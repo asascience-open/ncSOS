@@ -13,7 +13,7 @@ import thredds.server.sos.service.DatasetMetaData;
 public class MockDescribeSensorParser {
 
     private final DatasetMetaData dst;
-    private String templateFileLocation = "C:/Documents and Settings/abird/My Documents/NetBeansProjects/ISOTHREDDS/trunk/src/main/java/threads/server/metadata/templates/sosDescribeSensor.xml";
+    private String templateFileLocation = getClass().getClassLoader().getResource("templates/sosDescribeSensor.xml").getPath();
     Document doc;
     private String routeElement;
     private String identifier = "StationId";
@@ -96,7 +96,5 @@ public class MockDescribeSensorParser {
    public String getIdentifierName() {
         return identifier;
     }
-
-   //public String getTermValue
 
 }

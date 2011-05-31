@@ -41,16 +41,13 @@ public class MockGetCapabilitiesParser {
     //String[] serviceProvider = {"ows:ProviderName", "ows:ProviderSite"};
     private String routeElement;
 
-    private String templateFileLocation;
+    private String templateFileLocation = getClass().getClassLoader().getResource("templates/sosGetCapabilities.xml").getPath();
 
     private final DatasetMetaData dst;
     private ObservationOffering obsOffer;
 
-    //private String templateFileLocation = "threads/server/metadata/templates/sosGetCapabilities.xml";
-
     public MockGetCapabilitiesParser(DatasetMetaData dst) {
         this.dst = dst;
-        this.templateFileLocation = getTemplateLocation();
     }
 
 
@@ -63,32 +60,10 @@ public class MockGetCapabilitiesParser {
         dst.setSource("Source");
         dst.setInstitution("ASA");
         dst.setLocation("Location");
-        this.templateFileLocation = "C:/Program Files/Apache Software Foundation/Apache Tomcat 6.0.26/webapps/thredds/templates/sosGetCapabilities.xml";
     }
 
     public String getTemplateLocation(){
-     String[] b = dst.getLocation().split("/");
-     StringBuilder st = new StringBuilder();
-        for (int i = 0; i < b.length; i++) {
-            String string = b[i];
-            
-            if (string.equalsIgnoreCase("content")){
-            st.append("webapps");
-            }
-            else if (string.equalsIgnoreCase("thredds")){
-            st.append(string);
-                break;
-            }
-            else{
-            st.append(string);
-            }
-            st.append("/");
-        }
-
-     st.append("/templates/sosGetCapabilities.xml");
-     String serverLocation = st.toString();
-
-        return serverLocation;
+      return templateFileLocation;
     }
 
 

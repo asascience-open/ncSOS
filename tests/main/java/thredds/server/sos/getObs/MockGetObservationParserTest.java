@@ -30,8 +30,9 @@ public class MockGetObservationParserTest {
      MockGetObservationParser MockGetCapP= new MockGetObservationParser(dst);
 
      String serverLocation = MockGetCapP.getTemplateLocation();
-
-     assertEquals("C:/Program Files/Apache Software Foundation/Apache Tomcat 6.0.26/webapps/thredds/templates/sosGetCapabilities.xml", serverLocation);
+     String templateFileLocation = getClass().getClassLoader().getResource("templates/sosGetCapabilities.xml").getPath();
+     
+     assertEquals(templateFileLocation, serverLocation);
 
     }
 
