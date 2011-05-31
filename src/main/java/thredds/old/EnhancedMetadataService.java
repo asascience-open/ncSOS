@@ -28,11 +28,11 @@
  */
 package thredds.old;
 
-import thredds.server.metadata.bean.Extent;
-import thredds.server.metadata.util.ElementNameComparator;
-import thredds.server.metadata.util.NCMLModifier;
-import thredds.server.metadata.util.ThreddsExtentUtil;
-import thredds.server.metadata.util.XMLUtil;
+import thredds.server.sos.bean.Extent;
+import thredds.server.sos.util.ElementNameComparator;
+import thredds.server.sos.util.NCMLModifier;
+import thredds.server.sos.util.ThreddsExtentUtil;
+import thredds.server.sos.util.XMLUtil;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.ncml.NcMLWriter;
 

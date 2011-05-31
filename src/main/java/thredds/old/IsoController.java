@@ -35,15 +35,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
-import thredds.server.metadata.util.DatasetHandlerAdapter;
-import thredds.server.metadata.util.ThreddsTranslatorUtil;
+import thredds.server.sos.util.DatasetHandlerAdapter;
+import thredds.server.sos.util.ThreddsTranslatorUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
-import thredds.server.metadata.controller.IMetadataContoller;
+import thredds.server.sos.controller.IMetadataContoller;
 
 import ucar.nc2.dataset.NetcdfDataset;
 
