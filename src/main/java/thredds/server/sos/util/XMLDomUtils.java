@@ -10,6 +10,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import java.io.File;
+import java.io.InputStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Result;
@@ -31,13 +32,13 @@ public class XMLDomUtils {
 //TODO add in refactored code for utils here!
 
 
-    public static Document getTemplateDom(String templateFileLocation){
+    public static Document getTemplateDom(InputStream templateFileLocation){
     Document doc = null;
      try {
-     File file = new File(templateFileLocation);
+     //File file = new File(templateFileLocation);
      DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
      DocumentBuilder db = dbf.newDocumentBuilder();
-     doc = db.parse(file);
+     doc = db.parse(templateFileLocation);
      doc.getDocumentElement().normalize();
      //setRouteElement(doc.getDocumentElement().getNodeName());
 
@@ -132,10 +133,10 @@ public class XMLDomUtils {
     }
 
     public static Document getExceptionDom() {
-     String exceptionDomLocation = XMLDomUtils.class.getClassLoader().getResource("templates/exception.xml").getPath();
-     exceptionDomLocation = exceptionDomLocation.replaceAll("%20", " ");
 
-        Document exceptionDom = getTemplateDom(exceptionDomLocation);
+     InputStream isTemplate = XMLDomUtils.class.getClassLoader().getResourceAsStream("templates/exception.xml");
+
+        Document exceptionDom = getTemplateDom(isTemplate);
         return exceptionDom;
     }
 

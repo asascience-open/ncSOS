@@ -1,5 +1,6 @@
 package thredds.server.sos.getObs;
 
+import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,8 @@ import ucar.ma2.Array;
 public class MockGetObservationParser {
 
     private final DatasetMetaData dst;
-    private String templateFileLocation = getClass().getClassLoader().getResource("templates/sosGetObservation.xml").getPath();
+    //private String templateFileLocation = getClass().getClassLoader().getResource("templates/sosGetObservation.xml").getPath();
+    InputStream isTemplate = getClass().getClassLoader().getResourceAsStream("templates/sosGetObservation.xml");
 
     Document doc;
     private String routeElement;
@@ -39,21 +41,21 @@ public class MockGetObservationParser {
         dst.setSource("Source");
         dst.setInstitution("ASA");
         dst.setLocation("Location");
-        this.templateFileLocation = templateFileLocation.replaceAll("%20", " ");
     }
 
     public MockGetObservationParser(DatasetMetaData dst) {
         this.dst = dst;
-        this.templateFileLocation = templateFileLocation.replaceAll("%20", " ");
     }
 
+    /*
+     * needs to return input stream
      public String getTemplateLocation(){
       return templateFileLocation;
     }
-
+*/
 
     public void parseTemplateXML() {
-        doc = XMLDomUtils.getTemplateDom(templateFileLocation);
+        doc = XMLDomUtils.getTemplateDom(isTemplate);
         setRouteElement(doc.getDocumentElement().getNodeName());
     }
 

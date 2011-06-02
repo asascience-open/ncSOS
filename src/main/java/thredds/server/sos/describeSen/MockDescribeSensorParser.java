@@ -1,6 +1,7 @@
 package thredds.server.sos.describeSen;
 
 
+import java.io.InputStream;
 import thredds.server.sos.util.XMLDomUtils;
 import org.w3c.dom.Document;
 import thredds.server.sos.service.DatasetMetaData;
@@ -13,7 +14,8 @@ import thredds.server.sos.service.DatasetMetaData;
 public class MockDescribeSensorParser {
 
     private final DatasetMetaData dst;
-    private String templateFileLocation = getClass().getClassLoader().getResource("templates/sosDescribeSensor.xml").getPath();
+    
+    InputStream isTemplate = getClass().getClassLoader().getResourceAsStream("templates/sosDescribeSensor.xml");
     Document doc;
     private String routeElement;
     private String identifier = "StationId";
@@ -26,16 +28,14 @@ public class MockDescribeSensorParser {
         dst.setSource("Source");
         dst.setInstitution("ASA");
         dst.setLocation("Location");
-        this.templateFileLocation = templateFileLocation.replaceAll("%20", " ");
     }
 
      MockDescribeSensorParser(DatasetMetaData dst) {
         this.dst = dst;
-        this.templateFileLocation = templateFileLocation.replaceAll("%20", " ");
     }
 
     public void parseTemplateXML() {
-        doc = XMLDomUtils.getTemplateDom(templateFileLocation);
+        doc = XMLDomUtils.getTemplateDom(isTemplate);
         setRouteElement(doc.getDocumentElement().getNodeName());
     }
 

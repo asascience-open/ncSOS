@@ -31,12 +31,14 @@ public class MockGetObservationParserTest {
      dst.extractData();
      MockGetObservationParser MockGetObsP= new MockGetObservationParser(dst);
 
-     String serverLocation = MockGetObsP.getTemplateLocation();
+
+     fail("location is now input stream");
+
      String templateFileLocation = getClass().getClassLoader().getResource("templates/sosGetObservation.xml").getPath();
 
      templateFileLocation = templateFileLocation.replaceAll("%20", " ");
 
-     assertEquals(templateFileLocation, serverLocation);
+     //assertEquals(templateFileLocation, serverLocation);
 
     }
 
@@ -351,7 +353,9 @@ public class MockGetObservationParserTest {
      MockGetObs.parseObservations(observedProperty);
 
      String name = MockGetObs.getObservationProcedure();
-     assertEquals(MockGetObs.getTemplateLocation(), name);
+
+     fail("location is now an input stream");
+     //assertEquals(MockGetObs.getTemplateLocation(), name);
     }
 
     @Test

@@ -14,6 +14,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Result;
@@ -32,16 +34,10 @@ import thredds.server.sos.service.DatasetMetaData;
  */
 public class MockGetCapabilitiesParser {
 
-    // Get current classloader
-    ClassLoader cl = this.getClass().getClassLoader();
-
-   
     private Document doc;
-    //String[] serviceIdentification = {"ows:Title", "ows:Abstract"};
-    //String[] serviceProvider = {"ows:ProviderName", "ows:ProviderSite"};
     private String routeElement;
 
-    private String templateFileLocation = getClass().getClassLoader().getResource("templates/sosGetCapabilities.xml").getPath();
+    InputStream isTemplate = getClass().getClassLoader().getResourceAsStream("templates/sosGetCapabilities.xml");
 
 
     private final DatasetMetaData dst;
@@ -49,7 +45,6 @@ public class MockGetCapabilitiesParser {
 
     public MockGetCapabilitiesParser(DatasetMetaData dst) {
         this.dst = dst;
-        this.templateFileLocation = templateFileLocation.replaceAll("%20", " ");
     }
 
 
@@ -62,13 +57,14 @@ public class MockGetCapabilitiesParser {
         dst.setSource("Source");
         dst.setInstitution("ASA");
         dst.setLocation("Location");
-        this.templateFileLocation = templateFileLocation.replaceAll("%20", " ");
     }
 
+    /*
+     * needs to be the input stream and its location
     public String getTemplateLocation(){
       return templateFileLocation;
     }
-
+*/
 
     public String getRouteElement() {
         return routeElement;
@@ -76,10 +72,10 @@ public class MockGetCapabilitiesParser {
 
     public void parseTemplateXML() {
         try {   
-            File file = new File(templateFileLocation);
+            //File file = new File(templateFileLocation);
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
-            doc = db.parse(file);
+            doc = db.parse(isTemplate);
             doc.getDocumentElement().normalize();
             setRouteElement(doc.getDocumentElement().getNodeName());
 
