@@ -43,11 +43,13 @@ public class MockGetCapabilitiesParser {
 
     private String templateFileLocation = getClass().getClassLoader().getResource("templates/sosGetCapabilities.xml").getPath();
 
+
     private final DatasetMetaData dst;
     private ObservationOffering obsOffer;
 
     public MockGetCapabilitiesParser(DatasetMetaData dst) {
         this.dst = dst;
+        this.templateFileLocation = templateFileLocation.replaceAll("%20", " ");
     }
 
 
@@ -60,6 +62,7 @@ public class MockGetCapabilitiesParser {
         dst.setSource("Source");
         dst.setInstitution("ASA");
         dst.setLocation("Location");
+        this.templateFileLocation = templateFileLocation.replaceAll("%20", " ");
     }
 
     public String getTemplateLocation(){

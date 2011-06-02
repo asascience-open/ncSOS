@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package thredds.server.sos.service;
 
@@ -21,7 +17,11 @@ public class MetadataParserTest {
 
     @Test
     public void CanGetWriterContainingData() throws IOException {
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/Desktop/netcdfTestFiles/epa/epa+seamap_04-08_A04.nc");
+     String location = getClass().getClassLoader().getResource("datasets/epa+seamap_04-08_A04.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
+
+   
     Writer writer = new StringWriter();
 
     MetadataParser.enhance(dataset, writer,null);
@@ -35,8 +35,10 @@ public class MetadataParserTest {
 
     @Test
     public void testNullQueryStringResultInGetCaps() throws IOException  {
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/Desktop/netcdfTestFiles/epa/epa+seamap_04-08_A04.nc");
-    Writer writer = new StringWriter();
+     String location = getClass().getClassLoader().getResource("datasets/epa+seamap_04-08_A04.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
+     Writer writer = new StringWriter();
 
     MetadataParser.enhance(dataset, writer,null);
 
@@ -50,8 +52,10 @@ public class MetadataParserTest {
     public void testGetCapsQueryStringResultInGetCaps() throws IOException {
     String query = "service=SOS&version=1.0.0&request=GetCapabilities";
 
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/Desktop/netcdfTestFiles/epa/epa+seamap_04-08_A04.nc");
-    Writer writer = new StringWriter();
+     String location = getClass().getClassLoader().getResource("datasets/epa+seamap_04-08_A04.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
+     Writer writer = new StringWriter();
 
     MetadataParser.enhance(dataset, writer,query);
 
@@ -87,8 +91,10 @@ public class MetadataParserTest {
     public void testGetCapsUsingSplitString() throws IOException {
     String query = "service=SOS&version=1.0.0&request=GetCapabilities";
 
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/Desktop/netcdfTestFiles/epa/epa+seamap_04-08_A04.nc");
-    Writer writer = new StringWriter();
+     String location = getClass().getClassLoader().getResource("datasets/epa+seamap_04-08_A04.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
+     Writer writer = new StringWriter();
 
     MetadataParser.enhance(dataset, writer,query);
 
@@ -104,8 +110,10 @@ public class MetadataParserTest {
     public void testInvalidQueryStringNULLRequest() throws IOException {
     String query = "service=SOS&version=1.0.0&";
 
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/Desktop/netcdfTestFiles/epa/epa+seamap_04-08_A04.nc");
-    Writer writer = new StringWriter();
+     String location = getClass().getClassLoader().getResource("datasets/epa+seamap_04-08_A04.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
+     Writer writer = new StringWriter();
 
     MetadataParser.enhance(dataset, writer,query);
 
@@ -120,8 +128,10 @@ public class MetadataParserTest {
     public void testInvalidQueryStringInvalidRequest() throws IOException {
     String query = "service=SOS&version=1.0.0&request=somethingotherthanwhatiwant";
 
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/Desktop/netcdfTestFiles/epa/epa+seamap_04-08_A04.nc");
-    Writer writer = new StringWriter();
+     String location = getClass().getClassLoader().getResource("datasets/epa+seamap_04-08_A04.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
+     Writer writer = new StringWriter();
 
     MetadataParser.enhance(dataset, writer,query);
 
@@ -137,8 +147,10 @@ public class MetadataParserTest {
     public void testInvalidQueryStringInvalidTwoFields() throws IOException {
     String query = "version=1.0.0";
 
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/Desktop/netcdfTestFiles/epa/epa+seamap_04-08_A04.nc");
-    Writer writer = new StringWriter();
+     String location = getClass().getClassLoader().getResource("datasets/epa+seamap_04-08_A04.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
+     Writer writer = new StringWriter();
 
     MetadataParser.enhance(dataset, writer,query);
 
@@ -154,8 +166,10 @@ public class MetadataParserTest {
     public void testInvalidQueryStringInvalidRequestString() throws IOException {
     String query = "service=SOS&version=1.0.0&request=GetCapabil";
 
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/Desktop/netcdfTestFiles/epa/epa+seamap_04-08_A04.nc");
-    Writer writer = new StringWriter();
+     String location = getClass().getClassLoader().getResource("datasets/epa+seamap_04-08_A04.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
+     Writer writer = new StringWriter();
 
     MetadataParser.enhance(dataset, writer,query);
 
@@ -270,7 +284,11 @@ public class MetadataParserTest {
     public void testEDCDataFileAndEnhance() throws IOException {
     String query = "request=GetObservation&service=SOS&version=1.0.0&responseFormat=text%2Fxml%3B+subtype%3D%22om%2F1.0.0%22&offering=urn%3Asura%3Astation%3Asura.tds.sos%3A42056&observedproperty=sea_temp,sig_wvht&eventtime=2008-06-01T03:05:00Z/2008-07-27T02:54:00Z";
 
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/Desktop/netcdfTestFiles/station/Station_42056_2008met.nc");
+
+     String location = getClass().getClassLoader().getResource("datasets/Station_42056_2008met.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
+    
     Writer writer = new StringWriter();
 
     MetadataParser.enhance(dataset, writer,query);
@@ -287,7 +305,9 @@ public class MetadataParserTest {
     public void testMultiSearchTimesWork() throws IOException {
     String query = "&service=SOS&version=1.0.0&request=GetObservation&service=SOS&observedproperty=air_temp&eventtime=2007-12-31T19:50:00Z/2008-12-31T17:49:00Z";
 
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/Desktop/netcdfTestFiles/station/Station_42056_2008met.nc");
+   String location = getClass().getClassLoader().getResource("datasets/Station_42056_2008met.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
     Writer writer = new StringWriter();
 
     MetadataParser.enhance(dataset, writer,query);
@@ -303,7 +323,9 @@ public class MetadataParserTest {
     public void testVimsMultiStation() throws IOException {
     String query = "request=GetObservation&service=SOS&version=1.0.0&responseFormat=text%2Fxml%3B+subtype%3D%22om%2F1.0.0%22&offering=urn%3Asura%3Astation%3Asura.tds.sos%3A8726724&observedproperty=msl&eventtime=2008-09-07T11:31:00Z/2008-09-14T18:30:00Z";
 
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Program Files/Apache Software Foundation/Apache Tomcat 6.0.26/content/thredds/public/testdata/VIMS.nc");
+    String location = getClass().getClassLoader().getResource("datasets/VIMS.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
     Writer writer = new StringWriter();
 
     MetadataParser.enhance(dataset, writer,query);
@@ -322,8 +344,10 @@ public class MetadataParserTest {
         
      String query = "service=SOS&version=1.0.0&request=GetObservation&observedProperty=msl";
 
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Program Files/Apache Software Foundation/Apache Tomcat 6.0.26/content/thredds/public/testdata/VIMS.nc");
-    Writer writer = new StringWriter();
+      String location = getClass().getClassLoader().getResource("datasets/VIMS.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
+     Writer writer = new StringWriter();
 
     MetadataParser.enhance(dataset, writer,query);
 

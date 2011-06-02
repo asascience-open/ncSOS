@@ -22,8 +22,10 @@ public class DatasetMetaDataTest {
 
     @Test
     public void testGetAttribsFromDataSet() throws Exception {
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Program Files/Apache Software Foundation/Apache Tomcat 6.0.26/content/thredds/public/testdata/VIMS.nc");
-    Extent ext = ThreddsExtentUtil.getExtent(dataset);
+     String location = getClass().getClassLoader().getResource("datasets/VIMS.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
+     Extent ext = ThreddsExtentUtil.getExtent(dataset);
 
     DatasetMetaData dst = new DatasetMetaData(ext, dataset);
 
@@ -34,8 +36,10 @@ public class DatasetMetaDataTest {
 
     @Test
     public void testgetTitleFromDataset() throws Exception {
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Program Files/Apache Software Foundation/Apache Tomcat 6.0.26/content/thredds/public/testdata/VIMS.nc");
-    Extent ext = ThreddsExtentUtil.getExtent(dataset);
+     String location = getClass().getClassLoader().getResource("datasets/VIMS.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
+     Extent ext = ThreddsExtentUtil.getExtent(dataset);
 
     DatasetMetaData dst = new DatasetMetaData(ext, dataset);
 
@@ -46,7 +50,11 @@ public class DatasetMetaDataTest {
 
     @Test
     public void testgetValidDescriptionFromDataset() throws Exception {
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/Desktop/netcdfTestFiles/station/Station_42059_2008met.nc");
+    String location = getClass().getClassLoader().getResource("datasets/Station_42059_2008met.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
+
+
     Extent ext = ThreddsExtentUtil.getExtent(dataset);
 
     DatasetMetaData dst = new DatasetMetaData(ext, dataset);
@@ -58,8 +66,11 @@ public class DatasetMetaDataTest {
 
      @Test
     public void testgetValidDescriptionFromDatasetEPA() throws Exception {
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/Desktop/netcdfTestFiles/epa/epa+seamap_04-08_B07.nc");
-    Extent ext = ThreddsExtentUtil.getExtent(dataset);
+         String location = getClass().getClassLoader().getResource("datasets/epa+seamap_04-08_B07.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
+
+     Extent ext = ThreddsExtentUtil.getExtent(dataset);
 
     DatasetMetaData dst = new DatasetMetaData(ext, dataset);
     dst.extractData();
@@ -69,7 +80,10 @@ public class DatasetMetaDataTest {
 
     @Test
     public void testgetNullSetDescriptionFromDataset() throws Exception {
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Program Files/Apache Software Foundation/Apache Tomcat 6.0.26/content/thredds/public/testdata/VIMS.nc");
+      String location = getClass().getClassLoader().getResource("datasets/VIMS.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
+
     Extent ext = ThreddsExtentUtil.getExtent(dataset);
 
     DatasetMetaData dst = new DatasetMetaData(ext, dataset);
@@ -82,8 +96,10 @@ public class DatasetMetaDataTest {
 
     @Test
     public void testCanGetStationNameList() throws Exception {
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Program Files/Apache Software Foundation/Apache Tomcat 6.0.26/content/thredds/public/testdata/VIMS.nc");
-    Extent ext = ThreddsExtentUtil.getExtent(dataset);
+     String location = getClass().getClassLoader().getResource("datasets/VIMS.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
+     Extent ext = ThreddsExtentUtil.getExtent(dataset);
 
     DatasetMetaData dst = new DatasetMetaData(ext, dataset);
 
@@ -107,8 +123,10 @@ public class DatasetMetaDataTest {
 
     @Test
     public void testGetAlistOfObservationOfferingsUsingStationNames() throws Exception {
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Program Files/Apache Software Foundation/Apache Tomcat 6.0.26/content/thredds/public/testdata/VIMS.nc");
-    Extent ext = ThreddsExtentUtil.getExtent(dataset);
+     String location = getClass().getClassLoader().getResource("datasets/VIMS.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
+     Extent ext = ThreddsExtentUtil.getExtent(dataset);
 
     DatasetMetaData dst = new DatasetMetaData(ext, dataset);
 
@@ -120,8 +138,10 @@ public class DatasetMetaDataTest {
 
     @Test
     public void testGetListofObsOfferingChckSize() throws Exception {
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Program Files/Apache Software Foundation/Apache Tomcat 6.0.26/content/thredds/public/testdata/VIMS.nc");
-    Extent ext = ThreddsExtentUtil.getExtent(dataset);
+      String location = getClass().getClassLoader().getResource("datasets/VIMS.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
+     Extent ext = ThreddsExtentUtil.getExtent(dataset);
 
     DatasetMetaData dst = new DatasetMetaData(ext, dataset);
 
@@ -136,8 +156,10 @@ public class DatasetMetaDataTest {
 
      @Test
     public void testGetCorrectStationValueFromObs() throws Exception {
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Program Files/Apache Software Foundation/Apache Tomcat 6.0.26/content/thredds/public/testdata/VIMS.nc");
-    Extent ext = ThreddsExtentUtil.getExtent(dataset);
+     String location = getClass().getClassLoader().getResource("datasets/VIMS.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
+     Extent ext = ThreddsExtentUtil.getExtent(dataset);
 
     DatasetMetaData dst = new DatasetMetaData(ext, dataset);
 
@@ -154,8 +176,10 @@ public class DatasetMetaDataTest {
 
     @Test
     public void testGetCorrectStationLat() throws Exception {
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Program Files/Apache Software Foundation/Apache Tomcat 6.0.26/content/thredds/public/testdata/VIMS.nc");
-    Extent ext = ThreddsExtentUtil.getExtent(dataset);
+      String location = getClass().getClassLoader().getResource("datasets/VIMS.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
+     Extent ext = ThreddsExtentUtil.getExtent(dataset);
 
     DatasetMetaData dst = new DatasetMetaData(ext, dataset);
 
@@ -172,8 +196,10 @@ public class DatasetMetaDataTest {
 
     @Test
     public void testGetCorrectStationLon() throws Exception {
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Program Files/Apache Software Foundation/Apache Tomcat 6.0.26/content/thredds/public/testdata/VIMS.nc");
-    Extent ext = ThreddsExtentUtil.getExtent(dataset);
+     String location = getClass().getClassLoader().getResource("datasets/VIMS.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
+     Extent ext = ThreddsExtentUtil.getExtent(dataset);
 
     DatasetMetaData dst = new DatasetMetaData(ext, dataset);
 
@@ -188,8 +214,10 @@ public class DatasetMetaDataTest {
 
     @Test
     public void testGetCorrectDateString() throws Exception {
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Program Files/Apache Software Foundation/Apache Tomcat 6.0.26/content/thredds/public/testdata/VIMS.nc");
-    Extent ext = ThreddsExtentUtil.getExtent(dataset);
+     String location = getClass().getClassLoader().getResource("datasets/VIMS.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
+     Extent ext = ThreddsExtentUtil.getExtent(dataset);
 
     DatasetMetaData dst = new DatasetMetaData(ext, dataset);
 
@@ -204,7 +232,10 @@ public class DatasetMetaDataTest {
 
     @Test
     public void testGetTestGMGLName() throws Exception {
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/Desktop/netcdfTestFiles/station/Station_42059_2008met.nc");
+      String location = getClass().getClassLoader().getResource("datasets/Station_42059_2008met.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
+
     Extent ext = ThreddsExtentUtil.getExtent(dataset);
 
     DatasetMetaData dst = new DatasetMetaData(ext, dataset);
@@ -216,7 +247,10 @@ public class DatasetMetaDataTest {
 
     @Test
     public void testGetTheObservedProperties() throws Exception {
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/Desktop/netcdfTestFiles/station/Station_42059_2008met.nc");
+     String location = getClass().getClassLoader().getResource("datasets/Station_42059_2008met.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
+
     Extent ext = ThreddsExtentUtil.getExtent(dataset);
 
     DatasetMetaData dst = new DatasetMetaData(ext, dataset);
@@ -246,8 +280,10 @@ public class DatasetMetaDataTest {
 
     @Test
     public void testGetCorrectResponseFormat() throws Exception {
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/Desktop/netcdfTestFiles/station/Station_42059_2008met.nc");
-    Extent ext = ThreddsExtentUtil.getExtent(dataset);
+     String location = getClass().getClassLoader().getResource("datasets/Station_42059_2008met.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
+     Extent ext = ThreddsExtentUtil.getExtent(dataset);
 
     DatasetMetaData dst = new DatasetMetaData(ext, dataset);
 
@@ -261,8 +297,10 @@ public class DatasetMetaDataTest {
    @Test
     public void testGetObsArrays() throws Exception {
     //setup
-    NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/Desktop/netcdfTestFiles/station/Station_42059_2008met.nc");
-    Extent ext = ThreddsExtentUtil.getExtent(dataset);
+     String location = getClass().getClassLoader().getResource("datasets/Station_42059_2008met.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
+     Extent ext = ThreddsExtentUtil.getExtent(dataset);
     //extract the data
     DatasetMetaData dst = new DatasetMetaData(ext, dataset);
     dst.extractData();

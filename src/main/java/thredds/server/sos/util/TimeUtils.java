@@ -8,8 +8,6 @@ import org.joda.time.DateTimeUtils;
 
 public class TimeUtils
 {
-    // time rules
-    // twice
     /**
      * <p>A {@link Comparator} that compares {@link DateTime} objects based only
      * on their millisecond instant values.  This can be used for
@@ -75,4 +73,3 @@ public class TimeUtils
         return index;
     }
 }
-// hi
