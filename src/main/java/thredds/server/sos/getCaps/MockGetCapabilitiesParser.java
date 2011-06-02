@@ -75,7 +75,6 @@ public class MockGetCapabilitiesParser {
     }
 
     public void parseTemplateXML() {
-
         try {   
             File file = new File(templateFileLocation);
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();

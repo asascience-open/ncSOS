@@ -106,7 +106,7 @@ public class MockDescribeSensorParserTest {
     
 
     public DatasetMetaData getdst() throws Exception {
-        NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/Desktop/netcdfTestFiles/station/Station_42059_2008met.nc");
+        NetcdfDataset dataset = NetcdfDataset.openDataset("datasets/used/Station_42059_2008met.nc");
         Extent ext = ThreddsExtentUtil.getExtent(dataset);
         DatasetMetaData dst = new DatasetMetaData(ext, dataset);
         dst.extractData();
