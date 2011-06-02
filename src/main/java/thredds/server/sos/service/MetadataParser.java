@@ -54,7 +54,7 @@ public class MetadataParser {
      * @param dataset NetcdfDataset to enhance the NCML
      * @param writer writer to send enhanced NCML to
      */
-    public static void enhance(final NetcdfDataset dataset, final Writer writer, final String query) {
+    public static void enhance(final NetcdfDataset dataset, final Writer writer, final String query, String threddsURI) {
 
         MockGetCapP = null;
         xmlString = null;
@@ -69,6 +69,7 @@ public class MetadataParser {
 
             DatasetMetaData dst = new DatasetMetaData(ext, dataset);
             dst.extractData();
+            dst.setThreddsPath(threddsURI);
 
             if (query != null) {
                 //if query is not empty
@@ -115,6 +116,10 @@ public class MetadataParser {
         }
     }
 
+    public static void enhance(final NetcdfDataset dataset, final Writer writer, final String query) {
+      enhance(dataset, writer, query, null);
+    }
+    
     private static void writeErrorXMLCode(final Writer writer) throws IOException, TransformerException {
         Document doc = XMLDomUtils.getExceptionDom();
         createStringFromDom(doc, writer);

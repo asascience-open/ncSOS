@@ -64,6 +64,7 @@ public class DatasetMetaData {
     private String[] stationStringNamesList;
     private boolean noNCML;
     private String stationQueryRequested;
+    private String threddsPath;
 
     /*
      * Main constructor
@@ -602,4 +603,14 @@ public class DatasetMetaData {
     public String getRequestedStationName() {
         return stationQueryRequested;
     }
+    
+    public void setThreddsPath(String path) {
+      threddsPath = path;
+    }
+    
+    public String getThreddsPath() {
+      return threddsPath;
+    }
+      
+            
 }

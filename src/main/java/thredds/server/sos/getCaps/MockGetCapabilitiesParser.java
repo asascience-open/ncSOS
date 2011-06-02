@@ -219,7 +219,7 @@ public class MockGetCapabilitiesParser {
     }
 
     public String getHTTPGetAddress() {
-        return dst.getLocation();
+        return dst.getThreddsPath();
     }
 
     //

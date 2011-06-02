@@ -39,7 +39,7 @@ import javax.servlet.http.HttpServletResponse;
  * Author: dneufeld Date: Jul 6, 2010
  * <p/>
  */
-public interface IMetadataContoller {
+public interface ISosContoller {
 	
 	/** 
 	* All metadata controllers must implement a handleMetadataRequest method.

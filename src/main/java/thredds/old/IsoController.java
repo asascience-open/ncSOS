@@ -43,7 +43,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
-import thredds.server.sos.controller.IMetadataContoller;
+import thredds.server.sos.controller.ISosContoller;
 
 import ucar.nc2.dataset.NetcdfDataset;
 
@@ -54,7 +54,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  */
 @Controller
 @RequestMapping("/iso")
-public class IsoController implements IMetadataContoller {
+public class IsoController implements ISosContoller {
 	private static org.slf4j.Logger _log = org.slf4j.LoggerFactory
 			.getLogger(IsoController.class);
 	private static org.slf4j.Logger _logServerStartup = org.slf4j.LoggerFactory

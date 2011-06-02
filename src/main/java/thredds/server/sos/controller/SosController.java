@@ -28,7 +28,7 @@ import ucar.nc2.dataset.NetcdfDataset;
 //@Deprecated
 @Controller
 @RequestMapping("/sos")
-public class SosController implements IMetadataContoller {
+public class SosController implements ISosContoller {
 	private static org.slf4j.Logger _log = org.slf4j.LoggerFactory
 			.getLogger(IsoController.class);
 	private static org.slf4j.Logger _logServerStartup = org.slf4j.LoggerFactory
@@ -67,10 +67,9 @@ public class SosController implements IMetadataContoller {
                         //set the response type
                         res.setContentType("text/xml");
                         Writer writer = res.getWriter();
-
                         _log.info(req.getQueryString());
                         //TODO create new service
-                        MetadataParser.enhance(dataset, writer,req.getQueryString());
+                        MetadataParser.enhance(dataset, writer,req.getQueryString(), req.getRequestURL().toString());
                         writer.flush();
 			writer.close();
 
