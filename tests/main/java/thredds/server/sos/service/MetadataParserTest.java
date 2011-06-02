@@ -30,7 +30,7 @@ public class MetadataParserTest {
     writer.close();
 
     assertTrue(writer!=null);
-    System.out.println(writer.toString());
+    //System.out.println(writer.toString());
     }
 
     @Test
