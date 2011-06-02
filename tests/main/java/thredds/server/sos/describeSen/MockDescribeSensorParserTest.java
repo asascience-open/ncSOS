@@ -106,7 +106,10 @@ public class MockDescribeSensorParserTest {
     
 
     public DatasetMetaData getdst() throws Exception {
-        NetcdfDataset dataset = NetcdfDataset.openDataset("datasets/used/Station_42059_2008met.nc");
+     String location = getClass().getClassLoader().getResource("datasets/Station_42059_2008met.nc").getPath();
+     location = location.replaceAll("%20", " ");
+     NetcdfDataset dataset = NetcdfDataset.openDataset(location);
+
         Extent ext = ThreddsExtentUtil.getExtent(dataset);
         DatasetMetaData dst = new DatasetMetaData(ext, dataset);
         dst.extractData();
@@ -118,7 +121,9 @@ public class MockDescribeSensorParserTest {
     public void testWriteDomToXMLFile() throws Exception {
     MockDescribeSensorParser MockDesSen = new MockDescribeSensorParser(getdst());
     MockDesSen.parseTemplateXML();
-    String fileName = "C:/describeSensor.xml";
+    String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "describeSensor.xml";
+    fileName = fileName.replaceAll("%20", " ");
     XMLDomUtils.writeXMLDOMToFile(MockDesSen.getDom(),fileName);
     File xmlFile = new File(fileName);
     assertTrue(xmlFile!=null);

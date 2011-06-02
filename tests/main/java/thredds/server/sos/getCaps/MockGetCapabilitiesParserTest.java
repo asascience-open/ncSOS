@@ -57,7 +57,10 @@ public class MockGetCapabilitiesParserTest {
        
        MockGetCapP.parseServiceIdentification();
 
-       String fileName = "c:/testFile.xml";
+         String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "testFile.xml";
+    fileName = fileName.replaceAll("%20", " ");
+       
        String location = "ows:Title";
        MockGetCapP.writeXMLDOMToFile(MockGetCapP.getDom(),fileName);
        String a =  loadCreatedTempXMLFileAndCheckLocation(fileName,location);
@@ -200,7 +203,9 @@ public void testGetandSetServiceDescription(){
 
     MockGetCapP.parseServiceDescription();
 
-    String fileName = "c:/testFile.xml";
+    String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "testfile.xml";
+    fileName = fileName.replaceAll("%20", " ");
     String location = "ows:ProviderName";
     MockGetCapP.writeXMLDOMToFile(MockGetCapP.getDom(),fileName);
     String a =  loadCreatedTempXMLFileAndCheckLocation(fileName,location);
@@ -216,7 +221,9 @@ public void testCanGetEnteredMockPhoneNumber(){
 
     MockGetCapP.parseServiceDescription();
 
-    String fileName = "c:/testFile.xml";
+    String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "testfile.xml";
+    fileName = fileName.replaceAll("%20", " ");
     String location = "ows:Voice";
     MockGetCapP.writeXMLDOMToFile(MockGetCapP.getDom(),fileName);
     String expectedNumber =  loadCreatedTempXMLFileAndCheckLocation(fileName,location);
@@ -258,7 +265,9 @@ public void testGetandSetOperationsGetCaps(){
     MockGetCapP.parseOperationsMetaData();
     
 
-    String fileName = "c:/testFile.xml";
+    String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "testfile.xml";
+    fileName = fileName.replaceAll("%20", " ");
     String location = "ows:Get";
     String attribute = "xlink:href";
 
@@ -277,7 +286,9 @@ public void testGetandSetOperationsGetCaps(){
     MockGetCapP.parseOperationsMetaData();
 
 
-    String fileName = "c:/testFile.xml";
+    String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "testfile.xml";
+    fileName = fileName.replaceAll("%20", " ");
     String location = "ows:Post";
     String attribute = "xlink:href";
 
@@ -295,7 +306,9 @@ public void testGetandSetOperationsGetCaps(){
     MockGetCapP.parseOperationsMetaData();
 
 
-    String fileName = "c:/testFile.xml";
+    String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "testfile.xml";
+    fileName = fileName.replaceAll("%20", " ");
     String location = "ows:Get";
     String attribute = "xlink:href";
     String NodeName = "GetObservation";
@@ -316,7 +329,9 @@ public void testGetandSetOperationsGetCaps(){
     MockGetCapP.parseOperationsMetaData();
 
 
-    String fileName = "c:/testFile.xml";
+    String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "testfile.xml";
+    fileName = fileName.replaceAll("%20", " ");
     String location = "ows:Post";
     String attribute = "xlink:href";
     String NodeName = "GetObservation";
@@ -336,7 +351,9 @@ public void testGetandSetOperationsGetCaps(){
     MockGetCapP.parseOperationsMetaData();
 
 
-    String fileName = "c:/testFile.xml";
+   String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "testfile.xml";
+    fileName = fileName.replaceAll("%20", " ");
     String location = "ows:Get";
     String attribute = "xlink:href";
     String NodeName = "DescribeSensor";
@@ -356,7 +373,9 @@ public void testGetandSetOperationsGetCaps(){
     MockGetCapP.parseOperationsMetaData();
 
 
-    String fileName = "c:/testFile.xml";
+    String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "testfile.xml";
+    fileName = fileName.replaceAll("%20", " ");
     String location = "ows:Post";
     String attribute = "xlink:href";
     String NodeName = "DescribeSensor";
@@ -393,7 +412,10 @@ public void testAddOfferingInformationToDocFileNotNull(){
 
     MockGetCapP.addObsOfferingToDoc(offering);
 
-    String fileName = "c:/testFileNewNode.xml";
+    String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "testFileNewNode.xml";
+    fileName = fileName.replaceAll("%20", " ");
+
     MockGetCapP.writeXMLDOMToFile(MockGetCapP.getDom(),fileName);
 
     File xmlFile = new File(fileName);
@@ -614,7 +636,9 @@ public void testWriteAllDataToTextXMLFileCheckNotNull() throws Exception{
     MockGetCapP.parseServiceDescription();
     MockGetCapP.parseOperationsMetaData();
 
-    String fileName = "c:/testFile.xml";
+     String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "testfile.xml";
+    fileName = fileName.replaceAll("%20", " ");
     MockGetCapP.writeXMLDOMToFile(MockGetCapP.getDom(),fileName);
 
     File xmlFile = new File(fileName);
@@ -639,7 +663,9 @@ public void testWriteAllDataToTextXMLFileCheckObsOffering() throws Exception{
     MockGetCapP.parseOperationsMetaData();
     MockGetCapP.parseObservationList();
 
-    String fileName = "c:/testFileOBS.xml";
+     String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "testFileObs.xml";
+    fileName = fileName.replaceAll("%20", " ");
     MockGetCapP.writeXMLDOMToFile(MockGetCapP.getDom(),fileName);
 
     File xmlFile = new File(fileName);
@@ -666,7 +692,9 @@ public void testWriteAllDataToTextXMLFileCheckObsOffering() throws Exception{
     MockGetCapP.parseOperationsMetaData();
     MockGetCapP.parseObservationList();
 
-    String fileName = "C:/Documents and Settings/abird/Desktop/netcdfTestFiles/station/Station_42080_2008met.xml";
+     String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "Station_42080_2008met.xml";
+    fileName = fileName.replaceAll("%20", " ");
     MockGetCapP.writeXMLDOMToFile(MockGetCapP.getDom(),fileName);
 
     File xmlFile = new File(fileName);
@@ -692,7 +720,10 @@ public void testWriteAllDataToTextXMLFileCheckObsOffering() throws Exception{
     MockGetCapP.parseOperationsMetaData();
     MockGetCapP.parseObservationList();
 
-    String fileName = "C:/Documents and Settings/abird/Desktop/netcdfTestFiles/station/Station_42059_2008met.xml";
+    String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "Station_42059_2008met.xml";
+    fileName = fileName.replaceAll("%20", " ");
+
     MockGetCapP.writeXMLDOMToFile(MockGetCapP.getDom(),fileName);
 
     File xmlFile = new File(fileName);
@@ -718,7 +749,10 @@ public void testWriteAllDataToTextXMLFileCheckObsOffering() throws Exception{
     MockGetCapP.parseOperationsMetaData();
     MockGetCapP.parseObservationList();
 
-    String fileName = "C:/Documents and Settings/abird/Desktop/netcdfTestFiles/epa/epa_seamap_04-08_A04.xml";
+    String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "epa_seamap_04-08_A04.xml";
+    fileName = fileName.replaceAll("%20", " ");
+
     MockGetCapP.writeXMLDOMToFile(MockGetCapP.getDom(),fileName);
 
     File xmlFile = new File(fileName);
@@ -748,8 +782,10 @@ public void testWriteAllDataToTextXMLFileCheckObsOffering() throws Exception{
     assertTrue(MockGetCapP.getProviderNameSP() !=null);
     assertTrue(MockGetCapP.getProviderSiteSP() !=null);
 
+    String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "epa_seamap_04-08_A04.xml";
+    fileName = fileName.replaceAll("%20", " ");
 
-    String fileName = "C:/Documents and Settings/abird/Desktop/netcdfTestFiles/epa/epa_seamap_04-08_A04.xml";
     MockGetCapP.writeXMLDOMToFile(MockGetCapP.getDom(),fileName);
 
     File xmlFile = new File(fileName);
@@ -821,8 +857,10 @@ public void testWriteAllDataToTextXMLFileCheckObsOffering() throws Exception{
     assertTrue(MockGetCapP.getProviderNameSP() !=null);
     assertTrue(MockGetCapP.getProviderSiteSP() !=null);
 
+    String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "epa_seamap_04-08_TD26.xml";
+    fileName = fileName.replaceAll("%20", " ");
 
-    String fileName = "C:/Documents and Settings/abird/Desktop/netcdfTestFiles/epa/epa_seamap_04-08_TD26.xml";
     MockGetCapP.writeXMLDOMToFile(MockGetCapP.getDom(),fileName);
 
     File xmlFile = new File(fileName);

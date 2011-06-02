@@ -97,7 +97,13 @@ public class MockGetObservationParserTest {
         String values = MockGetObs.getResultValues();
         assertFalse(values.contains("TIME ERROR"));
         assertFalse(values.contains("ERROR!"));
-        XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), "C:/Station_42056_2008metTIMETEST.xml");
+
+        String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+        fileName = fileName + "Station_42056_2008metTIMETEST.xml";
+        fileName = fileName.replaceAll("%20", " ");
+
+
+        XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), fileName);
 
     }
 
@@ -546,7 +552,12 @@ public class MockGetObservationParserTest {
      MockGetObservationParser MockGetObs = new MockGetObservationParser(dst);
      MockGetObs.parseTemplateXML();
      MockGetObs.parseObservations(observedProperty);
-     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), "c:/getObs.xml");
+
+     String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "getObs.xml";
+    fileName = fileName.replaceAll("%20", " ");
+
+     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), fileName);
     }
 
     @Test
@@ -563,7 +574,12 @@ public class MockGetObservationParserTest {
      MockGetObservationParser MockGetObs = new MockGetObservationParser(dst);
      MockGetObs.parseTemplateXML();
      MockGetObs.parseObservations(observedProperty);
-     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), "c:/getObs2.xml");
+
+       String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "getObs2.xml";
+    fileName = fileName.replaceAll("%20", " ");
+
+     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), fileName);
     }
 
     @Test
@@ -580,7 +596,12 @@ public class MockGetObservationParserTest {
      MockGetObservationParser MockGetObs = new MockGetObservationParser(dst);
      MockGetObs.parseTemplateXML();
      MockGetObs.parseObservations(observedProperty);
-     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), "c:/getObs2PropsStation.xml");
+
+       String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "getObs2PropsStation.xml";
+    fileName = fileName.replaceAll("%20", " ");
+
+     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), fileName);
     }
 
     @Test
@@ -598,7 +619,11 @@ public class MockGetObservationParserTest {
      MockGetObservationParser MockGetObs = new MockGetObservationParser(dst);
      MockGetObs.parseTemplateXML();
      MockGetObs.parseObservations(observedProperty);
-     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), "c:/getObs2PropsNDBC.xml");
+
+      String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "getObs2PropsNDBC.xml";
+    fileName = fileName.replaceAll("%20", " ");
+     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), fileName);
     }
 
      @Test
@@ -617,7 +642,12 @@ public class MockGetObservationParserTest {
      MockGetObservationParser MockGetObs = new MockGetObservationParser(dst);
      MockGetObs.parseTemplateXML();
      MockGetObs.parseObservations(observedProperty);
-     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), "c:/getObs3PropsEPA.xml");
+
+      String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "getObs3PropsEPA.xml";
+    fileName = fileName.replaceAll("%20", " ");
+
+     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), fileName);
     }
 
        @Test
@@ -635,7 +665,12 @@ public class MockGetObservationParserTest {
      MockGetObs.parseTemplateXML();
      MockGetObs.parseObservations(observedProperty);
      assertTrue(MockGetObs.getIsDepth());
-     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), "c:/getObs3PropsEPA.xml");
+
+           String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "getObs3PropsEPA.xml";
+    fileName = fileName.replaceAll("%20", " ");
+
+     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), fileName);
     }
 
      @Test
@@ -653,7 +688,12 @@ public class MockGetObservationParserTest {
      MockGetObs.parseTemplateXML();
      MockGetObs.parseObservations(observedProperty);
      assertTrue(MockGetObs.getIsDepth());
-     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), "c:/getObs3PropsEPADepth.xml");
+
+    String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "getObs3PropsEPADepth.xml";
+    fileName = fileName.replaceAll("%20", " ");
+
+     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), fileName);
     }
 
      @Test
@@ -711,7 +751,12 @@ public class MockGetObservationParserTest {
 
      String values = MockGetObs.getResultValues();
 
-     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), "c:/4059MultiTimeStation.xml");
+
+      String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "4059MultiTimeStation.xml";
+    fileName = fileName.replaceAll("%20", " ");
+
+     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), fileName);
      assertEquals("42059,2008-01-01T00:50:00Z,15.006,-67.496,26.5 \n42059,2008-01-01T01:49:59Z,15.006,-67.496,27.1 "+"\n", values);
      
      }
@@ -742,7 +787,12 @@ public class MockGetObservationParserTest {
 
      String values = MockGetObs.getResultValues();
 
-     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), "c:/4059MTimeStationMProps.xml");
+       String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "4059MTimeStationMProps.xml";
+    fileName = fileName.replaceAll("%20", " ");
+
+
+     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), fileName);
      assertEquals("42059,2008-01-01T00:50:00Z,15.006,-67.496,26.5,5.19 \n42059,2008-01-01T01:49:59Z,15.006,-67.496,27.1,5.13 \n", values);
 
      }
@@ -772,7 +822,12 @@ public class MockGetObservationParserTest {
      assertTrue(MockGetObs.isSearchTimeAvailable());
 
      String values = MockGetObs.getResultValues();
-     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), "C:/WT6.1.xml");
+
+       String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "WT6.1.xml";
+    fileName = fileName.replaceAll("%20", " ");
+
+     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), fileName);
      }
 
     @Test
@@ -801,7 +856,13 @@ public class MockGetObservationParserTest {
 
      assertTrue(MockGetObs.isSearchTimeAvailable());
      String values = MockGetObs.getResultValues();
-     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), "C:/Vims.xml");
+
+
+       String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "Vims.xml";
+    fileName = fileName.replaceAll("%20", " ");
+
+     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), fileName);
 
      String[] stationNames = dst.getStringStationNames();
 
@@ -832,7 +893,13 @@ public class MockGetObservationParserTest {
      MockGetObservationParser MockGetObs = new MockGetObservationParser(dst);
      MockGetObs.parseTemplateXML();
      MockGetObs.parseObservations(observedProperty);
-     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), "C:/VimsStation.xml");
+
+
+       String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "VimsStation.xml";
+    fileName = fileName.replaceAll("%20", " ");
+
+     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), fileName);
 
      assertEquals(MockGetObs.getCollectionSourceName(), "urn:sura:station:sura.tds.sos:8726724");
 
@@ -859,7 +926,13 @@ public class MockGetObservationParserTest {
      MockGetObservationParser MockGetObs = new MockGetObservationParser(dst);
      MockGetObs.parseTemplateXML();
      MockGetObs.parseObservations(observedProperty);
-     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), "C:/VimsStation.xml");
+
+
+    String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "VimsStation.xml";
+    fileName = fileName.replaceAll("%20", " ");
+
+     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), fileName);
      assertEquals(MockGetObs.getCollectionSourceName(), "urn:sura:station:sura.tds.sos:8724698");
      }
 
@@ -887,7 +960,12 @@ public class MockGetObservationParserTest {
      MockGetObservationParser MockGetObs = new MockGetObservationParser(dst);
      MockGetObs.parseTemplateXML();
      MockGetObs.parseObservations(observedProperty);
-     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), "C:/VimsStation.xml");
+
+       String fileName = getClass().getClassLoader().getResource("XML/").getPath();
+    fileName = fileName + "VimsStation.xml";
+    fileName = fileName.replaceAll("%20", " ");
+
+     XMLDomUtils.writeXMLDOMToFile(MockGetObs.getDom(), fileName);
      assertEquals(MockGetObs.getCollectionSourceName(), "urn:sura:station:sura.tds.sos:8726724");    
 
      assertEquals("27.9783 -82.8317 0", MockGetObs.getCollectionLowerCornerEnvelope());

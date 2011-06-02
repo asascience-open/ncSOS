@@ -26,10 +26,12 @@ public class MockDescribeSensorParser {
         dst.setSource("Source");
         dst.setInstitution("ASA");
         dst.setLocation("Location");
+        this.templateFileLocation = templateFileLocation.replaceAll("%20", " ");
     }
 
      MockDescribeSensorParser(DatasetMetaData dst) {
         this.dst = dst;
+        this.templateFileLocation = templateFileLocation.replaceAll("%20", " ");
     }
 
     public void parseTemplateXML() {
