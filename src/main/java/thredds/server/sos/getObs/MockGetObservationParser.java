@@ -23,7 +23,8 @@ public class MockGetObservationParser {
 
     private final DatasetMetaData dst;
     //private String templateFileLocation = getClass().getClassLoader().getResource("templates/sosGetObservation.xml").getPath();
-    InputStream isTemplate = getClass().getClassLoader().getResourceAsStream("templates/sosGetObservation.xml");
+     String templateLocation = "templates/sosGetObservation.xml";
+    InputStream isTemplate = getClass().getClassLoader().getResourceAsStream(templateLocation);
 
     Document doc;
     private String routeElement;
@@ -47,12 +48,13 @@ public class MockGetObservationParser {
         this.dst = dst;
     }
 
-    /*
-     * needs to return input stream
-     public String getTemplateLocation(){
-      return templateFileLocation;
+  public InputStream getTemplateStream(){
+        return isTemplate;
     }
-*/
+
+    public String getTemplateLocation(){
+      return templateLocation;
+    }
 
     public void parseTemplateXML() {
         doc = XMLDomUtils.getTemplateDom(isTemplate);

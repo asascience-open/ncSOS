@@ -4,6 +4,8 @@
  */
 package thredds.server.sos.getCaps;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.List;
 import javax.xml.transform.TransformerException;
 import org.w3c.dom.DOMException;
@@ -15,6 +17,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import java.io.File;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -37,7 +40,8 @@ public class MockGetCapabilitiesParser {
     private Document doc;
     private String routeElement;
 
-    InputStream isTemplate = getClass().getClassLoader().getResourceAsStream("templates/sosGetCapabilities.xml");
+    String templateLocation = "templates/sosGetCapabilities.xml";
+    InputStream isTemplate = getClass().getClassLoader().getResourceAsStream(templateLocation);
 
 
     private final DatasetMetaData dst;
@@ -59,12 +63,14 @@ public class MockGetCapabilitiesParser {
         dst.setLocation("Location");
     }
 
-    /*
-     * needs to be the input stream and its location
-    public String getTemplateLocation(){
-      return templateFileLocation;
+
+    public InputStream getTemplateStream(){
+        return isTemplate;
     }
-*/
+
+    public String getTemplateLocation(){
+      return templateLocation;
+    }
 
     public String getRouteElement() {
         return routeElement;

@@ -36,12 +36,13 @@ public class MockGetCapabilitiesParserTest {
      dst.extractData();
      MockGetCapabilitiesParser MockGetCapP= new MockGetCapabilitiesParser(dst);
 
-     fail("change location to input stream");
-
-     //String serverLocation = MockGetCapP.getTemplateLocation();
-     String templateFileLocation = getClass().getClassLoader().getResource("templates/sosGetCapabilities.xml").getPath();
+     String serverLocation = MockGetCapP.getTemplateLocation();
+     String templateFileLocation = getClass().getClassLoader().getResource(serverLocation).getPath();
      templateFileLocation = templateFileLocation.replaceAll("%20", " ");
-     //assertEquals(templateFileLocation, serverLocation);
+     assertTrue(templateFileLocation.contains("templates/sosGetCapabilities.xml"));
+
+     assertTrue(MockGetCapP.getTemplateStream()!=null);
+
     }
 
     @Test
