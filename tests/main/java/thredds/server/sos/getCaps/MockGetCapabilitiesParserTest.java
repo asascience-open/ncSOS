@@ -173,8 +173,8 @@ public void testGetServiceProvider(){
 }
 
     private String loadCreatedTempXMLFileAndCheckLocation(String fileName,String Location) {
-        String nodeTitle = null;
-        try {
+      String nodeTitle = null;
+      try {
         File file = new File(fileName);
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
@@ -183,18 +183,18 @@ public void testGetServiceProvider(){
         NodeList nodeLst = doc.getElementsByTagName(Location);
         Node fstNode = nodeLst.item(0);
 
-       Element fstElmnt = (Element) fstNode;
-      
-      NodeList fstNm = fstElmnt.getChildNodes();
-      nodeTitle =  (fstNm.item(0).getNodeValue());
-     
+        Element fstElmnt = (Element) fstNode;
 
-        } 
-        catch (Exception e)
-        {
-         e.printStackTrace();
+        try {
+        nodeTitle = fstElmnt.getFirstChild().getNodeValue();
+        } catch (NullPointerException npe) {
+          // do nothing, the element was null
         }
-        return nodeTitle;
+        
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      return nodeTitle;
 
      }
 
