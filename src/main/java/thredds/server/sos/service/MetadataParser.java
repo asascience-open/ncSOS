@@ -82,6 +82,7 @@ public class MetadataParser {
                     if (request.equalsIgnoreCase("GetCapabilities")) {
                         createGetCapsResults(dst, writer);
                     } else if (request.equalsIgnoreCase("DescribeSensor")) {
+                        writeErrorXMLCode(writer);
                     } else if (request.equalsIgnoreCase("GetObservation")) {
                         if (EventTime !=null){
                             dst.setSearchTimes(EventTime,isMultiTime);
