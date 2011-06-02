@@ -132,7 +132,9 @@ public class XMLDomUtils {
     }
 
     public static Document getExceptionDom() {
-        String exceptionDomLocation =  ("C:/Documents and Settings/abird/My Documents/NetBeansProjects/ISOTHREDDS/trunk/src/main/java/threads/server/metadata/templates/exception.xml");
+     String exceptionDomLocation = XMLDomUtils.class.getClassLoader().getResource("templates/exception.xml").getPath();
+     exceptionDomLocation = exceptionDomLocation.replaceAll("%20", " ");
+
         Document exceptionDom = getTemplateDom(exceptionDomLocation);
         return exceptionDom;
     }

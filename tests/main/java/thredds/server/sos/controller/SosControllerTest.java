@@ -18,7 +18,10 @@ import java.net.URL;
 import org.jdom.Document;
 
 /**
- * TEST a number of the SOS properties including GUI functionality issue kyles end
+ * TEST a number of the SOS properties including GUI functionality
+ *
+ * ONLY TO BE USED ON LOCAL SERVER
+ *
  * @author abird
  */
 public class SosControllerTest {
