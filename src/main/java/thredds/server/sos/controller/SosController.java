@@ -67,14 +67,10 @@ public class SosController implements IMetadataContoller {
                         //set the response type
                         res.setContentType("text/xml");
                         Writer writer = res.getWriter();
-                        
-                        //log and print the query string
-                        System.out.println("Query::"+req.getQueryString());
+
                         _log.info(req.getQueryString());
                         //TODO create new service
                         MetadataParser.enhance(dataset, writer,req.getQueryString());
-
-                        //InputStream is = new ByteArrayInputStream(ncml.getBytes("UTF-8"));
                         writer.flush();
 			writer.close();
 
