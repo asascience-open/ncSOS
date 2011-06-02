@@ -1,2 +1,3 @@
 dist/*
 build/*
+tests/main/resources/XML/*
