@@ -42,7 +42,7 @@ public class DiscreteSamplingGeometryUtil {
                     if (featureCollection instanceof StationTimeSeriesFeatureCollection) {
                         return (StationTimeSeriesFeatureCollection) featureCollection;
                     } //**********         
-                    //added abird        
+                    //added abird -- need to remove - used to highlight feature type        
                     else if (featureCollection instanceof StationProfileFeatureCollection) {
                         System.out.println("profile feature collection");
                     } else if (featureCollection instanceof StationPointFeature) {

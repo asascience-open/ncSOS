@@ -16,6 +16,7 @@ import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.ft.PointFeature;
 import ucar.nc2.ft.PointFeatureCollection;
 import ucar.nc2.ft.PointFeatureCollectionIterator;
+import ucar.nc2.ft.PointFeatureIterator;
 import ucar.nc2.ft.ProfileFeature;
 import ucar.nc2.ft.ProfileFeatureCollection;
 import ucar.nc2.ft.StationProfileFeature;
@@ -220,44 +221,49 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
             observedPropertyList.add(variable.getShortName()); // TODO ? getName() instead?
             observedPropertyUnitList.add(variable.getUnitsString());
         }
-        
+
         //if the stationTimeSeriesFeature is null
         StationTimeSeriesFeatureCollection featureCollection = getFeatureCollection();
-        
+
         //***************************************
         //added abird
         //PROFILE
-        
         //profiles differ depending on type
-        
         ProfileFeatureCollection profileCollection = getProfileFeatureCollection();
+
         if (profileCollection != null) {
-            System.out.println(profileCollection.size());
             System.out.println(profileCollection.getName());
-            System.out.println(profileCollection.hasNext());
-            System.out.println("**********aaaaa**********");
+            System.out.println("*****************************");
             while (profileCollection.hasNext()) {
                 ProfileFeature pFeature = profileCollection.next();
-                System.out.println(pFeature.getLatLon());
+
+                //attributes
+                System.out.println(pFeature.getLatLon().getLatitude());
+                System.out.println(pFeature.getLatLon().getLongitude());
+                System.out.println(pFeature.getName());
                 System.out.println(pFeature.getTime());
-                System.out.println(pFeature.size());
+
+                SOSObservationOffering newOffering = new SOSObservationOffering();
+
+                newOffering.setObservationStationID(getGMLID(pFeature.getName()));
+                newOffering.setObservationStationLowerCorner(Double.toString(pFeature.getLatLon().getLatitude()), Double.toString(pFeature.getLatLon().getLongitude()));
+                newOffering.setObservationStationUpperCorner(Double.toString(pFeature.getLatLon().getLatitude()), Double.toString(pFeature.getLatLon().getLongitude()));
+
+                newOffering.setObservationStationDescription(pFeature.getCollectionFeatureType().toString());
+                newOffering.setObservationName(getGMLName((pFeature.getName())));
+                newOffering.setObservationSrsName("EPSG:4326");  // TODO?
+                newOffering.setObservationProcedureLink(getGMLName((pFeature.getName())));
+
+                newOffering.setObservationObserveredList(observedPropertyList);
+                newOffering.setObservationFeatureOfInterest(getFeatureOfInterest(pFeature.getName()));
+                newOffering.setObservationFormat(format);
+
+                addObsOfferingToDoc(newOffering);
             }
-            
-            
-            System.out.println("**********bbbbbb**********");
-            System.out.println(profileCollection.isMultipleNested());
-            if(profileCollection.isMultipleNested()==false){
+
+            if (profileCollection.isMultipleNested() == false) {
                 System.out.println("not nested");
-                PointFeatureCollectionIterator pFIterator = profileCollection.getPointFeatureCollectionIterator(-1);
-                while (pFIterator.hasNext()) {
-                     PointFeatureCollection pFeature1 = pFIterator.next();
-                     System.out.println(pFeature1.size());
-                     System.out.println(pFeature1.getName());  
-                }   
-                
-            }
-            else
-            {
+            } else {
                 System.out.println("nested");
             }
         }
@@ -273,9 +279,9 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                 String stationLat = formatDegree(station.getLatitude());
                 String stationLon = formatDegree(station.getLongitude());
 
-                System.out.println(stationName);
-                System.out.println(stationLat);
-                System.out.println(stationLon);
+                //System.out.println(stationName);
+                //System.out.println(stationLat);
+                //System.out.println(stationLon);
 
                 SOSObservationOffering newOffering = new SOSObservationOffering();
 

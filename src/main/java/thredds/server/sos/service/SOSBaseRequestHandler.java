@@ -49,10 +49,11 @@ public abstract class SOSBaseRequestHandler {
            
         featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.ANY_POINT,netCDFDataset,null,new Formatter(System.err));    
         
-        //change multi to single featureCollectionType - allowing for single variable
-        
+        //change multi to single featureCollectionType - allowing for single variable - switch on feature Type
+
         //keep remove others
         featureCollection = DiscreteSamplingGeometryUtil.extractStationTimeSeriesFeatureCollection(featureDataset);     
+        
         
         //added abird
         featureCollectionProfileFeature = DiscreteSamplingGeometryUtil.extractStationProfileFeatureCollection(featureDataset);      
