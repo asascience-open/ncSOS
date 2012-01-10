@@ -11,7 +11,7 @@ import java.util.List;
  * This object is an observation offering object containing all the info needed for the section
  * @author abird
  */
-public class SOSObservationOffering implements ObservationOffering{
+public class SOSObservationOffering implements ObservationOffering {
    private String stationID;
     private String stationDescription;
     private String stationName;

@@ -4,7 +4,6 @@ based on iso controller NOAA - ASA
  */
 package thredds.server.sos.controller;
 
-import thredds.old.IsoController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -29,57 +28,56 @@ import ucar.nc2.dataset.NetcdfDataset;
 @Controller
 @RequestMapping("/sos")
 public class SosController implements ISosContoller {
-	private static org.slf4j.Logger _log = org.slf4j.LoggerFactory
-			.getLogger(IsoController.class);
-	private static org.slf4j.Logger _logServerStartup = org.slf4j.LoggerFactory
-			.getLogger("serverStartup");
 
-	protected String getPath() {
-		return "Sos/";
-	}
+    private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(SosController.class);
+    private static org.slf4j.Logger _logServerStartup = org.slf4j.LoggerFactory.getLogger("serverStartup");
 
-	public void init() throws ServletException {
-		_logServerStartup.info("Metadata sos - initialization start");
-	}
+    protected String getPath() {
+        return "Sos/";
+    }
 
-	public void destroy() {
-		NetcdfDataset.shutdown();
-		_logServerStartup.info("Metadata sos - destroy done");
-	}
+    public void init() throws ServletException {
+        _logServerStartup.info("Metadata sos - initialization start");
+    }
 
-	/** 
-	* Generate SOS for the underlying NetcdfDataset
-	* 
-	* @param request incoming url request 
-	* @param response outgoing web based response
-	* @throws ServletException if ServletException occurred
-	* @throws IOException if IOException occurred 
-	*/	
-	@RequestMapping(params = {})
-	public void handleMetadataRequest(final HttpServletRequest req,final HttpServletResponse res) throws ServletException, IOException {
-		_log.info("Handling SOS metadata request.");
+    public void destroy() {
+        NetcdfDataset.shutdown();
+        _logServerStartup.info("Metadata sos - destroy done");
+    }
 
-		NetcdfDataset dataset = null;
+    /** 
+     * Generate SOS for the underlying NetcdfDataset
+     * 
+     * @param request incoming url request 
+     * @param response outgoing web based response
+     * @throws ServletException if ServletException occurred
+     * @throws IOException if IOException occurred 
+     */
+    @RequestMapping(params = {})
+    @Override
+    public void handleMetadataRequest(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
+        _log.info("Handling SOS metadata request.");
 
-		try {
-                        //return netcdf dataset
-			dataset = DatasetHandlerAdapter.openDataset(req, res);
-                        //set the response type
-                        res.setContentType("text/xml");
-                        Writer writer = res.getWriter();
-                        _log.info(req.getQueryString());
-                        //TODO create new service
-                        MetadataParser.enhance(dataset, writer,req.getQueryString(), req.getRequestURL().toString());
-                        writer.flush();
-			writer.close();
+        NetcdfDataset dataset = null;
 
-		} catch (Exception e) {
-			_log.error(e.getMessage());
+        try {
+            //return netcdf dataset
+            dataset = DatasetHandlerAdapter.openDataset(req, res);
+            //set the response type
+            res.setContentType("text/xml");
+            Writer writer = res.getWriter();
+            _log.info(req.getQueryString());
+            //TODO create new service
+            MetadataParser.enhance(dataset, writer, req.getQueryString(), req.getRequestURL().toString());
+            writer.flush();
+            writer.close();
 
-		} finally {
-			DatasetHandlerAdapter.closeDataset(dataset);
-		}
-		
-	}
+        } catch (Exception e) {
+            _log.error(e.getMessage());
 
+        } finally {
+            DatasetHandlerAdapter.closeDataset(dataset);
+        }
+
+    }
 }

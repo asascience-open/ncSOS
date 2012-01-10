@@ -37,7 +37,7 @@ public class SosControllerTest {
     @Test
     public void testSaxBuilderForNULL42099() throws IOException, JDOMException {
     SAXBuilder parser = new SAXBuilder();
-    Document doc = parser.build("http://192.168.100.123:8080/thredds/sos/testAll/Station_42099_2008met.nc");
+    Document doc = parser.build("http://localhost:8080/thredds/sos/testAll/Station_42099_2008met.nc");
     assertTrue(doc!=null);
     String baseURI = doc.getBaseURI();
     System.out.println(baseURI);
@@ -51,7 +51,7 @@ public class SosControllerTest {
      @Test
     public void testSaxBuilderForNULL42059() throws IOException, JDOMException {
     SAXBuilder parser = new SAXBuilder();
-    Document doc = parser.build("http://192.168.100.123:8080/thredds/sos/testAll/Station_42059_2008met.nc?service=SOS&version=1.0.0&request=GetCapabilities");
+    Document doc = parser.build("http://localhost:8080/thredds/sos/testAll/Station_42059_2008met.nc?service=SOS&version=1.0.0&request=GetCapabilities");
     assertTrue(doc!=null);
     String baseURI = doc.getBaseURI();
     System.out.println(baseURI);
@@ -67,7 +67,7 @@ public class SosControllerTest {
      @Test
     public void testSaxBuilderForNULL42080() throws IOException, JDOMException {
     SAXBuilder parser = new SAXBuilder();
-    Document doc = parser.build("http://192.168.100.123:8080/thredds/sos/testAll/Station_42080_2008met.nc?service=SOS&version=1.0.0&request=GetCapabilities");
+    Document doc = parser.build("http://localhost:8080/thredds/sos/testAll/Station_42080_2008met.nc?service=SOS&version=1.0.0&request=GetCapabilities");
     assertTrue(doc!=null);
     String baseURI = doc.getBaseURI();
     System.out.println(baseURI);
@@ -87,7 +87,7 @@ public class SosControllerTest {
     MockHttpServletResponse mockRes = new MockHttpServletResponse();
 
     
-    mockReq.setPathInfo("http://192.168.100.123:8080/thredds/sos/testAll/Station_42080_2008met.nc");
+    mockReq.setPathInfo("http://localhost:8080/thredds/sos/testAll/Station_42080_2008met.nc");
     mockReq.setQueryString("request=GetCapabilities&service=SOS&version=1.0.0");
     mockReq.setContextPath("/thredds");
     mockReq.setServletPath("/sos");

@@ -4,7 +4,6 @@ package thredds.server.sos.describeSen;
 import java.io.InputStream;
 import thredds.server.sos.util.XMLDomUtils;
 import org.w3c.dom.Document;
-import thredds.server.sos.service.DatasetMetaData;
 
 
 /**
@@ -13,7 +12,7 @@ import thredds.server.sos.service.DatasetMetaData;
  */
 public class MockDescribeSensorParser {
 
-    private final DatasetMetaData dst;
+//    private final DatasetMetaData dst;
     
     InputStream isTemplate = getClass().getClassLoader().getResourceAsStream("templates/sosDescribeSensor.xml");
     Document doc;
@@ -21,18 +20,18 @@ public class MockDescribeSensorParser {
     private String identifier = "StationId";
  
      MockDescribeSensorParser() {
-        this.dst = new DatasetMetaData();
-        dst.setTitle("Title");
-        dst.setHistory("History");
-        dst.setInstitution("Institution");
-        dst.setSource("Source");
-        dst.setInstitution("ASA");
-        dst.setLocation("Location");
+//        this.dst = new DatasetMetaData();
+//        dst.setTitle("Title");
+//        dst.setHistory("History");
+//        dst.setInstitution("Institution");
+//        dst.setSource("Source");
+//        dst.setInstitution("ASA");
+//        dst.setLocation("Location");
     }
 
-     MockDescribeSensorParser(DatasetMetaData dst) {
-        this.dst = dst;
-    }
+//     MockDescribeSensorParser(DatasetMetaData dst) {
+//        this.dst = dst;
+//    }
 
     public void parseTemplateXML() {
         doc = XMLDomUtils.getTemplateDom(isTemplate);
@@ -57,24 +56,24 @@ public class MockDescribeSensorParser {
         String container = "System";
         String attribute = "gml:id";
 
-        long length = dst.getStringStationNames().length;
-
-        if (length ==1)
-        {
-        String stationName = dst.getStringStationNames()[0];
-        XMLDomUtils.setAttributeFromNode(doc,"member",container,attribute,dst.getStationPrefix()+(stationName));
-        }
-        else
-        {
-        XMLDomUtils.setAttributeFromNode(doc,"member",container,attribute,null);
-        }
+//        long length = dst.getStringStationNames().length;
+//
+//        if (length ==1)
+//        {
+//        String stationName = dst.getStringStationNames()[0];
+//        XMLDomUtils.setAttributeFromNode(doc,"member",container,attribute,dst.getStationPrefix()+(stationName));
+//        }
+//        else
+//        {
+//        XMLDomUtils.setAttributeFromNode(doc,"member",container,attribute,null);
+//        }
        
     }
 
     public void setOrganizationName() {
         String container = "contact";
         String node = "organizationName";
-        XMLDomUtils.setNodeValue(doc,container,node,dst.getInstitution());
+//        XMLDomUtils.setNodeValue(doc,container,node,dst.getInstitution());
     }
 
     public String getOrganizationName() {

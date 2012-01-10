@@ -16,6 +16,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import thredds.server.sos.bean.Extent;
 import thredds.server.sos.service.DatasetMetaData;
+import thredds.server.sos.service.SOSGetCapabilitiesRequestHandler;
 import thredds.server.sos.util.ThreddsExtentUtil;
 import ucar.nc2.dataset.NetcdfDataset;
 
@@ -23,6 +24,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  * get capabilities class : parses the get caps
  * @author Abird
  */
+@Deprecated
 public class MockGetCapabilitiesParserTest {
 
     @Test
@@ -34,7 +36,7 @@ public class MockGetCapabilitiesParserTest {
      Extent ext = ThreddsExtentUtil.getExtent(dataset);
      DatasetMetaData dst = new DatasetMetaData(ext, dataset);
      dst.extractData();
-     MockGetCapabilitiesParser MockGetCapP= new MockGetCapabilitiesParser(dst);
+     SOSGetCapabilitiesRequestHandler MockGetCapP= new SOSGetCapabilitiesRequestHandler(dst);
 
      String serverLocation = MockGetCapP.getTemplateLocation();
      String templateFileLocation = getClass().getClassLoader().getResource(serverLocation).getPath();
@@ -277,7 +279,7 @@ public void testGetandSetOperationsGetCaps(){
     MockGetCapP.writeXMLDOMToFile(MockGetCapP.getDom(),fileName);
     String a =  loadCreatedTempXMLFileAndCheckAttribute(fileName,location,attribute);
 
-    assertEquals(MockGetCapP.getHTTPGetAddress(),a);
+    assertEquals(a,MockGetCapP.getHTTPGetAddress());
 
 
 }
@@ -298,7 +300,7 @@ public void testGetandSetOperationsGetCaps(){
     MockGetCapP.writeXMLDOMToFile(MockGetCapP.getDom(),fileName);
     String a =  loadCreatedTempXMLFileAndCheckAttribute(fileName,location,attribute);
 
-    assertEquals(MockGetCapP.getHTTPGetAddress(),a);
+    assertEquals(a,MockGetCapP.getHTTPGetAddress());
     assertEquals("Location", MockGetCapP.getHTTPGetAddress());
     }
 
@@ -319,7 +321,7 @@ public void testGetandSetOperationsGetCaps(){
     MockGetCapP.writeXMLDOMToFile(MockGetCapP.getDom(),fileName);
     String a =  loadCreatedTempXMLFileAndSpecifNodeAttribute(fileName,location,attribute,NodeName);
 
-    assertEquals(MockGetCapP.getHTTPGetAddress(),a);
+    assertEquals(a,MockGetCapP.getHTTPGetAddress());
     assertEquals("Location", MockGetCapP.getHTTPGetAddress());
 
 
@@ -342,7 +344,7 @@ public void testGetandSetOperationsGetCaps(){
     MockGetCapP.writeXMLDOMToFile(MockGetCapP.getDom(),fileName);
     String a =  loadCreatedTempXMLFileAndSpecifNodeAttribute(fileName,location,attribute,NodeName);
 
-    assertEquals(MockGetCapP.getHTTPGetAddress(),a);
+    assertEquals(a,MockGetCapP.getHTTPGetAddress());
     assertEquals("Location", MockGetCapP.getHTTPGetAddress());
   
     }
@@ -364,7 +366,7 @@ public void testGetandSetOperationsGetCaps(){
     MockGetCapP.writeXMLDOMToFile(MockGetCapP.getDom(),fileName);
     String a =  loadCreatedTempXMLFileAndSpecifNodeAttribute(fileName,location,attribute,NodeName);
 
-    assertEquals(MockGetCapP.getHTTPGetAddress(),a);
+    assertEquals(a,MockGetCapP.getHTTPGetAddress());
     assertEquals("Location", MockGetCapP.getHTTPGetAddress());
 
     }
@@ -386,7 +388,7 @@ public void testGetandSetOperationsGetCaps(){
     MockGetCapP.writeXMLDOMToFile(MockGetCapP.getDom(),fileName);
     String a =  loadCreatedTempXMLFileAndSpecifNodeAttribute(fileName,location,attribute,NodeName);
 
-    assertEquals(MockGetCapP.getHTTPGetAddress(),a);
+    assertEquals(a,MockGetCapP.getHTTPGetAddress());
     assertEquals("Location", MockGetCapP.getHTTPGetAddress());
 
     }

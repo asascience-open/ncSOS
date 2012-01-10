@@ -1,26 +1,18 @@
-/*
- *
- */
 package thredds.server.sos.service;
 
 import java.io.IOException;
-import java.io.StringWriter;
-import javax.xml.transform.TransformerException;
-import org.w3c.dom.Document;
-import thredds.server.sos.bean.Extent;
-import thredds.server.sos.util.ThreddsExtentUtil;
-import ucar.nc2.dataset.NetcdfDataset;
-
 import java.io.Writer;
-import javax.xml.transform.OutputKeys;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.apache.log4j.Logger;
-import thredds.server.sos.getObs.MockGetObservationParser;
-import thredds.server.sos.getCaps.MockGetCapabilitiesParser;
+import org.w3c.dom.Document;
 import thredds.server.sos.util.XMLDomUtils;
+import ucar.nc2.dataset.NetcdfDataset;
 
 /**
  * MetadataParser based on EnhancedMetadataService
@@ -29,24 +21,17 @@ import thredds.server.sos.util.XMLDomUtils;
  */
 public class MetadataParser {
 
-    private static final Logger _log = Logger.getLogger(MetadataParser.class);
-    private static String xmlString;
-    private static MockGetCapabilitiesParser MockGetCapP;
+//    private static final Logger _log = Logger.getLogger(MetadataParser.class);
     private static String service;
     private static String version;
     private static String request;
     private static String observedProperty;
-    private static MockGetObservationParser MockGetObsP;
     private static String offering;
     private static String singleEventTime;
-    //true if multiple props are used
-    private static boolean isMultiObsProperties;
     //used for the cases where multiple props are selected
     private static String[] observedProperties;
-    //true is multiple times are used
-    private static boolean isMultiTime;
     //used for the cases where muliple event times are selected
-    private static String[] EventTime;
+    private static String[] eventTime;
 
     /**
      * Enhance NCML with Data Discovery conventions elements if not already in place in the metadata.
@@ -56,20 +41,9 @@ public class MetadataParser {
      */
     public static void enhance(final NetcdfDataset dataset, final Writer writer, final String query, String threddsURI) {
 
-        MockGetCapP = null;
-        xmlString = null;
-        EventTime =null;
-        isMultiTime = false;
-        isMultiObsProperties = false;
-        //get the extent of the Netcdf file Lat/lon/time
-        Extent ext = null;
-        try {
-            //get basic information
-            ext = ThreddsExtentUtil.getExtent(dataset);
+        eventTime = null;
 
-            DatasetMetaData dst = new DatasetMetaData(ext, dataset);
-            dst.extractData();
-            dst.setThreddsPath(threddsURI);
+        try {
 
             if (query != null) {
                 //if query is not empty
@@ -81,18 +55,20 @@ public class MetadataParser {
                 if ((service != null) && (request != null) && (version != null)) {
                     //get caps
                     if (request.equalsIgnoreCase("GetCapabilities")) {
-                        createGetCapsResults(dst, writer);
+                        SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset,threddsURI);
+                        handler.parseServiceIdentification();
+                        handler.parseServiceDescription();
+                        handler.parseOperationsMetaData();
+                        handler.parseObservationList();
+                        writeDocument(handler.getDocument(), writer);
+                        handler.finished();
                     } else if (request.equalsIgnoreCase("DescribeSensor")) {
                         writeErrorXMLCode(writer);
                     } else if (request.equalsIgnoreCase("GetObservation")) {
-                        if (EventTime !=null){
-                            dst.setSearchTimes(EventTime,isMultiTime);
-
-                        }
-                        dst.setRequestedStationName(MetadataParser.offering);
-                        dst.setDatasetArrayValues(observedProperties);
-                        createGetObsResults(dst, writer);
-                        
+                        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset,offering,observedProperties,eventTime);
+                        handler.parseObservations();
+                        writeDocument(handler.getDocument(), writer);
+                        handler.finished();
                     } else {
                         writeErrorXMLCode(writer);
                     }
@@ -103,55 +79,37 @@ public class MetadataParser {
                 }
             } else if (query == null) {
                 //if the entry is null just print out the get caps xml
-                _log.info("Null query string/params: using get caps");
-                createGetCapsResults(dst, writer);
+//                _log.info("Null query string/params: using get caps");
+                SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset,threddsURI);
+                handler.parseTemplateXML();
+                handler.parseServiceIdentification();
+                handler.parseServiceDescription();
+                handler.parseOperationsMetaData();
+                handler.parseObservationList();
+                writeDocument(handler.getDocument(), writer);
+                handler.finished();
             }
 
-            //finally close the dataset
-            dst.closeDataSet();
-
             //catch
+        } catch (NullPointerException e) {
+//            _log.error(e);
+            Logger.getLogger(MetadataParser.class.getName()).log(Level.SEVERE, "Null Pointer in Data?", e);
         } catch (Exception e) {
-            _log.error(e);
+//            _log.error(e);
+            Logger.getLogger(MetadataParser.class.getName()).log(Level.SEVERE, "Null", e);
         }
     }
 
-    public static void enhance(final NetcdfDataset dataset, final Writer writer, final String query) {
-      enhance(dataset, writer, query, null);
-    }
-    
     private static void writeErrorXMLCode(final Writer writer) throws IOException, TransformerException {
         Document doc = XMLDomUtils.getExceptionDom();
-        createStringFromDom(doc, writer);
+        writeDocument(doc, writer);
     }
 
-    private static void createGetCapsResults(DatasetMetaData dst, final Writer writer) throws IOException, TransformerException {
-        MockGetCapP = new MockGetCapabilitiesParser(dst);
-        MockGetCapP.parseTemplateXML();
-        MockGetCapP.parseServiceIdentification();
-        MockGetCapP.parseServiceDescription();
-        MockGetCapP.parseOperationsMetaData();
-        MockGetCapP.parseObservationList();
-        //create string output
-        createStringFromDom(MockGetCapP.getDom(), writer);
-    }
-
-    public static void createStringFromDom(Document dom, final Writer writer) throws TransformerException, IOException {
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        StreamResult result = new StreamResult(new StringWriter());
+    public static void writeDocument(Document dom, final Writer writer) throws TransformerException, IOException {
         DOMSource source = new DOMSource(dom);
+        Result result = new StreamResult(writer);
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
         transformer.transform(source, result);
-        xmlString = result.getWriter().toString();
-        writer.append(xmlString);
-    }
-
-    public static String getxmlString() {
-        return xmlString;
-    }
-
-    public static MockGetCapabilitiesParser getGetCapsParser() {
-        return MockGetCapP;
     }
 
     public static void splitQuery(String query) {
@@ -174,7 +132,6 @@ public class MetadataParser {
                 } else if (splitServiceStr[0].equalsIgnoreCase("observedProperty")) {
                     MetadataParser.observedProperty = splitServiceStr[1];
                     if (observedProperty.contains(",")) {
-                        isMultiObsProperties = true;
                         MetadataParser.observedProperties = observedProperty.split(",");
                     } else {
                         MetadataParser.observedProperties = new String[]{MetadataParser.observedProperty};
@@ -188,63 +145,13 @@ public class MetadataParser {
 
                     MetadataParser.singleEventTime = splitServiceStr[1];
                     if (singleEventTime.contains("/")) {
-                        isMultiTime = true;
-                        MetadataParser.EventTime = singleEventTime.split("/");
+                        MetadataParser.eventTime = singleEventTime.split("/");
                     } else {
-                        isMultiTime = false;
-                        MetadataParser.EventTime = new String[]{MetadataParser.singleEventTime};
+                        MetadataParser.eventTime = new String[]{MetadataParser.singleEventTime};
                     }
 
                 }
             }
-        }
-    }
-
-    public static String getService() {
-        return service;
-    }
-
-    public static String getVersion() {
-        return version;
-    }
-
-    public static String getRequest() {
-        return request;
-    }
-
-    @Deprecated
-    public static String getObservedProperty() {
-        return observedProperty;
-    }
-
-    public static String[] getEventTime() {
-        return EventTime;
-    }
-
-    public static String getOffering() {
-        return offering;
-    }
-
-    public static String[] getObservedProperties() {
-        return observedProperties;
-    }
-
-    @Deprecated
-    public static boolean isMultiEventTime() {
-        return isMultiTime;
-    }
-
-    private static void createGetObsResults(DatasetMetaData dst, Writer writer) throws IOException, TransformerException {
-        MockGetObsP = new MockGetObservationParser(dst);
-        //check the obs property
-        boolean check = MockGetObsP.parseObsListForRequestedProperty(observedProperties);
-        if (check == true) {
-            MockGetObsP.parseTemplateXML();
-            MockGetObsP.parseObservations(observedProperties);
-            //create string output
-            createStringFromDom(MockGetObsP.getDom(), writer);
-        } else {
-            writeErrorXMLCode(writer);
         }
     }
 }

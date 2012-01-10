@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Capabilities xmlns="http://www.opengis.net/sos/1.0"
+<Capabilities     
+                  xmlns="http://www.opengis.net/sos/1.0"
                   xmlns:oost="http://www.oostethys.org/schemas/0.1.0/oostethys"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xmlns:ows="http://www.opengis.net/ows/1.1"

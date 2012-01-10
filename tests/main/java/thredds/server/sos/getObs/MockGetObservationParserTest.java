@@ -18,6 +18,7 @@ import thredds.server.sos.util.XMLDomUtils;
  *
  * @author abird
  */
+@Deprecated
 public class MockGetObservationParserTest {
 
 
