@@ -36,10 +36,10 @@ import ucar.unidata.geoloc.LatLonRect;
  */
 public class SOSgetCaps {
 
-    private static String imedsLocation = "C:\\Program Files\\Apache Software Foundation\\Apache Tomcat 6.0.26\\content\\thredds\\public\\imeds\\watlev_NOAA.F.C_IKE_VIMS_3D_WITHWAVE.nc";
-    private static String NOAA_NDBC = "C:\\Documents and Settings\\abird\\My Documents\\NetBeansProjects\\ncSOS\\tests\\main\\resources\\datasets\\NOAA_NDBC_42035_2008met.nc";
-    private static String imedsLocation1 = "C:\\Program Files\\Apache Software Foundation\\Apache Tomcat 6.0.26\\content\\thredds\\public\\imeds\\watlev_TCOON.F.C.nc";
-    private static String imedsLocationNew = "C:\\Program Files\\Apache Software Foundation\\Apache Tomcat 6.0.26\\content\\thredds\\public\\imeds\\watlev_TCOON.F.C.new.nc";
+    private static String imedsLocation = "C://Program Files//Apache Software Foundation//Apache Tomcat 6.0.26//content//thredds//public//imeds//watlev_NOAA.F.C_IKE_VIMS_3D_WITHWAVE.nc";
+    private static String NOAA_NDBC = "C://Documents and Settings//abird//My Documents//NetBeansProjects//ncSOS//tests//main//resources//datasets//NOAA_NDBC_42035_2008met.nc";
+    private static String imedsLocation1 = "C://Program Files//Apache Software Foundation//Apache Tomcat 6.0.26//content//thredds//public//imeds//watlev_TCOON.F.C.nc";
+    private static String imedsLocationNew = "C://Program Files//Apache Software Foundation//Apache Tomcat 6.0.26//content//thredds//public//imeds//watlev_TCOON.F.C.new.nc";
 //ragged Array - timeseries profile
     private static String RaggedSingleConventions = "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/timeSeriesProfile-Ragged-SingeStation-H.5.3/timeSeriesProfile-Ragged-SingeStation-H.5.3.nc";
     private static String RaggedMultiConventions = "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/timeSeriesProfile-Ragged-MultipeStations-H.5.3/timeSeriesProfile-Ragged-MultipeStations-H.5.3.nc";
@@ -54,7 +54,10 @@ public class SOSgetCaps {
     private static String IndexedRaggedMultipleProfiles = "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/profile-Indexed-Ragged-MultipleProfiles-H.3.5/profile-Indexed-Ragged-MultipleProfiles-H.3.5.nc";
     private static String OrthogonalMultiDimensionalMultipleProfiles = "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1.nc";
     private static String OrthogonalSingleDimensionalSingleProfile = "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3.nc";
-    public static final String base = "C:/Documents and Settings/abird/Desktop/ncSOS/getCaps/";
+    
+    
+    
+    public static final String base = "tests/main/java/thredds/server/sos/getObs/output/";
 
     private void fileWriter(String base, String fileName, Writer write) throws IOException {
         Writer output = null;
@@ -162,7 +165,7 @@ public class SOSgetCaps {
     }
 
     private void spaceBetweenTests() {
-        System.out.println("\n");
+        System.out.println("/n");
     }
 
     @Test
@@ -304,7 +307,7 @@ public class SOSgetCaps {
 
     @Test
     public void testStationFileNotNull() throws IOException {
-        NetcdfDataset dataset = NetcdfDataset.openDataset("C:\\Documents and Settings\\abird\\My Documents\\NetBeansProjects\\ncSOS\\tests\\main\\resources\\datasets\\Station_42080_2008met.nc");
+        NetcdfDataset dataset = NetcdfDataset.openDataset("C://Documents and Settings//abird//My Documents//NetBeansProjects//ncSOS//tests//main//resources//datasets//Station_42080_2008met.nc");
         String cdm_datatype = dataset.findAttValueIgnoreCase(null, "cdm_data_type", null);
         System.out.println(cdm_datatype);
         FeatureDataset featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.STATION, dataset, null, new Formatter(System.err));
