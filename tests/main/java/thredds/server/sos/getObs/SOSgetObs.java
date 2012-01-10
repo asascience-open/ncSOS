@@ -29,6 +29,7 @@ private static String IncompleteMultiDimensionalMultipleProfiles = "C:/Documents
 private static String cfRaggedSingleConventions= "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/timeSeriesProfile-Ragged-SingeStation-H.5.3/timeSeriesProfile-Ragged-SingeStation-H.5.3.nc";
 private static String cfRaggedSingleConventionsNew= "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/timeSeriesProfile-Ragged-SingeStation-H.5.3/timeSeriesProfile-Ragged-SingeStation-H.5.3.new.nc";
 
+  public static final String base = "tests/main/java/thredds/server/sos/getObs/output/";
 
     @Test
     public void testenhanceImedsNew() throws IOException {

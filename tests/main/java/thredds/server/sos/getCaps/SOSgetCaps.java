@@ -57,7 +57,7 @@ public class SOSgetCaps {
     
     
     
-    public static final String base = "tests/main/java/thredds/server/sos/getObs/output/";
+    public static final String base = "tests/main/java/thredds/server/sos/getCaps/output/";
 
     private void fileWriter(String base, String fileName, Writer write) throws IOException {
         Writer output = null;
