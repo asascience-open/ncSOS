@@ -249,6 +249,10 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                 newOffering.setObservationStationLowerCorner(Double.toString(pFeature.getLatLon().getLatitude()), Double.toString(pFeature.getLatLon().getLongitude()));
                 newOffering.setObservationStationUpperCorner(Double.toString(pFeature.getLatLon().getLatitude()), Double.toString(pFeature.getLatLon().getLongitude()));
 
+                pFeature.calcBounds();
+                newOffering.setObservationTimeBegin(pFeature.getDateRange().getStart().toDateTimeStringISO());
+                newOffering.setObservationTimeEnd(pFeature.getDateRange().getEnd().toDateTimeStringISO());
+
                 newOffering.setObservationStationDescription(pFeature.getCollectionFeatureType().toString());
                 newOffering.setObservationName(getGMLName((pFeature.getName())));
                 newOffering.setObservationSrsName("EPSG:4326");  // TODO?
