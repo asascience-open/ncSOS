@@ -1,3 +1,15 @@
 dist/*
 build/*
 tests/main/resources/XML/*
+tests/main/resources/XML/*
+
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+*.nc
+*.xsd

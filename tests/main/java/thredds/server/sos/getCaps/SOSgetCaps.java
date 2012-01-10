@@ -96,8 +96,8 @@ public class SOSgetCaps {
         fileWriter(base, fileName, write);
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
     }
-    
-      @Test
+
+    @Test
     public void testOrthogonalMultidimensionalMultiStations() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(OrthogonalMultidimensionalMultiStations);
 
@@ -111,8 +111,8 @@ public class SOSgetCaps {
         fileWriter(base, fileName, write);
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
     }
-    
-       @Test
+
+    @Test
     public void testMultiDimensionalSingleStations() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalSingleStations);
 
@@ -126,8 +126,8 @@ public class SOSgetCaps {
         fileWriter(base, fileName, write);
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
     }
-   
-  @Test
+
+    @Test
     public void testMultiDimensionalMultiStations() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalMultiStations);
 
@@ -141,7 +141,7 @@ public class SOSgetCaps {
         fileWriter(base, fileName, write);
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
     }
-   
+
 //**********************************
 //PROFILE TEST
     @Test
@@ -210,7 +210,7 @@ public class SOSgetCaps {
 
     @Test
     public void testOrthogonalSingleDimensionalSingleProfile() throws IOException {
-         spaceBetweenTests();
+        spaceBetweenTests();
         System.out.println("----OrthogonalSingleDimensionalSingleProfile------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(OrthogonalSingleDimensionalSingleProfile);
         MetadataParser md = new MetadataParser();
