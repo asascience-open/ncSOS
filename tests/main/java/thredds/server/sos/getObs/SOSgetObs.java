@@ -45,6 +45,11 @@ public class SOSgetObs {
     private static String OrthogonalSingleDimensionalSingleProfile = "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3.nc";
     public static final String base = "tests/main/java/thredds/server/sos/getObs/output/";
 
+    private void dataAvailableInOutputFile(Writer write) {
+        assertTrue(write.toString().contains("<swe:values>"));
+        assertFalse(write.toString().contains("ERROR!"));
+    }
+
      private void fileWriter(String base, String fileName, Writer write) throws IOException {
         Writer output = null;
         File file = new File(base + fileName);
@@ -76,7 +81,7 @@ public class SOSgetObs {
 
    //**********************************
 //TIMESERIESPROFILE TEST
-    public static final String timeSeriesRequest = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,height&offering=Station1&eventtime=0";
+    public static final String timeSeriesProfileRequest = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,height&offering=Station1&eventtime=0";
     
     @Test
     public void testenhanceSingleRaggedDataset() throws IOException {
@@ -85,14 +90,13 @@ public class SOSgetObs {
 
         MetadataParser md = new MetadataParser();
         Writer write = new CharArrayWriter();
-        md.enhance(dataset, write, timeSeriesRequest, RaggedSingleConventions);
+        md.enhance(dataset, write, timeSeriesProfileRequest, RaggedSingleConventions);
         write.flush();
         write.close();
         assertFalse(write.toString().contains("Exception"));
         String fileName = "RaggedSingleConventions.xml";
         fileWriter(base, fileName, write);
-        assertTrue(write.toString().contains("<swe:values>"));
-        assertFalse(write.toString().contains("ERROR!"));
+        dataAvailableInOutputFile(write);
         System.out.println("----------end-----------");
     }
 
@@ -103,60 +107,88 @@ public class SOSgetObs {
 
         MetadataParser md = new MetadataParser();
         Writer write = new CharArrayWriter();
-        md.enhance(dataset, write, timeSeriesRequest, RaggedMultiConventions);
+        md.enhance(dataset, write, timeSeriesProfileRequest, RaggedMultiConventions);
         write.flush();
         write.close();
         assertFalse(write.toString().contains("Exception"));
         String fileName = "RaggedMultiConventions.xml";
         fileWriter(base, fileName, write);
-        assertTrue(write.toString().contains("<swe:values>"));
-        assertFalse(write.toString().contains("ERROR!"));
+        dataAvailableInOutputFile(write);
         System.out.println("----------end-----------");
     }
 
+     public static final String timeSeriesProfileRequest2 = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,alt&offering=Station1&eventtime=0";
+   
+    
     @Test
     public void testOrthogonalMultidimensionalMultiStations() throws IOException {
+        System.out.println("----OrthogonalMultidimensionalMultiStations------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(OrthogonalMultidimensionalMultiStations);
 
         MetadataParser md = new MetadataParser();
         Writer write = new CharArrayWriter();
-        md.enhance(dataset, write, timeSeriesRequest, OrthogonalMultidimensionalMultiStations);
+        md.enhance(dataset, write, timeSeriesProfileRequest2, OrthogonalMultidimensionalMultiStations);
         write.flush();
         write.close();
         assertFalse(write.toString().contains("Exception"));
         String fileName = "OrthogonalMultidimensionalMultiStations.xml";
         fileWriter(base, fileName, write);
-        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        dataAvailableInOutputFile(write);
+        System.out.println("----------end-----------");
     }
 
     @Test
     public void testMultiDimensionalSingleStations() throws IOException {
+        System.out.println("----MultiDimensionalSingleStations------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalSingleStations);
 
         MetadataParser md = new MetadataParser();
         Writer write = new CharArrayWriter();
-        md.enhance(dataset, write, timeSeriesRequest, MultiDimensionalSingleStations);
+        md.enhance(dataset, write, timeSeriesProfileRequest2, MultiDimensionalSingleStations);
         write.flush();
         write.close();
         assertFalse(write.toString().contains("Exception"));
         String fileName = "MultiDimensionalSingleStations.xml";
         fileWriter(base, fileName, write);
-        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        dataAvailableInOutputFile(write);
+        System.out.println("----------end-----------");
     }
 
     @Test
     public void testMultiDimensionalMultiStations() throws IOException {
+        System.out.println("----MultiDimensionalMultiStations------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalMultiStations);
 
         MetadataParser md = new MetadataParser();
         Writer write = new CharArrayWriter();
-        md.enhance(dataset, write, timeSeriesRequest, MultiDimensionalMultiStations);
+        md.enhance(dataset, write, timeSeriesProfileRequest2, MultiDimensionalMultiStations);
         write.flush();
         write.close();
         assertFalse(write.toString().contains("Exception"));
         String fileName = "MultiDimensionalMultiStations.xml";
         fileWriter(base, fileName, write);
-        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        dataAvailableInOutputFile(write);
+        System.out.println("----------end-----------");
+    }
+
+    public static final String timeSeriesProfileRequest3 = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,alt&offering=Station2&eventtime=0";
+   
+    
+    @Test
+    public void testMultiDimensionalMultiStationsStation2() throws IOException {
+        System.out.println("----MultiDimensionalMultiStations------");
+        NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalMultiStations);
+
+        MetadataParser md = new MetadataParser();
+        Writer write = new CharArrayWriter();
+        md.enhance(dataset, write, timeSeriesProfileRequest3, MultiDimensionalMultiStations);
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "MultiDimensionalMultiStations.xml";
+        fileWriter(base, fileName, write);
+        dataAvailableInOutputFile(write);
+        System.out.println("----------end-----------");
     }
    //**********************************
 }

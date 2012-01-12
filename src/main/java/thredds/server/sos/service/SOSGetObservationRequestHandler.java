@@ -383,9 +383,9 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         //****************************************
         //Profile
         //added abird
-        if (stationProfileFeature != null) {
-            return createStationProfileFeature();
-        }
+        //if (stationProfileFeature != null) {
+        //    return createStationProfileFeature();
+        //}
 
         
         //all else fails
