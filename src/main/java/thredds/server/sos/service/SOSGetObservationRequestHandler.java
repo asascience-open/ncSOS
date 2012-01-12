@@ -19,6 +19,7 @@ import ucar.nc2.ft.PointFeatureCollection;
 import ucar.nc2.ft.PointFeatureCollectionIterator;
 import ucar.nc2.ft.PointFeatureIterator;
 import ucar.nc2.ft.ProfileFeature;
+import ucar.nc2.ft.ProfileFeatureCollection;
 import ucar.nc2.ft.StationProfileFeature;
 import ucar.nc2.ft.StationTimeSeriesFeature;
 import ucar.nc2.units.DateFormatter;
@@ -37,6 +38,8 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     private Station station;
     private StationTimeSeriesFeature stationTimeSeriesFeature;
     private StationProfileFeature stationProfileFeature;
+    private ProfileFeatureCollection pfc;
+    private ProfileFeature profileF;
 
     public SOSGetObservationRequestHandler(NetcdfDataset netCDFDataset, String stationName, String[] variableNames, String[] eventTime) throws IOException {
         super(netCDFDataset);
@@ -61,6 +64,19 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             //stationProfileFeature.calcBounds();
         }
 
+        //added abird
+        //profile
+        if (getProfileFeatureCollection() != null) {
+            pfc = getProfileFeatureCollection();
+            while (pfc.hasNext()) {
+                ProfileFeature pFeature = pfc.next(); 
+                if (pFeature.getName().equals(stationName)){
+                profileF = pFeature;
+                break;
+                }
+            }
+        }
+        
     }
 
     @Override
@@ -205,8 +221,46 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         return builder.toString();
     }
 
+    private String createProfileFeature() throws IOException{
+        PointFeatureIterator iterator = profileF.getPointFeatureIterator(-1);
+        StringBuilder builder = new StringBuilder();
+        DateFormatter dateFormatter = new DateFormatter();
+        List<String> valueList = new ArrayList<String>();
+        Joiner tokenJoiner = Joiner.on(',');
+        
+        while (iterator.hasNext()) {
+            PointFeature pointFeature = iterator.next();
+            valueList.clear();
+//            valueList.add(stationName);
+            valueList.add(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
+//            valueList.add(latVal);
+//            valueList.add(lonVal);
+            for (String variableName : variableNames) {
+                valueList.add(pointFeature.getData().getScalarObject(variableName).toString());
+            }
+            builder.append(tokenJoiner.join(valueList));
+            // TODO:  conditional inside loop...
+            if (profileF.size() > 1) {
+                builder.append(" ");
+                builder.append("\n");
+            }
+        }
+        setCount(profileF.size());
+        return builder.toString();
+    }
+    
     private String getLatLonString() {
+        //station
+        //added logic abird
+        if (station!=null){
         return (new StringBuilder()).append(formatDegree(station.getLatitude())).append(" ").append(formatDegree(station.getLongitude())).append(" ").append("0").toString();
+        }
+        //profile
+        //added abird
+        if (profileF!=null){
+        return (new StringBuilder()).append(formatDegree(profileF.getLatLon().getLatitude())).append(" ").append(formatDegree(profileF.getLatLon().getLongitude())).append(" ").append("0").toString();  
+        }
+        return null;
     }
 
     public String getSystemGMLID() {
@@ -358,9 +412,14 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
 
     public String createObsValuesString() throws Exception {
 
+        if (station!=null){
         String latVal = formatDegree(station.getLatitude());
         String lonVal = formatDegree(station.getLongitude());
-
+        }
+        if (profileF!=null){
+        String latVal = formatDegree(profileF.getLatLon().getLatitude());
+        String lonVal = formatDegree(profileF.getLatLon().getLongitude());
+        }
 
 
         //****************************************
@@ -383,9 +442,9 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         //****************************************
         //Profile
         //added abird
-        //if (stationProfileFeature != null) {
-        //    return createStationProfileFeature();
-        //}
+        if (profileF != null) {
+            return createProfileFeature();
+        }
 
         
         //all else fails
@@ -397,8 +456,12 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         setCollectionDescription();
         setCollectionName();
         setCollectionSourceName();
+        //added abird
         setCollectionLowerCornerEnvelope();
         setCollectionUpperCornerEnvelope();
+
+        
+        
     }
 
     public String getResultValues() {
@@ -416,4 +479,6 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     private void setCount(int count) {
         XMLDomUtils.setNodeValue(document, "om:Observation", "swe:value", Integer.toString(count));
     }
+
+    
 }

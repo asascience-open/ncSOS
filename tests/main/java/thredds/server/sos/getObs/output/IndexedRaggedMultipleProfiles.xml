@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><om:ObservationCollection xmlns:om="http://www.opengis.net/om/1.0" xmlns:gml="http://www.opengis.net/gml" xmlns:swe="http://www.opengis.net/swe/1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" gml:id="1990-01-01T01:00:00Z" xsi:schemaLocation="http://www.opengis.net/om/1.0 http://schemas.opengis.net/om/1.0.0/observation.xsd">
+        
+    <gml:description>Empty Description</gml:description>
+    <gml:name>Empty Title</gml:name>
+    <gml:boundedBy> 
+        <gml:Envelope srsName="EPSG:4326">
+            <!-- overwrite these with your actual offering ROI -->
+            <gml:lowerCorner>55.00000 135.00000 0</gml:lowerCorner>
+            <gml:upperCorner>55.00000 135.00000 0</gml:upperCorner>
+        </gml:Envelope>
+    </gml:boundedBy>
+    <om:member>
+        
+    <om:Observation><gml:description>Empty Description</gml:description><gml:name>Empty Description</gml:name><gml:boundedBy><gml:Envelope srsName="urn:tds:station.sos:1990-01-01T01:00:00Z"><gml:lowerCorner>55.00000 135.00000 0</gml:lowerCorner><gml:upperCorner>55.00000 135.00000 0</gml:upperCorner></gml:Envelope></gml:boundedBy><om:samplingTime><gml:TimePeriod gml:id="DATA_TIME"/></om:samplingTime><om:procedure xlink:href="C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/profile-Indexed-Ragged-MultipleProfiles-H.3.5/profile-Indexed-Ragged-MultipleProfiles-H.3.5.nc"/><om:observedProperty xlink:href="http://marinemetadata.org/cf#temperature"/><om:featureOfInterest xlink:href="1990-01-01T01:00:00Z"/><om:result><swe:DataArray><swe:elementCount><swe:Count><swe:value>10</swe:value></swe:Count></swe:elementCount><swe:elementType name="SimpleDataArray"><swe:DataRecord><swe:field name="time"><swe:Time definition="urn:ogc:phenomenon:time:iso8601"/></swe:field><swe:field name="temperature"><swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:temperature"><swe:uom code="Celsius"/></swe:Quantity></swe:field></swe:DataRecord></swe:elementType><swe:encoding><swe:TextBlock blockSeparator=" " decimalSeparator="." tokenSeparator=","/></swe:encoding><swe:values>1990-01-01T01:00:00Z,1.33355991990-01-01T01:00:00Z,35.8394621990-01-01T01:00:00Z,5.6976661990-01-01T01:00:00Z,10.6486491990-01-01T01:00:00Z,39.3443871990-01-01T01:00:00Z,12.3542791990-01-01T01:00:00Z,30.9284731990-01-01T01:00:00Z,14.4823161990-01-01T01:00:00Z,0.479477881990-01-01T01:00:00Z,17.778893</swe:values></swe:DataArray></om:result></om:Observation></om:member>
+</om:ObservationCollection>

@@ -23,6 +23,7 @@ import static org.junit.Assert.*;
  */
 public class SOSgetObs {
 //ragged Array - timeseries profile
+
     private static String cfRaggedSingleConventions = "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/timeSeriesProfile-Ragged-SingeStation-H.5.3/timeSeriesProfile-Ragged-SingeStation-H.5.3.nc";
     private static String cfRaggedSingleConventionsNew = "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/timeSeriesProfile-Ragged-SingeStation-H.5.3/timeSeriesProfile-Ragged-SingeStation-H.5.3.new.nc";
     private static String imedsLocation = "C://Program Files//Apache Software Foundation//Apache Tomcat 6.0.26//content//thredds//public//imeds//watlev_NOAA.F.C_IKE_VIMS_3D_WITHWAVE.nc";
@@ -50,7 +51,7 @@ public class SOSgetObs {
         assertFalse(write.toString().contains("ERROR!"));
     }
 
-     private void fileWriter(String base, String fileName, Writer write) throws IOException {
+    private void fileWriter(String base, String fileName, Writer write) throws IOException {
         Writer output = null;
         File file = new File(base + fileName);
         output = new BufferedWriter(new FileWriter(file));
@@ -59,8 +60,6 @@ public class SOSgetObs {
         System.out.println("Your file has been written");
     }
 
-    
-    
     @Test
     public void testenhanceImedsNew() throws IOException {
         //fail("not ready yet");
@@ -78,11 +77,10 @@ public class SOSgetObs {
         assertTrue(write.toString().contains("<swe:values>"));
         System.out.println("----------end-----------");
     }
-
-   //**********************************
+    //**********************************
 //TIMESERIESPROFILE TEST
     public static final String timeSeriesProfileRequest = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,height&offering=Station1&eventtime=0";
-    
+
     @Test
     public void testenhanceSingleRaggedDataset() throws IOException {
         System.out.println("----RaggedSingleConventions------");
@@ -116,10 +114,8 @@ public class SOSgetObs {
         dataAvailableInOutputFile(write);
         System.out.println("----------end-----------");
     }
+    public static final String timeSeriesProfileRequest2 = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,alt&offering=Station1&eventtime=0";
 
-     public static final String timeSeriesProfileRequest2 = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,alt&offering=Station1&eventtime=0";
-   
-    
     @Test
     public void testOrthogonalMultidimensionalMultiStations() throws IOException {
         System.out.println("----OrthogonalMultidimensionalMultiStations------");
@@ -170,10 +166,8 @@ public class SOSgetObs {
         dataAvailableInOutputFile(write);
         System.out.println("----------end-----------");
     }
-
     public static final String timeSeriesProfileRequest3 = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,alt&offering=Station2&eventtime=0";
-   
-    
+
     @Test
     public void testMultiDimensionalMultiStationsStation2() throws IOException {
         System.out.println("----MultiDimensionalMultiStations------");
@@ -190,5 +184,102 @@ public class SOSgetObs {
         dataAvailableInOutputFile(write);
         System.out.println("----------end-----------");
     }
-   //**********************************
+    //**********************************
+
+//PROFILE TEST
+    
+    public static final String profileRequest = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=1990-01-01T01:00:00Z&eventtime=0";
+
+    
+    @Test
+    public void testContiguousRaggedMultipleProfiles() throws IOException {
+        spaceBetweenTests();
+        System.out.println("----ContiguousRaggedMultipleProfiles------");
+        NetcdfDataset dataset = NetcdfDataset.openDataset(ContiguousRaggedMultipleProfiles);
+        MetadataParser md = new MetadataParser();
+        Writer write = new CharArrayWriter();
+        md.enhance(dataset, write, profileRequest, ContiguousRaggedMultipleProfiles);
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "ContiguousRaggedMultipleProfiles.xml";
+        fileWriter(base, fileName, write);
+        dataAvailableInOutputFile(write);
+        System.out.println("----------end-----------");
+    }
+
+    private void spaceBetweenTests() {
+        System.out.println("\n");
+    }
+
+    @Test
+    public void testIncompleteMultiDimensionalMultipleProfiles() throws IOException {
+        spaceBetweenTests();
+        System.out.println("----ContiguousRaggedMultipleProfiles------");
+        NetcdfDataset dataset = NetcdfDataset.openDataset(IncompleteMultiDimensionalMultipleProfiles);
+
+        MetadataParser md = new MetadataParser();
+        Writer write = new CharArrayWriter();
+        md.enhance(dataset, write, profileRequest, IncompleteMultiDimensionalMultipleProfiles);
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "IncompleteMultiDimensionalMultipleProfiles.xml";
+        fileWriter(base, fileName, write);
+        dataAvailableInOutputFile(write);
+        System.out.println("----------end-----------");
+    }
+
+    @Test
+    public void testIndexedRaggedMultipleProfiles() throws IOException {
+        spaceBetweenTests();
+        System.out.println("----ContiguousRaggedMultipleProfiles------");
+        NetcdfDataset dataset = NetcdfDataset.openDataset(IndexedRaggedMultipleProfiles);
+        MetadataParser md = new MetadataParser();
+        Writer write = new CharArrayWriter();
+        md.enhance(dataset, write, profileRequest, IndexedRaggedMultipleProfiles);
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "IndexedRaggedMultipleProfiles.xml";
+        fileWriter(base, fileName, write);
+        dataAvailableInOutputFile(write);
+        System.out.println("----------end-----------");
+    }
+
+    @Test
+    public void testOrthogonalMultiDimensionalMultipleProfiles() throws IOException {
+        spaceBetweenTests();
+        System.out.println("----ContiguousRaggedMultipleProfiles------");
+        NetcdfDataset dataset = NetcdfDataset.openDataset(OrthogonalMultiDimensionalMultipleProfiles);
+        MetadataParser md = new MetadataParser();
+        Writer write = new CharArrayWriter();
+        md.enhance(dataset, write, profileRequest, OrthogonalMultiDimensionalMultipleProfiles);
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "OrthogonalMultiDimensionalMultipleProfiles.xml";
+        fileWriter(base, fileName, write);
+       dataAvailableInOutputFile(write);
+        System.out.println("----------end-----------");
+    }
+
+    @Test
+    public void testOrthogonalSingleDimensionalSingleProfile() throws IOException {
+        spaceBetweenTests();
+        System.out.println("----OrthogonalSingleDimensionalSingleProfile------");
+        NetcdfDataset dataset = NetcdfDataset.openDataset(OrthogonalSingleDimensionalSingleProfile);
+        MetadataParser md = new MetadataParser();
+        Writer write = new CharArrayWriter();
+        md.enhance(dataset, write, profileRequest, OrthogonalSingleDimensionalSingleProfile);
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "OrthogonalSingleDimensionalSingleProfile.xml";
+        fileWriter(base, fileName, write);
+        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        dataAvailableInOutputFile(write);
+        System.out.println("----------end-----------");
+    }
+//**********************************
 }
