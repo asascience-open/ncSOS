@@ -3,13 +3,17 @@ package thredds.server.sos.service;
 import com.google.common.base.Joiner;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang.ArrayUtils;
 import thredds.server.sos.util.XMLDomUtils;
 import ucar.ma2.StructureData;
 import ucar.ma2.StructureMembers;
+import ucar.ma2.StructureMembers.Member;
 
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -63,17 +67,45 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             stationProfileFeature = getFeatureProfileCollection().getStationProfileFeature(station);
             //stationProfileFeature.calcBounds();
         }
+        
 
         //added abird
         //profile
         if (getProfileFeatureCollection() != null) {
             pfc = getProfileFeatureCollection();
+              
+            
+            List<String> variableNamesNew = new ArrayList<String>();
             while (pfc.hasNext()) {
                 ProfileFeature pFeature = pfc.next(); 
-                if (pFeature.getName().equals(stationName)){
-                profileF = pFeature;
-                break;
-                }
+                    if (pFeature.getName().equals(eventTime[0])){
+                        profileF = pFeature;
+                        
+                        //*******************************
+                        //check to see if Z present
+                        boolean foundZ =false;
+                        for (int i = 0; i < variableNames.length; i++) {
+                            String zAvail = variableNames[i];
+                            if (zAvail.equalsIgnoreCase("z")){
+                                foundZ =true;
+                                break;
+                            }
+                        }
+                        //if it not found add it!
+                        if (foundZ ==false){
+                        variableNamesNew = new ArrayList<String>();
+                            for (int i = 0; i < variableNames.length; i++) {
+                                variableNamesNew.add(variableNames[i]);
+                            }
+                            variableNamesNew.add("z");
+                        }
+                                               
+                        variableNames = new String[variableNames.length+1];
+                        this.variableNames = (String[]) variableNamesNew.toArray(variableNames);
+                        int a = 0;
+                        //*******************************
+                        
+                    }           
             }
         }
         
@@ -203,10 +235,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         while (iterator.hasNext()) {
             PointFeature pointFeature = iterator.next();
             valueList.clear();
-//            valueList.add(stationName);
             valueList.add(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
-//            valueList.add(latVal);
-//            valueList.add(lonVal);
             for (String variableName : variableNames) {
                 valueList.add(pointFeature.getData().getScalarObject(variableName).toString());
             }
@@ -231,19 +260,14 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         while (iterator.hasNext()) {
             PointFeature pointFeature = iterator.next();
             valueList.clear();
-//            valueList.add(stationName);
             valueList.add(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
-//            valueList.add(latVal);
-//            valueList.add(lonVal);
+            
             for (String variableName : variableNames) {
                 valueList.add(pointFeature.getData().getScalarObject(variableName).toString());
             }
             builder.append(tokenJoiner.join(valueList));
-            // TODO:  conditional inside loop...
-            if (profileF.size() > 1) {
                 builder.append(" ");
                 builder.append("\n");
-            }
         }
         setCount(profileF.size());
         return builder.toString();

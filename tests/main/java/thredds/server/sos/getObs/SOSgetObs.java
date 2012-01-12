@@ -188,8 +188,8 @@ public class SOSgetObs {
 
 //PROFILE TEST
     
-    public static final String profileRequest = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=1990-01-01T01:00:00Z&eventtime=0";
-
+    public static final String profileRequest = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,humidity&eventtime=1990-01-01T00:00:00Z";
+    public static final String profileRequestIndexed = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,humidity&eventtime=1990-01-01T01:00:00Z";
     
     @Test
     public void testContiguousRaggedMultipleProfiles() throws IOException {
@@ -205,6 +205,7 @@ public class SOSgetObs {
         String fileName = "ContiguousRaggedMultipleProfiles.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
+        //assertTrue(write.toString().contains("<swe:field name=\"z\">"));
         System.out.println("----------end-----------");
     }
 
@@ -227,6 +228,7 @@ public class SOSgetObs {
         String fileName = "IncompleteMultiDimensionalMultipleProfiles.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
+        assertTrue(write.toString().contains("<swe:field name=\"z\">"));
         System.out.println("----------end-----------");
     }
 
@@ -237,13 +239,14 @@ public class SOSgetObs {
         NetcdfDataset dataset = NetcdfDataset.openDataset(IndexedRaggedMultipleProfiles);
         MetadataParser md = new MetadataParser();
         Writer write = new CharArrayWriter();
-        md.enhance(dataset, write, profileRequest, IndexedRaggedMultipleProfiles);
+        md.enhance(dataset, write, profileRequestIndexed, IndexedRaggedMultipleProfiles);
         write.flush();
         write.close();
         assertFalse(write.toString().contains("Exception"));
         String fileName = "IndexedRaggedMultipleProfiles.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
+        assertTrue(write.toString().contains("<swe:field name=\"z\">"));
         System.out.println("----------end-----------");
     }
 
@@ -261,6 +264,7 @@ public class SOSgetObs {
         String fileName = "OrthogonalMultiDimensionalMultipleProfiles.xml";
         fileWriter(base, fileName, write);
        dataAvailableInOutputFile(write);
+       assertTrue(write.toString().contains("<swe:field name=\"z\">"));
         System.out.println("----------end-----------");
     }
 
@@ -277,8 +281,8 @@ public class SOSgetObs {
         assertFalse(write.toString().contains("Exception"));
         String fileName = "OrthogonalSingleDimensionalSingleProfile.xml";
         fileWriter(base, fileName, write);
-        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
         dataAvailableInOutputFile(write);
+        assertTrue(write.toString().contains("<swe:field name=\"z\">"));
         System.out.println("----------end-----------");
     }
 //**********************************

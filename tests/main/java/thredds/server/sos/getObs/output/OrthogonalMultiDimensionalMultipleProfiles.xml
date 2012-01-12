@@ -1,15 +1,57 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><om:ObservationCollection xmlns:om="http://www.opengis.net/om/1.0" xmlns:gml="http://www.opengis.net/gml" xmlns:swe="http://www.opengis.net/swe/1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" gml:id="1990-01-01T01:00:00Z" xsi:schemaLocation="http://www.opengis.net/om/1.0 http://schemas.opengis.net/om/1.0.0/observation.xsd">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><om:ObservationCollection xmlns:om="http://www.opengis.net/om/1.0" xmlns:gml="http://www.opengis.net/gml" xmlns:swe="http://www.opengis.net/swe/1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" gml:id="Station2" xsi:schemaLocation="http://www.opengis.net/om/1.0 http://schemas.opengis.net/om/1.0.0/observation.xsd">
         
     <gml:description>Empty Description</gml:description>
     <gml:name>Empty Title</gml:name>
     <gml:boundedBy> 
         <gml:Envelope srsName="EPSG:4326">
             <!-- overwrite these with your actual offering ROI -->
-            <gml:lowerCorner>68.00000 119.00000 0</gml:lowerCorner>
-            <gml:upperCorner>68.00000 119.00000 0</gml:upperCorner>
+            <gml:lowerCorner>90.00000 48.00000 0</gml:lowerCorner>
+            <gml:upperCorner>90.00000 48.00000 0</gml:upperCorner>
         </gml:Envelope>
     </gml:boundedBy>
     <om:member>
         
-    <om:Observation><gml:description>Empty Description</gml:description><gml:name>Empty Description</gml:name><gml:boundedBy><gml:Envelope srsName="urn:tds:station.sos:1990-01-01T01:00:00Z"><gml:lowerCorner>68.00000 119.00000 0</gml:lowerCorner><gml:upperCorner>68.00000 119.00000 0</gml:upperCorner></gml:Envelope></gml:boundedBy><om:samplingTime><gml:TimePeriod gml:id="DATA_TIME"/></om:samplingTime><om:procedure xlink:href="C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1.nc"/><om:observedProperty xlink:href="http://marinemetadata.org/cf#temperature"/><om:featureOfInterest xlink:href="1990-01-01T01:00:00Z"/><om:result><swe:DataArray><swe:elementCount><swe:Count><swe:value>42</swe:value></swe:Count></swe:elementCount><swe:elementType name="SimpleDataArray"><swe:DataRecord><swe:field name="time"><swe:Time definition="urn:ogc:phenomenon:time:iso8601"/></swe:field><swe:field name="temperature"><swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:temperature"><swe:uom code="Celsius"/></swe:Quantity></swe:field></swe:DataRecord></swe:elementType><swe:encoding><swe:TextBlock blockSeparator=" " decimalSeparator="." tokenSeparator=","/></swe:encoding><swe:values>1990-01-01T01:00:00Z,31.4607521990-01-01T01:00:00Z,39.4413261990-01-01T01:00:00Z,7.23091841990-01-01T01:00:00Z,29.5148851990-01-01T01:00:00Z,27.3649521990-01-01T01:00:00Z,39.7790221990-01-01T01:00:00Z,5.43731931990-01-01T01:00:00Z,7.7999491990-01-01T01:00:00Z,21.4359231990-01-01T01:00:00Z,23.2377011990-01-01T01:00:00Z,37.7432861990-01-01T01:00:00Z,19.3214231990-01-01T01:00:00Z,13.3433411990-01-01T01:00:00Z,16.6079481990-01-01T01:00:00Z,29.1675591990-01-01T01:00:00Z,4.75050451990-01-01T01:00:00Z,4.27963161990-01-01T01:00:00Z,2.15908431990-01-01T01:00:00Z,11.8634211990-01-01T01:00:00Z,11.6956361990-01-01T01:00:00Z,29.6962851990-01-01T01:00:00Z,26.7746221990-01-01T01:00:00Z,19.2436541990-01-01T01:00:00Z,38.9905321990-01-01T01:00:00Z,20.3310661990-01-01T01:00:00Z,31.000391990-01-01T01:00:00Z,21.3323881990-01-01T01:00:00Z,24.7679211990-01-01T01:00:00Z,28.1366711990-01-01T01:00:00Z,21.906081990-01-01T01:00:00Z,38.2725371990-01-01T01:00:00Z,27.5323471990-01-01T01:00:00Z,34.7447171990-01-01T01:00:00Z,22.0128731990-01-01T01:00:00Z,10.4932751990-01-01T01:00:00Z,1.42345941990-01-01T01:00:00Z,4.1212361990-01-01T01:00:00Z,21.2254961990-01-01T01:00:00Z,34.034221990-01-01T01:00:00Z,28.8273771990-01-01T01:00:00Z,16.6700971990-01-01T01:00:00Z,9.259405</swe:values></swe:DataArray></om:result></om:Observation></om:member>
+    <om:Observation><gml:description>Empty Description</gml:description><gml:name>Empty Description</gml:name><gml:boundedBy><gml:Envelope srsName="urn:tds:station.sos:Station2"><gml:lowerCorner>90.00000 48.00000 0</gml:lowerCorner><gml:upperCorner>90.00000 48.00000 0</gml:upperCorner></gml:Envelope></gml:boundedBy><om:samplingTime><gml:TimePeriod gml:id="DATA_TIME"/></om:samplingTime><om:procedure xlink:href="C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1.nc"/><om:observedProperty xlink:href="http://marinemetadata.org/cf#temperature"/><om:observedProperty xlink:href="http://marinemetadata.org/cf#humidity"/><om:observedProperty xlink:href="http://marinemetadata.org/cf#z"/><om:featureOfInterest xlink:href="Station2"/><om:result><swe:DataArray><swe:elementCount><swe:Count><swe:value>42</swe:value></swe:Count></swe:elementCount><swe:elementType name="SimpleDataArray"><swe:DataRecord><swe:field name="time"><swe:Time definition="urn:ogc:phenomenon:time:iso8601"/></swe:field><swe:field name="temperature"><swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:temperature"><swe:uom code="Celsius"/></swe:Quantity></swe:field><swe:field name="humidity"><swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:humidity"><swe:uom code="Percent"/></swe:Quantity></swe:field><swe:field name="z"><swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:z"/></swe:field></swe:DataRecord></swe:elementType><swe:encoding><swe:TextBlock blockSeparator=" " decimalSeparator="." tokenSeparator=","/></swe:encoding><swe:values>1990-01-01T00:00:00Z,26.161955,84.003525,4.3181562 
+1990-01-01T00:00:00Z,19.439766,11.802679,7.135745 
+1990-01-01T00:00:00Z,6.5429406,55.012863,2.513157 
+1990-01-01T00:00:00Z,35.989315,78.5367,4.0971637 
+1990-01-01T00:00:00Z,8.638953,53.755013,0.13049702 
+1990-01-01T00:00:00Z,10.258441,11.098993,0.9662451 
+1990-01-01T00:00:00Z,36.181805,58.5822,3.2777622 
+1990-01-01T00:00:00Z,17.858728,82.5806,9.317169 
+1990-01-01T00:00:00Z,23.421432,84.70745,1.1883174 
+1990-01-01T00:00:00Z,17.796455,69.58808,6.656681 
+1990-01-01T00:00:00Z,1.261717,50.480595,1.0877426 
+1990-01-01T00:00:00Z,34.928406,57.354206,9.114271 
+1990-01-01T00:00:00Z,38.237507,22.523094,5.422591 
+1990-01-01T00:00:00Z,24.749651,53.672947,6.1401525 
+1990-01-01T00:00:00Z,16.612219,52.555347,8.977864 
+1990-01-01T00:00:00Z,4.043351,65.07946,6.338296 
+1990-01-01T00:00:00Z,3.4957924,58.085423,1.3416989 
+1990-01-01T00:00:00Z,24.086258,83.65358,9.1138935 
+1990-01-01T00:00:00Z,39.264626,88.75675,0.9202665 
+1990-01-01T00:00:00Z,17.806997,44.24214,8.362424 
+1990-01-01T00:00:00Z,39.654713,75.78843,5.0828977 
+1990-01-01T00:00:00Z,11.140584,41.11219,3.480623 
+1990-01-01T00:00:00Z,14.24074,13.955338,8.257046 
+1990-01-01T00:00:00Z,6.486886,7.4697266,2.9435973 
+1990-01-01T00:00:00Z,14.694418,80.79351,1.7142004 
+1990-01-01T00:00:00Z,19.80611,42.46621,1.9165779 
+1990-01-01T00:00:00Z,21.200132,86.86471,2.8876123 
+1990-01-01T00:00:00Z,16.461685,89.88211,2.2545567 
+1990-01-01T00:00:00Z,33.926758,41.34712,7.974069 
+1990-01-01T00:00:00Z,15.988342,61.70514,5.9605684 
+1990-01-01T00:00:00Z,31.719252,52.722107,0.89818025 
+1990-01-01T00:00:00Z,9.8864565,5.73844,0.12651125 
+1990-01-01T00:00:00Z,23.503218,39.862476,6.2828207 
+1990-01-01T00:00:00Z,10.031067,42.716175,5.8075447 
+1990-01-01T00:00:00Z,6.32206,11.836043,4.4579277 
+1990-01-01T00:00:00Z,7.6111937,12.485782,1.5043386 
+1990-01-01T00:00:00Z,17.36435,80.14968,2.1687632 
+1990-01-01T00:00:00Z,17.300905,63.779007,8.445963 
+1990-01-01T00:00:00Z,7.296487,80.27964,9.273233 
+1990-01-01T00:00:00Z,18.278873,55.131653,3.4721975 
+1990-01-01T00:00:00Z,16.495277,58.47679,9.930888 
+1990-01-01T00:00:00Z,36.418823,54.62688,4.6595426 
+</swe:values></swe:DataArray></om:result></om:Observation></om:member>
 </om:ObservationCollection>
