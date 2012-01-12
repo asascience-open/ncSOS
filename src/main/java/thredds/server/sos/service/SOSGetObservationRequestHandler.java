@@ -3,13 +3,17 @@ package thredds.server.sos.service;
 import com.google.common.base.Joiner;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import thredds.server.sos.util.XMLDomUtils;
+import ucar.ma2.StructureData;
+import ucar.ma2.StructureMembers;
 
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.NetcdfDataset;
+import ucar.nc2.ft.FeatureDataset;
 import ucar.nc2.ft.PointFeature;
 import ucar.nc2.ft.PointFeatureCollection;
 import ucar.nc2.ft.PointFeatureCollectionIterator;
@@ -27,41 +31,41 @@ import ucar.unidata.geoloc.Station;
 public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
 
     public final static String TEMPLATE = "templates/sosGetObservation.xml";
-    
     private String stationName;
     private String[] variableNames;
     private String[] eventTime;
-
     private Station station;
     private StationTimeSeriesFeature stationTimeSeriesFeature;
     private StationProfileFeature stationProfileFeature;
-    
+
     public SOSGetObservationRequestHandler(NetcdfDataset netCDFDataset, String stationName, String[] variableNames, String[] eventTime) throws IOException {
         super(netCDFDataset);
         this.stationName = stationName;
         this.variableNames = variableNames;
         this.eventTime = eventTime;
-        
+
         //added logic block abird
-        if (getFeatureCollection()!=null){
+        if (getFeatureCollection() != null) {
             station = getFeatureCollection().getStation(stationName);
             stationTimeSeriesFeature = getFeatureCollection().getStationFeature(station);
             stationTimeSeriesFeature.calcBounds();
         }
-        
-        
+
+
         //added abird
-        if(getFeatureProfileCollection()!=null){
+        //profile Collection
+        //timeseriesprofile
+        if (getFeatureProfileCollection() != null) {
             station = getFeatureProfileCollection().getStation(stationName);
             stationProfileFeature = getFeatureProfileCollection().getStationProfileFeature(station);
             //stationProfileFeature.calcBounds();
         }
-        
+
     }
 
     @Override
-    public String getTemplateLocation(){
-      return TEMPLATE;
+    public String getTemplateLocation() {
+        return TEMPLATE;
     }
 
     private void addDatasetResults(String[] obsProperty) {
@@ -99,50 +103,110 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     private void createDataFields(String[] observedProperties) {
         int fieldIndex = 0;
         int quantityIndex = 0;
-        
+
 //        //add fields
-//        //platform
-//        document = XMLDomUtils.addNodeAndAttribute(document, "swe:DataRecord", "swe:field", "name", "PlatformName");
-//        document = XMLDomUtils.addNodeAndAttribute(document, "swe:field", "swe:Quantity", fieldIndex++, "definition", "urn:mmisw.org#platform");
-//        //time
         document = XMLDomUtils.addNodeAndAttribute(document, "swe:DataRecord", "swe:field", "name", "time");
         document = XMLDomUtils.addNodeAndAttribute(document, "swe:field", "swe:Time", fieldIndex++, "definition", "urn:ogc:phenomenon:time:iso8601");
-//        //lat
-//        document = XMLDomUtils.addNodeAndAttribute(document, "swe:DataRecord", "swe:field", "name", "lat");
-//        document = XMLDomUtils.addNodeAndAttribute(document, "swe:field", "swe:Quantity", fieldIndex++, "definition", "urn:ogc:phenomenon:latitude:wgs84");
-//        document = XMLDomUtils.addNodeAndAttribute(document, "swe:Quantity", "swe:uom", quantityIndex++, "code", "deg");
-//        //lon
-//        document = XMLDomUtils.addNodeAndAttribute(document, "swe:DataRecord", "swe:field", "name", "lon");
-//        document = XMLDomUtils.addNodeAndAttribute(document, "swe:field", "swe:Quantity", fieldIndex++, "definition", "urn:ogc:phenomenon:latitude:wgs84");
-//        document = XMLDomUtils.addNodeAndAttribute(document, "swe:Quantity", "swe:uom", quantityIndex++, "code", "deg");
-
-//        if (isDepthAvailable == true) {
-//            doc = XMLDomUtils.addNodeAndAttribute(doc, "swe:DataRecord", "swe:field", "name", "depth");
-//            doc = XMLDomUtils.addNodeAndAttribute(doc, "swe:field", "swe:Quantity", fieldIndex++, "definition", "http://mmisw.org/cf#depth");
-//            doc = XMLDomUtils.addNodeAndAttribute(doc, "swe:Quantity", "swe:uom", quantityIndex++, "code", "m");
-//        }
 
         // add observed property
         for (String observedProperty : observedProperties) {
+
             VariableSimpleIF variable = getFeatureDataset().getDataVariable(observedProperty);
             document = XMLDomUtils.addNodeAndAttribute(document, "swe:DataRecord", "swe:field", "name", observedProperty);
             document = XMLDomUtils.addNodeAndAttribute(document, "swe:field", "swe:Quantity", fieldIndex++, "definition", "urn:ogc:def:phenomenon:mmisw.org:cf:" + observedProperty);
-            
+
             //added logic abird
-            if (variable!=null){
-            document = XMLDomUtils.addNodeAndAttribute(document, "swe:Quantity", "swe:uom", quantityIndex++, "code", variable.getUnitsString());
+            if (variable != null) {
+                document = XMLDomUtils.addNodeAndAttribute(document, "swe:Quantity", "swe:uom", quantityIndex++, "code", variable.getUnitsString());
             }
         }
 
 
     }
 
+    private String createStationProfileFeature() throws IOException {
+        StringBuilder builder = new StringBuilder();
+        DateFormatter dateFormatter = new DateFormatter();
+        List<String> valueList = new ArrayList<String>();
+
+        //test getting items by date(index(0))
+        List<Date> z = stationProfileFeature.getTimes();
+        ProfileFeature pf = stationProfileFeature.getProfileByDate(z.get(0));
+        Joiner tokenJoiner = Joiner.on(',');
+
+        System.out.println(pf.getLatLon());
+        System.out.println(pf.getTime());
+
+        PointFeatureIterator it = pf.getPointFeatureIterator(-1);
+        
+        //int num = 0;
+        
+        while (it.hasNext()) {
+            PointFeature pointFeature = it.next();
+            valueList.clear();
+            valueList.add(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
+
+            StructureData a = (pointFeature.getData());    
+            StructureMembers aa = a.getStructureMembers();     
+            
+            /*
+            System.out.println(pointFeature.getLocation());       
+            System.out.println(aa.getStructureSize());
+            System.out.println(aa.getMemberNames());
+            
+            for (int i = 0; i < aa.getMemberNames().size(); i++) {
+                System.out.print(a.getScalarObject(aa.getMemberNames().get(i)).toString());
+                System.out.print(",");
+            }
+            
+                
+            System.out.println(num);
+            num++;
+             */
+            for (String variableName : variableNames) {
+                valueList.add(pointFeature.getData().getScalarObject(variableName).toString());
+            }
+            builder.append(tokenJoiner.join(valueList));
+            // TODO:  conditional inside loop...
+            if (stationProfileFeature.size() > 1) {
+                builder.append(" ");
+                builder.append("\n");
+            }
+        }
+        setCount(stationProfileFeature.size()); 
+        return builder.toString();
+    }
+
+    private String createStationTimeSeriesFeature() throws IOException {
+        PointFeatureIterator iterator = stationTimeSeriesFeature.getPointFeatureIterator(-1);
+
+        StringBuilder builder = new StringBuilder();
+        DateFormatter dateFormatter = new DateFormatter();
+        List<String> valueList = new ArrayList<String>();
+        Joiner tokenJoiner = Joiner.on(',');
+        while (iterator.hasNext()) {
+            PointFeature pointFeature = iterator.next();
+            valueList.clear();
+//            valueList.add(stationName);
+            valueList.add(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
+//            valueList.add(latVal);
+//            valueList.add(lonVal);
+            for (String variableName : variableNames) {
+                valueList.add(pointFeature.getData().getScalarObject(variableName).toString());
+            }
+            builder.append(tokenJoiner.join(valueList));
+            // TODO:  conditional inside loop...
+            if (stationTimeSeriesFeature.size() > 1) {
+                builder.append(" ");
+                builder.append("\n");
+            }
+        }
+        setCount(stationTimeSeriesFeature.size());
+        return builder.toString();
+    }
+
     private String getLatLonString() {
-        return (new StringBuilder())
-                .append(formatDegree(station.getLatitude())).append(" ")
-                .append(formatDegree(station.getLongitude())).append(" ")
-                .append("0")
-                .toString();
+        return (new StringBuilder()).append(formatDegree(station.getLatitude())).append(" ").append(formatDegree(station.getLongitude())).append(" ").append("0").toString();
     }
 
     public String getSystemGMLID() {
@@ -226,9 +290,9 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         document = XMLDomUtils.addNodeToNodeAndAttribute(document, "om:Observation", "om:samplingTime", "gml:TimePeriod", "gml:id", "DATA_TIME");
         //add time positions (being and end)
         //added logic abird
-        if (stationTimeSeriesFeature!=null){
-        document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:beginPosition", stationTimeSeriesFeature.getDateRange().getStart().toDateTimeStringISO());
-        document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:endPosition", stationTimeSeriesFeature.getDateRange().getEnd().toDateTimeStringISO());
+        if (stationTimeSeriesFeature != null) {
+            document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:beginPosition", stationTimeSeriesFeature.getDateRange().getStart().toDateTimeStringISO());
+            document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:endPosition", stationTimeSeriesFeature.getDateRange().getEnd().toDateTimeStringISO());
         }
         //add procedure
         document = XMLDomUtils.addNodeAndAttribute(document, "om:Observation", "om:procedure", "xlink:href", getLocation());
@@ -293,42 +357,38 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     }
 
     public String createObsValuesString() throws Exception {
-        
+
         String latVal = formatDegree(station.getLatitude());
         String lonVal = formatDegree(station.getLongitude());
-        
+
+
+
+        //****************************************
+        // TODO: eventTime filtering...
+        //Times series feature 
+        //added logic abird
+        if (stationTimeSeriesFeature != null) {
+            return createStationTimeSeriesFeature();
+        }
+
+
+        //****************************************
+        //station profile time series
+        //added abird
+        if (stationProfileFeature != null) {
+            return createStationProfileFeature();
+        }
+
         
         //****************************************
-        
-        // TODO: eventTime filtering...
-        //added logic abird
-        if (stationTimeSeriesFeature!=null){
-        PointFeatureIterator iterator = stationTimeSeriesFeature.getPointFeatureIterator(-1);
-        
-        StringBuilder builder = new StringBuilder();
-        DateFormatter dateFormatter = new DateFormatter();
-        List<String> valueList = new ArrayList<String>();
-        Joiner tokenJoiner = Joiner.on(',');
-        while (iterator.hasNext()) {
-            PointFeature pointFeature = iterator.next();
-            valueList.clear();
-//            valueList.add(stationName);
-            valueList.add(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
-//            valueList.add(latVal);
-//            valueList.add(lonVal);
-            for (String variableName : variableNames) {
-                valueList.add(pointFeature.getData().getScalarObject(variableName).toString());
-            }
-            builder.append(tokenJoiner.join(valueList));
-            // TODO:  conditional inside loop...
-            if (stationTimeSeriesFeature.size() > 1) {
-                builder.append(" ");
-                builder.append("\n");
-            }
+        //Profile
+        //added abird
+        if (stationProfileFeature != null) {
+            return createStationProfileFeature();
         }
-        setCount(stationTimeSeriesFeature.size());
-        return builder.toString();
-        }
+
+        
+        //all else fails
         return null;
     }
 

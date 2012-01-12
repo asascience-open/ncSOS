@@ -165,7 +165,7 @@ public class SOSgetCaps {
     }
 
     private void spaceBetweenTests() {
-        System.out.println("/n");
+        System.out.println("\n");
     }
 
     @Test
