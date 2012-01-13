@@ -89,7 +89,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
                 if (pFeature.getName().equals(eventTime[0])) {
                     profileF = pFeature;
                 }
-            } 
+            }
         }
 
     }
@@ -100,7 +100,6 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
      * @param variableNames1
      * @return 
      */
-    
     private String[] checkNetcdfFileForHeight(CoordinateAxis heightAxis, String[] variableNames1) {
         if (heightAxis != null) {
             List<String> variableNamesNew = new ArrayList<String>();
@@ -386,12 +385,15 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         //add time instant
         document = XMLDomUtils.addNodeToNodeAndAttribute(document, "om:Observation", "om:samplingTime", "gml:TimePeriod", "gml:id", "DATA_TIME");
         //add time positions (being and end)
+
         //added logic abird
+        //station timeseries
         if (stationTimeSeriesFeature != null) {
             document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:beginPosition", stationTimeSeriesFeature.getDateRange().getStart().toDateTimeStringISO());
             document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:endPosition", stationTimeSeriesFeature.getDateRange().getEnd().toDateTimeStringISO());
         }
 
+        //timeseries profile
         if (stationProfileFeature != null) {
             try {
                 List<Date> times = stationProfileFeature.getTimes();
@@ -408,6 +410,14 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             } catch (IOException ex) {
                 Logger.getLogger(SOSGetObservationRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }
+
+
+        //profile
+        if (profileF != null) {
+            DateFormatter timePeriodFormatter = new DateFormatter();
+            document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:beginPosition", timePeriodFormatter.toDateTimeStringISO(profileF.getTime()));
+            document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:endPosition", timePeriodFormatter.toDateTimeStringISO(profileF.getTime()));
         }
 
         //add procedure
