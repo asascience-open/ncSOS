@@ -1,7 +1,7 @@
    1. Extract ncSOS zip into a local directory
    2. Copy the ncSOS.jar into the thredds/WEB-INF/lib directory.
    3. Copy the sos-servlet.xml configuration file into the thredds/WEB-INF/ directory.
-   6. Add new servlet mappings to thredds/WEB-INF/web.xml with the following:
+   4. Add new servlet mappings to thredds/WEB-INF/web.xml with the following:
 
               <!-- sos services -->
               <servlet>
@@ -15,8 +15,8 @@
                 <url-pattern>/sos/*</url-pattern>
               </servlet-mapping>
 
-   7. Add the following service definition to enable SOS in your THREDDS catalog XML files:
+   5. Add the following service definition to enable SOS in your THREDDS catalog XML files:
 
               <service name="sos" serviceType="SOS" base="/thredds/sos/" />
       		
-   8. Restart the web application server.
+   6. Restart the web application server.

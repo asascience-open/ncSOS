@@ -233,9 +233,10 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         ProfileFeatureCollection profileCollection = getProfileFeatureCollection();
 
         if (profileCollection != null) {
+            
+            //profiles act like stations at present
             while (profileCollection.hasNext()) {
                 ProfileFeature pFeature = profileCollection.next();
-
                 //attributes
                 SOSObservationOffering newOffering = new SOSObservationOffering();
 
@@ -245,10 +246,16 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
 
                 pFeature.calcBounds();
                 
+                //check the data
                 if (pFeature.getDateRange()!=null){
                 newOffering.setObservationTimeBegin(pFeature.getDateRange().getStart().toDateTimeStringISO());
                 newOffering.setObservationTimeEnd(pFeature.getDateRange().getEnd().toDateTimeStringISO());
                 }
+                //find the dates out!
+                else{
+                    System.out.println("no dates yet");
+                }
+                
                 
                 newOffering.setObservationStationDescription(pFeature.getCollectionFeatureType().toString());
                 newOffering.setObservationName(getGMLName((pFeature.getName())));
@@ -261,7 +268,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
 
                 addObsOfferingToDoc(newOffering);
             }
-
+            
             if (profileCollection.isMultipleNested() == false) {
                 System.out.println("not nested");
             } else {

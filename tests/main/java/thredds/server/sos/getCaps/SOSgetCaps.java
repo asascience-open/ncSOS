@@ -170,9 +170,7 @@ public class SOSgetCaps {
     }
 
     @Test
-    public void testIncompleteMultiDimensionalMultipleProfiles() throws IOException {
-        fail("fail in file");
-        
+    public void testIncompleteMultiDimensionalMultipleProfiles() throws IOException {       
         NetcdfDataset dataset = NetcdfDataset.openDataset(IncompleteMultiDimensionalMultipleProfiles);
 
         MetadataParser md = new MetadataParser();

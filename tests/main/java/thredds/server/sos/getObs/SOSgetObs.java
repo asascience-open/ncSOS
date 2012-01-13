@@ -30,11 +30,11 @@ public class SOSgetObs {
     private static String NOAA_NDBC = "C://Documents and Settings//abird//My Documents//NetBeansProjects//ncSOS//tests//main//resources//datasets//NOAA_NDBC_42035_2008met.nc";
     private static String imedsLocation1 = "C://Program Files//Apache Software Foundation//Apache Tomcat 6.0.26//content//thredds//public//imeds//watlev_TCOON.F.C.nc";
     private static String imedsLocationNew = "C://Program Files//Apache Software Foundation//Apache Tomcat 6.0.26//content//thredds//public//imeds//watlev_TCOON.F.C.new.nc";
-    private static String audry = "C://file//audry.bpt.nc";
+    private static String audry = "C://files//audry.bpt.nc";
     
     
     //ragged Array - timeseries profile
-    private static String RaggedSingleConventions = "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/timeSeriesProfile-Ragged-SingeStation-H.5.3/timeSeriesProfile-Ragged-SingeStation-H.5.3.nc";
+    private static String RaggedSingleConventions = "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/timeSeriesProfile-Ragged-SingleStation-H.5.3/timeSeriesProfile-Ragged-SingleStation-H.5.3.nc";
     private static String RaggedMultiConventions = "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/timeSeriesProfile-Ragged-MultipeStations-H.5.3/timeSeriesProfile-Ragged-MultipeStations-H.5.3.nc";
     private static String OrthogonalMultidimensionalMultiStations = "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1.nc";
     private static String MultiDimensionalSingleStations = "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/timeSeriesProfile-Multidimensional-SingleStation-H.5.2/timeSeriesProfile-Multidimensional-SingleStation-H.5.2.nc";
@@ -50,8 +50,8 @@ public class SOSgetObs {
     public static final String base = "tests/main/java/thredds/server/sos/getObs/output/";
 
     private void dataAvailableInOutputFile(Writer write) {
-        assertTrue(write.toString().contains("<swe:values>"));
-        assertFalse(write.toString().contains("ERROR!"));
+        assertTrue("error no values",write.toString().contains("<swe:values>"));
+        assertFalse("error no values: error where data should be",write.toString().contains("<swe:values>ERROR!</swe:values>"));
     }
 
     private void fileWriter(String base, String fileName, Writer write) throws IOException {
@@ -77,7 +77,7 @@ public class SOSgetObs {
         assertFalse(write.toString().contains("Exception"));
         String fileName = "imedsLocationNew.xml";
         fileWriter(base, fileName, write);
-        assertTrue(write.toString().contains("<swe:values>"));
+         dataAvailableInOutputFile(write);
         System.out.println("----------end-----------");
     }
     
@@ -95,7 +95,7 @@ public class SOSgetObs {
         assertFalse(write.toString().contains("Exception"));
         String fileName = "NOAA_NDBC.xml";
         fileWriter(base, fileName, write);
-        assertTrue(write.toString().contains("<swe:values>"));
+         dataAvailableInOutputFile(write);
         System.out.println("----------end-----------");
     }
     
@@ -113,14 +113,14 @@ public class SOSgetObs {
         assertFalse(write.toString().contains("Exception"));
         String fileName = "audry.xml";
         fileWriter(base, fileName, write);
-        assertTrue(write.toString().contains("<swe:values>"));
+         dataAvailableInOutputFile(write);
         System.out.println("----------end-----------");
     }
     
     
     //**********************************
 //TIMESERIESPROFILE TEST
-    public static final String timeSeriesProfileRequest = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,height&offering=Station1&eventtime=0";
+    public static final String timeSeriesProfileRequest = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=Station1&eventtime=0";
 
     @Test
     public void testenhanceSingleRaggedDataset() throws IOException {
@@ -136,6 +136,8 @@ public class SOSgetObs {
         String fileName = "RaggedSingleConventions.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
+        //check depth was entered auto
+        assertTrue("depth not added",write.toString().contains("<swe:field name=\"height\">"));
         System.out.println("----------end-----------");
     }
 
@@ -153,9 +155,11 @@ public class SOSgetObs {
         String fileName = "RaggedMultiConventions.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
+        //check depth was entered auto
+        assertTrue("depth not added",write.toString().contains("<swe:field name=\"height\">"));
         System.out.println("----------end-----------");
     }
-    public static final String timeSeriesProfileRequest2 = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,alt&offering=Station1&eventtime=0";
+    public static final String timeSeriesProfileRequest2 = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=Station1&eventtime=0";
 
     @Test
     public void testOrthogonalMultidimensionalMultiStations() throws IOException {
@@ -171,6 +175,8 @@ public class SOSgetObs {
         String fileName = "OrthogonalMultidimensionalMultiStations.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
+        //check depth was entered auto
+        assertTrue("depth not added",write.toString().contains("<swe:field name=\"alt\">"));
         System.out.println("----------end-----------");
     }
 
@@ -188,6 +194,8 @@ public class SOSgetObs {
         String fileName = "MultiDimensionalSingleStations.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
+        //check depth was entered auto
+        assertTrue("depth not added",write.toString().contains("<swe:field name=\"alt\">"));
         System.out.println("----------end-----------");
     }
 
@@ -205,9 +213,11 @@ public class SOSgetObs {
         String fileName = "MultiDimensionalMultiStations.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
+                //check depth was entered auto
+        assertTrue("depth not added",write.toString().contains("<swe:field name=\"alt\">"));
         System.out.println("----------end-----------");
     }
-    public static final String timeSeriesProfileRequest3 = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,alt&offering=Station2&eventtime=0";
+    public static final String timeSeriesProfileRequest3 = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=Station2&eventtime=0";
 
     @Test
     public void testMultiDimensionalMultiStationsStation2() throws IOException {
@@ -223,6 +233,8 @@ public class SOSgetObs {
         String fileName = "MultiDimensionalMultiStations.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
+        //check depth was entered auto
+        assertTrue("depth not added",write.toString().contains("<swe:field name=\"alt\">"));
         System.out.println("----------end-----------");
     }
     //**********************************
@@ -246,7 +258,8 @@ public class SOSgetObs {
         String fileName = "ContiguousRaggedMultipleProfiles.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
-        //assertTrue(write.toString().contains("<swe:field name=\"z\">"));
+        //check depth was entered auto
+        assertTrue("depth not added",write.toString().contains("<swe:field name=\"z\">"));
         System.out.println("----------end-----------");
     }
 
@@ -269,7 +282,8 @@ public class SOSgetObs {
         String fileName = "IncompleteMultiDimensionalMultipleProfiles.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
-        assertTrue(write.toString().contains("<swe:field name=\"z\">"));
+        //check depth was entered auto
+        assertTrue("depth not added",write.toString().contains("<swe:field name=\"z\">"));
         System.out.println("----------end-----------");
     }
 
@@ -287,7 +301,7 @@ public class SOSgetObs {
         String fileName = "IndexedRaggedMultipleProfiles.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
-        assertTrue(write.toString().contains("<swe:field name=\"z\">"));
+        assertTrue("depth not added",write.toString().contains("<swe:field name=\"z\">"));
         System.out.println("----------end-----------");
     }
 
@@ -305,7 +319,8 @@ public class SOSgetObs {
         String fileName = "OrthogonalMultiDimensionalMultipleProfiles.xml";
         fileWriter(base, fileName, write);
        dataAvailableInOutputFile(write);
-       assertTrue(write.toString().contains("<swe:field name=\"z\">"));
+       //check depth was entered auto
+        assertTrue("depth not added",write.toString().contains("<swe:field name=\"z\">"));
         System.out.println("----------end-----------");
     }
 
@@ -323,7 +338,8 @@ public class SOSgetObs {
         String fileName = "OrthogonalSingleDimensionalSingleProfile.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
-        assertTrue(write.toString().contains("<swe:field name=\"z\">"));
+        //check depth was entered auto
+        assertTrue("depth not added",write.toString().contains("<swe:field name=\"z\">"));
         System.out.println("----------end-----------");
     }
 //**********************************

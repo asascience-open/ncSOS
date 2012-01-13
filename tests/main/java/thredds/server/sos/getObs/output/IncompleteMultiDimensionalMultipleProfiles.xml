@@ -5,4 +5,11 @@
     <gml:boundedBy> 
         <gml:Envelope srsName="EPSG:4326">
             <!-- overwrite these with your actual offering ROI -->
-            <gml:lowerCorner
+            <gml:lowerCorner>53.00000 121.00000 0</gml:lowerCorner>
+            <gml:upperCorner>53.00000 121.00000 0</gml:upperCorner>
+        </gml:Envelope>
+    </gml:boundedBy>
+    <om:member>
+        
+    <om:Observation><gml:description>Empty Description</gml:description><gml:name>Empty Description</gml:name><gml:boundedBy><gml:Envelope srsName="urn:tds:station.sos:Station2"><gml:lowerCorner>53.00000 121.00000 0</gml:lowerCorner><gml:upperCorner>53.00000 121.00000 0</gml:upperCorner></gml:Envelope></gml:boundedBy><om:samplingTime><gml:TimePeriod gml:id="DATA_TIME"/></om:samplingTime><om:procedure xlink:href="C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/profile-Incomplete-MultiDimensional-MultipleProfiles-H.3.2/profile-Incomplete-MultiDimensional-MultipleProfiles-H.3.2.nc"/><om:observedProperty xlink:href="http://marinemetadata.org/cf#temperature"/><om:observedProperty xlink:href="http://marinemetadata.org/cf#humidity"/><om:observedProperty xlink:href="http://marinemetadata.org/cf#z"/><om:featureOfInterest xlink:href="Station2"/><om:result><swe:DataArray><swe:elementCount><swe:Count><swe:value>COUNT!!!!</swe:value></swe:Count></swe:elementCount><swe:elementType name="SimpleDataArray"><swe:DataRecord><swe:field name="time"><swe:Time definition="urn:ogc:phenomenon:time:iso8601"/></swe:field><swe:field name="temperature"><swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:temperature"><swe:uom code="Celsius"/></swe:Quantity></swe:field><swe:field name="humidity"><swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:humidity"><swe:uom code="Percent"/></swe:Quantity></swe:field><swe:field name="z"><swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:z"/></swe:field></swe:DataRecord></swe:elementType><swe:encoding><swe:TextBlock blockSeparator=" " decimalSeparator="." tokenSeparator=","/></swe:encoding><swe:values>ERROR!</swe:values></swe:DataArray></om:result></om:Observation></om:member>
+</om:ObservationCollection>
