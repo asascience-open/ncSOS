@@ -30,7 +30,10 @@ public class SOSgetObs {
     private static String NOAA_NDBC = "C://Documents and Settings//abird//My Documents//NetBeansProjects//ncSOS//tests//main//resources//datasets//NOAA_NDBC_42035_2008met.nc";
     private static String imedsLocation1 = "C://Program Files//Apache Software Foundation//Apache Tomcat 6.0.26//content//thredds//public//imeds//watlev_TCOON.F.C.nc";
     private static String imedsLocationNew = "C://Program Files//Apache Software Foundation//Apache Tomcat 6.0.26//content//thredds//public//imeds//watlev_TCOON.F.C.new.nc";
-//ragged Array - timeseries profile
+    private static String audry = "C://file//audry.bpt.nc";
+    
+    
+    //ragged Array - timeseries profile
     private static String RaggedSingleConventions = "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/timeSeriesProfile-Ragged-SingeStation-H.5.3/timeSeriesProfile-Ragged-SingeStation-H.5.3.nc";
     private static String RaggedMultiConventions = "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/timeSeriesProfile-Ragged-MultipeStations-H.5.3/timeSeriesProfile-Ragged-MultipeStations-H.5.3.nc";
     private static String OrthogonalMultidimensionalMultiStations = "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1.nc";
@@ -77,6 +80,44 @@ public class SOSgetObs {
         assertTrue(write.toString().contains("<swe:values>"));
         System.out.println("----------end-----------");
     }
+    
+    @Test
+    public void testenhanceNOAA_NDBC() throws IOException {
+        //fail("not ready yet");
+        System.out.println("----NOAA_NDBC------");
+        NetcdfDataset dataset = NetcdfDataset.openDataset(NOAA_NDBC);
+
+        MetadataParser md = new MetadataParser();
+        Writer write = new CharArrayWriter();
+        md.enhance(dataset, write, "request=GetObservation&version=1&service=sos&observedProperty=watlev&offering=NOAA_8723970", NOAA_NDBC);
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "NOAA_NDBC.xml";
+        fileWriter(base, fileName, write);
+        assertTrue(write.toString().contains("<swe:values>"));
+        System.out.println("----------end-----------");
+    }
+    
+    @Test
+    public void testenhanceAudry() throws IOException {
+        //fail("not ready yet");
+        System.out.println("----audry------");
+        NetcdfDataset dataset = NetcdfDataset.openDataset(audry);
+
+        MetadataParser md = new MetadataParser();
+        Writer write = new CharArrayWriter();
+        md.enhance(dataset, write, "request=GetObservation&version=1&service=sos&observedProperty=watlev&offering=NOAA_8723970", audry);
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "audry.xml";
+        fileWriter(base, fileName, write);
+        assertTrue(write.toString().contains("<swe:values>"));
+        System.out.println("----------end-----------");
+    }
+    
+    
     //**********************************
 //TIMESERIESPROFILE TEST
     public static final String timeSeriesProfileRequest = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,height&offering=Station1&eventtime=0";

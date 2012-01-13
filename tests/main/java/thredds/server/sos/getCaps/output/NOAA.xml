@@ -4,8 +4,8 @@
 	<!-- Service Identification -->
 	<!--~~~~~~~~~~~~~~~~~~~~~~~~-->
 	<ows:ServiceIdentification>
-		<ows:Title>Empty Title</ows:Title>
-		<ows:Abstract>Empty History</ows:Abstract>
+		<ows:Title>NOAA NDBC Station 42035 for 2008 (meterological)</ows:Title>
+		<ows:Abstract>Converted from ndbc ascii to netcdf by Applied Science Associates - 2011 for Sura Testbed</ows:Abstract>
 		<ows:Keywords>
 			<ows:Keyword> </ows:Keyword>
 		</ows:Keywords>
@@ -18,8 +18,8 @@
 	<!-- Provider Description -->
 	<!--~~~~~~~~~~~~~~~~~~~~~~-->
 	<ows:ServiceProvider>
-		<ows:ProviderName>Empty Source</ows:ProviderName>
-		<ows:ProviderSite>Empty Insitution</ows:ProviderSite>
+		<ows:ProviderName>Sura IOOS Model Testbed Server</ows:ProviderName>
+		<ows:ProviderSite>NOAA</ows:ProviderSite>
 		<ows:ServiceContact>
 			<ows:IndividualName/>
 			<ows:PositionName/>
@@ -45,8 +45,8 @@
 		<ows:Operation name="GetCapabilities">
 			<ows:DCP>
 				<ows:HTTP>
-					<ows:Get xlink:href="C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/timeSeriesProfile-Ragged-SingleStation-H.5.3/timeSeriesProfile-Ragged-SingleStation-H.5.3.nc"/>
-					<ows:Post xlink:href="C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/timeSeriesProfile-Ragged-SingleStation-H.5.3/timeSeriesProfile-Ragged-SingleStation-H.5.3.nc"/>
+					<ows:Get xlink:href="C://Documents and Settings//abird//My Documents//NetBeansProjects//ncSOS//tests//main//resources//datasets//NOAA_NDBC_42035_2008met.nc"/>
+					<ows:Post xlink:href="C://Documents and Settings//abird//My Documents//NetBeansProjects//ncSOS//tests//main//resources//datasets//NOAA_NDBC_42035_2008met.nc"/>
 				</ows:HTTP>
 			</ows:DCP>
 			<ows:Parameter name="service" use="required">
@@ -59,8 +59,8 @@
 		<ows:Operation name="GetObservation">
 			<ows:DCP>
 				<ows:HTTP>
-					<ows:Get xlink:href="C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/timeSeriesProfile-Ragged-SingleStation-H.5.3/timeSeriesProfile-Ragged-SingleStation-H.5.3.nc"/>
-					<ows:Post xlink:href="C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/timeSeriesProfile-Ragged-SingleStation-H.5.3/timeSeriesProfile-Ragged-SingleStation-H.5.3.nc"/>
+					<ows:Get xlink:href="C://Documents and Settings//abird//My Documents//NetBeansProjects//ncSOS//tests//main//resources//datasets//NOAA_NDBC_42035_2008met.nc"/>
+					<ows:Post xlink:href="C://Documents and Settings//abird//My Documents//NetBeansProjects//ncSOS//tests//main//resources//datasets//NOAA_NDBC_42035_2008met.nc"/>
 				</ows:HTTP>
 			</ows:DCP>
 			<ows:Parameter name="offering" use="required"/>
@@ -70,8 +70,8 @@
 		<ows:Operation name="DescribeSensor">
 			<ows:DCP>
 				<ows:HTTP>
-					<ows:Get xlink:href="C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/timeSeriesProfile-Ragged-SingleStation-H.5.3/timeSeriesProfile-Ragged-SingleStation-H.5.3.nc"/>
-					<ows:Post xlink:href="C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/timeSeriesProfile-Ragged-SingleStation-H.5.3/timeSeriesProfile-Ragged-SingleStation-H.5.3.nc"/>
+					<ows:Get xlink:href="C://Documents and Settings//abird//My Documents//NetBeansProjects//ncSOS//tests//main//resources//datasets//NOAA_NDBC_42035_2008met.nc"/>
+					<ows:Post xlink:href="C://Documents and Settings//abird//My Documents//NetBeansProjects//ncSOS//tests//main//resources//datasets//NOAA_NDBC_42035_2008met.nc"/>
 				</ows:HTTP>
 			</ows:DCP>
 			<ows:Parameter name="SensorId" use="required"/>
@@ -83,6 +83,6 @@
 	<Contents>
 		<ObservationOfferingList>
 			
-		<ObservationOffering gml:id="Station1"><gml:description/><gml:name>urn:tds:station.sos:Station1</gml:name><gml:srsName>EPSG:4326</gml:srsName><gml:boundedBy><gml:Envelope srsName="EPSG:4326"><gml:lowerCorner>37.50000 -76.50000</gml:lowerCorner><gml:upperCorner>37.50000 -76.50000</gml:upperCorner></gml:Envelope></gml:boundedBy><time><gml:TimePeriod><gml:beginPosition> </gml:beginPosition><gml:endPosition indeterminatePosition="unknown"/></gml:TimePeriod></time><procedure xlink:href="urn:tds:station.sos:Station1"/><observedProperty xlink:href="temperature"/><featureOfInterest xlink:href="Station1"/><responseFormat>text/xml; subtype="om/1.0.0"</responseFormat><responseModel> </responseModel><responseMode> </responseMode></ObservationOffering></ObservationOfferingList>
+		<ObservationOffering gml:id="42035"><gml:description/><gml:name>urn:tds:station.sos:42035</gml:name><gml:srsName>EPSG:4326</gml:srsName><gml:boundedBy><gml:Envelope srsName="EPSG:4326"><gml:lowerCorner>29.00300 -94.80300</gml:lowerCorner><gml:upperCorner>29.00300 -94.80300</gml:upperCorner></gml:Envelope></gml:boundedBy><time><gml:TimePeriod><gml:beginPosition>2008-01-01T00:50:00.000Z</gml:beginPosition><gml:endPosition>2008-12-31T22:49:59.999Z</gml:endPosition></gml:TimePeriod></time><procedure xlink:href="urn:tds:station.sos:42035"/><observedProperty xlink:href="air_temp"/><observedProperty xlink:href="apd"/><observedProperty xlink:href="dew_point"/><observedProperty xlink:href="dom_wv_period"/><observedProperty xlink:href="gust"/><observedProperty xlink:href="mean_wv_dir"/><observedProperty xlink:href="sea_level_pressure"/><observedProperty xlink:href="sea_temp"/><observedProperty xlink:href="sig_wvht"/><observedProperty xlink:href="visibility"/><observedProperty xlink:href="water_level"/><observedProperty xlink:href="wdir"/><observedProperty xlink:href="wspd"/><featureOfInterest xlink:href="42035"/><responseFormat>text/xml; subtype="om/1.0.0"</responseFormat><responseModel> </responseModel><responseMode> </responseMode></ObservationOffering></ObservationOfferingList>
 	</Contents>
 </Capabilities>

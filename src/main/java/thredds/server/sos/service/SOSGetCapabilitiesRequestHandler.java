@@ -25,6 +25,7 @@ import ucar.nc2.ft.StationTimeSeriesFeature;
 import ucar.nc2.ft.StationTimeSeriesFeatureCollection;
 import ucar.nc2.ft.point.ProfileFeatureImpl;
 import ucar.nc2.ft.point.standard.StandardProfileCollectionImpl;
+import ucar.nc2.time.CalendarDateRange;
 import ucar.unidata.geoloc.Station;
 
 /**
@@ -232,17 +233,10 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         ProfileFeatureCollection profileCollection = getProfileFeatureCollection();
 
         if (profileCollection != null) {
-            System.out.println(profileCollection.getName());
-            System.out.println("*****************************");
             while (profileCollection.hasNext()) {
                 ProfileFeature pFeature = profileCollection.next();
 
                 //attributes
-                System.out.println(pFeature.getLatLon().getLatitude());
-                System.out.println(pFeature.getLatLon().getLongitude());
-                System.out.println(pFeature.getName());
-                System.out.println(pFeature.getTime());
-
                 SOSObservationOffering newOffering = new SOSObservationOffering();
 
                 newOffering.setObservationStationID(getGMLID(pFeature.getName()));
@@ -250,9 +244,12 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                 newOffering.setObservationStationUpperCorner(Double.toString(pFeature.getLatLon().getLatitude()), Double.toString(pFeature.getLatLon().getLongitude()));
 
                 pFeature.calcBounds();
+                
+                if (pFeature.getDateRange()!=null){
                 newOffering.setObservationTimeBegin(pFeature.getDateRange().getStart().toDateTimeStringISO());
                 newOffering.setObservationTimeEnd(pFeature.getDateRange().getEnd().toDateTimeStringISO());
-
+                }
+                
                 newOffering.setObservationStationDescription(pFeature.getCollectionFeatureType().toString());
                 newOffering.setObservationName(getGMLName((pFeature.getName())));
                 newOffering.setObservationSrsName("EPSG:4326");  // TODO?
@@ -296,6 +293,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                 StationProfileFeature feature = featureCollection1.getStationProfileFeature(station);
 
                 //feature.calcBounds();
+                                
                 //newOffering.setObservationTimeBegin(feature.getDateRange().getStart().toDateTimeStringISO());
                 //newOffering.setObservationTimeEnd(feature.getDateRange().getEnd().toDateTimeStringISO());
 

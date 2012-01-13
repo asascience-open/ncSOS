@@ -41,7 +41,7 @@ public class SOSgetCaps {
     private static String imedsLocation1 = "C://Program Files//Apache Software Foundation//Apache Tomcat 6.0.26//content//thredds//public//imeds//watlev_TCOON.F.C.nc";
     private static String imedsLocationNew = "C://Program Files//Apache Software Foundation//Apache Tomcat 6.0.26//content//thredds//public//imeds//watlev_TCOON.F.C.new.nc";
 //ragged Array - timeseries profile
-    private static String RaggedSingleConventions = "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/timeSeriesProfile-Ragged-SingeStation-H.5.3/timeSeriesProfile-Ragged-SingeStation-H.5.3.nc";
+    private static String RaggedSingleConventions = "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/timeSeriesProfile-Ragged-SingleStation-H.5.3/timeSeriesProfile-Ragged-SingleStation-H.5.3.nc";
     private static String RaggedMultiConventions = "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/timeSeriesProfile-Ragged-MultipeStations-H.5.3/timeSeriesProfile-Ragged-MultipeStations-H.5.3.nc";
     private static String OrthogonalMultidimensionalMultiStations = "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1.nc";
     private static String MultiDimensionalSingleStations = "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/timeSeriesProfile-Multidimensional-SingleStation-H.5.2/timeSeriesProfile-Multidimensional-SingleStation-H.5.2.nc";
@@ -102,6 +102,7 @@ public class SOSgetCaps {
 
     @Test
     public void testOrthogonalMultidimensionalMultiStations() throws IOException {
+        fail("file invalid i think");
         NetcdfDataset dataset = NetcdfDataset.openDataset(OrthogonalMultidimensionalMultiStations);
 
         MetadataParser md = new MetadataParser();
@@ -170,6 +171,8 @@ public class SOSgetCaps {
 
     @Test
     public void testIncompleteMultiDimensionalMultipleProfiles() throws IOException {
+        fail("fail in file");
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(IncompleteMultiDimensionalMultipleProfiles);
 
         MetadataParser md = new MetadataParser();
@@ -328,6 +331,24 @@ public class SOSgetCaps {
 
     @Test
     public void testenhanceNOAADataset() throws IOException {
+        NetcdfDataset dataset = NetcdfDataset.openDataset(NOAA_NDBC);
+
+        MetadataParser md = new MetadataParser();
+        Writer write = new CharArrayWriter();
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", NOAA_NDBC);
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "NOAA.xml";
+        fileWriter(base, fileName, write);
+        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        System.out.println("----end------");
+        
+    
+    }
+
+    @Test
+    public void testenhanceNOAADataset2() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(imedsLocation);
 
         MetadataParser md = new MetadataParser();
@@ -336,19 +357,28 @@ public class SOSgetCaps {
         write.flush();
         write.close();
         assertFalse(write.toString().contains("Exception"));
+        String fileName = "NOAA2.xml";
+        fileWriter(base, fileName, write);
+        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        System.out.println("----end------");
+        
     }
 
+    
+    
     @Test
     public void testenhanceTCOONDataset() throws IOException {
-        fail("something to do with feature types and CF complience?");
+        fail("issue with feature type: using imedsLocation Tcoon New");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imedsLocation1);
 
         MetadataParser md = new MetadataParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", imedsLocation1);
-        write.flush();
-        write.close();
         assertFalse(write.toString().contains("Exception"));
+        String fileName = "TCOON.xml";
+        fileWriter(base, fileName, write);
+        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        System.out.println("----end------");
     }
 
     @Test

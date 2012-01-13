@@ -65,50 +65,49 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         if (getFeatureProfileCollection() != null) {
             station = getFeatureProfileCollection().getStation(stationName);
             stationProfileFeature = getFeatureProfileCollection().getStationProfileFeature(station);
-            //stationProfileFeature.calcBounds();
         }
-        
+
 
         //added abird
         //profile
         if (getProfileFeatureCollection() != null) {
             pfc = getProfileFeatureCollection();
-              
-            
+
+
             List<String> variableNamesNew = new ArrayList<String>();
             while (pfc.hasNext()) {
-                ProfileFeature pFeature = pfc.next(); 
-                    if (pFeature.getName().equals(eventTime[0])){
-                        profileF = pFeature;
-                        
-                        //*******************************
-                        //check to see if Z present
-                        boolean foundZ =false;
-                        for (int i = 0; i < variableNames.length; i++) {
-                            String zAvail = variableNames[i];
-                            if (zAvail.equalsIgnoreCase("z")){
-                                foundZ =true;
-                                break;
-                            }
+                ProfileFeature pFeature = pfc.next();
+                if (pFeature.getName().equals(eventTime[0])) {
+                    profileF = pFeature;
+
+                    //*******************************
+                    //check to see if Z present
+                    boolean foundZ = false;
+                    for (int i = 0; i < variableNames.length; i++) {
+                        String zAvail = variableNames[i];
+                        if (zAvail.equalsIgnoreCase("z")) {
+                            foundZ = true;
+                            break;
                         }
-                        //if it not found add it!
-                        if (foundZ ==false){
+                    }
+                    //if it not found add it!
+                    if (foundZ == false) {
                         variableNamesNew = new ArrayList<String>();
-                            for (int i = 0; i < variableNames.length; i++) {
-                                variableNamesNew.add(variableNames[i]);
-                            }
-                            variableNamesNew.add("z");
+                        for (int i = 0; i < variableNames.length; i++) {
+                            variableNamesNew.add(variableNames[i]);
                         }
-                                               
-                        variableNames = new String[variableNames.length+1];
-                        this.variableNames = (String[]) variableNamesNew.toArray(variableNames);
-                        int a = 0;
-                        //*******************************
-                        
-                    }           
+                        variableNamesNew.add("z");
+                    }
+
+                    variableNames = new String[variableNames.length + 1];
+                    this.variableNames = (String[]) variableNamesNew.toArray(variableNames);
+                    int a = 0;
+                    //*******************************
+
+                }
             }
         }
-        
+
     }
 
     @Override
@@ -186,28 +185,28 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         System.out.println(pf.getTime());
 
         PointFeatureIterator it = pf.getPointFeatureIterator(-1);
-        
+
         //int num = 0;
-        
+
         while (it.hasNext()) {
             PointFeature pointFeature = it.next();
             valueList.clear();
             valueList.add(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
 
-            StructureData a = (pointFeature.getData());    
-            StructureMembers aa = a.getStructureMembers();     
-            
+            StructureData a = (pointFeature.getData());
+            StructureMembers aa = a.getStructureMembers();
+
             /*
             System.out.println(pointFeature.getLocation());       
             System.out.println(aa.getStructureSize());
             System.out.println(aa.getMemberNames());
             
             for (int i = 0; i < aa.getMemberNames().size(); i++) {
-                System.out.print(a.getScalarObject(aa.getMemberNames().get(i)).toString());
-                System.out.print(",");
+            System.out.print(a.getScalarObject(aa.getMemberNames().get(i)).toString());
+            System.out.print(",");
             }
             
-                
+            
             System.out.println(num);
             num++;
              */
@@ -221,7 +220,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
                 builder.append("\n");
             }
         }
-        setCount(stationProfileFeature.size()); 
+        setCount(stationProfileFeature.size());
         return builder.toString();
     }
 
@@ -250,39 +249,39 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         return builder.toString();
     }
 
-    private String createProfileFeature() throws IOException{
+    private String createProfileFeature() throws IOException {
         PointFeatureIterator iterator = profileF.getPointFeatureIterator(-1);
         StringBuilder builder = new StringBuilder();
         DateFormatter dateFormatter = new DateFormatter();
         List<String> valueList = new ArrayList<String>();
         Joiner tokenJoiner = Joiner.on(',');
-        
+
         while (iterator.hasNext()) {
             PointFeature pointFeature = iterator.next();
             valueList.clear();
             valueList.add(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
-            
+
             for (String variableName : variableNames) {
                 valueList.add(pointFeature.getData().getScalarObject(variableName).toString());
             }
             builder.append(tokenJoiner.join(valueList));
-                builder.append(" ");
-                builder.append("\n");
+            builder.append(" ");
+            builder.append("\n");
         }
         setCount(profileF.size());
         return builder.toString();
     }
-    
+
     private String getLatLonString() {
         //station
         //added logic abird
-        if (station!=null){
-        return (new StringBuilder()).append(formatDegree(station.getLatitude())).append(" ").append(formatDegree(station.getLongitude())).append(" ").append("0").toString();
+        if (station != null) {
+            return (new StringBuilder()).append(formatDegree(station.getLatitude())).append(" ").append(formatDegree(station.getLongitude())).append(" ").append("0").toString();
         }
         //profile
         //added abird
-        if (profileF!=null){
-        return (new StringBuilder()).append(formatDegree(profileF.getLatLon().getLatitude())).append(" ").append(formatDegree(profileF.getLatLon().getLongitude())).append(" ").append("0").toString();  
+        if (profileF != null) {
+            return (new StringBuilder()).append(formatDegree(profileF.getLatLon().getLatitude())).append(" ").append(formatDegree(profileF.getLatLon().getLongitude())).append(" ").append("0").toString();
         }
         return null;
     }
@@ -372,6 +371,18 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:beginPosition", stationTimeSeriesFeature.getDateRange().getStart().toDateTimeStringISO());
             document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:endPosition", stationTimeSeriesFeature.getDateRange().getEnd().toDateTimeStringISO());
         }
+        if (stationProfileFeature != null) {
+            try {
+                List<Date> times = stationProfileFeature.getTimes();
+                System.out.println(times);
+                //document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:beginPosition", stationTimeSeriesFeature.getDateRange().getStart().toDateTimeStringISO());
+                //document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:endPosition", stationTimeSeriesFeature.getDateRange().getEnd().toDateTimeStringISO());
+
+            } catch (IOException ex) {
+                Logger.getLogger(SOSGetObservationRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
         //add procedure
         document = XMLDomUtils.addNodeAndAttribute(document, "om:Observation", "om:procedure", "xlink:href", getLocation());
 
@@ -436,13 +447,13 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
 
     public String createObsValuesString() throws Exception {
 
-        if (station!=null){
-        String latVal = formatDegree(station.getLatitude());
-        String lonVal = formatDegree(station.getLongitude());
+        if (station != null) {
+            String latVal = formatDegree(station.getLatitude());
+            String lonVal = formatDegree(station.getLongitude());
         }
-        if (profileF!=null){
-        String latVal = formatDegree(profileF.getLatLon().getLatitude());
-        String lonVal = formatDegree(profileF.getLatLon().getLongitude());
+        if (profileF != null) {
+            String latVal = formatDegree(profileF.getLatLon().getLatitude());
+            String lonVal = formatDegree(profileF.getLatLon().getLongitude());
         }
 
 
@@ -462,7 +473,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             return createStationProfileFeature();
         }
 
-        
+
         //****************************************
         //Profile
         //added abird
@@ -470,7 +481,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             return createProfileFeature();
         }
 
-        
+
         //all else fails
         return null;
     }
@@ -484,8 +495,8 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         setCollectionLowerCornerEnvelope();
         setCollectionUpperCornerEnvelope();
 
-        
-        
+
+
     }
 
     public String getResultValues() {
@@ -503,6 +514,4 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     private void setCount(int count) {
         XMLDomUtils.setNodeValue(document, "om:Observation", "swe:value", Integer.toString(count));
     }
-
-    
 }
