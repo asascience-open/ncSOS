@@ -4,13 +4,7 @@
  */
 package thredds.server.sos.describeSen;
 
-import java.io.File;
-import thredds.server.sos.bean.Extent;
-import ucar.nc2.dataset.NetcdfDataset;
-import thredds.server.sos.util.ThreddsExtentUtil;
 import org.junit.Test;
-import thredds.server.sos.service.DatasetMetaData;
-import thredds.server.sos.util.XMLDomUtils;
 import static org.junit.Assert.*;
 
 /**
@@ -47,6 +41,7 @@ public class MockDescribeSensorParserTest {
 
     }
 
+    /*
     @Test
     public void testSetSystemIDFromSTATIONNetCDF() throws Exception {
         MockDescribeSensorParser MockDesSen = new MockDescribeSensorParser(getdst());
@@ -57,6 +52,8 @@ public class MockDescribeSensorParserTest {
 
     }
 
+     * 
+     */
     public String getExpectedFileID() {
         return "Buoy";
     }
@@ -70,6 +67,7 @@ public class MockDescribeSensorParserTest {
         assertEquals("ASA", MockDesSen.getOrganizationName());
     }
 
+    /*
     @Test
     public void testGetOrganizationNameFromSTATIONNetCDF() throws Exception {
         MockDescribeSensorParser MockDesSen = new MockDescribeSensorParser(getdst());
@@ -103,8 +101,10 @@ public class MockDescribeSensorParserTest {
     //assertEquals("urn:sura:station:sura.tds.sos:42902",MockDesSen.getTermValue());
 
     }
+     * 
+     */
     
-
+ /*
     public DatasetMetaData getdst() throws Exception {
      String location = getClass().getClassLoader().getResource("datasets/Station_42059_2008met.nc").getPath();
      location = location.replaceAll("%20", " ");
@@ -116,7 +116,11 @@ public class MockDescribeSensorParserTest {
         return dst;
     }
 
+     * 
+     */
 
+    
+    /*
     @Test
     public void testWriteDomToXMLFile() throws Exception {
     MockDescribeSensorParser MockDesSen = new MockDescribeSensorParser(getdst());
@@ -128,4 +132,6 @@ public class MockDescribeSensorParserTest {
     File xmlFile = new File(fileName);
     assertTrue(xmlFile!=null);
     }
+     * 
+     */
 }
