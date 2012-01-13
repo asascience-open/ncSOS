@@ -283,7 +283,7 @@ public class SOSgetObs {
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
         //check depth was entered auto
-        assertTrue("depth not added",write.toString().contains("<swe:field name=\"z\">"));
+        assertTrue("depth not added",write.toString().contains("<swe:field name=\"alt\">"));
         System.out.println("----------end-----------");
     }
 

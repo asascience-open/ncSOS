@@ -16,6 +16,8 @@ import ucar.ma2.StructureMembers;
 import ucar.ma2.StructureMembers.Member;
 
 import ucar.nc2.VariableSimpleIF;
+import ucar.nc2.constants.AxisType;
+import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.ft.FeatureDataset;
 import ucar.nc2.ft.PointFeature;
@@ -25,6 +27,7 @@ import ucar.nc2.ft.PointFeatureIterator;
 import ucar.nc2.ft.ProfileFeature;
 import ucar.nc2.ft.ProfileFeatureCollection;
 import ucar.nc2.ft.StationProfileFeature;
+import ucar.nc2.ft.StationProfileFeatureCollection;
 import ucar.nc2.ft.StationTimeSeriesFeature;
 import ucar.nc2.units.DateFormatter;
 import ucar.unidata.geoloc.Station;
@@ -58,56 +61,73 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             stationTimeSeriesFeature.calcBounds();
         }
 
-
         //added abird
         //profile Collection
         //timeseriesprofile
+        //get the station profile based on station name
         if (getFeatureProfileCollection() != null) {
             station = getFeatureProfileCollection().getStation(stationName);
             stationProfileFeature = getFeatureProfileCollection().getStationProfileFeature(station);
-        }
 
+            CoordinateAxis heightAxis = netCDFDataset.findCoordinateAxis(AxisType.Height);
+            this.variableNames = checkNetcdfFileForHeight(heightAxis, variableNames);
+        }
 
         //added abird
         //profile
+        //gets the profile based on event time
         if (getProfileFeatureCollection() != null) {
             pfc = getProfileFeatureCollection();
 
+            CoordinateAxis heightAxis = netCDFDataset.findCoordinateAxis(AxisType.Height);
+            this.variableNames = checkNetcdfFileForHeight(heightAxis, variableNames);
 
-            List<String> variableNamesNew = new ArrayList<String>();
+            //set the correct requested profile
             while (pfc.hasNext()) {
                 ProfileFeature pFeature = pfc.next();
+
                 if (pFeature.getName().equals(eventTime[0])) {
                     profileF = pFeature;
-
-                    //*******************************
-                    //check to see if Z present
-                    boolean foundZ = false;
-                    for (int i = 0; i < variableNames.length; i++) {
-                        String zAvail = variableNames[i];
-                        if (zAvail.equalsIgnoreCase("z")) {
-                            foundZ = true;
-                            break;
-                        }
-                    }
-                    //if it not found add it!
-                    if (foundZ == false) {
-                        variableNamesNew = new ArrayList<String>();
-                        for (int i = 0; i < variableNames.length; i++) {
-                            variableNamesNew.add(variableNames[i]);
-                        }
-                        variableNamesNew.add("z");
-                    }
-
-                    variableNames = new String[variableNames.length + 1];
-                    this.variableNames = (String[]) variableNamesNew.toArray(variableNames);
-                    int a = 0;
-                    //*******************************
-
                 }
-            }
+            } 
         }
 
+    }
+
+    /**
+     * checks for the presence of height in the netcdf dataset if it finds it but not in the variables selected it adds it
+     * @param heightAxis
+     * @param variableNames1
+     * @return 
+     */
+    
+    private String[] checkNetcdfFileForHeight(CoordinateAxis heightAxis, String[] variableNames1) {
+        if (heightAxis != null) {
+            List<String> variableNamesNew = new ArrayList<String>();
+            //check to see if Z present
+            boolean foundZ = false;
+            for (int i = 0; i < variableNames1.length; i++) {
+                String zAvail = variableNames1[i];
+
+                if (zAvail.equalsIgnoreCase(heightAxis.getName())) {
+                    foundZ = true;
+                    break;
+                }
+            }
+
+            //if it not found add it!
+            if (foundZ == false) {
+                variableNamesNew = new ArrayList<String>();
+                for (int i = 0; i < variableNames1.length; i++) {
+                    variableNamesNew.add(variableNames1[i]);
+                }
+                variableNamesNew.add(heightAxis.getName());
+                variableNames1 = new String[variableNames1.length + 1];
+                variableNames1 = (String[]) variableNamesNew.toArray(variableNames1);
+                //*******************************
+            }
+        }
+        return variableNames1;
     }
 
     @Override
@@ -371,10 +391,17 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:beginPosition", stationTimeSeriesFeature.getDateRange().getStart().toDateTimeStringISO());
             document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:endPosition", stationTimeSeriesFeature.getDateRange().getEnd().toDateTimeStringISO());
         }
+
         if (stationProfileFeature != null) {
             try {
                 List<Date> times = stationProfileFeature.getTimes();
-                System.out.println(times);
+
+                DateFormatter timePeriodFormatter = new DateFormatter();
+
+                document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:beginPosition", timePeriodFormatter.toDateTimeStringISO(times.get(0)));
+                document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:endPosition", timePeriodFormatter.toDateTimeStringISO(times.get(times.size() - 1)));
+
+                //old
                 //document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:beginPosition", stationTimeSeriesFeature.getDateRange().getStart().toDateTimeStringISO());
                 //document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:endPosition", stationTimeSeriesFeature.getDateRange().getEnd().toDateTimeStringISO());
 
