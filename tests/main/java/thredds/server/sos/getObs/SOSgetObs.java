@@ -83,7 +83,7 @@ public class SOSgetObs {
     
     @Test
     public void testenhanceNOAA_NDBC() throws IOException {
-        //fail("not ready yet");
+        fail("bad file - not ready yet");
         System.out.println("----NOAA_NDBC------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(NOAA_NDBC);
 
@@ -101,7 +101,7 @@ public class SOSgetObs {
     
     @Test
     public void testenhanceAudry() throws IOException {
-        //fail("not ready yet");
+        fail("possible bad file - not ready yet");
         System.out.println("----audry------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(audry);
 
@@ -124,6 +124,7 @@ public class SOSgetObs {
 
     @Test
     public void testenhanceSingleRaggedDataset() throws IOException {
+        fail("issue with time series profile netcdf file");
         System.out.println("----RaggedSingleConventions------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(RaggedSingleConventions);
 
@@ -163,6 +164,7 @@ public class SOSgetObs {
 
     @Test
     public void testOrthogonalMultidimensionalMultiStations() throws IOException {
+        fail("cant find file");
         System.out.println("----OrthogonalMultidimensionalMultiStations------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(OrthogonalMultidimensionalMultiStations);
 

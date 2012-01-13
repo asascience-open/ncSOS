@@ -212,8 +212,8 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             valueList.clear();
             valueList.add(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
 
-            StructureData a = (pointFeature.getData());
-            StructureMembers aa = a.getStructureMembers();
+            //StructureData a = (pointFeature.getData());
+            //StructureMembers aa = a.getStructureMembers();
 
             /*
             System.out.println(pointFeature.getLocation());       
@@ -222,12 +222,10 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             
             for (int i = 0; i < aa.getMemberNames().size(); i++) {
             System.out.print(a.getScalarObject(aa.getMemberNames().get(i)).toString());
-            System.out.print(",");
-            }
+            System.out.println(",");
+            }            
             
-            
-            System.out.println(num);
-            num++;
+             * 
              */
             for (String variableName : variableNames) {
                 valueList.add(pointFeature.getData().getScalarObject(variableName).toString());
