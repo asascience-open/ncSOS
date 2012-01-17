@@ -30,6 +30,7 @@ import ucar.nc2.ft.StationProfileFeature;
 import ucar.nc2.ft.StationProfileFeatureCollection;
 import ucar.nc2.ft.StationTimeSeriesFeature;
 import ucar.nc2.units.DateFormatter;
+import ucar.nc2.units.DateRange;
 import ucar.unidata.geoloc.Station;
 
 /**
@@ -209,7 +210,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             //test getting items by date(index(0))
             for (int i = 0; i < z.size(); i++) {
               pf = stationProfileFeature.getProfileByDate(z.get(i));  
-              getStationProfileData(pf, valueList, dateFormatter, builder, tokenJoiner);
+              createStationProfileData(pf, valueList, dateFormatter, builder, tokenJoiner);
             }
             return builder.toString();
         }
@@ -219,7 +220,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
                 
                 if (df.toDateTimeStringISO(z.get(i)).contentEquals(eventTime[0].toString())){
                     pf = stationProfileFeature.getProfileByDate(z.get(i));
-                    getStationProfileData(pf, valueList, dateFormatter, builder, tokenJoiner);
+                    createStationProfileData(pf, valueList, dateFormatter, builder, tokenJoiner);
                 }   
                 
             }
@@ -227,7 +228,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         }
     }
 
-    private void getStationProfileData(ProfileFeature pf, List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, Joiner tokenJoiner) throws IOException {
+    private void createStationProfileData(ProfileFeature pf, List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, Joiner tokenJoiner) throws IOException {
 
         PointFeatureIterator it = pf.getPointFeatureIterator(-1);
 
@@ -253,28 +254,47 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     }
 
     private String createStationTimeSeriesFeature() throws IOException {
+        
+        DateFormatter df = new DateFormatter();
+        
         PointFeatureIterator iterator = stationTimeSeriesFeature.getPointFeatureIterator(-1);
-
+                        
         StringBuilder builder = new StringBuilder();
         DateFormatter dateFormatter = new DateFormatter();
         List<String> valueList = new ArrayList<String>();
         Joiner tokenJoiner = Joiner.on(',');
+        
+        count = 0;
+        
         while (iterator.hasNext()) {
             PointFeature pointFeature = iterator.next();
-            valueList.clear();
-            valueList.add(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
-            for (String variableName : variableNames) {
-                valueList.add(pointFeature.getData().getScalarObject(variableName).toString());
-            }
-            builder.append(tokenJoiner.join(valueList));
-            // TODO:  conditional inside loop...
-            if (stationTimeSeriesFeature.size() > 1) {
-                builder.append(" ");
-                builder.append("\n");
-            }
+            
+            if (eventTime==null){
+                createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, tokenJoiner);
+                count = (stationTimeSeriesFeature.size());
+            }else{
+                if (eventTime[0].contentEquals(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()))){
+                    createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, tokenJoiner);                    
+                }
+            }   
         }
-        setCount(stationTimeSeriesFeature.size());
+        setCount(count);
         return builder.toString();
+    }
+
+    private void createTimeSeriesData(List<String> valueList, DateFormatter dateFormatter, PointFeature pointFeature, StringBuilder builder, Joiner tokenJoiner) throws IOException {
+       count ++;
+       valueList.clear();
+       valueList.add(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
+       for (String variableName : variableNames) {
+           valueList.add(pointFeature.getData().getScalarObject(variableName).toString());
+       }
+       builder.append(tokenJoiner.join(valueList));
+       // TODO:  conditional inside loop...
+       if (stationTimeSeriesFeature.size() > 1) {
+           builder.append(" ");
+           builder.append("\n");
+       }
     }
 
     private String createProfileFeature() throws IOException {

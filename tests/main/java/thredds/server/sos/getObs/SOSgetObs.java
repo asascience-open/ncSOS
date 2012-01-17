@@ -122,7 +122,8 @@ public class SOSgetObs {
     
         public static final String timeSeriesIncomplete = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,alt&offering=Station-9";
      public static final String timeSeriesMulti = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,alt&offering=Station-9";
-    
+    public static final String timeSeriesIncompleteWithTime = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,alt&offering=Station-9&eventtime=1990-01-01T00:00:00Z";
+     
     @Test
     public void testTimeSeriesIncomplete() throws IOException {
         System.out.println("----tsIncompleteMultiDimensionalMultipleStations------");
@@ -135,6 +136,25 @@ public class SOSgetObs {
         write.close();
         assertFalse(write.toString().contains("Exception"));
         String fileName = "tsIncompleteMultiDimensionalMultipleStations.xml";
+        fileWriter(base, fileName, write);
+        dataAvailableInOutputFile(write);
+        //check depth was entered auto
+        //assertTrue("depth not added",write.toString().contains("<swe:field name=\"alt\">"));
+        System.out.println("----------end-----------");
+    }
+    
+    @Test
+    public void testTimeSeriesIncompleteTime() throws IOException {
+        System.out.println("----tsIncompleteMultiDimensionalMultipleStations------");
+        NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
+
+        MetadataParser md = new MetadataParser();
+        Writer write = new CharArrayWriter();
+        md.enhance(dataset, write, timeSeriesIncompleteWithTime, tsIncompleteMultiDimensionalMultipleStations);
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "tsIncompleteMultiDimensionalMultipleStationsWithTime.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
         //check depth was entered auto
@@ -213,6 +233,7 @@ public class SOSgetObs {
     }
     public static final String timeSeriesProfileRequest2 = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=Station1";
 
+/*
     @Test
     public void testOrthogonalMultidimensionalMultiStations() throws IOException {
         fail("cant find file");
@@ -233,6 +254,8 @@ public class SOSgetObs {
         System.out.println("----------end-----------");
     }
 
+     * 
+     */
     @Test
     public void testMultiDimensionalSingleStations() throws IOException {
         System.out.println("----MultiDimensionalSingleStations------");
