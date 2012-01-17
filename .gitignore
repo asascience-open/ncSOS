@@ -11,5 +11,6 @@ tests/main/resources/XML/*
 *.exe
 *.o
 *.so
-*.nc
 *.xsd
+*.ncml
+*.cdl
