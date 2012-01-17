@@ -172,7 +172,7 @@ public abstract class SOSBaseRequestHandler {
         if (featureCollection!=null){
         try { featureCollection.finish(); } catch (Exception e) { e.printStackTrace(); }
         }
-        
+               
         //try { featureCollection.finish(); } catch (Exception e) { e.printStackTrace(); }
         try { featureDataset.close(); } catch (Exception e) { e.printStackTrace(); }
         try { netCDFDataset.close(); } catch (Exception e) { e.printStackTrace(); }

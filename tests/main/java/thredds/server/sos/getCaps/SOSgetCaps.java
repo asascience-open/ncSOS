@@ -131,6 +131,7 @@ public class SOSgetCaps {
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
     }
 
+    
     @Test
     public void testMultiDimensionalMultiStations() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalMultiStations);
@@ -145,6 +146,22 @@ public class SOSgetCaps {
         fileWriter(base, fileName, write);
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
     }
+    
+    @Test
+    public void testMultiDimensionalMultiStationsLocal() throws IOException {
+        NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalMultiStations);
+
+        MetadataParser md = new MetadataParser();
+        Writer write = new CharArrayWriter();
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", MultiDimensionalMultiStations);
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "MultiDimensionalMultiStations.xml";
+        fileWriter(base, fileName, write);
+        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+    }
+    
 
 //**********************************
 //PROFILE TEST

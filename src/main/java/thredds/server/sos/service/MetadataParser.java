@@ -50,7 +50,8 @@ public class MetadataParser {
                 //set the query params then call on the fly
                 splitQuery(query);
 
-
+                System.out.println(query);
+                
                 //if all the fields are valid ie not null
                 if ((service != null) && (request != null) && (version != null)) {
                     //get caps

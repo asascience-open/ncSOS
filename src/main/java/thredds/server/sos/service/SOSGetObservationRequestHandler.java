@@ -194,12 +194,40 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         StringBuilder builder = new StringBuilder();
         DateFormatter dateFormatter = new DateFormatter();
         List<String> valueList = new ArrayList<String>();
-
-        //test getting items by date(index(0))
+        
+        
         List<Date> z = stationProfileFeature.getTimes();
-        ProfileFeature pf = stationProfileFeature.getProfileByDate(z.get(0));
         Joiner tokenJoiner = Joiner.on(',');
+        DateFormatter df = new DateFormatter();
+        
+        
+        ProfileFeature pf = null;
+        //if not event time is specified get all the data
+        if(eventTime ==null){
+            //test getting items by date(index(0))
+            for (int i = 0; i < z.size(); i++) {
+              pf = stationProfileFeature.getProfileByDate(z.get(i));
+              getStationProfileData(pf, valueList, dateFormatter, builder, tokenJoiner);
+            }
+            return builder.toString();
+        }
+        else{
+            for (int i = 0; i < z.size(); i++) {      
+                System.out.print(df.toDateTimeStringISO(z.get(i)));
+                System.out.print(", compare with");
+                System.out.print(eventTime[0].toString());
+                
+                if (df.toDateTimeStringISO(z.get(i)).contentEquals(eventTime[0].toString())){
+                    pf = stationProfileFeature.getProfileByDate(z.get(i));
+                    getStationProfileData(pf, valueList, dateFormatter, builder, tokenJoiner);
+                }   
+                
+            }
+             return builder.toString();
+        }
+    }
 
+    private void getStationProfileData(ProfileFeature pf, List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, Joiner tokenJoiner) throws IOException {
         System.out.println(pf.getLatLon());
         System.out.println(pf.getTime());
 
@@ -212,10 +240,10 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             valueList.clear();
             valueList.add(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
 
-            //StructureData a = (pointFeature.getData());
-            //StructureMembers aa = a.getStructureMembers();
+            StructureData a = (pointFeature.getData());
+            StructureMembers aa = a.getStructureMembers();
 
-            /*
+            
             System.out.println(pointFeature.getLocation());       
             System.out.println(aa.getStructureSize());
             System.out.println(aa.getMemberNames());
@@ -225,8 +253,8 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             System.out.println(",");
             }            
             
-             * 
-             */
+             
+             
             for (String variableName : variableNames) {
                 valueList.add(pointFeature.getData().getScalarObject(variableName).toString());
             }
@@ -238,7 +266,6 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             }
         }
         setCount(stationProfileFeature.size());
-        return builder.toString();
     }
 
     private String createStationTimeSeriesFeature() throws IOException {
@@ -395,21 +422,13 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         if (stationProfileFeature != null) {
             try {
                 List<Date> times = stationProfileFeature.getTimes();
-
                 DateFormatter timePeriodFormatter = new DateFormatter();
-
                 document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:beginPosition", timePeriodFormatter.toDateTimeStringISO(times.get(0)));
-                document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:endPosition", timePeriodFormatter.toDateTimeStringISO(times.get(times.size() - 1)));
-
-                //old
-                //document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:beginPosition", stationTimeSeriesFeature.getDateRange().getStart().toDateTimeStringISO());
-                //document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:endPosition", stationTimeSeriesFeature.getDateRange().getEnd().toDateTimeStringISO());
-
+                document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:endPosition", timePeriodFormatter.toDateTimeStringISO(times.get(times.size() - 1)));               
             } catch (IOException ex) {
                 Logger.getLogger(SOSGetObservationRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-
 
         //profile
         if (profileF != null) {
