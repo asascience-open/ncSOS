@@ -199,9 +199,8 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         List<Date> z = stationProfileFeature.getTimes();
         Joiner tokenJoiner = Joiner.on(',');
         DateFormatter df = new DateFormatter();
-        
-        
         ProfileFeature pf = null;
+        
         //if not event time is specified get all the data
         if(eventTime ==null){
             //test getting items by date(index(0))
@@ -211,11 +210,9 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             }
             return builder.toString();
         }
+        //if the event time is specified get the correct data        
         else{
             for (int i = 0; i < z.size(); i++) {      
-                System.out.print(df.toDateTimeStringISO(z.get(i)));
-                System.out.print(", compare with");
-                System.out.print(eventTime[0].toString());
                 
                 if (df.toDateTimeStringISO(z.get(i)).contentEquals(eventTime[0].toString())){
                     pf = stationProfileFeature.getProfileByDate(z.get(i));
@@ -228,8 +225,8 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     }
 
     private void getStationProfileData(ProfileFeature pf, List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, Joiner tokenJoiner) throws IOException {
-        System.out.println(pf.getLatLon());
-        System.out.println(pf.getTime());
+        //System.out.println(pf.getLatLon());
+        //System.out.println(pf.getTime());
 
         PointFeatureIterator it = pf.getPointFeatureIterator(-1);
 
@@ -240,6 +237,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             valueList.clear();
             valueList.add(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
 
+            /*
             StructureData a = (pointFeature.getData());
             StructureMembers aa = a.getStructureMembers();
 
@@ -252,7 +250,8 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             System.out.print(a.getScalarObject(aa.getMemberNames().get(i)).toString());
             System.out.println(",");
             }            
-            
+             * 
+             */
              
              
             for (String variableName : variableNames) {
