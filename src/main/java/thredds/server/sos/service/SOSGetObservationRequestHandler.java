@@ -47,6 +47,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     private StationProfileFeature stationProfileFeature;
     private ProfileFeatureCollection pfc;
     private ProfileFeature profileF;
+    private int count;
 
     public SOSGetObservationRequestHandler(NetcdfDataset netCDFDataset, String stationName, String[] variableNames, String[] eventTime) throws IOException {
         super(netCDFDataset);
@@ -201,11 +202,13 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         DateFormatter df = new DateFormatter();
         ProfileFeature pf = null;
         
+        count = 0;
+        
         //if not event time is specified get all the data
         if(eventTime ==null){
             //test getting items by date(index(0))
             for (int i = 0; i < z.size(); i++) {
-              pf = stationProfileFeature.getProfileByDate(z.get(i));
+              pf = stationProfileFeature.getProfileByDate(z.get(i));  
               getStationProfileData(pf, valueList, dateFormatter, builder, tokenJoiner);
             }
             return builder.toString();
@@ -225,8 +228,6 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     }
 
     private void getStationProfileData(ProfileFeature pf, List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, Joiner tokenJoiner) throws IOException {
-        //System.out.println(pf.getLatLon());
-        //System.out.println(pf.getTime());
 
         PointFeatureIterator it = pf.getPointFeatureIterator(-1);
 
@@ -235,24 +236,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         while (it.hasNext()) {
             PointFeature pointFeature = it.next();
             valueList.clear();
-            valueList.add(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
-
-            /*
-            StructureData a = (pointFeature.getData());
-            StructureMembers aa = a.getStructureMembers();
-
-            
-            System.out.println(pointFeature.getLocation());       
-            System.out.println(aa.getStructureSize());
-            System.out.println(aa.getMemberNames());
-            
-            for (int i = 0; i < aa.getMemberNames().size(); i++) {
-            System.out.print(a.getScalarObject(aa.getMemberNames().get(i)).toString());
-            System.out.println(",");
-            }            
-             * 
-             */
-             
+            valueList.add(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));        
              
             for (String variableName : variableNames) {
                 valueList.add(pointFeature.getData().getScalarObject(variableName).toString());
@@ -264,7 +248,8 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
                 builder.append("\n");
             }
         }
-        setCount(stationProfileFeature.size());
+        count  = count + stationProfileFeature.size();
+        setCount(count);
     }
 
     private String createStationTimeSeriesFeature() throws IOException {
