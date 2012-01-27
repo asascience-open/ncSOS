@@ -140,6 +140,10 @@ public class MetadataParser {
                 } else if (splitServiceStr[0].equalsIgnoreCase("offering")) {
                     //replace all the eccaped : with real ones
                     String temp = splitServiceStr[1];
+                    if(temp.contains(":")){
+                        String[] splitStr = temp.split(":");
+                        temp = splitStr[splitStr.length-1];
+                    }
                     MetadataParser.offering = temp.replaceAll("%3A", ":");
 
                 } else if (splitServiceStr[0].equalsIgnoreCase("eventtime")) {

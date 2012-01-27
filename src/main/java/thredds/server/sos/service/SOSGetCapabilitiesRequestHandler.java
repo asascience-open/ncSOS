@@ -1,9 +1,6 @@
 package thredds.server.sos.service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -13,20 +10,17 @@ import thredds.server.sos.getCaps.SOSObservationOffering;
 import thredds.server.sos.util.DiscreteSamplingGeometryUtil;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.NetcdfDataset;
-import ucar.nc2.ft.PointFeature;
-import ucar.nc2.ft.PointFeatureCollection;
-import ucar.nc2.ft.PointFeatureCollectionIterator;
-import ucar.nc2.ft.PointFeatureIterator;
 import ucar.nc2.ft.ProfileFeature;
 import ucar.nc2.ft.ProfileFeatureCollection;
 import ucar.nc2.ft.StationProfileFeature;
 import ucar.nc2.ft.StationProfileFeatureCollection;
 import ucar.nc2.ft.StationTimeSeriesFeature;
 import ucar.nc2.ft.StationTimeSeriesFeatureCollection;
-import ucar.nc2.ft.point.ProfileFeatureImpl;
-import ucar.nc2.ft.point.standard.StandardProfileCollectionImpl;
-import ucar.nc2.time.CalendarDateRange;
 import ucar.unidata.geoloc.Station;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import ucar.nc2.units.DateFormatter;
 
 /**
  *
@@ -281,6 +275,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         //added abird
         //TIMESERIESPROFILE
         StationProfileFeatureCollection featureCollection1 = getFeatureProfileCollection();
+        StationProfileFeature stationProfileFeature;
         if (featureCollection1 != null) {
             for (Station station : featureCollection1.getStations()) {
                 String stationName = station.getName();
@@ -300,9 +295,12 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                 StationProfileFeature feature = featureCollection1.getStationProfileFeature(station);
 
                 //feature.calcBounds();
-                                
-                //newOffering.setObservationTimeBegin(feature.getDateRange().getStart().toDateTimeStringISO());
-                //newOffering.setObservationTimeEnd(feature.getDateRange().getEnd().toDateTimeStringISO());
+                stationProfileFeature = getFeatureProfileCollection().getStationProfileFeature(station);
+                List<Date> times = stationProfileFeature.getTimes();
+                DateFormatter timePeriodFormatter = new DateFormatter();
+                 
+                newOffering.setObservationTimeBegin(timePeriodFormatter.toDateTimeStringISO(times.get(0)));
+                newOffering.setObservationTimeEnd(timePeriodFormatter.toDateTimeStringISO(times.get(times.size()-1)));  
 
                 newOffering.setObservationStationDescription(feature.getDescription());
                 newOffering.setObservationName(getGMLName((stationName)));

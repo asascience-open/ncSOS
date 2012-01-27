@@ -3,34 +3,23 @@ package thredds.server.sos.service;
 import com.google.common.base.Joiner;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.lang.ArrayUtils;
 import thredds.server.sos.util.XMLDomUtils;
-import ucar.ma2.StructureData;
-import ucar.ma2.StructureMembers;
-import ucar.ma2.StructureMembers.Member;
 
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.constants.AxisType;
 import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.dataset.NetcdfDataset;
-import ucar.nc2.ft.FeatureDataset;
 import ucar.nc2.ft.PointFeature;
-import ucar.nc2.ft.PointFeatureCollection;
-import ucar.nc2.ft.PointFeatureCollectionIterator;
 import ucar.nc2.ft.PointFeatureIterator;
 import ucar.nc2.ft.ProfileFeature;
 import ucar.nc2.ft.ProfileFeatureCollection;
 import ucar.nc2.ft.StationProfileFeature;
-import ucar.nc2.ft.StationProfileFeatureCollection;
 import ucar.nc2.ft.StationTimeSeriesFeature;
 import ucar.nc2.units.DateFormatter;
-import ucar.nc2.units.DateRange;
 import ucar.unidata.geoloc.Station;
 
 /**
@@ -56,11 +45,16 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         this.variableNames = variableNames;
         this.eventTime = eventTime;
 
+        CoordinateAxis heightAxis = netCDFDataset.findCoordinateAxis(AxisType.Height);
+        this.variableNames = checkNetcdfFileForHeight(heightAxis, variableNames);
+        
         //added logic block abird
         if (getFeatureCollection() != null) {
             station = getFeatureCollection().getStation(stationName);
             stationTimeSeriesFeature = getFeatureCollection().getStationFeature(station);
             stationTimeSeriesFeature.calcBounds();
+            
+            
         }
 
         //added abird
@@ -69,10 +63,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         //get the station profile based on station name
         if (getFeatureProfileCollection() != null) {
             station = getFeatureProfileCollection().getStation(stationName);
-            stationProfileFeature = getFeatureProfileCollection().getStationProfileFeature(station);
-
-            CoordinateAxis heightAxis = netCDFDataset.findCoordinateAxis(AxisType.Height);
-            this.variableNames = checkNetcdfFileForHeight(heightAxis, variableNames);
+            stationProfileFeature = getFeatureProfileCollection().getStationProfileFeature(station);           
         }
 
         //added abird
@@ -80,9 +71,6 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         //gets the profile based on event time
         if (getProfileFeatureCollection() != null) {
             pfc = getProfileFeatureCollection();
-
-            CoordinateAxis heightAxis = netCDFDataset.findCoordinateAxis(AxisType.Height);
-            this.variableNames = checkNetcdfFileForHeight(heightAxis, variableNames);
 
             //set the correct requested profile
             while (pfc.hasNext()) {

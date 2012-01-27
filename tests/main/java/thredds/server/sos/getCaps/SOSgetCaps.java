@@ -38,8 +38,8 @@ public class SOSgetCaps {
 
      //timeseries
     private static String tsIncompleteMultiDimensionalMultipleStations = "tests/main/resources/datasets/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc";
-    private static String tsMultidimensionalMultipeStations = "tests/main/resources/datasets/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1.nc";
-
+    private static String tsOrthogonalMultidimenstionalMultipleStations = "tests/main/resources/datasets/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1.nc";
+    
     
     private static String imedsLocation = "C://Program Files//Apache Software Foundation//Apache Tomcat 6.0.26//content//thredds//public//imeds//watlev_NOAA.F.C_IKE_VIMS_3D_WITHWAVE.nc";
     private static String NOAA_NDBC = "C://Documents and Settings//abird//My Documents//NetBeansProjects//ncSOS//tests//main//resources//datasets//NOAA_NDBC_42035_2008met.nc";
@@ -90,16 +90,16 @@ public class SOSgetCaps {
     }
     
     @Test
-    public void testMultidimensionalMultipeStations() throws IOException {
-        NetcdfDataset dataset = NetcdfDataset.openDataset(tsMultidimensionalMultipeStations);
+    public void testOrthogonalMultidimenstionalMultipleStations() throws IOException {
+        NetcdfDataset dataset = NetcdfDataset.openDataset(tsOrthogonalMultidimenstionalMultipleStations);
 
         MetadataParser md = new MetadataParser();
         Writer write = new CharArrayWriter();
-        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", tsMultidimensionalMultipeStations);
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", tsOrthogonalMultidimenstionalMultipleStations);
         write.flush();
         write.close();
         assertFalse(write.toString().contains("Exception"));
-        String fileName = "tsMultidimensionalMultipeStations.xml";
+        String fileName = "tsOrthogonalMultidimenstionalMultipleStations.xml";
         fileWriter(base, fileName, write);
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
     }

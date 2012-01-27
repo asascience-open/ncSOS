@@ -30,7 +30,7 @@ public class SOSgetObs {
 
     //timeseries
     private static String tsIncompleteMultiDimensionalMultipleStations = "tests/main/resources/datasets/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc";
-    private static String tsMultidimensionalMultipeStations = "tests/main/resources/datasets/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1.nc";
+    private static String tsOrthogonalMultidimenstionalMultipleStations = "tests/main/resources/datasets/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1.nc";
     
     //ragged Array - timeseries profile
     private static String RaggedSingleConventions = "tests/main/resources/datasets/timeSeriesProfile-Ragged-SingleStation-H.5.3/timeSeriesProfile-Ragged-SingleStation-H.5.3.nc";
@@ -120,9 +120,10 @@ public class SOSgetObs {
     //**********************************
 //TIMESERIES TEST
     
-        public static final String timeSeriesIncomplete = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,alt&offering=Station-9";
-     public static final String timeSeriesMulti = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,alt&offering=Station-9";
-    public static final String timeSeriesIncompleteWithTime = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,alt&offering=Station-9&eventtime=1990-01-01T00:00:00Z";
+    public static final String timeSeriestOrth = "request=GetObservation&version=1.0.0&service=sos&observedProperty=alt&offering=Station-1&eventtime=1990-01-01T00:00:00Z";
+    public static final String timeSeriesIncomplete = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=Station-9&eventtime=1990-01-01T00:00:00Z";
+    public static final String timeSeriesMulti = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,alt&offering=Station-9";
+    public static final String timeSeriesIncompleteWithTime = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=Station-9&eventtime=1990-01-01T00:00:00Z";
      
     @Test
     public void testTimeSeriesIncomplete() throws IOException {
@@ -163,17 +164,17 @@ public class SOSgetObs {
     }
     
      @Test
-    public void testTimeSeriesMultidimensionalMultipeStations() throws IOException {
-        System.out.println("----tsIncompleteMultiDimensionalMultipleStations------");
-        NetcdfDataset dataset = NetcdfDataset.openDataset(tsMultidimensionalMultipeStations);
+    public void testTimeSeriesOrthogonalMultidimenstionalMultipleStations() throws IOException {
+        System.out.println("----tsOrthogonalMultidimenstionalMultipleStations------");
+        NetcdfDataset dataset = NetcdfDataset.openDataset(tsOrthogonalMultidimenstionalMultipleStations);
 
         MetadataParser md = new MetadataParser();
         Writer write = new CharArrayWriter();
-        md.enhance(dataset, write, timeSeriesIncomplete, tsMultidimensionalMultipeStations);
+        md.enhance(dataset, write, timeSeriestOrth, tsOrthogonalMultidimenstionalMultipleStations);
         write.flush();
         write.close();
         assertFalse(write.toString().contains("Exception"));
-        String fileName = "tsMultidimensionalMultipeStations.xml";
+        String fileName = "tsOrthogonalMultidimenstionalMultipleStations.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
         //check depth was entered auto
@@ -183,7 +184,7 @@ public class SOSgetObs {
     
     //**********************************
 //TIMESERIESPROFILE TEST
-    public static final String timeSeriesProfileRequest = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=Station1";
+    public static final String timeSeriesProfileRequest = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=uri.sos:Station1&eventtime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z";
 
     @Test
     public void testenhanceSingleRaggedDataset() throws IOException {
@@ -222,10 +223,10 @@ public class SOSgetObs {
         //check depth was entered auto
         assertTrue("depth not added",write.toString().contains("<swe:field name=\"height\">"));
         
-        assertTrue("data missing",write.toString().contains("1990-01-01T00:00:00Z,6.7,0.5")); 
-        assertTrue("data missing",write.toString().contains("1990-01-01T00:00:00Z,6.9,1.5")); 
+       assertTrue("data missing",write.toString().contains("1990-01-01T00:00:00Z,6.7,0.5")); 
+       assertTrue("data missing",write.toString().contains("1990-01-01T00:00:00Z,6.9,1.5"));                             
+
         
-       
        assertTrue("data missing",write.toString().contains("1990-01-01T02:00:00Z,6.7,0.5")); 
        assertTrue("data missing",write.toString().contains("1990-01-01T02:00:00Z,7.0,1.5")); 
         
