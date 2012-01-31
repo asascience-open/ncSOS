@@ -460,8 +460,35 @@ public static final String timeSeriesTimeRequestT1 = "request=GetObservation&ver
 
 //PROFILE TEST
     
-    public static final String profileRequest = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,humidity&eventtime=1990-01-01T00:00:00Z";
-    public static final String profileRequestIndexed = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,humidity&eventtime=1990-01-01T01:00:00Z";
+    public static final String profileRequest = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,humidity&offering=0&eventTime=1990-01-01T00:00:00Z";
+    public static final String profileRequestIndexed = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,humidity&offering=1&eventTime=1990-01-01T01:00:00Z";
+    
+    public static final String profileRequestMultiTime = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,humidity&offering=1,2,3,4,5&eventTime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z";
+    
+    @Test
+    public void testContiguousRaggedMultipleProfilesMultiTime() throws IOException {
+        spaceBetweenTests();
+        System.out.println("----ContiguousRaggedMultipleProfiles------");
+        NetcdfDataset dataset = NetcdfDataset.openDataset(ContiguousRaggedMultipleProfiles);
+        MetadataParser md = new MetadataParser();
+        Writer write = new CharArrayWriter();
+        md.enhance(dataset, write, profileRequestMultiTime, ContiguousRaggedMultipleProfiles);
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "ContiguousRaggedMultipleProfilesMultiTime.xml";
+        fileWriter(base, fileName, write);
+        dataAvailableInOutputFile(write);
+        //check depth was entered auto
+        assertTrue("depth not added",write.toString().contains("<swe:field name=\"z\">"));   
+        assertTrue("data missing",write.toString().contains("1990-01-01T00:00:00Z,")); 
+        assertTrue("data missing",write.toString().contains("1990-01-01T01:00:00Z,")); 
+        assertTrue("data missing",write.toString().contains("1990-01-01T02:00:00Z,")); 
+        
+        System.out.println("----------end-----------");
+    }
+    
+    
     
     @Test
     public void testContiguousRaggedMultipleProfiles() throws IOException {

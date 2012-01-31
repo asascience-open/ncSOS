@@ -26,7 +26,7 @@ public class MetadataParser {
     private static String version;
     private static String request;
     private static String observedProperty;
-    private static String offering;
+    private static String[] offering;
     private static String singleEventTime;
     //used for the cases where multiple props are selected
     private static String[] observedProperties;
@@ -66,8 +66,8 @@ public class MetadataParser {
                     } else if (request.equalsIgnoreCase("DescribeSensor")) {
                         writeErrorXMLCode(writer);
                     } else if (request.equalsIgnoreCase("GetObservation")) {
-                        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset,offering,observedProperties,eventTime);
-                        handler.parseObservations();
+                        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset,offering[0],observedProperties,eventTime);
+                        handler.parseObservations();                        
                         writeDocument(handler.getDocument(), writer);
                         handler.finished();
                     } else {
@@ -144,8 +144,12 @@ public class MetadataParser {
                         String[] splitStr = temp.split(":");
                         temp = splitStr[splitStr.length-1];
                     }
-                    MetadataParser.offering = temp.replaceAll("%3A", ":");
-
+                    String replaceOffer = temp.replaceAll("%3A", ":");
+                    if (replaceOffer.contains(",")) {
+                    MetadataParser.offering = replaceOffer.split(",");
+                    }else{
+                    MetadataParser.offering = new String[]{replaceOffer};    
+                    }
                 } else if (splitServiceStr[0].equalsIgnoreCase("eventtime")) {
 
                     MetadataParser.singleEventTime = splitServiceStr[1];

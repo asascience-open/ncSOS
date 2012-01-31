@@ -48,18 +48,18 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     private ProfileFeatureCollection pfc;
     private ProfileFeature profileF;
     private int count;
-    private boolean multiTime;
+    private boolean isMultiTime;
 
     public SOSGetObservationRequestHandler(NetcdfDataset netCDFDataset, String stationName, String[] variableNames, String[] eventTime) throws IOException {
         super(netCDFDataset);
         this.stationName = stationName;
         this.variableNames = variableNames;
         this.eventTime = eventTime;
-        multiTime = false;
+        isMultiTime = false;
 
         if (this.eventTime.length == 2) {
             //it is a multi time
-            multiTime = true;
+            isMultiTime = true;
         }
 
         CoordinateAxis heightAxis = netCDFDataset.findCoordinateAxis(AxisType.Height);
@@ -89,16 +89,60 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         if (getProfileFeatureCollection() != null) {
             pfc = getProfileFeatureCollection();
 
-            //set the correct requested profile
-            while (pfc.hasNext()) {
-                ProfileFeature pFeature = pfc.next();
+            if (isMultiTime == false) {
+                //set the correct requested profile
+                while (pfc.hasNext()) {
+                    ProfileFeature pFeature = pfc.next();
 
-                if (pFeature.getName().equals(eventTime[0])) {
-                    profileF = pFeature;
+                    if (pFeature.getName().equals(eventTime[0])) {
+                        profileF = pFeature;
+                    }
                 }
             }
         }
 
+    }
+
+    public void addProfileData(List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, Joiner tokenJoiner, PointFeatureIterator profileIterator) throws IOException {
+        //set the iterator the the correct profile
+        while (profileIterator.hasNext()) {
+            PointFeature pointFeature = profileIterator.next();
+            valueList.clear();
+            valueList.add(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
+
+            String profileID = getProfileIDFromProfile(pointFeature);
+            //if there is a profile id use it against the data that is requested
+            if (profileID!=null){
+                //System.out.println(profileID);
+                if (profileID.equalsIgnoreCase(stationName))
+                addProfileDataToBuilder(valueList, pointFeature, builder, tokenJoiner);
+            }
+            else{
+                addProfileDataToBuilder(valueList, pointFeature, builder, tokenJoiner);
+            }    
+        }
+    }
+
+    public void addProfileDataToBuilder(List<String> valueList, PointFeature pointFeature, StringBuilder builder, Joiner tokenJoiner) throws IOException {
+        for (String variableName : variableNames) {
+            valueList.add(pointFeature.getData().getScalarObject(variableName).toString());
+        }
+        builder.append(tokenJoiner.join(valueList));
+        builder.append(" ");
+        builder.append("\n");
+    }
+
+    public String getProfileIDFromProfile(PointFeature pointFeature) {
+        String profileID = null;
+        //Try and get profileID
+        try{
+            profileID = (pointFeature.getData().getScalarObject("profile").toString());
+        }
+        //if it is not there dont USE IT!,,,,,but maybe warn that it is not there?        
+        catch(Exception e){
+            //Logger.getLogger(SOSGetObservationRequestHandler.class.getName()).log(Level.INFO, "ERROR PROFILE ID NO AVAILABLE \n Must be single Profile \n", e);
+        }
+        return profileID;
     }
 
     public void parseMultiTimeEventTimeSeries(DateFormatter df, Chronology chrono, PointFeature pointFeature, List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, Joiner tokenJoiner) throws IOException {
@@ -112,15 +156,12 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         //same as start
         if (tsDt.isEqual(dtStart)) {
             createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, tokenJoiner);
-            //System.out.println("search date is same as start date:");
         } //equal end
         else if (tsDt.isEqual(dtEnd)) {
             createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, tokenJoiner);
-            //System.out.println("search date is same as end date:");
         } //afterStart and before end       
         else if (tsDt.isAfter(dtStart) && (tsDt.isBefore(dtEnd))) {
-            createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, tokenJoiner);
-            //System.out.println("search is after start and before end:");
+            createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, tokenJoiner);    
         }
     }
 
@@ -165,7 +206,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     }
 
     public boolean getIfMultiTime() {
-        return multiTime;
+        return isMultiTime;
     }
 
     private void addDatasetResults(String[] obsProperty) {
@@ -246,7 +287,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
                 createStationProfileData(pf, valueList, dateFormatter, builder, tokenJoiner);
             }
             return builder.toString();
-        } else if (multiTime) {
+        } else if (isMultiTime) {
             for (int i = 0; i < z.size(); i++) {
 
                 pf = stationProfileFeature.getProfileByDate(z.get(i));
@@ -359,38 +400,69 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     }
 
     private String createProfileFeature() throws IOException {
-        PointFeatureIterator iterator = profileF.getPointFeatureIterator(-1);
+
         StringBuilder builder = new StringBuilder();
         DateFormatter dateFormatter = new DateFormatter();
         List<String> valueList = new ArrayList<String>();
         Joiner tokenJoiner = Joiner.on(',');
 
-        while (iterator.hasNext()) {
-            PointFeature pointFeature = iterator.next();
-            valueList.clear();
-            valueList.add(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
 
-            for (String variableName : variableNames) {
-                valueList.add(pointFeature.getData().getScalarObject(variableName).toString());
+        //if multi Time
+        if (isMultiTime) {
+            Chronology chrono = ISOChronology.getInstance();
+            DateFormatter df = new DateFormatter();
+            //get the profile collection, and loop through
+            //while has next
+            while (pfc.hasNext()) {
+                //grab the profile
+                ProfileFeature pFeature = pfc.next();
+                if (pFeature != null) {
+
+                    //output the name
+                    DateTime dtStart = new DateTime(df.getISODate(eventTime[0]), chrono);
+                    DateTime dtEnd = new DateTime(df.getISODate(eventTime[1]), chrono);
+                    DateTime tsDt = new DateTime(pFeature.getName(), chrono);
+
+                    //find out if current time(searchtime) is one or after startTime
+                    //same as start
+                    if (tsDt.isEqual(dtStart)) {
+                        addProfileData(valueList, dateFormatter, builder, tokenJoiner, pFeature.getPointFeatureIterator(-1));
+                    } //equal end
+                    else if (tsDt.isEqual(dtEnd)) {
+                        addProfileData(valueList, dateFormatter, builder, tokenJoiner, pFeature.getPointFeatureIterator(-1));
+                    } //afterStart and before end       
+                    else if (tsDt.isAfter(dtStart) && (tsDt.isBefore(dtEnd))) {
+                        addProfileData(valueList, dateFormatter, builder, tokenJoiner, pFeature.getPointFeatureIterator(-1));
+                    }
+                    setCount(pFeature.size());
+
+                }
             }
-            builder.append(tokenJoiner.join(valueList));
-            builder.append(" ");
-            builder.append("\n");
+            return builder.toString();
+
+        } //if not multiTime        
+        else {
+            addProfileData(valueList, dateFormatter, builder, tokenJoiner, profileF.getPointFeatureIterator(-1));
+
+            setCount(profileF.size());
+            return builder.toString();
         }
-        setCount(profileF.size());
-        return builder.toString();
+
     }
 
     private String getLatLonString() {
         //station
-        //added logic abird
         if (station != null) {
             return (new StringBuilder()).append(formatDegree(station.getLatitude())).append(" ").append(formatDegree(station.getLongitude())).append(" ").append("0").toString();
         }
-        //profile
-        //added abird
+        //profile        
         if (profileF != null) {
+            //calc single block
             return (new StringBuilder()).append(formatDegree(profileF.getLatLon().getLatitude())).append(" ").append(formatDegree(profileF.getLatLon().getLongitude())).append(" ").append("0").toString();
+        }
+        if (pfc != null) {
+            //calc multi Block
+            return (new StringBuilder()).append(formatDegree(-99)).append(" ").append(formatDegree(-99)).append(" ").append("0").toString();
         }
         return null;
     }
@@ -501,6 +573,11 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:beginPosition", timePeriodFormatter.toDateTimeStringISO(profileF.getTime()));
             document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:endPosition", timePeriodFormatter.toDateTimeStringISO(profileF.getTime()));
         }
+        if ((profileF == null) && (pfc != null)) {
+            DateFormatter timePeriodFormatter = new DateFormatter();
+            document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:beginPosition", "cheese");
+            document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:endPosition", "cheese");
+        }
 
         //add procedure
         document = XMLDomUtils.addNodeAndAttribute(document, "om:Observation", "om:procedure", "xlink:href", getLocation());
@@ -568,24 +645,19 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
 
         //****************************************
         //Times series feature 
-        //added logic abird
         if (stationTimeSeriesFeature != null) {
             return createStationTimeSeriesFeature();
         }
-
-
         //****************************************
         //station profile time series
-        //added abird
+
         if (stationProfileFeature != null) {
             return createStationProfileFeature();
         }
-
-
         //****************************************
         //Profile
-        //added abird
-        if (profileF != null) {
+        //looks for profileFeature or the collection depending on eventTime
+        if (profileF != null || pfc != null) {
             return createProfileFeature();
         }
 
