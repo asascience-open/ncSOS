@@ -49,13 +49,16 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     private ProfileFeature profileF;
     private int count;
     private boolean isMultiTime;
+    private final StationData stD;
 
-    public SOSGetObservationRequestHandler(NetcdfDataset netCDFDataset, String stationName, String[] variableNames, String[] eventTime) throws IOException {
+    public SOSGetObservationRequestHandler(NetcdfDataset netCDFDataset, String[] stationName, String[] variableNames, String[] eventTime) throws IOException {
         super(netCDFDataset);
-        this.stationName = stationName;
+
+        this.stationName = stationName[0];
         this.variableNames = variableNames;
         this.eventTime = eventTime;
         isMultiTime = false;
+
 
         if (this.eventTime.length == 2) {
             //it is a multi time
@@ -65,30 +68,41 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         CoordinateAxis heightAxis = netCDFDataset.findCoordinateAxis(AxisType.Height);
         this.variableNames = checkNetcdfFileForHeight(heightAxis, variableNames);
 
+        //one per request
+        stD = new StationData(stationName, eventTime);
+
+
+
         //added logic block abird
         if (getFeatureCollection() != null) {
-            station = getFeatureCollection().getStation(stationName);
+            stD.setData(getFeatureCollection());
+
+            //************REMOVE!!!!!!!!!!!!!!!!!
+            station = getFeatureCollection().getStation(this.stationName);
             stationTimeSeriesFeature = getFeatureCollection().getStationFeature(station);
             stationTimeSeriesFeature.calcBounds();
 
-
         }
 
-        //added abird
         //profile Collection
         //timeseriesprofile
         //get the station profile based on station name
         if (getFeatureProfileCollection() != null) {
-            station = getFeatureProfileCollection().getStation(stationName);
+            stD.setData(getFeatureProfileCollection());
+
+
+            //************REMOVE!!!!!!!!!!!!!!!!!
+            station = getFeatureProfileCollection().getStation(this.stationName);
             stationProfileFeature = getFeatureProfileCollection().getStationProfileFeature(station);
         }
 
-        //added abird
         //profile
         //gets the profile based on event time
         if (getProfileFeatureCollection() != null) {
-            pfc = getProfileFeatureCollection();
+            stD.setData(getProfileFeatureCollection());
 
+
+            pfc = getProfileFeatureCollection();
             if (isMultiTime == false) {
                 //set the correct requested profile
                 while (pfc.hasNext()) {
@@ -99,8 +113,13 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
                     }
                 }
             }
+
         }
 
+    }
+
+    public StationData getStationData() {
+        return stD;
     }
 
     public void addProfileData(List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, Joiner tokenJoiner, PointFeatureIterator profileIterator) throws IOException {
@@ -112,14 +131,14 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
 
             String profileID = getProfileIDFromProfile(pointFeature);
             //if there is a profile id use it against the data that is requested
-            if (profileID!=null){
+            if (profileID != null) {
                 //System.out.println(profileID);
-                if (profileID.equalsIgnoreCase(stationName))
+                if (profileID.equalsIgnoreCase(stationName)) {
+                    addProfileDataToBuilder(valueList, pointFeature, builder, tokenJoiner);
+                }
+            } else {
                 addProfileDataToBuilder(valueList, pointFeature, builder, tokenJoiner);
             }
-            else{
-                addProfileDataToBuilder(valueList, pointFeature, builder, tokenJoiner);
-            }    
         }
     }
 
@@ -135,11 +154,10 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     public String getProfileIDFromProfile(PointFeature pointFeature) {
         String profileID = null;
         //Try and get profileID
-        try{
+        try {
             profileID = (pointFeature.getData().getScalarObject("profile").toString());
-        }
-        //if it is not there dont USE IT!,,,,,but maybe warn that it is not there?        
-        catch(Exception e){
+        } //if it is not there dont USE IT!,,,,,but maybe warn that it is not there?        
+        catch (Exception e) {
             //Logger.getLogger(SOSGetObservationRequestHandler.class.getName()).log(Level.INFO, "ERROR PROFILE ID NO AVAILABLE \n Must be single Profile \n", e);
         }
         return profileID;
@@ -161,7 +179,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, tokenJoiner);
         } //afterStart and before end       
         else if (tsDt.isAfter(dtStart) && (tsDt.isBefore(dtEnd))) {
-            createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, tokenJoiner);    
+            createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, tokenJoiner);
         }
     }
 
@@ -209,56 +227,56 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         return isMultiTime;
     }
 
-    private void addDatasetResults(String[] obsProperty) {
+    private void addDatasetResults(String[] obsProperty, int stationNumber) {
         //TODO Test the following
         //add Data Block Definition
-        document = XMLDomUtils.addNode(document, "om:result", "swe:DataArray");
+        document = XMLDomUtils.addNode(document, "om:result", "swe:DataArray", stationNumber);
         //element count
-        document = XMLDomUtils.addNode(document, "swe:DataArray", "swe:elementCount");
-        document = XMLDomUtils.addNode(document, "swe:elementCount", "swe:Count");
-        document = XMLDomUtils.addNodeAndValue(document, "swe:Count", "swe:value", "COUNT!!!!");
+        document = XMLDomUtils.addNode(document, "swe:DataArray", "swe:elementCount", stationNumber);
+        document = XMLDomUtils.addNode(document, "swe:elementCount", "swe:Count", stationNumber);
+        document = XMLDomUtils.addNodeAndValue(document, "swe:Count", "swe:value", "COUNT!!!!", stationNumber);
         //element Type
-        document = XMLDomUtils.addNodeAndAttribute(document, "swe:DataArray", "swe:elementType", "name", "SimpleDataArray");
+        document = XMLDomUtils.addNodeAndAttribute(document, "swe:DataArray", "swe:elementType", "name", "SimpleDataArray", stationNumber);
         //add data record
-        document = XMLDomUtils.addNode(document, "swe:elementType", "swe:DataRecord");
+        document = XMLDomUtils.addNode(document, "swe:elementType", "swe:DataRecord", stationNumber);
 
-        createDataFields(obsProperty);
+        createDataFields(obsProperty, stationNumber);
 
         //add encoding value
-        document = XMLDomUtils.addNode(document, "swe:DataArray", "swe:encoding");
+        document = XMLDomUtils.addNode(document, "swe:DataArray", "swe:encoding", stationNumber);
         // text block
-        document = XMLDomUtils.addNodeAndAttribute(document, "swe:encoding", "swe:TextBlock", "blockSeparator", " ");
+        document = XMLDomUtils.addNodeAndAttribute(document, "swe:encoding", "swe:TextBlock", "blockSeparator", " ", stationNumber);
         XMLDomUtils.setAttributeFromNode(document, "swe:encoding", "swe:TextBlock", "decimalSeparator", ".");
         XMLDomUtils.setAttributeFromNode(document, "swe:encoding", "swe:TextBlock", "tokenSeparator", ",");
 
         try {
             //set the data
-            document = XMLDomUtils.addNodeAndValue(document, "swe:DataArray", "swe:values", createObsValuesString());
+            document = XMLDomUtils.addNodeAndValue(document, "swe:DataArray", "swe:values", createObsValuesString(), stationNumber);
         } catch (Exception ex) {
-            document = XMLDomUtils.addNodeAndValue(document, "swe:DataArray", "swe:values", "ERROR!");
+            document = XMLDomUtils.addNodeAndValue(document, "swe:DataArray", "swe:values", "ERROR!", stationNumber);
             Logger.getLogger(SOSGetObservationRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
 
-    private void createDataFields(String[] observedProperties) {
+    private void createDataFields(String[] observedProperties, int stationNumber) {
         int fieldIndex = 0;
         int quantityIndex = 0;
 
 //        //add fields
-        document = XMLDomUtils.addNodeAndAttribute(document, "swe:DataRecord", "swe:field", "name", "time");
-        document = XMLDomUtils.addNodeAndAttribute(document, "swe:field", "swe:Time", fieldIndex++, "definition", "urn:ogc:phenomenon:time:iso8601");
+        document = XMLDomUtils.addNodeAndAttribute(document, "swe:DataRecord", "swe:field", "name", "time", stationNumber);
+        document = XMLDomUtils.addNodeAndAttribute(document, "swe:field", "swe:Time", fieldIndex++, "definition", "urn:ogc:phenomenon:time:iso8601", stationNumber);
 
         // add observed property
         for (String observedProperty : observedProperties) {
 
             VariableSimpleIF variable = getFeatureDataset().getDataVariable(observedProperty);
-            document = XMLDomUtils.addNodeAndAttribute(document, "swe:DataRecord", "swe:field", "name", observedProperty);
-            document = XMLDomUtils.addNodeAndAttribute(document, "swe:field", "swe:Quantity", fieldIndex++, "definition", "urn:ogc:def:phenomenon:mmisw.org:cf:" + observedProperty);
+            document = XMLDomUtils.addNodeAndAttribute(document, "swe:DataRecord", "swe:field", "name", observedProperty, stationNumber);
+            document = XMLDomUtils.addNodeAndAttribute(document, "swe:field", "swe:Quantity", fieldIndex++, "definition", "urn:ogc:def:phenomenon:mmisw.org:cf:" + observedProperty, stationNumber);
 
             //added logic abird
             if (variable != null) {
-                document = XMLDomUtils.addNodeAndAttribute(document, "swe:Quantity", "swe:uom", quantityIndex++, "code", variable.getUnitsString());
+                document = XMLDomUtils.addNodeAndAttribute(document, "swe:Quantity", "swe:uom", quantityIndex++, "code", variable.getUnitsString(), stationNumber);
             }
         }
 
@@ -450,23 +468,6 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
 
     }
 
-    private String getLatLonString() {
-        //station
-        if (station != null) {
-            return (new StringBuilder()).append(formatDegree(station.getLatitude())).append(" ").append(formatDegree(station.getLongitude())).append(" ").append("0").toString();
-        }
-        //profile        
-        if (profileF != null) {
-            //calc single block
-            return (new StringBuilder()).append(formatDegree(profileF.getLatLon().getLatitude())).append(" ").append(formatDegree(profileF.getLatLon().getLongitude())).append(" ").append("0").toString();
-        }
-        if (pfc != null) {
-            //calc multi Block
-            return (new StringBuilder()).append(formatDegree(-99)).append(" ").append(formatDegree(-99)).append(" ").append("0").toString();
-        }
-        return null;
-    }
-
     public String getSystemGMLID() {
         return XMLDomUtils.getObsGMLIDAttributeFromNode(document, "om:ObservationCollection", "gml:id");
     }
@@ -476,7 +477,13 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     }
 
     void setSystemGMLID() {
-        XMLDomUtils.setObsGMLIDAttributeFromNode(document, "om:ObservationCollection", "gml:id", getGMLID(stationName));
+        
+        StringBuilder b = new StringBuilder();
+        for (int i = 0; i < stD.getNumberOfStations(); i++) {            
+            b.append(stationName);
+            b.append(",");
+        }
+        XMLDomUtils.setObsGMLIDAttributeFromNode(document, "om:ObservationCollection", "gml:id", getGMLID("GML_ID_NAME"));
     }
 
     public void setCollectionDescription() {
@@ -504,8 +511,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     }
 
     public void setCollectionLowerCornerEnvelope() {
-        String lonlatStr = getLatLonString();
-        XMLDomUtils.setNodeValue(document, "gml:Envelope", "gml:lowerCorner", lonlatStr);
+        XMLDomUtils.setNodeValue(document, "gml:Envelope", "gml:lowerCorner", getBoundLowerLatLonStr());
     }
 
     public String getCollectionLowerCornerEnvelope() {
@@ -513,7 +519,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     }
 
     public void setCollectionUpperCornerEnvelope() {
-        XMLDomUtils.setNodeValue(document, "gml:Envelope", "gml:upperCorner", getLatLonString());
+        XMLDomUtils.setNodeValue(document, "gml:Envelope", "gml:upperCorner", getBoundUpperLatLonStr());
     }
 
     public String getCollectionUpperCornerEnvelope() {
@@ -527,77 +533,57 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
 
         setObsCollectionMetaData();
 
-        //add observation
-        document = XMLDomUtils.addObservationElement(document);
-        //add description
-        document = XMLDomUtils.addNodeAndValue(document, "om:Observation", "gml:description", getDescription());
-        //add name
-        document = XMLDomUtils.addNodeAndValue(document, "om:Observation", "gml:name", getDescription());
-        //add bounded by
-        document = XMLDomUtils.addNode(document, "om:Observation", "gml:boundedBy");
-        //add envelope and attribute
-        document = XMLDomUtils.addNodeToNodeAndAttribute(document, "om:Observation", "gml:boundedBy", "gml:Envelope", "srsName", getGMLName(stationName));
-        String upper = getLatLonString();
-        String lower = getLatLonString();
-        document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:Envelope", "gml:lowerCorner", lower);
-        //add Upper GPS coors
-        document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:Envelope", "gml:upperCorner", upper);
-        //add sampling time
-        document = XMLDomUtils.addNode(document, "om:Observation", "om:samplingTime");
-        //add time instant
-        document = XMLDomUtils.addNodeToNodeAndAttribute(document, "om:Observation", "om:samplingTime", "gml:TimePeriod", "gml:id", "DATA_TIME");
-        //add time positions (being and end)
+        //add observation 
+        //*********THIS IS FOR NUMBER OF STATIONS!
+        for (int stNum = 0; stNum < stD.getNumberOfStations(); stNum++) {
 
-        //added logic abird
-        //station timeseries
-        if (stationTimeSeriesFeature != null) {
-            document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:beginPosition", stationTimeSeriesFeature.getDateRange().getStart().toDateTimeStringISO());
-            document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:endPosition", stationTimeSeriesFeature.getDateRange().getEnd().toDateTimeStringISO());
-        }
 
-        //timeseries profile
-        if (stationProfileFeature != null) {
-            try {
-                List<Date> times = stationProfileFeature.getTimes();
-                DateFormatter timePeriodFormatter = new DateFormatter();
-                document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:beginPosition", timePeriodFormatter.toDateTimeStringISO(times.get(0)));
-                document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:endPosition", timePeriodFormatter.toDateTimeStringISO(times.get(times.size() - 1)));
-            } catch (IOException ex) {
-                Logger.getLogger(SOSGetObservationRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
+            document = XMLDomUtils.addObservationElement(document);
+            //add description
+            document = XMLDomUtils.addNodeAndValue(document, "om:Observation", "gml:description", getDescription(), stNum);
+            //add name
+            document = XMLDomUtils.addNodeAndValue(document, "om:Observation", "gml:name", getDescription(), stNum);
+            //add bounded by
+            document = XMLDomUtils.addNode(document, "om:Observation", "gml:boundedBy", stNum);
+            //add envelope and attribute
+            document = XMLDomUtils.addNodeToNodeAndAttribute(document, "om:Observation", "gml:boundedBy", "gml:Envelope", "srsName", getGMLName(stD.getStationName(stNum)), stNum);
+            //add lat lon string
+            document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:Envelope", "gml:lowerCorner", getStationLowerLatLonStr(stNum), stNum);
+            //add Upper GPS coors
+            document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:Envelope", "gml:upperCorner", getStationUpperLatLonStr(stNum), stNum);
+            //add sampling time
+            document = XMLDomUtils.addNode(document, "om:Observation", "om:samplingTime", stNum);
+            //add time instant
+            document = XMLDomUtils.addNodeToNodeAndAttribute(document, "om:Observation", "om:samplingTime", "gml:TimePeriod", "gml:id", "DATA_TIME", stNum);
+            //add time positions (being and end)
+
+            //******NEW DATA MANAGER************
+            if (stD != null) {
+                document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:beginPosition", stD.getTimeBegin(stNum), stNum);
+                document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:endPosition", stD.getTimeEnd(stNum), stNum);
             }
+
+            //add procedure
+            document = XMLDomUtils.addNodeAndAttribute(document, "om:Observation", "om:procedure", "xlink:href", getLocation(), stNum);
+
+            //add observedProperties
+            for (int i = 0; i < variableNames.length; i++) {
+                String variableName = variableNames[i];
+                document = XMLDomUtils.addNodeAndAttribute(document, "om:Observation", "om:observedProperty", "xlink:href", "http://marinemetadata.org/cf#" + variableName, stNum);
+            }
+
+            //if (isDepthAvailable == true) {
+            //doc = XMLDomUtils.addNodeAndAttribute(doc, "om:Observation", "om:observedProperty", "xlink:href", "http://marinemetadata.org/cf#" + "depth");
+            //}
+
+            //add feature of interest
+            document = XMLDomUtils.addNodeAndAttribute(document, "om:Observation", "om:featureOfInterest", "xlink:href", getFeatureOfInterest(stD.getStationName(stNum)), stNum);
+            //add results Node
+            document = XMLDomUtils.addNode(document, "om:Observation", "om:result", stNum);
+
+            addDatasetResults(variableNames, stNum);
+
         }
-
-        //profile
-        if (profileF != null) {
-            DateFormatter timePeriodFormatter = new DateFormatter();
-            document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:beginPosition", timePeriodFormatter.toDateTimeStringISO(profileF.getTime()));
-            document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:endPosition", timePeriodFormatter.toDateTimeStringISO(profileF.getTime()));
-        }
-        if ((profileF == null) && (pfc != null)) {
-            DateFormatter timePeriodFormatter = new DateFormatter();
-            document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:beginPosition", "cheese");
-            document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:endPosition", "cheese");
-        }
-
-        //add procedure
-        document = XMLDomUtils.addNodeAndAttribute(document, "om:Observation", "om:procedure", "xlink:href", getLocation());
-
-        //add observedProperties
-        for (int i = 0; i < variableNames.length; i++) {
-            String variableName = variableNames[i];
-            document = XMLDomUtils.addNodeAndAttribute(document, "om:Observation", "om:observedProperty", "xlink:href", "http://marinemetadata.org/cf#" + variableName);
-        }
-
-//        if (isDepthAvailable == true) {
-//            doc = XMLDomUtils.addNodeAndAttribute(doc, "om:Observation", "om:observedProperty", "xlink:href", "http://marinemetadata.org/cf#" + "depth");
-//        }
-
-        //add feature of interest
-        document = XMLDomUtils.addNodeAndAttribute(document, "om:Observation", "om:featureOfInterest", "xlink:href", getFeatureOfInterest(stationName));
-        //add results Node
-        document = XMLDomUtils.addNode(document, "om:Observation", "om:result");
-
-        addDatasetResults(variableNames);
 
     }
 
@@ -690,4 +676,29 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     private void setCount(int count) {
         XMLDomUtils.setNodeValue(document, "om:Observation", "swe:value", Integer.toString(count));
     }
+
+    private String getStationLowerLatLonStr(int stNum) {
+         return (new StringBuilder()).append(formatDegree(stD.getLowerLat(stNum))).append(" ").append(formatDegree(stD.getLowerLon(stNum))).append(" ").append("0").toString();
+    }
+
+    private String getStationUpperLatLonStr(int stNum) {
+        return (new StringBuilder()).append(formatDegree(stD.getUpperLat(stNum))).append(" ").append(formatDegree(stD.getUpperLon(stNum))).append(" ").append("0").toString();
+    }
+    
+    /**
+     * get the upper lat lon string
+     * @return 
+     */
+    private String getBoundUpperLatLonStr() {
+        return (new StringBuilder()).append(formatDegree(stD.getBoundUpperLat())).append(" ").append(formatDegree(stD.getBoundUpperLon())).append(" ").append("0").toString();
+    }
+
+    /**
+     * get the lower lat lon string
+     * @return 
+     */
+    private String getBoundLowerLatLonStr() {
+        return (new StringBuilder()).append(formatDegree(stD.getBoundLowerLat())).append(" ").append(formatDegree(stD.getBoundLowerLon())).append(" ").append("0").toString();
+    }
+    
 }

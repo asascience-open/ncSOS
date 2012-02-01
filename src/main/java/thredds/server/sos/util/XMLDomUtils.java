@@ -152,9 +152,9 @@ public class XMLDomUtils {
          return fstNmElmnt1;
     }
 
-    public static Document addNodeAndValue(Document doc, String Obs, String nodeName, String value) {
+    public static Document addNodeAndValue(Document doc, String Obs, String nodeName, String value,int stationNumber) {
         NodeList obsOfferingList = doc.getElementsByTagName(Obs);
-        Element obsOfferEl = (Element) obsOfferingList.item(0);
+        Element obsOfferEl = (Element) obsOfferingList.item(stationNumber);
 
         Element obsOfferingNode = doc.createElement(nodeName);
         obsOfferingNode.appendChild(doc.createTextNode(value));
@@ -163,17 +163,17 @@ public class XMLDomUtils {
     }
 
     //adds a node with no value ie a container
-    public static Document addNode(Document doc, String obs, String nodeName) {
+    public static Document addNode(Document doc, String obs, String nodeName,int stationNumber) {
         NodeList obsOfferingList = doc.getElementsByTagName(obs);
-        Element obsOfferEl = (Element) obsOfferingList.item(0);
+        Element obsOfferEl = (Element) obsOfferingList.item(stationNumber);
         Element obsOfferingNode = doc.createElement(nodeName);
         obsOfferEl.appendChild(obsOfferingNode);
         return doc;
     }
 
-    public static Document addNodeAndAttribute(Document doc, String obs,String nodeName, String attribute ,String value) {
+    public static Document addNodeAndAttribute(Document doc, String obs,String nodeName, String attribute ,String value,int stationNumber) {
         NodeList obsOfferingList = doc.getElementsByTagName(obs);
-        Element obsOfferEl = (Element) obsOfferingList.item(0);
+        Element obsOfferEl = (Element) obsOfferingList.item(stationNumber);
 
         Element obsOfferingNode = doc.createElement(nodeName);
         obsOfferingNode.setAttribute(attribute, value);
@@ -181,9 +181,9 @@ public class XMLDomUtils {
         return doc;
     }
 
-    public static Document addNodeToNodeAndValue(Document doc, String obs, String nodeName, String value) {
+    public static Document addNodeToNodeAndValue(Document doc, String obs, String nodeName, String value,int stationNumber) {
         NodeList obsOfferingList1 = doc.getElementsByTagName("om:Observation");
-        Element obsOfferEl111 = (Element) obsOfferingList1.item(0);
+        Element obsOfferEl111 = (Element) obsOfferingList1.item(stationNumber);
 
         NodeList obsOfferingList=  obsOfferEl111.getElementsByTagName(obs);
         Element obsOfferEl = (Element) obsOfferingList.item(0);
@@ -196,9 +196,9 @@ public class XMLDomUtils {
         return doc;
     }
 
-    public static Document addNodeToNodeAndAttribute(Document doc, String obs, String nodeaddingto, String newNode, String atrributeName, String value) {
+    public static Document addNodeToNodeAndAttribute(Document doc, String obs, String nodeaddingto, String newNode, String atrributeName, String value,int stationNumber) {
          NodeList obsOfferingList = doc.getElementsByTagName(obs);
-        Element obsOfferEl = (Element) obsOfferingList.item(0);
+        Element obsOfferEl = (Element) obsOfferingList.item(stationNumber);
 
         NodeList nodes = obsOfferEl.getChildNodes();
 
@@ -218,8 +218,12 @@ public class XMLDomUtils {
     /*
      * add node to attribute with allocation number
      */
-    public static Document addNodeAndAttribute(Document doc, String obs, String nodeName, int index, String attribute, String value) {
-         NodeList obsOfferingList = doc.getElementsByTagName(obs);
+    public static Document addNodeAndAttribute(Document doc, String obs, String nodeName, int index, String attribute, String value,int stationNumber) {
+        NodeList obsOfferingList1 = doc.getElementsByTagName("swe:DataRecord");
+        Element obsOfferEl1 = (Element) obsOfferingList1.item(stationNumber);        
+          
+        NodeList obsOfferingList = obsOfferEl1.getElementsByTagName(obs);
+        
         Element obsOfferEl = (Element) obsOfferingList.item(index);
 
         Element obsOfferingNode = doc.createElement(nodeName);

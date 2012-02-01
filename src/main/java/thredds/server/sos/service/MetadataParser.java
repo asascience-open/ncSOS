@@ -44,11 +44,10 @@ public class MetadataParser {
         eventTime = null;
 
         try {
-
             if (query != null) {
                 //if query is not empty
                 //set the query params then call on the fly
-                splitQuery(query);
+            splitQuery(query);
 
                 System.out.println(query);
                 
@@ -66,7 +65,7 @@ public class MetadataParser {
                     } else if (request.equalsIgnoreCase("DescribeSensor")) {
                         writeErrorXMLCode(writer);
                     } else if (request.equalsIgnoreCase("GetObservation")) {
-                        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset,offering[0],observedProperties,eventTime);
+                        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset,offering,observedProperties,eventTime);
                         handler.parseObservations();                        
                         writeDocument(handler.getDocument(), writer);
                         handler.finished();

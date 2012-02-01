@@ -129,6 +129,33 @@ public class SOSgetObs {
     public static final String timeSeriesIncompleteMulti = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=Station-9&eventtime=1990-01-01T00:00:00Z/1990-01-01T10:00:00Z";
      public static final String timeSeriesIncompleteMultiInvalid = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=Station-9&eventtime=1990-02-01T00:00:00Z/1990-05-01T10:00:00Z";
     
+     public static final String timeSeriesIncompleteMultiStation = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=Station-9,Station-8&eventtime=1990-02-01T00:00:00Z/1990-05-01T10:00:00Z";
+    
+     @Test
+    public void testMultiTimeCreateDataStruct() throws IOException {
+         
+         System.out.println("----tsData------");
+        NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
+
+        MetadataParser md = new MetadataParser();
+        Writer write = new CharArrayWriter();
+        md.enhance(dataset, write, timeSeriesIncompleteMultiStation, tsIncompleteMultiDimensionalMultipleStations);
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "tsData.xml";
+        fileWriter(base, fileName, write);
+        //dataAvailableInOutputFile(write);
+        
+        assertFalse("Time1 entered",write.toString().contains("1990-01-01T00:00:00Z,"));
+        assertFalse("Time2 entered",write.toString().contains("1990-01-01T10:00:00Z,"));
+        
+        assertFalse("Time3 entered",write.toString().contains("1990-01-01T11:00:00Z,"));
+        
+        System.out.println("----------end-----------");
+    }
+     
+     
     @Test
     public void testTimeSeriesIncompleteDataMultiTimeInvalid() throws IOException {
         System.out.println("----tsIncompleteMultiDimensionalMultipleStations------");
@@ -236,8 +263,11 @@ public class SOSgetObs {
     //**********************************
 //TIMESERIESPROFILE TEST
     public static final String timeSeriesProfileRequestSingle = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=uri.sos:Station1&eventtime=1990-01-01T00:00:00Z";            
-     public static final String timeSeriesProfileRequestMulti = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=uri.sos:Station1&eventtime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z";            
+    public static final String timeSeriesProfileRequestMulti = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=uri.sos:Station1&eventtime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z";            
     
+    public static final String timeSeriesProfileRequestMultiStation = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=Station1,Station2&eventtime=1990-01-01T00:00:00Z/1990-01-01T05:00:00Z";            
+    
+     
     @Test
     public void testenhanceSingleRaggedDataset() throws IOException {
         fail("issue with time series profile netcdf file - no temperature");
@@ -456,9 +486,36 @@ public static final String timeSeriesTimeRequestT1 = "request=GetObservation&ver
         assertTrue("depth not added",write.toString().contains("<swe:field name=\"alt\">"));
         System.out.println("----------end-----------");
     }
-    //**********************************
+    
+    @Test
+    public void testMultiDimensionalMultiStation() throws IOException {
+        System.out.println("----MultiDimensionalMultiStations------");
+        NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalMultiStations);
 
-//PROFILE TEST
+        MetadataParser md = new MetadataParser();
+        Writer write = new CharArrayWriter();
+        md.enhance(dataset, write, timeSeriesProfileRequestMultiStation, MultiDimensionalMultiStations);
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "MultiDimensionalMultiStationRequest.xml";
+        fileWriter(base, fileName, write);
+        dataAvailableInOutputFile(write);
+        //check depth was entered auto
+        assertTrue("depth not added",write.toString().contains("<swe:field name=\"alt\">"));
+        System.out.println("----------end-----------");
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //**********************************
+    //PROFILE TEST
     
     public static final String profileRequest = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,humidity&offering=0&eventTime=1990-01-01T00:00:00Z";
     public static final String profileRequestIndexed = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,humidity&offering=1&eventTime=1990-01-01T01:00:00Z";
