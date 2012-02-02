@@ -129,7 +129,7 @@ public class SOSgetObs {
     public static final String timeSeriesIncompleteMulti = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=Station-9&eventtime=1990-01-01T00:00:00Z/1990-01-01T10:00:00Z";
      public static final String timeSeriesIncompleteMultiInvalid = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=Station-9&eventtime=1990-02-01T00:00:00Z/1990-05-01T10:00:00Z";
     
-     public static final String timeSeriesIncompleteMultiStation = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=Station-9,Station-8&eventtime=1990-02-01T00:00:00Z/1990-05-01T10:00:00Z";
+     public static final String timeSeriesIncompleteMultiStation = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=Station-9,Station-8&eventtime=1990-01-01T00:00:00Z/1990-01-01T8:00:00Z";
     
      @Test
     public void testMultiTimeCreateDataStruct() throws IOException {
@@ -145,12 +145,20 @@ public class SOSgetObs {
         assertFalse(write.toString().contains("Exception"));
         String fileName = "tsData.xml";
         fileWriter(base, fileName, write);
-        //dataAvailableInOutputFile(write);
+        dataAvailableInOutputFile(write);
         
-        assertFalse("Time1 entered",write.toString().contains("1990-01-01T00:00:00Z,"));
-        assertFalse("Time2 entered",write.toString().contains("1990-01-01T10:00:00Z,"));
+        //check dates
+        assertTrue("Time1 entered",write.toString().contains("1990-01-01T00:00:00Z,"));
+        assertTrue("Time2 entered",write.toString().contains("1990-01-01T07:00:00Z,"));        
+        assertTrue("Time3 entered",write.toString().contains("1990-01-01T06:00:00Z,"));
         
-        assertFalse("Time3 entered",write.toString().contains("1990-01-01T11:00:00Z,"));
+        //check data
+        assertTrue("Station8 Data T0",write.toString().contains("1990-01-01T00:00:00Z,32.0,4.554936"));
+        assertTrue("Station8 Data T2",write.toString().contains("1990-01-01T02:00:00Z,36.0,4.554936"));
+        
+        assertTrue("Station9 Data T0",write.toString().contains("1990-01-01T00:00:00Z,37.0,0.47794318"));
+        assertTrue("Station9 Data T2",write.toString().contains("1990-01-01T02:00:00Z,6.0,0.47794318"));
+        
         
         System.out.println("----------end-----------");
     }
@@ -265,7 +273,7 @@ public class SOSgetObs {
     public static final String timeSeriesProfileRequestSingle = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=uri.sos:Station1&eventtime=1990-01-01T00:00:00Z";            
     public static final String timeSeriesProfileRequestMulti = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=uri.sos:Station1&eventtime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z";            
     
-    public static final String timeSeriesProfileRequestMultiStation = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=Station1,Station2&eventtime=1990-01-01T00:00:00Z/1990-01-01T05:00:00Z";            
+    public static final String timeSeriesProfileRequestMultiStation = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=Station1,Station2&eventTime=1990-01-01T00:00:00Z/1990-01-01T05:00:00Z";            
     
      
     @Test
@@ -504,6 +512,26 @@ public static final String timeSeriesTimeRequestT1 = "request=GetObservation&ver
         //check depth was entered auto
         assertTrue("depth not added",write.toString().contains("<swe:field name=\"alt\">"));
         System.out.println("----------end-----------");
+        
+        assertTrue("Station 1 T0A0",write.toString().contains("1990-01-01T00:00:00Z,0.0,0.0")); 
+        assertTrue("Station 1 T0A1",write.toString().contains("1990-01-01T00:00:00Z,0.7000000000000001,17.5"));         
+        assertTrue("Station 1 T0A2",write.toString().contains("1990-01-01T00:00:00Z,1.6,40")); 
+        //
+        assertTrue("Station 1 T3A0",write.toString().contains("1990-01-01T03:00:00Z,9.0,225.0")); 
+        assertTrue("Station 1 T3A1",write.toString().contains("1990-01-01T03:00:00Z,9.3,232.5"));         
+        assertTrue("Station 1 T3A2",write.toString().contains("1990-01-01T03:00:00Z,11.4,285.0")); 
+        assertTrue("Station 1 T3A3",write.toString().contains("1990-01-01T03:00:00Z,11.8,295")); 
+        
+        
+        
+        assertTrue("Station 2 T0A0",write.toString().contains("1990-01-01T04:00:00Z,12.0,300.0")); 
+        assertTrue("Station 2 T0A1",write.toString().contains("1990-01-01T04:00:00Z,13.5,337.5"));         
+        assertTrue("Station 2 T0A2",write.toString().contains("1990-01-01T04:00:00Z,14.0,350")); 
+        assertTrue("Station 2 T3A0",write.toString().contains("1990-01-01T04:00:00Z,14.9,372.5")); 
+        //
+        assertTrue("Station 2 T3A1",write.toString().contains("1990-01-01T05:00:00Z,15.0,375.0"));         
+        assertTrue("Station 2 T3A2",write.toString().contains("1990-01-01T05:00:00Z,16.3,407.5")); 
+        assertTrue("Station 2 T3A3",write.toString().contains("1990-01-01T05:00:00Z,17.8,445.0")); 
     }
     
     

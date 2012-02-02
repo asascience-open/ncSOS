@@ -38,7 +38,7 @@ public class StationDataTest {
     public void testCanGetCorrectStationList() {
 
         String[] stNames = {"station1", "station2", "station3"};
-        StationData std = new StationData(stNames);
+        StationData std = new StationData(stNames,null,null);
         List<String> names = std.getStationNames();
         assertTrue(names != null);
 
@@ -90,11 +90,11 @@ public class StationDataTest {
         SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, new String[]{"Station-9", "Station-8"}, new String[]{"temperature"}, new String[]{"1990-01-01T00:00:00Z", "1990-01-01T07:00:00Z"});
         
         
-        assertTrue(handler.getStationData().getDataResponce().contains("1990-01-01T00:00:00Z"));
-        assertTrue(handler.getStationData().getDataResponce().contains("1990-01-01T02:00:00Z"));
-        assertTrue(handler.getStationData().getDataResponce().contains("1990-01-01T05:00:00Z"));
-        assertTrue(handler.getStationData().getDataResponce().contains("1990-01-01T06:00:00Z"));
-        assertTrue(handler.getStationData().getDataResponce().contains("1990-01-01T08:00:00Z"));
+        assertTrue(handler.getStationData().getDataResponse(0).contains("1990-01-01T00:00:00Z"));
+        assertTrue(handler.getStationData().getDataResponse(0).contains("1990-01-01T02:00:00Z"));
+        assertTrue(handler.getStationData().getDataResponse(0).contains("1990-01-01T05:00:00Z"));
+        assertTrue(handler.getStationData().getDataResponse(0).contains("1990-01-01T06:00:00Z"));
+        assertTrue(handler.getStationData().getDataResponse(0).contains("1990-01-01T08:00:00Z"));
     }
     
     //***********************************************    
