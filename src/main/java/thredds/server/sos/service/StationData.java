@@ -51,13 +51,13 @@ public class StationData {
     private List<ProfileFeature> profileList;
     private int numberOfStations;
     private final String[] variableNames;
-   
+
     public StationData(String[] stationName, String[] eventTime, String[] variableNames) {
         startDate = null;
         endDate = null;
-        
+
         this.variableNames = variableNames;
-        
+
         this.stationNames = new ArrayList<String>();
         stationNames.addAll(Arrays.asList(stationName));
 
@@ -65,8 +65,7 @@ public class StationData {
         eventTimes.addAll(Arrays.asList(eventTime));
 
     }
-    
-    
+
     public void checkLatLonBoundaries(List<Station> tsStationList, int i) {
         //LAT?LON PARSING
         //lat
@@ -230,7 +229,7 @@ public class StationData {
      */
     public void setData(ProfileFeatureCollection profilePeatureCollection) throws IOException {
         this.profileData = profilePeatureCollection;
-        
+
         profileList = new ArrayList<ProfileFeature>();
 
         Chronology chrono = ISOChronology.getInstance();
@@ -245,10 +244,10 @@ public class StationData {
             //turn event times in to dateTimes to compare
             if (eventTimes.size() >= 1) {
                 dtSearchStart = new DateTime(df.getISODate(eventTimes.get(0)), chrono);
-            } 
+            }
             if (eventTimes.size() == 2) {
-                
-                dtSearchEnd = new DateTime(df.getISODate(eventTimes.get(1)), chrono);     
+
+                dtSearchEnd = new DateTime(df.getISODate(eventTimes.get(1)), chrono);
             }
 
             //temp
@@ -258,28 +257,33 @@ public class StationData {
             DateTime dtStartt = null;
             DateTime dtEndt = null;
             String profileID = null;
-            
+
             while (profileData.hasNext()) {
                 ProfileFeature pFeature = profileData.next();
-                pFeature.calcBounds();    
-                
+                pFeature.calcBounds();
+
                 //scan through the data and get the profile id number
-                PointFeatureIterator pp =pFeature.getPointFeatureIterator(-1);
+                PointFeatureIterator pp = pFeature.getPointFeatureIterator(-1);
                 while (pp.hasNext()) {
                     PointFeature pointFeature = pp.next();
                     profileID = getProfileIDFromProfile(pointFeature);
                     //System.out.println(profileID);
                     break;
                 }
-                
+
                 //scan through the stationname for a match of id
                 for (Iterator<String> it = stationNames.iterator(); it.hasNext();) {
                     String stName = it.next();
-                    if (stName.equalsIgnoreCase(profileID)){
-                         profileList.add(pFeature);    
-                    }   
+                    if (stName.equalsIgnoreCase(profileID)) {
+                        profileList.add(pFeature);
+                    }
                 }
-                
+
+                if (profileID == null) {
+                    profileID = "0";
+                    profileList.add(pFeature);
+                }
+
                 if (firstSet) {
                     upperLat = pFeature.getLatLon().getLatitude();
                     lowerLat = pFeature.getLatLon().getLatitude();
@@ -289,8 +293,7 @@ public class StationData {
                     dtStart = new DateTime(pFeature.getTime(), chrono);
                     dtEnd = new DateTime(pFeature.getTime(), chrono);
                     firstSet = false;
-                } 
-                else {
+                } else {
 
                     dtStartt = new DateTime(pFeature.getTime(), chrono);
                     dtEndt = new DateTime(pFeature.getTime(), chrono);
@@ -317,12 +320,12 @@ public class StationData {
                     }
                 }
             }
-            
+
             setStartDate(df.toDateTimeStringISO(dtStart.toDate()));
             setEndDate(df.toDateTimeStringISO(dtEnd.toDate()));
-            if (stationNames!=null){
-            setNumberOfStations(stationNames.size());
-            }            
+            if (stationNames != null) {
+                setNumberOfStations(stationNames.size());
+            }
         }
     }
 
@@ -363,7 +366,7 @@ public class StationData {
         try {
             if (tsData != null) {
                 return createTimeSeriesData(stNum);
-            } else if (tsProfileData != null) {     
+            } else if (tsProfileData != null) {
                 return createStationProfileFeature(stNum);
             } else if (profileData != null) {
                 return createProfileFeature(stNum);
@@ -388,24 +391,22 @@ public class StationData {
         List<String> valueList = new ArrayList<String>();
         Joiner tokenJoiner = Joiner.on(',');
         Chronology chrono = ISOChronology.getInstance();
-        
+
         //int count = 0;
 
-        
+
 
         while (iterator.hasNext()) {
             PointFeature pointFeature = iterator.next();
 
             //if no event time
             if (eventTimes == null) {
-                createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, tokenJoiner,stNum);
+                createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, tokenJoiner, stNum);
                 //count = (stationTimeSeriesFeature.size());
-            } 
-            //if bounded event time        
-            else if (eventTimes.size()>1) {
-                parseMultiTimeEventTimeSeries(df, chrono, pointFeature, valueList, dateFormatter, builder, tokenJoiner,stNum);
-            } 
-            //if single event time        
+            } //if bounded event time        
+            else if (eventTimes.size() > 1) {
+                parseMultiTimeEventTimeSeries(df, chrono, pointFeature, valueList, dateFormatter, builder, tokenJoiner, stNum);
+            } //if single event time        
             else {
                 if (eventTimes.get(0).contentEquals(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()))) {
                     createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, tokenJoiner, stNum);
@@ -416,7 +417,7 @@ public class StationData {
         return builder.toString();
     }
 
-    private void createTimeSeriesData(List<String> valueList, DateFormatter dateFormatter, PointFeature pointFeature, StringBuilder builder, Joiner tokenJoiner,int stNum) throws IOException {
+    private void createTimeSeriesData(List<String> valueList, DateFormatter dateFormatter, PointFeature pointFeature, StringBuilder builder, Joiner tokenJoiner, int stNum) throws IOException {
         //count++;
         valueList.clear();
         valueList.add(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
@@ -430,8 +431,8 @@ public class StationData {
             builder.append("\n");
         }
     }
-    
-    public void parseMultiTimeEventTimeSeries(DateFormatter df, Chronology chrono, PointFeature pointFeature, List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, Joiner tokenJoiner,int stNum) throws IOException {
+
+    public void parseMultiTimeEventTimeSeries(DateFormatter df, Chronology chrono, PointFeature pointFeature, List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, Joiner tokenJoiner, int stNum) throws IOException {
         //get start/end date based on iso date format date        
 
         DateTime dtStart = new DateTime(df.getISODate(eventTimes.get(0)), chrono);
@@ -441,28 +442,27 @@ public class StationData {
         //find out if current time(searchtime) is one or after startTime
         //same as start
         if (tsDt.isEqual(dtStart)) {
-            createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, tokenJoiner,stNum);
+            createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, tokenJoiner, stNum);
         } //equal end
         else if (tsDt.isEqual(dtEnd)) {
-            createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, tokenJoiner,stNum);
+            createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, tokenJoiner, stNum);
         } //afterStart and before end       
         else if (tsDt.isAfter(dtStart) && (tsDt.isBefore(dtEnd))) {
-            createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, tokenJoiner,stNum);
+            createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, tokenJoiner, stNum);
         }
     }
-    
+
     /****************TIMESERIESPROFILE*******************/
-    
     private String createStationProfileFeature(int stNum) throws IOException {
         StringBuilder builder = new StringBuilder();
         DateFormatter dateFormatter = new DateFormatter();
         List<String> valueList = new ArrayList<String>();
-        
-       
+
+
         StationProfileFeature stationProfileFeature = tsProfileData.getStationProfileFeature(tsStationList.get(stNum));
         List<Date> z = stationProfileFeature.getTimes();
-        
-        
+
+
         Joiner tokenJoiner = Joiner.on(',');
         DateFormatter df = new DateFormatter();
         ProfileFeature pf = null;
@@ -475,10 +475,10 @@ public class StationData {
             //test getting items by date(index(0))
             for (int i = 0; i < z.size(); i++) {
                 pf = stationProfileFeature.getProfileByDate(z.get(i));
-                createStationProfileData(pf, valueList, dateFormatter, builder, tokenJoiner,stNum);
+                createStationProfileData(pf, valueList, dateFormatter, builder, tokenJoiner, stNum);
             }
             return builder.toString();
-        } else if (eventTimes.size()>1) {
+        } else if (eventTimes.size() > 1) {
             for (int i = 0; i < z.size(); i++) {
 
                 pf = stationProfileFeature.getProfileByDate(z.get(i));
@@ -490,13 +490,13 @@ public class StationData {
                 //find out if current time(searchtime) is one or after startTime
                 //same as start
                 if (tsDt.isEqual(dtStart)) {
-                    createStationProfileData(pf, valueList, dateFormatter, builder, tokenJoiner,stNum);
+                    createStationProfileData(pf, valueList, dateFormatter, builder, tokenJoiner, stNum);
                 } //equal end
                 else if (tsDt.isEqual(dtEnd)) {
-                    createStationProfileData(pf, valueList, dateFormatter, builder, tokenJoiner,stNum);
+                    createStationProfileData(pf, valueList, dateFormatter, builder, tokenJoiner, stNum);
                 } //afterStart and before end       
                 else if (tsDt.isAfter(dtStart) && (tsDt.isBefore(dtEnd))) {
-                    createStationProfileData(pf, valueList, dateFormatter, builder, tokenJoiner,stNum);
+                    createStationProfileData(pf, valueList, dateFormatter, builder, tokenJoiner, stNum);
                 }
             }
             return builder.toString();
@@ -506,14 +506,14 @@ public class StationData {
 
                 if (df.toDateTimeStringISO(z.get(i)).contentEquals(eventTimes.get(0).toString())) {
                     pf = stationProfileFeature.getProfileByDate(z.get(i));
-                    createStationProfileData(pf, valueList, dateFormatter, builder, tokenJoiner,stNum);
+                    createStationProfileData(pf, valueList, dateFormatter, builder, tokenJoiner, stNum);
                 }
             }
             return builder.toString();
         }
     }
-    
-    private void createStationProfileData(ProfileFeature pf, List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, Joiner tokenJoiner,int stNum) throws IOException {
+
+    private void createStationProfileData(ProfileFeature pf, List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, Joiner tokenJoiner, int stNum) throws IOException {
 
         PointFeatureIterator it = pf.getPointFeatureIterator(-1);
 
@@ -538,22 +538,21 @@ public class StationData {
         //setCount(count);
     }
 
-    
     /*******************PROFILE**************************/
     private String createProfileFeature(int stNum) throws IOException {
 
         StringBuilder builder = new StringBuilder();
         DateFormatter dateFormatter = new DateFormatter();
         List<String> valueList = new ArrayList<String>();
-        Joiner tokenJoiner = Joiner.on(',');     
-        
+        Joiner tokenJoiner = Joiner.on(',');
+
         //if multi Time
-        if (eventTimes.size()>1) {
+        if (eventTimes.size() > 1) {
             Chronology chrono = ISOChronology.getInstance();
             DateFormatter df = new DateFormatter();
             //get the profile collection, and loop through
             //while has next
-            
+
             for (int i = 0; i < profileList.size(); i++) {
                 //grab the profile
                 ProfileFeature pFeature = profileList.get(i);
@@ -567,13 +566,13 @@ public class StationData {
                     //find out if current time(searchtime) is one or after startTime
                     //same as start
                     if (tsDt.isEqual(dtStart)) {
-                        addProfileData(valueList, dateFormatter, builder, tokenJoiner, pFeature.getPointFeatureIterator(-1),stNum);
+                        addProfileData(valueList, dateFormatter, builder, tokenJoiner, pFeature.getPointFeatureIterator(-1), stNum);
                     } //equal end
                     else if (tsDt.isEqual(dtEnd)) {
-                        addProfileData(valueList, dateFormatter, builder, tokenJoiner, pFeature.getPointFeatureIterator(-1),stNum);
+                        addProfileData(valueList, dateFormatter, builder, tokenJoiner, pFeature.getPointFeatureIterator(-1), stNum);
                     } //afterStart and before end       
                     else if (tsDt.isAfter(dtStart) && (tsDt.isBefore(dtEnd))) {
-                        addProfileData(valueList, dateFormatter, builder, tokenJoiner, pFeature.getPointFeatureIterator(-1),stNum);
+                        addProfileData(valueList, dateFormatter, builder, tokenJoiner, pFeature.getPointFeatureIterator(-1), stNum);
                     }
                     //setCount(pFeature.size());
 
@@ -581,19 +580,18 @@ public class StationData {
             }
             return builder.toString();
 
-        } 
-                //if not multiTime        
+        } //if not multiTime        
         else {
             ProfileFeature pFeature = profileList.get(stNum);
-            addProfileData(valueList, dateFormatter, builder, tokenJoiner, pFeature.getPointFeatureIterator(-1),stNum);
+            addProfileData(valueList, dateFormatter, builder, tokenJoiner, pFeature.getPointFeatureIterator(-1), stNum);
 
             //setCount(profileF.size());
             return builder.toString();
         }
 
     }
-    
-    public void addProfileData(List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, Joiner tokenJoiner, PointFeatureIterator profileIterator,int stNum) throws IOException {
+
+    public void addProfileData(List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, Joiner tokenJoiner, PointFeatureIterator profileIterator, int stNum) throws IOException {
         //set the iterator the the correct profile
         while (profileIterator.hasNext()) {
             PointFeature pointFeature = profileIterator.next();
@@ -621,7 +619,7 @@ public class StationData {
         builder.append(" ");
         builder.append("\n");
     }
-    
+
     public String getProfileIDFromProfile(PointFeature pointFeature) {
         String profileID = null;
         //Try and get profileID
@@ -633,7 +631,7 @@ public class StationData {
         }
         return profileID;
     }
-    
+
     /**
      * get begin time of obs
      * @param stNum
@@ -642,40 +640,33 @@ public class StationData {
     public String getTimeBegin(int stNum) {
         Chronology chrono = ISOChronology.getInstance();
         DateFormatter df = new DateFormatter();
-        if (tsData != null) {
-            try {
+        try {
+            if (tsData != null) {
                 tsData.getStationFeature(tsStationList.get(stNum)).calcBounds();
                 DateRange dateRange = tsData.getStationFeature(tsStationList.get(stNum)).getDateRange();
                 DateTime dtStart = new DateTime(dateRange.getStart().getDate(), chrono);
                 return (df.toDateTimeStringISO(dtStart.toDate()));
-            } catch (IOException ex) {
-                Logger.getLogger(StationData.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else if (tsProfileData != null) {
-            try {
+
+            } else if (tsProfileData != null) {
+
                 DateTime curTime = null;
                 DateTime dtStart = null;
                 StationProfileFeature sPFeature = tsProfileData.getStationProfileFeature(tsStationList.get(stNum));
                 List<Date> times = sPFeature.getTimes();
-
                 dtStart = new DateTime(times.get(0), chrono);
-
                 //check the dates
                 for (int j = 0; j < times.size(); j++) {
                     curTime = new DateTime(times.get(j), chrono);
-
                     if (curTime.isBefore(dtStart)) {
                         dtStart = curTime;
                     }
                 }
-
                 return (df.toDateTimeStringISO(dtStart.toDate()));
-
-            } catch (IOException ex) {
-                Logger.getLogger(StationData.class.getName()).log(Level.SEVERE, null, ex);
+            } else if (profileData != null) {
+                return df.toDateTimeStringISO(profileList.get(stNum).getTime());
             }
-        } else if (profileData != null) {
-            return ("");
+        } catch (IOException ex) {
+            Logger.getLogger(StationData.class.getName()).log(Level.SEVERE, null, ex);
         }
         return "ERROR NULL Date!!!!";
     }
@@ -688,26 +679,19 @@ public class StationData {
     public String getTimeEnd(int stNum) {
         Chronology chrono = ISOChronology.getInstance();
         DateFormatter df = new DateFormatter();
-
-        if (tsData != null) {
-            try {
+        try {
+            if (tsData != null) {
                 tsData.getStationFeature(tsStationList.get(stNum)).calcBounds();
                 DateRange dateRange = tsData.getStationFeature(tsStationList.get(stNum)).getDateRange();
                 DateTime dtEnd = new DateTime(dateRange.getEnd().getDate(), chrono);
                 return (df.toDateTimeStringISO(dtEnd.toDate()));
-            } catch (IOException ex) {
-                Logger.getLogger(StationData.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            } else if (tsProfileData != null) {
 
-        } else if (tsProfileData != null) {
-            try {
                 DateTime curTime = null;
                 DateTime dtEnd = null;
                 StationProfileFeature sPFeature = tsProfileData.getStationProfileFeature(tsStationList.get(stNum));
                 List<Date> times = sPFeature.getTimes();
-
                 dtEnd = new DateTime(times.get(0), chrono);
-
                 //check the dates
                 for (int j = 0; j < times.size(); j++) {
                     curTime = new DateTime(times.get(j), chrono);
@@ -717,12 +701,11 @@ public class StationData {
                     }
                 }
                 return (df.toDateTimeStringISO(dtEnd.toDate()));
-
-            } catch (IOException ex) {
-                Logger.getLogger(StationData.class.getName()).log(Level.SEVERE, null, ex);
+            } else if (profileData != null) {
+                return df.toDateTimeStringISO(profileList.get(stNum).getTime());
             }
-        } else if (profileData != null) {
-            return ("");
+        } catch (IOException ex) {
+            Logger.getLogger(StationData.class.getName()).log(Level.SEVERE, null, ex);
         }
         return "ERROR NULL Date!!!!";
 
@@ -734,7 +717,7 @@ public class StationData {
         } else if (tsProfileData != null) {
             return (tsStationList.get(idNum).getName());
         } else if (profileData != null) {
-            return (profileList.get(idNum).getName());
+            return "PROFILE_" + (stationNames.get(idNum));
         }
         return "ERROR NULL Date!!!!";
     }
