@@ -139,20 +139,15 @@ public class SOSgetObs {
         String fileName = "tsDatax3.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
-
         //check dates
         assertTrue("Time1 entered", write.toString().contains("1990-01-01T00:00:00Z,"));
         assertTrue("Time2 entered", write.toString().contains("1990-01-01T07:00:00Z,"));
         assertTrue("Time3 entered", write.toString().contains("1990-01-01T06:00:00Z,"));
-
         //check data
         assertTrue("Station8 Data T0", write.toString().contains("1990-01-01T00:00:00Z,32.0,4.554936"));
         assertTrue("Station8 Data T2", write.toString().contains("1990-01-01T02:00:00Z,36.0,4.554936"));
-
         assertTrue("Station9 Data T0", write.toString().contains("1990-01-01T00:00:00Z,37.0,0.47794318"));
         assertTrue("Station9 Data T2", write.toString().contains("1990-01-01T02:00:00Z,6.0,0.47794318"));
-
-
         System.out.println("----------end-----------");
     }
 
@@ -176,15 +171,11 @@ public class SOSgetObs {
         assertTrue("Time1 entered", write.toString().contains("1990-01-01T00:00:00Z,"));
         assertTrue("Time2 entered", write.toString().contains("1990-01-01T07:00:00Z,"));
         assertTrue("Time3 entered", write.toString().contains("1990-01-01T06:00:00Z,"));
-
         //check data
         assertTrue("Station8 Data T0", write.toString().contains("1990-01-01T00:00:00Z,32.0,4.554936"));
         assertTrue("Station8 Data T2", write.toString().contains("1990-01-01T02:00:00Z,36.0,4.554936"));
-
         assertTrue("Station9 Data T0", write.toString().contains("1990-01-01T00:00:00Z,37.0,0.47794318"));
         assertTrue("Station9 Data T2", write.toString().contains("1990-01-01T02:00:00Z,6.0,0.47794318"));
-
-
         System.out.println("----------end-----------");
     }
 

@@ -360,7 +360,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     }
 
     public String createObsValuesString(int stNum) throws Exception {
-
+        setCount(variableNames.length+1);
         return stD.getDataResponse(stNum);
     }
 
