@@ -57,11 +57,11 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         super(netCDFDataset);
 
         //this.stationName = stationName[0];        
-        
+
         //check for height and add it, if there of course
         CoordinateAxis heightAxis = netCDFDataset.findCoordinateAxis(AxisType.Height);
         this.variableNames = checkNetcdfFileForHeight(heightAxis, variableNames);
-        
+
         //TODO add this in to code
         /*
         /////////////////////////CHECK for single profile//////////////////////////////////////      
@@ -69,18 +69,17 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         if (z!=null){ 
         Attribute zz = z.findAttribute("cf_role");
         if(zz!=null){
-             System.out.println("profileID" + z.read().toString());
+        System.out.println("profileID" + z.read().toString());
         }
         }
         //////////////////////////////////////////////////////////////////////////////////////        
          * 
          */
-        
-        
+
         this.eventTime = eventTime;
-        
+
         //one per request
-        stD = new StationData(stationName, eventTime,this.variableNames);
+        stD = new StationData(stationName, eventTime, this.variableNames);
 
         //Time Series
         if (getFeatureCollection() != null) {
@@ -179,7 +178,6 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             document = XMLDomUtils.addNodeAndValue(document, "swe:DataArray", "swe:values", "ERROR!", stationNumber);
             Logger.getLogger(SOSGetObservationRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
     private void createDataFields(String[] observedProperties, int stationNumber) {
@@ -202,10 +200,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
                 document = XMLDomUtils.addNodeAndAttribute(document, "swe:Quantity", "swe:uom", quantityIndex++, "code", variable.getUnitsString(), stationNumber);
             }
         }
-
-
     }
-
 
     public String getSystemGMLID() {
         return XMLDomUtils.getObsGMLIDAttributeFromNode(document, "om:ObservationCollection", "gml:id");
@@ -216,9 +211,9 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     }
 
     void setSystemGMLID() {
-        
+
         StringBuilder b = new StringBuilder();
-        for (int i = 0; i < stD.getNumberOfStations(); i++) {            
+        for (int i = 0; i < stD.getNumberOfStations(); i++) {
             b.append(stationName);
             b.append(",");
         }
@@ -275,8 +270,6 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         //add observation 
         //*********THIS IS FOR NUMBER OF STATIONS!
         for (int stNum = 0; stNum < stD.getNumberOfStations(); stNum++) {
-
-
             document = XMLDomUtils.addObservationElement(document);
             //add description
             document = XMLDomUtils.addNodeAndValue(document, "om:Observation", "gml:description", getDescription(), stNum);
@@ -366,8 +359,8 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         return XMLDomUtils.getAttributeFromNode(document, "om:Observation", "om:observedProperty", "xlink:href");
     }
 
-    public String createObsValuesString(int stNum) throws Exception {    
-       
+    public String createObsValuesString(int stNum) throws Exception {
+
         return stD.getDataResponse(stNum);
     }
 
@@ -398,13 +391,13 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     }
 
     private String getStationLowerLatLonStr(int stNum) {
-         return (new StringBuilder()).append(formatDegree(stD.getLowerLat(stNum))).append(" ").append(formatDegree(stD.getLowerLon(stNum))).append(" ").append("0").toString();
+        return (new StringBuilder()).append(formatDegree(stD.getLowerLat(stNum))).append(" ").append(formatDegree(stD.getLowerLon(stNum))).append(" ").append("0").toString();
     }
 
     private String getStationUpperLatLonStr(int stNum) {
         return (new StringBuilder()).append(formatDegree(stD.getUpperLat(stNum))).append(" ").append(formatDegree(stD.getUpperLon(stNum))).append(" ").append("0").toString();
     }
-    
+
     /**
      * get the upper lat lon string
      * @return 
@@ -420,5 +413,4 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     private String getBoundLowerLatLonStr() {
         return (new StringBuilder()).append(formatDegree(stD.getBoundLowerLat())).append(" ").append(formatDegree(stD.getBoundLowerLon())).append(" ").append("0").toString();
     }
-    
 }
