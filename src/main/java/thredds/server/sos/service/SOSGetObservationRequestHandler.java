@@ -61,28 +61,22 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         this.variableNames = checkNetcdfFileForHeight(heightAxis, variableNames);
         
         this.eventTime = eventTime;
+        
+        /*
         isMultiTime = false;
-
-
         if (this.eventTime.length == 2) {
             //it is a multi time
             isMultiTime = true;
         }
+         * 
+         */
         
         //one per request
         stD = new StationData(stationName, eventTime,this.variableNames);
 
-
-
-        //added logic block abird
+        //Time Series
         if (getFeatureCollection() != null) {
             stD.setData(getFeatureCollection());
-
-            //************REMOVE!!!!!!!!!!!!!!!!!
-            //station = getFeatureCollection().getStation(this.stationName);
-            //stationTimeSeriesFeature = getFeatureCollection().getStationFeature(station);
-            //stationTimeSeriesFeature.calcBounds();
-
         }
 
         //profile Collection
@@ -90,31 +84,12 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         //get the station profile based on station name
         if (getFeatureProfileCollection() != null) {
             stD.setData(getFeatureProfileCollection());
-
-
-            //************REMOVE!!!!!!!!!!!!!!!!!
-            //station = getFeatureProfileCollection().getStation(this.stationName);
-            //stationProfileFeature = getFeatureProfileCollection().getStationProfileFeature(station);
         }
 
         //profile
         //gets the profile based on event time
         if (getProfileFeatureCollection() != null) {
             stD.setData(getProfileFeatureCollection());
-
-
-            pfc = getProfileFeatureCollection();
-            if (isMultiTime == false) {
-                //set the correct requested profile
-                while (pfc.hasNext()) {
-                    ProfileFeature pFeature = pfc.next();
-
-                    if (pFeature.getName().equals(eventTime[0])) {
-                        profileF = pFeature;
-                    }
-                }
-            }
-
         }
 
     }
@@ -122,7 +97,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     public StationData getStationData() {
         return stD;
     }
-
+/*
     public void addProfileData(List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, Joiner tokenJoiner, PointFeatureIterator profileIterator) throws IOException {
         //set the iterator the the correct profile
         while (profileIterator.hasNext()) {
@@ -164,6 +139,8 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         return profileID;
     }
 
+     * 
+     */
     /*
     public void parseMultiTimeEventTimeSeries(DateFormatter df, Chronology chrono, PointFeature pointFeature, List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, Joiner tokenJoiner) throws IOException {
         //get start/end date based on iso date format date        
@@ -431,6 +408,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
 
      * 
      */
+    /*
     private String createProfileFeature() throws IOException {
 
         StringBuilder builder = new StringBuilder();
@@ -481,6 +459,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         }
 
     }
+    */
 
     public String getSystemGMLID() {
         return XMLDomUtils.getObsGMLIDAttributeFromNode(document, "om:ObservationCollection", "gml:id");
@@ -642,22 +621,8 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     }
 
     public String createObsValuesString(int stNum) throws Exception {    
-
-        
+       
         return stD.getDataResponse(stNum);
-
-        //****************************************
-        //Profile
-        //looks for profileFeature or the collection depending on eventTime
-        /*
-        if (profileF != null || pfc != null) {
-            return createProfileFeature();
-        }
-
-        //all else fails
-        return null;
-         * 
-         */
     }
 
     private void setObsCollectionMetaData() {

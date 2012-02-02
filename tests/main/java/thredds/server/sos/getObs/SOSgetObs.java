@@ -520,9 +520,7 @@ public static final String timeSeriesTimeRequestT1 = "request=GetObservation&ver
         assertTrue("Station 1 T3A0",write.toString().contains("1990-01-01T03:00:00Z,9.0,225.0")); 
         assertTrue("Station 1 T3A1",write.toString().contains("1990-01-01T03:00:00Z,9.3,232.5"));         
         assertTrue("Station 1 T3A2",write.toString().contains("1990-01-01T03:00:00Z,11.4,285.0")); 
-        assertTrue("Station 1 T3A3",write.toString().contains("1990-01-01T03:00:00Z,11.8,295")); 
-        
-        
+        assertTrue("Station 1 T3A3",write.toString().contains("1990-01-01T03:00:00Z,11.8,295"));         
         
         assertTrue("Station 2 T0A0",write.toString().contains("1990-01-01T04:00:00Z,12.0,300.0")); 
         assertTrue("Station 2 T0A1",write.toString().contains("1990-01-01T04:00:00Z,13.5,337.5"));         
@@ -534,21 +532,42 @@ public static final String timeSeriesTimeRequestT1 = "request=GetObservation&ver
         assertTrue("Station 2 T3A3",write.toString().contains("1990-01-01T05:00:00Z,17.8,445.0")); 
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
     //**********************************
     //PROFILE TEST
     
     public static final String profileRequest = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,humidity&offering=0&eventTime=1990-01-01T00:00:00Z";
     public static final String profileRequestIndexed = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,humidity&offering=1&eventTime=1990-01-01T01:00:00Z";
     
-    public static final String profileRequestMultiTime = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,humidity&offering=1,2,3,4,5&eventTime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z";
+    public static final String profileRequestMultiTime = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,humidity&offering=1,2,3&eventTime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z";
+    
+    public static final String profileRequestMultiTime2 = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,humidity&offering=1,2&eventTime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z";
+    
+    
+     public static final String profileRequestMultiTime3 = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,humidity&offering=3&eventTime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z";
+    
+    
+      @Test
+    public void testContiguousRaggedMultipleProfilesMultiTime3() throws IOException {
+        spaceBetweenTests();
+        System.out.println("----ContiguousRaggedMultipleProfiles------");
+        NetcdfDataset dataset = NetcdfDataset.openDataset(ContiguousRaggedMultipleProfiles);
+        MetadataParser md = new MetadataParser();
+        Writer write = new CharArrayWriter();
+        md.enhance(dataset, write, profileRequestMultiTime3, ContiguousRaggedMultipleProfiles);
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "ContiguousRaggedMultipleProfilesMultiTime3.xml";
+        fileWriter(base, fileName, write);
+        dataAvailableInOutputFile(write);
+        //check depth was entered auto
+        assertTrue("depth not added",write.toString().contains("<swe:field name=\"z\">"));   
+        assertFalse("data missing",write.toString().contains("<om:featureOfInterest xlink:href=\"1990-01-01T03:00:00Z\"/>"));
+        assertFalse("data missing",write.toString().contains("1990-01-01T01:00:00Z,")); 
+        assertFalse("data missing",write.toString().contains("1990-01-01T02:00:00Z,")); 
+        System.out.println("----------end-----------");
+    }
+     
     
     @Test
     public void testContiguousRaggedMultipleProfilesMultiTime() throws IOException {
@@ -566,13 +585,38 @@ public static final String timeSeriesTimeRequestT1 = "request=GetObservation&ver
         dataAvailableInOutputFile(write);
         //check depth was entered auto
         assertTrue("depth not added",write.toString().contains("<swe:field name=\"z\">"));   
-        assertTrue("data missing",write.toString().contains("1990-01-01T00:00:00Z,")); 
+        assertFalse("data missing",write.toString().contains("<om:featureOfInterest xlink:href=\"1990-01-01T00:00:00Z\"/>"));
+        assertTrue("data missing",write.toString().contains("<om:featureOfInterest xlink:href=\"1990-01-01T01:00:00Z\"/>"));
+        assertTrue("data missing",write.toString().contains("<om:featureOfInterest xlink:href=\"1990-01-01T02:00:00Z\"/>"));
+        assertTrue("data missing",write.toString().contains("<om:featureOfInterest xlink:href=\"1990-01-01T03:00:00Z\"/>"));
         assertTrue("data missing",write.toString().contains("1990-01-01T01:00:00Z,")); 
         assertTrue("data missing",write.toString().contains("1990-01-01T02:00:00Z,")); 
         
         System.out.println("----------end-----------");
     }
     
+    @Test
+    public void testContiguousRaggedMultipleProfilesMultiTime2() throws IOException {
+        spaceBetweenTests();
+        System.out.println("----ContiguousRaggedMultipleProfiles------");
+        NetcdfDataset dataset = NetcdfDataset.openDataset(ContiguousRaggedMultipleProfiles);
+        MetadataParser md = new MetadataParser();
+        Writer write = new CharArrayWriter();
+        md.enhance(dataset, write, profileRequestMultiTime2, ContiguousRaggedMultipleProfiles);
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "ContiguousRaggedMultipleProfilesMultiTime2.xml";
+        fileWriter(base, fileName, write);
+        dataAvailableInOutputFile(write);
+        //check depth was entered auto
+        assertTrue("depth not added",write.toString().contains("<swe:field name=\"z\">"));   
+        assertFalse("data missing",write.toString().contains("1990-01-01T00:00:00Z,")); 
+        assertTrue("data missing",write.toString().contains("1990-01-01T01:00:00Z,")); 
+        assertTrue("data missing",write.toString().contains("1990-01-01T02:00:00Z,")); 
+        
+        System.out.println("----------end-----------");
+    }
     
     
     @Test
