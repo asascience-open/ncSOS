@@ -20,6 +20,8 @@ import ucar.unidata.geoloc.Station;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import ucar.nc2.ft.PointFeature;
+import ucar.nc2.ft.PointFeatureIterator;
 import ucar.nc2.units.DateFormatter;
 
 /**
@@ -225,16 +227,26 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         //PROFILE
         //profiles differ depending on type
         ProfileFeatureCollection profileCollection = getProfileFeatureCollection();
+        String profileID =null;
 
         if (profileCollection != null) {
             
             //profiles act like stations at present
             while (profileCollection.hasNext()) {
                 ProfileFeature pFeature = profileCollection.next();
+                
+                //scan through the data and get the profile id number
+                PointFeatureIterator pp = pFeature.getPointFeatureIterator(-1);
+                while (pp.hasNext()) {
+                    PointFeature pointFeature = pp.next();
+                    profileID = StationData.getProfileIDFromProfile(pointFeature);
+                    //System.out.println(profileID);
+                    break;
+                }
+
                 //attributes
                 SOSObservationOffering newOffering = new SOSObservationOffering();
 
-                newOffering.setObservationStationID(getGMLID(pFeature.getName()));
                 newOffering.setObservationStationLowerCorner(Double.toString(pFeature.getLatLon().getLatitude()), Double.toString(pFeature.getLatLon().getLongitude()));
                 newOffering.setObservationStationUpperCorner(Double.toString(pFeature.getLatLon().getLatitude()), Double.toString(pFeature.getLatLon().getLongitude()));
 
@@ -252,14 +264,21 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                 
                 
                 newOffering.setObservationStationDescription(pFeature.getCollectionFeatureType().toString());
-                newOffering.setObservationName(getGMLName((pFeature.getName())));
-                newOffering.setObservationSrsName("EPSG:4326");  // TODO?
+                if (profileID!=null){
+                newOffering.setObservationStationID("PROFILE_"+profileID);    
+                newOffering.setObservationProcedureLink(getGMLName("PROFILE_"+profileID));
+                newOffering.setObservationName(getGMLName(profileID));
+                newOffering.setObservationFeatureOfInterest(getFeatureOfInterest("PROFILE_"+profileID));    
+                }
+                else{
+                newOffering.setObservationFeatureOfInterest(getFeatureOfInterest(pFeature.getName()));    
+                newOffering.setObservationStationID(getGMLID(pFeature.getName()));   
                 newOffering.setObservationProcedureLink(getGMLName((pFeature.getName())));
-
-                newOffering.setObservationObserveredList(observedPropertyList);
                 newOffering.setObservationFeatureOfInterest(getFeatureOfInterest(pFeature.getName()));
+                }
+                newOffering.setObservationSrsName("EPSG:4326");  // TODO?  
+                newOffering.setObservationObserveredList(observedPropertyList);
                 newOffering.setObservationFormat(format);
-
                 addObsOfferingToDoc(newOffering);
             }
             
@@ -343,7 +362,8 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
 
                 newOffering.setObservationStationDescription(feature.getDescription());
                 newOffering.setObservationName(getGMLName((stationName)));
-                newOffering.setObservationSrsName("EPSG:4326");  // TODO?
+                newOffering.setObservationSrsName("EPSG:4326");  // TODO? 
+                
                 newOffering.setObservationProcedureLink(getGMLName((stationName)));
 
                 newOffering.setObservationObserveredList(observedPropertyList);

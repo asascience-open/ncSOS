@@ -122,7 +122,7 @@ public class SOSgetObs {
     public static final String timeSeriesIncompleteMulti = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=Station-9&eventtime=1990-01-01T00:00:00Z/1990-01-01T10:00:00Z";
     public static final String timeSeriesIncompleteMultiInvalid = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=Station-9&eventtime=1990-02-01T00:00:00Z/1990-05-01T10:00:00Z";
     public static final String timeSeriesIncompleteMultiStation = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=Station-9,Station-8&eventtime=1990-01-01T00:00:00Z/1990-01-01T8:00:00Z";
-    public static final String timeSeriesIncompleteMultiStationx3 = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=Station-9,Station-8,Station-7&eventtime=1990-01-01T00:00:00Z/1990-01-01T8:00:00Z";
+    public static final String timeSeriesIncompleteMultiStationx3 = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=urn:tds:station.sos:Station-9,urn:tds:station.sos:Station-8,urn:tds:station.sos:Station-7&eventtime=1990-01-01T00:00:00Z/1990-01-01T8:00:00Z";
 
     @Test
     public void testMultiTimeCreateDataStruct3Stations() throws IOException {

@@ -2,6 +2,8 @@ package thredds.server.sos.service;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.transform.Result;
@@ -139,16 +141,28 @@ public class MetadataParser {
                 } else if (splitServiceStr[0].equalsIgnoreCase("offering")) {
                     //replace all the eccaped : with real ones
                     String temp = splitServiceStr[1];
-                    if(temp.contains(":")){
-                        String[] splitStr = temp.split(":");
-                        temp = splitStr[splitStr.length-1];
-                    }
                     String replaceOffer = temp.replaceAll("%3A", ":");
-                    if (replaceOffer.contains(",")) {
-                    MetadataParser.offering = replaceOffer.split(",");
-                    }else{
-                    MetadataParser.offering = new String[]{replaceOffer};    
+                    
+                    //split on ,
+                    String[] howManyStation = replaceOffer.split(","); 
+                    
+                    List<String> stList = new ArrayList<String>();
+                    
+                    for (int j = 0; j < howManyStation.length; j++) {
+                        //split on :
+                        String[] splitStr = howManyStation[j].split(":");
+                        String stationName = splitStr[splitStr.length-1];
+                        stList.add(stationName);
                     }
+                    
+                    //String[] toArray = (String[] )stList.toArray();
+                    //MetadataParser.offering = toArray;
+                    
+                    Object[] objectArray = stList.toArray();
+                    String[] array = (String[])stList.toArray(new String[stList.size()]);
+                    
+                    MetadataParser.offering = array;
+                    
                 } else if (splitServiceStr[0].equalsIgnoreCase("eventtime")) {
 
                     MetadataParser.singleEventTime = splitServiceStr[1];

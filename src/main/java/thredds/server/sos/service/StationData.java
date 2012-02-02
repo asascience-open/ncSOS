@@ -620,7 +620,7 @@ public class StationData {
         builder.append("\n");
     }
 
-    public String getProfileIDFromProfile(PointFeature pointFeature) {
+    public static String getProfileIDFromProfile(PointFeature pointFeature) {
         String profileID = null;
         //Try and get profileID
         try {
