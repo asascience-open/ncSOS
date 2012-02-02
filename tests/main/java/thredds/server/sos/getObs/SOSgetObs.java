@@ -536,14 +536,10 @@ public static final String timeSeriesTimeRequestT1 = "request=GetObservation&ver
     //PROFILE TEST
     
     public static final String profileRequest = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,humidity&offering=0&eventTime=1990-01-01T00:00:00Z";
-    public static final String profileRequestIndexed = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,humidity&offering=1&eventTime=1990-01-01T01:00:00Z";
-    
+    public static final String profileRequestIndexed = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,humidity&offering=1&eventTime=1990-01-01T01:00:00Z/1990-01-01T04:00:00Z";    
     public static final String profileRequestMultiTime = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,humidity&offering=1,2,3&eventTime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z";
-    
     public static final String profileRequestMultiTime2 = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,humidity&offering=1,2&eventTime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z";
-    
-    
-     public static final String profileRequestMultiTime3 = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,humidity&offering=3&eventTime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z";
+    public static final String profileRequestMultiTime3 = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature,humidity&offering=3&eventTime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z";
     
     
       @Test
@@ -562,7 +558,7 @@ public static final String timeSeriesTimeRequestT1 = "request=GetObservation&ver
         //dataAvailableInOutputFile(write);
         //check depth was entered auto
         assertTrue("depth not added",write.toString().contains("<swe:field name=\"z\">"));   
-        assertTrue("data missing",write.toString().contains("<om:featureOfInterest xlink:href=\"1990-01-01T03:00:00Z\"/>"));
+        assertTrue("data missing",write.toString().contains("<om:featureOfInterest xlink:href=\"PROFILE_3\"/>"));
         assertFalse("data missing",write.toString().contains("1990-01-01T01:00:00Z,")); 
         assertFalse("data missing",write.toString().contains("1990-01-01T02:00:00Z,")); 
         System.out.println("----------end-----------");
@@ -585,10 +581,10 @@ public static final String timeSeriesTimeRequestT1 = "request=GetObservation&ver
         dataAvailableInOutputFile(write);
         //check depth was entered auto
         assertTrue("depth not added",write.toString().contains("<swe:field name=\"z\">"));   
-        assertFalse("data missing",write.toString().contains("<om:featureOfInterest xlink:href=\"1990-01-01T00:00:00Z\"/>"));
-        assertTrue("data missing",write.toString().contains("<om:featureOfInterest xlink:href=\"1990-01-01T01:00:00Z\"/>"));
-        assertTrue("data missing",write.toString().contains("<om:featureOfInterest xlink:href=\"1990-01-01T02:00:00Z\"/>"));
-        assertTrue("data missing",write.toString().contains("<om:featureOfInterest xlink:href=\"1990-01-01T03:00:00Z\"/>"));
+        assertFalse("data missing",write.toString().contains("<om:featureOfInterest xlink:href=\"PROFILE_0\"/>"));
+        assertTrue("data missing",write.toString().contains("<om:featureOfInterest xlink:href=\"PROFILE_1\"/>"));
+        assertTrue("data missing",write.toString().contains("<om:featureOfInterest xlink:href=\"PROFILE_2\"/>"));
+        assertTrue("data missing",write.toString().contains("<om:featureOfInterest xlink:href=\"PROFILE_3\"/>"));
         assertTrue("data missing",write.toString().contains("1990-01-01T01:00:00Z,")); 
         assertTrue("data missing",write.toString().contains("1990-01-01T02:00:00Z,")); 
         
@@ -701,7 +697,6 @@ public static final String timeSeriesTimeRequestT1 = "request=GetObservation&ver
 
     @Test
     public void testOrthogonalSingleDimensionalSingleProfile() throws IOException {
-        fail("maybe issue with the file");
         spaceBetweenTests();
         System.out.println("----OrthogonalSingleDimensionalSingleProfile------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(OrthogonalSingleDimensionalSingleProfile);
