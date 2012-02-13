@@ -37,6 +37,10 @@ public class SOSgetObs {
     private static String imeds11 = "tests/main/resources/datasets/sura/watlev_CRMS_2008.F.C__IKE_VIMS_3D_WITHWAVE.nc";
     private static String imeds12 = "tests/main/resources/datasets/sura/watlev_CSI.nc";
     
+    private static String imeds13 = "tests/main/resources/datasets/sura/watlev_IKE.nc";
+    private static String imeds14 = "tests/main/resources/datasets/sura/watlev_IKE.P.UL-Ike2Dh.61.nc";
+    private static String imeds15 = "tests/main/resources/datasets/sura/watlev_NOAA_NAVD_PRE.nc";
+    
     //timeseries
     private static String tsIncompleteMultiDimensionalMultipleStations = "tests/main/resources/datasets/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc";
     private static String tsOrthogonalMultidimenstionalMultipleStations = "tests/main/resources/datasets/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1.nc";
@@ -359,6 +363,79 @@ public class SOSgetObs {
         System.out.println("----------end-----------");
     }    
       
+     public static final String imeds13Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=watlev&offering=CSI_06,CSI_09&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
+
+     
+       @Test
+    public void testenhanceImeds13() throws IOException {
+
+         System.out.println("----IMEDS13------");
+        NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
+
+        MetadataParser md = new MetadataParser();
+        Writer write = new CharArrayWriter();
+        md.enhance(dataset, write, imeds13Req, imeds13);
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "imeds13.xml";
+        fileWriter(base, fileName, write);
+        dataAvailableInOutputFile(write);
+        
+        assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_06\">"));
+     assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_09\">"));
+        
+        System.out.println("----------end-----------");
+    }    
+      
+         @Test
+    public void testenhanceImeds14() throws IOException {
+
+         System.out.println("----IMEDS14------");
+        NetcdfDataset dataset = NetcdfDataset.openDataset(imeds14);
+
+        MetadataParser md = new MetadataParser();
+        Writer write = new CharArrayWriter();
+        md.enhance(dataset, write, imeds13Req, imeds14);
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "imeds14.xml";
+        fileWriter(base, fileName, write);
+        dataAvailableInOutputFile(write);
+        
+        assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_06\">"));
+     assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_09\">"));
+        
+        System.out.println("----------end-----------");
+    }    
+        
+     public static final String imeds15Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=watlev&offering=NOAA_8727235,NOAA_8729501&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
+
+           
+           @Test
+    public void testenhanceImeds15() throws IOException {
+
+         System.out.println("----IMEDS15------");
+        NetcdfDataset dataset = NetcdfDataset.openDataset(imeds15);
+
+        MetadataParser md = new MetadataParser();
+        Writer write = new CharArrayWriter();
+        md.enhance(dataset, write, imeds15Req, imeds15);
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "imeds15.xml";
+        fileWriter(base, fileName, write);
+        dataAvailableInOutputFile(write);
+        
+        assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:NOAA_8727235\">"));
+        assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:NOAA_8729501\">"));
+        
+        System.out.println("----------end-----------");
+    }    
+      
+         
      
      
      

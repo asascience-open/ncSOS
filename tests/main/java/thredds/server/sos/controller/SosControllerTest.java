@@ -5,8 +5,6 @@
 
 package thredds.server.sos.controller;
 
-import com.mockrunner.mock.web.MockHttpServletRequest;
-import com.mockrunner.mock.web.MockHttpServletResponse;
 import java.util.List;
 import javax.servlet.ServletException;
 import org.junit.Test;
@@ -78,6 +76,7 @@ public class SosControllerTest {
     assertTrue(doc2!=null);
     }
 
+     /*
     @Test
     public void testMockResAndReq() throws ServletException, IOException {
 
@@ -100,8 +99,10 @@ public class SosControllerTest {
     SosController sos = new SosController();
     sos.handleMetadataRequest(mockReq, mockRes);
 
-
-    }
+       }
+      * 
+      */
+    
 
 
 

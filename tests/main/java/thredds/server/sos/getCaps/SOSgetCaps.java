@@ -36,15 +36,34 @@ import ucar.unidata.geoloc.LatLonRect;
  */
 public class SOSgetCaps {
 
+        //imeds data
+    private static String imeds1 = "tests/main/resources/datasets/sura/Hsig_UNDKennedy_IKE_VIMS_3D_WAVEONLY.nc";
+    private static String imeds2 = "tests/main/resources/datasets/sura/andrw.lft.nc";
+    private static String imeds3 = "tests/main/resources/datasets/sura/audry.bpt.nc";
+    private static String imeds4 = "tests/main/resources/datasets/sura/hs_USACE-CHL.nc";
+    private static String imeds5 = "tests/main/resources/datasets/sura/hwm_TCOON_NAVD88.nc";
+    private static String imeds6 = "tests/main/resources/datasets/sura/tm_CSI.nc";
+    private static String imeds7 = "tests/main/resources/datasets/sura/tm_IKE.nc";
+    private static String imeds8 = "tests/main/resources/datasets/sura/watlev_CRMS.nc";
+    private static String imeds9 = "tests/main/resources/datasets/sura/watlev_CRMS_2005.nc";
+    private static String imeds10 = "tests/main/resources/datasets/sura/watlev_CRMS_2008.F.C_IKE_VIMS_3D_NOWAVE.nc";
+    private static String imeds11 = "tests/main/resources/datasets/sura/watlev_CRMS_2008.F.C__IKE_VIMS_3D_WITHWAVE.nc";
+    private static String imeds12 = "tests/main/resources/datasets/sura/watlev_CSI.nc";
+    
+    private static String imeds13 = "tests/main/resources/datasets/sura/watlev_IKE.nc";
+    private static String imeds14 = "tests/main/resources/datasets/sura/watlev_IKE.P.UL-Ike2Dh.61.nc";
+    private static String imeds15 = "tests/main/resources/datasets/sura/watlev_NOAA_NAVD_PRE.nc";
+    
+    
      //timeseries
     private static String tsIncompleteMultiDimensionalMultipleStations = "tests/main/resources/datasets/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc";
     private static String tsOrthogonalMultidimenstionalMultipleStations = "tests/main/resources/datasets/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1.nc";
     
     
-    private static String imedsLocation = "C://Program Files//Apache Software Foundation//Apache Tomcat 6.0.26//content//thredds//public//imeds//watlev_NOAA.F.C_IKE_VIMS_3D_WITHWAVE.nc";
-    private static String NOAA_NDBC = "C://Documents and Settings//abird//My Documents//NetBeansProjects//ncSOS//tests//main//resources//datasets//NOAA_NDBC_42035_2008met.nc";
-    private static String imedsLocation1 = "C://Program Files//Apache Software Foundation//Apache Tomcat 6.0.26//content//thredds//public//imeds//watlev_TCOON.F.C.nc";
-    private static String imedsLocationNew = "C://Program Files//Apache Software Foundation//Apache Tomcat 6.0.26//content//thredds//public//imeds//watlev_TCOON.F.C.new.nc";
+    //private static String imedsLocation = "C://Program Files//Apache Software Foundation//Apache Tomcat 6.0.26//content//thredds//public//imeds//watlev_NOAA.F.C_IKE_VIMS_3D_WITHWAVE.nc";
+    //private static String NOAA_NDBC = "C://Documents and Settings//abird//My Documents//NetBeansProjects//ncSOS//tests//main//resources//datasets//NOAA_NDBC_42035_2008met.nc";
+    //private static String imedsLocation1 = "C://Program Files//Apache Software Foundation//Apache Tomcat 6.0.26//content//thredds//public//imeds//watlev_TCOON.F.C.nc";
+    //private static String imedsLocationNew = "C://Program Files//Apache Software Foundation//Apache Tomcat 6.0.26//content//thredds//public//imeds//watlev_TCOON.F.C.new.nc";
 //ragged Array - timeseries profile
     private static String RaggedSingleConventions = "tests/main/resources/datasets/timeSeriesProfile-Ragged-SingleStation-H.5.3/timeSeriesProfile-Ragged-SingleStation-H.5.3.nc";
     private static String RaggedMultiConventions = "tests/main/resources/datasets/timeSeriesProfile-Ragged-MultipeStations-H.5.3/timeSeriesProfile-Ragged-MultipeStations-H.5.3.nc";
@@ -72,6 +91,46 @@ public class SOSgetCaps {
         output.close();
         System.out.println("Your file has been written");
     }
+    
+    
+    @Test
+    public void testLargeDatasets() throws IOException {
+         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
+
+        MetadataParser md = new MetadataParser();
+        Writer write = new CharArrayWriter();
+        
+        long start = System.currentTimeMillis();
+        
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", imeds13);
+        
+        long elapsedTimeMillis = System.currentTimeMillis() - start;
+        float elapsedTimeSec = elapsedTimeMillis / 1000F;
+
+        System.out.println("Time To Complete Mil: " + elapsedTimeMillis + ": SEC: " + elapsedTimeSec);
+
+        
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "largeDataSetIKE.xml";
+        fileWriter(base, fileName, write);
+        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 //**********************************
 //TIMESERIES TEST
     @Test
@@ -287,7 +346,7 @@ public class SOSgetCaps {
         //3.SOSgetcaps
         //2.sos metadata parser
         //1.sos controller  
-        NetcdfDataset dataset = NetcdfDataset.openDataset(imedsLocation);
+        NetcdfDataset dataset = NetcdfDataset.openDataset(imeds1);
 
         SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, "imeds");
         handler.parseServiceIdentification();
@@ -298,7 +357,7 @@ public class SOSgetCaps {
         //3.SOSgetcaps
         //2.sos metadata parser
         //1.sos controller  
-        NetcdfDataset dataset = NetcdfDataset.openDataset(imedsLocation);
+        NetcdfDataset dataset = NetcdfDataset.openDataset(imeds1);
 
         SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, "imeds");
         handler.parseServiceIdentification();
@@ -310,7 +369,7 @@ public class SOSgetCaps {
         //3.SOSgetcaps
         //2.sos metadata parser
         //1.sos controller  
-        NetcdfDataset dataset = NetcdfDataset.openDataset(imedsLocation);
+        NetcdfDataset dataset = NetcdfDataset.openDataset(imeds1);
 
         SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, "imeds");
         handler.parseServiceIdentification();
@@ -323,7 +382,7 @@ public class SOSgetCaps {
         //3.SOSgetcaps
         //2.sos metadata parser
         //1.sos controller  
-        NetcdfDataset dataset = NetcdfDataset.openDataset(imedsLocation);
+        NetcdfDataset dataset = NetcdfDataset.openDataset(imeds1);
 
         SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, "imeds");
         handler.parseServiceIdentification();
@@ -337,7 +396,7 @@ public class SOSgetCaps {
         //3.SOSgetcaps
         //2.sos metadata parser
         //1.sos controller  
-        NetcdfDataset dataset = NetcdfDataset.openDataset(NOAA_NDBC);
+        NetcdfDataset dataset = NetcdfDataset.openDataset(imeds15);
 
         String cdm_datatype = dataset.findAttValueIgnoreCase(null, "cdm_data_type", null);
         System.out.println(cdm_datatype);
@@ -350,7 +409,7 @@ public class SOSgetCaps {
 
     @Test
     public void testImedsNetcdfFileDoeNotCauseNullObject() throws IOException {
-        NetcdfDataset dataset = NetcdfDataset.openDataset(imedsLocation);
+        NetcdfDataset dataset = NetcdfDataset.openDataset(imeds1);
         String cdm_datatype = dataset.findAttValueIgnoreCase(null, "cdm_data_type", null);
         System.out.println(cdm_datatype);
         FeatureDataset featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.STATION, dataset, null, new Formatter(System.err));
@@ -360,7 +419,8 @@ public class SOSgetCaps {
 
     @Test
     public void testStationFileNotNull() throws IOException {
-        NetcdfDataset dataset = NetcdfDataset.openDataset("C://Documents and Settings//abird//My Documents//NetBeansProjects//ncSOS//tests//main//resources//datasets//Station_42080_2008met.nc");
+        fail("Station file removed");
+        NetcdfDataset dataset = NetcdfDataset.openDataset(null);
         String cdm_datatype = dataset.findAttValueIgnoreCase(null, "cdm_data_type", null);
         System.out.println(cdm_datatype);
         FeatureDataset featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.STATION, dataset, null, new Formatter(System.err));
@@ -369,11 +429,11 @@ public class SOSgetCaps {
 
     @Test
     public void testenhanceImedsDataset() throws IOException {
-        NetcdfDataset dataset = NetcdfDataset.openDataset(imedsLocation);
+        NetcdfDataset dataset = NetcdfDataset.openDataset(imeds1);
 
         MetadataParser md = new MetadataParser();
         Writer write = new CharArrayWriter();
-        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", imedsLocation);
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", imeds1);
         write.flush();
         write.close();
         assertFalse(write.toString().contains("Exception"));
@@ -381,11 +441,11 @@ public class SOSgetCaps {
 
     @Test
     public void testenhanceNOAADataset() throws IOException {
-        NetcdfDataset dataset = NetcdfDataset.openDataset(NOAA_NDBC);
+        NetcdfDataset dataset = NetcdfDataset.openDataset(imeds15);
 
         MetadataParser md = new MetadataParser();
         Writer write = new CharArrayWriter();
-        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", NOAA_NDBC);
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", imeds15);
         write.flush();
         write.close();
         assertFalse(write.toString().contains("Exception"));
@@ -399,11 +459,11 @@ public class SOSgetCaps {
 
     @Test
     public void testenhanceNOAADataset2() throws IOException {
-        NetcdfDataset dataset = NetcdfDataset.openDataset(imedsLocation);
+        NetcdfDataset dataset = NetcdfDataset.openDataset(imeds15);
 
         MetadataParser md = new MetadataParser();
         Writer write = new CharArrayWriter();
-        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", imedsLocation);
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", imeds15);
         write.flush();
         write.close();
         assertFalse(write.toString().contains("Exception"));
@@ -414,31 +474,15 @@ public class SOSgetCaps {
         
     }
 
-    
-    
-    @Test
-    public void testenhanceTCOONDataset() throws IOException {
-        fail("issue with feature type: using imedsLocation Tcoon New");
-        NetcdfDataset dataset = NetcdfDataset.openDataset(imedsLocation1);
-
-        MetadataParser md = new MetadataParser();
-        Writer write = new CharArrayWriter();
-        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", imedsLocation1);
-        assertFalse(write.toString().contains("Exception"));
-        String fileName = "TCOON.xml";
-        fileWriter(base, fileName, write);
-        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
-        System.out.println("----end------");
-    }
 
     @Test
     public void testenhanceTCOONDatasetNew() throws IOException {
 
-        NetcdfDataset dataset = NetcdfDataset.openDataset(imedsLocationNew);
+        NetcdfDataset dataset = NetcdfDataset.openDataset(imeds5);
 
         MetadataParser md = new MetadataParser();
         Writer write = new CharArrayWriter();
-        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", imedsLocationNew);
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", imeds5);
         write.flush();
         write.close();
         assertFalse(write.toString().contains("Exception"));
