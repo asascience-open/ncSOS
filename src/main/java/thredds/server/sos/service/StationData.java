@@ -4,7 +4,6 @@
  */
 package thredds.server.sos.service;
 
-import com.google.common.base.Joiner;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +30,7 @@ import ucar.unidata.geoloc.Station;
  * @author abird
  * @version 
  *
- * {Insert class description here}
+ * stores the station data, easy to access and use, abstracts complexity of station information
  *
  */
 public class StationData {
@@ -389,27 +388,25 @@ public class StationData {
         StringBuilder builder = new StringBuilder();
         DateFormatter dateFormatter = new DateFormatter();
         List<String> valueList = new ArrayList<String>();
-        Joiner tokenJoiner = Joiner.on(',');
+        //Joiner tokenJoiner = Joiner.on(',');
         Chronology chrono = ISOChronology.getInstance();
 
         //int count = 0;
-
-
 
         while (iterator.hasNext()) {
             PointFeature pointFeature = iterator.next();
 
             //if no event time
             if (eventTimes == null) {
-                createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, tokenJoiner, stNum);
+                createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, stNum);
                 //count = (stationTimeSeriesFeature.size());
             } //if bounded event time        
             else if (eventTimes.size() > 1) {
-                parseMultiTimeEventTimeSeries(df, chrono, pointFeature, valueList, dateFormatter, builder, tokenJoiner, stNum);
+                parseMultiTimeEventTimeSeries(df, chrono, pointFeature, valueList, dateFormatter, builder, stNum);
             } //if single event time        
             else {
                 if (eventTimes.get(0).contentEquals(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()))) {
-                    createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, tokenJoiner, stNum);
+                    createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, stNum);
                 }
             }
         }
@@ -417,14 +414,22 @@ public class StationData {
         return builder.toString();
     }
 
-    private void createTimeSeriesData(List<String> valueList, DateFormatter dateFormatter, PointFeature pointFeature, StringBuilder builder, Joiner tokenJoiner, int stNum) throws IOException {
+    private void createTimeSeriesData(List<String> valueList, DateFormatter dateFormatter, PointFeature pointFeature, StringBuilder builder, int stNum) throws IOException {
         //count++;
         valueList.clear();
         valueList.add(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
         for (String variableName : variableNames) {
             valueList.add(pointFeature.getData().getScalarObject(variableName).toString());
         }
-        builder.append(tokenJoiner.join(valueList));
+     
+        for (int i = 0; i < valueList.size(); i++) {
+            builder.append(valueList.get(i));
+            if (i < valueList.size()-1){
+                builder.append(",");
+            }
+        }
+           
+        //builder.append(tokenJoiner.join(valueList));
         // TODO:  conditional inside loop...
         if (tsData.getStationFeature(tsStationList.get(stNum)).size() > 1) {
             builder.append(" ");
@@ -432,7 +437,7 @@ public class StationData {
         }
     }
 
-    public void parseMultiTimeEventTimeSeries(DateFormatter df, Chronology chrono, PointFeature pointFeature, List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, Joiner tokenJoiner, int stNum) throws IOException {
+    public void parseMultiTimeEventTimeSeries(DateFormatter df, Chronology chrono, PointFeature pointFeature, List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, int stNum) throws IOException {
         //get start/end date based on iso date format date        
 
         DateTime dtStart = new DateTime(df.getISODate(eventTimes.get(0)), chrono);
@@ -442,13 +447,13 @@ public class StationData {
         //find out if current time(searchtime) is one or after startTime
         //same as start
         if (tsDt.isEqual(dtStart)) {
-            createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, tokenJoiner, stNum);
+            createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, stNum);
         } //equal end
         else if (tsDt.isEqual(dtEnd)) {
-            createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, tokenJoiner, stNum);
+            createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, stNum);
         } //afterStart and before end       
         else if (tsDt.isAfter(dtStart) && (tsDt.isBefore(dtEnd))) {
-            createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, tokenJoiner, stNum);
+            createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, stNum);
         }
     }
 
@@ -462,8 +467,6 @@ public class StationData {
         StationProfileFeature stationProfileFeature = tsProfileData.getStationProfileFeature(tsStationList.get(stNum));
         List<Date> z = stationProfileFeature.getTimes();
 
-
-        Joiner tokenJoiner = Joiner.on(',');
         DateFormatter df = new DateFormatter();
         ProfileFeature pf = null;
 
@@ -475,7 +478,7 @@ public class StationData {
             //test getting items by date(index(0))
             for (int i = 0; i < z.size(); i++) {
                 pf = stationProfileFeature.getProfileByDate(z.get(i));
-                createStationProfileData(pf, valueList, dateFormatter, builder, tokenJoiner, stNum);
+                createStationProfileData(pf, valueList, dateFormatter, builder, stNum);
             }
             return builder.toString();
         } else if (eventTimes.size() > 1) {
@@ -490,13 +493,13 @@ public class StationData {
                 //find out if current time(searchtime) is one or after startTime
                 //same as start
                 if (tsDt.isEqual(dtStart)) {
-                    createStationProfileData(pf, valueList, dateFormatter, builder, tokenJoiner, stNum);
+                    createStationProfileData(pf, valueList, dateFormatter, builder, stNum);
                 } //equal end
                 else if (tsDt.isEqual(dtEnd)) {
-                    createStationProfileData(pf, valueList, dateFormatter, builder, tokenJoiner, stNum);
+                    createStationProfileData(pf, valueList, dateFormatter, builder, stNum);
                 } //afterStart and before end       
                 else if (tsDt.isAfter(dtStart) && (tsDt.isBefore(dtEnd))) {
-                    createStationProfileData(pf, valueList, dateFormatter, builder, tokenJoiner, stNum);
+                    createStationProfileData(pf, valueList, dateFormatter, builder, stNum);
                 }
             }
             return builder.toString();
@@ -506,14 +509,14 @@ public class StationData {
 
                 if (df.toDateTimeStringISO(z.get(i)).contentEquals(eventTimes.get(0).toString())) {
                     pf = stationProfileFeature.getProfileByDate(z.get(i));
-                    createStationProfileData(pf, valueList, dateFormatter, builder, tokenJoiner, stNum);
+                    createStationProfileData(pf, valueList, dateFormatter, builder, stNum);
                 }
             }
             return builder.toString();
         }
     }
 
-    private void createStationProfileData(ProfileFeature pf, List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, Joiner tokenJoiner, int stNum) throws IOException {
+    private void createStationProfileData(ProfileFeature pf, List<String> valueList, DateFormatter dateFormatter, StringBuilder builder,  int stNum) throws IOException {
 
         PointFeatureIterator it = pf.getPointFeatureIterator(-1);
 
@@ -527,7 +530,16 @@ public class StationData {
             for (String variableName : variableNames) {
                 valueList.add(pointFeature.getData().getScalarObject(variableName).toString());
             }
-            builder.append(tokenJoiner.join(valueList));
+            
+            for (int i = 0; i < valueList.size(); i++) {
+            builder.append(valueList.get(i));
+            if (i < valueList.size()-1){
+                builder.append(",");
+            }
+             }
+            
+            
+            //builder.append(tokenJoiner.join(valueList));
             // TODO:  conditional inside loop...
             if (tsProfileData.getStationProfileFeature(tsStationList.get(stNum)).size() > 1) {
                 builder.append(" ");
@@ -544,7 +556,6 @@ public class StationData {
         StringBuilder builder = new StringBuilder();
         DateFormatter dateFormatter = new DateFormatter();
         List<String> valueList = new ArrayList<String>();
-        Joiner tokenJoiner = Joiner.on(',');
 
         //if multi Time
         if (eventTimes.size() > 1) {
@@ -566,13 +577,13 @@ public class StationData {
                     //find out if current time(searchtime) is one or after startTime
                     //same as start
                     if (tsDt.isEqual(dtStart)) {
-                        addProfileData(valueList, dateFormatter, builder, tokenJoiner, pFeature.getPointFeatureIterator(-1), stNum);
+                        addProfileData(valueList, dateFormatter, builder, pFeature.getPointFeatureIterator(-1), stNum);
                     } //equal end
                     else if (tsDt.isEqual(dtEnd)) {
-                        addProfileData(valueList, dateFormatter, builder, tokenJoiner, pFeature.getPointFeatureIterator(-1), stNum);
+                        addProfileData(valueList, dateFormatter, builder, pFeature.getPointFeatureIterator(-1), stNum);
                     } //afterStart and before end       
                     else if (tsDt.isAfter(dtStart) && (tsDt.isBefore(dtEnd))) {
-                        addProfileData(valueList, dateFormatter, builder, tokenJoiner, pFeature.getPointFeatureIterator(-1), stNum);
+                        addProfileData(valueList, dateFormatter, builder, pFeature.getPointFeatureIterator(-1), stNum);
                     }
                     //setCount(pFeature.size());
 
@@ -583,7 +594,7 @@ public class StationData {
         } //if not multiTime        
         else {
             ProfileFeature pFeature = profileList.get(stNum);
-            addProfileData(valueList, dateFormatter, builder, tokenJoiner, pFeature.getPointFeatureIterator(-1), stNum);
+            addProfileData(valueList, dateFormatter, builder, pFeature.getPointFeatureIterator(-1), stNum);
 
             //setCount(profileF.size());
             return builder.toString();
@@ -591,7 +602,7 @@ public class StationData {
 
     }
 
-    public void addProfileData(List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, Joiner tokenJoiner, PointFeatureIterator profileIterator, int stNum) throws IOException {
+    public void addProfileData(List<String> valueList, DateFormatter dateFormatter, StringBuilder builder,  PointFeatureIterator profileIterator, int stNum) throws IOException {
         //set the iterator the the correct profile
         while (profileIterator.hasNext()) {
             PointFeature pointFeature = profileIterator.next();
@@ -603,19 +614,27 @@ public class StationData {
             if (profileID != null) {
                 //System.out.println(profileID);
                 if (profileID.equalsIgnoreCase(stationNames.get(stNum))) {
-                    addProfileDataToBuilder(valueList, pointFeature, builder, tokenJoiner);
+                    addProfileDataToBuilder(valueList, pointFeature, builder);
                 }
             } else {
-                addProfileDataToBuilder(valueList, pointFeature, builder, tokenJoiner);
+                addProfileDataToBuilder(valueList, pointFeature, builder);
             }
         }
     }
 
-    public void addProfileDataToBuilder(List<String> valueList, PointFeature pointFeature, StringBuilder builder, Joiner tokenJoiner) throws IOException {
+    public void addProfileDataToBuilder(List<String> valueList, PointFeature pointFeature, StringBuilder builder) throws IOException {
         for (String variableName : variableNames) {
             valueList.add(pointFeature.getData().getScalarObject(variableName).toString());
         }
-        builder.append(tokenJoiner.join(valueList));
+        
+        for (int i = 0; i < valueList.size(); i++) {
+            builder.append(valueList.get(i));
+            if (i < valueList.size()-1){
+                builder.append(",");
+            }
+        }
+        
+        //builder.append(tokenJoiner.join(valueList));
         builder.append(" ");
         builder.append("\n");
     }

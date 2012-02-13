@@ -1,38 +1,16 @@
 package thredds.server.sos.service;
 
-import com.google.common.base.Joiner;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.joda.time.Chronology;
-import org.joda.time.DateTime;
-import org.joda.time.chrono.ISOChronology;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 import thredds.server.sos.util.XMLDomUtils;
-import ucar.nc2.Attribute;
-import ucar.nc2.Variable;
 
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.constants.AxisType;
 import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.dataset.NetcdfDataset;
-import ucar.nc2.ft.PointFeature;
-import ucar.nc2.ft.PointFeatureIterator;
-import ucar.nc2.ft.ProfileFeature;
-import ucar.nc2.ft.ProfileFeatureCollection;
-import ucar.nc2.ft.StationProfileFeature;
-import ucar.nc2.ft.StationTimeSeriesFeature;
-import ucar.nc2.units.DateFormatter;
-import ucar.unidata.geoloc.Station;
 
 /**
  * Get Observation Parser
@@ -44,12 +22,6 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     private String stationName;
     private String[] variableNames;
     private String[] eventTime;
-    private Station station;
-    private StationTimeSeriesFeature stationTimeSeriesFeature;
-    private StationProfileFeature stationProfileFeature;
-    private ProfileFeatureCollection pfc;
-    private ProfileFeature profileF;
-    private int count;
     private boolean isMultiTime;
     private final StationData stD;
 
@@ -360,7 +332,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     }
 
     public String createObsValuesString(int stNum) throws Exception {
-        setCount(variableNames.length+1);
+        setCount(variableNames.length+1,stNum);
         return stD.getDataResponse(stNum);
     }
 
@@ -386,8 +358,8 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         XMLDomUtils.setNodeValue(document, "om:Observation", "gml:EndPosition", time);
     }
 
-    private void setCount(int count) {
-        XMLDomUtils.setNodeValue(document, "om:Observation", "swe:value", Integer.toString(count));
+    private void setCount(int count,int StNum) {
+        XMLDomUtils.setNodeValue(document, "om:Observation", "swe:value", Integer.toString(count),StNum);
     }
 
     private String getStationLowerLatLonStr(int stNum) {

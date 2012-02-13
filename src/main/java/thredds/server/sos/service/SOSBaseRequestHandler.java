@@ -52,7 +52,7 @@ public abstract class SOSBaseRequestHandler {
         //change multi to single featureCollectionType - allowing for single variable - switch on feature Type
 
         //keep remove others
-        featureCollection = DiscreteSamplingGeometryUtil.extractStationTimeSeriesFeatureCollection(featureDataset);       
+        featureCollection = DiscreteSamplingGeometryUtil.extractStationTimeSeriesFeatureCollection(featureDataset);               
         
         //added abird
         featureCollectionProfileFeature = DiscreteSamplingGeometryUtil.extractStationProfileFeatureCollection(featureDataset);      

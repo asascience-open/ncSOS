@@ -71,7 +71,24 @@ public class XMLDomUtils {
       NodeList fstNm = fstNmElmnt1.getChildNodes();
       fstNm.item(0).setNodeValue(value);
     }
+    
+     public static void setNodeValue(Document doc, String container, String node, String value,int stationNumber) {
+      Element fstNmElmnt1 = getElementBaseOnContainerAndNode(doc, container,node,stationNumber);
+      NodeList fstNm = fstNmElmnt1.getChildNodes();
+      fstNm.item(0).setNodeValue(value);
+    }
 
+      private static Element getElementBaseOnContainerAndNode(Document doc, String container, String node,int stationNumber) {
+        NodeList serviceProviderNodeList = doc.getElementsByTagName(container);
+        //get the first node in the the list matching the above name
+        Node fstNode = serviceProviderNodeList.item(stationNumber);
+        //create an element from the node
+        Element fstElmnt = (Element) fstNode;
+        NodeList fstNm1 = fstElmnt.getElementsByTagName(node);
+        Element fstNmElmnt1 = (Element) fstNm1.item(0);
+        return fstNmElmnt1;
+    }
+     
     private static Element getElementBaseOnContainerAndNode(Document doc, String container, String node) {
         NodeList serviceProviderNodeList = doc.getElementsByTagName(container);
         //get the first node in the the list matching the above name

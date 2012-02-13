@@ -1,6 +1,8 @@
 package thredds.server.sos.service;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -8,6 +10,8 @@ import org.w3c.dom.DOMException;
 import thredds.server.sos.getCaps.ObservationOffering;
 import thredds.server.sos.getCaps.SOSObservationOffering;
 import thredds.server.sos.util.DiscreteSamplingGeometryUtil;
+import ucar.ma2.Array;
+import ucar.ma2.StructureMembers.Member;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.ft.ProfileFeature;
@@ -16,13 +20,19 @@ import ucar.nc2.ft.StationProfileFeature;
 import ucar.nc2.ft.StationProfileFeatureCollection;
 import ucar.nc2.ft.StationTimeSeriesFeature;
 import ucar.nc2.ft.StationTimeSeriesFeatureCollection;
+import ucar.nc2.time.CalendarDateRange;
+import ucar.unidata.geoloc.LatLonRect;
 import ucar.unidata.geoloc.Station;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.joda.time.Chronology;
+import org.joda.time.DateTime;
+import org.joda.time.chrono.ISOChronology;
 import ucar.nc2.ft.PointFeature;
 import ucar.nc2.ft.PointFeatureIterator;
 import ucar.nc2.units.DateFormatter;
+import ucar.nc2.units.DateRange;
 
 /**
  *
@@ -33,6 +43,8 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
     private final static String TEMPLATE = "templates/sosGetCapabilities.xml";
     private final String threddsURI;
     private final String format = "text/xml; subtype=\"om/1.0.0\"";
+    Chronology chrono = ISOChronology.getInstance();
+    DateFormatter dateFormatter = new DateFormatter();
 
     public SOSGetCapabilitiesRequestHandler(NetcdfDataset netCDFDataset, String threddsURI) throws IOException {
         super(netCDFDataset);
@@ -227,16 +239,17 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         //PROFILE
         //profiles differ depending on type
         ProfileFeatureCollection profileCollection = getProfileFeatureCollection();
-        String profileID =null;
+        String profileID = null;
+        PointFeatureIterator pp;
 
         if (profileCollection != null) {
-            
+
             //profiles act like stations at present
             while (profileCollection.hasNext()) {
                 ProfileFeature pFeature = profileCollection.next();
-                
+
                 //scan through the data and get the profile id number
-                PointFeatureIterator pp = pFeature.getPointFeatureIterator(-1);
+                pp = pFeature.getPointFeatureIterator(-1);
                 while (pp.hasNext()) {
                     PointFeature pointFeature = pp.next();
                     profileID = StationData.getProfileIDFromProfile(pointFeature);
@@ -251,37 +264,35 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                 newOffering.setObservationStationUpperCorner(Double.toString(pFeature.getLatLon().getLatitude()), Double.toString(pFeature.getLatLon().getLongitude()));
 
                 pFeature.calcBounds();
-                
+
                 //check the data
-                if (pFeature.getDateRange()!=null){
-                newOffering.setObservationTimeBegin(pFeature.getDateRange().getStart().toDateTimeStringISO());
-                newOffering.setObservationTimeEnd(pFeature.getDateRange().getEnd().toDateTimeStringISO());
-                }
-                //find the dates out!
-                else{
+                if (pFeature.getDateRange() != null) {
+                    newOffering.setObservationTimeBegin(pFeature.getDateRange().getStart().toDateTimeStringISO());
+                    newOffering.setObservationTimeEnd(pFeature.getDateRange().getEnd().toDateTimeStringISO());
+                } //find the dates out!
+                else {
                     System.out.println("no dates yet");
                 }
-                
-                
+
+
                 newOffering.setObservationStationDescription(pFeature.getCollectionFeatureType().toString());
-                if (profileID!=null){
-                newOffering.setObservationStationID("PROFILE_"+profileID);    
-                newOffering.setObservationProcedureLink(getGMLName("PROFILE_"+profileID));
-                newOffering.setObservationName(getGMLName(profileID));
-                newOffering.setObservationFeatureOfInterest(getFeatureOfInterest("PROFILE_"+profileID));    
-                }
-                else{
-                newOffering.setObservationFeatureOfInterest(getFeatureOfInterest(pFeature.getName()));    
-                newOffering.setObservationStationID(getGMLID(pFeature.getName()));   
-                newOffering.setObservationProcedureLink(getGMLName((pFeature.getName())));
-                newOffering.setObservationFeatureOfInterest(getFeatureOfInterest(pFeature.getName()));
+                if (profileID != null) {
+                    newOffering.setObservationStationID("PROFILE_" + profileID);
+                    newOffering.setObservationProcedureLink(getGMLName("PROFILE_" + profileID));
+                    newOffering.setObservationName(getGMLName(profileID));
+                    newOffering.setObservationFeatureOfInterest(getFeatureOfInterest("PROFILE_" + profileID));
+                } else {
+                    newOffering.setObservationFeatureOfInterest(getFeatureOfInterest(pFeature.getName()));
+                    newOffering.setObservationStationID(getGMLID(pFeature.getName()));
+                    newOffering.setObservationProcedureLink(getGMLName((pFeature.getName())));
+                    newOffering.setObservationFeatureOfInterest(getFeatureOfInterest(pFeature.getName()));
                 }
                 newOffering.setObservationSrsName("EPSG:4326");  // TODO?  
                 newOffering.setObservationObserveredList(observedPropertyList);
                 newOffering.setObservationFormat(format);
                 addObsOfferingToDoc(newOffering);
             }
-            
+
             if (profileCollection.isMultipleNested() == false) {
                 System.out.println("not nested");
             } else {
@@ -317,9 +328,9 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                 stationProfileFeature = getFeatureProfileCollection().getStationProfileFeature(station);
                 List<Date> times = stationProfileFeature.getTimes();
                 DateFormatter timePeriodFormatter = new DateFormatter();
-                 
+
                 newOffering.setObservationTimeBegin(timePeriodFormatter.toDateTimeStringISO(times.get(0)));
-                newOffering.setObservationTimeEnd(timePeriodFormatter.toDateTimeStringISO(times.get(times.size()-1)));  
+                newOffering.setObservationTimeEnd(timePeriodFormatter.toDateTimeStringISO(times.get(times.size() - 1)));
 
                 newOffering.setObservationStationDescription(feature.getDescription());
                 newOffering.setObservationName(getGMLName((stationName)));
@@ -329,51 +340,88 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                 newOffering.setObservationObserveredList(observedPropertyList);
 
                 newOffering.setObservationFeatureOfInterest(getFeatureOfInterest(stationName));
-                // TODO:
-                //            newOffering.setObservationModel("")
 
                 newOffering.setObservationFormat(format);
 
                 addObsOfferingToDoc(newOffering);
             }
         }
+        List<Member> zz;
+
         //***************************************
         //TIMESERIES
         if (featureCollection != null) {
-            //old
-            for (Station station : featureCollection.getStations()) {
 
-                String stationName = station.getName();
-                String stationLat = formatDegree(station.getLatitude());
-                String stationLon = formatDegree(station.getLongitude());
+            String stationName = null;
+            String stationLat = null;
+            String stationLon = null;
+            SOSObservationOffering newOffering = null;
+            StationTimeSeriesFeature feature = null;
+            DateTime startDate = null;
+            DateTime endDate = null;
 
-                SOSObservationOffering newOffering = new SOSObservationOffering();
+            int dataCount = 0;
 
+            List<Station> stationList = featureCollection.getStations();
+            PointFeature pointFeature;
+            for (int i = 0; i < stationList.size(); i++) {
+                feature = featureCollection.getStationFeature(stationList.get(i));
+                //feature = featureCollection.getStationFeature(station);
+                stationName = stationList.get(i).getName();
+                stationLat = formatDegree(stationList.get(i).getLatitude());
+                stationLon = formatDegree(stationList.get(i).getLongitude());
+                newOffering = new SOSObservationOffering();
                 newOffering.setObservationStationID(getGMLID(stationName));
                 newOffering.setObservationStationLowerCorner(stationLat, stationLon);
                 newOffering.setObservationStationUpperCorner(stationLat, stationLon);
 
-                StationTimeSeriesFeature feature = featureCollection.getStationFeature(station);
+                /*
+                feature.resetIteration();
+                long start = System.currentTimeMillis();
+                try {
+                    while (feature.hasNext()) {
+                        pointFeature = feature.next();
+                        
+                        DateTime ptDate = new DateTime(pointFeature.getObservationTimeAsDate(), chrono);
+                        if (startDate == null) {
+                            startDate = ptDate;
+                        }
+                        if (endDate == null) {
+                            endDate = ptDate;
+                        }
+                         
+                        
+                    }
+                } catch (Exception e) {
+                }
 
-                feature.calcBounds();
+                long elapsedTimeMillis = System.currentTimeMillis() - start;
+                float elapsedTimeSec = elapsedTimeMillis / 1000F;
+                System.out.println(dataCount + "," + elapsedTimeMillis + "," + elapsedTimeSec);
+                dataCount++;
 
-                newOffering.setObservationTimeBegin(feature.getDateRange().getStart().toDateTimeStringISO());
-                newOffering.setObservationTimeEnd(feature.getDateRange().getEnd().toDateTimeStringISO());
+                */
+                
+                if (stationList.size()<500){
+                    feature.calcBounds();
+                     newOffering.setObservationTimeBegin(feature.getDateRange().getStart().toDateTimeStringISO());
+                     newOffering.setObservationTimeEnd(feature.getDateRange().getEnd().toDateTimeStringISO());
+                }
+                
+                //feature.calcBounds();
+                //System.out.println(dataCount);
+                //newOffering.setObservationTimeBegin(feature.getDateRange().getStart().toDateTimeStringISO());
+                //newOffering.setObservationTimeEnd(feature.getDateRange().getEnd().toDateTimeStringISO());
 
+                //newOffering.setObservationTimeBegin(dateFormatter.toDateTimeStringISO(startDate.toDate()));
+                //newOffering.setObservationTimeEnd(dateFormatter.toDateTimeStringISO(endDate.toDate()));
                 newOffering.setObservationStationDescription(feature.getDescription());
                 newOffering.setObservationName(getGMLName((stationName)));
                 newOffering.setObservationSrsName("EPSG:4326");  // TODO? 
-                
                 newOffering.setObservationProcedureLink(getGMLName((stationName)));
-
                 newOffering.setObservationObserveredList(observedPropertyList);
-
                 newOffering.setObservationFeatureOfInterest(getFeatureOfInterest(stationName));
-                // TODO:
-//            newOffering.setObservationModel("")
-
                 newOffering.setObservationFormat(format);
-
                 addObsOfferingToDoc(newOffering);
             }
         }
@@ -382,9 +430,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
     public void addObsOfferingToDoc(ObservationOffering offering) {
 
         NodeList obsOfferingList = document.getElementsByTagName("ObservationOfferingList");
-
         Element obsOfferEl = (Element) obsOfferingList.item(0);
-
         obsOfferEl.appendChild(constructObsOfferingNodes(offering));
 
     }
