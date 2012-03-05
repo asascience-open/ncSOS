@@ -1,5 +1,8 @@
 package thredds.server.sos.service;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -57,12 +60,24 @@ public class MetadataParser {
                 if ((service != null) && (request != null) && (version != null)) {
                     //get caps
                     if (request.equalsIgnoreCase("GetCapabilities")) {
+                        
+                        //Check to see if get caps exists, it is does load it else parse file
+                        
+                        
                         SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset,threddsURI);
                         handler.parseServiceIdentification();
                         handler.parseServiceDescription();
                         handler.parseOperationsMetaData();
                         handler.parseObservationList();
                         writeDocument(handler.getDocument(), writer);
+                        
+                        //GetCaps Caching / file writing
+                        /*
+                        writer.flush();
+                        writer.close();
+                        fileWriter(baseLocation, fileName, writer);                        
+                         * 
+                         */
                         handler.finished();
                     } else if (request.equalsIgnoreCase("DescribeSensor")) {
                         writeErrorXMLCode(writer);
@@ -102,6 +117,16 @@ public class MetadataParser {
         }
     }
 
+    private void fileWriter(String base, String fileName, Writer write) throws IOException {
+        Writer output = null;
+        File file = new File(base + fileName);
+        output = new BufferedWriter(new FileWriter(file));
+        output.write(write.toString());
+        output.close();
+        System.out.println("Your file has been written");
+    }
+    
+    
     private static void writeErrorXMLCode(final Writer writer) throws IOException, TransformerException {
         Document doc = XMLDomUtils.getExceptionDom();
         writeDocument(doc, writer);

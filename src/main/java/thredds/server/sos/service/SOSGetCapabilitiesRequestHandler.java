@@ -226,6 +226,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         List<VariableSimpleIF> variableList = DiscreteSamplingGeometryUtil.getDataVariables(getFeatureDataset());
         List<String> observedPropertyList = new ArrayList<String>(variableList.size());
         List<String> observedPropertyUnitList = new ArrayList<String>(variableList.size());
+        
         for (VariableSimpleIF variable : variableList) {
             observedPropertyList.add(variable.getShortName()); // TODO ? getName() instead?
             observedPropertyUnitList.add(variable.getUnitsString());
@@ -233,7 +234,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
 
         //if the stationTimeSeriesFeature is null
         StationTimeSeriesFeatureCollection featureCollection = getFeatureCollection();
-
+        
         //***************************************
         //added abird
         //PROFILE
@@ -312,10 +313,6 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                 String stationLat = formatDegree(station.getLatitude());
                 String stationLon = formatDegree(station.getLongitude());
 
-                //System.out.println(stationName);
-                //System.out.println(stationLat);
-                //System.out.println(stationLon);
-
                 SOSObservationOffering newOffering = new SOSObservationOffering();
 
                 newOffering.setObservationStationID(getGMLID(stationName));
@@ -334,19 +331,14 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
 
                 newOffering.setObservationStationDescription(feature.getDescription());
                 newOffering.setObservationName(getGMLName((stationName)));
-                newOffering.setObservationSrsName("EPSG:4326");  // TODO?
+                newOffering.setObservationSrsName("EPSG:4326");
                 newOffering.setObservationProcedureLink(getGMLName((stationName)));
-
                 newOffering.setObservationObserveredList(observedPropertyList);
-
                 newOffering.setObservationFeatureOfInterest(getFeatureOfInterest(stationName));
-
                 newOffering.setObservationFormat(format);
-
                 addObsOfferingToDoc(newOffering);
             }
         }
-        List<Member> zz;
 
         //***************************************
         //TIMESERIES
@@ -357,64 +349,24 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
             String stationLon = null;
             SOSObservationOffering newOffering = null;
             StationTimeSeriesFeature feature = null;
-            DateTime startDate = null;
-            DateTime endDate = null;
-
-            int dataCount = 0;
 
             List<Station> stationList = featureCollection.getStations();
-            PointFeature pointFeature;
             for (int i = 0; i < stationList.size(); i++) {
                 feature = featureCollection.getStationFeature(stationList.get(i));
-                //feature = featureCollection.getStationFeature(station);
                 stationName = stationList.get(i).getName();
                 stationLat = formatDegree(stationList.get(i).getLatitude());
                 stationLon = formatDegree(stationList.get(i).getLongitude());
                 newOffering = new SOSObservationOffering();
                 newOffering.setObservationStationID(getGMLID(stationName));
                 newOffering.setObservationStationLowerCorner(stationLat, stationLon);
-                newOffering.setObservationStationUpperCorner(stationLat, stationLon);
-
-                /*
-                feature.resetIteration();
-                long start = System.currentTimeMillis();
-                try {
-                    while (feature.hasNext()) {
-                        pointFeature = feature.next();
-                        
-                        DateTime ptDate = new DateTime(pointFeature.getObservationTimeAsDate(), chrono);
-                        if (startDate == null) {
-                            startDate = ptDate;
-                        }
-                        if (endDate == null) {
-                            endDate = ptDate;
-                        }
-                         
-                        
-                    }
-                } catch (Exception e) {
-                }
-
-                long elapsedTimeMillis = System.currentTimeMillis() - start;
-                float elapsedTimeSec = elapsedTimeMillis / 1000F;
-                System.out.println(dataCount + "," + elapsedTimeMillis + "," + elapsedTimeSec);
-                dataCount++;
-
-                */
+                newOffering.setObservationStationUpperCorner(stationLat, stationLon);                               
                 
-                if (stationList.size()<500){
+                if (stationList.size()<100){
                     feature.calcBounds();
-                     newOffering.setObservationTimeBegin(feature.getDateRange().getStart().toDateTimeStringISO());
-                     newOffering.setObservationTimeEnd(feature.getDateRange().getEnd().toDateTimeStringISO());
+                    newOffering.setObservationTimeBegin(feature.getDateRange().getStart().toDateTimeStringISO());
+                    newOffering.setObservationTimeEnd(feature.getDateRange().getEnd().toDateTimeStringISO());
                 }
                 
-                //feature.calcBounds();
-                //System.out.println(dataCount);
-                //newOffering.setObservationTimeBegin(feature.getDateRange().getStart().toDateTimeStringISO());
-                //newOffering.setObservationTimeEnd(feature.getDateRange().getEnd().toDateTimeStringISO());
-
-                //newOffering.setObservationTimeBegin(dateFormatter.toDateTimeStringISO(startDate.toDate()));
-                //newOffering.setObservationTimeEnd(dateFormatter.toDateTimeStringISO(endDate.toDate()));
                 newOffering.setObservationStationDescription(feature.getDescription());
                 newOffering.setObservationName(getGMLName((stationName)));
                 newOffering.setObservationSrsName("EPSG:4326");  // TODO? 
