@@ -2,7 +2,7 @@ dist/*
 build/*
 tests/main/resources/XML/*
 tests/main/resources/XML/*
-
+lib/*
 # Compiled source #
 ###################
 *.com
