@@ -37,7 +37,7 @@ public class MetadataParser {
     private static String[] observedProperties;
     //used for the cases where muliple event times are selected
     private static String[] eventTime;
-
+    
     /**
      * Enhance NCML with Data Discovery conventions elements if not already in place in the metadata.
      *
@@ -52,24 +52,32 @@ public class MetadataParser {
             if (query != null) {
                 //if query is not empty
                 //set the query params then call on the fly
-            splitQuery(query);
+                splitQuery(query);
 
-                System.out.println(query);
-                
+                //System.out.println(query);
+
                 //if all the fields are valid ie not null
                 if ((service != null) && (request != null) && (version != null)) {
                     //get caps
                     if (request.equalsIgnoreCase("GetCapabilities")) {
-                        
+
                         //Check to see if get caps exists, it is does load it else parse file
-                        
-                        
-                        SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset,threddsURI);
+
+                        SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
                         handler.parseServiceIdentification();
                         handler.parseServiceDescription();
                         handler.parseOperationsMetaData();
                         handler.parseObservationList();
-                        writeDocument(handler.getDocument(), writer);
+                        //writeDocument(handler.getDocument(), writer);
+
+                        DOMSource source = new DOMSource(handler.getDocument());
+                        Result result = new StreamResult(writer);
+                        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+                        transformer.transform(source, result);
+
+                        source = null;
+                        result = null;
+                        
                         
                         //GetCaps Caching / file writing
                         /*
@@ -79,11 +87,12 @@ public class MetadataParser {
                          * 
                          */
                         handler.finished();
+                        handler = null;
                     } else if (request.equalsIgnoreCase("DescribeSensor")) {
                         writeErrorXMLCode(writer);
                     } else if (request.equalsIgnoreCase("GetObservation")) {
-                        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset,offering,observedProperties,eventTime);
-                        handler.parseObservations();                        
+                        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, offering, observedProperties, eventTime);
+                        handler.parseObservations();
                         writeDocument(handler.getDocument(), writer);
                         handler.finished();
                     } else {
@@ -97,7 +106,7 @@ public class MetadataParser {
             } else if (query == null) {
                 //if the entry is null just print out the get caps xml
 //                _log.info("Null query string/params: using get caps");
-                SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset,threddsURI);
+                SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
                 handler.parseTemplateXML();
                 handler.parseServiceIdentification();
                 handler.parseServiceDescription();
@@ -125,8 +134,7 @@ public class MetadataParser {
         output.close();
         System.out.println("Your file has been written");
     }
-    
-    
+
     private static void writeErrorXMLCode(final Writer writer) throws IOException, TransformerException {
         Document doc = XMLDomUtils.getExceptionDom();
         writeDocument(doc, writer);
@@ -167,27 +175,27 @@ public class MetadataParser {
                     //replace all the eccaped : with real ones
                     String temp = splitServiceStr[1];
                     String replaceOffer = temp.replaceAll("%3A", ":");
-                    
+
                     //split on ,
-                    String[] howManyStation = replaceOffer.split(","); 
-                    
+                    String[] howManyStation = replaceOffer.split(",");
+
                     List<String> stList = new ArrayList<String>();
-                    
+
                     for (int j = 0; j < howManyStation.length; j++) {
                         //split on :
                         String[] splitStr = howManyStation[j].split(":");
-                        String stationName = splitStr[splitStr.length-1];
+                        String stationName = splitStr[splitStr.length - 1];
                         stList.add(stationName);
                     }
-                    
+
                     //String[] toArray = (String[] )stList.toArray();
                     //MetadataParser.offering = toArray;
-                    
+
                     Object[] objectArray = stList.toArray();
-                    String[] array = (String[])stList.toArray(new String[stList.size()]);
-                    
+                    String[] array = (String[]) stList.toArray(new String[stList.size()]);
+
                     MetadataParser.offering = array;
-                    
+
                 } else if (splitServiceStr[0].equalsIgnoreCase("eventtime")) {
 
                     MetadataParser.singleEventTime = splitServiceStr[1];

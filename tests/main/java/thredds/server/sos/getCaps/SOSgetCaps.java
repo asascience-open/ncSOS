@@ -83,7 +83,7 @@ public class SOSgetCaps {
     
     public static final String base = "tests/main/java/thredds/server/sos/getCaps/output/";
 
-    private void fileWriter(String base, String fileName, Writer write) throws IOException {
+    private static void fileWriter(String base, String fileName, Writer write) throws IOException {
         Writer output = null;
         File file = new File(base + fileName);
         output = new BufferedWriter(new FileWriter(file));

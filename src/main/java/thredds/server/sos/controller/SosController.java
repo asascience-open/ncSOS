@@ -66,15 +66,16 @@ public class SosController implements ISosContoller {
             //set the response type
             res.setContentType("text/xml");
             Writer writer = res.getWriter();
-            _log.info(req.getQueryString());
             //TODO create new service
             MetadataParser.enhance(dataset, writer, req.getQueryString(), req.getRequestURL().toString());
+            _log.info(req.getQueryString().toString());
             writer.flush();
             writer.close();
 
         } catch (Exception e) {
             _log.error(e.getMessage());
 
+            //close the dataset remove memory hang
         } finally {
             DatasetHandlerAdapter.closeDataset(dataset);
         }

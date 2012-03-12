@@ -102,6 +102,128 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         }
     }
 
+    private void ifProfileCollection(ProfileFeatureCollection profileCollection, String profileID, List<String> observedPropertyList) throws IOException {
+        PointFeatureIterator pp = null;
+        //profiles act like stations at present
+        while (profileCollection.hasNext()) {
+            ProfileFeature pFeature = profileCollection.next();
+
+            //scan through the data and get the profile id number
+            pp = pFeature.getPointFeatureIterator(-1);
+            while (pp.hasNext()) {
+                PointFeature pointFeature = pp.next();
+                profileID = StationData.getProfileIDFromProfile(pointFeature);
+                //System.out.println(profileID);
+                break;
+            }
+
+            //attributes
+            SOSObservationOffering newOffering = new SOSObservationOffering();
+
+            newOffering.setObservationStationLowerCorner(Double.toString(pFeature.getLatLon().getLatitude()), Double.toString(pFeature.getLatLon().getLongitude()));
+            newOffering.setObservationStationUpperCorner(Double.toString(pFeature.getLatLon().getLatitude()), Double.toString(pFeature.getLatLon().getLongitude()));
+
+            pFeature.calcBounds();
+
+            //check the data
+            if (pFeature.getDateRange() != null) {
+                newOffering.setObservationTimeBegin(pFeature.getDateRange().getStart().toDateTimeStringISO());
+                newOffering.setObservationTimeEnd(pFeature.getDateRange().getEnd().toDateTimeStringISO());
+            } //find the dates out!
+            else {
+                System.out.println("no dates yet");
+            }
+
+
+            newOffering.setObservationStationDescription(pFeature.getCollectionFeatureType().toString());
+            if (profileID != null) {
+                newOffering.setObservationStationID("PROFILE_" + profileID);
+                newOffering.setObservationProcedureLink(getGMLName("PROFILE_" + profileID));
+                newOffering.setObservationName(getGMLName(profileID));
+                newOffering.setObservationFeatureOfInterest(getFeatureOfInterest("PROFILE_" + profileID));
+            } else {
+                newOffering.setObservationFeatureOfInterest(getFeatureOfInterest(pFeature.getName()));
+                newOffering.setObservationStationID(getGMLID(pFeature.getName()));
+                newOffering.setObservationProcedureLink(getGMLName((pFeature.getName())));
+                newOffering.setObservationFeatureOfInterest(getFeatureOfInterest(pFeature.getName()));
+            }
+            newOffering.setObservationSrsName("EPSG:4326");  // TODO?  
+            newOffering.setObservationObserveredList(observedPropertyList);
+            newOffering.setObservationFormat(format);
+            addObsOfferingToDoc(newOffering);
+        }
+
+        if (profileCollection.isMultipleNested() == false) {
+            System.out.println("not nested");
+        } else {
+            System.out.println("nested");
+        }
+    }
+
+    private void ifTimeSeriesFeatureCollection(StationTimeSeriesFeatureCollection featureCollection, List<String> observedPropertyList) throws IOException {
+        String stationName = null;
+        String stationLat = null;
+        String stationLon = null;
+        SOSObservationOffering newOffering = null;
+        StationTimeSeriesFeature feature = null;
+
+        List<Station> stationList = featureCollection.getStations();
+        for (int i = 0; i < stationList.size(); i++) {
+            feature = featureCollection.getStationFeature(stationList.get(i));
+            stationName = stationList.get(i).getName();
+            stationLat = formatDegree(stationList.get(i).getLatitude());
+            stationLon = formatDegree(stationList.get(i).getLongitude());
+            newOffering = new SOSObservationOffering();
+            newOffering.setObservationStationID(getGMLID(stationName));
+            newOffering.setObservationStationLowerCorner(stationLat, stationLon);
+            newOffering.setObservationStationUpperCorner(stationLat, stationLon);
+
+            if (stationList.size() < 75) {
+                feature.calcBounds();
+                newOffering.setObservationTimeBegin(feature.getDateRange().getStart().toDateTimeStringISO());
+                newOffering.setObservationTimeEnd(feature.getDateRange().getEnd().toDateTimeStringISO());
+            }
+
+            newOffering.setObservationStationDescription(feature.getDescription());
+            newOffering.setObservationName(getGMLName((stationName)));
+            newOffering.setObservationSrsName("EPSG:4326");  // TODO? 
+            newOffering.setObservationProcedureLink(getGMLName((stationName)));
+            newOffering.setObservationObserveredList(observedPropertyList);
+            newOffering.setObservationFeatureOfInterest(getFeatureOfInterest(stationName));
+            newOffering.setObservationFormat(format);
+            addObsOfferingToDoc(newOffering);
+        }
+    }
+
+    private void ifTimeSeriesProfileCollection(StationProfileFeatureCollection featureCollection1, List<String> observedPropertyList) throws IOException {
+        StationProfileFeature stationProfileFeature = null;
+        SOSObservationOffering newOffering = null;
+        DateFormatter timePeriodFormatter = new DateFormatter();
+        for (Station station : featureCollection1.getStations()) {
+            String stationName = station.getName();
+            String stationLat = formatDegree(station.getLatitude());
+            String stationLon = formatDegree(station.getLongitude());
+            newOffering = new SOSObservationOffering();
+            newOffering.setObservationStationID(getGMLID(stationName));
+            newOffering.setObservationStationLowerCorner(stationLat, stationLon);
+            newOffering.setObservationStationUpperCorner(stationLat, stationLon);
+            StationProfileFeature feature = featureCollection1.getStationProfileFeature(station);
+            //feature.calcBounds();
+            stationProfileFeature = getFeatureProfileCollection().getStationProfileFeature(station);
+            List<Date> times = stationProfileFeature.getTimes();
+            newOffering.setObservationTimeBegin(timePeriodFormatter.toDateTimeStringISO(times.get(0)));
+            newOffering.setObservationTimeEnd(timePeriodFormatter.toDateTimeStringISO(times.get(times.size() - 1)));
+            newOffering.setObservationStationDescription(feature.getDescription());
+            newOffering.setObservationName(getGMLName((stationName)));
+            newOffering.setObservationSrsName("EPSG:4326");
+            newOffering.setObservationProcedureLink(getGMLName((stationName)));
+            newOffering.setObservationObserveredList(observedPropertyList);
+            newOffering.setObservationFeatureOfInterest(getFeatureOfInterest(stationName));
+            newOffering.setObservationFormat(format);
+            addObsOfferingToDoc(newOffering);
+        }
+    }
+
     private void setProviderName(Element fstElmnt, String xmlLocation) throws DOMException {
         //get the node named be the string
         NodeList fstNm1 = getXMLNode(fstElmnt, xmlLocation);
@@ -226,7 +348,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         List<VariableSimpleIF> variableList = DiscreteSamplingGeometryUtil.getDataVariables(getFeatureDataset());
         List<String> observedPropertyList = new ArrayList<String>(variableList.size());
         List<String> observedPropertyUnitList = new ArrayList<String>(variableList.size());
-        
+
         for (VariableSimpleIF variable : variableList) {
             observedPropertyList.add(variable.getShortName()); // TODO ? getName() instead?
             observedPropertyUnitList.add(variable.getUnitsString());
@@ -234,148 +356,30 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
 
         //if the stationTimeSeriesFeature is null
         StationTimeSeriesFeatureCollection featureCollection = getFeatureCollection();
-        
+
         //***************************************
         //added abird
         //PROFILE
         //profiles differ depending on type
         ProfileFeatureCollection profileCollection = getProfileFeatureCollection();
         String profileID = null;
-        PointFeatureIterator pp;
 
         if (profileCollection != null) {
-
-            //profiles act like stations at present
-            while (profileCollection.hasNext()) {
-                ProfileFeature pFeature = profileCollection.next();
-
-                //scan through the data and get the profile id number
-                pp = pFeature.getPointFeatureIterator(-1);
-                while (pp.hasNext()) {
-                    PointFeature pointFeature = pp.next();
-                    profileID = StationData.getProfileIDFromProfile(pointFeature);
-                    //System.out.println(profileID);
-                    break;
-                }
-
-                //attributes
-                SOSObservationOffering newOffering = new SOSObservationOffering();
-
-                newOffering.setObservationStationLowerCorner(Double.toString(pFeature.getLatLon().getLatitude()), Double.toString(pFeature.getLatLon().getLongitude()));
-                newOffering.setObservationStationUpperCorner(Double.toString(pFeature.getLatLon().getLatitude()), Double.toString(pFeature.getLatLon().getLongitude()));
-
-                pFeature.calcBounds();
-
-                //check the data
-                if (pFeature.getDateRange() != null) {
-                    newOffering.setObservationTimeBegin(pFeature.getDateRange().getStart().toDateTimeStringISO());
-                    newOffering.setObservationTimeEnd(pFeature.getDateRange().getEnd().toDateTimeStringISO());
-                } //find the dates out!
-                else {
-                    System.out.println("no dates yet");
-                }
-
-
-                newOffering.setObservationStationDescription(pFeature.getCollectionFeatureType().toString());
-                if (profileID != null) {
-                    newOffering.setObservationStationID("PROFILE_" + profileID);
-                    newOffering.setObservationProcedureLink(getGMLName("PROFILE_" + profileID));
-                    newOffering.setObservationName(getGMLName(profileID));
-                    newOffering.setObservationFeatureOfInterest(getFeatureOfInterest("PROFILE_" + profileID));
-                } else {
-                    newOffering.setObservationFeatureOfInterest(getFeatureOfInterest(pFeature.getName()));
-                    newOffering.setObservationStationID(getGMLID(pFeature.getName()));
-                    newOffering.setObservationProcedureLink(getGMLName((pFeature.getName())));
-                    newOffering.setObservationFeatureOfInterest(getFeatureOfInterest(pFeature.getName()));
-                }
-                newOffering.setObservationSrsName("EPSG:4326");  // TODO?  
-                newOffering.setObservationObserveredList(observedPropertyList);
-                newOffering.setObservationFormat(format);
-                addObsOfferingToDoc(newOffering);
-            }
-
-            if (profileCollection.isMultipleNested() == false) {
-                System.out.println("not nested");
-            } else {
-                System.out.println("nested");
-            }
+            ifProfileCollection(profileCollection, profileID, observedPropertyList);
         }
-
-
         //***************************************
         //added abird
         //TIMESERIESPROFILE
         StationProfileFeatureCollection featureCollection1 = getFeatureProfileCollection();
-        StationProfileFeature stationProfileFeature;
+
         if (featureCollection1 != null) {
-            for (Station station : featureCollection1.getStations()) {
-                String stationName = station.getName();
-                String stationLat = formatDegree(station.getLatitude());
-                String stationLon = formatDegree(station.getLongitude());
-
-                SOSObservationOffering newOffering = new SOSObservationOffering();
-
-                newOffering.setObservationStationID(getGMLID(stationName));
-                newOffering.setObservationStationLowerCorner(stationLat, stationLon);
-                newOffering.setObservationStationUpperCorner(stationLat, stationLon);
-
-                StationProfileFeature feature = featureCollection1.getStationProfileFeature(station);
-
-                //feature.calcBounds();
-                stationProfileFeature = getFeatureProfileCollection().getStationProfileFeature(station);
-                List<Date> times = stationProfileFeature.getTimes();
-                DateFormatter timePeriodFormatter = new DateFormatter();
-
-                newOffering.setObservationTimeBegin(timePeriodFormatter.toDateTimeStringISO(times.get(0)));
-                newOffering.setObservationTimeEnd(timePeriodFormatter.toDateTimeStringISO(times.get(times.size() - 1)));
-
-                newOffering.setObservationStationDescription(feature.getDescription());
-                newOffering.setObservationName(getGMLName((stationName)));
-                newOffering.setObservationSrsName("EPSG:4326");
-                newOffering.setObservationProcedureLink(getGMLName((stationName)));
-                newOffering.setObservationObserveredList(observedPropertyList);
-                newOffering.setObservationFeatureOfInterest(getFeatureOfInterest(stationName));
-                newOffering.setObservationFormat(format);
-                addObsOfferingToDoc(newOffering);
-            }
+            ifTimeSeriesProfileCollection(featureCollection1, observedPropertyList);
         }
 
         //***************************************
         //TIMESERIES
         if (featureCollection != null) {
-
-            String stationName = null;
-            String stationLat = null;
-            String stationLon = null;
-            SOSObservationOffering newOffering = null;
-            StationTimeSeriesFeature feature = null;
-
-            List<Station> stationList = featureCollection.getStations();
-            for (int i = 0; i < stationList.size(); i++) {
-                feature = featureCollection.getStationFeature(stationList.get(i));
-                stationName = stationList.get(i).getName();
-                stationLat = formatDegree(stationList.get(i).getLatitude());
-                stationLon = formatDegree(stationList.get(i).getLongitude());
-                newOffering = new SOSObservationOffering();
-                newOffering.setObservationStationID(getGMLID(stationName));
-                newOffering.setObservationStationLowerCorner(stationLat, stationLon);
-                newOffering.setObservationStationUpperCorner(stationLat, stationLon);                               
-                
-                if (stationList.size()<100){
-                    feature.calcBounds();
-                    newOffering.setObservationTimeBegin(feature.getDateRange().getStart().toDateTimeStringISO());
-                    newOffering.setObservationTimeEnd(feature.getDateRange().getEnd().toDateTimeStringISO());
-                }
-                
-                newOffering.setObservationStationDescription(feature.getDescription());
-                newOffering.setObservationName(getGMLName((stationName)));
-                newOffering.setObservationSrsName("EPSG:4326");  // TODO? 
-                newOffering.setObservationProcedureLink(getGMLName((stationName)));
-                newOffering.setObservationObserveredList(observedPropertyList);
-                newOffering.setObservationFeatureOfInterest(getFeatureOfInterest(stationName));
-                newOffering.setObservationFormat(format);
-                addObsOfferingToDoc(newOffering);
-            }
+            ifTimeSeriesFeatureCollection(featureCollection, observedPropertyList);
         }
     }
 
@@ -384,7 +388,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         NodeList obsOfferingList = document.getElementsByTagName("ObservationOfferingList");
         Element obsOfferEl = (Element) obsOfferingList.item(0);
         obsOfferEl.appendChild(constructObsOfferingNodes(offering));
-
+        offering = null;
     }
 
     public Element constructObsOfferingNodes(ObservationOffering offering) {

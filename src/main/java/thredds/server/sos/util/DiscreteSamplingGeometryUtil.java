@@ -27,7 +27,7 @@ import ucar.nc2.ft.point.standard.StandardProfileCollectionImpl;
 
 /**
  *
- * @author tkunicki
+ * @author tkunicki ,
  */
 public class DiscreteSamplingGeometryUtil {
 
@@ -44,17 +44,17 @@ public class DiscreteSamplingGeometryUtil {
                     } //**********         
                     //added abird -- need to remove - used to highlight feature type        
                     else if (featureCollection instanceof StationProfileFeatureCollection) {
-                        System.out.println("profile feature collection");
+                        //System.out.println("profile feature collection");
                     } else if (featureCollection instanceof StationPointFeature) {
-                        System.out.println("point feature");
+                        //System.out.println("point feature");
                     } else if (featureCollection instanceof StationProfileFeature) {
-                        System.out.println("profile feature");
+                        //System.out.println("profile feature");
                     } else if (featureCollection instanceof StationTimeSeriesFeature) {
-                        System.out.println("StationTimeSeriesFeature feature");
+                        //System.out.println("StationTimeSeriesFeature feature");
                     } else if (featureCollection instanceof ProfileFeature) {
-                        System.out.println("profile feature");
+                        //System.out.println("profile feature");
                     } else if (featureCollection instanceof ProfileFeatureCollection) {
-                        System.out.println("profile feature collection");
+                        //System.out.println("profile feature collection");
                     }
                     //********** 
 
@@ -79,7 +79,7 @@ public class DiscreteSamplingGeometryUtil {
             System.out.println("ERROR:Null Data");
         }
 
-        System.out.println(dataset.getFeatureType());
+        //System.out.println(dataset.getFeatureType());
         switch (dataset.getFeatureType()) {
             case POINT:
             case PROFILE:

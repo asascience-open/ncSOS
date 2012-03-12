@@ -24,11 +24,12 @@ import ucar.nc2.units.DateFormatter;
  */
 public abstract class SOSBaseRequestHandler {
 
+    private static final String STATION_GML_BASE = "urn:tds:station.sos:";
     private final NetcdfDataset netCDFDataset;
     private FeatureDataset featureDataset;
-    private final StationTimeSeriesFeatureCollection featureCollection;
-    private final StationProfileFeatureCollection featureCollectionProfileFeature;
-    private final ProfileFeatureCollection ProfileFeatureCollection;
+    private StationTimeSeriesFeatureCollection featureCollection;
+    private StationProfileFeatureCollection featureCollectionProfileFeature;
+    private ProfileFeatureCollection ProfileFeatureCollection;
     private String title;
     private String history;
     private String institution;
@@ -36,31 +37,31 @@ public abstract class SOSBaseRequestHandler {
     private String description;
     private String featureOfInterestBaseQueryURL;
     protected Document document;
-    
     private final static NumberFormat FORMAT_DEGREE;
+
     static {
         FORMAT_DEGREE = NumberFormat.getNumberInstance();
         FORMAT_DEGREE.setMinimumFractionDigits(5);
         FORMAT_DEGREE.setMaximumFractionDigits(5);
     }
-    
+
     public SOSBaseRequestHandler(NetcdfDataset netCDFDataset) throws IOException {
         this.netCDFDataset = netCDFDataset;
-           
-        featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.ANY_POINT,netCDFDataset,null,new Formatter(System.err));    
+
+        featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.ANY_POINT, netCDFDataset, null, new Formatter(System.err));
         //change multi to single featureCollectionType - allowing for single variable - switch on feature Type
         //keep remove others
-        featureCollection = DiscreteSamplingGeometryUtil.extractStationTimeSeriesFeatureCollection(featureDataset);               
+        featureCollection = DiscreteSamplingGeometryUtil.extractStationTimeSeriesFeatureCollection(featureDataset);
         //added abird
-        featureCollectionProfileFeature = DiscreteSamplingGeometryUtil.extractStationProfileFeatureCollection(featureDataset);      
+        featureCollectionProfileFeature = DiscreteSamplingGeometryUtil.extractStationProfileFeatureCollection(featureDataset);
         //added abird
-        ProfileFeatureCollection = DiscreteSamplingGeometryUtil.extractStdProfileCollection(featureDataset);           
+        ProfileFeatureCollection = DiscreteSamplingGeometryUtil.extractStdProfileCollection(featureDataset);
         parseGlobalAttributes();
         document = parseTemplateXML();
     }
 
     private void parseGlobalAttributes() {
-                
+
         title = netCDFDataset.findAttValueIgnoreCase(null, "title", "Empty Title");
         history = netCDFDataset.findAttValueIgnoreCase(null, "history", "Empty History");
         institution = netCDFDataset.findAttValueIgnoreCase(null, "institution", "Empty Insitution");
@@ -68,7 +69,7 @@ public abstract class SOSBaseRequestHandler {
         description = netCDFDataset.findAttValueIgnoreCase(null, "description", "Empty Description");
         featureOfInterestBaseQueryURL = netCDFDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", null);
     }
-    
+
     public abstract String getTemplateLocation();
 
     protected final Document parseTemplateXML() {
@@ -86,35 +87,34 @@ public abstract class SOSBaseRequestHandler {
             }
         }
     }
-    
+
     public final Document getDocument() {
         return document;
     }
-    
+
     public NetcdfDataset getNetCDFDataset() {
         return netCDFDataset;
     }
-    
+
     public FeatureDataset getFeatureDataset() {
         return featureDataset;
-    }   
-    
+    }
+
     //added abird
     public StationTimeSeriesFeatureCollection getFeatureCollection() {
         return featureCollection;
     }
-    
+
     //added abird
-    public StationProfileFeatureCollection getFeatureProfileCollection(){
+    public StationProfileFeatureCollection getFeatureProfileCollection() {
         return featureCollectionProfileFeature;
     }
-    
+
     //added abird
-    public ProfileFeatureCollection getProfileFeatureCollection(){
+    public ProfileFeatureCollection getProfileFeatureCollection() {
         return ProfileFeatureCollection;
     }
-    
-    
+
     public String getTitle() {
         return title;
     }
@@ -126,7 +126,7 @@ public abstract class SOSBaseRequestHandler {
     public String getInstitution() {
         return institution;
     }
-    
+
     public String getSource() {
         return source;
     }
@@ -134,43 +134,66 @@ public abstract class SOSBaseRequestHandler {
     public String getDescription() {
         return description;
     }
-    
+
     public String getGMLID(String stationName) {
         return stationName;
     }
-    
+
     public String getGMLName(String stationName) {
-        return "urn:tds:station.sos:" + stationName;
+        return STATION_GML_BASE + stationName;
     }
-    
+
     public String getLocation() {
         return netCDFDataset.getLocation();
     }
-    
+
     public String getFeatureOfInterest(String stationName) {
-        return featureOfInterestBaseQueryURL == null ?
-                stationName :
-                featureOfInterestBaseQueryURL + stationName;
+        return featureOfInterestBaseQueryURL == null
+                ? stationName
+                : featureOfInterestBaseQueryURL + stationName;
     }
-    
+
     public static String formatDegree(double degree) {
         return FORMAT_DEGREE.format(degree);
     }
-    
+
     public static String formatDateTimeISO(Date date) {
         // assuming not thread safe...  true?
         return (new DateFormatter()).toDateTimeStringISO(date);
     }
-    
+
     public void finished() {
         //added abird   
-        if (featureCollection!=null){
-        try { featureCollection.finish(); } catch (Exception e) { e.printStackTrace(); }
+        if (featureCollection != null) {
+            try {
+                featureCollection.finish();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-               
         //try { featureCollection.finish(); } catch (Exception e) { e.printStackTrace(); }
-        try { featureDataset.close(); } catch (Exception e) { e.printStackTrace(); }
-        try { netCDFDataset.close(); } catch (Exception e) { e.printStackTrace(); }
+        try {
+            featureDataset.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            netCDFDataset.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         
+        //tidy up set vars
+        featureCollectionProfileFeature = null;
+        ProfileFeatureCollection = null;
+        title = null;
+        history = null;;
+        institution = null;;
+        source = null;
+        description = null;
+        featureOfInterestBaseQueryURL = null;
+        document = null;
+
+
     }
 }
