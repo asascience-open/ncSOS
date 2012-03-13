@@ -5,19 +5,25 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.joda.time.DateTime;
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+import thredds.server.sos.controller.SosController;
 import thredds.server.sos.util.XMLDomUtils;
 import ucar.nc2.dataset.NetcdfDataset;
 
@@ -64,37 +70,30 @@ public class SOSParser {
                 if ((service != null) && (request != null) && (version != null)) {
                     //get caps
                     if (request.equalsIgnoreCase("GetCapabilities")) {
-
                         //check to see if use cache was set to true if so load the data file DONT PARSE IT
-                        if (cache !=null && cache.equalsIgnoreCase(CACHE_TRUE)) {
+                        if (cache != null && cache.equalsIgnoreCase(CACHE_TRUE)) {
                             //Check to see if get caps exists, if it does not actual parse the file
                             File f = new File("c:/xmlFile.xml");
                             if (f.exists()) {
-                                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                                DocumentBuilder builder = factory.newDocumentBuilder();
-                                Document doc = builder.parse(f);
-                                writeDocument(doc, writer);
-                                writer.flush();
-                                writer.close();
-                                    _log.info("CACHING: using cached XML file");
+                                //if the file exists check the modified data against current data
+                                long fileDateTime = f.lastModified();
+                                Date fileDate = new Date(fileDateTime);
+                                DateTime currentDateTime = new DateTime();
+                                DateTime SevenDaysEarlier = currentDateTime.minusDays(7);
+                                Date minusSevenFromNow = SevenDaysEarlier.toDate();
+                                //if the file is older than seven days reprocess the data
+                                if (fileDate.before(minusSevenFromNow)) {
+                                    fileIsToOldCreateNewOne( dataset, threddsURI, writer);
+                                } else {
+                                    fileIsInDate(f, writer);
+                                }
                             } else {
-                                //parse the file anyway
-                                SOSGetCapabilitiesRequestHandler handler = performSOSGetCaps(dataset, threddsURI, writer);
-                                handler.finished();
-                                handler = null;
-                                //GetCaps file writing if not there
-                                writer.flush();
-                                writer.close();
-                                //write the file
-                                fileWriter("c:/", "xmlFile.xml", writer);
+                                //create the file as it does not exist
+                                //Check Directory                                   
+                                fileDoesNotExistCreate( dataset, threddsURI, writer);
                             }
-                            //if it is just a regular request.....    
                         } else {
-                            SOSGetCapabilitiesRequestHandler handler = performSOSGetCaps(dataset, threddsURI, writer);
-                            handler.finished();
-                            handler = null;
-                            writer.flush();
-                            writer.close();
+                            normalSOSRequestNoCacheParam(dataset, threddsURI, writer);
                         }
 
                     } else if (request.equalsIgnoreCase("DescribeSensor")) {
@@ -133,6 +132,61 @@ public class SOSParser {
 //            _log.error(e);
             Logger.getLogger(SOSParser.class.getName()).log(Level.SEVERE, "Null", e);
         }
+    }
+
+    public String getCacheXmlFileName(String threddsURI){
+        
+        String[] splitStr = threddsURI.split("/");
+        String dName = splitStr[splitStr.length-1];
+        splitStr = null;
+        splitStr = dName.split("nc");
+        
+        return splitStr[0]+"xml";
+    }
+    
+    private static void normalSOSRequestNoCacheParam(final NetcdfDataset dataset, String threddsURI, final Writer writer) throws IOException, TransformerException {
+        _log.info("Normal request no caching");
+        SOSGetCapabilitiesRequestHandler handler = performSOSGetCaps(dataset, threddsURI, writer);
+        handler.finished();
+        handler = null;
+        writer.flush();
+        writer.close();
+    }
+
+    private static void fileDoesNotExistCreate(final NetcdfDataset dataset, String threddsURI, final Writer writer) throws IOException, TransformerException {
+        _log.info("CACHING: Cached file does not exist...creating");
+        //parse the file anyway
+        SOSGetCapabilitiesRequestHandler handler = performSOSGetCaps(dataset, threddsURI, writer);
+        handler.finished();
+        handler = null;
+        //GetCaps file writing if not there
+        writer.flush();
+        writer.close();
+        //write the file
+        fileWriter("c:/", "xmlFile.xml", writer);
+    }
+
+    private static void fileIsInDate(File f, final Writer writer) throws TransformerException, SAXException, IOException, ParserConfigurationException {
+        _log.info("CACHING: using cached XML file");
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(f);
+        writeDocument(doc, writer);
+        writer.flush();
+        writer.close();
+    }
+
+    private static void fileIsToOldCreateNewOne(final NetcdfDataset dataset, String threddsURI, final Writer writer) throws TransformerException, IOException {
+        _log.info("CACHING: File is too old using new one");
+        //parse the file anyway
+        SOSGetCapabilitiesRequestHandler handler = performSOSGetCaps(dataset, threddsURI, writer);
+        handler.finished();
+        handler = null;
+        //GetCaps file writing if not there
+        writer.flush();
+        writer.close();
+        //write the file
+        fileWriter("c:/", "xmlFile.xml", writer);
     }
 
     private static SOSGetCapabilitiesRequestHandler performSOSGetCaps(final NetcdfDataset dataset, String threddsURI, final Writer writer) throws IOException, TransformerException {

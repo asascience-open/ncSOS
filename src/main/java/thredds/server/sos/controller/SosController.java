@@ -61,6 +61,10 @@ public class SosController implements ISosContoller {
         NetcdfDataset dataset = null;
 
         try {
+            //see http://tomcat.apache.org/tomcat-5.5-doc/config/context.html ----- workdir
+            String path = (req.getServletContext().getAttribute("javax.servlet.context.tempdir").toString());
+            System.out.println(path);
+            
             //return netcdf dataset
             dataset = DatasetHandlerAdapter.openDataset(req, res);
             //set the response type

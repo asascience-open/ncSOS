@@ -110,7 +110,13 @@ public class SOSgetCaps {
         f.delete();
     }
     
-     
+    @Test
+    public void testCanGetCorrectDataSetFileName() throws IOException {
+        NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
+        SOSParser md = new SOSParser();
+        assertEquals("watlev_IKE.xml",md.getCacheXmlFileName(imeds13));
+    }
+    
      
     @Test
     public void testAddAdditionalParamForCachingDataTRUE() throws IOException {
@@ -128,7 +134,7 @@ public class SOSgetCaps {
         //fileWriter(base, fileName, write);
         
         //check file exists
-        File f= new File(base+fileName);
+        File f= new File(fileName);
         assertTrue(f.exists());
     }
     
