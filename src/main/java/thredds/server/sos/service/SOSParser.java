@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -20,13 +22,13 @@ import thredds.server.sos.util.XMLDomUtils;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
- * MetadataParser based on EnhancedMetadataService
+ * SOSParser based on EnhancedMetadataService
  * @author: Andrew Bird
  * Date: 2011
  */
-public class MetadataParser {
+public class SOSParser {
 
-//    private static final Logger _log = Logger.getLogger(MetadataParser.class);
+//    private static final Logger _log = Logger.getLogger(SOSParser.class);
     private static String service;
     private static String version;
     private static String request;
@@ -37,7 +39,11 @@ public class MetadataParser {
     private static String[] observedProperties;
     //used for the cases where muliple event times are selected
     private static String[] eventTime;
-    
+    //used for cacheing getcaps and get obs results
+    private static String cache;
+    private static String CACHE_TRUE = "true";
+    private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(SOSParser.class);
+
     /**
      * Enhance NCML with Data Discovery conventions elements if not already in place in the metadata.
      *
@@ -54,40 +60,43 @@ public class MetadataParser {
                 //set the query params then call on the fly
                 splitQuery(query);
 
-                //System.out.println(query);
-
                 //if all the fields are valid ie not null
                 if ((service != null) && (request != null) && (version != null)) {
                     //get caps
                     if (request.equalsIgnoreCase("GetCapabilities")) {
 
-                        //Check to see if get caps exists, it is does load it else parse file
+                        //check to see if use cache was set to true if so load the data file DONT PARSE IT
+                        if (cache !=null && cache.equalsIgnoreCase(CACHE_TRUE)) {
+                            //Check to see if get caps exists, if it does not actual parse the file
+                            File f = new File("c:/xmlFile.xml");
+                            if (f.exists()) {
+                                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                                DocumentBuilder builder = factory.newDocumentBuilder();
+                                Document doc = builder.parse(f);
+                                writeDocument(doc, writer);
+                                writer.flush();
+                                writer.close();
+                                    _log.info("CACHING: using cached XML file");
+                            } else {
+                                //parse the file anyway
+                                SOSGetCapabilitiesRequestHandler handler = performSOSGetCaps(dataset, threddsURI, writer);
+                                handler.finished();
+                                handler = null;
+                                //GetCaps file writing if not there
+                                writer.flush();
+                                writer.close();
+                                //write the file
+                                fileWriter("c:/", "xmlFile.xml", writer);
+                            }
+                            //if it is just a regular request.....    
+                        } else {
+                            SOSGetCapabilitiesRequestHandler handler = performSOSGetCaps(dataset, threddsURI, writer);
+                            handler.finished();
+                            handler = null;
+                            writer.flush();
+                            writer.close();
+                        }
 
-                        SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
-                        handler.parseServiceIdentification();
-                        handler.parseServiceDescription();
-                        handler.parseOperationsMetaData();
-                        handler.parseObservationList();
-                        //writeDocument(handler.getDocument(), writer);
-
-                        DOMSource source = new DOMSource(handler.getDocument());
-                        Result result = new StreamResult(writer);
-                        Transformer transformer = TransformerFactory.newInstance().newTransformer();
-                        transformer.transform(source, result);
-
-                        source = null;
-                        result = null;
-                        
-                        
-                        //GetCaps Caching / file writing
-                        /*
-                        writer.flush();
-                        writer.close();
-                        fileWriter(baseLocation, fileName, writer);                        
-                         * 
-                         */
-                        handler.finished();
-                        handler = null;
                     } else if (request.equalsIgnoreCase("DescribeSensor")) {
                         writeErrorXMLCode(writer);
                     } else if (request.equalsIgnoreCase("GetObservation")) {
@@ -119,25 +128,43 @@ public class MetadataParser {
             //catch
         } catch (NullPointerException e) {
 //            _log.error(e);
-            Logger.getLogger(MetadataParser.class.getName()).log(Level.SEVERE, "Null Pointer in Data?", e);
+            Logger.getLogger(SOSParser.class.getName()).log(Level.SEVERE, "Null Pointer in Data?", e);
         } catch (Exception e) {
 //            _log.error(e);
-            Logger.getLogger(MetadataParser.class.getName()).log(Level.SEVERE, "Null", e);
+            Logger.getLogger(SOSParser.class.getName()).log(Level.SEVERE, "Null", e);
         }
     }
 
-    private void fileWriter(String base, String fileName, Writer write) throws IOException {
-        Writer output = null;
-        File file = new File(base + fileName);
-        output = new BufferedWriter(new FileWriter(file));
-        output.write(write.toString());
-        output.close();
-        System.out.println("Your file has been written");
+    private static SOSGetCapabilitiesRequestHandler performSOSGetCaps(final NetcdfDataset dataset, String threddsURI, final Writer writer) throws IOException, TransformerException {
+        SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
+        handler.parseServiceIdentification();
+        handler.parseServiceDescription();
+        handler.parseOperationsMetaData();
+        handler.parseObservationList();
+        writeDocument(handler.getDocument(), writer);
+        return handler;
+    }
+
+    private static void fileWriter(String base, String fileName, Writer write) throws IOException {
+        try {
+            Writer output = null;
+            File file = new File(base + fileName);
+            output = new BufferedWriter(new FileWriter(file));
+            output.write(write.toString());
+            output.close();
+            _log.info("Your file has been written");
+        } catch (IOException ex) {
+            _log.info("CACHING:issue with XML file writing");
+        }
     }
 
     private static void writeErrorXMLCode(final Writer writer) throws IOException, TransformerException {
         Document doc = XMLDomUtils.getExceptionDom();
         writeDocument(doc, writer);
+    }
+
+    public String getCacheValue() {
+        return cache;
     }
 
     public static void writeDocument(Document dom, final Writer writer) throws TransformerException, IOException {
@@ -152,6 +179,7 @@ public class MetadataParser {
         service = null;
         version = null;
         request = null;
+        cache = null;
         observedProperty = null;
 
         if (splitQuery.length > 2) {
@@ -159,17 +187,19 @@ public class MetadataParser {
                 String parsedString = splitQuery[i];
                 String[] splitServiceStr = parsedString.split("=");
                 if (splitServiceStr[0].equalsIgnoreCase("service")) {
-                    MetadataParser.service = splitServiceStr[1];
+                    SOSParser.service = splitServiceStr[1];
                 } else if (splitServiceStr[0].equalsIgnoreCase("version")) {
-                    MetadataParser.version = splitServiceStr[1];
+                    SOSParser.version = splitServiceStr[1];
+                } else if (splitServiceStr[0].equalsIgnoreCase("useCache")) {
+                    SOSParser.cache = splitServiceStr[1];
                 } else if (splitServiceStr[0].equalsIgnoreCase("request")) {
-                    MetadataParser.request = splitServiceStr[1];
+                    SOSParser.request = splitServiceStr[1];
                 } else if (splitServiceStr[0].equalsIgnoreCase("observedProperty")) {
-                    MetadataParser.observedProperty = splitServiceStr[1];
+                    SOSParser.observedProperty = splitServiceStr[1];
                     if (observedProperty.contains(",")) {
-                        MetadataParser.observedProperties = observedProperty.split(",");
+                        SOSParser.observedProperties = observedProperty.split(",");
                     } else {
-                        MetadataParser.observedProperties = new String[]{MetadataParser.observedProperty};
+                        SOSParser.observedProperties = new String[]{SOSParser.observedProperty};
                     }
                 } else if (splitServiceStr[0].equalsIgnoreCase("offering")) {
                     //replace all the eccaped : with real ones
@@ -194,15 +224,15 @@ public class MetadataParser {
                     Object[] objectArray = stList.toArray();
                     String[] array = (String[]) stList.toArray(new String[stList.size()]);
 
-                    MetadataParser.offering = array;
+                    SOSParser.offering = array;
 
                 } else if (splitServiceStr[0].equalsIgnoreCase("eventtime")) {
 
-                    MetadataParser.singleEventTime = splitServiceStr[1];
+                    SOSParser.singleEventTime = splitServiceStr[1];
                     if (singleEventTime.contains("/")) {
-                        MetadataParser.eventTime = singleEventTime.split("/");
+                        SOSParser.eventTime = singleEventTime.split("/");
                     } else {
-                        MetadataParser.eventTime = new String[]{MetadataParser.singleEventTime};
+                        SOSParser.eventTime = new String[]{SOSParser.singleEventTime};
                     }
 
                 }

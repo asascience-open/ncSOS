@@ -15,7 +15,7 @@ import thredds.server.sos.util.DatasetHandlerAdapter;
 
 import java.io.IOException;
 import java.io.Writer;
-import thredds.server.sos.service.MetadataParser;
+import thredds.server.sos.service.SOSParser;
 
 import ucar.nc2.dataset.NetcdfDataset;
 
@@ -55,7 +55,7 @@ public class SosController implements ISosContoller {
      */
     @RequestMapping(params = {})
     @Override
-    public void handleMetadataRequest(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
+    public void handleSOSRequest(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
         _log.info("Handling SOS metadata request.");
 
         NetcdfDataset dataset = null;
@@ -67,7 +67,7 @@ public class SosController implements ISosContoller {
             res.setContentType("text/xml");
             Writer writer = res.getWriter();
             //TODO create new service
-            MetadataParser.enhance(dataset, writer, req.getQueryString(), req.getRequestURL().toString());
+            SOSParser.enhance(dataset, writer, req.getQueryString(), req.getRequestURL().toString());
             _log.info(req.getQueryString().toString());
             writer.flush();
             writer.close();

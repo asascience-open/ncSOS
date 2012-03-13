@@ -9,7 +9,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.Writer;
 import java.io.CharArrayWriter;
-import thredds.server.sos.service.MetadataParser;
+import thredds.server.sos.service.SOSParser;
 import ucar.nc2.dataset.NetcdfDataset;
 import java.io.IOException;
 import org.junit.AfterClass;
@@ -85,7 +85,7 @@ public class SOSgetObs {
         System.out.println("----IMEDS1------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds1);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, imeds1Req, imeds1);
         write.flush();
@@ -109,7 +109,7 @@ public class SOSgetObs {
         System.out.println("----IMEDS2------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds2);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, imeds2Req, imeds2);
         write.flush();
@@ -129,7 +129,7 @@ public class SOSgetObs {
         System.out.println("----IMEDS3------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds3);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, imeds3Req, imeds3);
         write.flush();
@@ -148,7 +148,7 @@ public class SOSgetObs {
         System.out.println("----IMEDS4------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds4);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, imeds4Req, imeds4);
         write.flush();
@@ -172,7 +172,7 @@ public class SOSgetObs {
         System.out.println("----IMEDS5------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds5);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, imeds5Req, imeds5);
         write.flush();
@@ -196,7 +196,7 @@ public class SOSgetObs {
         System.out.println("----IMEDS6------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds6);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, imeds6Req, imeds6);
         write.flush();
@@ -221,7 +221,7 @@ public class SOSgetObs {
         System.out.println("----IMEDS7------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds7);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, imeds7Req, imeds7);
         write.flush();
@@ -246,7 +246,7 @@ public class SOSgetObs {
         System.out.println("----IMEDS8------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds8);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, imeds8Req, imeds8);
         write.flush();
@@ -272,7 +272,7 @@ public class SOSgetObs {
         System.out.println("----IMEDS9------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds9);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, imeds9Req, imeds9);
         write.flush();
@@ -297,7 +297,7 @@ public class SOSgetObs {
         System.out.println("----IMEDS10------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds10);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, imeds10Req, imeds10);
         write.flush();
@@ -321,7 +321,7 @@ public class SOSgetObs {
         System.out.println("----IMEDS11------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds11);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, imeds11Req, imeds11);
         write.flush();
@@ -346,7 +346,7 @@ public class SOSgetObs {
          System.out.println("----IMEDS12------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds12);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, imeds12Req, imeds12);
         write.flush();
@@ -372,7 +372,7 @@ public class SOSgetObs {
          System.out.println("----IMEDS13------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, imeds13Req, imeds13);
         write.flush();
@@ -394,7 +394,7 @@ public class SOSgetObs {
          System.out.println("----IMEDS14------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds14);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, imeds13Req, imeds14);
         write.flush();
@@ -419,7 +419,7 @@ public class SOSgetObs {
          System.out.println("----IMEDS15------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds15);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, imeds15Req, imeds15);
         write.flush();
@@ -457,7 +457,7 @@ public class SOSgetObs {
         System.out.println("----tsData------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, timeSeriesIncompleteMultiStationx3, tsIncompleteMultiDimensionalMultipleStations);
         write.flush();
@@ -484,7 +484,7 @@ public class SOSgetObs {
         System.out.println("----tsData------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, timeSeriesIncompleteMultiStation, tsIncompleteMultiDimensionalMultipleStations);
         write.flush();
@@ -511,7 +511,7 @@ public class SOSgetObs {
         System.out.println("----tsIncompleteMultiDimensionalMultipleStations------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, timeSeriesIncompleteMultiInvalid, tsIncompleteMultiDimensionalMultipleStations);
         write.flush();
@@ -534,7 +534,7 @@ public class SOSgetObs {
         System.out.println("----tsIncompleteMultiDimensionalMultipleStations------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, timeSeriesIncompleteMulti, tsIncompleteMultiDimensionalMultipleStations);
         write.flush();
@@ -557,7 +557,7 @@ public class SOSgetObs {
         System.out.println("----tsIncompleteMultiDimensionalMultipleStations------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, timeSeriesIncomplete, tsIncompleteMultiDimensionalMultipleStations);
         write.flush();
@@ -576,7 +576,7 @@ public class SOSgetObs {
         System.out.println("----tsIncompleteMultiDimensionalMultipleStations------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, timeSeriesIncompleteWithTime, tsIncompleteMultiDimensionalMultipleStations);
         write.flush();
@@ -595,7 +595,7 @@ public class SOSgetObs {
         System.out.println("----tsOrthogonalMultidimenstionalMultipleStations------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsOrthogonalMultidimenstionalMultipleStations);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, timeSeriestOrth, tsOrthogonalMultidimenstionalMultipleStations);
         write.flush();
@@ -621,7 +621,7 @@ public class SOSgetObs {
         System.out.println("----RaggedSingleConventions------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(RaggedSingleConventions);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, timeSeriesProfileRequestSingle, RaggedSingleConventions);
         write.flush();
@@ -640,7 +640,7 @@ public class SOSgetObs {
         System.out.println("----RaggedMultiConventions------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(RaggedMultiConventions);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, timeSeriesProfileRequestMulti, RaggedMultiConventions);
         write.flush();
@@ -668,7 +668,7 @@ public class SOSgetObs {
         System.out.println("----RaggedMultiConventions------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(RaggedMultiConventions);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, timeSeriesProfileRequestMultiInvalidDates, RaggedMultiConventions);
         write.flush();
@@ -695,7 +695,7 @@ public class SOSgetObs {
         System.out.println("----RaggedMultiConventions------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(RaggedMultiConventions);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, timeSeriesProfileRequestSingle, RaggedMultiConventions);
         write.flush();
@@ -719,7 +719,7 @@ public class SOSgetObs {
         System.out.println("----MultiDimensionalSingleStations------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalSingleStations);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, timeSeriesProfileRequest2, MultiDimensionalSingleStations);
         write.flush();
@@ -740,7 +740,7 @@ public class SOSgetObs {
         System.out.println("----MultiDimensionalSingleStations------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(RaggedMultiConventions);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, timeSeriesTimeRequestT2, RaggedMultiConventions);
         write.flush();
@@ -766,7 +766,7 @@ public class SOSgetObs {
         System.out.println("----MultiDimensionalSingleStations------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(RaggedMultiConventions);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, timeSeriesTimeRequestT1, RaggedMultiConventions);
         write.flush();
@@ -792,7 +792,7 @@ public class SOSgetObs {
         System.out.println("----MultiDimensionalMultiStations------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalMultiStations);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, timeSeriesProfileRequest2, MultiDimensionalMultiStations);
         write.flush();
@@ -812,7 +812,7 @@ public class SOSgetObs {
         System.out.println("----MultiDimensionalMultiStations------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalMultiStations);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, timeSeriesProfileRequest3, MultiDimensionalMultiStations);
         write.flush();
@@ -831,7 +831,7 @@ public class SOSgetObs {
         System.out.println("----MultiDimensionalMultiStations------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalMultiStations);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, timeSeriesProfileRequestMultiStation, MultiDimensionalMultiStations);
         write.flush();
@@ -875,7 +875,7 @@ public class SOSgetObs {
         spaceBetweenTests();
         System.out.println("----ContiguousRaggedMultipleProfiles------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(ContiguousRaggedMultipleProfiles);
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, profileRequestMultiTime3, ContiguousRaggedMultipleProfiles);
         write.flush();
@@ -897,7 +897,7 @@ public class SOSgetObs {
         spaceBetweenTests();
         System.out.println("----ContiguousRaggedMultipleProfiles------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(ContiguousRaggedMultipleProfiles);
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, profileRequestMultiTime, ContiguousRaggedMultipleProfiles);
         write.flush();
@@ -923,7 +923,7 @@ public class SOSgetObs {
         spaceBetweenTests();
         System.out.println("----ContiguousRaggedMultipleProfiles------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(ContiguousRaggedMultipleProfiles);
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, profileRequestMultiTime2, ContiguousRaggedMultipleProfiles);
         write.flush();
@@ -946,7 +946,7 @@ public class SOSgetObs {
         spaceBetweenTests();
         System.out.println("----ContiguousRaggedMultipleProfiles------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(ContiguousRaggedMultipleProfiles);
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, profileRequest, ContiguousRaggedMultipleProfiles);
         write.flush();
@@ -970,7 +970,7 @@ public class SOSgetObs {
         System.out.println("----ContiguousRaggedMultipleProfiles------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(IncompleteMultiDimensionalMultipleProfiles);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, profileRequest, IncompleteMultiDimensionalMultipleProfiles);
         write.flush();
@@ -989,7 +989,7 @@ public class SOSgetObs {
         spaceBetweenTests();
         System.out.println("----ContiguousRaggedMultipleProfiles------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(IndexedRaggedMultipleProfiles);
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, profileRequestIndexed, IndexedRaggedMultipleProfiles);
         write.flush();
@@ -1007,7 +1007,7 @@ public class SOSgetObs {
         spaceBetweenTests();
         System.out.println("----ContiguousRaggedMultipleProfiles------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(OrthogonalMultiDimensionalMultipleProfiles);
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, profileRequest, OrthogonalMultiDimensionalMultipleProfiles);
         write.flush();
@@ -1026,7 +1026,7 @@ public class SOSgetObs {
         spaceBetweenTests();
         System.out.println("----OrthogonalSingleDimensionalSingleProfile------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(OrthogonalSingleDimensionalSingleProfile);
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, profileRequest, OrthogonalSingleDimensionalSingleProfile);
         write.flush();

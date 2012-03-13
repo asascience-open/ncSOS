@@ -42,14 +42,14 @@ import javax.servlet.http.HttpServletResponse;
 public interface ISosContoller {
 	
 	/** 
-	* All metadata controllers must implement a handleMetadataRequest method.
+	* All metadata controllers must implement a handleSOSRequest method.
 	* 
 	* @param request incoming url request 
 	* @param response outgoing web based response
 	* @throws ServletException if ServletException occurred
 	* @throws IOException if IOException occurred 
 	*/	
-	void handleMetadataRequest(final HttpServletRequest req,
+	void handleSOSRequest(final HttpServletRequest req,
 			final HttpServletResponse res) throws ServletException, IOException;
 	
 }

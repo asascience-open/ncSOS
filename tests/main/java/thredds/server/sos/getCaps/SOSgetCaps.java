@@ -24,7 +24,7 @@ import ucar.nc2.dataset.NetcdfDataset;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import thredds.server.sos.service.MetadataParser;
+import thredds.server.sos.service.SOSParser;
 import thredds.server.sos.service.SOSBaseRequestHandler;
 import ucar.nc2.util.CancelTask;
 import static org.junit.Assert.*;
@@ -77,12 +77,63 @@ public class SOSgetCaps {
     private static String IncompleteMultiDimensionalMultipleProfiles = "tests/main/resources/datasets/profile-Incomplete-MultiDimensional-MultipleProfiles-H.3.2/profile-Incomplete-MultiDimensional-MultipleProfiles-H.3.2.nc";
     private static String IndexedRaggedMultipleProfiles = "tests/main/resources/datasets/profile-Indexed-Ragged-MultipleProfiles-H.3.5/profile-Indexed-Ragged-MultipleProfiles-H.3.5.nc";
     private static String OrthogonalMultiDimensionalMultipleProfiles = "tests/main/resources/datasets/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1.nc";
-    private static String OrthogonalSingleDimensionalSingleProfile = "tests/main/resources/datasets/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3.nc";
-    
-    
-    
+    private static String OrthogonalSingleDimensionalSingleProfile = "tests/main/resources/datasets/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3.nc";            
     public static final String base = "tests/main/java/thredds/server/sos/getCaps/output/";
 
+    @Test
+    public void testCacheReturnsTrueFileDoesNOTExist() throws IOException {
+         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
+        SOSParser md = new SOSParser();
+        Writer write = new CharArrayWriter();
+        File f = new File("c:/xmlFile.xml");
+        f.delete();
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13);
+        assertEquals("true",md.getCacheValue());
+        f = new File("c:/xmlFile.xml");
+        assertTrue(f.exists());
+        f.delete();
+    }
+    
+    
+    @Test
+    public void testCacheReturnsTrueFileDoesExist() throws IOException {
+         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
+        SOSParser md = new SOSParser();
+        Writer write = new CharArrayWriter();
+ 
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13);
+        File f = new File("c:/xmlFile.xml");
+        assertTrue(f.exists());
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13);
+        
+        assertTrue(f.exists());
+        f.delete();
+    }
+    
+     
+     
+    @Test
+    public void testAddAdditionalParamForCachingDataTRUE() throws IOException {
+        NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
+        SOSParser md = new SOSParser();
+        Writer write = new CharArrayWriter();
+ 
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13);
+        write.flush();
+        write.close();
+        
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "watlev_IKE.xml";
+        
+        //fileWriter(base, fileName, write);
+        
+        //check file exists
+        File f= new File(base+fileName);
+        assertTrue(f.exists());
+    }
+    
+    
+    
     private static void fileWriter(String base, String fileName, Writer write) throws IOException {
         Writer output = null;
         File file = new File(base + fileName);
@@ -95,9 +146,9 @@ public class SOSgetCaps {
     
     @Test
     public void testLargeDatasets() throws IOException {
-         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
+        NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         
         long start = System.currentTimeMillis();
@@ -137,7 +188,7 @@ public class SOSgetCaps {
     public void testIncompleteMultiDimensionalMultipleStations() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", tsIncompleteMultiDimensionalMultipleStations);
         write.flush();
@@ -152,7 +203,7 @@ public class SOSgetCaps {
     public void testOrthogonalMultidimenstionalMultipleStations() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsOrthogonalMultidimenstionalMultipleStations);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", tsOrthogonalMultidimenstionalMultipleStations);
         write.flush();
@@ -168,7 +219,7 @@ public class SOSgetCaps {
     public void testenhanceSingleRaggedDataset() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(RaggedSingleConventions);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", RaggedSingleConventions);
         write.flush();
@@ -183,7 +234,7 @@ public class SOSgetCaps {
     public void testenhanceMultiRaggedDataset() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(RaggedMultiConventions);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", RaggedMultiConventions);
         write.flush();
@@ -199,7 +250,7 @@ public class SOSgetCaps {
         fail("file invalid i think");
         NetcdfDataset dataset = NetcdfDataset.openDataset(OrthogonalMultidimensionalMultiStations);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", OrthogonalMultidimensionalMultiStations);
         write.flush();
@@ -214,7 +265,7 @@ public class SOSgetCaps {
     public void testMultiDimensionalSingleStations() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalSingleStations);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", MultiDimensionalSingleStations);
         write.flush();
@@ -230,7 +281,7 @@ public class SOSgetCaps {
     public void testMultiDimensionalMultiStations() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalMultiStations);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", MultiDimensionalMultiStations);
         write.flush();
@@ -245,7 +296,7 @@ public class SOSgetCaps {
     public void testMultiDimensionalMultiStationsLocal() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalMultiStations);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", MultiDimensionalMultiStations);
         write.flush();
@@ -264,7 +315,7 @@ public class SOSgetCaps {
         spaceBetweenTests();
         System.out.println("----ContiguousRaggedMultipleProfiles------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(ContiguousRaggedMultipleProfiles);
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1.0.0&service=SOS", ContiguousRaggedMultipleProfiles);
         write.flush();
@@ -284,7 +335,7 @@ public class SOSgetCaps {
     public void testIncompleteMultiDimensionalMultipleProfiles() throws IOException {       
         NetcdfDataset dataset = NetcdfDataset.openDataset(IncompleteMultiDimensionalMultipleProfiles);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", IncompleteMultiDimensionalMultipleProfiles);
         write.flush();
@@ -298,7 +349,7 @@ public class SOSgetCaps {
     @Test
     public void testIndexedRaggedMultipleProfiles() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(IndexedRaggedMultipleProfiles);
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1.0.0&service=SOS", IndexedRaggedMultipleProfiles);
         write.flush();
@@ -312,7 +363,7 @@ public class SOSgetCaps {
     @Test
     public void testOrthogonalMultiDimensionalMultipleProfiles() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(OrthogonalMultiDimensionalMultipleProfiles);
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1.0.0&service=SOS", OrthogonalMultiDimensionalMultipleProfiles);
         write.flush();
@@ -328,7 +379,7 @@ public class SOSgetCaps {
         spaceBetweenTests();
         System.out.println("----OrthogonalSingleDimensionalSingleProfile------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(OrthogonalSingleDimensionalSingleProfile);
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1.0.0&service=SOS", OrthogonalSingleDimensionalSingleProfile);
         write.flush();
@@ -431,7 +482,7 @@ public class SOSgetCaps {
     public void testenhanceImedsDataset() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds1);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", imeds1);
         write.flush();
@@ -443,7 +494,7 @@ public class SOSgetCaps {
     public void testenhanceNOAADataset() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds15);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", imeds15);
         write.flush();
@@ -461,7 +512,7 @@ public class SOSgetCaps {
     public void testenhanceNOAADataset2() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds15);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", imeds15);
         write.flush();
@@ -480,7 +531,7 @@ public class SOSgetCaps {
 
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds5);
 
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", imeds5);
         write.flush();
@@ -491,7 +542,7 @@ public class SOSgetCaps {
     @Test
     public void testenhancePoint() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(cfPoint);
-        MetadataParser md = new MetadataParser();
+        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", cfPoint);
         write.flush();
