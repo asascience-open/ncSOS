@@ -29,16 +29,24 @@
 package thredds.server.sos.util;
 
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import thredds.catalog.InvDatasetFeatureCollection;
+import thredds.catalog.InvDatasetImpl;
+import thredds.servlet.DataRootHandler;
 
 import thredds.servlet.DatasetHandler;
 import thredds.servlet.ServletUtil;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.dataset.NetcdfDataset;
+import ucar.nc2.ncml.NcMLReader;
+import ucar.nc2.util.cache.FileFactory;
 
 /**
  * DatasetHandlerAdapter
@@ -74,10 +82,9 @@ public class DatasetHandlerAdapter {
                         + e.getMessage());
             }
         } else {
-
             try {
-                netcdfFile = DatasetHandler.getNetcdfFile(req, res, datasetPath);
 
+                netcdfFile = DatasetHandler.getNetcdfFile(req, res, datasetPath);
                 _log.debug("netcdfFile location: " + netcdfFile.getLocation());
                 dataset = new NetcdfDataset(netcdfFile);
             } catch (IOException e) {
@@ -92,7 +99,7 @@ public class DatasetHandlerAdapter {
     /** 
      * Close a NetcdfDataset.
      * 
-     * @param dataste the NetcdfDataset to close 
+     * @param dataset the NetcdfDataset to close 
      */
     public static void closeDataset(final NetcdfDataset dataset) {
         if (dataset == null) {

@@ -15,6 +15,7 @@ import thredds.server.sos.util.DatasetHandlerAdapter;
 
 import java.io.IOException;
 import java.io.Writer;
+import org.apache.log4j.Level;
 import thredds.server.sos.service.SOSParser;
 
 import ucar.nc2.dataset.NetcdfDataset;
@@ -37,12 +38,12 @@ public class SosController implements ISosContoller {
     }
 
     public void init() throws ServletException {
-        _logServerStartup.info("Metadata sos - initialization start");
+        _logServerStartup.info("SOS Service - initialization start");
     }
 
     public void destroy() {
         NetcdfDataset.shutdown();
-        _logServerStartup.info("Metadata sos - destroy done");
+        _logServerStartup.info("SOS Service - destroy done");
     }
 
     /** 
@@ -61,18 +62,18 @@ public class SosController implements ISosContoller {
         NetcdfDataset dataset = null;
 
         try {
-            //see http://tomcat.apache.org/tomcat-5.5-doc/config/context.html ----- workdir
-            String path = (req.getServletContext().getAttribute("javax.servlet.context.tempdir").toString());
-            System.out.println(path);
+            //see http://tomcat.apache.org/tomcat-5.5-doc/config/context.html ----- workdir    
+            String tempdir = System.getProperty("java.io.tmpdir");
             
             //return netcdf dataset
             dataset = DatasetHandlerAdapter.openDataset(req, res);
+            
             //set the response type
             res.setContentType("text/xml");
             Writer writer = res.getWriter();
             //TODO create new service
-            SOSParser.enhance(dataset, writer, req.getQueryString(), req.getRequestURL().toString());
-            _log.info(req.getQueryString().toString());
+            SOSParser.enhance(dataset, writer, req.getQueryString(), req.getRequestURL().toString(),tempdir);          
+            _log.info(req.getRequestURL().toString()+"?"+req.getQueryString().toString());
             writer.flush();
             writer.close();
 

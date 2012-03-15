@@ -80,16 +80,18 @@ public class SOSgetCaps {
     private static String OrthogonalSingleDimensionalSingleProfile = "tests/main/resources/datasets/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3.nc";            
     public static final String base = "tests/main/java/thredds/server/sos/getCaps/output/";
 
+  
+    
     @Test
     public void testCacheReturnsTrueFileDoesNOTExist() throws IOException {
          NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
-        File f = new File("c:/xmlFile.xml");
+        File f = new File("C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds/xmlFile.xml");
         f.delete();
-        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13);
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13,"C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds");
         assertEquals("true",md.getCacheValue());
-        f = new File("c:/xmlFile.xml");
+        f = new File("C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds/watlev_IKE.xml");
         assertTrue(f.exists());
         f.delete();
     }
@@ -97,14 +99,14 @@ public class SOSgetCaps {
     
     @Test
     public void testCacheReturnsTrueFileDoesExist() throws IOException {
-         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
+        NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
  
-        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13);
-        File f = new File("c:/xmlFile.xml");
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13,"C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds");
+        File f = new File("C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds/watlev_IKE.xml");
         assertTrue(f.exists());
-        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13);
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13,"C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds");
         
         assertTrue(f.exists());
         f.delete();
@@ -114,7 +116,7 @@ public class SOSgetCaps {
     public void testCanGetCorrectDataSetFileName() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
         SOSParser md = new SOSParser();
-        assertEquals("watlev_IKE.xml",md.getCacheXmlFileName(imeds13));
+        assertEquals("/watlev_IKE.xml",md.getCacheXmlFileName(imeds13));
     }
     
      
@@ -124,17 +126,17 @@ public class SOSgetCaps {
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
  
-        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13);
+        String fileName = "C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds/watlev_IKE.xml";        
+        //check file exists
+        File f= new File(fileName);
+        f.delete();
+        
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13,"C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds");
         write.flush();
         write.close();
         
         assertFalse(write.toString().contains("Exception"));
-        String fileName = "watlev_IKE.xml";
-        
-        //fileWriter(base, fileName, write);
-        
-        //check file exists
-        File f= new File(fileName);
+        f= new File(fileName);
         assertTrue(f.exists());
     }
     
