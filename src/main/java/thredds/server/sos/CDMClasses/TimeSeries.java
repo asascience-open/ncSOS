@@ -28,19 +28,11 @@ import ucar.unidata.geoloc.Station;
  *
  */
 public class TimeSeries extends baseCDMClass implements iStationData {
-    public static final String DATA_RESPONSE_ERROR = "Data Response IO Error: ";
-    public static final String ERROR_NULL_DATE = "ERROR NULL Date!!!!";
-
-    private static final int Invalid_Value = -9999999;
-    private static final String Invalid_Station = "INVALID_ST";
+    
     private StationTimeSeriesFeatureCollection tsData;
     private List<Station> tsStationList;
     private final ArrayList<String> eventTimes;
     private final String[] variableNames;
-
-    
-    Chronology chrono = ISOChronology.getInstance();
-    DateFormatter df = new DateFormatter();
 
     public TimeSeries(String[] stationName, String[] eventTime, String[] variableNames) {
         startDate = null;
@@ -51,6 +43,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         this.eventTimes = new ArrayList<String>();
         eventTimes.addAll(Arrays.asList(eventTime));
     }
+    
     
     /*******************TIMSERIES*************************/
     private String createTimeSeriesData(int stNum) throws IOException {

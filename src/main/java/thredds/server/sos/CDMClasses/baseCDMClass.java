@@ -7,6 +7,9 @@ package thredds.server.sos.CDMClasses;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.joda.time.Chronology;
+import org.joda.time.chrono.ISOChronology;
+import ucar.nc2.units.DateFormatter;
 import ucar.unidata.geoloc.Station;
 
 /**
@@ -25,8 +28,15 @@ public abstract class baseCDMClass implements iStationData {
     public String startDate;
     public String endDate;
     public List<String> stationNames;
-    private int numberOfStations;
-
+    public int numberOfStations;
+    public static final String DATA_RESPONSE_ERROR = "Data Response IO Error: ";
+    public static final String ERROR_NULL_DATE = "ERROR NULL Date!!!!";
+    public static final int Invalid_Value = -9999999;
+    public static final String Invalid_Station = "INVALID_ST";
+    Chronology chrono = ISOChronology.getInstance();
+    DateFormatter df = new DateFormatter();
+    
+    
     @Override
     public void checkLatLonBoundaries(List<Station> stationList, int i) {
         //LAT?LON PARSING
