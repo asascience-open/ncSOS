@@ -4,6 +4,7 @@
  */
 package thredds.server.sos.service;
 
+import thredds.server.sos.getObs.SOSGetObservationRequestHandler;
 import java.io.IOException;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.constants.FeatureType;

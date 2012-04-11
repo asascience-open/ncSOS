@@ -33,6 +33,7 @@ import ucar.unidata.geoloc.Station;
  * stores the station data, easy to access and use, abstracts complexity of station information
  *
  */
+@Deprecated
 public class StationData {
 
     private List<String> stationNames;
@@ -651,6 +652,8 @@ public class StationData {
         return profileID;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    
     /**
      * get begin time of obs
      * @param stNum

@@ -1,4 +1,4 @@
-package thredds.server.sos.service;
+package thredds.server.sos.getCaps;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -7,8 +7,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.DOMException;
-import thredds.server.sos.getCaps.ObservationOffering;
-import thredds.server.sos.getCaps.SOSObservationOffering;
+import thredds.server.sos.getObs.ObservationOffering;
+import thredds.server.sos.getObs.SOSObservationOffering;
 import thredds.server.sos.util.DiscreteSamplingGeometryUtil;
 import ucar.ma2.Array;
 import ucar.ma2.StructureMembers.Member;
@@ -29,6 +29,8 @@ import java.util.List;
 import org.joda.time.Chronology;
 import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
+import thredds.server.sos.service.SOSBaseRequestHandler;
+import thredds.server.sos.service.StationData;
 import ucar.nc2.ft.PointFeature;
 import ucar.nc2.ft.PointFeatureIterator;
 import ucar.nc2.units.DateFormatter;

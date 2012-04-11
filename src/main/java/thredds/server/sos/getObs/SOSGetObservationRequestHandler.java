@@ -1,10 +1,12 @@
-package thredds.server.sos.service;
+package thredds.server.sos.getObs;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import thredds.server.sos.service.SOSBaseRequestHandler;
+import thredds.server.sos.service.StationData;
 import thredds.server.sos.util.XMLDomUtils;
 
 import ucar.nc2.VariableSimpleIF;

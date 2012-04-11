@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package thredds.server.sos.getCaps;
+package thredds.server.sos.getObs;
 
 import java.util.List;
 

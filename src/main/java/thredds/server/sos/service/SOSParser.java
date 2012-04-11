@@ -1,5 +1,7 @@
 package thredds.server.sos.service;
 
+import thredds.server.sos.getCaps.SOSGetCapabilitiesRequestHandler;
+import thredds.server.sos.getObs.SOSGetObservationRequestHandler;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;

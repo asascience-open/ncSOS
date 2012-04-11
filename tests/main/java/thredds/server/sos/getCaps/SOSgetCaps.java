@@ -16,7 +16,6 @@ import ucar.nc2.constants.FeatureType;
 import java.util.Formatter;
 import javax.swing.JOptionPane;
 import ucar.nc2.thredds.ThreddsDataFactory;
-import thredds.server.sos.service.SOSGetCapabilitiesRequestHandler;
 import java.io.IOException;
 import java.io.Writer;
 import thredds.server.sos.util.DatasetHandlerAdapter;
