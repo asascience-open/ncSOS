@@ -12,7 +12,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.joda.time.Chronology;
 import org.joda.time.DateTime;
-import org.joda.time.chrono.ISOChronology;
 import ucar.nc2.ft.PointFeature;
 import ucar.nc2.ft.PointFeatureIterator;
 import ucar.nc2.ft.StationTimeSeriesFeatureCollection;
