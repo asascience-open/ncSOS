@@ -22,12 +22,15 @@ import ucar.nc2.ft.StationProfileFeature;
 import ucar.nc2.ft.StationProfileFeatureCollection;
 import ucar.nc2.ft.StationTimeSeriesFeature;
 import ucar.nc2.ft.StationTimeSeriesFeatureCollection;
+import ucar.nc2.ft.TrajectoryFeature;
+import ucar.nc2.ft.grid.Grid;
 import ucar.nc2.ft.point.StationPointFeature;
 import ucar.nc2.ft.point.standard.StandardProfileCollectionImpl;
 
 /**
  *
- * @author tkunicki ,
+ * @author tkunicki
+ * @modified Andy Bird 
  */
 public class DiscreteSamplingGeometryUtil {
 
@@ -42,7 +45,7 @@ public class DiscreteSamplingGeometryUtil {
                     if (featureCollection instanceof StationTimeSeriesFeatureCollection) {
                         return (StationTimeSeriesFeatureCollection) featureCollection;
                     } //**********         
-                    //added abird -- need to remove - used to highlight feature type        
+                    //used to highlight feature type        
                     else if (featureCollection instanceof StationProfileFeatureCollection) {
                         //System.out.println("profile feature collection");
                     } else if (featureCollection instanceof StationPointFeature) {
@@ -54,6 +57,10 @@ public class DiscreteSamplingGeometryUtil {
                     } else if (featureCollection instanceof ProfileFeature) {
                         //System.out.println("profile feature");
                     } else if (featureCollection instanceof ProfileFeatureCollection) {
+                        //System.out.println("profile feature collection");
+                    }else if (featureCollection instanceof Grid) {
+                        //System.out.println("profile feature collection");
+                    }else if (featureCollection instanceof TrajectoryFeature) {
                         //System.out.println("profile feature collection");
                     }
                     //********** 

@@ -172,11 +172,23 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
             newOffering.setObservationStationLowerCorner(stationLat, stationLon);
             newOffering.setObservationStationUpperCorner(stationLat, stationLon);
 
+            // Code that causes slow issues
+            /*
             if (stationList.size() < 75) {
+            feature.calcBounds();
+            newOffering.setObservationTimeBegin(feature.getDateRange().getStart().toDateTimeStringISO());
+            newOffering.setObservationTimeEnd(feature.getDateRange().getEnd().toDateTimeStringISO());
+            }
+             * 
+             */
+            try {
                 feature.calcBounds();
                 newOffering.setObservationTimeBegin(feature.getDateRange().getStart().toDateTimeStringISO());
                 newOffering.setObservationTimeEnd(feature.getDateRange().getEnd().toDateTimeStringISO());
+            } catch (Exception e) {
             }
+
+            //END of slow issue code
 
             newOffering.setObservationStationDescription(feature.getDescription());
             newOffering.setObservationName(getGMLName((stationName)));

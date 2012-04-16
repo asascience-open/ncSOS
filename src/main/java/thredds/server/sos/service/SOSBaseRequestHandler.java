@@ -10,6 +10,7 @@ import thredds.server.sos.util.DiscreteSamplingGeometryUtil;
 import thredds.server.sos.util.XMLDomUtils;
 import ucar.nc2.constants.FeatureType;
 import ucar.nc2.dataset.NetcdfDataset;
+import ucar.nc2.ft.FeatureCollection;
 import ucar.nc2.ft.FeatureDataset;
 import ucar.nc2.ft.FeatureDatasetFactoryManager;
 import ucar.nc2.ft.ProfileFeatureCollection;
@@ -52,9 +53,9 @@ public abstract class SOSBaseRequestHandler {
         //change multi to single featureCollectionType - allowing for single variable - switch on feature Type
         //keep remove others
         featureCollection = DiscreteSamplingGeometryUtil.extractStationTimeSeriesFeatureCollection(featureDataset);
-        //added abird
+        
         featureCollectionProfileFeature = DiscreteSamplingGeometryUtil.extractStationProfileFeatureCollection(featureDataset);
-        //added abird
+       
         ProfileFeatureCollection = DiscreteSamplingGeometryUtil.extractStdProfileCollection(featureDataset);
         parseGlobalAttributes();
         document = parseTemplateXML();
@@ -100,19 +101,37 @@ public abstract class SOSBaseRequestHandler {
         return featureDataset;
     }
 
-    //added abird
+    
+    
+    @Deprecated    
     public StationTimeSeriesFeatureCollection getFeatureCollection() {
         return featureCollection;
     }
 
-    //added abird
+    @Deprecated
     public StationProfileFeatureCollection getFeatureProfileCollection() {
         return featureCollectionProfileFeature;
     }
 
-    //added abird
+    @Deprecated
     public ProfileFeatureCollection getProfileFeatureCollection() {
         return ProfileFeatureCollection;
+    }
+    
+    /**
+     * Gets the dataset currently in use
+     * @return feature collection dataset
+     */
+    public FeatureCollection getFeatureTypeDataSet(){
+        return null;
+    }
+    
+    /**
+     * gets the feature type of the dataset in question
+     * @return feature type of dataset
+     */
+    public FeatureType getDatasetFeatureType(){
+        return FeatureType.ANY;        
     }
 
     public String getTitle() {
