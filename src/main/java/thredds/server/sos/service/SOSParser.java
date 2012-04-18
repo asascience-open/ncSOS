@@ -10,7 +10,10 @@ import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
@@ -52,6 +55,7 @@ public class SOSParser {
     private static String cache;
     private static String CACHE_TRUE = "true";
     private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(SOSParser.class);
+    private static Map<String, String> latLonRequest = new HashMap();
 
     /**
      * Enhance NCML with Data Discovery conventions elements if not already in place in the metadata.
@@ -82,7 +86,7 @@ public class SOSParser {
                             //Check to see if get caps exists, if it does not actual parse the file
                             _log.info("cache option selected");
                             File f = new File(savePath + getCacheXmlFileName(threddsURI));
-                              long start = System.currentTimeMillis();
+                            long start = System.currentTimeMillis();
                             if (f.exists()) {
                                 //if the file exists check the modified data against current data
                                 long fileDateTime = f.lastModified();
@@ -94,7 +98,7 @@ public class SOSParser {
                                 if (fileDate.before(minusSevenFromNow)) {
                                     createGetCapsCacheFile(dataset, threddsURI, writer, savePath);
                                 } else {
-                                     
+
                                     fileIsInDate(f, writer);
                                 }
                             } else {
@@ -102,9 +106,9 @@ public class SOSParser {
                                 //Check Directory                                   
                                 createGetCapsCacheFile(dataset, threddsURI, writer, savePath);
                             }
-                             long elapsedTimeMillis = System.currentTimeMillis() - start;
-                             float elapsedTimeSec = elapsedTimeMillis / 1000F;
-                              _log.info("Time to complete  - MILI:"+ elapsedTimeMillis + ":SEC: " + elapsedTimeSec);
+                            long elapsedTimeMillis = System.currentTimeMillis() - start;
+                            float elapsedTimeSec = elapsedTimeMillis / 1000F;
+                            _log.info("Time to complete  - MILI:" + elapsedTimeMillis + ":SEC: " + elapsedTimeSec);
                         } else {
                             normalSOSRequestNoCacheParam(dataset, threddsURI, writer);
                         }
@@ -112,7 +116,7 @@ public class SOSParser {
                     } else if (request.equalsIgnoreCase("DescribeSensor")) {
                         writeErrorXMLCode(writer);
                     } else if (request.equalsIgnoreCase("GetObservation")) {
-                        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, offering, observedProperties, eventTime);
+                        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, offering, observedProperties, eventTime,latLonRequest);
                         handler.parseObservations();
                         writeDocumentToResponse(handler.getDocument(), writer);
                         handler.finished();
@@ -147,6 +151,8 @@ public class SOSParser {
         }
     }
 
+    
+    
     /**
      * get the XML file name base on the request string add the / for correct directory
      */
@@ -157,19 +163,18 @@ public class SOSParser {
         splitStr = null;
         splitStr = dName.split("nc");
 
-        return "/"+splitStr[0] + "xml";
+        return "/" + splitStr[0] + "xml";
     }
 
-    
-   
-     /**
+    /**
      * Normal sos request without any file writing
      * @param dataset
      * @param threddsURI
      * @param writer
      * @throws IOException
      * @throws TransformerException 
-     */    private static void normalSOSRequestNoCacheParam(final NetcdfDataset dataset, String threddsURI, final Writer writer) throws IOException, TransformerException {
+     */
+    private static void normalSOSRequestNoCacheParam(final NetcdfDataset dataset, String threddsURI, final Writer writer) throws IOException, TransformerException {
         _log.info("Normal request no caching");
         SOSGetCapabilitiesRequestHandler handler = performSOSGetCaps(dataset, threddsURI, writer);
         handler.finished();
@@ -178,17 +183,17 @@ public class SOSParser {
         writer.close();
     }
 
-     /**
-      * if the file is older than seven days create it,
-      * or
-      * if the cached file does not exist
-      * @param dataset
-      * @param threddsURI
-      * @param writer
-      * @param savePath
-      * @throws IOException
-      * @throws TransformerException 
-      */
+    /**
+     * if the file is older than seven days create it,
+     * or
+     * if the cached file does not exist
+     * @param dataset
+     * @param threddsURI
+     * @param writer
+     * @param savePath
+     * @throws IOException
+     * @throws TransformerException 
+     */
     private static void createGetCapsCacheFile(final NetcdfDataset dataset, String threddsURI, final Writer writer, String savePath) throws IOException, TransformerException {
         _log.info("CACHING: Cached file does not exist or override...");
         //parse the file anyway
@@ -204,7 +209,7 @@ public class SOSParser {
         //GetCaps file writing if not there
         writer.flush();
         writer.close();
-       }
+    }
 
     /**
      * checks to see if the file in questions is in date
@@ -278,7 +283,7 @@ public class SOSParser {
     public String getCacheValue() {
         return cache;
     }
-    
+
     public static void writeDocumentToResponse(Document dom, final Writer writer) throws TransformerException, IOException {
         DOMSource source = new DOMSource(dom);
         Result result = new StreamResult(writer);
@@ -347,7 +352,13 @@ public class SOSParser {
                         SOSParser.eventTime = new String[]{SOSParser.singleEventTime};
                     }
 
+                } else if (splitServiceStr[0].equalsIgnoreCase("lat")) {
+                    latLonRequest.put("lat", splitServiceStr[1]);
+                    
+                } else if (splitServiceStr[0].equalsIgnoreCase("lon")) {
+                    latLonRequest.put("lon", splitServiceStr[1]);
                 }
+
             }
         }
     }
