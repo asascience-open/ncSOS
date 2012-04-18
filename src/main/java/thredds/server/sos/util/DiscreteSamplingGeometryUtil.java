@@ -13,6 +13,7 @@ import ucar.nc2.Variable;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.constants.CF;
 import ucar.nc2.dataset.CoordinateAxis;
+import ucar.nc2.dt.GridDataset;
 import ucar.nc2.ft.FeatureCollection;
 import ucar.nc2.ft.FeatureDataset;
 import ucar.nc2.ft.FeatureDatasetPoint;
@@ -23,6 +24,7 @@ import ucar.nc2.ft.StationProfileFeatureCollection;
 import ucar.nc2.ft.StationTimeSeriesFeature;
 import ucar.nc2.ft.StationTimeSeriesFeatureCollection;
 import ucar.nc2.ft.TrajectoryFeature;
+import ucar.nc2.ft.TrajectoryFeatureCollection;
 import ucar.nc2.ft.grid.Grid;
 import ucar.nc2.ft.point.StationPointFeature;
 import ucar.nc2.ft.point.standard.StandardProfileCollectionImpl;
@@ -58,9 +60,9 @@ public class DiscreteSamplingGeometryUtil {
                         //System.out.println("profile feature");
                     } else if (featureCollection instanceof ProfileFeatureCollection) {
                         //System.out.println("profile feature collection");
-                    }else if (featureCollection instanceof Grid) {
+                    } else if (featureCollection instanceof Grid) {
                         //System.out.println("profile feature collection");
-                    }else if (featureCollection instanceof TrajectoryFeature) {
+                    } else if (featureCollection instanceof TrajectoryFeature) {
                         //System.out.println("profile feature collection");
                     }
                     //********** 
@@ -179,7 +181,7 @@ public class DiscreteSamplingGeometryUtil {
         return variableList;
     }
 
-    //added abird
+    @Deprecated
     public static StationProfileFeatureCollection extractStationProfileFeatureCollection(FeatureDataset featureDataset) {
         if (featureDataset instanceof FeatureDatasetPoint) {
             FeatureDatasetPoint featureDatasetPoint = (FeatureDatasetPoint) featureDataset;
@@ -204,7 +206,7 @@ public class DiscreteSamplingGeometryUtil {
         return null;
     }
 
-    //added abird
+    @Deprecated
     public static ProfileFeatureCollection extractStdProfileCollection(FeatureDataset featureDataset) {
         if (featureDataset instanceof FeatureDatasetPoint) {
             FeatureDatasetPoint featureDatasetPoint = (FeatureDatasetPoint) featureDataset;
@@ -225,6 +227,59 @@ public class DiscreteSamplingGeometryUtil {
             }
         } else {
             // error, no data or wrong data type
+        }
+        return null;
+    }
+
+    public static FeatureCollection extractFeatureDatasetCollection(FeatureDataset featureDataset) {
+        if (featureDataset instanceof FeatureDatasetPoint) {
+            FeatureDatasetPoint featureDatasetPoint = (FeatureDatasetPoint) featureDataset;
+            List<FeatureCollection> featureCollectionList = featureDatasetPoint.getPointFeatureCollectionList();
+            if (featureCollectionList != null && featureCollectionList.size() > 0) {
+                if (featureCollectionList.size() == 1) {
+                    FeatureCollection featureCollection = featureCollectionList.get(0);
+
+                    if (featureCollection instanceof StationTimeSeriesFeatureCollection) {
+                        return (StationTimeSeriesFeatureCollection) featureCollection;
+                    } else if (featureCollection instanceof StationProfileFeatureCollection) {
+                        return (StationProfileFeatureCollection) featureCollection;
+                    } else if (featureCollection instanceof StationPointFeature) {
+                        //System.out.println("point feature");
+                    } else if (featureCollection instanceof StationProfileFeature) {
+                        //System.out.println("profile feature");
+                    } else if (featureCollection instanceof StationTimeSeriesFeature) {
+                        //System.out.println("StationTimeSeriesFeature feature");
+                    } else if (featureCollection instanceof ProfileFeature) {
+                        //System.out.println("profile feature");
+                    } else if (featureCollection instanceof ProfileFeatureCollection) {
+                        return (ProfileFeatureCollection) featureCollection;
+                    } else if (featureCollection instanceof TrajectoryFeature) {
+                        System.out.println("Trajectory");
+                        return (TrajectoryFeature) featureCollection;
+                    } else if (featureCollection instanceof TrajectoryFeatureCollection) {
+                        System.out.println("Trajectory Collection");
+                        return (TrajectoryFeatureCollection) featureCollection;
+                    }
+                    //********** 
+
+
+                } else {
+                    // multiple collections???
+                }
+            } else {
+                // error, no data
+            }
+        } else {
+            //GRIDDED DATASET             
+            // error, no data or wrong data type
+
+        }
+        return null;
+    }
+
+    public static GridDataset extractGridDatasetCollection(FeatureDataset featureDataset) {
+        if (featureDataset instanceof GridDataset) {
+            return (GridDataset) featureDataset;
         }
         return null;
     }
