@@ -42,8 +42,8 @@ public class Profile extends baseCDMClass implements iStationData {
 
         this.variableNames = variableNames;
 
-        this.stationNames = new ArrayList<String>();
-        stationNames.addAll(Arrays.asList(stationName));
+        this.reqStationNames = new ArrayList<String>();
+        reqStationNames.addAll(Arrays.asList(stationName));
 
         this.eventTimes = new ArrayList<String>();
         eventTimes.addAll(Arrays.asList(eventTime));
@@ -110,7 +110,7 @@ public class Profile extends baseCDMClass implements iStationData {
             //if there is a profile id use it against the data that is requested
             if (profileID != null) {
                 //System.out.println(profileID);
-                if (profileID.equalsIgnoreCase(stationNames.get(stNum))) {
+                if (profileID.equalsIgnoreCase(reqStationNames.get(stNum))) {
                     addProfileDataToBuilder(valueList, pointFeature, builder);
                 }
             } else {
@@ -192,7 +192,7 @@ public class Profile extends baseCDMClass implements iStationData {
                 }
 
                 //scan through the stationname for a match of id
-                for (Iterator<String> it = stationNames.iterator(); it.hasNext();) {
+                for (Iterator<String> it = reqStationNames.iterator(); it.hasNext();) {
                     String stName = it.next();
                     if (stName.equalsIgnoreCase(profileID)) {
                         profileList.add(pFeature);
@@ -243,8 +243,8 @@ public class Profile extends baseCDMClass implements iStationData {
 
             setStartDate(df.toDateTimeStringISO(dtStart.toDate()));
             setEndDate(df.toDateTimeStringISO(dtEnd.toDate()));
-            if (stationNames != null) {
-                setNumberOfStations(stationNames.size());
+            if (reqStationNames != null) {
+                setNumberOfStations(reqStationNames.size());
             }
         }
     }
@@ -270,7 +270,7 @@ public class Profile extends baseCDMClass implements iStationData {
     @Override
     public String getStationName(int idNum) {
         if (profileData != null) {
-            return "PROFILE_" + (stationNames.get(idNum));
+            return "PROFILE_" + (reqStationNames.get(idNum));
         } else {
             return Invalid_Station;
         }
@@ -329,5 +329,10 @@ public class Profile extends baseCDMClass implements iStationData {
         } else {
             return ERROR_NULL_DATE;
         }
+    }
+
+    @Override
+    public String getDescription(int stNum) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

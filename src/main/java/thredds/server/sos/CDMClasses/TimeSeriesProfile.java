@@ -41,8 +41,8 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
         startDate = null;
         endDate = null;
         this.variableNames = variableNames;
-        this.stationNames = new ArrayList<String>();
-        stationNames.addAll(Arrays.asList(stationName));
+        this.reqStationNames = new ArrayList<String>();
+        reqStationNames.addAll(Arrays.asList(stationName));
         this.eventTimes = new ArrayList<String>();
         eventTimes.addAll(Arrays.asList(eventTime));
 
@@ -143,7 +143,7 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
     @Override
     public void setData(Object featureProfileCollection) throws IOException {
         this.tsProfileData = (StationProfileFeatureCollection) featureProfileCollection;
-        tsStationList = tsProfileData.getStations(stationNames);
+        tsStationList = tsProfileData.getStations(reqStationNames);
 
         setNumberOfStations(tsStationList.size());
 
@@ -295,5 +295,10 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
             Logger.getLogger(TimeSeriesProfile.class.getName()).log(Level.SEVERE, null, ex);
         }
         return ERROR_NULL_DATE;
+    }
+
+    @Override
+    public String getDescription(int stNum) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

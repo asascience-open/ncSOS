@@ -4,8 +4,6 @@
  */
 package thredds.server.sos.CDMClasses;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.joda.time.Chronology;
 import org.joda.time.chrono.ISOChronology;
@@ -27,7 +25,7 @@ public abstract class baseCDMClass implements iStationData {
     public double upperLat;
     public String startDate;
     public String endDate;
-    public List<String> stationNames;
+    public List<String> reqStationNames;
     public int numberOfStations;
     public static final String DATA_RESPONSE_ERROR = "Data Response IO Error: ";
     public static final String ERROR_NULL_DATE = "ERROR NULL Date!!!!";
@@ -58,7 +56,7 @@ public abstract class baseCDMClass implements iStationData {
 
     @Override
     public List<String> getStationNames() {
-        return stationNames;
+        return reqStationNames;
     }
 
     @Override
