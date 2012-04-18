@@ -2,15 +2,20 @@ package thredds.server.sos.getObs;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import thredds.server.sos.CDMClasses.Grid;
+import thredds.server.sos.CDMClasses.iStationData;
 import thredds.server.sos.service.SOSBaseRequestHandler;
 import thredds.server.sos.service.StationData;
 import thredds.server.sos.util.XMLDomUtils;
 
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.constants.AxisType;
+import ucar.nc2.constants.FeatureType;
 import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.dataset.NetcdfDataset;
 
@@ -26,6 +31,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     private String[] variableNames;
     private boolean isMultiTime;
     private final StationData stD;
+    private final iStationData CDMDataSet;
 
     /**
      * SOS get obs request handler
@@ -35,36 +41,57 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
      * @param eventTime
      * @throws IOException 
      */
-    public SOSGetObservationRequestHandler(NetcdfDataset netCDFDataset, String[] stationName, String[] variableNames, String[] eventTime) throws IOException {
+    public SOSGetObservationRequestHandler(NetcdfDataset netCDFDataset, String[] stationName, String[] variableNames, String[] eventTime, Map<String, String> latLonRequest) throws IOException {
         super(netCDFDataset);
-
         //this.stationName = stationName[0];        
-
-        //check for height and add it, get variable names
         CoordinateAxis heightAxis = netCDFDataset.findCoordinateAxis(AxisType.Height);
-        this.variableNames = checkNetcdfFileForHeight(heightAxis, variableNames);
+        
+        this.variableNames = checkNetcdfFileForAxis(heightAxis, variableNames);
 
-        //one per request
-        stD = new StationData(stationName, eventTime, this.variableNames);
+        //grid operation
+        if (getDatasetFeatureType() == FeatureType.GRID) {
+            if (!latLonRequest.isEmpty()) {
+                stD = null;        
+                 this.variableNames = checkNetcdfFileForAxis(netCDFDataset.findCoordinateAxis(AxisType.Lat), this.variableNames);
+                 this.variableNames = checkNetcdfFileForAxis(netCDFDataset.findCoordinateAxis(AxisType.Lon), this.variableNames);
+                
+                CDMDataSet = new Grid(stationName, eventTime, this.variableNames, latLonRequest);
+                CDMDataSet.setData(getGridDataset());
+                return;
+            } else {
+                stD = null;
+                CDMDataSet = null;
+                return;
+            }
+        } //point operation
+        else {
 
-        //Time Series
-        if (getFeatureCollection() != null) {
-            stD.setData(getFeatureCollection());
+            //check for height and add it, get variable names
+
+
+
+            //one per request
+            stD = new StationData(stationName, eventTime, this.variableNames);
+
+            //Time Series
+            if (getFeatureCollection() != null) {
+                stD.setData(getFeatureCollection());
+            }
+
+            //profile Collection
+            //timeseriesprofile
+            //get the station profile based on station name
+            if (getFeatureProfileCollection() != null) {
+                stD.setData(getFeatureProfileCollection());
+            }
+
+            //profile
+            //gets the profile based on event time
+            if (getProfileFeatureCollection() != null) {
+                stD.setData(getProfileFeatureCollection());
+            }
         }
-
-        //profile Collection
-        //timeseriesprofile
-        //get the station profile based on station name
-        if (getFeatureProfileCollection() != null) {
-            stD.setData(getFeatureProfileCollection());
-        }
-
-        //profile
-        //gets the profile based on event time
-        if (getProfileFeatureCollection() != null) {
-            stD.setData(getProfileFeatureCollection());
-        }
-
+        CDMDataSet = null;
     }
 
     public StationData getStationData() {
@@ -77,7 +104,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
      * @param variableNames1
      * @return 
      */
-    private String[] checkNetcdfFileForHeight(CoordinateAxis heightAxis, String[] variableNames1) {
+    private String[] checkNetcdfFileForAxis(CoordinateAxis heightAxis, String[] variableNames1) {
         if (heightAxis != null) {
             List<String> variableNamesNew = new ArrayList<String>();
             //check to see if Z present
@@ -115,7 +142,6 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         return isMultiTime;
     }
 
-    
     private void addDatasetResults(String[] obsProperty, int stationNumber) {
         //TODO Test the following
         //add Data Block Definition
@@ -161,10 +187,12 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             VariableSimpleIF variable = getFeatureDataset().getDataVariable(observedProperty);
             document = XMLDomUtils.addNodeAndAttribute(document, "swe:DataRecord", "swe:field", "name", observedProperty, stationNumber);
             document = XMLDomUtils.addNodeAndAttribute(document, "swe:field", "swe:Quantity", fieldIndex++, "definition", "urn:ogc:def:phenomenon:mmisw.org:cf:" + observedProperty, stationNumber);
-
+            
             //added logic abird
             if (variable != null) {
                 document = XMLDomUtils.addNodeAndAttribute(document, "swe:Quantity", "swe:uom", quantityIndex++, "code", variable.getUnitsString(), stationNumber);
+            }else{
+                quantityIndex++;
             }
         }
     }
@@ -180,10 +208,15 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     void setSystemGMLID() {
 
         StringBuilder b = new StringBuilder();
-        for (int i = 0; i < stD.getNumberOfStations(); i++) {
-            b.append(stationName);
-            b.append(",");
+        if (stD != null) {
+
+            for (int i = 0; i < stD.getNumberOfStations(); i++) {
+                b.append(stationName);
+                b.append(",");
+            }
         }
+
+
         XMLDomUtils.setObsGMLIDAttributeFromNode(document, "om:ObservationCollection", "gml:id", getGMLID("GML_ID_NAME"));
     }
 
@@ -237,65 +270,93 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         setCollectionSourceName();
         setCollectionLowerCornerEnvelope();
         setCollectionUpperCornerEnvelope();
-    } 
-    
+    }
+
     /*
      * Create the observation XML data for getObs
      */
     public void parseObservations() {
 
-        setObsCollectionMetaData();
+        if (CDMDataSet == null && stD == null) {
+            setDocument(XMLDomUtils.getExceptionDom());
+        } else {
+            setObsCollectionMetaData();
 
-        //add observation 
-        //*********THIS IS FOR NUMBER OF STATIONS!
-        for (int stNum = 0; stNum < stD.getNumberOfStations(); stNum++) {
-            document = XMLDomUtils.addObservationElement(document);
-            //add description
-            document = XMLDomUtils.addNodeAndValue(document, OM_OBSERVATION, "gml:description", getDescription(), stNum);
-            //add name
-            document = XMLDomUtils.addNodeAndValue(document, OM_OBSERVATION, "gml:name", getDescription(), stNum);
-            //add bounded by
-            document = XMLDomUtils.addNode(document, OM_OBSERVATION, "gml:boundedBy", stNum);
-            //add envelope and attribute
-            document = XMLDomUtils.addNodeToNodeAndAttribute(document, OM_OBSERVATION, "gml:boundedBy", "gml:Envelope", "srsName", getGMLName(stD.getStationName(stNum)), stNum);
-            //add lat lon string
-            document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:Envelope", "gml:lowerCorner", getStationLowerLatLonStr(stNum), stNum);
-            //add Upper GPS coors
-            document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:Envelope", "gml:upperCorner", getStationUpperLatLonStr(stNum), stNum);
-            //add sampling time
-            document = XMLDomUtils.addNode(document, OM_OBSERVATION, "om:samplingTime", stNum);
-            //add time instant
-            document = XMLDomUtils.addNodeToNodeAndAttribute(document, OM_OBSERVATION, "om:samplingTime", "gml:TimePeriod", "gml:id", "DATA_TIME", stNum);
-            //add time positions (being and end)
-
-            //******NEW DATA MANAGER************
-            if (stD != null) {
-                document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:beginPosition", stD.getTimeBegin(stNum), stNum);
-                document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:endPosition", stD.getTimeEnd(stNum), stNum);
+            int numStations;
+            if (stD == null) {
+                numStations = CDMDataSet.getNumberOfStations();
+            } else {
+                numStations = stD.getNumberOfStations();
             }
 
-            //add procedure
-            document = XMLDomUtils.addNodeAndAttribute(document, OM_OBSERVATION, "om:procedure", "xlink:href", getLocation(), stNum);
 
-            //add observedProperties
-            for (int i = 0; i < variableNames.length; i++) {
-                String variableName = variableNames[i];
-                document = XMLDomUtils.addNodeAndAttribute(document, OM_OBSERVATION, "om:observedProperty", "xlink:href", "http://marinemetadata.org/cf#" + variableName, stNum);
+            //add observation 
+            //*********THIS IS FOR NUMBER OF STATIONS!
+            for (int stNum = 0; stNum < numStations; stNum++) {
+                document = XMLDomUtils.addObservationElement(document);
+                //add description
+                if (CDMDataSet!=null){
+                document = XMLDomUtils.addNodeAndValue(document, OM_OBSERVATION, "gml:description", CDMDataSet.getDescription(stNum), stNum);
+                }else{
+                 document = XMLDomUtils.addNodeAndValue(document, OM_OBSERVATION, "gml:description", getDescription(), stNum);    
+                }
+                //add name
+                document = XMLDomUtils.addNodeAndValue(document, OM_OBSERVATION, "gml:name", getDescription(), stNum);
+                //add bounded by
+                document = XMLDomUtils.addNode(document, OM_OBSERVATION, "gml:boundedBy", stNum);
+                //add envelope and attribute
+                if (stD != null) {
+                    document = XMLDomUtils.addNodeToNodeAndAttribute(document, OM_OBSERVATION, "gml:boundedBy", "gml:Envelope", "srsName", getGMLName(stD.getStationName(stNum)), stNum);
+                } else {
+                    document = XMLDomUtils.addNodeToNodeAndAttribute(document, OM_OBSERVATION, "gml:boundedBy", "gml:Envelope", "srsName", getGMLName(CDMDataSet.getStationName(stNum)), stNum);
+                }
+
+                //add lat lon string
+                document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:Envelope", "gml:lowerCorner", getStationLowerLatLonStr(stNum), stNum);
+                //add Upper GPS coors
+                document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:Envelope", "gml:upperCorner", getStationUpperLatLonStr(stNum), stNum);
+                //add sampling time
+                document = XMLDomUtils.addNode(document, OM_OBSERVATION, "om:samplingTime", stNum);
+                //add time instant
+                document = XMLDomUtils.addNodeToNodeAndAttribute(document, OM_OBSERVATION, "om:samplingTime", "gml:TimePeriod", "gml:id", "DATA_TIME", stNum);
+                //add time positions (being and end)
+
+                //******NEW DATA MANAGER************
+                if (stD != null || CDMDataSet != null) {
+                    if (stD == null) {
+                        document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:beginPosition", CDMDataSet.getTimeBegin(stNum), stNum);
+                        document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:endPosition", CDMDataSet.getTimeEnd(stNum), stNum);
+                    } else {
+
+                        document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:beginPosition", stD.getTimeBegin(stNum), stNum);
+                        document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:endPosition", stD.getTimeEnd(stNum), stNum);
+                    }
+                }
+
+                //add procedure
+                document = XMLDomUtils.addNodeAndAttribute(document, OM_OBSERVATION, "om:procedure", "xlink:href", getLocation(), stNum);
+
+                //add observedProperties
+                for (int i = 0; i < variableNames.length; i++) {
+                    String variableName = variableNames[i];
+                    document = XMLDomUtils.addNodeAndAttribute(document, OM_OBSERVATION, "om:observedProperty", "xlink:href", "http://marinemetadata.org/cf#" + variableName, stNum);
+                }
+
+                //if (isDepthAvailable == true) {
+                //doc = XMLDomUtils.addNodeAndAttribute(doc, OM_OBSERVATION, "om:observedProperty", "xlink:href", "http://marinemetadata.org/cf#" + "depth");
+                //}
+
+                //add feature of interest
+                if (stD != null) {
+                    document = XMLDomUtils.addNodeAndAttribute(document, OM_OBSERVATION, "om:featureOfInterest", "xlink:href", getFeatureOfInterest(stD.getStationName(stNum)), stNum);
+                }
+                //add results Node
+                document = XMLDomUtils.addNode(document, OM_OBSERVATION, "om:result", stNum);
+
+                addDatasetResults(variableNames, stNum);
+
             }
-
-            //if (isDepthAvailable == true) {
-            //doc = XMLDomUtils.addNodeAndAttribute(doc, OM_OBSERVATION, "om:observedProperty", "xlink:href", "http://marinemetadata.org/cf#" + "depth");
-            //}
-
-            //add feature of interest
-            document = XMLDomUtils.addNodeAndAttribute(document, OM_OBSERVATION, "om:featureOfInterest", "xlink:href", getFeatureOfInterest(stD.getStationName(stNum)), stNum);
-            //add results Node
-            document = XMLDomUtils.addNode(document, OM_OBSERVATION, "om:result", stNum);
-
-            addDatasetResults(variableNames, stNum);
-
         }
-
     }
 
     public String getObservationDescription() {
@@ -338,12 +399,16 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         return XMLDomUtils.getAttributeFromNode(document, OM_OBSERVATION, "om:observedProperty", "xlink:href");
     }
 
-    public String createObsValuesString(int stNum) throws Exception {
-        setCount(variableNames.length+1,stNum);
-        return stD.getDataResponse(stNum);
+    public String createObsValuesString(int stNum) throws Exception { 
+        if (stD != null) {
+            setCount(variableNames.length + 1, stNum);
+            return stD.getDataResponse(stNum);
+        } else {
+            setCount(99, stNum);
+            return CDMDataSet.getDataResponse(stNum);
+            
+        }
     }
-
-    
 
     @Deprecated
     public String getResultValues() {
@@ -365,8 +430,8 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
      * @param count
      * @param StNum 
      */
-    private void setCount(int count,int StNum) {
-        XMLDomUtils.setNodeValue(document, OM_OBSERVATION, "swe:value", Integer.toString(count),StNum);
+    private void setCount(int count, int StNum) {
+        XMLDomUtils.setNodeValue(document, OM_OBSERVATION, "swe:value", Integer.toString(count), StNum);
     }
 
     /**
@@ -374,7 +439,10 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
      * @return 
      */
     private String getStationLowerLatLonStr(int stNum) {
-        return (new StringBuilder()).append(formatDegree(stD.getLowerLat(stNum))).append(" ").append(formatDegree(stD.getLowerLon(stNum))).append(" ").append("0").toString();
+        if (stD != null) {
+            return (new StringBuilder()).append(formatDegree(stD.getLowerLat(stNum))).append(" ").append(formatDegree(stD.getLowerLon(stNum))).append(" ").append("0").toString();
+        }
+        return (new StringBuilder()).append(formatDegree(CDMDataSet.getLowerLat(stNum))).append(" ").append(formatDegree(CDMDataSet.getLowerLon(stNum))).append(" ").append("0").toString();
     }
 
     /**
@@ -382,7 +450,10 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
      * @return 
      */
     private String getStationUpperLatLonStr(int stNum) {
-        return (new StringBuilder()).append(formatDegree(stD.getUpperLat(stNum))).append(" ").append(formatDegree(stD.getUpperLon(stNum))).append(" ").append("0").toString();
+        if (stD != null) {
+            return (new StringBuilder()).append(formatDegree(stD.getUpperLat(stNum))).append(" ").append(formatDegree(stD.getUpperLon(stNum))).append(" ").append("0").toString();
+        }
+        return (new StringBuilder()).append(formatDegree(CDMDataSet.getUpperLat(stNum))).append(" ").append(formatDegree(CDMDataSet.getUpperLon(stNum))).append(" ").append("0").toString();
     }
 
     /**
@@ -390,7 +461,10 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
      * @return 
      */
     private String getBoundUpperLatLonStr() {
-        return (new StringBuilder()).append(formatDegree(stD.getBoundUpperLat())).append(" ").append(formatDegree(stD.getBoundUpperLon())).append(" ").append("0").toString();
+        if (stD != null) {
+            return (new StringBuilder()).append(formatDegree(stD.getBoundUpperLat())).append(" ").append(formatDegree(stD.getBoundUpperLon())).append(" ").append("0").toString();
+        }
+        return (new StringBuilder()).append(formatDegree(CDMDataSet.getBoundUpperLat())).append(" ").append(formatDegree(CDMDataSet.getBoundUpperLon())).append(" ").append("0").toString();
     }
 
     /**
@@ -398,6 +472,10 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
      * @return 
      */
     private String getBoundLowerLatLonStr() {
-        return (new StringBuilder()).append(formatDegree(stD.getBoundLowerLat())).append(" ").append(formatDegree(stD.getBoundLowerLon())).append(" ").append("0").toString();
+        if (stD != null) {
+            return (new StringBuilder()).append(formatDegree(stD.getBoundLowerLat())).append(" ").append(formatDegree(stD.getBoundLowerLon())).append(" ").append("0").toString();
+        }
+        return (new StringBuilder()).append(formatDegree(CDMDataSet.getBoundLowerLat())).append(" ").append(formatDegree(CDMDataSet.getBoundLowerLon())).append(" ").append("0").toString();
+
     }
 }

@@ -10,6 +10,7 @@ import thredds.server.sos.getObs.SOSObservationOffering;
 import thredds.server.sos.util.DiscreteSamplingGeometryUtil;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.NetcdfDataset;
+import ucar.nc2.dt.GridDatatype;
 import ucar.nc2.ft.ProfileFeature;
 import ucar.nc2.ft.ProfileFeatureCollection;
 import ucar.nc2.ft.StationProfileFeature;
@@ -22,10 +23,14 @@ import java.util.Date;
 import java.util.List;
 import org.joda.time.Chronology;
 import org.joda.time.chrono.ISOChronology;
+import thredds.server.sos.CDMClasses.Grid;
+import thredds.server.sos.CDMClasses.Trajectory;
 import thredds.server.sos.service.SOSBaseRequestHandler;
 import thredds.server.sos.service.StationData;
+import ucar.nc2.constants.FeatureType;
 import ucar.nc2.ft.PointFeature;
 import ucar.nc2.ft.PointFeatureIterator;
+import ucar.nc2.time.CalendarDate;
 import ucar.nc2.units.DateFormatter;
 
 /**
@@ -96,6 +101,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         }
     }
 
+    @Deprecated
     private void ifProfileCollection(ProfileFeatureCollection profileCollection, String profileID, List<String> observedPropertyList) throws IOException {
         PointFeatureIterator pp = null;
         //profiles act like stations at present
@@ -154,6 +160,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         }
     }
 
+    @Deprecated
     private void ifTimeSeriesFeatureCollection(StationTimeSeriesFeatureCollection featureCollection, List<String> observedPropertyList) throws IOException {
         String stationName = null;
         String stationLat = null;
@@ -181,12 +188,15 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
             }
              * 
              */
+
             try {
                 feature.calcBounds();
                 newOffering.setObservationTimeBegin(feature.getDateRange().getStart().toDateTimeStringISO());
                 newOffering.setObservationTimeEnd(feature.getDateRange().getEnd().toDateTimeStringISO());
             } catch (Exception e) {
             }
+
+
 
             //END of slow issue code
 
@@ -201,6 +211,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         }
     }
 
+    @Deprecated
     private void ifTimeSeriesProfileCollection(StationProfileFeatureCollection featureCollection1, List<String> observedPropertyList) throws IOException {
         StationProfileFeature stationProfileFeature = null;
         SOSObservationOffering newOffering = null;
@@ -351,20 +362,25 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
      * parses the observation list object and add the observations to the node
      */
     public void parseObservationList() throws IOException {
-        List<VariableSimpleIF> variableList = DiscreteSamplingGeometryUtil.getDataVariables(getFeatureDataset());
-        List<String> observedPropertyList = new ArrayList<String>(variableList.size());
-        List<String> observedPropertyUnitList = new ArrayList<String>(variableList.size());
+        List<VariableSimpleIF> variableList = null;
+        List<String> observedPropertyList = null;
 
-        for (VariableSimpleIF variable : variableList) {
-            observedPropertyList.add(variable.getShortName()); // TODO ? getName() instead?
-            observedPropertyUnitList.add(variable.getUnitsString());
+        if (getDatasetFeatureType() != FeatureType.GRID) {
+            variableList = DiscreteSamplingGeometryUtil.getDataVariables(getFeatureDataset());
+            observedPropertyList = new ArrayList<String>(variableList.size());
+            List<String> observedPropertyUnitList = new ArrayList<String>(variableList.size());
+
+            for (VariableSimpleIF variable : variableList) {
+                observedPropertyList.add(variable.getShortName()); // TODO ? getName() instead?
+                observedPropertyUnitList.add(variable.getUnitsString());
+            }
         }
-
+        
+        
+        
         //if the stationTimeSeriesFeature is null
         StationTimeSeriesFeatureCollection featureCollection = getFeatureCollection();
-
-        //***************************************
-        //added abird
+        //***************************************        
         //PROFILE
         //profiles differ depending on type
         ProfileFeatureCollection profileCollection = getProfileFeatureCollection();
@@ -387,6 +403,23 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         if (featureCollection != null) {
             ifTimeSeriesFeatureCollection(featureCollection, observedPropertyList);
         }
+
+        //***************************************
+        //NEW!!!!
+        if (getDatasetFeatureType() == FeatureType.TRAJECTORY) {
+            try {
+                this.document = Trajectory.getResponse(getFeatureTypeDataSet(), getDocument(), getFeatureOfInterestBase(), getGMLNameBase(), format, observedPropertyList);
+            } catch (Exception e) {
+            }
+        } else if (getDatasetFeatureType() == FeatureType.STATION) {
+        } else if (getDatasetFeatureType() == FeatureType.STATION_PROFILE) {
+        } else if (getDatasetFeatureType() == FeatureType.PROFILE) {
+        } else if (getDatasetFeatureType() == FeatureType.GRID) {
+            this.document = Grid.getResponse(getGridDataset(),getDocument(),getGMLNameBase(), format);
+        }
+
+
+
     }
 
     public void addObsOfferingToDoc(ObservationOffering offering) {
