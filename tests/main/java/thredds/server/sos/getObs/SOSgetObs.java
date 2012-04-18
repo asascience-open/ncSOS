@@ -4,6 +4,8 @@
  */
 package thredds.server.sos.getObs;
 
+import java.lang.String;
+import java.util.Map;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,9 +14,11 @@ import java.io.CharArrayWriter;
 import thredds.server.sos.service.SOSParser;
 import ucar.nc2.dataset.NetcdfDataset;
 import java.io.IOException;
+import java.util.HashMap;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import thredds.server.sos.util.XMLDomUtils;
 import static org.junit.Assert.*;
 
 /**
@@ -36,11 +40,9 @@ public class SOSgetObs {
     private static String imeds10 = "tests/main/resources/datasets/sura/watlev_CRMS_2008.F.C_IKE_VIMS_3D_NOWAVE.nc";
     private static String imeds11 = "tests/main/resources/datasets/sura/watlev_CRMS_2008.F.C__IKE_VIMS_3D_WITHWAVE.nc";
     private static String imeds12 = "tests/main/resources/datasets/sura/watlev_CSI.nc";
-    
     private static String imeds13 = "tests/main/resources/datasets/sura/watlev_IKE.nc";
     private static String imeds14 = "tests/main/resources/datasets/sura/watlev_IKE.P.UL-Ike2Dh.61.nc";
     private static String imeds15 = "tests/main/resources/datasets/sura/watlev_NOAA_NAVD_PRE.nc";
-    
     //timeseries
     private static String tsIncompleteMultiDimensionalMultipleStations = "tests/main/resources/datasets/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc";
     private static String tsOrthogonalMultidimenstionalMultipleStations = "tests/main/resources/datasets/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1.nc";
@@ -73,13 +75,11 @@ public class SOSgetObs {
         output.close();
         System.out.println("Your file has been written");
     }
-
+    
     //***********************************************
     //IMEDS FILES
-    
-     public static final String imeds1Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=hs&offering=UNDKennedy_S,UNDKennedy_X,UNDKennedy_Z&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
-   
-    
+    public static final String imeds1Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=hs&offering=UNDKennedy_S,UNDKennedy_X,UNDKennedy_Z&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
+
     @Test
     public void testenhanceImeds1() throws IOException {
         System.out.println("----IMEDS1------");
@@ -94,16 +94,15 @@ public class SOSgetObs {
         String fileName = "imeds1.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
-        
+
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:UNDKennedy_X\">"));
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:UNDKennedy_S\">"));
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:UNDKennedy_Z\">"));
-        
+
         System.out.println("----------end-----------");
     }
-
     public static final String imeds2Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=watlev&offering=Site-79-2&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
-   
+
     @Test
     public void testenhanceImeds2() throws IOException {
         System.out.println("----IMEDS2------");
@@ -120,10 +119,8 @@ public class SOSgetObs {
         dataAvailableInOutputFile(write);
         System.out.println("----------end-----------");
     }
-    
     public static final String imeds3Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=watlev&offering=Site-79-2&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
-   
-    
+
     @Test
     public void testenhanceImeds3() throws IOException {
         System.out.println("----IMEDS3------");
@@ -137,12 +134,11 @@ public class SOSgetObs {
         assertFalse(write.toString().contains("Exception"));
         String fileName = "imeds3.xml";
         fileWriter(base, fileName, write);
-        dataAvailableInOutputFile(write); 
+        dataAvailableInOutputFile(write);
         System.out.println("----------end-----------");
     }
-    
     public static final String imeds4Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=hs&offering=USACE-CHL_2410508B,USACE-CHL_2410513B,USACE-CHL_2410510B&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
-   
+
     @Test
     public void testenhanceImeds4() throws IOException {
         System.out.println("----IMEDS4------");
@@ -157,16 +153,15 @@ public class SOSgetObs {
         String fileName = "imeds4.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
-        
+
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:USACE-CHL_2410513B\">"));
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:USACE-CHL_2410508B\">"));
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:USACE-CHL_2410510B\">"));
-        
+
         System.out.println("----------end-----------");
     }
-    
     public static final String imeds5Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=hwm&offering=TCOON_87747701,TCOON_87705701,TCOON_87705201,TCOON_87704751,TCOON_87708221&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
-   
+
     @Test
     public void testenhanceImeds5() throws IOException {
         System.out.println("----IMEDS5------");
@@ -181,17 +176,16 @@ public class SOSgetObs {
         String fileName = "imeds5.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
-        
+
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:TCOON_87747701\">"));
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:TCOON_87705701\">"));
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:TCOON_87704751\">"));
-        
+
         System.out.println("----------end-----------");
     }
-    
-     public static final String imeds6Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=tp&offering=CSI_15,CSI_06,CSI_09&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
-   
-     @Test
+    public static final String imeds6Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=tp&offering=CSI_15,CSI_06,CSI_09&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
+
+    @Test
     public void testenhanceImeds6() throws IOException {
         System.out.println("----IMEDS6------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds6);
@@ -205,18 +199,16 @@ public class SOSgetObs {
         String fileName = "imeds6.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
-        
+
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_15\">"));
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_09\">"));
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_06\">"));
-        
+
         System.out.println("----------end-----------");
     }
-    
-      public static final String imeds7Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=tp&offering=CSI_06,CSI_09,NDBC_42020,NDBC_42019,USACE-CHL_2410513B,NDBC_42059&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
-   
-     
-     @Test
+    public static final String imeds7Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=tp&offering=CSI_06,CSI_09,NDBC_42020,NDBC_42019,USACE-CHL_2410513B,NDBC_42059&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
+
+    @Test
     public void testenhanceImeds7() throws IOException {
         System.out.println("----IMEDS7------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds7);
@@ -230,18 +222,17 @@ public class SOSgetObs {
         String fileName = "imeds7.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
-        
+
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:NDBC_42020\">"));
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_09\">"));
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:USACE-CHL_2410513B\">"));
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:NDBC_42059\">"));
-        
+
         System.out.println("----------end-----------");
     }
-     
     public static final String imeds8Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=watlev&offering=CRMS_CS20-106,CRMS_CS20-15R,CRMS_DCPBS03,CRMS_DCPBS04&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
 
-     @Test
+    @Test
     public void testenhanceImeds8() throws IOException {
         System.out.println("----IMEDS8------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds8);
@@ -255,19 +246,17 @@ public class SOSgetObs {
         String fileName = "imeds8.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
-        
+
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_DCPBS04\">"));
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_DCPBS03\">"));
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CS20-15R\">"));
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CS20-106\">"));
-        
+
         System.out.println("----------end-----------");
     }
-     
-     
-     public static final String imeds9Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=watlev&offering=CRMS_CS20-106,CRMS_CS20-15R,CRMS_DCPBS03,CRMS_DCPBS04&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
+    public static final String imeds9Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=watlev&offering=CRMS_CS20-106,CRMS_CS20-15R,CRMS_DCPBS03,CRMS_DCPBS04&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
 
-     @Test
+    @Test
     public void testenhanceImeds9() throws IOException {
         System.out.println("----IMEDS9------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds9);
@@ -281,18 +270,17 @@ public class SOSgetObs {
         String fileName = "imeds9.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
-        
+
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_DCPBS04\">"));
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_DCPBS03\">"));
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CS20-15R\">"));
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CS20-106\">"));
-        
+
         System.out.println("----------end-----------");
     }
-     
     public static final String imeds10Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=watlev&offering=CRMS_CRMS0161-H01,CRMS_DCPBA07,CRMS_CRMS0174-H01,&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
 
-     @Test
+    @Test
     public void testenhanceImeds10() throws IOException {
         System.out.println("----IMEDS10------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds10);
@@ -306,17 +294,16 @@ public class SOSgetObs {
         String fileName = "imeds10.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
-        
+
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CRMS0161-H01\">"));
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CRMS0174-H01\">"));
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_DCPBA07\">"));
-        
+
         System.out.println("----------end-----------");
-    }  
-     
+    }
     public static final String imeds11Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=watlev&offering=CRMS_CRMS0161-H01,CRMS_DCPBA07,CRMS_CRMS0174-H01,&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
 
-     @Test
+    @Test
     public void testenhanceImeds11() throws IOException {
         System.out.println("----IMEDS11------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds11);
@@ -330,20 +317,19 @@ public class SOSgetObs {
         String fileName = "imeds11.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
-        
+
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CRMS0161-H01\">"));
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CRMS0174-H01\">"));
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_DCPBA07\">"));
-        
+
         System.out.println("----------end-----------");
-    }    
-     
+    }
     public static final String imeds12Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=watlev&offering=CRMS_CRMS0161-H01,CRMS_DCPBA07,CRMS_CRMS0174-H01,&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
 
-     @Test
+    @Test
     public void testenhanceImeds12() throws IOException {
         fail("Data File Does Not work");
-         System.out.println("----IMEDS12------");
+        System.out.println("----IMEDS12------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds12);
 
         SOSParser md = new SOSParser();
@@ -355,21 +341,19 @@ public class SOSgetObs {
         String fileName = "imeds12.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
-        
+
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CRMS0161-H01\">"));
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CRMS0174-H01\">"));
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_DCPBA07\">"));
-        
-        System.out.println("----------end-----------");
-    }    
-      
-     public static final String imeds13Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=watlev&offering=CSI_06,CSI_09&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
 
-     
-       @Test
+        System.out.println("----------end-----------");
+    }
+    public static final String imeds13Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=watlev&offering=CSI_06,CSI_09&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
+
+    @Test
     public void testenhanceImeds13() throws IOException {
 
-         System.out.println("----IMEDS13------");
+        System.out.println("----IMEDS13------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
 
         SOSParser md = new SOSParser();
@@ -381,17 +365,17 @@ public class SOSgetObs {
         String fileName = "imeds13.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
-        
+
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_06\">"));
-     assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_09\">"));
-        
+        assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_09\">"));
+
         System.out.println("----------end-----------");
-    }    
-      
-         @Test
+    }
+
+    @Test
     public void testenhanceImeds14() throws IOException {
 
-         System.out.println("----IMEDS14------");
+        System.out.println("----IMEDS14------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds14);
 
         SOSParser md = new SOSParser();
@@ -403,20 +387,18 @@ public class SOSgetObs {
         String fileName = "imeds14.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
-        
-        assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_06\">"));
-     assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_09\">"));
-        
-        System.out.println("----------end-----------");
-    }    
-        
-     public static final String imeds15Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=watlev&offering=NOAA_8727235,NOAA_8729501&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
 
-           
-           @Test
+        assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_06\">"));
+        assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_09\">"));
+
+        System.out.println("----------end-----------");
+    }
+    public static final String imeds15Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=watlev&offering=NOAA_8727235,NOAA_8729501&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
+
+    @Test
     public void testenhanceImeds15() throws IOException {
 
-         System.out.println("----IMEDS15------");
+        System.out.println("----IMEDS15------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds15);
 
         SOSParser md = new SOSParser();
@@ -428,18 +410,12 @@ public class SOSgetObs {
         String fileName = "imeds15.xml";
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
-        
+
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:NOAA_8727235\">"));
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:NOAA_8729501\">"));
-        
+
         System.out.println("----------end-----------");
-    }    
-      
-         
-     
-     
-     
-     
+    }
     //**********************************
 //TIMESERIES TEST
     public static final String timeSeriestOrth = "request=GetObservation&version=1.0.0&service=sos&observedProperty=alt&offering=Station-1&eventtime=1990-01-01T00:00:00Z";

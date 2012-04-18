@@ -35,7 +35,7 @@ import ucar.unidata.geoloc.LatLonRect;
  */
 public class SOSgetCaps {
 
-        //imeds data
+    //imeds data
     private static String imeds1 = "tests/main/resources/datasets/sura/Hsig_UNDKennedy_IKE_VIMS_3D_WAVEONLY.nc";
     private static String imeds2 = "tests/main/resources/datasets/sura/andrw.lft.nc";
     private static String imeds3 = "tests/main/resources/datasets/sura/audry.bpt.nc";
@@ -48,21 +48,12 @@ public class SOSgetCaps {
     private static String imeds10 = "tests/main/resources/datasets/sura/watlev_CRMS_2008.F.C_IKE_VIMS_3D_NOWAVE.nc";
     private static String imeds11 = "tests/main/resources/datasets/sura/watlev_CRMS_2008.F.C__IKE_VIMS_3D_WITHWAVE.nc";
     private static String imeds12 = "tests/main/resources/datasets/sura/watlev_CSI.nc";
-    
     private static String imeds13 = "tests/main/resources/datasets/sura/watlev_IKE.nc";
     private static String imeds14 = "tests/main/resources/datasets/sura/watlev_IKE.P.UL-Ike2Dh.61.nc";
     private static String imeds15 = "tests/main/resources/datasets/sura/watlev_NOAA_NAVD_PRE.nc";
-    
-    
-     //timeseries
+    //timeseries
     private static String tsIncompleteMultiDimensionalMultipleStations = "tests/main/resources/datasets/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc";
     private static String tsOrthogonalMultidimenstionalMultipleStations = "tests/main/resources/datasets/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1.nc";
-    
-    
-    //private static String imedsLocation = "C://Program Files//Apache Software Foundation//Apache Tomcat 6.0.26//content//thredds//public//imeds//watlev_NOAA.F.C_IKE_VIMS_3D_WITHWAVE.nc";
-    //private static String NOAA_NDBC = "C://Documents and Settings//abird//My Documents//NetBeansProjects//ncSOS//tests//main//resources//datasets//NOAA_NDBC_42035_2008met.nc";
-    //private static String imedsLocation1 = "C://Program Files//Apache Software Foundation//Apache Tomcat 6.0.26//content//thredds//public//imeds//watlev_TCOON.F.C.nc";
-    //private static String imedsLocationNew = "C://Program Files//Apache Software Foundation//Apache Tomcat 6.0.26//content//thredds//public//imeds//watlev_TCOON.F.C.new.nc";
 //ragged Array - timeseries profile
     private static String RaggedSingleConventions = "tests/main/resources/datasets/timeSeriesProfile-Ragged-SingleStation-H.5.3/timeSeriesProfile-Ragged-SingleStation-H.5.3.nc";
     private static String RaggedMultiConventions = "tests/main/resources/datasets/timeSeriesProfile-Ragged-MultipeStations-H.5.3/timeSeriesProfile-Ragged-MultipeStations-H.5.3.nc";
@@ -76,71 +67,140 @@ public class SOSgetCaps {
     private static String IncompleteMultiDimensionalMultipleProfiles = "tests/main/resources/datasets/profile-Incomplete-MultiDimensional-MultipleProfiles-H.3.2/profile-Incomplete-MultiDimensional-MultipleProfiles-H.3.2.nc";
     private static String IndexedRaggedMultipleProfiles = "tests/main/resources/datasets/profile-Indexed-Ragged-MultipleProfiles-H.3.5/profile-Indexed-Ragged-MultipleProfiles-H.3.5.nc";
     private static String OrthogonalMultiDimensionalMultipleProfiles = "tests/main/resources/datasets/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1.nc";
-    private static String OrthogonalSingleDimensionalSingleProfile = "tests/main/resources/datasets/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3.nc";            
+    private static String OrthogonalSingleDimensionalSingleProfile = "tests/main/resources/datasets/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3.nc";
     public static final String base = "tests/main/java/thredds/server/sos/getCaps/output/";
 
-  
+    
+    @Test
+    public void testCanIdentifyGriddedCDM() throws IOException {
+    NetcdfDataset dataset = NetcdfDataset.openDataset("D:/Data/20120417.108.1357.n16.EC1.nc");   
+    SOSGetCapabilitiesRequestHandler sosget = new SOSGetCapabilitiesRequestHandler(dataset, "threddsURI");
+    assertEquals(FeatureType.GRID,sosget.getDatasetFeatureType());
+    }
+     
+    @Test
+    public void testParseGriddedCDM() throws IOException {
+    NetcdfDataset dataset = NetcdfDataset.openDataset("D:/Data/20120417.108.1357.n16.EC1.nc");   
+    SOSParser md = new SOSParser();
+        Writer write = new CharArrayWriter();
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", "D:/Data/20120417.108.1357.n16.EC1.nc");
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "gridded.xml";
+        fileWriter(base, fileName, write);
+        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+    }
+     
+    
+    @Test
+    public void testCanIdentifyTrajectoryCDM() throws IOException {
+        NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/trajectory/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc");
+        SOSGetCapabilitiesRequestHandler sosget = new SOSGetCapabilitiesRequestHandler(dataset, "threddsURI");
+        assertEquals(FeatureType.TRAJECTORY, sosget.getDatasetFeatureType());
+
+    }
+    
+    @Test
+    public void testCanProcessTrajectory() throws IOException {
+        NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/trajectory/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc");
+        SOSParser md = new SOSParser();
+        Writer write = new CharArrayWriter();
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/trajectory/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc");
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.xml";
+        fileWriter(base, fileName, write);
+        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+    }
+    
+    @Test
+    public void testTrajLatLongCorrect() throws IOException {
+        NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/trajectory/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc");
+        SOSParser md = new SOSParser();
+        Writer write = new CharArrayWriter();
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/trajectory/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc");
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.xml";
+        fileWriter(base, fileName, write);
+        assertTrue(write.toString().contains("<gml:lowerCorner>3.024412155151367  -68.12552642822266</gml:lowerCorner>"));
+        assertTrue(write.toString().contains("<gml:upperCorner>43.00862503051758  -1.6318601369857788</gml:upperCorner>"));
+    }
+
+    @Test
+    public void testTrajStartEndTimeCorrect() throws IOException {
+        NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/trajectory/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc");
+        SOSParser md = new SOSParser();
+        Writer write = new CharArrayWriter();
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/trajectory/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc");
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.xml";
+        fileWriter(base, fileName, write);
+        assertTrue(write.toString().contains("<gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>"));
+        assertTrue(write.toString().contains("<gml:endPosition>1990-01-01T23:00:00.000Z</gml:endPosition>"));
+    }
     
     @Test
     public void testCacheReturnsTrueFileDoesNOTExist() throws IOException {
-         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
+        NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
         File f = new File("C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds/xmlFile.xml");
         f.delete();
-        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13,"C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds");
-        assertEquals("true",md.getCacheValue());
+        SOSParser.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13, "C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds");
+        assertEquals("true", md.getCacheValue());
         f = new File("C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds/watlev_IKE.xml");
         assertTrue(f.exists());
         f.delete();
     }
-    
-    
+
     @Test
     public void testCacheReturnsTrueFileDoesExist() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
- 
-        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13,"C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds");
+
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13, "C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds");
         File f = new File("C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds/watlev_IKE.xml");
         assertTrue(f.exists());
-        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13,"C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds");
-        
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13, "C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds");
+
         assertTrue(f.exists());
         f.delete();
     }
-    
+
     @Test
     public void testCanGetCorrectDataSetFileName() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
         SOSParser md = new SOSParser();
-        assertEquals("/watlev_IKE.xml",md.getCacheXmlFileName(imeds13));
+        assertEquals("/watlev_IKE.xml", md.getCacheXmlFileName(imeds13));
     }
-    
-     
+
     @Test
     public void testAddAdditionalParamForCachingDataTRUE() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
- 
-        String fileName = "C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds/watlev_IKE.xml";        
+
+        String fileName = "C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds/watlev_IKE.xml";
         //check file exists
-        File f= new File(fileName);
+        File f = new File(fileName);
         f.delete();
-        
-        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13,"C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds");
+
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13, "C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds");
         write.flush();
         write.close();
-        
+
         assertFalse(write.toString().contains("Exception"));
-        f= new File(fileName);
+        f = new File(fileName);
         assertTrue(f.exists());
     }
-    
-    
-    
+
     private static void fileWriter(String base, String fileName, Writer write) throws IOException {
         Writer output = null;
         File file = new File(base + fileName);
@@ -149,25 +209,24 @@ public class SOSgetCaps {
         output.close();
         System.out.println("Your file has been written");
     }
-    
-    
+
     @Test
     public void testLargeDatasets() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
 
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
-        
+
         long start = System.currentTimeMillis();
-        
+
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", imeds13);
-        
+
         long elapsedTimeMillis = System.currentTimeMillis() - start;
         float elapsedTimeSec = elapsedTimeMillis / 1000F;
 
         System.out.println("Time To Complete Mil: " + elapsedTimeMillis + ": SEC: " + elapsedTimeSec);
 
-        
+
         write.flush();
         write.close();
         assertFalse(write.toString().contains("Exception"));
@@ -175,20 +234,7 @@ public class SOSgetCaps {
         fileWriter(base, fileName, write);
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
 //**********************************
 //TIMESERIES TEST
     @Test
@@ -205,7 +251,7 @@ public class SOSgetCaps {
         fileWriter(base, fileName, write);
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
     }
-    
+
     @Test
     public void testOrthogonalMultidimenstionalMultipleStations() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsOrthogonalMultidimenstionalMultipleStations);
@@ -222,6 +268,7 @@ public class SOSgetCaps {
     }
 //**********************************
 //TIMESERIESPROFILE TEST
+
     @Test
     public void testenhanceSingleRaggedDataset() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(RaggedSingleConventions);
@@ -283,7 +330,6 @@ public class SOSgetCaps {
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
     }
 
-    
     @Test
     public void testMultiDimensionalMultiStations() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalMultiStations);
@@ -298,7 +344,7 @@ public class SOSgetCaps {
         fileWriter(base, fileName, write);
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
     }
-    
+
     @Test
     public void testMultiDimensionalMultiStationsLocal() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalMultiStations);
@@ -313,7 +359,6 @@ public class SOSgetCaps {
         fileWriter(base, fileName, write);
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
     }
-    
 
 //**********************************
 //PROFILE TEST
@@ -335,11 +380,11 @@ public class SOSgetCaps {
     }
 
     private void spaceBetweenTests() {
-        System.out.println("\n");
+        System.out.println("/n");
     }
 
     @Test
-    public void testIncompleteMultiDimensionalMultipleProfiles() throws IOException {       
+    public void testIncompleteMultiDimensionalMultipleProfiles() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(IncompleteMultiDimensionalMultipleProfiles);
 
         SOSParser md = new SOSParser();
@@ -511,8 +556,8 @@ public class SOSgetCaps {
         fileWriter(base, fileName, write);
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
         System.out.println("----end------");
-        
-    
+
+
     }
 
     @Test
@@ -529,9 +574,8 @@ public class SOSgetCaps {
         fileWriter(base, fileName, write);
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
         System.out.println("----end------");
-        
-    }
 
+    }
 
     @Test
     public void testenhanceTCOONDatasetNew() throws IOException {

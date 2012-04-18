@@ -52,7 +52,7 @@ public class StationDataTest {
     @Test
     public void testTIMESERIESGetCorrectUpperLonLatOneStation() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
-        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, new String[]{"Station-9", "Station-8"}, new String[]{"temperature"}, new String[]{"1990-02-01T00:00:00Z", "1990-05-01T10:00:00Z"});
+        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, new String[]{"Station-9", "Station-8"}, new String[]{"temperature"}, new String[]{"1990-02-01T00:00:00Z", "1990-05-01T10:00:00Z"},null);
 
         assertEquals(82.0, handler.getStationData().getBoundLowerLat(), 0);
         assertEquals(132.0, handler.getStationData().getBoundUpperLat(), 0);
@@ -63,7 +63,7 @@ public class StationDataTest {
     @Test
     public void testTIMESERIESGetCorrectUpperLonLatTwoStations() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
-        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, new String[]{"Station-9", "Station-8"}, new String[]{"temperature"}, new String[]{"1990-02-01T00:00:00Z", "1990-05-01T10:00:00Z"});
+        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, new String[]{"Station-9", "Station-8"}, new String[]{"temperature"}, new String[]{"1990-02-01T00:00:00Z", "1990-05-01T10:00:00Z"},null);
 
         assertEquals(82.0, handler.getStationData().getBoundLowerLat(), 0);
         assertEquals(132.0, handler.getStationData().getBoundUpperLat(), 0);
@@ -74,21 +74,21 @@ public class StationDataTest {
     @Test
     public void testTIMESERIESCanGetAndSetStartDate() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
-        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, new String[]{"Station-9", "Station-8"}, new String[]{"temperature"}, new String[]{"1990-02-01T00:00:00Z", "1990-05-01T10:00:00Z"});
+        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, new String[]{"Station-9", "Station-8"}, new String[]{"temperature"}, new String[]{"1990-02-01T00:00:00Z", "1990-05-01T10:00:00Z"},null);
         assertEquals("1921-12-13T20:45:53Z", handler.getStationData().getBoundTimeBegin());
     }
 
     @Test
     public void testTIMESERIESCanGetAndSetEndDate() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
-        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, new String[]{"Station-9", "Station-8"}, new String[]{"temperature"}, new String[]{"1990-02-01T00:00:00Z", "1990-05-01T10:00:00Z"});
+        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, new String[]{"Station-9", "Station-8"}, new String[]{"temperature"}, new String[]{"1990-02-01T00:00:00Z", "1990-05-01T10:00:00Z"},null);
         assertEquals("1990-01-01T11:00:00Z", handler.getStationData().getBoundTimeEnd());
     }
 
     @Test
     public void testTIMESERIESCanGetData() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
-        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, new String[]{"Station-9", "Station-8"}, new String[]{"temperature"}, new String[]{"1990-01-01T00:00:00Z", "1990-01-01T07:00:00Z"});
+        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, new String[]{"Station-9", "Station-8"}, new String[]{"temperature"}, new String[]{"1990-01-01T00:00:00Z", "1990-01-01T07:00:00Z"},null);
 
 
         assertTrue(handler.getStationData().getDataResponse(0).contains("1990-01-01T00:00:00Z"));
@@ -106,7 +106,7 @@ public class StationDataTest {
     @Test
     public void testTIMESERIESPROFILEGetCorrectUpperLonLatOneStation() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalSingleStations);
-        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, new String[]{"Station1"}, new String[]{"temperature"}, new String[]{"1990-02-01T00:00:00Z", "1990-05-01T10:00:00Z"});
+        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, new String[]{"Station1"}, new String[]{"temperature"}, new String[]{"1990-02-01T00:00:00Z", "1990-05-01T10:00:00Z"},null);
 
         assertEquals(37.5, handler.getStationData().getBoundLowerLat(), 0);
         assertEquals(37.5, handler.getStationData().getBoundUpperLat(), 0);
@@ -117,7 +117,7 @@ public class StationDataTest {
     @Test
     public void testTIMESERIESPROFILEGetCorrectStartEndDateOneStation() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalSingleStations);
-        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, new String[]{"Station1"}, new String[]{"temperature"}, new String[]{"1990-02-01T00:00:00Z", "1990-05-01T10:00:00Z"});
+        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, new String[]{"Station1"}, new String[]{"temperature"}, new String[]{"1990-02-01T00:00:00Z", "1990-05-01T10:00:00Z"},null);
 
         assertEquals("1990-01-01T00:00:00Z", handler.getStationData().getBoundTimeBegin());
         assertEquals("1990-01-01T03:00:00Z", handler.getStationData().getBoundTimeEnd());
@@ -126,7 +126,7 @@ public class StationDataTest {
     @Test
     public void testTIMESERIESPROFILEGetCorrectStartEndDateTwoStations() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalMultiStations);
-        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, new String[]{"Station1", "Station2"}, new String[]{"temperature"}, new String[]{"1990-02-01T00:00:00Z", "1990-05-01T10:00:00Z"});
+        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, new String[]{"Station1", "Station2"}, new String[]{"temperature"}, new String[]{"1990-02-01T00:00:00Z", "1990-05-01T10:00:00Z"},null);
 
         assertEquals("1990-01-01T00:00:00Z", handler.getStationData().getBoundTimeBegin());
         assertEquals("1990-01-01T03:00:00Z", handler.getStationData().getBoundTimeEnd());
@@ -135,7 +135,7 @@ public class StationDataTest {
     @Test
     public void testTIMESERIESPROFILEGetCorrectUpperLonLatTwoStation() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalMultiStations);
-        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, new String[]{"Station1", "Station2"}, new String[]{"temperature"}, new String[]{"1990-02-01T00:00:00Z", "1990-05-01T10:00:00Z"});
+        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, new String[]{"Station1", "Station2"}, new String[]{"temperature"}, new String[]{"1990-02-01T00:00:00Z", "1990-05-01T10:00:00Z"},null);
 
         assertEquals(32.5, handler.getStationData().getBoundLowerLat(), 0);
         assertEquals(37.5, handler.getStationData().getBoundUpperLat(), 0);
@@ -150,7 +150,7 @@ public class StationDataTest {
     @Test
     public void testPROFILEGetCorrectUpperLonLatOneStation() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(ContiguousRaggedMultipleProfiles);
-        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, new String[]{"1"}, new String[]{"temperature"}, new String[]{"1990-01-01T00:00:00Z", "1990-01-01T10:00:00Z"});
+        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, new String[]{"1"}, new String[]{"temperature"}, new String[]{"1990-01-01T00:00:00Z", "1990-01-01T10:00:00Z"},null);
 
         assertEquals(13, handler.getStationData().getBoundLowerLat(), 0);
         assertEquals(104, handler.getStationData().getBoundUpperLat(), 0);
@@ -161,7 +161,7 @@ public class StationDataTest {
     @Test
     public void testPROFILEGetCorrectStartEndDate() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(ContiguousRaggedMultipleProfiles);
-        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, new String[]{"1"}, new String[]{"temperature"}, new String[]{"1990-01-01T00:00:00Z", "1990-01-01T10:00:00Z"});
+        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, new String[]{"1"}, new String[]{"temperature"}, new String[]{"1990-01-01T00:00:00Z", "1990-01-01T10:00:00Z"},null);
 
         assertEquals("1990-01-01T00:00:00Z", handler.getStationData().getBoundTimeBegin());
         assertEquals("1990-01-01T03:00:00Z", handler.getStationData().getBoundTimeEnd());
