@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><om:ObservationCollection xmlns:om="http://www.opengis.net/om/1.0" xmlns:gml="http://www.opengis.net/gml" xmlns:swe="http://www.opengis.net/swe/1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" gml:id="GML_ID_NAME" xsi:schemaLocation="http://www.opengis.net/om/1.0 http://schemas.opengis.net/om/1.0.0/observation.xsd">
+        
+    <gml:description>Empty Description</gml:description>
+    <gml:name>Empty Title</gml:name>
+    <gml:boundedBy> 
+        <gml:Envelope srsName="EPSG:4326">
+            <!-- overwrite these with your actual offering ROI -->
+            <gml:lowerCorner>20.0 -100.0 0</gml:lowerCorner>
+            <gml:upperCorner>52.0 -50.0 0</gml:upperCorner>
+        </gml:Envelope>
+    </gml:boundedBy>
+    <om:member>
+        
+    <om:Observation><gml:description>Multichannel Sea Surface Temperature</gml:description><gml:name>Empty Description</gml:name><gml:boundedBy><gml:Envelope srsName="urn:tds:station.sos:mcsst"><gml:lowerCorner>29.88603303 -89.0087125 0</gml:lowerCorner><gml:upperCorner>29.88603303 -89.0087125 0</gml:upperCorner></gml:Envelope></gml:boundedBy><om:samplingTime><gml:TimePeriod gml:id="DATA_TIME"><gml:beginPosition>2012-04-17T13:57:00Z</gml:beginPosition><gml:endPosition>2012-04-17T13:57:00Z</gml:endPosition></gml:TimePeriod></om:samplingTime><om:procedure xlink:href="D:/Data/20120417.108.1357.n16.EC1.nc"/><om:observedProperty xlink:href="http://marinemetadata.org/cf#mcsst"/><om:observedProperty xlink:href="http://marinemetadata.org/cf#lat"/><om:observedProperty xlink:href="http://marinemetadata.org/cf#lon"/><om:result><swe:DataArray><swe:elementCount><swe:Count><swe:value>99</swe:value></swe:Count></swe:elementCount><swe:elementType name="SimpleDataArray"><swe:DataRecord><swe:field name="time"><swe:Time definition="urn:ogc:phenomenon:time:iso8601"/></swe:field><swe:field name="mcsst"><swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:mcsst"><swe:uom code="Celsius"/></swe:Quantity></swe:field><swe:field name="lat"><swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:lat"><swe:uom code="degrees_north"/></swe:Quantity></swe:field><swe:field name="lon"><swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:lon"><swe:uom code="degrees_east"/></swe:Quantity></swe:field></swe:DataRecord></swe:elementType><swe:encoding><swe:TextBlock blockSeparator=" " decimalSeparator="." tokenSeparator=","/></swe:encoding><swe:values>2012-04-17T13:57:00Z,22.8,29.886033032786887,-89.00871255834629 
+</swe:values></swe:DataArray></om:result></om:Observation></om:member>
+</om:ObservationCollection>

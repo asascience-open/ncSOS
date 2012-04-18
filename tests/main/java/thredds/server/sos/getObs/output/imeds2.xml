@@ -5,8 +5,8 @@
     <gml:boundedBy> 
         <gml:Envelope srsName="EPSG:4326">
             <!-- overwrite these with your actual offering ROI -->
-            <gml:lowerCorner>0.00000 0.00000 0</gml:lowerCorner>
-            <gml:upperCorner>0.00000 0.00000 0</gml:upperCorner>
+            <gml:lowerCorner>0.0 0.0 0</gml:lowerCorner>
+            <gml:upperCorner>0.0 0.0 0</gml:upperCorner>
         </gml:Envelope>
     </gml:boundedBy>
     <om:member>
