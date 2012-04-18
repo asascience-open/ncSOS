@@ -8,14 +8,17 @@ import java.util.Formatter;
 import org.w3c.dom.Document;
 import thredds.server.sos.util.DiscreteSamplingGeometryUtil;
 import thredds.server.sos.util.XMLDomUtils;
+import ucar.nc2.Variable;
 import ucar.nc2.constants.FeatureType;
 import ucar.nc2.dataset.NetcdfDataset;
+import ucar.nc2.dt.GridDataset;
 import ucar.nc2.ft.FeatureCollection;
 import ucar.nc2.ft.FeatureDataset;
 import ucar.nc2.ft.FeatureDatasetFactoryManager;
 import ucar.nc2.ft.ProfileFeatureCollection;
 import ucar.nc2.ft.StationProfileFeatureCollection;
 import ucar.nc2.ft.StationTimeSeriesFeatureCollection;
+import ucar.nc2.ft.grid.Grid;
 import ucar.nc2.ft.point.standard.StandardProfileCollectionImpl;
 import ucar.nc2.units.DateFormatter;
 
@@ -39,24 +42,41 @@ public abstract class SOSBaseRequestHandler {
     private String featureOfInterestBaseQueryURL;
     protected Document document;
     private final static NumberFormat FORMAT_DEGREE;
+    private final FeatureCollection CDMPointFeatureCollection;
+    private GridDataset gridDataSet = null;
 
     static {
         FORMAT_DEGREE = NumberFormat.getNumberInstance();
-        FORMAT_DEGREE.setMinimumFractionDigits(5);
-        FORMAT_DEGREE.setMaximumFractionDigits(5);
+        FORMAT_DEGREE.setMinimumFractionDigits(1);
+        FORMAT_DEGREE.setMaximumFractionDigits(14);
     }
+    private FeatureType dataFeatureType;
 
     public SOSBaseRequestHandler(NetcdfDataset netCDFDataset) throws IOException {
         this.netCDFDataset = netCDFDataset;
 
-        featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.ANY_POINT, netCDFDataset, null, new Formatter(System.err));
+        featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.ANY, netCDFDataset, null, new Formatter(System.err));
         //change multi to single featureCollectionType - allowing for single variable - switch on feature Type
         //keep remove others
         featureCollection = DiscreteSamplingGeometryUtil.extractStationTimeSeriesFeatureCollection(featureDataset);
-        
+
         featureCollectionProfileFeature = DiscreteSamplingGeometryUtil.extractStationProfileFeatureCollection(featureDataset);
-       
+
         ProfileFeatureCollection = DiscreteSamplingGeometryUtil.extractStdProfileCollection(featureDataset);
+
+        //try and get dataset
+        CDMPointFeatureCollection = DiscreteSamplingGeometryUtil.extractFeatureDatasetCollection(featureDataset);
+ 
+        //if its null try using grid?
+        if (CDMPointFeatureCollection == null) {
+            gridDataSet = DiscreteSamplingGeometryUtil.extractGridDatasetCollection(featureDataset);
+            if(gridDataSet!=null){
+               dataFeatureType = FeatureType.GRID;                                 
+            }
+        }else{
+            dataFeatureType = CDMPointFeatureCollection.getCollectionFeatureType();
+        }
+
         parseGlobalAttributes();
         document = parseTemplateXML();
     }
@@ -93,6 +113,10 @@ public abstract class SOSBaseRequestHandler {
         return document;
     }
 
+    public void setDocument(Document document) {
+        this.document = document;
+    }
+    
     public NetcdfDataset getNetCDFDataset() {
         return netCDFDataset;
     }
@@ -101,9 +125,11 @@ public abstract class SOSBaseRequestHandler {
         return featureDataset;
     }
 
+    public GridDataset getGridDataset(){
+        return gridDataSet;
+    }
     
-    
-    @Deprecated    
+    @Deprecated
     public StationTimeSeriesFeatureCollection getFeatureCollection() {
         return featureCollection;
     }
@@ -117,21 +143,21 @@ public abstract class SOSBaseRequestHandler {
     public ProfileFeatureCollection getProfileFeatureCollection() {
         return ProfileFeatureCollection;
     }
-    
+
     /**
      * Gets the dataset currently in use
      * @return feature collection dataset
      */
-    public FeatureCollection getFeatureTypeDataSet(){
-        return null;
+    public FeatureCollection getFeatureTypeDataSet() {
+        return CDMPointFeatureCollection;
     }
-    
+
     /**
      * gets the feature type of the dataset in question
      * @return feature type of dataset
      */
-    public FeatureType getDatasetFeatureType(){
-        return FeatureType.ANY;        
+    public FeatureType getDatasetFeatureType() {
+        return dataFeatureType;
     }
 
     public String getTitle() {
@@ -158,12 +184,23 @@ public abstract class SOSBaseRequestHandler {
         return stationName;
     }
 
+    public String getGMLNameBase() {
+        return STATION_GML_BASE;
+    }
+
     public String getGMLName(String stationName) {
         return STATION_GML_BASE + stationName;
     }
 
     public String getLocation() {
         return netCDFDataset.getLocation();
+    }
+
+    public String getFeatureOfInterestBase() {
+        if (featureOfInterestBaseQueryURL == null || featureOfInterestBaseQueryURL.contentEquals("null")) {
+            return "";
+        }
+        return featureOfInterestBaseQueryURL;
     }
 
     public String getFeatureOfInterest(String stationName) {
@@ -201,7 +238,7 @@ public abstract class SOSBaseRequestHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         //tidy up set vars
         featureCollectionProfileFeature = null;
         ProfileFeatureCollection = null;
