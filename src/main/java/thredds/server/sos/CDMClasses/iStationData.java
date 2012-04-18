@@ -78,5 +78,8 @@ public interface iStationData {
     
     //Does what is says on the tin
     String getTimeBegin(int stNum);
+
+    public String getDescription(int stNum);
+    
     
 }
