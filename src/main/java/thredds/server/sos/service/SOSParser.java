@@ -357,6 +357,8 @@ public class SOSParser {
                     
                 } else if (splitServiceStr[0].equalsIgnoreCase("lon")) {
                     latLonRequest.put("lon", splitServiceStr[1]);
+                }else if (splitServiceStr[0].equalsIgnoreCase("depth")) {
+                    latLonRequest.put("depth", splitServiceStr[1]);
                 }
 
             }

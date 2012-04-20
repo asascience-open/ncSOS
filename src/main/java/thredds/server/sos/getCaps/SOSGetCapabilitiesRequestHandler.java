@@ -415,7 +415,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         } else if (getDatasetFeatureType() == FeatureType.STATION_PROFILE) {
         } else if (getDatasetFeatureType() == FeatureType.PROFILE) {
         } else if (getDatasetFeatureType() == FeatureType.GRID) {
-            this.document = Grid.getResponse(getGridDataset(),getDocument(),getGMLNameBase(), format);
+            this.document = Grid.getCapsResponse(getGridDataset(),getDocument(),getGMLNameBase(), format);
         }
 
 

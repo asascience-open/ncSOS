@@ -71,27 +71,7 @@ public class SOSgetCaps {
     public static final String base = "tests/main/java/thredds/server/sos/getCaps/output/";
 
     
-    @Test
-    public void testCanIdentifyGriddedCDM() throws IOException {
-    NetcdfDataset dataset = NetcdfDataset.openDataset("D:/Data/20120417.108.1357.n16.EC1.nc");   
-    SOSGetCapabilitiesRequestHandler sosget = new SOSGetCapabilitiesRequestHandler(dataset, "threddsURI");
-    assertEquals(FeatureType.GRID,sosget.getDatasetFeatureType());
-    }
-     
-    @Test
-    public void testParseGriddedCDM() throws IOException {
-    NetcdfDataset dataset = NetcdfDataset.openDataset("D:/Data/20120417.108.1357.n16.EC1.nc");   
-    SOSParser md = new SOSParser();
-        Writer write = new CharArrayWriter();
-        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", "D:/Data/20120417.108.1357.n16.EC1.nc");
-        write.flush();
-        write.close();
-        assertFalse(write.toString().contains("Exception"));
-        String fileName = "gridded.xml";
-        fileWriter(base, fileName, write);
-        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
-    }
-     
+    
     
     @Test
     public void testCanIdentifyTrajectoryCDM() throws IOException {

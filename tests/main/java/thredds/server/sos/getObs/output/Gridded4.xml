@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><om:ObservationCollection xmlns:om="http://www.opengis.net/om/1.0" xmlns:gml="http://www.opengis.net/gml" xmlns:swe="http://www.opengis.net/swe/1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" gml:id="GML_ID_NAME" xsi:schemaLocation="http://www.opengis.net/om/1.0 http://schemas.opengis.net/om/1.0.0/observation.xsd">
+        
+    <gml:description>Empty Description</gml:description>
+    <gml:name>Near-Real Time Surface Ocean Velocity</gml:name>
+    <gml:boundedBy> 
+        <gml:Envelope srsName="EPSG:4326">
+            <!-- overwrite these with your actual offering ROI -->
+            <gml:lowerCorner>30.25 -130.36000061035156 0</gml:lowerCorner>
+            <gml:upperCorner>49.99203872680664 -115.8055648803711 0</gml:upperCorner>
+        </gml:Envelope>
+    </gml:boundedBy>
+    <om:member>
+        
+    <om:Observation><gml:description>surface_eastward_sea_water_velocity</gml:description><gml:name>Empty Description</gml:name><gml:boundedBy><gml:Envelope srsName="urn:tds:station.sos:u"><gml:lowerCorner>29.0 -89.0 0</gml:lowerCorner><gml:upperCorner>29.0 -89.0 0</gml:upperCorner></gml:Envelope></gml:boundedBy><om:samplingTime><gml:TimePeriod gml:id="DATA_TIME"><gml:beginPosition>2012-04-20T12:00:00Z</gml:beginPosition><gml:endPosition>2012-04-20T12:00:00Z</gml:endPosition></gml:TimePeriod></om:samplingTime><om:procedure xlink:href="D:/Data/201204201200_HFRadar_USWC_6km_rtv_NDBC.nc"/><om:observedProperty xlink:href="http://marinemetadata.org/cf#u"/><om:observedProperty xlink:href="http://marinemetadata.org/cf#lat"/><om:observedProperty xlink:href="http://marinemetadata.org/cf#lon"/><om:result><swe:DataArray><swe:elementCount><swe:Count><swe:value>99</swe:value></swe:Count></swe:elementCount><swe:elementType name="SimpleDataArray"><swe:DataRecord><swe:field name="time"><swe:Time definition="urn:ogc:phenomenon:time:iso8601"/></swe:field><swe:field name="u"><swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:u"><swe:uom code="m s-1"/></swe:Quantity></swe:field><swe:field name="lat"><swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:lat"><swe:uom code="degrees_north"/></swe:Quantity></swe:field><swe:field name="lon"><swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:lon"><swe:uom code="degrees_east"/></swe:Quantity></swe:field></swe:DataRecord></swe:elementType><swe:encoding><swe:TextBlock blockSeparator=" " decimalSeparator="." tokenSeparator=","/></swe:encoding><swe:values>2012-04-20T12:00:00Z,NaN,30.25,-115.8055648803711 
+</swe:values></swe:DataArray></om:result></om:Observation></om:member>
+</om:ObservationCollection>

@@ -12,11 +12,13 @@ import thredds.server.sos.CDMClasses.iStationData;
 import thredds.server.sos.service.SOSBaseRequestHandler;
 import thredds.server.sos.service.StationData;
 import thredds.server.sos.util.XMLDomUtils;
+import ucar.nc2.Variable;
 
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.constants.AxisType;
 import ucar.nc2.constants.FeatureType;
 import ucar.nc2.dataset.CoordinateAxis;
+import ucar.nc2.dataset.CoordinateAxis1D;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
@@ -47,13 +49,19 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         CoordinateAxis heightAxis = netCDFDataset.findCoordinateAxis(AxisType.Height);
         
         this.variableNames = checkNetcdfFileForAxis(heightAxis, variableNames);
+        Variable depthAxis;
+
 
         //grid operation
         if (getDatasetFeatureType() == FeatureType.GRID) {
             if (!latLonRequest.isEmpty()) {
                 stD = null;        
-                 this.variableNames = checkNetcdfFileForAxis(netCDFDataset.findCoordinateAxis(AxisType.Lat), this.variableNames);
-                 this.variableNames = checkNetcdfFileForAxis(netCDFDataset.findCoordinateAxis(AxisType.Lon), this.variableNames);
+                 depthAxis = (netCDFDataset.findVariable("depth"));
+                if (depthAxis!=null){
+                    this.variableNames = checkNetcdfFileForAxis((CoordinateAxis1D)depthAxis, this.variableNames);
+                }
+                this.variableNames = checkNetcdfFileForAxis(netCDFDataset.findCoordinateAxis(AxisType.Lat), this.variableNames);
+                this.variableNames = checkNetcdfFileForAxis(netCDFDataset.findCoordinateAxis(AxisType.Lon), this.variableNames);
                 
                 CDMDataSet = new Grid(stationName, eventTime, this.variableNames, latLonRequest);
                 CDMDataSet.setData(getGridDataset());
@@ -100,19 +108,19 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
 
     /**
      * checks for the presence of height in the netcdf dataset if it finds it but not in the variables selected it adds it
-     * @param heightAxis
+     * @param Axis
      * @param variableNames1
      * @return 
      */
-    private String[] checkNetcdfFileForAxis(CoordinateAxis heightAxis, String[] variableNames1) {
-        if (heightAxis != null) {
+    private String[] checkNetcdfFileForAxis(CoordinateAxis Axis, String[] variableNames1) {
+        if (Axis != null) {
             List<String> variableNamesNew = new ArrayList<String>();
             //check to see if Z present
             boolean foundZ = false;
             for (int i = 0; i < variableNames1.length; i++) {
                 String zAvail = variableNames1[i];
 
-                if (zAvail.equalsIgnoreCase(heightAxis.getName())) {
+                if (zAvail.equalsIgnoreCase(Axis.getName())) {
                     foundZ = true;
                     break;
                 }
@@ -124,7 +132,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
                 for (int i = 0; i < variableNames1.length; i++) {
                     variableNamesNew.add(variableNames1[i]);
                 }
-                variableNamesNew.add(heightAxis.getName());
+                variableNamesNew.add(Axis.getName());
                 variableNames1 = new String[variableNames1.length + 1];
                 variableNames1 = (String[]) variableNamesNew.toArray(variableNames1);
                 //*******************************
