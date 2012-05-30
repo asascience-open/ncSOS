@@ -7,8 +7,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import ucar.nc2.units.DateFormatter;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
@@ -291,7 +289,7 @@ public class Grid extends baseCDMClass implements iStationData {
      * @param GMLName
      * @param format
      * @return 
-     */
+     */    
     public static Document getCapsResponse(GridDataset dataset, Document document, String GMLName, String format) {
         System.out.println("grid");
         List<GridDatatype> gridData = dataset.getGrids();

@@ -13,6 +13,7 @@ import thredds.server.sos.getObs.ObservationOffering;
  */
 public class CDMUtils {
     
+    
     /**
      * Add the offering to the get caps document
      * @param offering

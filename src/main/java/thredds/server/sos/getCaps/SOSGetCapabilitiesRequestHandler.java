@@ -10,7 +10,6 @@ import thredds.server.sos.getObs.SOSObservationOffering;
 import thredds.server.sos.util.DiscreteSamplingGeometryUtil;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.NetcdfDataset;
-import ucar.nc2.dt.GridDatatype;
 import ucar.nc2.ft.ProfileFeature;
 import ucar.nc2.ft.ProfileFeatureCollection;
 import ucar.nc2.ft.StationProfileFeature;
@@ -24,13 +23,15 @@ import java.util.List;
 import org.joda.time.Chronology;
 import org.joda.time.chrono.ISOChronology;
 import thredds.server.sos.CDMClasses.Grid;
+import thredds.server.sos.CDMClasses.Profile;
+import thredds.server.sos.CDMClasses.TimeSeries;
+import thredds.server.sos.CDMClasses.TimeSeriesProfile;
 import thredds.server.sos.CDMClasses.Trajectory;
 import thredds.server.sos.service.SOSBaseRequestHandler;
 import thredds.server.sos.service.StationData;
 import ucar.nc2.constants.FeatureType;
 import ucar.nc2.ft.PointFeature;
 import ucar.nc2.ft.PointFeatureIterator;
-import ucar.nc2.time.CalendarDate;
 import ucar.nc2.units.DateFormatter;
 
 /**
@@ -375,9 +376,9 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                 observedPropertyUnitList.add(variable.getUnitsString());
             }
         }
-        
-        
-        
+
+
+        /*
         //if the stationTimeSeriesFeature is null
         StationTimeSeriesFeatureCollection featureCollection = getFeatureCollection();
         //***************************************        
@@ -387,7 +388,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         String profileID = null;
 
         if (profileCollection != null) {
-            ifProfileCollection(profileCollection, profileID, observedPropertyList);
+            //ifProfileCollection(profileCollection, profileID, observedPropertyList);
         }
         //***************************************
         //added abird
@@ -395,27 +396,37 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         StationProfileFeatureCollection featureCollection1 = getFeatureProfileCollection();
 
         if (featureCollection1 != null) {
-            ifTimeSeriesProfileCollection(featureCollection1, observedPropertyList);
+            //ifTimeSeriesProfileCollection(featureCollection1, observedPropertyList);
         }
 
         //***************************************
         //TIMESERIES
         if (featureCollection != null) {
-            ifTimeSeriesFeatureCollection(featureCollection, observedPropertyList);
+            //ifTimeSeriesFeatureCollection(featureCollection, observedPropertyList);
         }
+         * 
+         */
 
         //***************************************
-        //NEW!!!!
+            // use CDM to get, getCaps;
         if (getDatasetFeatureType() == FeatureType.TRAJECTORY) {
             try {
-                this.document = Trajectory.getResponse(getFeatureTypeDataSet(), getDocument(), getFeatureOfInterestBase(), getGMLNameBase(), format, observedPropertyList);
+                this.document = Trajectory.getCapsResponse(getFeatureTypeDataSet(), getDocument(), getFeatureOfInterestBase(), getGMLNameBase(), format, observedPropertyList);
             } catch (Exception e) {
             }
-        } else if (getDatasetFeatureType() == FeatureType.STATION) {
-        } else if (getDatasetFeatureType() == FeatureType.STATION_PROFILE) {
-        } else if (getDatasetFeatureType() == FeatureType.PROFILE) {
-        } else if (getDatasetFeatureType() == FeatureType.GRID) {
-            this.document = Grid.getCapsResponse(getGridDataset(),getDocument(),getGMLNameBase(), format);
+            
+        } else if (getDatasetFeatureType() == FeatureType.STATION) {            
+            this.document = TimeSeries.getCapsResponse((StationTimeSeriesFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),format,observedPropertyList);
+            
+        } else if (getDatasetFeatureType() == FeatureType.STATION_PROFILE) {           
+            this.document = TimeSeriesProfile.getCapsResponse((StationProfileFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),format,observedPropertyList);
+            
+        } else if (getDatasetFeatureType() == FeatureType.PROFILE) {            
+            this.document = Profile.getCapsResponse((ProfileFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),format,observedPropertyList);
+            
+            
+        } else if (getDatasetFeatureType() == FeatureType.GRID) {            
+            this.document = Grid.getCapsResponse(getGridDataset(), getDocument(), getGMLNameBase(), format);
         }
 
 

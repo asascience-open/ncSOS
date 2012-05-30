@@ -3,6 +3,7 @@ package thredds.server.sos.CDMClasses;
 import java.io.IOException;
 import java.util.List;
 import ucar.unidata.geoloc.Station;
+import org.w3c.dom.Document;
 
 /**
  * @author abird
@@ -80,6 +81,6 @@ public interface iStationData {
     String getTimeBegin(int stNum);
 
     public String getDescription(int stNum);
-    
+       
     
 }

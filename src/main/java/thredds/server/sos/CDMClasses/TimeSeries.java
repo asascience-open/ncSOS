@@ -12,8 +12,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.joda.time.Chronology;
 import org.joda.time.DateTime;
+import org.w3c.dom.Document;
+import thredds.server.sos.getObs.SOSObservationOffering;
+import thredds.server.sos.service.SOSBaseRequestHandler;
+import ucar.nc2.ft.FeatureDataset;
 import ucar.nc2.ft.PointFeature;
 import ucar.nc2.ft.PointFeatureIterator;
+import ucar.nc2.ft.StationTimeSeriesFeature;
 import ucar.nc2.ft.StationTimeSeriesFeatureCollection;
 import ucar.nc2.units.DateFormatter;
 import ucar.nc2.units.DateRange;
@@ -27,7 +32,67 @@ import ucar.unidata.geoloc.Station;
  *
  */
 public class TimeSeries extends baseCDMClass implements iStationData {
-    
+
+    /**
+     * gets the timeseries response for the getcaps request
+     * @param featureCollection
+     * @param document
+     * @param featureOfInterest
+     * @param GMLName
+     * @param format
+     * @param observedPropertyList
+     * @return
+     * @throws IOException 
+     */
+    public static Document getCapsResponse(StationTimeSeriesFeatureCollection featureCollection, Document document, String featureOfInterest, String GMLName, String format, List<String> observedPropertyList) throws IOException {
+        String stationName = null;
+        String stationLat = null;
+        String stationLon = null;
+        SOSObservationOffering newOffering = null;
+        StationTimeSeriesFeature feature = null;
+
+        List<Station> stationList = featureCollection.getStations();
+        for (int i = 0; i < stationList.size(); i++) {
+            feature = featureCollection.getStationFeature(stationList.get(i));
+            stationName = stationList.get(i).getName();
+            stationLat = SOSBaseRequestHandler.formatDegree(stationList.get(i).getLatitude());
+            stationLon = SOSBaseRequestHandler.formatDegree(stationList.get(i).getLongitude());
+            newOffering = new SOSObservationOffering();
+            newOffering.setObservationStationID(stationName);
+            newOffering.setObservationStationLowerCorner(stationLat, stationLon);
+            newOffering.setObservationStationUpperCorner(stationLat, stationLon);
+
+            // Code that causes slow issues
+            /*
+            if (stationList.size() < 75) {
+            feature.calcBounds();
+            newOffering.setObservationTimeBegin(feature.getDateRange().getStart().toDateTimeStringISO());
+            newOffering.setObservationTimeEnd(feature.getDateRange().getEnd().toDateTimeStringISO());
+            }
+             * 
+             */
+
+            try {
+                feature.calcBounds();
+                newOffering.setObservationTimeBegin(feature.getDateRange().getStart().toDateTimeStringISO());
+                newOffering.setObservationTimeEnd(feature.getDateRange().getEnd().toDateTimeStringISO());
+            } catch (Exception e) {
+            }
+            //END of slow issue code
+
+            newOffering.setObservationStationDescription(feature.getDescription());
+            newOffering.setObservationName(GMLName + stationName);
+            newOffering.setObservationSrsName("EPSG:4326");  // TODO? 
+            newOffering.setObservationProcedureLink(GMLName + stationName);
+            newOffering.setObservationObserveredList(observedPropertyList);
+            newOffering.setObservationFeatureOfInterest(featureOfInterest + stationName);
+            newOffering.setObservationFormat(format);
+
+            document = CDMUtils.addObsOfferingToDoc(newOffering, document);
+        }
+
+        return document;
+    }
     private StationTimeSeriesFeatureCollection tsData;
     private List<Station> tsStationList;
     private final ArrayList<String> eventTimes;
@@ -42,8 +107,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         this.eventTimes = new ArrayList<String>();
         eventTimes.addAll(Arrays.asList(eventTime));
     }
-    
-    
+
     /*******************TIMSERIES*************************/
     private String createTimeSeriesData(int stNum) throws IOException {
         //create the iterator for the feature
@@ -84,14 +148,14 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         for (String variableName : variableNames) {
             valueList.add(pointFeature.getData().getScalarObject(variableName).toString());
         }
-     
+
         for (int i = 0; i < valueList.size(); i++) {
             builder.append(valueList.get(i));
-            if (i < valueList.size()-1){
+            if (i < valueList.size() - 1) {
                 builder.append(",");
             }
         }
-           
+
         //builder.append(tokenJoiner.join(valueList));
         // TODO:  conditional inside loop...
         if (tsData.getStationFeature(tsStationList.get(stNum)).size() > 1) {
@@ -119,7 +183,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
             createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, stNum);
         }
     }
-        
+
     @Override
     public void setInitialLatLonBounaries(List<Station> tsStationList) {
         upperLat = tsStationList.get(0).getLatitude();
@@ -130,7 +194,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
 
     @Override
     public void setData(Object featureCollection) throws IOException {
-        this.tsData = (StationTimeSeriesFeatureCollection)featureCollection;
+        this.tsData = (StationTimeSeriesFeatureCollection) featureCollection;
         tsStationList = tsData.getStations(reqStationNames);
 
         setNumberOfStations(tsStationList.size());
@@ -175,11 +239,11 @@ public class TimeSeries extends baseCDMClass implements iStationData {
             if (tsData != null) {
                 return createTimeSeriesData(stNum);
             }
-        }catch (IOException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(TimeSeries.class.getName()).log(Level.SEVERE, null, ex);
-            return DATA_RESPONSE_ERROR+ TimeSeries.class;
+            return DATA_RESPONSE_ERROR + TimeSeries.class;
         }
-        return DATA_RESPONSE_ERROR+ TimeSeries.class;
+        return DATA_RESPONSE_ERROR + TimeSeries.class;
     }
 
     @Override
@@ -251,7 +315,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
                 DateTime dtStart = new DateTime(dateRange.getStart().getDate(), chrono);
                 return (df.toDateTimeStringISO(dtStart.toDate()));
             }
-        }catch (IOException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(TimeSeries.class.getName()).log(Level.SEVERE, null, ex);
         }
         return ERROR_NULL_DATE;

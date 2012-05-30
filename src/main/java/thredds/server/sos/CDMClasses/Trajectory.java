@@ -88,7 +88,7 @@ public class Trajectory extends baseCDMClass implements iStationData {
      * @return
      * @throws IOException 
      */
-    public static Document getResponse(FeatureCollection dataset,Document document,String featureOfInterest,String GMLName,String format,List<String> observedPropertyList) throws IOException {
+    public static Document getCapsResponse(FeatureCollection dataset,Document document,String featureOfInterest,String GMLName,String format,List<String> observedPropertyList) throws IOException {
         //PointFeatureIterator trajIter;
 
 

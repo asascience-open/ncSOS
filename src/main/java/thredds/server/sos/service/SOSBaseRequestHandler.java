@@ -31,8 +31,11 @@ public abstract class SOSBaseRequestHandler {
     private static final String STATION_GML_BASE = "urn:tds:station.sos:";
     private final NetcdfDataset netCDFDataset;
     private FeatureDataset featureDataset;
+    @Deprecated
     private StationTimeSeriesFeatureCollection featureCollection;
+    @Deprecated
     private StationProfileFeatureCollection featureCollectionProfileFeature;
+    @Deprecated
     private ProfileFeatureCollection ProfileFeatureCollection;
     private String title;
     private String history;
@@ -58,6 +61,7 @@ public abstract class SOSBaseRequestHandler {
         featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.ANY, netCDFDataset, null, new Formatter(System.err));
         //change multi to single featureCollectionType - allowing for single variable - switch on feature Type
         //keep remove others
+
         featureCollection = DiscreteSamplingGeometryUtil.extractStationTimeSeriesFeatureCollection(featureDataset);
 
         featureCollectionProfileFeature = DiscreteSamplingGeometryUtil.extractStationProfileFeatureCollection(featureDataset);
@@ -66,14 +70,14 @@ public abstract class SOSBaseRequestHandler {
 
         //try and get dataset
         CDMPointFeatureCollection = DiscreteSamplingGeometryUtil.extractFeatureDatasetCollection(featureDataset);
- 
+
         //if its null try using grid?
         if (CDMPointFeatureCollection == null) {
             gridDataSet = DiscreteSamplingGeometryUtil.extractGridDatasetCollection(featureDataset);
-            if(gridDataSet!=null){
-               dataFeatureType = FeatureType.GRID;                                 
+            if (gridDataSet != null) {
+                dataFeatureType = FeatureType.GRID;
             }
-        }else{
+        } else {
             dataFeatureType = CDMPointFeatureCollection.getCollectionFeatureType();
         }
 
@@ -116,7 +120,7 @@ public abstract class SOSBaseRequestHandler {
     public void setDocument(Document document) {
         this.document = document;
     }
-    
+
     public NetcdfDataset getNetCDFDataset() {
         return netCDFDataset;
     }
@@ -125,10 +129,10 @@ public abstract class SOSBaseRequestHandler {
         return featureDataset;
     }
 
-    public GridDataset getGridDataset(){
+    public GridDataset getGridDataset() {
         return gridDataSet;
     }
-    
+
     @Deprecated
     public StationTimeSeriesFeatureCollection getFeatureCollection() {
         return featureCollection;

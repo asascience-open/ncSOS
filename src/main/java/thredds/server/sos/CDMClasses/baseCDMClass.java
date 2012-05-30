@@ -7,6 +7,7 @@ package thredds.server.sos.CDMClasses;
 import java.util.List;
 import org.joda.time.Chronology;
 import org.joda.time.chrono.ISOChronology;
+import org.w3c.dom.Document;
 import ucar.nc2.units.DateFormatter;
 import ucar.unidata.geoloc.Station;
 
@@ -108,4 +109,5 @@ public abstract class baseCDMClass implements iStationData {
     public int getNumberOfStations() {
         return numberOfStations;
     }
+    
 }

@@ -14,6 +14,9 @@ import java.util.logging.Logger;
 import org.joda.time.Chronology;
 import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
+import org.w3c.dom.Document;
+import thredds.server.sos.getObs.SOSObservationOffering;
+import thredds.server.sos.service.SOSBaseRequestHandler;
 import ucar.nc2.ft.PointFeature;
 import ucar.nc2.ft.PointFeatureIterator;
 import ucar.nc2.ft.ProfileFeature;
@@ -31,6 +34,47 @@ import ucar.unidata.geoloc.Station;
  */
 public class TimeSeriesProfile extends baseCDMClass implements iStationData {
 
+    /**
+     * gets the timeseriesprofile response for the getcaps request
+     * @param featureCollection1
+     * @param document
+     * @param featureOfInterestBase
+     * @param GMLBase
+     * @param format
+     * @param observedPropertyList
+     * @return
+     * @throws IOException 
+     */
+    public static Document getCapsResponse(StationProfileFeatureCollection featureCollection1, Document document, String featureOfInterestBase, String GMLBase, String format, List<String> observedPropertyList) throws IOException {
+        StationProfileFeature stationProfileFeature = null;
+        SOSObservationOffering newOffering = null;
+        DateFormatter timePeriodFormatter = new DateFormatter();
+        for (Station station : featureCollection1.getStations()) {
+            String stationName = station.getName();
+            String stationLat = SOSBaseRequestHandler.formatDegree(station.getLatitude());
+            String stationLon = SOSBaseRequestHandler.formatDegree(station.getLongitude());
+            newOffering = new SOSObservationOffering();
+            newOffering.setObservationStationID(stationName);
+            newOffering.setObservationStationLowerCorner(stationLat, stationLon);
+            newOffering.setObservationStationUpperCorner(stationLat, stationLon);
+            StationProfileFeature feature = featureCollection1.getStationProfileFeature(station);
+            //feature.calcBounds();
+            stationProfileFeature = featureCollection1.getStationProfileFeature(station);
+            List<Date> times = stationProfileFeature.getTimes();
+            newOffering.setObservationTimeBegin(timePeriodFormatter.toDateTimeStringISO(times.get(0)));
+            newOffering.setObservationTimeEnd(timePeriodFormatter.toDateTimeStringISO(times.get(times.size() - 1)));
+            newOffering.setObservationStationDescription(feature.getDescription());
+            newOffering.setObservationName(GMLBase + stationName);
+            newOffering.setObservationSrsName("EPSG:4326");
+            newOffering.setObservationProcedureLink(GMLBase + stationName);
+            newOffering.setObservationObserveredList(observedPropertyList);
+            newOffering.setObservationFeatureOfInterest(featureOfInterestBase + stationName);
+            newOffering.setObservationFormat(format);
+            document = CDMUtils.addObsOfferingToDoc(newOffering, document);
+        }
+
+        return document;
+    }
     private StationProfileFeatureCollection tsProfileData;
     private List<Station> tsStationList;
     private final ArrayList<String> eventTimes;

@@ -13,6 +13,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.joda.time.Chronology;
 import org.joda.time.DateTime;
+import org.w3c.dom.Document;
+import thredds.server.sos.getObs.SOSObservationOffering;
+import thredds.server.sos.service.StationData;
 import ucar.nc2.ft.PointFeature;
 import ucar.nc2.ft.PointFeatureIterator;
 import ucar.nc2.ft.ProfileFeature;
@@ -31,6 +34,81 @@ import ucar.unidata.geoloc.Station;
  */
 public class Profile extends baseCDMClass implements iStationData {
 
+   
+/**
+     * gets the Profile response for the getcaps request
+     * @param profileCollection
+     * @param document
+     * @param featureOfInterestBase
+     * @param GMLName
+     * @param format
+     * @param observedPropertyList
+     * @return 
+     */
+    public static Document getCapsResponse(ProfileFeatureCollection profileCollection, Document document, String featureOfInterestBase, String GMLName, String format, List<String> observedPropertyList) throws IOException {
+        String profileID = null;
+        
+        PointFeatureIterator pp = null;
+        //profiles act like stations at present
+        while (profileCollection.hasNext()) {
+            ProfileFeature pFeature = profileCollection.next();
+
+            //scan through the data and get the profile id number
+            pp = pFeature.getPointFeatureIterator(-1);
+            while (pp.hasNext()) {
+                PointFeature pointFeature = pp.next();
+                profileID = getProfileIDFromProfile(pointFeature);
+                //System.out.println(profileID);
+                break;
+            }
+
+            //attributes
+            SOSObservationOffering newOffering = new SOSObservationOffering();
+
+            newOffering.setObservationStationLowerCorner(Double.toString(pFeature.getLatLon().getLatitude()), Double.toString(pFeature.getLatLon().getLongitude()));
+            newOffering.setObservationStationUpperCorner(Double.toString(pFeature.getLatLon().getLatitude()), Double.toString(pFeature.getLatLon().getLongitude()));
+
+            pFeature.calcBounds();
+
+            //check the data
+            if (pFeature.getDateRange() != null) {
+                newOffering.setObservationTimeBegin(pFeature.getDateRange().getStart().toDateTimeStringISO());
+                newOffering.setObservationTimeEnd(pFeature.getDateRange().getEnd().toDateTimeStringISO());
+            } //find the dates out!
+            else {
+                System.out.println("no dates yet");
+            }
+
+
+            newOffering.setObservationStationDescription(pFeature.getCollectionFeatureType().toString());
+            if (profileID != null) {
+                newOffering.setObservationStationID("PROFILE_" + profileID);
+                newOffering.setObservationProcedureLink(GMLName+("PROFILE_" + profileID));
+                newOffering.setObservationName(GMLName+(profileID));
+                newOffering.setObservationFeatureOfInterest(featureOfInterestBase+("PROFILE_" + profileID));
+            } else {
+                newOffering.setObservationFeatureOfInterest(featureOfInterestBase+(pFeature.getName()));
+                newOffering.setObservationStationID((pFeature.getName()));
+                newOffering.setObservationProcedureLink(GMLName+((pFeature.getName())));
+                newOffering.setObservationFeatureOfInterest(featureOfInterestBase+(pFeature.getName()));
+            }
+            newOffering.setObservationSrsName("EPSG:4326");  // TODO?  
+            newOffering.setObservationObserveredList(observedPropertyList);
+            newOffering.setObservationFormat(format);
+            document = CDMUtils.addObsOfferingToDoc(newOffering,document);
+        }
+
+        if (profileCollection.isMultipleNested() == false) {
+            System.out.println("not nested");
+        } else {
+            System.out.println("nested");
+        }
+        
+         return document;
+    }
+
+     
+    
     private final String[] variableNames;
     private List<ProfileFeature> profileList;
     private final ArrayList<String> eventTimes;
@@ -136,6 +214,11 @@ public class Profile extends baseCDMClass implements iStationData {
         builder.append("\n");
     }
 
+    /**
+     * gets the station/profile id from the point feature
+     * @param pointFeature
+     * @return 
+     */
     public static String getProfileIDFromProfile(PointFeature pointFeature) {
         String profileID = null;
         //Try and get profileID

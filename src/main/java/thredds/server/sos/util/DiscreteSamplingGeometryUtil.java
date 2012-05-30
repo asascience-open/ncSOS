@@ -36,6 +36,7 @@ import ucar.nc2.ft.point.standard.StandardProfileCollectionImpl;
  */
 public class DiscreteSamplingGeometryUtil {
 
+    @Deprecated
     public static StationTimeSeriesFeatureCollection extractStationTimeSeriesFeatureCollection(FeatureDataset featureDataset) throws IOException {
         if (featureDataset instanceof FeatureDatasetPoint) {
             FeatureDatasetPoint featureDatasetPoint = (FeatureDatasetPoint) featureDataset;
