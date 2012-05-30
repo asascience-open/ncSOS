@@ -69,8 +69,14 @@ public class SOSgetCaps {
     private static String OrthogonalMultiDimensionalMultipleProfiles = "tests/main/resources/datasets/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1.nc";
     private static String OrthogonalSingleDimensionalSingleProfile = "tests/main/resources/datasets/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3.nc";
     public static final String base = "tests/main/java/thredds/server/sos/getCaps/output/";
-
     
+    @Test
+    public void testCanIdentifyTimeSeriesCDM() throws IOException {
+       NetcdfDataset dataset = NetcdfDataset.openDataset(imeds8);
+        SOSGetCapabilitiesRequestHandler sosget = new SOSGetCapabilitiesRequestHandler(dataset, "threddsURI-IMEDS8");
+         assertEquals(FeatureType.STATION, sosget.getDatasetFeatureType());
+         //station
+    }
     
     
     @Test
@@ -78,6 +84,7 @@ public class SOSgetCaps {
         NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/trajectory/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc");
         SOSGetCapabilitiesRequestHandler sosget = new SOSGetCapabilitiesRequestHandler(dataset, "threddsURI");
         assertEquals(FeatureType.TRAJECTORY, sosget.getDatasetFeatureType());
+        //trajectory
 
     }
     
@@ -93,6 +100,7 @@ public class SOSgetCaps {
         String fileName = "trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.xml";
         fileWriter(base, fileName, write);
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        //traj
     }
     
     @Test
@@ -108,6 +116,7 @@ public class SOSgetCaps {
         fileWriter(base, fileName, write);
         assertTrue(write.toString().contains("<gml:lowerCorner>3.024412155151367  -68.12552642822266</gml:lowerCorner>"));
         assertTrue(write.toString().contains("<gml:upperCorner>43.00862503051758  -1.6318601369857788</gml:upperCorner>"));
+        //traj
     }
 
     @Test
@@ -123,10 +132,12 @@ public class SOSgetCaps {
         fileWriter(base, fileName, write);
         assertTrue(write.toString().contains("<gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>"));
         assertTrue(write.toString().contains("<gml:endPosition>1990-01-01T23:00:00.000Z</gml:endPosition>"));
+        //traj
     }
     
     @Test
     public void testCacheReturnsTrueFileDoesNOTExist() throws IOException {
+        fail("removed");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
@@ -137,10 +148,12 @@ public class SOSgetCaps {
         f = new File("C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds/watlev_IKE.xml");
         assertTrue(f.exists());
         f.delete();
+        //station
     }
 
     @Test
     public void testCacheReturnsTrueFileDoesExist() throws IOException {
+        fail("removed");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
@@ -163,6 +176,7 @@ public class SOSgetCaps {
 
     @Test
     public void testAddAdditionalParamForCachingDataTRUE() throws IOException {
+        fail("removed");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
@@ -192,6 +206,7 @@ public class SOSgetCaps {
 
     @Test
     public void testLargeDatasets() throws IOException {
+        fail("removed");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
 
         SOSParser md = new SOSParser();
@@ -230,6 +245,7 @@ public class SOSgetCaps {
         String fileName = "tsIncompleteMultiDimensionalMultipleStations.xml";
         fileWriter(base, fileName, write);
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        //station
     }
 
     @Test
@@ -245,6 +261,7 @@ public class SOSgetCaps {
         String fileName = "tsOrthogonalMultidimenstionalMultipleStations.xml";
         fileWriter(base, fileName, write);
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        //station
     }
 //**********************************
 //TIMESERIESPROFILE TEST
@@ -262,6 +279,7 @@ public class SOSgetCaps {
         String fileName = "RaggedSingleConventions.xml";
         fileWriter(base, fileName, write);
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        //station_profile
     }
 
     @Test
@@ -277,6 +295,7 @@ public class SOSgetCaps {
         String fileName = "RaggedMultiConventions.xml";
         fileWriter(base, fileName, write);
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        //station_Profile
     }
 
     @Test
@@ -293,6 +312,7 @@ public class SOSgetCaps {
         String fileName = "OrthogonalMultidimensionalMultiStations.xml";
         fileWriter(base, fileName, write);
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        
     }
 
     @Test
@@ -338,6 +358,7 @@ public class SOSgetCaps {
         String fileName = "MultiDimensionalMultiStations.xml";
         fileWriter(base, fileName, write);
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        //station_profile
     }
 
 //**********************************
@@ -357,6 +378,7 @@ public class SOSgetCaps {
         fileWriter(base, fileName, write);
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
         System.out.println("----end------");
+        //profile
     }
 
     private void spaceBetweenTests() {
