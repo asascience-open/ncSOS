@@ -1,29 +1,8 @@
-# This is an <h1> tag
-## This is an <h2> tag
-###### This is an <h6> tag
+###### ncSOS Install Instructions <h6>
 
-*This text will be italic*
-_This will also be italic_
-**This text will be bold**
-__This will also be bold__
-*You **can** combine them*
+*We hold no responsibility for THREDDS issues/damage/lost data caused from following the instructions below*
 
-* Item 1
-* Item 2
-  * Item 2a
-  * Item 2b
-1. Item 1
-2. Item 2
-3. Item 3
-   * Item 3a
-   * Item 3b
-
-
-
-*** We hold no responsibility for THREDDS issues/damage/lost data caused from following the instructions below***
-
---------------------------------------------------------------------------------------------------
-Feature Type ncSOS
+###### Feature Type ncSOS<h6>
 
     Once thredds has been deployed on to the Apache Web Server (see below for 4.3 info)
 
@@ -50,8 +29,8 @@ Feature Type ncSOS
       		
    6. Restart the web application server.
 
---------------------------------------------------------------------------------------------------
-Updating THREDDS to 4.3
+###### Updating THREDDS to 4.3<h6>
+
 
     1. Shutdown Apache Server if in use
     2. Backup webapps/thredds Directory outside of Apache Directory (precaution!)
