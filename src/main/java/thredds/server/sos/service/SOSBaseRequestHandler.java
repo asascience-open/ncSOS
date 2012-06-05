@@ -31,12 +31,6 @@ public abstract class SOSBaseRequestHandler {
     private static final String STATION_GML_BASE = "urn:tds:station.sos:";
     private final NetcdfDataset netCDFDataset;
     private FeatureDataset featureDataset;
-    @Deprecated
-    private StationTimeSeriesFeatureCollection featureCollection;
-    @Deprecated
-    private StationProfileFeatureCollection featureCollectionProfileFeature;
-    @Deprecated
-    private ProfileFeatureCollection ProfileFeatureCollection;
     private String title;
     private String history;
     private String institution;
@@ -45,7 +39,7 @@ public abstract class SOSBaseRequestHandler {
     private String featureOfInterestBaseQueryURL;
     protected Document document;
     private final static NumberFormat FORMAT_DEGREE;
-    private final FeatureCollection CDMPointFeatureCollection;
+    private FeatureCollection CDMPointFeatureCollection;
     private GridDataset gridDataSet = null;
 
     static {
@@ -59,15 +53,6 @@ public abstract class SOSBaseRequestHandler {
         this.netCDFDataset = netCDFDataset;
 
         featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.ANY, netCDFDataset, null, new Formatter(System.err));
-        //change multi to single featureCollectionType - allowing for single variable - switch on feature Type
-        //keep remove others
-
-        featureCollection = DiscreteSamplingGeometryUtil.extractStationTimeSeriesFeatureCollection(featureDataset);
-
-        featureCollectionProfileFeature = DiscreteSamplingGeometryUtil.extractStationProfileFeatureCollection(featureDataset);
-
-        ProfileFeatureCollection = DiscreteSamplingGeometryUtil.extractStdProfileCollection(featureDataset);
-
         //try and get dataset
         CDMPointFeatureCollection = DiscreteSamplingGeometryUtil.extractFeatureDatasetCollection(featureDataset);
 
@@ -131,21 +116,6 @@ public abstract class SOSBaseRequestHandler {
 
     public GridDataset getGridDataset() {
         return gridDataSet;
-    }
-
-    @Deprecated
-    public StationTimeSeriesFeatureCollection getFeatureCollection() {
-        return featureCollection;
-    }
-
-    @Deprecated
-    public StationProfileFeatureCollection getFeatureProfileCollection() {
-        return featureCollectionProfileFeature;
-    }
-
-    @Deprecated
-    public ProfileFeatureCollection getProfileFeatureCollection() {
-        return ProfileFeatureCollection;
     }
 
     /**
@@ -223,15 +193,6 @@ public abstract class SOSBaseRequestHandler {
     }
 
     public void finished() {
-        //added abird   
-        if (featureCollection != null) {
-            try {
-                featureCollection.finish();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        //try { featureCollection.finish(); } catch (Exception e) { e.printStackTrace(); }
         try {
             featureDataset.close();
         } catch (Exception e) {
@@ -242,10 +203,6 @@ public abstract class SOSBaseRequestHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        //tidy up set vars
-        featureCollectionProfileFeature = null;
-        ProfileFeatureCollection = null;
         title = null;
         history = null;;
         institution = null;;
@@ -253,7 +210,7 @@ public abstract class SOSBaseRequestHandler {
         description = null;
         featureOfInterestBaseQueryURL = null;
         document = null;
-
+        CDMPointFeatureCollection =null;
 
     }
 }

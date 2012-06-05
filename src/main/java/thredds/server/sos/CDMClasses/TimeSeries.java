@@ -33,6 +33,21 @@ import ucar.unidata.geoloc.Station;
  */
 public class TimeSeries extends baseCDMClass implements iStationData {
 
+    private StationTimeSeriesFeatureCollection tsData;
+    private List<Station> tsStationList;
+    private final ArrayList<String> eventTimes;
+    private final String[] variableNames;
+
+    public TimeSeries(String[] stationName, String[] eventTime, String[] variableNames) {
+        startDate = null;
+        endDate = null;
+        this.variableNames = variableNames;
+        this.reqStationNames = new ArrayList<String>();
+        reqStationNames.addAll(Arrays.asList(stationName));
+        this.eventTimes = new ArrayList<String>();
+        eventTimes.addAll(Arrays.asList(eventTime));
+    }
+
     /**
      * gets the timeseries response for the getcaps request
      * @param featureCollection
@@ -92,20 +107,6 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         }
 
         return document;
-    }
-    private StationTimeSeriesFeatureCollection tsData;
-    private List<Station> tsStationList;
-    private final ArrayList<String> eventTimes;
-    private final String[] variableNames;
-
-    public TimeSeries(String[] stationName, String[] eventTime, String[] variableNames) {
-        startDate = null;
-        endDate = null;
-        this.variableNames = variableNames;
-        this.reqStationNames = new ArrayList<String>();
-        reqStationNames.addAll(Arrays.asList(stationName));
-        this.eventTimes = new ArrayList<String>();
-        eventTimes.addAll(Arrays.asList(eventTime));
     }
 
     /*******************TIMSERIES*************************/
@@ -323,6 +324,6 @@ public class TimeSeries extends baseCDMClass implements iStationData {
 
     @Override
     public String getDescription(int stNum) {
-        throw new UnsupportedOperationException("Not supported yet.");
+       return "descrip";
     }
 }

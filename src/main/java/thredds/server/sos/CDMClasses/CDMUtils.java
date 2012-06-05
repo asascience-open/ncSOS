@@ -9,7 +9,10 @@ import thredds.server.sos.getObs.ObservationOffering;
 /**
  * RPS - ASA
  * @author abird
- * @version 
+ * @version
+ * 
+ * this class is for common util functions that are used across the CDM classes
+ * 
  */
 public class CDMUtils {
     
@@ -30,7 +33,7 @@ public class CDMUtils {
     }
 
     /**
-     * constructs the node to be added
+     * constructs the node to be added to the document
      * @param offering
      * @param document
      * @return 

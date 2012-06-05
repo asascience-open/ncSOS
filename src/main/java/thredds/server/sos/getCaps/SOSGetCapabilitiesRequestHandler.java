@@ -56,6 +56,9 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         return TEMPLATE;
     }
 
+    /**
+     * sets the service identification information 
+     */
     public void parseServiceIdentification() {
         NodeList nodeLst = document.getElementsByTagName("ows:ServiceIdentification");
 
@@ -102,146 +105,6 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         }
     }
 
-    @Deprecated
-    private void ifProfileCollection(ProfileFeatureCollection profileCollection, String profileID, List<String> observedPropertyList) throws IOException {
-        PointFeatureIterator pp = null;
-        //profiles act like stations at present
-        while (profileCollection.hasNext()) {
-            ProfileFeature pFeature = profileCollection.next();
-
-            //scan through the data and get the profile id number
-            pp = pFeature.getPointFeatureIterator(-1);
-            while (pp.hasNext()) {
-                PointFeature pointFeature = pp.next();
-                profileID = StationData.getProfileIDFromProfile(pointFeature);
-                //System.out.println(profileID);
-                break;
-            }
-
-            //attributes
-            SOSObservationOffering newOffering = new SOSObservationOffering();
-
-            newOffering.setObservationStationLowerCorner(Double.toString(pFeature.getLatLon().getLatitude()), Double.toString(pFeature.getLatLon().getLongitude()));
-            newOffering.setObservationStationUpperCorner(Double.toString(pFeature.getLatLon().getLatitude()), Double.toString(pFeature.getLatLon().getLongitude()));
-
-            pFeature.calcBounds();
-
-            //check the data
-            if (pFeature.getDateRange() != null) {
-                newOffering.setObservationTimeBegin(pFeature.getDateRange().getStart().toDateTimeStringISO());
-                newOffering.setObservationTimeEnd(pFeature.getDateRange().getEnd().toDateTimeStringISO());
-            } //find the dates out!
-            else {
-                System.out.println("no dates yet");
-            }
-
-
-            newOffering.setObservationStationDescription(pFeature.getCollectionFeatureType().toString());
-            if (profileID != null) {
-                newOffering.setObservationStationID("PROFILE_" + profileID);
-                newOffering.setObservationProcedureLink(getGMLName("PROFILE_" + profileID));
-                newOffering.setObservationName(getGMLName(profileID));
-                newOffering.setObservationFeatureOfInterest(getFeatureOfInterest("PROFILE_" + profileID));
-            } else {
-                newOffering.setObservationFeatureOfInterest(getFeatureOfInterest(pFeature.getName()));
-                newOffering.setObservationStationID(getGMLID(pFeature.getName()));
-                newOffering.setObservationProcedureLink(getGMLName((pFeature.getName())));
-                newOffering.setObservationFeatureOfInterest(getFeatureOfInterest(pFeature.getName()));
-            }
-            newOffering.setObservationSrsName("EPSG:4326");  // TODO?  
-            newOffering.setObservationObserveredList(observedPropertyList);
-            newOffering.setObservationFormat(format);
-            addObsOfferingToDoc(newOffering);
-        }
-
-        if (profileCollection.isMultipleNested() == false) {
-            System.out.println("not nested");
-        } else {
-            System.out.println("nested");
-        }
-    }
-
-    @Deprecated
-    private void ifTimeSeriesFeatureCollection(StationTimeSeriesFeatureCollection featureCollection, List<String> observedPropertyList) throws IOException {
-        String stationName = null;
-        String stationLat = null;
-        String stationLon = null;
-        SOSObservationOffering newOffering = null;
-        StationTimeSeriesFeature feature = null;
-
-        List<Station> stationList = featureCollection.getStations();
-        for (int i = 0; i < stationList.size(); i++) {
-            feature = featureCollection.getStationFeature(stationList.get(i));
-            stationName = stationList.get(i).getName();
-            stationLat = formatDegree(stationList.get(i).getLatitude());
-            stationLon = formatDegree(stationList.get(i).getLongitude());
-            newOffering = new SOSObservationOffering();
-            newOffering.setObservationStationID(getGMLID(stationName));
-            newOffering.setObservationStationLowerCorner(stationLat, stationLon);
-            newOffering.setObservationStationUpperCorner(stationLat, stationLon);
-
-            // Code that causes slow issues
-            /*
-            if (stationList.size() < 75) {
-            feature.calcBounds();
-            newOffering.setObservationTimeBegin(feature.getDateRange().getStart().toDateTimeStringISO());
-            newOffering.setObservationTimeEnd(feature.getDateRange().getEnd().toDateTimeStringISO());
-            }
-             * 
-             */
-
-            try {
-                feature.calcBounds();
-                newOffering.setObservationTimeBegin(feature.getDateRange().getStart().toDateTimeStringISO());
-                newOffering.setObservationTimeEnd(feature.getDateRange().getEnd().toDateTimeStringISO());
-            } catch (Exception e) {
-            }
-
-
-
-            //END of slow issue code
-
-            newOffering.setObservationStationDescription(feature.getDescription());
-            newOffering.setObservationName(getGMLName((stationName)));
-            newOffering.setObservationSrsName("EPSG:4326");  // TODO? 
-            newOffering.setObservationProcedureLink(getGMLName((stationName)));
-            newOffering.setObservationObserveredList(observedPropertyList);
-            newOffering.setObservationFeatureOfInterest(getFeatureOfInterest(stationName));
-            newOffering.setObservationFormat(format);
-            addObsOfferingToDoc(newOffering);
-        }
-    }
-
-    @Deprecated
-    private void ifTimeSeriesProfileCollection(StationProfileFeatureCollection featureCollection1, List<String> observedPropertyList) throws IOException {
-        StationProfileFeature stationProfileFeature = null;
-        SOSObservationOffering newOffering = null;
-        DateFormatter timePeriodFormatter = new DateFormatter();
-        for (Station station : featureCollection1.getStations()) {
-            String stationName = station.getName();
-            String stationLat = formatDegree(station.getLatitude());
-            String stationLon = formatDegree(station.getLongitude());
-            newOffering = new SOSObservationOffering();
-            newOffering.setObservationStationID(getGMLID(stationName));
-            newOffering.setObservationStationLowerCorner(stationLat, stationLon);
-            newOffering.setObservationStationUpperCorner(stationLat, stationLon);
-            StationProfileFeature feature = featureCollection1.getStationProfileFeature(station);
-            //feature.calcBounds();
-            stationProfileFeature = getFeatureProfileCollection().getStationProfileFeature(station);
-            List<Date> times = stationProfileFeature.getTimes();
-            newOffering.setObservationTimeBegin(timePeriodFormatter.toDateTimeStringISO(times.get(0)));
-            newOffering.setObservationTimeEnd(timePeriodFormatter.toDateTimeStringISO(times.get(times.size() - 1)));
-            newOffering.setObservationStationDescription(feature.getDescription());
-            newOffering.setObservationName(getGMLName((stationName)));
-            newOffering.setObservationSrsName("EPSG:4326");
-            newOffering.setObservationProcedureLink(getGMLName((stationName)));
-            newOffering.setObservationObserveredList(observedPropertyList);
-            newOffering.setObservationFeatureOfInterest(getFeatureOfInterest(stationName));
-            newOffering.setObservationFormat(format);
-            addObsOfferingToDoc(newOffering);
-        }
-    }
-
     private void setProviderName(Element fstElmnt, String xmlLocation) throws DOMException {
         //get the node named be the string
         NodeList fstNm1 = getXMLNode(fstElmnt, xmlLocation);
@@ -261,9 +124,6 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         }
     }
 
-    //
-    //TODO ADD THESE TO MOCK GET CAPS RESULT!!!!!!
-    //
     public String getInvividualNameSP() {
         return "";
     }
@@ -280,9 +140,9 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         return threddsURI;
     }
 
-    //
-    //TODO ADD THESE TO MOCK GET CAPS RESULT!!!!!!
-    //
+    /**
+     * sets the service description, this is typically additional created user/site information
+     */
     public void parseServiceDescription() {
         //get service provider node list
         NodeList serviceProviderNodeList = document.getElementsByTagName("ows:ServiceProvider");
@@ -361,6 +221,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
 
     /**
      * parses the observation list object and add the observations to the node
+     * main location for parsing CDM get caps response 
      */
     public void parseObservationList() throws IOException {
         List<VariableSimpleIF> variableList = null;
@@ -376,36 +237,6 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                 observedPropertyUnitList.add(variable.getUnitsString());
             }
         }
-
-
-        /*
-        //if the stationTimeSeriesFeature is null
-        StationTimeSeriesFeatureCollection featureCollection = getFeatureCollection();
-        //***************************************        
-        //PROFILE
-        //profiles differ depending on type
-        ProfileFeatureCollection profileCollection = getProfileFeatureCollection();
-        String profileID = null;
-
-        if (profileCollection != null) {
-            //ifProfileCollection(profileCollection, profileID, observedPropertyList);
-        }
-        //***************************************
-        //added abird
-        //TIMESERIESPROFILE
-        StationProfileFeatureCollection featureCollection1 = getFeatureProfileCollection();
-
-        if (featureCollection1 != null) {
-            //ifTimeSeriesProfileCollection(featureCollection1, observedPropertyList);
-        }
-
-        //***************************************
-        //TIMESERIES
-        if (featureCollection != null) {
-            //ifTimeSeriesFeatureCollection(featureCollection, observedPropertyList);
-        }
-         * 
-         */
 
         //***************************************
             // use CDM to get, getCaps;
@@ -431,109 +262,5 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
 
 
 
-    }
-
-    public void addObsOfferingToDoc(ObservationOffering offering) {
-
-        NodeList obsOfferingList = document.getElementsByTagName("ObservationOfferingList");
-        Element obsOfferEl = (Element) obsOfferingList.item(0);
-        obsOfferEl.appendChild(constructObsOfferingNodes(offering));
-        offering = null;
-    }
-
-    public Element constructObsOfferingNodes(ObservationOffering offering) {
-        //Create the observation offering
-        Element obsOfferingEl = document.createElement("ObservationOffering");
-        //add the station ID to the created element
-        obsOfferingEl.setAttribute("gml:id", offering.getObservationStationID());
-
-        //create the description and add the offering info
-        Element obsOfferingDescripEl = document.createElement("gml:description");
-        obsOfferingDescripEl.appendChild(document.createTextNode(offering.getObservationStationDescription()));
-
-        //create the obs name and add it to the element
-        Element obsOfferingNameEl = document.createElement("gml:name");
-        obsOfferingNameEl.appendChild(document.createTextNode(offering.getObservationName()));
-
-        //create the source name el and add data
-        Element obsOfferingSrsNameEl = document.createElement("gml:srsName");
-        obsOfferingSrsNameEl.appendChild(document.createTextNode(offering.getObservationSrsName()));
-
-        //create bounded area node
-        Element obsOfferingBoundedByEl = document.createElement("gml:boundedBy");
-        // create the envelope node and add attribute srs name
-        Element obsOfferingEnvelopeEl = document.createElement("gml:Envelope");
-        obsOfferingEnvelopeEl.setAttribute("srsName", offering.getObservationSrsName());
-        //create the lower coner node
-        Element obsOfferinglowerCornerEl = document.createElement("gml:lowerCorner");
-        obsOfferinglowerCornerEl.appendChild(document.createTextNode(offering.getObservationStationLowerCorner()));
-        //create the upper corner node
-        Element obsOfferingUpperCornerEl = document.createElement("gml:upperCorner");
-        obsOfferingUpperCornerEl.appendChild(document.createTextNode(offering.getObservationStationUpperCorner()));
-
-        //add the upper and lower to the envelope node
-        obsOfferingEnvelopeEl.appendChild(obsOfferinglowerCornerEl);
-        obsOfferingEnvelopeEl.appendChild(obsOfferingUpperCornerEl);
-        //add the envelope node to the bounded by node
-        obsOfferingBoundedByEl.appendChild(obsOfferingEnvelopeEl);
-
-        //create time node
-        Element obsOfferingTimeEl = document.createElement("time");
-        //create time period node
-        Element obsOfferingTimePeriodEl = document.createElement("gml:TimePeriod");
-        //create begin position node
-        Element obsOfferingTimeBeginEl = document.createElement("gml:beginPosition");
-        obsOfferingTimeBeginEl.appendChild(document.createTextNode(offering.getObservationTimeBegin()));
-        //create end position node
-        Element obsOfferingTimeEndEl = document.createElement("gml:endPosition");
-        checkEndDateElementNode(offering, obsOfferingTimeEndEl);
-
-        //add time begin to time period
-        obsOfferingTimePeriodEl.appendChild(obsOfferingTimeBeginEl);
-        //add time end to time period
-        obsOfferingTimePeriodEl.appendChild(obsOfferingTimeEndEl);
-        //add time period to time
-        obsOfferingTimeEl.appendChild(obsOfferingTimePeriodEl);
-
-        //create procedure node and add element
-        Element obsOfferingProcedureEl = document.createElement("procedure");
-        obsOfferingProcedureEl.setAttribute("xlink:href", offering.getObservationProcedureLink());
-
-        //create feature of interest node and add element
-        Element obsOfferingFeatureOfInterestEl = document.createElement("featureOfInterest");
-        obsOfferingFeatureOfInterestEl.setAttribute("xlink:href", offering.getObservationFeatureOfInterest());
-
-        //create response format
-        Element obsOfferingFormatEl = document.createElement("responseFormat");
-        obsOfferingFormatEl.appendChild(document.createTextNode(offering.getObservationFormat()));
-
-        //create response model
-        Element obsOfferingModelEl = document.createElement("responseModel");
-        obsOfferingModelEl.appendChild(document.createTextNode(offering.getObservationModel()));
-
-        //create response model
-        Element obsOfferingModeEl = document.createElement("responseMode");
-        obsOfferingModeEl.appendChild(document.createTextNode(offering.getObservationResponseMode()));
-
-        //add the new elements to the XML doc
-        obsOfferingEl.appendChild(obsOfferingDescripEl);
-        obsOfferingEl.appendChild(obsOfferingNameEl);
-        obsOfferingEl.appendChild(obsOfferingSrsNameEl);
-        obsOfferingEl.appendChild(obsOfferingBoundedByEl);
-        obsOfferingEl.appendChild(obsOfferingTimeEl);
-        obsOfferingEl.appendChild(obsOfferingProcedureEl);
-
-        //create obs property node and add element
-        for (int i = 0; i < offering.getObservationObserveredList().size(); i++) {
-            Element obsOfferingObsPropertyEll = document.createElement("observedProperty");
-            obsOfferingObsPropertyEll.setAttribute("xlink:href", (String) offering.getObservationObserveredList().get(i));
-            obsOfferingEl.appendChild(obsOfferingObsPropertyEll);
-        }
-
-        obsOfferingEl.appendChild(obsOfferingFeatureOfInterestEl);
-        obsOfferingEl.appendChild(obsOfferingFormatEl);
-        obsOfferingEl.appendChild(obsOfferingModelEl);
-        obsOfferingEl.appendChild(obsOfferingModeEl);
-        return obsOfferingEl;
     }
 }

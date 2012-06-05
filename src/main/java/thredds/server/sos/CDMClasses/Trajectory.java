@@ -27,6 +27,10 @@ import ucar.nc2.ft.TrajectoryFeatureCollection;
  */
 public class Trajectory extends baseCDMClass implements iStationData {
 
+    public Trajectory(String[] stationName, String[] eventTime, String[] variableNames) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
     @Override
     public void setData(Object featureCollection) throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");

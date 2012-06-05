@@ -238,6 +238,7 @@ public class Grid extends baseCDMClass implements iStationData {
                 } else {
                     //if it is not lat/lon look through all available grids to find a variable/name match then get data at that location
                     for (int i = 0; i < GridData.getGrids().size(); i++) {
+                        //if grid matches data of interest
                         if (GridData.getGrids().get(i).getName().equalsIgnoreCase(variableNames[j])) {
                             //get the grid of interest
                             grid = GridData.getGrids().get(i);
@@ -330,16 +331,7 @@ public class Grid extends baseCDMClass implements iStationData {
 
                 newOffering.setObservationObserveredList(obsProperty);
                 newOffering.setObservationFormat(format);
-
-                /*
-                System.out.println(gridData.get(i).getDescription());
-                System.out.println(gridData.get(i).getFullName());
-                System.out.println(gridData.get(i).getDataType());
-                System.out.println(gridData.get(i).getInfo());
-                System.out.println(gridData.get(i).getName());
-                System.out.println(gridData.get(i).getUnitsString());
-                 * 
-                 */
+                
                 document = CDMUtils.addObsOfferingToDoc(newOffering, document);
             }
         }

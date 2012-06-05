@@ -8,6 +8,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import thredds.server.sos.CDMClasses.Grid;
+import thredds.server.sos.CDMClasses.Profile;
+import thredds.server.sos.CDMClasses.TimeSeries;
+import thredds.server.sos.CDMClasses.TimeSeriesProfile;
+import thredds.server.sos.CDMClasses.Trajectory;
 import thredds.server.sos.CDMClasses.iStationData;
 import thredds.server.sos.service.SOSBaseRequestHandler;
 import thredds.server.sos.service.StationData;
@@ -32,8 +36,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     private String stationName;
     private String[] variableNames;
     private boolean isMultiTime;
-    private final StationData stD;
-    private final iStationData CDMDataSet;
+    private iStationData CDMDataSet;
 
     /**
      * SOS get obs request handler
@@ -47,63 +50,45 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         super(netCDFDataset);
         //this.stationName = stationName[0];        
         CoordinateAxis heightAxis = netCDFDataset.findCoordinateAxis(AxisType.Height);
-        
+
         this.variableNames = checkNetcdfFileForAxis(heightAxis, variableNames);
-        Variable depthAxis;
+
 
 
         //grid operation
         if (getDatasetFeatureType() == FeatureType.GRID) {
+            Variable depthAxis;
             if (!latLonRequest.isEmpty()) {
-                stD = null;        
-                 depthAxis = (netCDFDataset.findVariable("depth"));
-                if (depthAxis!=null){
-                    this.variableNames = checkNetcdfFileForAxis((CoordinateAxis1D)depthAxis, this.variableNames);
+
+                depthAxis = (netCDFDataset.findVariable("depth"));
+                if (depthAxis != null) {
+                    this.variableNames = checkNetcdfFileForAxis((CoordinateAxis1D) depthAxis, this.variableNames);
                 }
                 this.variableNames = checkNetcdfFileForAxis(netCDFDataset.findCoordinateAxis(AxisType.Lat), this.variableNames);
                 this.variableNames = checkNetcdfFileForAxis(netCDFDataset.findCoordinateAxis(AxisType.Lon), this.variableNames);
-                
+
                 CDMDataSet = new Grid(stationName, eventTime, this.variableNames, latLonRequest);
                 CDMDataSet.setData(getGridDataset());
                 return;
-            } else {
-                stD = null;
-                CDMDataSet = null;
-                return;
-            }
-        } //point operation
-        else {
-
-            //check for height and add it, get variable names
-
-
-
-            //one per request
-            stD = new StationData(stationName, eventTime, this.variableNames);
-
-            //Time Series
-            if (getFeatureCollection() != null) {
-                stD.setData(getFeatureCollection());
-            }
-
-            //profile Collection
-            //timeseriesprofile
-            //get the station profile based on station name
-            if (getFeatureProfileCollection() != null) {
-                stD.setData(getFeatureProfileCollection());
-            }
-
-            //profile
-            //gets the profile based on event time
-            if (getProfileFeatureCollection() != null) {
-                stD.setData(getProfileFeatureCollection());
             }
         }
-        CDMDataSet = null;
-    }
+        //station operation        
+        else {
 
-    public StationData getStationData() {
-        return stD;
+            if (getDatasetFeatureType() == FeatureType.TRAJECTORY) {
+                CDMDataSet = new Trajectory(stationName, eventTime, variableNames);
+            } else if (getDatasetFeatureType() == FeatureType.STATION) {
+                CDMDataSet = new TimeSeries(stationName, eventTime, variableNames);
+            } else if (getDatasetFeatureType() == FeatureType.STATION_PROFILE) {
+                CDMDataSet = new TimeSeriesProfile(stationName, eventTime, variableNames);
+            } else if (getDatasetFeatureType() == FeatureType.PROFILE) {
+                CDMDataSet = new Profile(stationName, eventTime, variableNames);
+            } else {
+                CDMDataSet = null;
+            }
+            CDMDataSet.setData(getFeatureTypeDataSet());
+        }
+
     }
 
     /**
@@ -195,11 +180,11 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             VariableSimpleIF variable = getFeatureDataset().getDataVariable(observedProperty);
             document = XMLDomUtils.addNodeAndAttribute(document, "swe:DataRecord", "swe:field", "name", observedProperty, stationNumber);
             document = XMLDomUtils.addNodeAndAttribute(document, "swe:field", "swe:Quantity", fieldIndex++, "definition", "urn:ogc:def:phenomenon:mmisw.org:cf:" + observedProperty, stationNumber);
-            
+
             //added logic abird
             if (variable != null) {
                 document = XMLDomUtils.addNodeAndAttribute(document, "swe:Quantity", "swe:uom", quantityIndex++, "code", variable.getUnitsString(), stationNumber);
-            }else{
+            } else {
                 quantityIndex++;
             }
         }
@@ -216,9 +201,9 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     void setSystemGMLID() {
 
         StringBuilder b = new StringBuilder();
-        if (stD != null) {
+        if (CDMDataSet != null) {
 
-            for (int i = 0; i < stD.getNumberOfStations(); i++) {
+            for (int i = 0; i < CDMDataSet.getNumberOfStations(); i++) {
                 b.append(stationName);
                 b.append(",");
             }
@@ -285,17 +270,13 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
      */
     public void parseObservations() {
 
-        if (CDMDataSet == null && stD == null) {
+        if (CDMDataSet == null) {
             setDocument(XMLDomUtils.getExceptionDom());
         } else {
             setObsCollectionMetaData();
 
             int numStations;
-            if (stD == null) {
                 numStations = CDMDataSet.getNumberOfStations();
-            } else {
-                numStations = stD.getNumberOfStations();
-            }
 
 
             //add observation 
@@ -303,21 +284,17 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             for (int stNum = 0; stNum < numStations; stNum++) {
                 document = XMLDomUtils.addObservationElement(document);
                 //add description
-                if (CDMDataSet!=null){
-                document = XMLDomUtils.addNodeAndValue(document, OM_OBSERVATION, "gml:description", CDMDataSet.getDescription(stNum), stNum);
-                }else{
-                 document = XMLDomUtils.addNodeAndValue(document, OM_OBSERVATION, "gml:description", getDescription(), stNum);    
-                }
+                //if (CDMDataSet != null) {
+                //document = XMLDomUtils.addNodeAndValue(document, OM_OBSERVATION, "gml:description", CDMDataSet.getDescription(stNum), stNum);
+                //} else {
+                document = XMLDomUtils.addNodeAndValue(document, OM_OBSERVATION, "gml:description", getDescription(), stNum);
+                //}
                 //add name
                 document = XMLDomUtils.addNodeAndValue(document, OM_OBSERVATION, "gml:name", getDescription(), stNum);
                 //add bounded by
                 document = XMLDomUtils.addNode(document, OM_OBSERVATION, "gml:boundedBy", stNum);
                 //add envelope and attribute
-                if (stD != null) {
-                    document = XMLDomUtils.addNodeToNodeAndAttribute(document, OM_OBSERVATION, "gml:boundedBy", "gml:Envelope", "srsName", getGMLName(stD.getStationName(stNum)), stNum);
-                } else {
-                    document = XMLDomUtils.addNodeToNodeAndAttribute(document, OM_OBSERVATION, "gml:boundedBy", "gml:Envelope", "srsName", getGMLName(CDMDataSet.getStationName(stNum)), stNum);
-                }
+                document = XMLDomUtils.addNodeToNodeAndAttribute(document, OM_OBSERVATION, "gml:boundedBy", "gml:Envelope", "srsName", getGMLName(CDMDataSet.getStationName(stNum)), stNum);
 
                 //add lat lon string
                 document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:Envelope", "gml:lowerCorner", getStationLowerLatLonStr(stNum), stNum);
@@ -328,19 +305,10 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
                 //add time instant
                 document = XMLDomUtils.addNodeToNodeAndAttribute(document, OM_OBSERVATION, "om:samplingTime", "gml:TimePeriod", "gml:id", "DATA_TIME", stNum);
                 //add time positions (being and end)
-
-                //******NEW DATA MANAGER************
-                if (stD != null || CDMDataSet != null) {
-                    if (stD == null) {
-                        document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:beginPosition", CDMDataSet.getTimeBegin(stNum), stNum);
-                        document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:endPosition", CDMDataSet.getTimeEnd(stNum), stNum);
-                    } else {
-
-                        document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:beginPosition", stD.getTimeBegin(stNum), stNum);
-                        document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:endPosition", stD.getTimeEnd(stNum), stNum);
-                    }
+                if (CDMDataSet != null) {
+                    document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:beginPosition", CDMDataSet.getTimeBegin(stNum), stNum);
+                    document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:endPosition", CDMDataSet.getTimeEnd(stNum), stNum);
                 }
-
                 //add procedure
                 document = XMLDomUtils.addNodeAndAttribute(document, OM_OBSERVATION, "om:procedure", "xlink:href", getLocation(), stNum);
 
@@ -355,8 +323,8 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
                 //}
 
                 //add feature of interest
-                if (stD != null) {
-                    document = XMLDomUtils.addNodeAndAttribute(document, OM_OBSERVATION, "om:featureOfInterest", "xlink:href", getFeatureOfInterest(stD.getStationName(stNum)), stNum);
+                if (CDMDataSet != null) {
+                    document = XMLDomUtils.addNodeAndAttribute(document, OM_OBSERVATION, "om:featureOfInterest", "xlink:href", getFeatureOfInterest(CDMDataSet.getStationName(stNum)), stNum);
                 }
                 //add results Node
                 document = XMLDomUtils.addNode(document, OM_OBSERVATION, "om:result", stNum);
@@ -407,15 +375,16 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         return XMLDomUtils.getAttributeFromNode(document, OM_OBSERVATION, "om:observedProperty", "xlink:href");
     }
 
-    public String createObsValuesString(int stNum) throws Exception { 
-        if (stD != null) {
-            setCount(variableNames.length + 1, stNum);
-            return stD.getDataResponse(stNum);
-        } else {
-            setCount(99, stNum);
-            return CDMDataSet.getDataResponse(stNum);
-            
-        }
+    /**
+     * This sets the values param in the output based on station number index  
+     * @param stNum
+     * @return data response using variables
+     * @throws Exception 
+     */
+    public String createObsValuesString(int stNum) throws Exception {
+        setCount(variableNames.length + 1, stNum);
+        return CDMDataSet.getDataResponse(stNum);
+
     }
 
     @Deprecated
@@ -447,9 +416,6 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
      * @return 
      */
     private String getStationLowerLatLonStr(int stNum) {
-        if (stD != null) {
-            return (new StringBuilder()).append(formatDegree(stD.getLowerLat(stNum))).append(" ").append(formatDegree(stD.getLowerLon(stNum))).append(" ").append("0").toString();
-        }
         return (new StringBuilder()).append(formatDegree(CDMDataSet.getLowerLat(stNum))).append(" ").append(formatDegree(CDMDataSet.getLowerLon(stNum))).append(" ").append("0").toString();
     }
 
@@ -458,9 +424,6 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
      * @return 
      */
     private String getStationUpperLatLonStr(int stNum) {
-        if (stD != null) {
-            return (new StringBuilder()).append(formatDegree(stD.getUpperLat(stNum))).append(" ").append(formatDegree(stD.getUpperLon(stNum))).append(" ").append("0").toString();
-        }
         return (new StringBuilder()).append(formatDegree(CDMDataSet.getUpperLat(stNum))).append(" ").append(formatDegree(CDMDataSet.getUpperLon(stNum))).append(" ").append("0").toString();
     }
 
@@ -468,10 +431,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
      * get the upper lat lon string all stations
      * @return 
      */
-    private String getBoundUpperLatLonStr() {
-        if (stD != null) {
-            return (new StringBuilder()).append(formatDegree(stD.getBoundUpperLat())).append(" ").append(formatDegree(stD.getBoundUpperLon())).append(" ").append("0").toString();
-        }
+    private String getBoundUpperLatLonStr() { 
         return (new StringBuilder()).append(formatDegree(CDMDataSet.getBoundUpperLat())).append(" ").append(formatDegree(CDMDataSet.getBoundUpperLon())).append(" ").append("0").toString();
     }
 
@@ -480,9 +440,6 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
      * @return 
      */
     private String getBoundLowerLatLonStr() {
-        if (stD != null) {
-            return (new StringBuilder()).append(formatDegree(stD.getBoundLowerLat())).append(" ").append(formatDegree(stD.getBoundLowerLon())).append(" ").append("0").toString();
-        }
         return (new StringBuilder()).append(formatDegree(CDMDataSet.getBoundLowerLat())).append(" ").append(formatDegree(CDMDataSet.getBoundLowerLon())).append(" ").append("0").toString();
 
     }

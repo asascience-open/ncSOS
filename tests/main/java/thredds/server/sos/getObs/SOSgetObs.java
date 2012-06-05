@@ -87,7 +87,7 @@ public class SOSgetObs {
 
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
-        md.enhance(dataset, write, imeds1Req, imeds1);
+        SOSParser.enhance(dataset, write, imeds1Req, imeds1);
         write.flush();
         write.close();
         assertFalse(write.toString().contains("Exception"));
