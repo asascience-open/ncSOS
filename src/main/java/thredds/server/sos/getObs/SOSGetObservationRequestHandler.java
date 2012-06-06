@@ -72,21 +72,25 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
                 return;
             }
         }
-        //station operation        
+        //if the stations are not of cdm type grid then check to see and set cdm data type        
         else {
 
             if (getDatasetFeatureType() == FeatureType.TRAJECTORY) {
-                CDMDataSet = new Trajectory(stationName, eventTime, variableNames);
+                CDMDataSet = new Trajectory(stationName, eventTime, this.variableNames);
             } else if (getDatasetFeatureType() == FeatureType.STATION) {
-                CDMDataSet = new TimeSeries(stationName, eventTime, variableNames);
+                CDMDataSet = new TimeSeries(stationName, eventTime, this.variableNames);
             } else if (getDatasetFeatureType() == FeatureType.STATION_PROFILE) {
-                CDMDataSet = new TimeSeriesProfile(stationName, eventTime, variableNames);
+                CDMDataSet = new TimeSeriesProfile(stationName, eventTime, this.variableNames);
             } else if (getDatasetFeatureType() == FeatureType.PROFILE) {
-                CDMDataSet = new Profile(stationName, eventTime, variableNames);
+                CDMDataSet = new Profile(stationName, eventTime, this.variableNames);
             } else {
                 CDMDataSet = null;
             }
+            
+            //only set the data is it is valid
+            if (CDMDataSet!=null){
             CDMDataSet.setData(getFeatureTypeDataSet());
+            }
         }
 
     }
