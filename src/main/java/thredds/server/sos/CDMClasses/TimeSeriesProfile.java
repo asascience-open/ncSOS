@@ -26,14 +26,32 @@ import ucar.nc2.units.DateFormatter;
 import ucar.unidata.geoloc.Station;
 
 /**
+ * RPS - ASA
  * @author abird
  * @version 
  *
- * 
+ * handles TIMES SERIES PROFILE CDM DATA TYPE
  *
  */
 public class TimeSeriesProfile extends baseCDMClass implements iStationData {
 
+     private StationProfileFeatureCollection tsProfileData;
+    private List<Station> tsStationList;
+    private final ArrayList<String> eventTimes;
+    private final String[] variableNames;
+
+    public TimeSeriesProfile(String[] stationName, String[] eventTime, String[] variableNames) {
+
+        startDate = null;
+        endDate = null;
+        this.variableNames = variableNames;
+        this.reqStationNames = new ArrayList<String>();
+        reqStationNames.addAll(Arrays.asList(stationName));
+        this.eventTimes = new ArrayList<String>();
+        eventTimes.addAll(Arrays.asList(eventTime));
+
+    }
+    
     /**
      * gets the timeseriesprofile response for the getcaps request
      * @param featureCollection1
@@ -75,22 +93,7 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
 
         return document;
     }
-    private StationProfileFeatureCollection tsProfileData;
-    private List<Station> tsStationList;
-    private final ArrayList<String> eventTimes;
-    private final String[] variableNames;
-
-    public TimeSeriesProfile(String[] stationName, String[] eventTime, String[] variableNames) {
-
-        startDate = null;
-        endDate = null;
-        this.variableNames = variableNames;
-        this.reqStationNames = new ArrayList<String>();
-        reqStationNames.addAll(Arrays.asList(stationName));
-        this.eventTimes = new ArrayList<String>();
-        eventTimes.addAll(Arrays.asList(eventTime));
-
-    }
+   
 
     /****************TIMESERIESPROFILE*******************/
     private String createStationProfileFeature(int stNum) throws IOException {

@@ -11,18 +11,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.joda.time.Chronology;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import thredds.server.sos.getObs.SOSObservationOffering;
-import thredds.server.sos.service.StationData;
 import ucar.nc2.ft.PointFeature;
 import ucar.nc2.ft.PointFeatureIterator;
 import ucar.nc2.ft.ProfileFeature;
 import ucar.nc2.ft.ProfileFeatureCollection;
-import ucar.nc2.ft.StationTimeSeriesFeatureCollection;
 import ucar.nc2.units.DateFormatter;
-import ucar.nc2.units.DateRange;
 import ucar.unidata.geoloc.Station;
 
 /**
