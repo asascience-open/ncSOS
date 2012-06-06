@@ -6,25 +6,11 @@ package thredds.server.sos.service;
 
 import thredds.server.sos.getObs.SOSGetObservationRequestHandler;
 import java.io.IOException;
-import ucar.nc2.VariableSimpleIF;
-import ucar.nc2.constants.FeatureType;
-import ucar.nc2.ft.NestedPointFeatureCollectionIterator;
-import ucar.nc2.ft.PointFeature;
-import ucar.nc2.ft.PointFeatureCollection;
-import ucar.nc2.ft.PointFeatureCollectionIterator;
-import ucar.nc2.ft.StationTimeSeriesFeature;
-import ucar.nc2.ft.StationTimeSeriesFeatureCollection;
 import java.util.List;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import thredds.server.sos.service.StationData;
 import static org.junit.Assert.*;
 import ucar.nc2.dataset.NetcdfDataset;
-import ucar.nc2.time.CalendarDateRange;
-import ucar.nc2.units.DateRange;
-import ucar.unidata.geoloc.LatLonRect;
-import ucar.unidata.geoloc.Station;
 
 /**
  *

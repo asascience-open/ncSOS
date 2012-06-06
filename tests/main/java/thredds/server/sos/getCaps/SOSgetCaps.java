@@ -69,6 +69,11 @@ public class SOSgetCaps {
     private static String OrthogonalMultiDimensionalMultipleProfiles = "tests/main/resources/datasets/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1.nc";
     private static String OrthogonalSingleDimensionalSingleProfile = "tests/main/resources/datasets/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3.nc";
     public static final String base = "tests/main/java/thredds/server/sos/getCaps/output/";
+    //traj
+    public final String multiRaggedTraj = "tests/main/resources/datasets/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc";
+    public final String multiInCompTraj = "tests/main/resources/datasets/trajectory-Incomplete-Multidimensional-MultipleTrajectories-H.4.1/trajectory-Incomplete-Multidimensional-MultipleTrajectories-H.4.1.nc";
+    public final String singleInCompTraj = "tests/main/resources/datasets/trajectory-Incomplete-Multidimensional-SingleTrajectory-H.4.2/trajectory-Incomplete-Multidimensional-SingleTrajectory-H.4.2.nc";
+  public final String indexmultiRaggedTraj = "tests/main/resources/datasets/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4.nc";
     
     @Test
     public void testCanIdentifyTimeSeriesCDM() throws IOException {
@@ -81,7 +86,7 @@ public class SOSgetCaps {
     
     @Test
     public void testCanIdentifyTrajectoryCDM() throws IOException {
-        NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/trajectory/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc");
+        NetcdfDataset dataset = NetcdfDataset.openDataset(multiRaggedTraj);
         SOSGetCapabilitiesRequestHandler sosget = new SOSGetCapabilitiesRequestHandler(dataset, "threddsURI");
         assertEquals(FeatureType.TRAJECTORY, sosget.getDatasetFeatureType());
         //trajectory
@@ -89,11 +94,11 @@ public class SOSgetCaps {
     }
     
     @Test
-    public void testCanProcessTrajectory() throws IOException {
-        NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/trajectory/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc");
+    public void testCanProcess_H43_Trajectory() throws IOException {
+        NetcdfDataset dataset = NetcdfDataset.openDataset(multiRaggedTraj);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
-        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/trajectory/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc");
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", multiRaggedTraj);
         write.flush();
         write.close();
         assertFalse(write.toString().contains("Exception"));
@@ -104,20 +109,69 @@ public class SOSgetCaps {
     }
     
     @Test
-    public void testTrajLatLongCorrect() throws IOException {
-        NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/trajectory/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc");
+    public void testCanProcess_H41_Trajectory() throws IOException {
+        NetcdfDataset dataset = NetcdfDataset.openDataset(multiInCompTraj);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
-        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/trajectory/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc");
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", multiInCompTraj);
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "trajectory-Incomplete-Multidimensional-MultipleTrajectories-H.4.1.xml";
+        fileWriter(base, fileName, write);
+        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        //traj
+    }
+    
+     @Test
+    public void testCanProcess_H42_Trajectory() throws IOException {
+        NetcdfDataset dataset = NetcdfDataset.openDataset(singleInCompTraj);
+        SOSParser md = new SOSParser();
+        Writer write = new CharArrayWriter();
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", singleInCompTraj);
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "trajectory-Incomplete-Multidimensional-SingleTrajectory-H.4.2.xml";
+        fileWriter(base, fileName, write);
+        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        //traj
+    }
+    
+        @Test
+    public void testCanProcess_H44_Trajectory() throws IOException {
+        NetcdfDataset dataset = NetcdfDataset.openDataset(indexmultiRaggedTraj);
+        SOSParser md = new SOSParser();
+        Writer write = new CharArrayWriter();
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", indexmultiRaggedTraj);
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4.xml";
+        fileWriter(base, fileName, write);
+        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        //traj
+    }
+    
+    @Test
+    public void testTrajLatLongCorrect() throws IOException {
+        NetcdfDataset dataset = NetcdfDataset.openDataset(multiRaggedTraj);
+        SOSParser md = new SOSParser();
+        Writer write = new CharArrayWriter();
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", multiRaggedTraj);
         write.flush();
         write.close();
         assertFalse(write.toString().contains("Exception"));
         String fileName = "trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.xml";
         fileWriter(base, fileName, write);
-        assertTrue(write.toString().contains("<gml:lowerCorner>3.024412155151367  -68.12552642822266</gml:lowerCorner>"));
-        assertTrue(write.toString().contains("<gml:upperCorner>43.00862503051758  -1.6318601369857788</gml:upperCorner>"));
+        assertTrue(write.toString().contains("<gml:lowerCorner>3.024412155151367 -68.12552642822266</gml:lowerCorner>"));
+        assertTrue(write.toString().contains("<gml:upperCorner>43.00862503051758 -1.6318601369857788</gml:upperCorner>"));
         //traj
     }
+    
+    
+    
+    
 
     @Test
     public void testTrajStartEndTimeCorrect() throws IOException {
@@ -300,7 +354,7 @@ public class SOSgetCaps {
 
     @Test
     public void testOrthogonalMultidimensionalMultiStations() throws IOException {
-        fail("file invalid i think");
+        fail("file invalid");
         NetcdfDataset dataset = NetcdfDataset.openDataset(OrthogonalMultidimensionalMultiStations);
 
         SOSParser md = new SOSParser();

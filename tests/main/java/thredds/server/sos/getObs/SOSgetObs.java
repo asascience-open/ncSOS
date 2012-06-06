@@ -61,6 +61,11 @@ public class SOSgetObs {
     private static String OrthogonalMultiDimensionalMultipleProfiles = "tests/main/resources/datasets/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1.nc";
     private static String OrthogonalSingleDimensionalSingleProfile = "tests/main/resources/datasets/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3.nc";
     public static final String base = "tests/main/java/thredds/server/sos/getObs/output/";
+    //trajectory
+    public final String multiRaggedTraj = "tests/main/resources/datasets/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc";
+    public final String multiInCompTraj = "tests/main/resources/datasets/trajectory-Incomplete-Multidimensional-MultipleTrajectories-H.4.1/trajectory-Incomplete-Multidimensional-MultipleTrajectories-H.4.1.nc";
+    public final String singleInCompTraj = "tests/main/resources/datasets/trajectory-Incomplete-Multidimensional-SingleTrajectory-H.4.2/trajectory-Incomplete-Multidimensional-SingleTrajectory-H.4.2.nc";
+    public final String indexmultiRaggedTraj = "tests/main/resources/datasets/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4.nc";
 
     private void dataAvailableInOutputFile(Writer write) {
         assertTrue("error no values", write.toString().contains("<swe:values>"));
@@ -75,11 +80,79 @@ public class SOSgetObs {
         output.close();
         System.out.println("Your file has been written");
     }
+    //***********************************************
+    //Trajectory Files
+
+    public static final String  trajReq1= "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=Trajectory1&eventtime=1990-01-01T00:00:00.000Z/1990-01-01T06:00:00.000Z";
+
+ public static final String  trajReq2NoTime= "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=Trajectory1";
     
+ public static final String  trajReq2OneTime= "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=Trajectory1&eventtime=1990-01-01T00:00:00.000Z";
+ 
+ 
+ @Test
+    public void testMultiRraggedNoTime() throws IOException {
+     fail("there should never be a case where no time is passed?");        
+     System.out.println("----Traj1 - NoTime------");
+
+        NetcdfDataset dataset = NetcdfDataset.openDataset(multiRaggedTraj);
+
+        SOSParser md = new SOSParser();
+        Writer write = new CharArrayWriter();
+        SOSParser.enhance(dataset, write, trajReq2NoTime, multiRaggedTraj);
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "Traj1Notime.xml";
+        fileWriter(base, fileName, write);
+        dataAvailableInOutputFile(write);
+        
+        
+    }
+ 
+ @Test
+    public void testMultiRraggedOneTime() throws IOException {
+        System.out.println("----Traj1 - OneTime------");
+
+        NetcdfDataset dataset = NetcdfDataset.openDataset(multiRaggedTraj);
+
+        SOSParser md = new SOSParser();
+        Writer write = new CharArrayWriter();
+        SOSParser.enhance(dataset, write, trajReq2OneTime, multiRaggedTraj);
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "Traj1Onetime.xml";
+        fileWriter(base, fileName, write);
+        dataAvailableInOutputFile(write);
+        
+        
+    }
+ 
+    @Test
+    public void testMultiRragged() throws IOException {
+        System.out.println("----Traj1------");
+
+        NetcdfDataset dataset = NetcdfDataset.openDataset(multiRaggedTraj);
+
+        SOSParser md = new SOSParser();
+        Writer write = new CharArrayWriter();
+        SOSParser.enhance(dataset, write, trajReq1, multiRaggedTraj);
+        write.flush();
+        write.close();
+        assertFalse(write.toString().contains("Exception"));
+        String fileName = "Traj1.xml";
+        fileWriter(base, fileName, write);
+        dataAvailableInOutputFile(write);
+        
+        
+    }
     //***********************************************
     //IMEDS FILES
+    
     public static final String imeds1Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=hs&offering=UNDKennedy_S,UNDKennedy_X,UNDKennedy_Z&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
 
+    
     @Test
     public void testenhanceImeds1() throws IOException {
         System.out.println("----IMEDS1------");
@@ -105,12 +178,13 @@ public class SOSgetObs {
 
     @Test
     public void testenhanceImeds2() throws IOException {
+        fail("fails Point Feature scan i.e CDM data type invalid");
         System.out.println("----IMEDS2------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds2);
 
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
-        md.enhance(dataset, write, imeds2Req, imeds2);
+        SOSParser.enhance(dataset, write, imeds2Req, imeds2);
         write.flush();
         write.close();
         assertFalse(write.toString().contains("Exception"));
@@ -123,12 +197,12 @@ public class SOSgetObs {
 
     @Test
     public void testenhanceImeds3() throws IOException {
+        fail("fails Point Feature scan i.e CDM data type invalid");
         System.out.println("----IMEDS3------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds3);
 
-        SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
-        md.enhance(dataset, write, imeds3Req, imeds3);
+        SOSParser.enhance(dataset, write, imeds3Req, imeds3);
         write.flush();
         write.close();
         assertFalse(write.toString().contains("Exception"));
@@ -618,7 +692,7 @@ public class SOSgetObs {
 
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
-        md.enhance(dataset, write, timeSeriesProfileRequestMulti, RaggedMultiConventions);
+        SOSParser.enhance(dataset, write, timeSeriesProfileRequestMulti, RaggedMultiConventions);
         write.flush();
         write.close();
         assertFalse(write.toString().contains("Exception"));
