@@ -1079,7 +1079,7 @@
 2008-09-29T21:59:59Z,-1019.0 
 2008-09-29T23:00:00Z,-1019.0 
 2008-09-30T00:00:00Z,-1019.0 
-</swe:values></swe:DataArray></om:result></om:Observation><om:Observation><gml:description>Empty Description</gml:description><gml:name>Empty Description</gml:name><gml:boundedBy><gml:Envelope srsName="urn:tds:station.sos:CSI_09"><gml:lowerCorner>29.10149955749512 -89.97816467285156 0</gml:lowerCorner><gml:upperCorner>29.10149955749512 -89.97816467285156 0</gml:upperCorner></gml:Envelope></gml:boundedBy><om:samplingTime><gml:TimePeriod gml:id="DATA_TIME"><gml:beginPosition>2008-08-02T00:00:00Z</gml:beginPosition><gml:endPosition>2008-10-01T23:00:00Z</gml:endPosition></gml:TimePeriod></om:samplingTime><om:procedure xlink:href="tests/main/resources/datasets/sura/watlev_IKE.nc"/><om:observedProperty xlink:href="http://marinemetadata.org/cf#watlev"/><om:featureOfInterest xlink:href="CSI_09"/><om:result><swe:DataArray><swe:elementCount><swe:Count><swe:value>2</swe:value></swe:Count></swe:elementCount><swe:elementType name="SimpleDataArray"><swe:DataRecord><swe:field name="time"><swe:Time definition="urn:ogc:phenomenon:time:iso8601"/></swe:field><swe:field name="watlev"><swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:watlev"><swe:uom code="m"/></swe:Quantity></swe:field></swe:DataRecord></swe:elementType><swe:encoding><swe:TextBlock blockSeparator=" "/></swe:encoding><swe:values>2008-08-02T00:00:00Z,0.0010 
+</swe:values></swe:DataArray></om:result></om:Observation><om:Observation><gml:description>Empty Description</gml:description><gml:name>Empty Description</gml:name><gml:boundedBy><gml:Envelope srsName="urn:tds:station.sos:CSI_09"><gml:lowerCorner>29.10149955749512 -89.97816467285156 0</gml:lowerCorner><gml:upperCorner>29.10149955749512 -89.97816467285156 0</gml:upperCorner></gml:Envelope></gml:boundedBy><om:samplingTime><gml:TimePeriod gml:id="DATA_TIME"><gml:beginPosition>2008-08-02T00:00:00Z</gml:beginPosition><gml:endPosition>2008-10-01T23:00:00Z</gml:endPosition></gml:TimePeriod></om:samplingTime><om:procedure xlink:href="tests/main/resources/datasets/sura/watlev_IKE.nc"/><om:observedProperty xlink:href="http://marinemetadata.org/cf#watlev"/><om:featureOfInterest xlink:href="CSI_09"/><om:result><swe:DataArray><swe:elementCount><swe:Count><swe:value>2</swe:value></swe:Count></swe:elementCount><swe:elementType name="SimpleDataArray"><swe:DataRecord><swe:field name="time"><swe:Time definition="urn:ogc:phenomenon:time:iso8601"/></swe:field><swe:field name="watlev"><swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:watlev"><swe:uom code="m"/></swe:Quantity></swe:field></swe:DataRecord></swe:elementType><swe:encoding><swe:TextBlock blockSeparator=" "/></swe:encoding><swe:values>2008-08-02T00:00:00Z,0.001 
 2008-08-02T00:59:59Z,-0.029 
 2008-08-02T02:00:00Z,-0.069 
 2008-08-02T03:00:00Z,-0.037 
@@ -1288,8 +1288,8 @@
 2008-08-10T18:00:00Z,0.067 
 2008-08-10T18:59:59Z,0.03 
 2008-08-10T20:00:00Z,0.012 
-2008-08-10T21:00:00Z,-0.0010 
-2008-08-10T21:59:59Z,-0.0040 
+2008-08-10T21:00:00Z,-0.001 
+2008-08-10T21:59:59Z,-0.004 
 2008-08-10T23:00:00Z,0.015 
 2008-08-11T00:00:00Z,0.051 
 2008-08-11T00:59:59Z,0.109 
@@ -1311,7 +1311,7 @@
 2008-08-11T17:00:00Z,0.13 
 2008-08-11T18:00:00Z,0.066 
 2008-08-11T18:59:59Z,0.03 
-2008-08-11T20:00:00Z,0.0010 
+2008-08-11T20:00:00Z,0.001 
 2008-08-11T21:00:00Z,-0.043 
 2008-08-11T23:00:00Z,-0.045 
 2008-08-12T00:00:00Z,-0.026 
@@ -1334,7 +1334,7 @@
 2008-08-12T17:00:00Z,0.192 
 2008-08-12T18:00:00Z,0.105 
 2008-08-12T18:59:59Z,0.043 
-2008-08-12T20:00:00Z,-0.0030 
+2008-08-12T20:00:00Z,-0.003 
 2008-08-12T21:00:00Z,-0.042 
 2008-08-12T21:59:59Z,-0.051 
 2008-08-12T23:00:00Z,-0.069 
@@ -1386,7 +1386,7 @@
 2008-08-14T21:59:59Z,-0.012 
 2008-08-14T23:00:00Z,-0.022 
 2008-08-15T00:00:00Z,-0.028 
-2008-08-15T00:59:59Z,-0.0060 
+2008-08-15T00:59:59Z,-0.006 
 2008-08-15T02:00:00Z,0.051 
 2008-08-15T03:00:00Z,0.148 
 2008-08-15T05:00:00Z,0.209 
@@ -1408,8 +1408,8 @@
 2008-08-15T21:00:00Z,0.095 
 2008-08-15T21:59:59Z,0.032 
 2008-08-15T23:00:00Z,0.019 
-2008-08-16T00:00:00Z,0.0040 
-2008-08-16T00:59:59Z,-0.0090 
+2008-08-16T00:00:00Z,0.004 
+2008-08-16T00:59:59Z,-0.009 
 2008-08-16T02:00:00Z,0.012 
 2008-08-16T03:00:00Z,0.066 
 2008-08-16T03:59:59Z,0.095 
@@ -1434,7 +1434,7 @@
 2008-08-16T23:00:00Z,-0.01 
 2008-08-17T00:00:00Z,-0.028 
 2008-08-17T00:59:59Z,-0.017 
-2008-08-17T02:00:00Z,0.0050 
+2008-08-17T02:00:00Z,0.005 
 2008-08-17T03:00:00Z,0.06 
 2008-08-17T03:59:59Z,0.088 
 2008-08-17T05:00:00Z,0.147 
@@ -1590,7 +1590,7 @@
 2008-08-23T12:00:00Z,0.188 
 2008-08-23T12:59:59Z,0.132 
 2008-08-23T14:00:00Z,0.061 
-2008-08-23T15:00:00Z,-0.0030 
+2008-08-23T15:00:00Z,-0.003 
 2008-08-23T15:59:59Z,-0.05 
 2008-08-23T17:00:00Z,-0.079 
 2008-08-23T18:00:00Z,-0.105 
@@ -1696,7 +1696,7 @@
 2008-08-27T21:59:59Z,-0.131 
 2008-08-27T23:00:00Z,-0.146 
 2008-08-28T00:59:59Z,-0.07 
-2008-08-28T02:00:00Z,0.0020 
+2008-08-28T02:00:00Z,0.002 
 2008-08-28T03:00:00Z,0.073 
 2008-08-28T03:59:59Z,0.136 
 2008-08-28T05:00:00Z,0.198 
@@ -1715,7 +1715,7 @@
 2008-08-28T18:00:00Z,0.235 
 2008-08-28T18:59:59Z,0.151 
 2008-08-28T20:00:00Z,0.064 
-2008-08-28T21:00:00Z,-0.0020 
+2008-08-28T21:00:00Z,-0.002 
 2008-08-28T21:59:59Z,-0.025 
 2008-08-28T23:00:00Z,-0.054 
 2008-08-29T00:00:00Z,-0.065 
@@ -1741,7 +1741,7 @@
 2008-08-29T20:00:00Z,0.116 
 2008-08-29T21:00:00Z,0.068 
 2008-08-29T21:59:59Z,0.024 
-2008-08-29T23:00:00Z,0.0060 
+2008-08-29T23:00:00Z,0.006 
 2008-08-30T00:00:00Z,-0.026 
 2008-08-30T00:59:59Z,0.024 
 2008-08-30T02:00:00Z,0.027 

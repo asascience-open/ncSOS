@@ -84,6 +84,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             } else if (getDatasetFeatureType() == FeatureType.PROFILE) {
                 CDMDataSet = new Profile(stationName, eventTime, variableNames);
             } else {
+                System.out.println("Have a null CDMDataSet, this will cause a null reference exception! - SOSGetObservationRequestHandler.87");
                 CDMDataSet = null;
             }
             CDMDataSet.setData(getFeatureTypeDataSet());
