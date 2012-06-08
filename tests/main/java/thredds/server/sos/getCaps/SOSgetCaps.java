@@ -34,6 +34,13 @@ import ucar.unidata.geoloc.LatLonRect;
  * @author abird
  */
 public class SOSgetCaps {
+    
+    // base location of resources
+    private static String baseLocalDir = "C:/Users/scowan/Projects/ncSOS/";
+    private static String baseTomcatDir = "C:/apache_tomcat/apache-tomcat-7.0.27/";
+    
+    // work thredds
+    private static String catalinaThredds = "work/Catalina/localhost/thredds/";
 
     //imeds data
     private static String imeds1 = "tests/main/resources/datasets/sura/Hsig_UNDKennedy_IKE_VIMS_3D_WAVEONLY.nc";
@@ -70,6 +77,9 @@ public class SOSgetCaps {
     private static String OrthogonalSingleDimensionalSingleProfile = "tests/main/resources/datasets/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3.nc";
     public static final String base = "tests/main/java/thredds/server/sos/getCaps/output/";
     
+    // trajectories
+    public static String TCRMTH43 = "tests/main/resources/datasets/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc";
+    
     @Test
     public void testCanIdentifyTimeSeriesCDM() throws IOException {
        NetcdfDataset dataset = NetcdfDataset.openDataset(imeds8);
@@ -81,7 +91,7 @@ public class SOSgetCaps {
     
     @Test
     public void testCanIdentifyTrajectoryCDM() throws IOException {
-        NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/trajectory/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc");
+        NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + TCRMTH43);
         SOSGetCapabilitiesRequestHandler sosget = new SOSGetCapabilitiesRequestHandler(dataset, "threddsURI");
         assertEquals(FeatureType.TRAJECTORY, sosget.getDatasetFeatureType());
         //trajectory
@@ -90,10 +100,10 @@ public class SOSgetCaps {
     
     @Test
     public void testCanProcessTrajectory() throws IOException {
-        NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/trajectory/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc");
+        NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + TCRMTH43);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
-        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/trajectory/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc");
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", baseLocalDir + TCRMTH43);
         write.flush();
         write.close();
         assertFalse(write.toString().contains("Exception"));
@@ -105,26 +115,26 @@ public class SOSgetCaps {
     
     @Test
     public void testTrajLatLongCorrect() throws IOException {
-        NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/trajectory/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc");
+        NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + TCRMTH43);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
-        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/trajectory/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc");
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", baseLocalDir + TCRMTH43);
         write.flush();
         write.close();
         assertFalse(write.toString().contains("Exception"));
         String fileName = "trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.xml";
         fileWriter(base, fileName, write);
-        assertTrue(write.toString().contains("<gml:lowerCorner>3.024412155151367  -68.12552642822266</gml:lowerCorner>"));
-        assertTrue(write.toString().contains("<gml:upperCorner>43.00862503051758  -1.6318601369857788</gml:upperCorner>"));
+        assertTrue(write.toString().contains("<gml:lowerCorner>3.024412155151367 -68.12552642822266</gml:lowerCorner>"));
+        assertTrue(write.toString().contains("<gml:upperCorner>43.00862503051758 -1.6318601369857788</gml:upperCorner>"));
         //traj
     }
 
     @Test
     public void testTrajStartEndTimeCorrect() throws IOException {
-        NetcdfDataset dataset = NetcdfDataset.openDataset("C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/trajectory/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc");
+        NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + TCRMTH43);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
-        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", "C:/Documents and Settings/abird/My Documents/NetBeansProjects/cfpoint/CFPointConventions/trajectory/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc");
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", baseLocalDir + TCRMTH43);
         write.flush();
         write.close();
         assertFalse(write.toString().contains("Exception"));
@@ -137,15 +147,15 @@ public class SOSgetCaps {
     
     @Test
     public void testCacheReturnsTrueFileDoesNOTExist() throws IOException {
-        fail("removed");
+        fail("removed - test takes too long");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
-        File f = new File("C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds/xmlFile.xml");
+        File f = new File(baseTomcatDir + catalinaThredds + "xmlFile.xml");
         f.delete();
-        SOSParser.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13, "C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds");
+        SOSParser.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13, baseTomcatDir + catalinaThredds);
         assertEquals("true", md.getCacheValue());
-        f = new File("C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds/watlev_IKE.xml");
+        f = new File(baseTomcatDir + catalinaThredds + "watlev_IKE.xml");
         assertTrue(f.exists());
         f.delete();
         //station
@@ -153,15 +163,15 @@ public class SOSgetCaps {
 
     @Test
     public void testCacheReturnsTrueFileDoesExist() throws IOException {
-        fail("removed");
+        //fail("removed");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
 
-        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13, "C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds");
-        File f = new File("C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds/watlev_IKE.xml");
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13, baseTomcatDir + catalinaThredds);
+        File f = new File(baseTomcatDir + catalinaThredds + "watlev_IKE.xml");
         assertTrue(f.exists());
-        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13, "C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds");
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13, baseTomcatDir + catalinaThredds);
 
         assertTrue(f.exists());
         f.delete();
@@ -176,17 +186,17 @@ public class SOSgetCaps {
 
     @Test
     public void testAddAdditionalParamForCachingDataTRUE() throws IOException {
-        fail("removed");
+        //fail("removed");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
 
-        String fileName = "C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds/watlev_IKE.xml";
+        String fileName = baseTomcatDir + catalinaThredds + "watlev_IKE.xml";
         //check file exists
         File f = new File(fileName);
         f.delete();
 
-        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13, "C:/Program Files/Apache Software Foundation/Apache Tomcat 7.0.11/work/Catalina/localhost/thredds");
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13, baseTomcatDir + catalinaThredds);
         write.flush();
         write.close();
 
@@ -206,7 +216,7 @@ public class SOSgetCaps {
 
     @Test
     public void testLargeDatasets() throws IOException {
-        fail("removed");
+        //fail("removed");
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
 
         SOSParser md = new SOSParser();
@@ -300,12 +310,12 @@ public class SOSgetCaps {
 
     @Test
     public void testOrthogonalMultidimensionalMultiStations() throws IOException {
-        fail("file invalid i think");
-        NetcdfDataset dataset = NetcdfDataset.openDataset(OrthogonalMultidimensionalMultiStations);
+        //fail("file invalid i think");
+        NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + OrthogonalMultidimensionalMultiStations);
 
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
-        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", OrthogonalMultidimensionalMultiStations);
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", baseLocalDir + OrthogonalMultidimensionalMultiStations);
         write.flush();
         write.close();
         assertFalse(write.toString().contains("Exception"));
