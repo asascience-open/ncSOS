@@ -50,6 +50,7 @@ public abstract class SOSBaseRequestHandler {
     private FeatureType dataFeatureType;
 
     public SOSBaseRequestHandler(NetcdfDataset netCDFDataset) throws IOException {
+        System.out.println("in SOSBaseRequestHandler");
         this.netCDFDataset = netCDFDataset;
 
         featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.ANY, netCDFDataset, null, new Formatter(System.err));
