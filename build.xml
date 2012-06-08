@@ -76,7 +76,7 @@
     
     <target name="-post-jar">
       <copy file="doc/sos-servlet.xml" todir="dist/"/> 
-      <copy file="README" todir="dist/"/>
+      <copy file="README.md" todir="dist/"/>
       <zip destfile="dist/ncSOS-${version}.zip" basedir="dist/"/>
     </target>
     
