@@ -60,7 +60,7 @@ public class SOSgetObsTest {
     private static String IndexedRaggedMultipleProfiles = "resources/datasets/profile-Indexed-Ragged-MultipleProfiles-H.3.5/profile-Indexed-Ragged-MultipleProfiles-H.3.5.nc";
     private static String OrthogonalMultiDimensionalMultipleProfiles = "resources/datasets/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1.nc";
     private static String OrthogonalSingleDimensionalSingleProfile = "resources/datasets/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3.nc";
-    public static final String base = "C:/Users/scowan/Projects/maven/ncSOS/src/test/java/com/asascience/getObs/output";
+    public static final String base = "C:/Users/scowan/Projects/maven/ncSOS/src/test/java/com/asascience/getObs/output/";
 
     private void dataAvailableInOutputFile(Writer write) {
         assertTrue("error no values", write.toString().contains("<swe:values>"));

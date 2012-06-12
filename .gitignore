@@ -1,7 +1,7 @@
 resources/datasets/*
 target/*
-src/test/java/com/getObs/output/*
-src/test/java/com/getCaps/output/*
+src/test/java/com/asascience/getObs/output/*
+src/test/java/com/asascience/getCaps/output/*
 # Compiled source #
 ###################
 *.com

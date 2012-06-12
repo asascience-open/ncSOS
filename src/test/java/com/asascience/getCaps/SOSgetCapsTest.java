@@ -75,7 +75,7 @@ public class SOSgetCapsTest {
     private static String IndexedRaggedMultipleProfiles = "resources/datasets/profile-Indexed-Ragged-MultipleProfiles-H.3.5/profile-Indexed-Ragged-MultipleProfiles-H.3.5.nc";
     private static String OrthogonalMultiDimensionalMultipleProfiles = "resources/datasets/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1.nc";
     private static String OrthogonalSingleDimensionalSingleProfile = "resources/datasets/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3.nc";
-    public static final String base = "C:/Users/scowan/Projects/maven/ncSOS/src/test/java/com/asascience/getCaps/output";
+    public static final String base = "C:/Users/scowan/Projects/maven/ncSOS/src/test/java/com/asascience/getCaps/output/";
     
     // trajectories
     public static String TCRMTH43 = "resources/datasets/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc";
