@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<project name="maven-antrun-" default="main"  >
-<target name="main">
-  <copy todir="target/" file="resources/sos-servlet.xml"/>
-  <copy todir="target/" file="resources/README"/>
-  <zip basedir="target/" destfile="target/ncSOS-1.0.zip"/>
-</target>
-</project>
