@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><om:ObservationCollection xmlns:om="http://www.opengis.net/om/1.0" xmlns:gml="http://www.opengis.net/gml" xmlns:swe="http://www.opengis.net/swe/1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" gml:id="GML_ID_NAME" xsi:schemaLocation="http://www.opengis.net/om/1.0 http://schemas.opengis.net/om/1.0.0/observation.xsd">
+        
+    <gml:description>Empty Description</gml:description>
+    <gml:name>Empty Title</gml:name>
+    <gml:boundedBy> 
+        <gml:Envelope srsName="EPSG:4326">
+            <!-- overwrite these with your actual offering ROI -->
+            <gml:lowerCorner>5.0 262.0 0</gml:lowerCorner>
+            <gml:upperCorner>31.9730281829834 304.9632263183594 0</gml:upperCorner>
+        </gml:Envelope>
+    </gml:boundedBy>
+    <om:member>
+        
+    <om:Observation><gml:description>Salinity</gml:description><gml:name>Empty Description</gml:name><gml:boundedBy><gml:Envelope srsName="urn:tds:station.sos:salinity"><gml:lowerCorner>5.0 262.0 0</gml:lowerCorner><gml:upperCorner>5.0 262.0 0</gml:upperCorner></gml:Envelope></gml:boundedBy><om:samplingTime><gml:TimePeriod gml:id="DATA_TIME"><gml:beginPosition>2012-04-19T12:00:00Z</gml:beginPosition><gml:endPosition>2012-04-19T12:00:00Z</gml:endPosition></gml:TimePeriod></om:samplingTime><om:procedure xlink:href="D:/Data/ncom_relo_amseas_u_2012041800_t036.nc"/><om:observedProperty xlink:href="http://marinemetadata.org/cf#salinity"/><om:observedProperty xlink:href="http://marinemetadata.org/cf#depth"/><om:observedProperty xlink:href="http://marinemetadata.org/cf#lat"/><om:observedProperty xlink:href="http://marinemetadata.org/cf#lon"/><om:result><swe:DataArray><swe:elementCount><swe:Count><swe:value>99</swe:value></swe:Count></swe:elementCount><swe:elementType name="SimpleDataArray"><swe:DataRecord><swe:field name="time"><swe:Time definition="urn:ogc:phenomenon:time:iso8601"/></swe:field><swe:field name="salinity"><swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:salinity"><swe:uom code="psu"/></swe:Quantity></swe:field><swe:field name="depth"><swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:depth"><swe:uom code="meter"/></swe:Quantity></swe:field><swe:field name="lat"><swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:lat"><swe:uom code="degrees_north"/></swe:Quantity></swe:field><swe:field name="lon"><swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:lon"><swe:uom code="degrees_east"/></swe:Quantity></swe:field></swe:DataRecord></swe:elementType><swe:encoding><swe:TextBlock blockSeparator=" " decimalSeparator="." tokenSeparator=","/></swe:encoding><swe:values>2012-04-19T12:00:00Z,NaN,0,5.0,262.0 
+</swe:values></swe:DataArray></om:result></om:Observation></om:member>
+</om:ObservationCollection>
