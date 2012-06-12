@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><SensorML xmlns="http://www.opengis.net/sensorML/1.0.1" xmlns:gml="http://www.opengis.net/gml" xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0.1" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <member>
+        <System gml:id="Buoy">
+            
+            <gml:description>
+                <!-- Detailed description of your sensor here -->
+            </gml:description> 
+            
+            <keywords>
+                <KeywordList codeSpace="http://gcmd.nasa.gov/Resources/valids/keyword_list.html">
+                    <!-- Keywords (for discovery) -->
+                    <keyword>OCEANOGRAPHY</keyword>
+                </KeywordList>
+            </keywords>        
+
+            <identification>
+                <IdentifierList>
+                    <identifier name="Long Name">
+                        <Term definition="urn:x-ogc:def:identifier:OGC:longName">
+                            <value/>
+                        </Term>
+                    </identifier>
+                </IdentifierList>
+            </identification>
+            
+            <classification>
+                <ClassifierList>
+     				<classifier name="sensorType">
+                        <Term definition="urn:marinemetatdata.org:platform">
+                            <value>Moored Buoy</value>
+                        </Term>
+                    </classifier>
+                    <classifier name="Platform">
+                        <Term definition="urn:marinemetatdata.org:platform">
+                            <value/>
+                        </Term>
+                    </classifier>
+                </ClassifierList>
+            </classification>
+
+            <!-- ValidTime represents the Valid Time period of THIS SensorML description -->
+            <validTime>
+                <gml:TimePeriod frame="#ISO-8601" gml:id="DOC_TIME">
+                    <gml:beginPosition/>
+                    <gml:endPosition indeterminatePosition="now"/>
+                </gml:TimePeriod>
+            </validTime>
+            
+            <!-- System charactersitics can be entered as a swe:DataRecord here -->
+            <characteristics>
+            </characteristics>
+            
+            <contact>
+                <ResponsibleParty>
+                    <individualName>organ</individualName>
+                    <organizationName> </organizationName>
+                    <contactInfo>
+                        <address>
+                            <electronicMailAddress/>
+                        </address>
+                        <onlineResource/>
+                    </contactInfo>
+                </ResponsibleParty>
+            </contact>
+            
+            <location>
+                <gml:Point gml:id="SYSTEM_LOCATION" srsName="urn:ogc:def:crs:EPSG:6.5:4326">
+                    <gml:coordinates/>
+                </gml:Point>
+            </location>
+            
+            <outputs>
+                <OutputList>
+                    <output name="output_data">
+                       <swe:DataArray>
+                           <swe:elementCount>
+                               <swe:Count>
+                                     <swe:value/>  <!-- Number of Records here -->
+                                 </swe:Count>
+                             </swe:elementCount>
+                             <swe:elementType name="buoyData">
+                                 <swe:DataRecord>
+                                    <swe:field name="PlatformName">
+                                        <swe:Quantity definition="urn:marinemetatdata.org:platform"/>
+                                    </swe:field>
+                                    <!--  Time -->
+                                    <swe:field name="time">
+                                        <swe:Time definition="urn:ogc:phenomenon:time:iso8601"/>
+                                    </swe:field>
+                                    <swe:field name="latitude">
+                                        <swe:Quantity definition="urn:ogc:phenomenon:latitude:wgs84">
+                                            <swe:uom code="deg"/>
+                                        </swe:Quantity>
+                                    </swe:field>
+                                    <swe:field name="longitude">
+                                        <swe:Quantity definition="urn:ogc:phenomenon:longitude:wgs84">
+                                     <swe:uom code="deg"/> 
+                                        </swe:Quantity>
+                                    </swe:field>
+                                    <swe:field name="depth">
+                                        <swe:Quantity definition="urn:ogc:phenomenon:depth">
+                                             <swe:uom code="m"/>
+                                         </swe:Quantity>
+                                    </swe:field>
+                                    <!--  Observable fields -->
+                                    <swe:field name="observedProperty">
+                                        <swe:Quantity definition="urn:to:observedProperty">
+                                            <swe:uom code="UOM_CODE"/>                    
+                                        </swe:Quantity>
+                                    </swe:field>
+                                 </swe:DataRecord>
+                             </swe:elementType>
+                         </swe:DataArray>
+                    </output>
+                </OutputList>
+            </outputs>      
+        </System>
+    </member>
+</SensorML>

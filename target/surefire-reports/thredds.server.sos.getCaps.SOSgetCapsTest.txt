@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: thredds.server.sos.getCaps.SOSgetCapsTest
+-------------------------------------------------------------------------------
+Tests run: 34, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 277.415 sec

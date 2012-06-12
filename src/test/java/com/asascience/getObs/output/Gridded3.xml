@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><om:ObservationCollection xmlns:om="http://www.opengis.net/om/1.0" xmlns:gml="http://www.opengis.net/gml" xmlns:swe="http://www.opengis.net/swe/1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" gml:id="GML_ID_NAME" xsi:schemaLocation="http://www.opengis.net/om/1.0 http://schemas.opengis.net/om/1.0.0/observation.xsd">
+        
+    <gml:description>Empty Description</gml:description>
+    <gml:name>Empty Title</gml:name>
+    <gml:boundedBy> 
+        <gml:Envelope srsName="EPSG:4326">
+            <!-- overwrite these with your actual offering ROI -->
+            <gml:lowerCorner>20.0 -100.0 0</gml:lowerCorner>
+            <gml:upperCorner>52.0 -50.0 0</gml:upperCorner>
+        </gml:Envelope>
+    </gml:boundedBy>
+    <om:member>
+        
+    </om:member>
+</om:ObservationCollection>
