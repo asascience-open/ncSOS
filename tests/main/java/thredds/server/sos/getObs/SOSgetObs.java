@@ -103,6 +103,7 @@ public class SOSgetObs {
     }
     public static final String imeds2Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=watlev&offering=Site-79-2&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
 
+    /* test removed until it can be fixed -- Sean
     @Test
     public void testenhanceImeds2() throws IOException {
         fail("removed - file is not properly read by netcdf");
@@ -120,8 +121,11 @@ public class SOSgetObs {
         dataAvailableInOutputFile(write);
         System.out.println("----------end-----------");
     }
+    * 
+    */
     public static final String imeds3Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=watlev&offering=Site-79-2&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
 
+    /* Test removed until it can be fixed -- Sean
     @Test
     public void testenhanceImeds3() throws IOException {
         fail("removed - files is not properly read by netcdf");
@@ -139,6 +143,8 @@ public class SOSgetObs {
         dataAvailableInOutputFile(write);
         System.out.println("----------end-----------");
     }
+    * 
+    */
     public static final String imeds4Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=hs&offering=USACE-CHL_2410508B,USACE-CHL_2410513B,USACE-CHL_2410510B&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
 
     @Test
@@ -328,6 +334,7 @@ public class SOSgetObs {
     }
     public static final String imeds12Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=watlev&offering=CRMS_CRMS0161-H01,CRMS_DCPBA07,CRMS_CRMS0174-H01,&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
 
+    /* test removed until it can be fixed -- Sean
     @Test
     public void testenhanceImeds12() throws IOException {
         fail("removed - Data File Does Not work");
@@ -350,6 +357,8 @@ public class SOSgetObs {
 
         System.out.println("----------end-----------");
     }
+    * 
+    */
     public static final String imeds13Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=watlev&offering=CSI_06,CSI_09&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
 
     @Test
@@ -593,6 +602,7 @@ public class SOSgetObs {
     public static final String timeSeriesProfileRequestMulti = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=uri.sos:Station1&eventtime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z";
     public static final String timeSeriesProfileRequestMultiStation = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=Station1,Station2&eventTime=1990-01-01T00:00:00Z/1990-01-01T05:00:00Z";
 
+    /* Test removed until it can fixed for new setup -- Sean
     @Test
     public void testenhanceSingleRaggedDataset() throws IOException {
         fail("removed - issue with time series profile netcdf file - no temperature");
@@ -612,7 +622,7 @@ public class SOSgetObs {
         //check depth was entered auto
         assertTrue("depth not added", write.toString().contains("<swe:field name=\"height\">"));
         System.out.println("----------end-----------");
-    }
+        }*/
 
     @Test
     public void testMultiTimeSeriesProfileRequest() throws IOException {
