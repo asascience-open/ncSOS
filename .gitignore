@@ -1,0 +1,14 @@
+resources/datasets/*
+target/*
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+*.xsd
+*.ncml
+*.cdl
+*.nc
