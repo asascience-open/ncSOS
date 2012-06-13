@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><Capabilities xmlns="http://www.opengis.net/sos/1.0" xmlns:gml="http://www.opengis.net/gml" xmlns:oost="http://www.oostethys.org/schemas/0.1.0/oostethys" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0.0" xsi:schemaLocation="http://www.opengis.net/sos/1.0 http://schemas.opengis.net/sos/1.0.0/sosGetCapabilities.xsd">
+<?xml version="1.0" encoding="UTF-8"?><Capabilities xmlns="http://www.opengis.net/sos/1.0" xmlns:gml="http://www.opengis.net/gml" xmlns:oost="http://www.oostethys.org/schemas/0.1.0/oostethys" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0.0" xsi:schemaLocation="http://www.opengis.net/sos/1.0 http://schemas.opengis.net/sos/1.0.0/sosGetCapabilities.xsd">
 
 	<!--~~~~~~~~~~~~~~~~~~~~~~~~-->
 	<!-- Service Identification -->
@@ -21,11 +21,11 @@
 		<ows:ProviderName>Empty Source</ows:ProviderName>
 		<ows:ProviderSite>Empty Insitution</ows:ProviderSite>
 		<ows:ServiceContact>
-			<ows:IndividualName/>
-			<ows:PositionName/>
+			<ows:IndividualName></ows:IndividualName>
+			<ows:PositionName></ows:PositionName>
 			<ows:ContactInfo>
 				<ows:Phone>
-                                <ows:Voice/>
+                                <ows:Voice></ows:Voice>
                                 </ows:Phone>
 				<ows:Address>
 					<ows:DeliveryPoint> </ows:DeliveryPoint>

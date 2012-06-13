@@ -13,6 +13,15 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+  
+  <repositories>
+	<repository>
+		<id>unidata</id>
+		<name>Unidata Artifact Repository</name>
+		<url>https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/</url>
+		<layout>default</layout>
+	</repository>
+  </repositories>
 
   <dependencies>
     <dependency>
@@ -37,9 +46,9 @@
 	  <version>1.2.16</version>
 	</dependency>
 	<dependency>
-	  <groupId>edu.ncar</groupId>
-	  <artifactId>netcdfAll</artifactId>
-	  <version>4.3</version>
+	  <groupId>edu.ucar</groupId>
+	  <artifactId>netcdf</artifactId>
+	  <version>4.3.10</version>
 	</dependency>
 	<dependency>
 	  <groupId>org.apache.tomcat</groupId>
@@ -77,9 +86,9 @@
 	  <version>3.0.5.RELEASE</version>
 	</dependency>
 	<dependency>
-	  <groupId>edu.ncar</groupId>
+	  <groupId>edu.ucar</groupId>
 	  <artifactId>visadCdm</artifactId>
-	  <version>4.3</version>
+	  <version>4.3.10</version>
 	</dependency>
 	<dependency>
 	  <groupId>optional.resources</groupId>
@@ -87,9 +96,9 @@
 	  <version>1.0</version>
 	</dependency>
 	<dependency>
-	  <groupId>org.tds</groupId>
+	  <groupId>edu.ucar</groupId>
 	  <artifactId>tds</artifactId>
-	  <version>1.0</version>
+	  <version>4.3.10</version>
 	</dependency>
   </dependencies>
   

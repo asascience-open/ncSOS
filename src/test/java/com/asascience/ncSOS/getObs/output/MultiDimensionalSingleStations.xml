@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><om:ObservationCollection xmlns:gml="http://www.opengis.net/gml" xmlns:om="http://www.opengis.net/om/1.0" xmlns:swe="http://www.opengis.net/swe/1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" gml:id="GML_ID_NAME" xsi:schemaLocation="http://www.opengis.net/om/1.0 http://schemas.opengis.net/om/1.0.0/observation.xsd">
+        
+    <gml:description>Empty Description</gml:description>
+    <gml:name>Empty Title</gml:name>
+    <gml:boundedBy> 
+        <gml:Envelope srsName="EPSG:4326">
+            <!-- overwrite these with your actual offering ROI -->
+            <gml:lowerCorner>37.5 -76.5 0</gml:lowerCorner>
+            <gml:upperCorner>37.5 -76.5 0</gml:upperCorner>
+        </gml:Envelope>
+    </gml:boundedBy>
+    <om:member>
+        
+    <om:Observation><gml:description>Empty Description</gml:description><gml:name>Empty Description</gml:name><gml:boundedBy><gml:Envelope srsName="urn:tds:station.sos:Station1"><gml:lowerCorner>37.5 -76.5 0</gml:lowerCorner><gml:upperCorner>37.5 -76.5 0</gml:upperCorner></gml:Envelope></gml:boundedBy><om:samplingTime><gml:TimePeriod gml:id="DATA_TIME"><gml:beginPosition>1990-01-01T00:00:00Z</gml:beginPosition><gml:endPosition>1990-01-01T03:00:00Z</gml:endPosition></gml:TimePeriod></om:samplingTime><om:procedure xlink:href="resources/datasets/timeSeriesProfile-Multidimensional-SingleStation-H.5.2/timeSeriesProfile-Multidimensional-SingleStation-H.5.2.nc"/><om:observedProperty xlink:href="http://marinemetadata.org/cf#temperature"/><om:observedProperty xlink:href="http://marinemetadata.org/cf#alt"/><om:featureOfInterest xlink:href="Station1"/><om:result><swe:DataArray><swe:elementCount><swe:Count><swe:value>3</swe:value></swe:Count></swe:elementCount><swe:elementType name="SimpleDataArray"><swe:DataRecord><swe:field name="time"><swe:Time definition="urn:ogc:phenomenon:time:iso8601"/></swe:field><swe:field name="temperature"><swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:temperature"><swe:uom code="Celsius"/></swe:Quantity></swe:field><swe:field name="alt"><swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:alt"><swe:uom code="m"/></swe:Quantity></swe:field></swe:DataRecord></swe:elementType><swe:encoding><swe:TextBlock blockSeparator=" " decimalSeparator="." tokenSeparator=","/></swe:encoding><swe:values>1990-01-01T00:00:00Z,0.0 
+1990-01-01T00:00:00Z,0.1 
+1990-01-01T00:00:00Z,0.2 
+1990-01-01T00:00:00Z,0.30000000000000004 
+1990-01-01T00:00:00Z,0.4 
+1990-01-01T00:00:00Z,0.5 
+1990-01-01T00:00:00Z,0.6000000000000001 
+1990-01-01T00:00:00Z,0.7000000000000001 
+1990-01-01T00:00:00Z,0.8 
+1990-01-01T00:00:00Z,0.9 
+1990-01-01T00:00:00Z,1.0 
+1990-01-01T00:00:00Z,1.1 
+1990-01-01T00:00:00Z,1.2000000000000002 
+1990-01-01T00:00:00Z,1.3 
+1990-01-01T00:00:00Z,1.4000000000000001 
+1990-01-01T00:00:00Z,1.5 
+1990-01-01T00:00:00Z,1.6 
+1990-01-01T00:00:00Z,1.7000000000000002 
+1990-01-01T00:00:00Z,1.8 
+1990-01-01T00:00:00Z,1.9000000000000001 
+1990-01-01T00:00:00Z,2.0 
+1990-01-01T00:00:00Z,2.1 
+1990-01-01T00:00:00Z,2.2 
+1990-01-01T00:00:00Z,2.3000000000000003 
+1990-01-01T00:00:00Z,2.4000000000000004 
+1990-01-01T00:00:00Z,2.5 
+1990-01-01T00:00:00Z,2.6 
+1990-01-01T00:00:00Z,2.7 
+1990-01-01T00:00:00Z,2.8000000000000003 
+1990-01-01T00:00:00Z,2.9000000000000004 
+</swe:values></swe:DataArray></om:result></om:Observation></om:member>
+</om:ObservationCollection>
