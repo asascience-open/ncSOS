@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?><Capabilities xmlns="http://www.opengis.net/sos/1.0" xmlns:gml="http://www.opengis.net/gml" xmlns:oost="http://www.oostethys.org/schemas/0.1.0/oostethys" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0.0" xsi:schemaLocation="http://www.opengis.net/sos/1.0 http://schemas.opengis.net/sos/1.0.0/sosGetCapabilities.xsd">
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~-->
+	<!-- Service Identification -->
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~-->
+	<ows:ServiceIdentification>
+		<ows:Title>Empty Title</ows:Title>
+		<ows:Abstract>Empty History</ows:Abstract>
+		<ows:Keywords>
+			<ows:Keyword> </ows:Keyword>
+		</ows:Keywords>
+		<ows:ServiceType codeSpace="http://opengeospatial.net">OGC:SOS</ows:ServiceType>
+		<ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
+		<ows:Fees>NONE</ows:Fees>
+		<ows:AccessConstraints>NONE</ows:AccessConstraints>
+	</ows:ServiceIdentification>
+	<!--~~~~~~~~~~~~~~~~~~~~~~-->
+	<!-- Provider Description -->
+	<!--~~~~~~~~~~~~~~~~~~~~~~-->
+	<ows:ServiceProvider>
+		<ows:ProviderName>Empty Source</ows:ProviderName>
+		<ows:ProviderSite>Empty Insitution</ows:ProviderSite>
+		<ows:ServiceContact>
+			<ows:IndividualName></ows:IndividualName>
+			<ows:PositionName></ows:PositionName>
+			<ows:ContactInfo>
+				<ows:Phone>
+                                <ows:Voice></ows:Voice>
+                                </ows:Phone>
+				<ows:Address>
+					<ows:DeliveryPoint> </ows:DeliveryPoint>
+					<ows:City> </ows:City>
+					<ows:AdministrativeArea> </ows:AdministrativeArea>
+					<ows:PostalCode> </ows:PostalCode>
+					<ows:Country> </ows:Country>
+					<ows:ElectronicMailAddress> </ows:ElectronicMailAddress>
+				</ows:Address>
+			</ows:ContactInfo>
+		</ows:ServiceContact>
+	</ows:ServiceProvider>
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+	<!-- operations Metadata Section -->
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+	<ows:OperationsMetadata>
+		<ows:Operation name="GetCapabilities">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get xlink:href="resources/datasets/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc"/>
+					<ows:Post xlink:href="resources/datasets/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc"/>
+				</ows:HTTP>
+			</ows:DCP>
+			<ows:Parameter name="service" use="required">
+				<ows:Value>SOS</ows:Value>
+			</ows:Parameter>
+			<ows:Parameter name="version" use="required">
+				<ows:Value>1.0.0</ows:Value>
+			</ows:Parameter>
+		</ows:Operation>
+		<ows:Operation name="GetObservation">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get xlink:href="resources/datasets/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc"/>
+					<ows:Post xlink:href="resources/datasets/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc"/>
+				</ows:HTTP>
+			</ows:DCP>
+			<ows:Parameter name="offering" use="required"/>
+			<ows:Parameter name="observedProperty" use="required"/>
+			<ows:Parameter name="time" use="optional"/>
+		</ows:Operation>
+		<ows:Operation name="DescribeSensor">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get xlink:href="resources/datasets/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc"/>
+					<ows:Post xlink:href="resources/datasets/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc"/>
+				</ows:HTTP>
+			</ows:DCP>
+			<ows:Parameter name="SensorId" use="required"/>
+		</ows:Operation>
+	</ows:OperationsMetadata>
+	<!--~~~~~~~~~~~~~~~~~~~~~~~-->
+	<!-- Observation Offerings -->
+	<!--~~~~~~~~~~~~~~~~~~~~~~~-->
+	<Contents>
+		<ObservationOfferingList>
+			
+		<ObservationOffering gml:id="Station-0"><gml:description></gml:description><gml:name>urn:tds:station.sos:Station-0</gml:name><gml:srsName>EPSG:4326</gml:srsName><gml:boundedBy><gml:Envelope srsName="EPSG:4326"><gml:lowerCorner>29.0 160.0</gml:lowerCorner><gml:upperCorner>29.0 160.0</gml:upperCorner></gml:Envelope></gml:boundedBy><time><gml:TimePeriod><gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition><gml:endPosition>1990-01-01T19:00:00.000Z</gml:endPosition></gml:TimePeriod></time><procedure xlink:href="urn:tds:station.sos:Station-0"/><observedProperty xlink:href="temperature"/><observedProperty xlink:href="humidity"/><featureOfInterest xlink:href="Station-0"/><responseFormat>text/xml; subtype="om/1.0.0"</responseFormat><responseModel> </responseModel><responseMode> </responseMode></ObservationOffering><ObservationOffering gml:id="Station-1"><gml:description></gml:description><gml:name>urn:tds:station.sos:Station-1</gml:name><gml:srsName>EPSG:4326</gml:srsName><gml:boundedBy><gml:Envelope srsName="EPSG:4326"><gml:lowerCorner>87.0 39.0</gml:lowerCorner><gml:upperCorner>87.0 39.0</gml:upperCorner></gml:Envelope></gml:boundedBy><time><gml:TimePeriod><gml:beginPosition>1921-12-13T20:45:53.000Z</gml:beginPosition><gml:endPosition>1990-01-01T09:00:00.000Z</gml:endPosition></gml:TimePeriod></time><procedure xlink:href="urn:tds:station.sos:Station-1"/><observedProperty xlink:href="temperature"/><observedProperty xlink:href="humidity"/><featureOfInterest xlink:href="Station-1"/><responseFormat>text/xml; subtype="om/1.0.0"</responseFormat><responseModel> </responseModel><responseMode> </responseMode></ObservationOffering><ObservationOffering gml:id="Station-2"><gml:description></gml:description><gml:name>urn:tds:station.sos:Station-2</gml:name><gml:srsName>EPSG:4326</gml:srsName><gml:boundedBy><gml:Envelope srsName="EPSG:4326"><gml:lowerCorner>155.0 143.0</gml:lowerCorner><gml:upperCorner>155.0 143.0</gml:upperCorner></gml:Envelope></gml:boundedBy><time><gml:TimePeriod><gml:beginPosition>1921-12-13T20:45:53.000Z</gml:beginPosition><gml:endPosition>1990-01-01T14:00:00.000Z</gml:endPosition></gml:TimePeriod></time><procedure xlink:href="urn:tds:station.sos:Station-2"/><observedProperty xlink:href="temperature"/><observedProperty xlink:href="humidity"/><featureOfInterest xlink:href="Station-2"/><responseFormat>text/xml; subtype="om/1.0.0"</responseFormat><responseModel> </responseModel><responseMode> </responseMode></ObservationOffering><ObservationOffering gml:id="Station-3"><gml:description></gml:description><gml:name>urn:tds:station.sos:Station-3</gml:name><gml:srsName>EPSG:4326</gml:srsName><gml:boundedBy><gml:Envelope srsName="EPSG:4326"><gml:lowerCorner>165.0 68.0</gml:lowerCorner><gml:upperCorner>165.0 68.0</gml:upperCorner></gml:Envelope></gml:boundedBy><time><gml:TimePeriod><gml:beginPosition>1921-12-13T20:45:53.000Z</gml:beginPosition><gml:endPosition>1990-01-01T16:00:00.000Z</gml:endPosition></gml:TimePeriod></time><procedure xlink:href="urn:tds:station.sos:Station-3"/><observedProperty xlink:href="temperature"/><observedProperty xlink:href="humidity"/><featureOfInterest xlink:href="Station-3"/><responseFormat>text/xml; subtype="om/1.0.0"</responseFormat><responseModel> </responseModel><responseMode> </responseMode></ObservationOffering><ObservationOffering gml:id="Station-4"><gml:description></gml:description><gml:name>urn:tds:station.sos:Station-4</gml:name><gml:srsName>EPSG:4326</gml:srsName><gml:boundedBy><gml:Envelope srsName="EPSG:4326"><gml:lowerCorner>37.0 116.0</gml:lowerCorner><gml:upperCorner>37.0 116.0</gml:upperCorner></gml:Envelope></gml:boundedBy><time><gml:TimePeriod><gml:beginPosition>1921-12-13T20:45:53.000Z</gml:beginPosition><gml:endPosition>1990-01-01T03:00:00.000Z</gml:endPosition></gml:TimePeriod></time><procedure xlink:href="urn:tds:station.sos:Station-4"/><observedProperty xlink:href="temperature"/><observedProperty xlink:href="humidity"/><featureOfInterest xlink:href="Station-4"/><responseFormat>text/xml; subtype="om/1.0.0"</responseFormat><responseModel> </responseModel><responseMode> </responseMode></ObservationOffering><ObservationOffering gml:id="Station-5"><gml:description></gml:description><gml:name>urn:tds:station.sos:Station-5</gml:name><gml:srsName>EPSG:4326</gml:srsName><gml:boundedBy><gml:Envelope srsName="EPSG:4326"><gml:lowerCorner>112.0 49.0</gml:lowerCorner><gml:upperCorner>112.0 49.0</gml:upperCorner></gml:Envelope></gml:boundedBy><time><gml:TimePeriod><gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition><gml:endPosition>1990-01-01T19:00:00.000Z</gml:endPosition></gml:TimePeriod></time><procedure xlink:href="urn:tds:station.sos:Station-5"/><observedProperty xlink:href="temperature"/><observedProperty xlink:href="humidity"/><featureOfInterest xlink:href="Station-5"/><responseFormat>text/xml; subtype="om/1.0.0"</responseFormat><responseModel> </responseModel><responseMode> </responseMode></ObservationOffering><ObservationOffering gml:id="Station-6"><gml:description></gml:description><gml:name>urn:tds:station.sos:Station-6</gml:name><gml:srsName>EPSG:4326</gml:srsName><gml:boundedBy><gml:Envelope srsName="EPSG:4326"><gml:lowerCorner>1.0 58.0</gml:lowerCorner><gml:upperCorner>1.0 58.0</gml:upperCorner></gml:Envelope></gml:boundedBy><time><gml:TimePeriod><gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition><gml:endPosition>1990-01-01T19:00:00.000Z</gml:endPosition></gml:TimePeriod></time><procedure xlink:href="urn:tds:station.sos:Station-6"/><observedProperty xlink:href="temperature"/><observedProperty xlink:href="humidity"/><featureOfInterest xlink:href="Station-6"/><responseFormat>text/xml; subtype="om/1.0.0"</responseFormat><responseModel> </responseModel><responseMode> </responseMode></ObservationOffering><ObservationOffering gml:id="Station-7"><gml:description></gml:description><gml:name>urn:tds:station.sos:Station-7</gml:name><gml:srsName>EPSG:4326</gml:srsName><gml:boundedBy><gml:Envelope srsName="EPSG:4326"><gml:lowerCorner>4.0 100.0</gml:lowerCorner><gml:upperCorner>4.0 100.0</gml:upperCorner></gml:Envelope></gml:boundedBy><time><gml:TimePeriod><gml:beginPosition>1921-12-13T20:45:53.000Z</gml:beginPosition><gml:endPosition>1990-01-01T15:00:00.000Z</gml:endPosition></gml:TimePeriod></time><procedure xlink:href="urn:tds:station.sos:Station-7"/><observedProperty xlink:href="temperature"/><observedProperty xlink:href="humidity"/><featureOfInterest xlink:href="Station-7"/><responseFormat>text/xml; subtype="om/1.0.0"</responseFormat><responseModel> </responseModel><responseMode> </responseMode></ObservationOffering><ObservationOffering gml:id="Station-8"><gml:description></gml:description><gml:name>urn:tds:station.sos:Station-8</gml:name><gml:srsName>EPSG:4326</gml:srsName><gml:boundedBy><gml:Envelope srsName="EPSG:4326"><gml:lowerCorner>132.0 45.0</gml:lowerCorner><gml:upperCorner>132.0 45.0</gml:upperCorner></gml:Envelope></gml:boundedBy><time><gml:TimePeriod><gml:beginPosition>1921-12-13T20:45:53.000Z</gml:beginPosition><gml:endPosition>1990-01-01T09:00:00.000Z</gml:endPosition></gml:TimePeriod></time><procedure xlink:href="urn:tds:station.sos:Station-8"/><observedProperty xlink:href="temperature"/><observedProperty xlink:href="humidity"/><featureOfInterest xlink:href="Station-8"/><responseFormat>text/xml; subtype="om/1.0.0"</responseFormat><responseModel> </responseModel><responseMode> </responseMode></ObservationOffering><ObservationOffering gml:id="Station-9"><gml:description></gml:description><gml:name>urn:tds:station.sos:Station-9</gml:name><gml:srsName>EPSG:4326</gml:srsName><gml:boundedBy><gml:Envelope srsName="EPSG:4326"><gml:lowerCorner>82.0 20.0</gml:lowerCorner><gml:upperCorner>82.0 20.0</gml:upperCorner></gml:Envelope></gml:boundedBy><time><gml:TimePeriod><gml:beginPosition>1921-12-13T20:45:53.000Z</gml:beginPosition><gml:endPosition>1990-01-01T11:00:00.000Z</gml:endPosition></gml:TimePeriod></time><procedure xlink:href="urn:tds:station.sos:Station-9"/><observedProperty xlink:href="temperature"/><observedProperty xlink:href="humidity"/><featureOfInterest xlink:href="Station-9"/><responseFormat>text/xml; subtype="om/1.0.0"</responseFormat><responseModel> </responseModel><responseMode> </responseMode></ObservationOffering></ObservationOfferingList>
+	</Contents>
+</Capabilities>
