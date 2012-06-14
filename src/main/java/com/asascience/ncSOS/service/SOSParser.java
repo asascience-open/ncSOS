@@ -70,6 +70,7 @@ public class SOSParser {
 
     public void enhance(final NetcdfDataset dataset, final Writer writer, final String query, String threddsURI, String savePath) {
         eventTime = null;
+        
 
         try {
             if (query != null) {
@@ -255,12 +256,14 @@ public class SOSParser {
      * @param fileName
      * @param dom 
      */
-    private void fileWriter(String base, String fileName, Document dom) {
+    private void fileWriter(String base, String fileName, Document dom) throws IOException {
         try {
-
             File file = new File(base + fileName);
+            file.createNewFile();
             DOMSource source = new DOMSource(dom);
             Result result = new StreamResult(file);
+            // for some reason, the line below is needed to make tests successful, but I imagine that it will not work in production -- Sean
+//            result.setSystemId("file:///" + file.toString());
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.transform(source, result);
             _log.info("Your file has been written");

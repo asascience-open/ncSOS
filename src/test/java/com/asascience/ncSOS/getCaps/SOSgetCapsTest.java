@@ -40,7 +40,7 @@ public class SOSgetCapsTest {
     private static String baseTomcatDir = "C:/apache_tomcat/apache-tomcat-7.0.27/";
     
     // work thredds
-    private static String catalinaThredds = "work/Catalina/localhost/thredds/";
+    private static String catalinaThredds = "work/Catalina/localhost/thredds";
 
     //imeds data
     private static String imeds1 = "resources/datasets/sura/Hsig_UNDKennedy_IKE_VIMS_3D_WAVEONLY.nc";
@@ -157,11 +157,11 @@ public class SOSgetCapsTest {
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
-        File f = new File(baseTomcatDir + catalinaThredds + "xmlFile.xml");
+        File f = new File(baseTomcatDir + catalinaThredds + "/xmlFile.xml");
         f.delete();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13, baseTomcatDir + catalinaThredds);
         assertEquals("true", md.getCacheValue());
-        f = new File(baseTomcatDir + catalinaThredds + "watlev_IKE.xml");
+        f = new File(baseTomcatDir + catalinaThredds + "/watlev_IKE.xml");
         assertTrue("file watlev_IKE.xml does not exist - testCacheReturnsTrueFileDoesNotExist", f.exists());
         f.delete();
         //station
@@ -173,13 +173,11 @@ public class SOSgetCapsTest {
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
-
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13, baseTomcatDir + catalinaThredds);
-        File f = new File(baseTomcatDir + catalinaThredds + "watlev_IKE.xml");
+        File f = new File(baseTomcatDir + catalinaThredds + "/watlev_IKE.xml");
         assertTrue("file watlev_IKE.xml does not exist - testCacheReturnsTrueFileDoesExist", f.exists());
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13, baseTomcatDir + catalinaThredds);
-        
-        assertTrue("file watlev_IKE.xml does not exist - testCacheReturnsTrueFileDoesExist", f.exists());
+        assertTrue("file watlev_IKE.xml does not exist (test 2) - testCacheReturnsTrueFileDoesExist", f.exists());
         f.delete();
     }
 
@@ -198,13 +196,13 @@ public class SOSgetCapsTest {
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
 
-        String fileName = baseTomcatDir + catalinaThredds + "watlev_IKE.xml";
+        String fileName = baseTomcatDir + catalinaThredds + "/watlev_IKE.xml";
         //check file exists
         File f = new File(fileName);
         f.delete();
 
-//        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13, baseTomcatDir + catalinaThredds);
-        md.enhance(dataset, write, null, imeds13, baseTomcatDir + catalinaThredds);
+        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13, baseTomcatDir + catalinaThredds);
+//        md.enhance(dataset, write, null, imeds13, baseTomcatDir + catalinaThredds);
         write.flush();
         write.close();
         if (write.toString().contains("Exception")) {
