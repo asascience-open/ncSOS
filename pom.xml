@@ -103,6 +103,36 @@
   </dependencies>
   
   <build>
+	<resources>
+    <resource>
+      <targetPath>templates/</targetPath>
+      <directory>${basedir}/resources/templates</directory>
+      <includes>
+        <include>*</include>
+      </includes>
+    </resource>
+    <resource>
+      <targetPath>dev/</targetPath>
+      <directory>${basedir}/resources/dev</directory>
+      <includes>
+        <include>*</include>
+      </includes>
+    </resource>
+    <resource>
+      <targetPath>prod/</targetPath>
+      <directory>${basedir}/resources/prod</directory>
+      <includes>
+        <include>*</include>
+      </includes>
+    </resource>
+    <resource>
+      <targetPath>spring/</targetPath>
+      <directory>${basedir}/resources/spring</directory>
+      <includes>
+        <include>*</include>
+      </includes>
+    </resource>
+  </resources>
 	<plugins>
 		<plugin>
 			<artifactId>maven-antrun-plugin</artifactId>

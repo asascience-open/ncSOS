@@ -160,16 +160,9 @@ public class SOSgetCapsTest {
         File f = new File(baseTomcatDir + catalinaThredds + "xmlFile.xml");
         f.delete();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13, baseTomcatDir + catalinaThredds);
-        if (md.getCacheValue() == "true") {
-            System.out.println("parser cache value is not 'true' - testCacheReturnsTrueFileDoesNotExist");
-            assertEquals("true", md.getCacheValue());
-        }
+        assertEquals("true", md.getCacheValue());
         f = new File(baseTomcatDir + catalinaThredds + "watlev_IKE.xml");
-        f.createNewFile();
-        if (!f.exists()) {
-            System.out.println("file watlev_IKE.xml does not exist - testCacheReturnsTrueFileDoesNotExist");
-            assertTrue(f.exists());
-        }
+        assertTrue("file watlev_IKE.xml does not exist - testCacheReturnsTrueFileDoesNotExist", f.exists());
         f.delete();
         //station
     }
@@ -183,16 +176,10 @@ public class SOSgetCapsTest {
 
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13, baseTomcatDir + catalinaThredds);
         File f = new File(baseTomcatDir + catalinaThredds + "watlev_IKE.xml");
-        f.createNewFile();
-        if (!f.exists()) {
-            System.out.println("file watlev_IKE.xml does not exist - testCacheReturnsTrueFileDoesExist");
-            assertTrue(f.exists());
-        }
+        assertTrue("file watlev_IKE.xml does not exist - testCacheReturnsTrueFileDoesExist", f.exists());
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13, baseTomcatDir + catalinaThredds);
-        if (!f.exists()) {
-            System.out.println("file watlev_IKE.xml does not exist - testCacheReturnsTrueFileDoesExist 2");
-            assertTrue(f.exists());
-        }
+        
+        assertTrue("file watlev_IKE.xml does not exist - testCacheReturnsTrueFileDoesExist", f.exists());
         f.delete();
     }
 
@@ -216,7 +203,8 @@ public class SOSgetCapsTest {
         File f = new File(fileName);
         f.delete();
 
-        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13, baseTomcatDir + catalinaThredds);
+//        md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13, baseTomcatDir + catalinaThredds);
+        md.enhance(dataset, write, null, imeds13, baseTomcatDir + catalinaThredds);
         write.flush();
         write.close();
         if (write.toString().contains("Exception")) {
@@ -224,7 +212,7 @@ public class SOSgetCapsTest {
             assertFalse(write.toString().contains("Exception"));
         }
         f = new File(fileName);
-        f.createNewFile();
+//        f.createNewFile();
         if (!f.exists()) {
             System.out.println("file does not exist - testAddAdditionalParamForCachingDataTRUE");
             assertTrue(f.exists());

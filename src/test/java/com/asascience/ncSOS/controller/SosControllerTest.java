@@ -26,11 +26,13 @@ public class SosControllerTest {
 
     /**
      * Test of getPath method, of class SosController.
-     */
+     *
     @Test
     public void testGetPath() {
        //fail("NOT entered yet");
     }
+    * 
+    */
 
     @Test
     public void testSaxBuilderForNULL42099() throws IOException, JDOMException {
@@ -49,7 +51,7 @@ public class SosControllerTest {
      @Test
     public void testSaxBuilderForNULL42059() throws IOException, JDOMException {
     if(true) {
-        // skipping
+        // skipping - do not have dataset
         return;
     }
     SAXBuilder parser = new SAXBuilder();
@@ -69,7 +71,7 @@ public class SosControllerTest {
      @Test
     public void testSaxBuilderForNULL42080() throws IOException, JDOMException {
     if(true) {
-        // skipping
+        // skipping - do not have dataset
         return;
     }
     SAXBuilder parser = new SAXBuilder();

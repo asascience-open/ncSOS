@@ -50,9 +50,15 @@ public abstract class SOSBaseRequestHandler {
     private FeatureType dataFeatureType;
 
     public SOSBaseRequestHandler(NetcdfDataset netCDFDataset) throws IOException {
+        if(netCDFDataset == null) {
+            System.out.println("dataset is null");
+        }
         this.netCDFDataset = netCDFDataset;
 
         featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.ANY, netCDFDataset, null, new Formatter(System.err));
+        if (featureDataset == null) {
+            System.out.println("dataset is null...why?");
+        }
         //try and get dataset
         CDMPointFeatureCollection = DiscreteSamplingGeometryUtil.extractFeatureDatasetCollection(featureDataset);
 
