@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><Capabilities xmlns="http://www.opengis.net/sos/1.0" xmlns:gml="http://www.opengis.net/gml" xmlns:oost="http://www.oostethys.org/schemas/0.1.0/oostethys" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0.0" xsi:schemaLocation="http://www.opengis.net/sos/1.0 http://schemas.opengis.net/sos/1.0.0/sosGetCapabilities.xsd">
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~-->
+	<!-- Service Identification -->
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~-->
+	<ows:ServiceIdentification>
+		<ows:Title>Empty Title</ows:Title>
+		<ows:Abstract>Empty History</ows:Abstract>
+		<ows:Keywords>
+			<ows:Keyword> </ows:Keyword>
+		</ows:Keywords>
+		<ows:ServiceType codeSpace="http://opengeospatial.net">OGC:SOS</ows:ServiceType>
+		<ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
+		<ows:Fees>NONE</ows:Fees>
+		<ows:AccessConstraints>NONE</ows:AccessConstraints>
+	</ows:ServiceIdentification>
+	<!--~~~~~~~~~~~~~~~~~~~~~~-->
+	<!-- Provider Description -->
+	<!--~~~~~~~~~~~~~~~~~~~~~~-->
+	<ows:ServiceProvider>
+		<ows:ProviderName>Empty Source</ows:ProviderName>
+		<ows:ProviderSite>Empty Insitution</ows:ProviderSite>
+		<ows:ServiceContact>
+			<ows:IndividualName/>
+			<ows:PositionName/>
+			<ows:ContactInfo>
+				<ows:Phone>
+                                <ows:Voice/>
+                                </ows:Phone>
+				<ows:Address>
+					<ows:DeliveryPoint> </ows:DeliveryPoint>
+					<ows:City> </ows:City>
+					<ows:AdministrativeArea> </ows:AdministrativeArea>
+					<ows:PostalCode> </ows:PostalCode>
+					<ows:Country> </ows:Country>
+					<ows:ElectronicMailAddress> </ows:ElectronicMailAddress>
+				</ows:Address>
+			</ows:ContactInfo>
+		</ows:ServiceContact>
+	</ows:ServiceProvider>
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+	<!-- operations Metadata Section -->
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+	<ows:OperationsMetadata>
+		<ows:Operation name="GetCapabilities">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get xlink:href="tests/main/resources/datasets/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4.nc"/>
+					<ows:Post xlink:href="tests/main/resources/datasets/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4.nc"/>
+				</ows:HTTP>
+			</ows:DCP>
+			<ows:Parameter name="service" use="required">
+				<ows:Value>SOS</ows:Value>
+			</ows:Parameter>
+			<ows:Parameter name="version" use="required">
+				<ows:Value>1.0.0</ows:Value>
+			</ows:Parameter>
+		</ows:Operation>
+		<ows:Operation name="GetObservation">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get xlink:href="tests/main/resources/datasets/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4.nc"/>
+					<ows:Post xlink:href="tests/main/resources/datasets/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4.nc"/>
+				</ows:HTTP>
+			</ows:DCP>
+			<ows:Parameter name="offering" use="required"/>
+			<ows:Parameter name="observedProperty" use="required"/>
+			<ows:Parameter name="time" use="optional"/>
+		</ows:Operation>
+		<ows:Operation name="DescribeSensor">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get xlink:href="tests/main/resources/datasets/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4.nc"/>
+					<ows:Post xlink:href="tests/main/resources/datasets/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4.nc"/>
+				</ows:HTTP>
+			</ows:DCP>
+			<ows:Parameter name="SensorId" use="required"/>
+		</ows:Operation>
+	</ows:OperationsMetadata>
+	<!--~~~~~~~~~~~~~~~~~~~~~~~-->
+	<!-- Observation Offerings -->
+	<!--~~~~~~~~~~~~~~~~~~~~~~~-->
+	<Contents>
+		<ObservationOfferingList>
+			
+		<ObservationOffering gml:id="Trajectory0"><gml:description>TRAJECTORY</gml:description><gml:name>urn:tds:station.sos:Trajectory0</gml:name><gml:srsName>EPSG:4326</gml:srsName><gml:boundedBy><gml:Envelope srsName="EPSG:4326"><gml:lowerCorner>0.3526528477668762 -75.94522094726562</gml:lowerCorner><gml:upperCorner>41.91437911987305 -10.074542999267578</gml:upperCorner></gml:Envelope></gml:boundedBy><time><gml:TimePeriod><gml:beginPosition>1990-01-01T06:00:00.000Z</gml:beginPosition><gml:endPosition>1990-01-02T23:00:00.000Z</gml:endPosition></gml:TimePeriod></time><procedure xlink:href="urn:tds:station.sos:Trajectory0"/><observedProperty xlink:href="temperature"/><observedProperty xlink:href="humidity"/><featureOfInterest xlink:href="Trajectory0"/><responseFormat>text/xml; subtype="om/1.0.0"</responseFormat><responseModel> </responseModel><responseMode> </responseMode></ObservationOffering><ObservationOffering gml:id="Trajectory1"><gml:description>TRAJECTORY</gml:description><gml:name>urn:tds:station.sos:Trajectory1</gml:name><gml:srsName>EPSG:4326</gml:srsName><gml:boundedBy><gml:Envelope srsName="EPSG:4326"><gml:lowerCorner>0.38483840227127075 -72.1167984008789</gml:lowerCorner><gml:upperCorner>43.25913619995117 -3.396801233291626</gml:upperCorner></gml:Envelope></gml:boundedBy><time><gml:TimePeriod><gml:beginPosition>1990-01-01T01:00:00.000Z</gml:beginPosition><gml:endPosition>1990-01-03T00:00:00.000Z</gml:endPosition></gml:TimePeriod></time><procedure xlink:href="urn:tds:station.sos:Trajectory1"/><observedProperty xlink:href="temperature"/><observedProperty xlink:href="humidity"/><featureOfInterest xlink:href="Trajectory1"/><responseFormat>text/xml; subtype="om/1.0.0"</responseFormat><responseModel> </responseModel><responseMode> </responseMode></ObservationOffering><ObservationOffering gml:id="Trajectory2"><gml:description>TRAJECTORY</gml:description><gml:name>urn:tds:station.sos:Trajectory2</gml:name><gml:srsName>EPSG:4326</gml:srsName><gml:boundedBy><gml:Envelope srsName="EPSG:4326"><gml:lowerCorner>0.773406982421875 -74.36222076416016</gml:lowerCorner><gml:upperCorner>44.824017120361326 -8.545401573181152</gml:upperCorner></gml:Envelope></gml:boundedBy><time><gml:TimePeriod><gml:beginPosition>1990-01-01T01:00:00.000Z</gml:beginPosition><gml:endPosition>1990-01-03T01:00:00.000Z</gml:endPosition></gml:TimePeriod></time><procedure xlink:href="urn:tds:station.sos:Trajectory2"/><observedProperty xlink:href="temperature"/><observedProperty xlink:href="humidity"/><featureOfInterest xlink:href="Trajectory2"/><responseFormat>text/xml; subtype="om/1.0.0"</responseFormat><responseModel> </responseModel><responseMode> </responseMode></ObservationOffering><ObservationOffering gml:id="Trajectory3"><gml:description>TRAJECTORY</gml:description><gml:name>urn:tds:station.sos:Trajectory3</gml:name><gml:srsName>EPSG:4326</gml:srsName><gml:boundedBy><gml:Envelope srsName="EPSG:4326"><gml:lowerCorner>0.5408774018287659 -69.19937896728516</gml:lowerCorner><gml:upperCorner>43.79940414428711 -23.47330093383789</gml:upperCorner></gml:Envelope></gml:boundedBy><time><gml:TimePeriod><gml:beginPosition>1990-01-01T08:00:00.000Z</gml:beginPosition><gml:endPosition>1990-01-02T20:00:00.000Z</gml:endPosition></gml:TimePeriod></time><procedure xlink:href="urn:tds:station.sos:Trajectory3"/><observedProperty xlink:href="temperature"/><observedProperty xlink:href="humidity"/><featureOfInterest xlink:href="Trajectory3"/><responseFormat>text/xml; subtype="om/1.0.0"</responseFormat><responseModel> </responseModel><responseMode> </responseMode></ObservationOffering><ObservationOffering gml:id="Trajectory4"><gml:description>TRAJECTORY</gml:description><gml:name>urn:tds:station.sos:Trajectory4</gml:name><gml:srsName>EPSG:4326</gml:srsName><gml:boundedBy><gml:Envelope srsName="EPSG:4326"><gml:lowerCorner>3.336824655532837 -71.3157730102539</gml:lowerCorner><gml:upperCorner>44.04582595825195 -0.5323939323425293</gml:upperCorner></gml:Envelope></gml:boundedBy><time><gml:TimePeriod><gml:beginPosition>1990-01-01T02:00:00.000Z</gml:beginPosition><gml:endPosition>1990-01-02T23:00:00.000Z</gml:endPosition></gml:TimePeriod></time><procedure xlink:href="urn:tds:station.sos:Trajectory4"/><observedProperty xlink:href="temperature"/><observedProperty xlink:href="humidity"/><featureOfInterest xlink:href="Trajectory4"/><responseFormat>text/xml; subtype="om/1.0.0"</responseFormat><responseModel> </responseModel><responseMode> </responseMode></ObservationOffering><ObservationOffering gml:id="Trajectory5"><gml:description>TRAJECTORY</gml:description><gml:name>urn:tds:station.sos:Trajectory5</gml:name><gml:srsName>EPSG:4326</gml:srsName><gml:boundedBy><gml:Envelope srsName="EPSG:4326"><gml:lowerCorner>2.283581495285034 -75.66221618652344</gml:lowerCorner><gml:upperCorner>43.81130599975586 -0.008589320816099644</gml:upperCorner></gml:Envelope></gml:boundedBy><time><gml:TimePeriod><gml:beginPosition>1990-01-01T05:00:00.000Z</gml:beginPosition><gml:endPosition>1990-01-02T19:00:00.000Z</gml:endPosition></gml:TimePeriod></time><procedure xlink:href="urn:tds:station.sos:Trajectory5"/><observedProperty xlink:href="temperature"/><observedProperty xlink:href="humidity"/><featureOfInterest xlink:href="Trajectory5"/><responseFormat>text/xml; subtype="om/1.0.0"</responseFormat><responseModel> </responseModel><responseMode> </responseMode></ObservationOffering><ObservationOffering gml:id="Trajectory6"><gml:description>TRAJECTORY</gml:description><gml:name>urn:tds:station.sos:Trajectory6</gml:name><gml:srsName>EPSG:4326</gml:srsName><gml:boundedBy><gml:Envelope srsName="EPSG:4326"><gml:lowerCorner>4.738412380218506 -74.12496185302734</gml:lowerCorner><gml:upperCorner>44.70710754394531 -4.261115074157715</gml:upperCorner></gml:Envelope></gml:boundedBy><time><gml:TimePeriod><gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition><gml:endPosition>1990-01-02T20:00:00.000Z</gml:endPosition></gml:TimePeriod></time><procedure xlink:href="urn:tds:station.sos:Trajectory6"/><observedProperty xlink:href="temperature"/><observedProperty xlink:href="humidity"/><featureOfInterest xlink:href="Trajectory6"/><responseFormat>text/xml; subtype="om/1.0.0"</responseFormat><responseModel> </responseModel><responseMode> </responseMode></ObservationOffering><ObservationOffering gml:id="Trajectory7"><gml:description>TRAJECTORY</gml:description><gml:name>urn:tds:station.sos:Trajectory7</gml:name><gml:srsName>EPSG:4326</gml:srsName><gml:boundedBy><gml:Envelope srsName="EPSG:4326"><gml:lowerCorner>0.6969012022018433 -75.19536590576172</gml:lowerCorner><gml:upperCorner>43.64375686645508 -0.6387653946876526</gml:upperCorner></gml:Envelope></gml:boundedBy><time><gml:TimePeriod><gml:beginPosition>1990-01-01T01:00:00.000Z</gml:beginPosition><gml:endPosition>1990-01-03T01:00:00.000Z</gml:endPosition></gml:TimePeriod></time><procedure xlink:href="urn:tds:station.sos:Trajectory7"/><observedProperty xlink:href="temperature"/><observedProperty xlink:href="humidity"/><featureOfInterest xlink:href="Trajectory7"/><responseFormat>text/xml; subtype="om/1.0.0"</responseFormat><responseModel> </responseModel><responseMode> </responseMode></ObservationOffering><ObservationOffering gml:id="Trajectory8"><gml:description>TRAJECTORY</gml:description><gml:name>urn:tds:station.sos:Trajectory8</gml:name><gml:srsName>EPSG:4326</gml:srsName><gml:boundedBy><gml:Envelope srsName="EPSG:4326"><gml:lowerCorner>0.596437394618988 -71.47563934326172</gml:lowerCorner><gml:upperCorner>43.61520004272461 -1.577453302383418</gml:upperCorner></gml:Envelope></gml:boundedBy><time><gml:TimePeriod><gml:beginPosition>1990-01-01T02:00:00.000Z</gml:beginPosition><gml:endPosition>1990-01-02T23:00:00.000Z</gml:endPosition></gml:TimePeriod></time><procedure xlink:href="urn:tds:station.sos:Trajectory8"/><observedProperty xlink:href="temperature"/><observedProperty xlink:href="humidity"/><featureOfInterest xlink:href="Trajectory8"/><responseFormat>text/xml; subtype="om/1.0.0"</responseFormat><responseModel> </responseModel><responseMode> </responseMode></ObservationOffering><ObservationOffering gml:id="Trajectory9"><gml:description>TRAJECTORY</gml:description><gml:name>urn:tds:station.sos:Trajectory9</gml:name><gml:srsName>EPSG:4326</gml:srsName><gml:boundedBy><gml:Envelope srsName="EPSG:4326"><gml:lowerCorner>0.8869433403015137 -74.27416229248047</gml:lowerCorner><gml:upperCorner>44.1566162109375 -0.6717602610588074</gml:upperCorner></gml:Envelope></gml:boundedBy><time><gml:TimePeriod><gml:beginPosition>1990-01-01T01:00:00.000Z</gml:beginPosition><gml:endPosition>1990-01-02T21:00:00.000Z</gml:endPosition></gml:TimePeriod></time><procedure xlink:href="urn:tds:station.sos:Trajectory9"/><observedProperty xlink:href="temperature"/><observedProperty xlink:href="humidity"/><featureOfInterest xlink:href="Trajectory9"/><responseFormat>text/xml; subtype="om/1.0.0"</responseFormat><responseModel> </responseModel><responseMode> </responseMode></ObservationOffering></ObservationOfferingList>
+	</Contents>
+</Capabilities>

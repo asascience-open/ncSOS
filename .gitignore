@@ -1,8 +1,7 @@
-dist/*
-build/*
-tests/main/resources/XML/*
-tests/main/resources/XML/*
-lib/*
+resources/datasets/*
+target/*
+src/test/java/com/asascience/ncSOS/getObs/output/*
+src/test/java/com/asascience/ncSOS/getCaps/output/*
 # Compiled source #
 ###################
 *.com

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><om:ObservationCollection xmlns:gml="http://www.opengis.net/gml" xmlns:om="http://www.opengis.net/om/1.0" xmlns:swe="http://www.opengis.net/swe/1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" gml:id="GML_ID_NAME" xsi:schemaLocation="http://www.opengis.net/om/1.0 http://schemas.opengis.net/om/1.0.0/observation.xsd">
+        
+    <gml:description>Empty Description</gml:description>
+    <gml:name>Empty Title</gml:name>
+    <gml:boundedBy> 
+        <gml:Envelope srsName="EPSG:4326">
+            <!-- overwrite these with your actual offering ROI -->
+            <gml:lowerCorner>34.0 17.0 0</gml:lowerCorner>
+            <gml:upperCorner>90.0 143.0 0</gml:upperCorner>
+        </gml:Envelope>
+    </gml:boundedBy>
+    <om:member>
+        
+    <om:Observation><gml:description>Empty Description</gml:description><gml:name>Empty Description</gml:name><gml:boundedBy><gml:Envelope srsName="urn:tds:station.sos:PROFILE_1"><gml:lowerCorner>90.0 17.0 0</gml:lowerCorner><gml:upperCorner>90.0 17.0 0</gml:upperCorner></gml:Envelope></gml:boundedBy><om:samplingTime><gml:TimePeriod gml:id="DATA_TIME"><gml:beginPosition>1990-01-01T00:00:00Z</gml:beginPosition><gml:endPosition>1990-01-01T00:00:00Z</gml:endPosition></gml:TimePeriod></om:samplingTime><om:procedure xlink:href="resources/datasets/profile-Indexed-Ragged-MultipleProfiles-H.3.5/profile-Indexed-Ragged-MultipleProfiles-H.3.5.nc"/><om:observedProperty xlink:href="http://marinemetadata.org/cf#temperature"/><om:observedProperty xlink:href="http://marinemetadata.org/cf#humidity"/><om:observedProperty xlink:href="http://marinemetadata.org/cf#z"/><om:featureOfInterest xlink:href="PROFILE_1"/><om:result><swe:DataArray><swe:elementCount><swe:Count><swe:value>4</swe:value></swe:Count></swe:elementCount><swe:elementType name="SimpleDataArray"><swe:DataRecord><swe:field name="time"><swe:Time definition="urn:ogc:phenomenon:time:iso8601"/></swe:field><swe:field name="temperature"><swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:temperature"><swe:uom code="Celsius"/></swe:Quantity></swe:field><swe:field name="humidity"><swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:humidity"><swe:uom code="Percent"/></swe:Quantity></swe:field><swe:field name="z"><swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:z"><swe:uom code="m"/></swe:Quantity></swe:field></swe:DataRecord></swe:elementType><swe:encoding><swe:TextBlock blockSeparator=" " decimalSeparator="." tokenSeparator=","/></swe:encoding><swe:values>1990-01-01T01:00:00Z,3.9910657,55.919827 
+1990-01-01T01:00:00Z,7.5696435,37.65302 
+1990-01-01T01:00:00Z,22.086445,9.667259 
+1990-01-01T01:00:00Z,14.682033,55.190876 
+1990-01-01T01:00:00Z,36.07818,11.025434 
+1990-01-01T01:00:00Z,18.844038,25.462297 
+1990-01-01T01:00:00Z,5.212819,63.762695 
+1990-01-01T01:00:00Z,11.659932,67.25323 
+1990-01-01T01:00:00Z,35.695385,38.39977 
+1990-01-01T01:00:00Z,37.289276,72.30876 
+</swe:values></swe:DataArray></om:result></om:Observation></om:member>
+</om:ObservationCollection>

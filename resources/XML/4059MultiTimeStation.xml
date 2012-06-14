@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><om:ObservationCollection xmlns:om="http://www.opengis.net/om/1.0" xmlns:gml="http://www.opengis.net/gml" xmlns:swe="http://www.opengis.net/swe/1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" gml:id="station-42059" xsi:schemaLocation="http://www.opengis.net/om/1.0 http://schemas.opengis.net/om/1.0.0/observation.xsd">
+        
+    <gml:description>Station 42059 - Eastern Caribbean</gml:description>
+    <gml:name>NOAA NDBC Station 42059 for 2008 (meterological)</gml:name>
+    <gml:boundedBy> 
+        <gml:Envelope srsName="urn:sura:station:sura.tds.sos:42059">
+            <!-- overwrite these with your actual offering ROI -->
+            <gml:lowerCorner>15.006 -67.496 0</gml:lowerCorner>
+            <gml:upperCorner>15.006 -67.496 0</gml:upperCorner>
+        </gml:Envelope>
+    </gml:boundedBy>
+    <om:member>
+        
+    <om:Observation><gml:description>Station 42059 - Eastern Caribbean</gml:description><gml:name>Station 42059 - Eastern Caribbean</gml:name><gml:boundedBy><gml:Envelope srsName="urn:sura:station:sura.tds.sos:42059"><gml:lowerCorner>15.006 -67.496 0</gml:lowerCorner><gml:upperCorner>15.006 -67.496 0</gml:upperCorner></gml:Envelope></gml:boundedBy><om:samplingTime><gml:TimePeriod gml:id="DATA_TIME"><gml:beginPosition>2008-01-01T00:50:00Z</gml:beginPosition><gml:endPosition>2008-12-05T02:49:59Z</gml:endPosition></gml:TimePeriod></om:samplingTime><om:procedure xlink:href="/C:/Documents and Settings/abird/My Documents/NetBeansProjects/ncSOS/tests/main/resources/datasets/Station_42059_2008met.nc"/><om:observedProperty xlink:href="http://marinemetadata.org/cf#air_temp"/><om:featureOfInterest xlink:href="NA"/><om:result><swe:DataArray><swe:elementCount><swe:Count><swe:value>8119</swe:value></swe:Count></swe:elementCount><swe:elementType name="SimpleDataArray"><swe:DataRecord><swe:field name="PlatformName"><swe:Quantity definition="urn:mmisw.org#platform"/></swe:field><swe:field name="time"><swe:Time definition="urn:ogc:phenomenon:time:iso8601"/></swe:field><swe:field name="lat"><swe:Quantity definition="urn:ogc:phenomenon:latitude:wgs84"><swe:uom code="deg"/></swe:Quantity></swe:field><swe:field name="lon"><swe:Quantity definition="urn:ogc:phenomenon:latitude:wgs84"><swe:uom code="deg"/></swe:Quantity></swe:field><swe:field name="air_temp"><swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:air_temp"><swe:uom code="degC"/></swe:Quantity></swe:field></swe:DataRecord></swe:elementType><swe:encoding><swe:TextBlock blockSeparator=" " decimalSeparator="." tokenSeparator=","/></swe:encoding><swe:values>42059,2008-01-01T00:50:00Z,15.006,-67.496,26.5 
+42059,2008-01-01T01:49:59Z,15.006,-67.496,27.1 
+</swe:values></swe:DataArray></om:result></om:Observation></om:member>
+</om:ObservationCollection>
