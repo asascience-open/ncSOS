@@ -4,10 +4,7 @@
  */
 package thredds.server.sos.getCaps;
 
-import java.io.BufferedWriter;
-import java.io.CharArrayWriter;
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import ucar.nc2.ft.FeatureDataset;
@@ -16,8 +13,6 @@ import ucar.nc2.constants.FeatureType;
 import java.util.Formatter;
 import javax.swing.JOptionPane;
 import ucar.nc2.thredds.ThreddsDataFactory;
-import java.io.IOException;
-import java.io.Writer;
 import thredds.server.sos.util.DatasetHandlerAdapter;
 import ucar.nc2.dataset.NetcdfDataset;
 import org.junit.AfterClass;
@@ -27,6 +22,8 @@ import thredds.server.sos.service.SOSParser;
 import thredds.server.sos.service.SOSBaseRequestHandler;
 import ucar.nc2.util.CancelTask;
 import static org.junit.Assert.*;
+import org.w3c.dom.Document;
+import thredds.server.sos.util.XMLDomUtils;
 import ucar.unidata.geoloc.LatLonRect;
 
 /**
@@ -36,8 +33,8 @@ import ucar.unidata.geoloc.LatLonRect;
 public class SOSgetCapsTest {
     
     // base location of resources
-    private static String baseLocalDir = "C:/Users/scowan/Projects/maven/ncSOS/";
-    private static String baseTomcatDir = "C:/apache_tomcat/apache-tomcat-7.0.27/";
+    private static String baseLocalDir = null;
+    private static String baseTomcatDir = null;
     
     // work thredds
     private static String catalinaThredds = "work/Catalina/localhost/thredds";
@@ -75,10 +72,38 @@ public class SOSgetCapsTest {
     private static String IndexedRaggedMultipleProfiles = "resources/datasets/profile-Indexed-Ragged-MultipleProfiles-H.3.5/profile-Indexed-Ragged-MultipleProfiles-H.3.5.nc";
     private static String OrthogonalMultiDimensionalMultipleProfiles = "resources/datasets/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1.nc";
     private static String OrthogonalSingleDimensionalSingleProfile = "resources/datasets/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3.nc";
-    public static final String base = "C:/Users/scowan/Projects/maven/ncSOS/src/test/java/com/asascience/ncSOS/getCaps/output/";
+//    public static String base = "C:/Users/scowan/Projects/maven/ncSOS/src/test/java/com/asascience/ncSOS/getCaps/output/";
+    public static String base = null;
     
     // trajectories
     public static String TCRMTH43 = "resources/datasets/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc";
+    
+    public void SetupEnviron() throws FileNotFoundException {
+        // not really a test, just used to set up the various string values
+        if (base != null && baseLocalDir != null && baseTomcatDir != null) {
+            // exit early if the environ is already set
+            return;
+        }
+        String container = "getCaps";
+        InputStream templateInputStream = null;
+        try {
+            File configFile = new File("resources/tests_config.xml");
+            templateInputStream = new FileInputStream(configFile);
+            Document configDoc = XMLDomUtils.getTemplateDom(templateInputStream);
+            // read from the config file
+            base = XMLDomUtils.getNodeValue(configDoc, container, "outputBase");
+            baseLocalDir = XMLDomUtils.getNodeValue(configDoc, container, "projectDir");
+            baseTomcatDir = XMLDomUtils.getNodeValue(configDoc, container, "tomcatLocation");
+        } finally {
+            if (templateInputStream != null) {
+                try {
+                    templateInputStream.close();
+                } catch (IOException e) {
+                    // ignore, closing..
+                }
+            }
+        }
+    }
     
     @Test
     public void testCanIdentifyTimeSeriesCDM() throws IOException {
@@ -92,7 +117,7 @@ public class SOSgetCapsTest {
     
     @Test
     public void testCanIdentifyTrajectoryCDM() throws IOException {
-        
+        SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + TCRMTH43);
         SOSGetCapabilitiesRequestHandler sosget = new SOSGetCapabilitiesRequestHandler(dataset, "threddsURI");
         assertEquals(FeatureType.TRAJECTORY, sosget.getDatasetFeatureType());
@@ -102,7 +127,7 @@ public class SOSgetCapsTest {
     
     @Test
     public void testCanProcessTrajectory() throws IOException {
-        
+        SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + TCRMTH43);
         assertNotNull(dataset);
         SOSParser md = new SOSParser();
@@ -119,7 +144,7 @@ public class SOSgetCapsTest {
     
     @Test
     public void testTrajLatLongCorrect() throws IOException {
-        
+        SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + TCRMTH43);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
@@ -136,7 +161,7 @@ public class SOSgetCapsTest {
 
     @Test
     public void testTrajStartEndTimeCorrect() throws IOException {
-        
+        SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + TCRMTH43);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
@@ -154,6 +179,7 @@ public class SOSgetCapsTest {
     @Test
     public void testCacheReturnsTrueFileDoesNOTExist() throws IOException {
 //        fail("removed - test takes too long");
+        SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
@@ -170,6 +196,7 @@ public class SOSgetCapsTest {
     @Test
     public void testCacheReturnsTrueFileDoesExist() throws IOException {
 //        fail("removed - test is expensive");
+        SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
@@ -192,6 +219,7 @@ public class SOSgetCapsTest {
     @Test
     public void testAddAdditionalParamForCachingDataTRUE() throws IOException {
 //        fail("removed - test is expensive");
+        SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
@@ -229,6 +257,7 @@ public class SOSgetCapsTest {
     @Test
     public void testLargeDatasets() throws IOException {
 //        fail("removed - test is expensive");
+        SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
 
         SOSParser md = new SOSParser();
@@ -256,7 +285,7 @@ public class SOSgetCapsTest {
 //TIMESERIES TEST
     @Test
     public void testIncompleteMultiDimensionalMultipleStations() throws IOException {
-        
+        SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
 
         SOSParser md = new SOSParser();
@@ -273,7 +302,7 @@ public class SOSgetCapsTest {
 
     @Test
     public void testOrthogonalMultidimenstionalMultipleStations() throws IOException {
-        
+        SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsOrthogonalMultidimenstionalMultipleStations);
 
         SOSParser md = new SOSParser();
@@ -298,7 +327,7 @@ public class SOSgetCapsTest {
 
     @Test
     public void testenhanceSingleRaggedDataset() throws IOException {
-        
+        SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(RaggedSingleConventions);
 
         SOSParser md = new SOSParser();
@@ -315,7 +344,7 @@ public class SOSgetCapsTest {
 
     @Test
     public void testenhanceMultiRaggedDataset() throws IOException {
-        
+        SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(RaggedMultiConventions);
 
         SOSParser md = new SOSParser();
@@ -333,6 +362,7 @@ public class SOSgetCapsTest {
     @Test
     public void testOrthogonalMultidimensionalMultiStations() throws IOException {
 //        fail("removed - file does not parse correctly in netcdf : Table Structure(record) featureType POINT: lat/lon/time coord not found");
+        SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + OrthogonalMultidimensionalMultiStations);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
@@ -348,7 +378,7 @@ public class SOSgetCapsTest {
 
     @Test
     public void testMultiDimensionalSingleStations() throws IOException {
-        
+        SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalSingleStations);
 
         SOSParser md = new SOSParser();
@@ -364,7 +394,7 @@ public class SOSgetCapsTest {
 
     @Test
     public void testMultiDimensionalMultiStations() throws IOException {
-        
+        SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalMultiStations);
 
         SOSParser md = new SOSParser();
@@ -380,7 +410,7 @@ public class SOSgetCapsTest {
 
     @Test
     public void testMultiDimensionalMultiStationsLocal() throws IOException {
-        
+        SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalMultiStations);
 
         SOSParser md = new SOSParser();
@@ -399,7 +429,7 @@ public class SOSgetCapsTest {
 //PROFILE TEST
     @Test
     public void testContiguousRaggedMultipleProfiles() throws IOException {
-        
+        SetupEnviron();
         spaceBetweenTests();
         System.out.println("----ContiguousRaggedMultipleProfiles------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(ContiguousRaggedMultipleProfiles);
@@ -422,7 +452,7 @@ public class SOSgetCapsTest {
 
     @Test
     public void testIncompleteMultiDimensionalMultipleProfiles() throws IOException {
-        
+        SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(IncompleteMultiDimensionalMultipleProfiles);
 
         SOSParser md = new SOSParser();
@@ -438,7 +468,7 @@ public class SOSgetCapsTest {
 
     @Test
     public void testIndexedRaggedMultipleProfiles() throws IOException {
-        
+        SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(IndexedRaggedMultipleProfiles);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
@@ -453,7 +483,7 @@ public class SOSgetCapsTest {
 
     @Test
     public void testOrthogonalMultiDimensionalMultipleProfiles() throws IOException {
-        
+        SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(OrthogonalMultiDimensionalMultipleProfiles);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
@@ -468,7 +498,7 @@ public class SOSgetCapsTest {
 
     @Test
     public void testOrthogonalSingleDimensionalSingleProfile() throws IOException {
-        
+        SetupEnviron();
         spaceBetweenTests();
         System.out.println("----OrthogonalSingleDimensionalSingleProfile------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(OrthogonalSingleDimensionalSingleProfile);
@@ -594,7 +624,7 @@ public class SOSgetCapsTest {
 
     @Test
     public void testenhanceNOAADataset() throws IOException {
-        
+        SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds15);
 
         SOSParser md = new SOSParser();
@@ -613,7 +643,7 @@ public class SOSgetCapsTest {
 
     @Test
     public void testenhanceNOAADataset2() throws IOException {
-        
+        SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds15);
 
         SOSParser md = new SOSParser();
