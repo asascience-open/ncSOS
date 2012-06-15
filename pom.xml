@@ -91,11 +91,6 @@
 	  <version>4.3.10</version>
 	</dependency>
 	<dependency>
-	  <groupId>optional.resources</groupId>
-	  <artifactId>resourcesOptional</artifactId>
-	  <version>1.0</version>
-	</dependency>
-	<dependency>
 	  <groupId>edu.ucar</groupId>
 	  <artifactId>tds</artifactId>
 	  <version>4.3.10</version>
