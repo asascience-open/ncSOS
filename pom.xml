@@ -4,7 +4,7 @@
 
   <groupId>com.asascience</groupId>
   <artifactId>ncSOS</artifactId>
-  <version>1.0</version>
+  <version>0.1a</version>
   <packaging>jar</packaging>
 
   <name>ncSOS</name>
