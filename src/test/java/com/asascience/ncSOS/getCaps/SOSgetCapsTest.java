@@ -176,6 +176,15 @@ public class SOSgetCapsTest {
         //traj
     }
     
+    private static void fileWriter(String base, String fileName, Writer write) throws IOException {
+        Writer output = null;
+        File file = new File(base + fileName);
+        output = new BufferedWriter(new FileWriter(file));
+        output.write(write.toString());
+        output.close();
+        System.out.println("Your file has been written");
+    }
+    
     @Test
     public void testCacheReturnsTrueFileDoesNOTExist() throws IOException {
 //        fail("removed - test takes too long");
@@ -243,15 +252,6 @@ public class SOSgetCapsTest {
             System.out.println("file does not exist - testAddAdditionalParamForCachingDataTRUE");
             assertTrue(f.exists());
         }
-    }
-
-    private static void fileWriter(String base, String fileName, Writer write) throws IOException {
-        Writer output = null;
-        File file = new File(base + fileName);
-        output = new BufferedWriter(new FileWriter(file));
-        output.write(write.toString());
-        output.close();
-        System.out.println("Your file has been written");
     }
 
     @Test

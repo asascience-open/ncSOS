@@ -5,3 +5,7 @@
 	<tomcatLocation>C:/apache_tomcat/apache-tomcat-7.0.27/</tomcatLocation>
 	<projectDir>C:/Users/scowan/Projects/maven/ncSOS/</projectDir>
 </getCaps>
+
+<getObs>
+	<outputBase>C:/Users/scowan/Projects/maven/ncSOS/src/test/java/com/asascience/ncSOS/getObs/output/</outputBase>
+</getObs>
