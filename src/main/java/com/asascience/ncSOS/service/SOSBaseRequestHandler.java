@@ -51,17 +51,17 @@ public abstract class SOSBaseRequestHandler {
 
     public SOSBaseRequestHandler(NetcdfDataset netCDFDataset) throws IOException {
         if(netCDFDataset == null) {
-            System.out.println("dataset is null");
+            System.out.println("netCDFDataset is null");
         }
         this.netCDFDataset = netCDFDataset;
 
         featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.ANY, netCDFDataset, null, new Formatter(System.err));
         if (featureDataset == null) {
-            System.out.println("dataset is null...why?");
+            System.out.println("featureDataset is null...");
         }
         //try and get dataset
         CDMPointFeatureCollection = DiscreteSamplingGeometryUtil.extractFeatureDatasetCollection(featureDataset);
-
+        
         //if its null try using grid?
         if (CDMPointFeatureCollection == null) {
             gridDataSet = DiscreteSamplingGeometryUtil.extractGridDatasetCollection(featureDataset);

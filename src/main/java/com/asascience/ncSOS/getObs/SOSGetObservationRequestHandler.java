@@ -85,6 +85,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
                 CDMDataSet = new Profile(stationName, eventTime, this.variableNames);
             } else {
                 System.out.println("Have a null CDMDataSet, this will cause a null reference exception! - SOSGetObservationRequestHandler.87");
+                // print exception and then return the doc
                 CDMDataSet = null;
             }
             

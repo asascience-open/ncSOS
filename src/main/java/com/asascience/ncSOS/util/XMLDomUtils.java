@@ -147,6 +147,12 @@ public class XMLDomUtils {
         Document exceptionDom = getTemplateDom(isTemplate);
         return exceptionDom;
     }
+    
+    public static Document getExceptionDom(String exceptionMessage) {
+        Document exceptionDom = getExceptionDom();
+        setNodeValue(exceptionDom, "Exception", "ExceptionText", exceptionMessage);
+        return exceptionDom;
+    }
 
     public static void addObservation() {
         throw new UnsupportedOperationException("Not yet implemented");

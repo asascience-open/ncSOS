@@ -29,6 +29,7 @@ import thredds.server.sos.CDMClasses.TimeSeriesProfile;
 import thredds.server.sos.CDMClasses.Trajectory;
 import thredds.server.sos.service.SOSBaseRequestHandler;
 import thredds.server.sos.service.StationData;
+import thredds.server.sos.util.XMLDomUtils;
 import ucar.nc2.constants.FeatureType;
 import ucar.nc2.ft.PointFeature;
 import ucar.nc2.ft.PointFeatureIterator;
@@ -226,6 +227,12 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
     public void parseObservationList() throws IOException {
         List<VariableSimpleIF> variableList = null;
         List<String> observedPropertyList = null;
+        
+        // check for null feature type and return error if it is
+        if(getDatasetFeatureType() == null) {
+            this.document = XMLDomUtils.getExceptionDom("Invalid or unknown feature type");
+            return;
+        }
 
         if (getDatasetFeatureType() != FeatureType.GRID) {
             variableList = DiscreteSamplingGeometryUtil.getDataVariables(getFeatureDataset());

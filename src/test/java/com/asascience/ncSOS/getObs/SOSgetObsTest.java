@@ -22,11 +22,11 @@ import org.w3c.dom.Document;
  * @author Abird
  */
 public class SOSgetObsTest {
+    
+    private static final String datasetFolder = "resources/datasets/";
 
     //imeds data
     private static String imeds1 = "resources/datasets/sura/Hsig_UNDKennedy_IKE_VIMS_3D_WAVEONLY.nc";
-    private static String imeds2 = "resources/datasets/sura/andrw.lft.nc";
-    private static String imeds3 = "resources/datasets/sura/audry.bpt.nc";
     private static String imeds4 = "resources/datasets/sura/hs_USACE-CHL.nc";
     private static String imeds5 = "resources/datasets/sura/hwm_TCOON_NAVD88.nc";
     private static String imeds6 = "resources/datasets/sura/tm_CSI.nc";
@@ -43,19 +43,23 @@ public class SOSgetObsTest {
     private static String tsIncompleteMultiDimensionalMultipleStations = "resources/datasets/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc";
     private static String tsOrthogonalMultidimenstionalMultipleStations = "resources/datasets/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1.nc";
     //ragged Array - timeseries profile
-    private static String RaggedSingleConventions = "resources/datasets/timeSeriesProfile-Ragged-SingleStation-H.5.3/timeSeriesProfile-Ragged-SingleStation-H.5.3.nc";
+//    private static String RaggedSingleConventions = "resources/datasets/timeSeriesProfile-Ragged-SingleStation-H.5.3/timeSeriesProfile-Ragged-SingleStation-H.5.3.nc";
     private static String RaggedMultiConventions = "resources/datasets/timeSeriesProfile-Ragged-MultipeStations-H.5.3/timeSeriesProfile-Ragged-MultipeStations-H.5.3.nc";
-    private static String OrthogonalMultidimensionalMultiStations = "resources/datasets/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1.nc";
+//    private static String OrthogonalMultidimensionalMultiStations = "resources/datasets/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1.nc";
     private static String MultiDimensionalSingleStations = "resources/datasets/timeSeriesProfile-Multidimensional-SingleStation-H.5.2/timeSeriesProfile-Multidimensional-SingleStation-H.5.2.nc";
     private static String MultiDimensionalMultiStations = "resources/datasets/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1.nc";
     //point
-    private static String cfPoint = "resources/datasets/point-H.1/point-H.1.nc";
+//    private static String cfPoint = "resources/datasets/point-H.1/point-H.1.nc";
 // profile
     private static String ContiguousRaggedMultipleProfiles = "resources/datasets/profile-Contiguous-Ragged-MultipleProfiles-H.3.4/profile-Contiguous-Ragged-MultipleProfiles-H.3.4.nc";
     private static String IncompleteMultiDimensionalMultipleProfiles = "resources/datasets/profile-Incomplete-MultiDimensional-MultipleProfiles-H.3.2/profile-Incomplete-MultiDimensional-MultipleProfiles-H.3.2.nc";
     private static String IndexedRaggedMultipleProfiles = "resources/datasets/profile-Indexed-Ragged-MultipleProfiles-H.3.5/profile-Indexed-Ragged-MultipleProfiles-H.3.5.nc";
     private static String OrthogonalMultiDimensionalMultipleProfiles = "resources/datasets/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1.nc";
     private static String OrthogonalSingleDimensionalSingleProfile = "resources/datasets/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3.nc";
+    // satellite sst data
+//    private static String sst1 = datasetFolder + "satellite-sst/20120617.1508.d7.composite.nc";
+//    private static String sst2 = datasetFolder + "satellite-sst/20120617..d7.composite.nc";
+//    private static String sst3 = datasetFolder + "satellite-sst/20120617..d7.composite.nc";
     public static String base = null;
 
     private void dataAvailableInOutputFile(Writer write) {
@@ -123,50 +127,7 @@ public class SOSgetObsTest {
 
         System.out.println("----------end-----------");
     }
-    public static final String imeds2Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=watlev&offering=Site-79-2&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
-
-    /* test removed until it can be fixed -- Sean
-    @Test
-    public void testenhanceImeds2() throws IOException {
-//        fail("removed - file is not properly read by netcdf");
-        System.out.println("----IMEDS2------");
-        NetcdfDataset dataset = NetcdfDataset.openDataset(imeds2);
-//        assertNotNull(dataset);
-        SOSParser md = new SOSParser();
-        Writer write = new CharArrayWriter();
-        md.enhance(dataset, write, imeds2Req, imeds2);
-        write.flush();
-        write.close();
-        assertFalse(write.toString().contains("Exception"));
-        String fileName = "imeds2.xml";
-        fileWriter(base, fileName, write);
-        dataAvailableInOutputFile(write);
-        System.out.println("----------end-----------");
-    }
-    * 
-    */
-    public static final String imeds3Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=watlev&offering=Site-79-2&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
-
-    /* test removed until it can fixed -- Sean
-    @Test
-    public void testenhanceImeds3() throws IOException {
-//        fail("removed - files is not properly read by netcdf");
-        System.out.println("----IMEDS3------");
-        NetcdfDataset dataset = NetcdfDataset.openDataset(imeds3);
-
-        SOSParser md = new SOSParser();
-        Writer write = new CharArrayWriter();
-        md.enhance(dataset, write, imeds3Req, imeds3);
-        write.flush();
-        write.close();
-        assertFalse(write.toString().contains("Exception"));
-        String fileName = "imeds3.xml";
-        fileWriter(base, fileName, write);
-        dataAvailableInOutputFile(write);
-        System.out.println("----------end-----------");
-    }
-    * 
-    */
+    
     public static final String imeds4Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=hs&offering=USACE-CHL_2410508B,USACE-CHL_2410513B,USACE-CHL_2410510B&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
 
     @Test
@@ -362,13 +323,12 @@ public class SOSgetObsTest {
 
         System.out.println("----------end-----------");
     }
-    public static final String imeds12Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=watlev&offering=CRMS_CRMS0161-H01,CRMS_DCPBA07,CRMS_CRMS0174-H01,&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
+    public static final String imeds12Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=watlev&offering=CSI_03,CSI_06,CSI_09,CSI_15&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
 
-    /* test removed until it can be fixed -- Sean
     @Test
     public void testenhanceImeds12() throws IOException {
-//        fail("removed - Data File Does Not work");
         System.out.println("----IMEDS12------");
+        SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds12);
 
         SOSParser md = new SOSParser();
@@ -381,14 +341,14 @@ public class SOSgetObsTest {
         fileWriter(base, fileName, write);
         dataAvailableInOutputFile(write);
 
-        assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CRMS0161-H01\">"));
-        assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CRMS0174-H01\">"));
-        assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_DCPBA07\">"));
+        assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_03\">"));
+        assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_06\">"));
+        assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_09\">"));
+        assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_15\">"));
 
         System.out.println("----------end-----------");
     }
-    * 
-    */
+    
     public static final String imeds13Req = "request=GetObservation&version=1.0.0&service=sos&observedProperty=watlev&offering=CSI_06,CSI_09&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
 
     @Test
@@ -459,7 +419,7 @@ public class SOSgetObsTest {
         assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:NOAA_8729501\">"));
 
         System.out.println("----------end-----------");
-    }
+    }   
     //**********************************
 //TIMESERIES TEST
     public static final String timeSeriestOrth = "request=GetObservation&version=1.0.0&service=sos&observedProperty=alt&offering=Station-1&eventtime=1990-01-01T00:00:00Z";
@@ -642,30 +602,7 @@ public class SOSgetObsTest {
     public static final String timeSeriesProfileRequestMulti = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=uri.sos:Station1&eventtime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z";
     public static final String timeSeriesProfileRequestMultiStation = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=Station1,Station2&eventTime=1990-01-01T00:00:00Z/1990-01-01T05:00:00Z";
 
-    /* test removed until it can be fixed -- Sean
-    @Test
-    public void testenhanceSingleRaggedDataset() throws IOException {
-//        fail("removed - issue with time series profile netcdf file - no temperature");
-
-        System.out.println("----RaggedSingleConventions------");
-        NetcdfDataset dataset = NetcdfDataset.openDataset(RaggedSingleConventions);
-
-        SOSParser md = new SOSParser();
-        Writer write = new CharArrayWriter();
-        md.enhance(dataset, write, timeSeriesProfileRequestSingle, RaggedSingleConventions);
-        write.flush();
-        write.close();
-        assertFalse(write.toString().contains("Exception"));
-        String fileName = "RaggedSingleConventions.xml";
-        fileWriter(base, fileName, write);
-        dataAvailableInOutputFile(write);
-        //check depth was entered auto
-        assertTrue("depth not added", write.toString().contains("<swe:field name=\"height\">"));
-        System.out.println("----------end-----------");
-    }
-    * 
-    */
-
+    
     @Test
     public void testMultiTimeSeriesProfileRequest() throws IOException {
         System.out.println("----RaggedMultiConventions------");

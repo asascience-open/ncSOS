@@ -118,7 +118,12 @@ public class SOSParser {
                         writeErrorXMLCode(writer);
                     } else if (request.equalsIgnoreCase("GetObservation")) {
                         SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, offering, observedProperties, eventTime,latLonRequest);
-                        handler.parseObservations();
+                        if (handler.getFeatureDataset() == null) {
+                            // unknown/bad feature type
+                            handler.setDocument(XMLDomUtils.getExceptionDom("Unknown or invalid feature type"));
+                        } else {
+                            handler.parseObservations();
+                        }
                         writeDocumentToResponse(handler.getDocument(), writer);
                         handler.finished();
                     } else {
