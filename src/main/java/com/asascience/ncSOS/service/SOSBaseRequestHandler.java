@@ -41,6 +41,8 @@ public abstract class SOSBaseRequestHandler {
     private final static NumberFormat FORMAT_DEGREE;
     private FeatureCollection CDMPointFeatureCollection;
     private GridDataset gridDataSet = null;
+    
+    private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(SOSBaseRequestHandler.class);
 
     static {
         FORMAT_DEGREE = NumberFormat.getNumberInstance();
@@ -51,13 +53,13 @@ public abstract class SOSBaseRequestHandler {
 
     public SOSBaseRequestHandler(NetcdfDataset netCDFDataset) throws IOException {
         if(netCDFDataset == null) {
-            System.out.println("netCDFDataset is null");
+            _log.error("received null dataset");
         }
         this.netCDFDataset = netCDFDataset;
 
         featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.ANY, netCDFDataset, null, new Formatter(System.err));
         if (featureDataset == null) {
-            System.out.println("featureDataset is null...");
+            _log.info("featureDataset is null, may be a GRID dataset");
         }
         //try and get dataset
         CDMPointFeatureCollection = DiscreteSamplingGeometryUtil.extractFeatureDatasetCollection(featureDataset);
@@ -66,6 +68,7 @@ public abstract class SOSBaseRequestHandler {
         if (CDMPointFeatureCollection == null) {
             gridDataSet = DiscreteSamplingGeometryUtil.extractGridDatasetCollection(featureDataset);
             if (gridDataSet != null) {
+                _log.info("FeatureType is GRID");
                 dataFeatureType = FeatureType.GRID;
             }
         } else {

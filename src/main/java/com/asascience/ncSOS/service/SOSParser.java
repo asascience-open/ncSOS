@@ -27,11 +27,13 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.joda.time.DateTime;
+import org.opengis.feature.type.FeatureType;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import thredds.server.sos.controller.SosController;
 import thredds.server.sos.util.XMLDomUtils;
 import ucar.nc2.dataset.NetcdfDataset;
+import ucar.nc2.ft.FeatureDataset;
 
 /**
  * SOSParser based on EnhancedMetadataService
@@ -115,24 +117,26 @@ public class SOSParser {
                         }
 
                     } else if (request.equalsIgnoreCase("DescribeSensor")) {
-                        writeErrorXMLCode(writer);
+                        writeErrorXMLCodeWithError(writer, "DescribeSensor is not currently supported");
                     } else if (request.equalsIgnoreCase("GetObservation")) {
                         SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, offering, observedProperties, eventTime,latLonRequest);
                         if (handler.getFeatureDataset() == null) {
                             // unknown/bad feature type
                             handler.setDocument(XMLDomUtils.getExceptionDom("Unknown or invalid feature type"));
+                        } else if (handler.getDatasetFeatureType() == ucar.nc2.constants.FeatureType.GRID && handler.getCDMDataset() == null) {
+                            handler.setDocument(XMLDomUtils.getExceptionDom("Lat and lon must be supplied on a GetObservation request for GRID data"));
                         } else {
                             handler.parseObservations();
                         }
                         writeDocumentToResponse(handler.getDocument(), writer);
                         handler.finished();
                     } else {
-                        writeErrorXMLCode(writer);
+                        writeErrorXMLCodeWithError(writer, "Unknown request " + request);
                     }
 
                 } //else if the above is not true print invalid xml text
                 else {
-                    writeErrorXMLCode(writer);
+                    writeErrorXMLCodeWithError(writer, "Invalid request; requires: version, service and request in query");
                 }
             } else if (query == null) {
                 //if the entry is null just print out the get caps xml
@@ -281,6 +285,11 @@ public class SOSParser {
 
     private void writeErrorXMLCode(final Writer writer) throws IOException, TransformerException {
         Document doc = XMLDomUtils.getExceptionDom();
+        writeDocumentToResponse(doc, writer);
+    }
+    
+    private void writeErrorXMLCodeWithError(final Writer writer, String errorMsg) throws IOException, TransformerException {
+        Document doc = XMLDomUtils.getExceptionDom(errorMsg);
         writeDocumentToResponse(doc, writer);
     }
 

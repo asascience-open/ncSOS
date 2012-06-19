@@ -14,6 +14,7 @@ import thredds.server.sos.CDMClasses.TimeSeriesProfile;
 import thredds.server.sos.CDMClasses.Trajectory;
 import thredds.server.sos.CDMClasses.iStationData;
 import thredds.server.sos.service.SOSBaseRequestHandler;
+import thredds.server.sos.service.SOSParser;
 //import thredds.server.sos.service.StationData;
 import thredds.server.sos.util.XMLDomUtils;
 import ucar.nc2.Variable;
@@ -37,6 +38,8 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     private String[] variableNames;
     private boolean isMultiTime;
     private iStationData CDMDataSet;
+    
+    private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(SOSGetObservationRequestHandler.class);
 
     /**
      * SOS get obs request handler
@@ -52,14 +55,12 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         CoordinateAxis heightAxis = netCDFDataset.findCoordinateAxis(AxisType.Height);
 
         this.variableNames = checkNetcdfFileForAxis(heightAxis, variableNames);
-
-
-
+        
         //grid operation
         if (getDatasetFeatureType() == FeatureType.GRID) {
             Variable depthAxis;
             if (!latLonRequest.isEmpty()) {
-
+                _log.info("Dealing with GRID data, recieved lat and lon");
                 depthAxis = (netCDFDataset.findVariable("depth"));
                 if (depthAxis != null) {
                     this.variableNames = checkNetcdfFileForAxis((CoordinateAxis1D) depthAxis, this.variableNames);
@@ -277,9 +278,11 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     public void parseObservations() {
 
         if (CDMDataSet == null) {
-            setDocument(XMLDomUtils.getExceptionDom());
+            setDocument(XMLDomUtils.getExceptionDom("CDMDataSet is null"));
         } else {
             setObsCollectionMetaData();
+            
+            _log.info("Parsing observations");
 
             int numStations;
                 numStations = CDMDataSet.getNumberOfStations();
@@ -303,17 +306,17 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
                 document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:boundedBy", "gml:Envelope", "srsName", getGMLName(CDMDataSet.getStationName(stNum)), stNum);
 
                 //add lat lon string
-                document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:Envelope", "gml:lowerCorner", getStationLowerLatLonStr(stNum), stNum);
+                document = XMLDomUtils.addNodeAllOptions(document, "om:Observation", "gml:Envelope", "gml:lowerCorner", getStationLowerLatLonStr(stNum), stNum);
                 //add Upper GPS coors
-                document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:Envelope", "gml:upperCorner", getStationUpperLatLonStr(stNum), stNum);
+                document = XMLDomUtils.addNodeAllOptions(document, "om:Observation", "gml:Envelope", "gml:upperCorner", getStationUpperLatLonStr(stNum), stNum);
                 //add sampling time
                 document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "om:samplingTime", stNum);
                 //add time instant
                 document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "om:samplingTime", "gml:TimePeriod", "gml:id", "DATA_TIME", stNum);
                 //add time positions (being and end)
                 if (CDMDataSet != null) {
-                    document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:beginPosition", CDMDataSet.getTimeBegin(stNum), stNum);
-                    document = XMLDomUtils.addNodeToNodeAndValue(document, "gml:TimePeriod", "gml:endPosition", CDMDataSet.getTimeEnd(stNum), stNum);
+                    document = XMLDomUtils.addNodeAllOptions(document, "om:Observation", "gml:TimePeriod", "gml:beginPosition", CDMDataSet.getTimeBegin(stNum), stNum);
+                    document = XMLDomUtils.addNodeAllOptions(document, "om:Observation", "gml:TimePeriod", "gml:endPosition", CDMDataSet.getTimeEnd(stNum), stNum);
                 }
                 //add procedure
                 document = XMLDomUtils.addNodeAndAttribute(document, OM_OBSERVATION, "om:procedure", "xlink:href", getLocation(), stNum);
@@ -355,6 +358,10 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
 
     public String getObservationEnvelopeSrsName() {
         return XMLDomUtils.getAttributeFromNode(document, OM_OBSERVATION, "gml:Envelope", "srsName");
+    }
+    
+    public iStationData getCDMDataset() {
+        return CDMDataSet;
     }
 
     String getObservationLowerCorner() {
