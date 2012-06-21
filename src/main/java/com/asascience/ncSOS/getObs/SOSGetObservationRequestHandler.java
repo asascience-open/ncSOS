@@ -71,7 +71,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
                 CDMDataSet = new Grid(stationName, eventTime, this.variableNames, latLonRequest);
                 CDMDataSet.setData(getGridDataset());
                 return;
-            }
+            } 
         }
         //if the stations are not of cdm type grid then check to see and set cdm data type        
         else {
@@ -160,7 +160,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         //add encoding value
         document = XMLDomUtils.addNodeAllOptions(document, "swe:DataArray", "swe:encoding", stationNumber);
         // text block
-        document = XMLDomUtils.addNodeAndAttribute(document, "swe:encoding", "swe:TextBlock", "blockSeparator", " ", stationNumber);
+        document = XMLDomUtils.addNodeAndAttribute(document, "swe:encoding", "swe:TextBlock", "blockSeparator", "\r\n", stationNumber);
         XMLDomUtils.setAttributeFromNode(document, "swe:encoding", "swe:TextBlock", "decimalSeparator", ".");
         XMLDomUtils.setAttributeFromNode(document, "swe:encoding", "swe:TextBlock", "tokenSeparator", ",");
 
@@ -306,17 +306,17 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
                 document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:boundedBy", "gml:Envelope", "srsName", getGMLName(CDMDataSet.getStationName(stNum)), stNum);
 
                 //add lat lon string
-                document = XMLDomUtils.addNodeAllOptions(document, "om:Observation", "gml:Envelope", "gml:lowerCorner", getStationLowerLatLonStr(stNum), stNum);
+                document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:Envelope", "gml:lowerCorner", getStationLowerLatLonStr(stNum), stNum);
                 //add Upper GPS coors
-                document = XMLDomUtils.addNodeAllOptions(document, "om:Observation", "gml:Envelope", "gml:upperCorner", getStationUpperLatLonStr(stNum), stNum);
+                document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:Envelope", "gml:upperCorner", getStationUpperLatLonStr(stNum), stNum);
                 //add sampling time
                 document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "om:samplingTime", stNum);
                 //add time instant
                 document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "om:samplingTime", "gml:TimePeriod", "gml:id", "DATA_TIME", stNum);
                 //add time positions (being and end)
                 if (CDMDataSet != null) {
-                    document = XMLDomUtils.addNodeAllOptions(document, "om:Observation", "gml:TimePeriod", "gml:beginPosition", CDMDataSet.getTimeBegin(stNum), stNum);
-                    document = XMLDomUtils.addNodeAllOptions(document, "om:Observation", "gml:TimePeriod", "gml:endPosition", CDMDataSet.getTimeEnd(stNum), stNum);
+                    document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:TimePeriod", "gml:beginPosition", CDMDataSet.getTimeBegin(stNum), stNum);
+                    document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:TimePeriod", "gml:endPosition", CDMDataSet.getTimeEnd(stNum), stNum);
                 }
                 //add procedure
                 document = XMLDomUtils.addNodeAndAttribute(document, OM_OBSERVATION, "om:procedure", "xlink:href", getLocation(), stNum);

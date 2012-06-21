@@ -83,38 +83,63 @@ public class Grid extends baseCDMClass implements iStationData {
      * @param latlon
      * @return 
      */
-    public int checkAndGetDepthValue(Map<String, Integer> latlon) {
-        /**
-         * initialize depth variable if available, set in the SOS parser is available
-         */
-        double[] depthDbl = null;
-        int depthHeight = -1;
-        for (int i = 0; i < variableNames.length; i++) {
-            if (variableNames[i].equalsIgnoreCase(DEPTH)) {
-                CoordinateAxis1D depthData = (CoordinateAxis1D) GridData.getDataVariable(DEPTH);
-                depthDbl = depthData.getCoordValues();
-                /**
-                 * try and get the depth information if it is there
-                 * if not use the first layer i.e 0
-                 */
+//    public int checkAndGetDepthValue(Map<String, Integer> latlon) {
+//        /**
+//         * initialize depth variable if available, set in the SOS parser is available
+//         */
+//        double[] depthDbl = null;
+//        int depthHeight = -1;
+//        for (int i = 0; i < variableNames.length; i++) {
+//            if (variableNames[i].equalsIgnoreCase(DEPTH)) {
+//                CoordinateAxis1D depthData = (CoordinateAxis1D) GridData.getDataVariable(DEPTH);
+//                depthDbl = depthData.getCoordValues();
+//                /**
+//                 * try and get the depth information if it is there
+//                 * if not use the first layer i.e 0
+//                 */
+//                try {
+//                    depthHeight = latlon.get(DEPTH);
+//                    //check that the depth is valid
+//                    if (getDepthIndex(depthDbl, depthHeight) == -1) {
+//                        depthHeight = 0;
+//                    }
+//
+//
+//                } catch (Exception e) {
+//                    depthHeight = 0;
+//                }
+//                break;
+//            }
+//        }
+//        if (depthDbl == null) {
+//            depthHeight = 0;
+//        }
+//        return depthHeight;
+//    }
+    
+    public int[] checkAndGetDepthIndices(Map<String, Integer[]> latLons) {
+        // setup for finding our depth values
+        int[] retVal = new int[latLons.get(LAT).length];
+        CoordinateAxis1D depthData = (CoordinateAxis1D) GridData.getDataVariable(DEPTH);
+        if (depthData != null) {
+            double[] depthDbl = depthData.getCoordValues();
+            String[] requestedDepths = latLonRequest.get(DEPTH).split("[,]");
+            int currIndex = 0;
+            for (int i=0;i<retVal.length;i++) {
+                currIndex = (i < requestedDepths.length) ? i : requestedDepths.length - 1;
                 try {
-                    depthHeight = latlon.get(DEPTH);
-                    //check that the depth is valid
-                    if (getDepthIndex(depthDbl, depthHeight) == -1) {
-                        depthHeight = 0;
-                    }
-
-
+                    retVal[i] = findBestIndex(depthDbl, Double.parseDouble(requestedDepths[currIndex]));
                 } catch (Exception e) {
-                    depthHeight = 0;
+                    System.out.println("Could not parse: " + requestedDepths[currIndex] + " - " + e.getMessage());
+                    retVal[i] = 0;
                 }
-                break;
+            }
+        } else {
+            for (int r=0;r<retVal.length;r++) {
+                retVal[r] = 0;
             }
         }
-        if (depthDbl == null) {
-            depthHeight = 0;
-        }
-        return depthHeight;
+        return retVal;
     }
 
     public double[] getLatCoordData() {
@@ -203,69 +228,88 @@ public class Grid extends baseCDMClass implements iStationData {
             Array data = null;
             double[] lonDbl = getLonCoordData();
             double[] latDbl = getLatCoordData();
-            Map<String, Integer> latLonDepthHash = findDataIndexs(lonDbl, latDbl, latLonRequest);
+            Map<String, Integer[]> latLonDepthHash = findDataIndexs(lonDbl, latDbl, latLonRequest);
 
             GridDatatype grid = GridData.getGrids().get(0);
             GridCoordSystem gcs = grid.getCoordinateSystem();
+            
+            int[] depthHeights = new int[latLonDepthHash.get(LON).length];
+            Boolean zeroDepths = true;
 
-            int depthHeight = checkAndGetDepthValue(latLonDepthHash);
-
-
-            java.util.Date[] dates = null;
-            if (gcs.hasTimeAxis1D()) {
-                CoordinateAxis1DTime tAxis1D = gcs.getTimeAxis1D();
-                dates = tAxis1D.getTimeDates();
-
-            } else if (gcs.hasTimeAxis()) {
-                CoordinateAxis tAxis = gcs.getTimeAxis();
-            }
-
-            //modify for requested dates, add in for loop
-            int dateIndex = 0;
-
-            addDateEntry(builder, dates);
-
-            for (int j = 0; j < variableNames.length; j++) {
-                if (variableNames[j].equalsIgnoreCase(DEPTH)) {
-                    addDepthEntry(builder, depthHeight);
+            for(String vars : variableNames) {
+                if(vars.equalsIgnoreCase(DEPTH)) {
+                    // we do want depths
+                    zeroDepths = false;
+                    depthHeights = checkAndGetDepthIndices(latLonDepthHash);
                 }
-                else if (variableNames[j].equalsIgnoreCase(LAT)) {
-                    builder.append(latDbl[latLonDepthHash.get(LAT)]);
+            }
+            
+            if (zeroDepths) {
+                for(int i=0; i<depthHeights.length; i++) {
+                    depthHeights[i] = 0;
+                }
+            }
+//            int depthHeight = checkAndGetDepthValue(latLonDepthHash);
+
+
+            
+            
+            double[] depthDbl = null;
+            CoordinateAxis1D depthAxis = (CoordinateAxis1D) GridData.getDataVariable(DEPTH);
+            if(depthAxis != null) {
+                depthDbl = depthAxis.getCoordValues();
+            }
+            
+            for (int k=0; k<latLonDepthHash.get(LAT).length; k++) {
+                java.util.Date[] dates = null;
+                if (gcs.hasTimeAxis1D()) {
+                    CoordinateAxis1DTime tAxis1D = gcs.getTimeAxis1D();
+                    dates = tAxis1D.getTimeDates();
+
+                } else if (gcs.hasTimeAxis()) {
+                    CoordinateAxis tAxis = gcs.getTimeAxis();
+                }
+                //modify for requested dates, add in for loop
+                addDateEntry(builder, dates);
+                
+                if (isInVariableNames(DEPTH) && depthDbl != null) {
+                    builder.append(depthDbl[depthHeights[k]]);
                     builder.append(",");
-                } else if (variableNames[j].equalsIgnoreCase(LON)) {
-                    builder.append(lonDbl[latLonDepthHash.get(LON)]);
-                    //builder.append(",");
-                } else {
-                    //if it is not lat/lon look through all available grids to find a variable/name match then get data at that location
-                    for (int i = 0; i < GridData.getGrids().size(); i++) {
-                        //if grid matches data of interest
-                        if (GridData.getGrids().get(i).getName().equalsIgnoreCase(variableNames[j])) {
-                            //get the grid of interest
-                            grid = GridData.getGrids().get(i);
-                            //get the data and add it to the response using data index's
-                            try {
-                                data = grid.readDataSlice(dateIndex, depthHeight, latLonDepthHash.get(LAT), latLonDepthHash.get(LON));
-                                builder.append(data.getFloat(0));
-                                builder.append(",");
-                            } catch (Exception e) {
-                            }
-                            //break out of loop when set
-                            break;
+                }
+                
+                builder.append(latDbl[latLonDepthHash.get(LAT)[k]]);
+                builder.append(",");
+                builder.append(lonDbl[latLonDepthHash.get(LON)[k]]);
+                builder.append(",");
+                // get data slices
+                for (int l=0; l<GridData.getGrids().size();l++) {
+                    if (isInVariableNames(GridData.getGrids().get(l).getName())) {
+                        try {
+                            data = grid.readDataSlice(0, depthHeights[k], latLonDepthHash.get(LAT)[k], latLonDepthHash.get(LON)[k]);
+                            builder.append(data.getFloat(0));
+                            builder.append(",");
+                        } catch (Exception e) {
+                            System.out.println("Error in reading data slice, index " + l + " - " + e.getMessage());
                         }
                     }
                 }
-                /*
-                if (j < variableNames.length - 1) {
-                    builder.append(",");
-                }
-                 * 
-                 */
+                builder.append("\r\n");
             }
             appendEndOfEntry(builder);
             return builder.toString();
         }
         return DATA_RESPONSE_ERROR + Grid.class;
 
+    }
+    
+    private Boolean isInVariableNames(String nameToCheck) {
+        for (String name : variableNames) {
+            if (name.equalsIgnoreCase(nameToCheck)) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     @Override
@@ -340,22 +384,114 @@ public class Grid extends baseCDMClass implements iStationData {
 
     @Override
     public double getLowerLat(int stNum) {
-        return Double.parseDouble(latLonRequest.get(LAT));
+//        return Double.parseDouble(latLonRequest.get(LAT));
+        String[] latStr = latLonRequest.get(LAT).split(("[,]"));
+        double retVal = Double.MAX_VALUE;
+        for(int i=0; i<latStr.length;i++) {
+            try {
+                double val;
+                if(latStr[i].contains("_")) {
+                    String[] bounds = latStr[i].split("_");
+                    if(Double.parseDouble(bounds[0]) > Double.parseDouble(bounds[1])) {
+                        val = Double.parseDouble(bounds[1]);
+                    } else {
+                        val = Double.parseDouble(bounds[0]);
+                    }
+                } else {
+                    val = Double.parseDouble(latStr[i]);
+                }
+                if (val < retVal)
+                    retVal = val;
+            } catch (Exception e) {
+                System.out.println("Error getLowerLat: " + e.getMessage());
+            }
+        }
+        
+        return retVal;
     }
 
     @Override
     public double getLowerLon(int stNum) {
-        return Double.parseDouble(latLonRequest.get(LON));
+//        return Double.parseDouble(latLonRequest.get(LON));
+        String[] lonStr = latLonRequest.get(LON).split(("[,]"));
+        double retVal = Double.MAX_VALUE;
+        for(int i=0; i<lonStr.length;i++) {
+            try {
+                double val;
+                if(lonStr[i].contains("_")) {
+                    String[] bounds = lonStr[i].split("_");
+                    if(Double.parseDouble(bounds[0]) > Double.parseDouble(bounds[1])) {
+                        val = Double.parseDouble(bounds[1]);
+                    } else {
+                        val = Double.parseDouble(bounds[0]);
+                    }
+                } else {
+                    val = Double.parseDouble(lonStr[i]);
+                }
+                if (val < retVal)
+                    retVal = val;
+            } catch (Exception e) {
+                System.out.println("Error getLowerLon: " + e.getMessage());
+            }
+        }
+        
+        return retVal;
     }
 
     @Override
     public double getUpperLat(int stNum) {
-        return Double.parseDouble(latLonRequest.get(LAT));
+//        return Double.parseDouble(latLonRequest.get(LAT));
+        String[] latStr = latLonRequest.get(LAT).split(("[,]"));
+        double retVal = -1 * Double.MAX_VALUE;
+        for(int i=0; i<latStr.length;i++) {
+            try {
+                double val;
+                if(latStr[i].contains("_")) {
+                    String[] bounds = latStr[i].split("_");
+                    if(Double.parseDouble(bounds[0]) < Double.parseDouble(bounds[1])) {
+                        val = Double.parseDouble(bounds[1]);
+                    } else {
+                        val = Double.parseDouble(bounds[0]);
+                    }
+                } else {
+                    val = Double.parseDouble(latStr[i]);
+                }
+                if (val > retVal)
+                    retVal = val;
+            } catch (Exception e) {
+                System.out.println("Error getUpperLat: " + e.getMessage());
+            }
+        }
+        
+        return retVal;
     }
 
     @Override
     public double getUpperLon(int stNum) {
-        return Double.parseDouble(latLonRequest.get(LON));
+//        return Double.parseDouble(latLonRequest.get(LON));
+        String[] lonStr = latLonRequest.get(LON).split(("[,]"));
+        double retVal = -1 * Double.MAX_VALUE;
+        for(int i=0; i<lonStr.length;i++) {
+            try {
+                double val;
+                if(lonStr[i].contains("_")) {
+                    String[] bounds = lonStr[i].split("_");
+                    if(Double.parseDouble(bounds[0]) < Double.parseDouble(bounds[1])) {
+                        val = Double.parseDouble(bounds[1]);
+                    } else {
+                        val = Double.parseDouble(bounds[0]);
+                    }
+                } else {
+                    val = Double.parseDouble(lonStr[i]);
+                }
+                if (val > retVal)
+                    retVal = val;
+            } catch (Exception e) {
+                System.out.println("Error getUpperLon: " + e.getMessage());
+            }
+        }
+        
+        return retVal;
     }
 
     /**
@@ -365,62 +501,136 @@ public class Grid extends baseCDMClass implements iStationData {
      * @param latLonRequest
      * @return 
      */
-    private Map<String, Integer> findDataIndexs(double[] lonDbl, double[] latDbl, Map<String, String> latLonRequest) {
-
-        Map<String, Integer> latLonIndex = new HashMap<String, Integer>();
+    private Map<String, Integer[]> findDataIndexs(double[] lonDbl, double[] latDbl, Map<String, String> latLonRequest) {
+        System.out.println("Uh, do we get to findDataIndexs?");
+        Map<String, Integer[]> latLonIndex = new HashMap<String, Integer[]>();
         String lonVal = latLonRequest.get(LON);
         String latVal = latLonRequest.get(LAT);
-        double requestedLon = Double.parseDouble(lonVal);
-        double requestedLat = Double.parseDouble(latVal);
-
-        int maxArrayLength = 0;
-        if (lonDbl.length > maxArrayLength) {
-            maxArrayLength = lonDbl.length;
-        } else if (latDbl.length > maxArrayLength) {
-            maxArrayLength = latDbl.length;
+        String[] lons, lats;
+        
+        // check to see if we are looking for multiple or range of lat/lons
+        // multiple
+        if(lonVal.contains(",")) {
+            // multiple lons
+            lons = lonVal.split(",");
+        } else {
+            lons = new String[] { lonVal };
         }
+        
+        if (latVal.contains(",")) {
+            // multiple lats
+            lats = latVal.split(",");
+        } else {
+            lats = new String[] { latVal };            
+        }
+            
+        double[] requestedLons = new double[lons.length];
+        double[] requestedLats = new double[lats.length];
 
-        int latIdx = -1;
-        int lonIdx = -1;
-        double minLat = Double.MAX_VALUE;
-        double minLon = Double.MAX_VALUE;
 
-        double Lat;
-        double Lon;
-
-        for (int i = 0; i < maxArrayLength; i++) {
-            //array
-
-
+        for (int j=0;j<lons.length;j++) {
             try {
-                Lat = latDbl[i];
-                double diffLat = (Lat - requestedLat);
-
-                if (Math.abs(diffLat) < minLat) {
-                    minLat = Math.abs(diffLat);
-                    latIdx = i;
-                }
-
-            } catch (Exception e) {
-            }
-
-            //double Lon = Double.NaN;
-
-            try {
-                Lon = lonDbl[i];
-                double diffLon = (Lon - requestedLon);
-                if (Math.abs(diffLon) < minLon) {
-                    minLon = Math.abs(diffLon);
-                    lonIdx = i;
+                if (lons[j].contains("_")) {
+                    String[] bounds = lons[j].split("_");
+                    requestedLons = arrayFromValueRange(bounds, lonDbl, requestedLons);
+                } else {
+                    requestedLons[j] = Double.parseDouble(lons[j]);
                 }
             } catch (Exception e) {
+                System.out.println("Error in parse: " + e.getMessage());
             }
-
         }
 
-        latLonIndex.put(LAT, latIdx);
-        latLonIndex.put(LON, lonIdx);
+        for (int k=0;k<lats.length;k++) {
+            try {
+                if (lats[k].contains("_")) {
+                    String[] bounds = lats[k].split("_");
+                    requestedLats = arrayFromValueRange(bounds, latDbl, requestedLats);
+                } else {
+                    requestedLats[k] = Double.parseDouble(lats[k]);
+                }
+            } catch (Exception e) {
+                System.out.println("Error in parse: " + e.getMessage());
+            }
+        }
+
+        // determine which array to use for loop count
+        int requestedArrayLength = (requestedLons.length > requestedLats.length) ? requestedLons.length : requestedLats.length;
+
+        Integer[] retLats = new Integer[requestedArrayLength];
+        Integer[] retLons = new Integer[requestedArrayLength];
+
+        // get our indices
+        for(int i=0;i<requestedArrayLength;i++) {
+            if(requestedLons.length > i) {
+                retLons[i] = findBestIndex(lonDbl, requestedLons[i]);
+            } else {
+                retLons[i] = findBestIndex(lonDbl, requestedLons[requestedLons.length - 1]);
+            }
+
+            if(requestedLats.length > i) {
+                retLats[i] = findBestIndex(latDbl, requestedLats[i]);
+            } else {
+                retLats[i] = findBestIndex(latDbl, requestedLats[requestedLats.length - 1]);
+            }
+        }
+
+        // put into hash
+        latLonIndex.put(LAT, retLats);
+        latLonIndex.put(LON, retLons);
+        
         return latLonIndex;
+
+    }
+    
+    private double[] arrayFromValueRange(String[] bounds, double[] arrayToSearch, double[] arrayToExpand) {
+        System.out.println("In arrayFromValueRange");
+        double minVal, maxVal;
+        try {
+            minVal = Double.parseDouble(bounds[0]);
+        } catch (Exception e) {
+            minVal = 0;
+        }
+        try {
+            maxVal = Double.parseDouble(bounds[1]);
+        } catch (Exception e) {
+            maxVal = minVal;
+        }
+        if (maxVal < minVal) {
+            // swap values if the order is reversed
+            double temp = minVal;
+            minVal = maxVal;
+            maxVal = temp;
+        }
+        // looking for a range of longitudes, iterate through the longitude array for values that lie in out boundaries
+        ArrayList<Double> builder = new ArrayList<Double>();
+        for (int k=0;k<arrayToExpand.length;k++) {
+            builder.add(arrayToExpand[k]);
+        }
+        for (int l=0;l<arrayToSearch.length;l++) {
+            if (arrayToSearch[l] >= minVal && arrayToSearch[l] <= maxVal) {
+                builder.add(arrayToSearch[l]);
+            }
+        }
+        arrayToExpand = new double[builder.size()];
+        for(int i=0;i<builder.size();i++) {
+            arrayToExpand[i] = builder.get(i).doubleValue();
+        }
+        return arrayToExpand;
+    }
+    
+    private int findBestIndex(double[] valueArray, double valueToFind){
+        // iterate through the array to find the index with the value closest to 'valueToFind'
+        double bestDiffValue = Double.MAX_VALUE;
+        int retIndex = -1;
+        for(int i=0; i<valueArray.length; i++) {
+           double curDiffValue = valueArray[i] - valueToFind;
+           if(Math.abs(curDiffValue) < bestDiffValue) {
+               bestDiffValue = Math.abs(curDiffValue);
+               retIndex = i;
+           }
+        }
+        return retIndex;
     }
 
     @Override
