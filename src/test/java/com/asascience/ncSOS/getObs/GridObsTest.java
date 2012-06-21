@@ -1,47 +1,104 @@
-///*
-// * To change this template, choose Tools | Templates
-// * and open the template in the editor.
-// */
-//package thredds.server.sos.getObs;
-//
-//import java.lang.String;
-//import java.util.Map;
-//import java.io.FileWriter;
-//import java.io.BufferedWriter;
-//import java.io.File;
-//import java.io.Writer;
-//import java.io.CharArrayWriter;
-//import thredds.server.sos.service.SOSParser;
-//import ucar.nc2.dataset.NetcdfDataset;
-//import java.io.IOException;
-//import java.util.HashMap;
-//import org.junit.AfterClass;
-//import org.junit.BeforeClass;
-//import org.junit.Test;
-//import thredds.server.sos.util.XMLDomUtils;
-//import static org.junit.Assert.*;
-//
-///**
-// *
-// * @author abird
-// */
-//public class GridObsTest {
-//    
-//    //***********************************************
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package thredds.server.sos.getObs;
+
+import java.io.*;
+import java.lang.String;
+import java.util.Map;
+import thredds.server.sos.service.SOSParser;
+import ucar.nc2.dataset.NetcdfDataset;
+import java.util.HashMap;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import thredds.server.sos.util.XMLDomUtils;
+import static org.junit.Assert.*;
+import org.w3c.dom.Document;
+
+/**
+ *
+ * @author abird
+ */
+public class GridObsTest {
+    
+    //***********************************************
 //    public static final String GridReq1 = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=mcsst&eventtime=1990-01-01T00:00:00Z/2012-05-17T09:57:00.000-04:00";
 //    public static final String GridReq2 = "request=GetObservation&version=1.0.0&service=sos&observedProperty=mcsst&offering=mcsst&eventtime=1990-01-01T00:00:00Z/2012-05-17T09:57:00.000-04:00&lat=29.88603303&lon=-89.0087125";
 //    public static final String GridReq3 = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=mcsst&eventtime=1990-01-01T00:00:00Z/2012-05-17T09:57:00.000-04:00&lat=29.0&lon=-89.0";
-//    public static final String base = "tests/main/java/thredds/server/sos/getObs/output/";
-//
-//    private void fileWriter(String base, String fileName, Writer write) throws IOException {
-//        Writer output = null;
-//        File file = new File(base + fileName);
-//        output = new BufferedWriter(new FileWriter(file));
-//        output.write(write.toString());
-//        output.close();
-//        System.out.println("Your file has been written");
-//    }
-//    
+    private static final String sst_1 = "resources/datasets/satellite-sst/20120617.1508.d7.composite.nc";
+    private static final String sst_1_reqs = "request=GetObservation&service=sos&version=1.0.0&lat=52.0&lon=-50.0&observedProperty=mcsst&offering=mcsst&eventtime=1990-01-01T00:00:00Z/2012-05-17T09:57:00.000-04:00";
+    private static final String sst_2 = "resources/datasets/satellite-sst/20120617.1716.d7.composite.nc";
+    private static final String sst_2_reqs = "request=GetObservation&service=sos&version=1.0.0&lat=52.0,51.004,50.547&lon=-50.0,-52.156,-63.225&observedProperty=mcsst&offering=mcsst&eventtime=1990-01-01T00:00:00Z/2012-05-17T09:57:00.000-04:00";
+    public static String baseLocalDir = null;
+    public static String outputDir = null;
+
+    private void fileWriter(String base, String fileName, Writer write) throws IOException {
+        Writer output = null;
+        File file = new File(base + fileName);
+        output = new BufferedWriter(new FileWriter(file));
+        output.write(write.toString());
+        output.close();
+        System.out.println("Your file has been written");
+    }
+    
+    public void SetupEnviron() throws FileNotFoundException {
+        // not really a test, just used to set up the various string values
+        if (outputDir != null && baseLocalDir != null) {
+            // exit early if the environ is already set
+            return;
+        }
+        String container = "getObsGrid";
+        InputStream templateInputStream = null;
+        try {
+            File configFile = new File("resources/tests_config.xml");
+            templateInputStream = new FileInputStream(configFile);
+            Document configDoc = XMLDomUtils.getTemplateDom(templateInputStream);
+            // read from the config file
+            outputDir = XMLDomUtils.getNodeValue(configDoc, container, "outputBase");
+            baseLocalDir = XMLDomUtils.getNodeValue(configDoc, container, "projectDir");
+        } finally {
+            if (templateInputStream != null) {
+                try {
+                    templateInputStream.close();
+                } catch (IOException e) {
+                    // ignore, closing..
+                }
+            }
+        }
+    }
+    
+    @Test
+    public void testGetObsGridSSTSingleLatLon() throws IOException {
+        System.out.println("------SST1------");
+        SetupEnviron();
+        NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + sst_1);
+        Writer writer = new CharArrayWriter();
+        SOSParser parser = new SOSParser();
+        parser.enhance(dataset, writer, sst_1_reqs, baseLocalDir + sst_1);
+        assertFalse(writer.toString().contains("Exception"));
+        writer.flush();
+        writer.close();
+        fileWriter(outputDir, "testGetObsGridSSTSingleLatLon_output.xml", writer);
+        System.out.println("------SST1-End------");
+    }
+    
+    @Test
+    public void testGetObsGridSSTMultipleLatLon() throws IOException {
+        System.out.println("------SST2------");
+        SetupEnviron();
+        NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + sst_2);
+        Writer writer = new CharArrayWriter();
+        SOSParser parser = new SOSParser();
+        parser.enhance(dataset, writer, sst_2_reqs, baseLocalDir + sst_2);
+        assertFalse(writer.toString().contains("Exception"));
+        writer.flush();
+        writer.close();
+        fileWriter(outputDir, "testGetObsGridSSTMultipleLatLon_output.xml", writer);
+        System.out.println("------SST2-End------");
+    }
+    
 //    @Test
 //    public void testGetObsGridWithoutLatLon() throws IOException {
 //        System.out.println("----GRID1------");
@@ -206,4 +263,4 @@
 //       
 //   
 //    }
-//}
+}

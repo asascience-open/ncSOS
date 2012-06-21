@@ -293,7 +293,7 @@ public class Grid extends baseCDMClass implements iStationData {
                         }
                     }
                 }
-                builder.append("\r\n");
+                builder.append(" ");
             }
             appendEndOfEntry(builder);
             return builder.toString();

@@ -9,4 +9,9 @@
 	<getObs>
 		<outputBase>C:/Users/scowan/Projects/maven/ncSOS/src/test/java/com/asascience/ncSOS/getObs/output/</outputBase>
 	</getObs>
+	
+	<getObsGrid>
+		<outputBase>C:/Users/scowan/Projects/maven/ncSOS/src/test/java/com/asascience/ncSOS/getObs/output/</outputBase>
+		<projectDir>C:/Users/scowan/Projects/maven/ncSOS/</projectDir>
+	</getObsGrid>
 </testConfiguration>
