@@ -197,14 +197,6 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         }
     }
 
-    public String getSystemGMLID() {
-        return XMLDomUtils.getObsGMLIDAttributeFromNode(document, "om:ObservationCollection", "gml:id");
-    }
-
-    public void setSystemGMLID(String value) {
-        XMLDomUtils.setObsGMLIDAttributeFromNode(document, "om:ObservationCollection", "gml:id", value);
-    }
-
     void setSystemGMLID() {
 
         StringBuilder b = new StringBuilder();
@@ -224,40 +216,20 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         XMLDomUtils.setNodeValue(document, "om:ObservationCollection", "gml:description", getDescription());
     }
 
-    public String getCollectionDescription() {
-        return XMLDomUtils.getNodeValue(document, "om:ObservationCollection", "gml:description");
-    }
-
     public void setCollectionName() {
         XMLDomUtils.setNodeValue(document, "om:ObservationCollection", "gml:name", getTitle());
-    }
-
-    public String getCollectionName() {
-        return XMLDomUtils.getNodeValue(document, "om:ObservationCollection", "gml:name");
     }
 
     public void setCollectionSourceName() {
         XMLDomUtils.setAttributeFromNode(document, "gml:boundedBy", "gml:Envelope", "srsName", "EPSG:4326");
     }
 
-    public String getCollectionSourceName() {
-        return XMLDomUtils.getAttributeFromNode(document, "gml:boundedBy", "gml:Envelope", "srsName");
-    }
-
     public void setCollectionLowerCornerEnvelope() {
         XMLDomUtils.setNodeValue(document, "gml:Envelope", "gml:lowerCorner", getBoundLowerLatLonStr());
     }
 
-    public String getCollectionLowerCornerEnvelope() {
-        return XMLDomUtils.getNodeValue(document, "gml:Envelope", "gml:lowerCorner");
-    }
-
     public void setCollectionUpperCornerEnvelope() {
         XMLDomUtils.setNodeValue(document, "gml:Envelope", "gml:upperCorner", getBoundUpperLatLonStr());
-    }
-
-    public String getCollectionUpperCornerEnvelope() {
-        return XMLDomUtils.getNodeValue(document, "gml:Envelope", "gml:upperCorner");
     }
 
     /**
@@ -404,17 +376,6 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     public String getResultValues() {
         return XMLDomUtils.getNodeValue(document, OM_OBSERVATION, "swe:values");
     }
-
-    @Deprecated
-    private void setBeginTime(String time) {
-        XMLDomUtils.setNodeValue(document, OM_OBSERVATION, "gml:beginPosition", time);
-    }
-
-    @Deprecated
-    private void setEndTime(String time) {
-        XMLDomUtils.setNodeValue(document, OM_OBSERVATION, "gml:EndPosition", time);
-    }
-
     /**
      * set data count?
      * @param count
