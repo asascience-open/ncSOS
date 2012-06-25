@@ -160,17 +160,14 @@ public class Profile extends baseCDMClass implements iStationData {
 
                 }
             }
-            return builder.toString();
 
         } //if not multiTime        
         else {
             ProfileFeature pFeature = profileList.get(stNum);
             addProfileData(valueList, dateFormatter, builder, pFeature.getPointFeatureIterator(-1), stNum);
-
-            //setCount(profileF.size());
-            return builder.toString();
         }
-
+        
+        return builder.toString();
     }
 
     public void addProfileData(List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, PointFeatureIterator profileIterator, int stNum) throws IOException {
@@ -179,6 +176,10 @@ public class Profile extends baseCDMClass implements iStationData {
             PointFeature pointFeature = profileIterator.next();
             valueList.clear();
             valueList.add(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
+            // add depth, lat, lon filler
+            valueList.add("-");
+            valueList.add("-");
+            valueList.add("-");
 
             String profileID = getProfileIDFromProfile(pointFeature);
             //if there is a profile id use it against the data that is requested
@@ -206,8 +207,9 @@ public class Profile extends baseCDMClass implements iStationData {
         }
 
         //builder.append(tokenJoiner.join(valueList));
-        builder.append(" ");
-        builder.append("\n");
+//        builder.append(" ");
+//        builder.append("\n");
+        builder.append(";");
     }
 
     /**

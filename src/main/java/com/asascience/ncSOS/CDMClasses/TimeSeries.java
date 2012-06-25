@@ -15,7 +15,6 @@ import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import thredds.server.sos.getObs.SOSObservationOffering;
 import thredds.server.sos.service.SOSBaseRequestHandler;
-import ucar.nc2.ft.FeatureDataset;
 import ucar.nc2.ft.PointFeature;
 import ucar.nc2.ft.PointFeatureIterator;
 import ucar.nc2.ft.StationTimeSeriesFeature;
@@ -146,6 +145,10 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         //count++;
         valueList.clear();
         valueList.add(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
+        // add fillers for data not supplied by this request
+        valueList.add("-"); // depth 
+        valueList.add("-"); // lat
+        valueList.add("-"); // lon
         for (String variableName : variableNames) {
             valueList.add(pointFeature.getData().getScalarObject(variableName).toString());
         }
@@ -160,8 +163,9 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         //builder.append(tokenJoiner.join(valueList));
         // TODO:  conditional inside loop...
         if (tsData.getStationFeature(tsStationList.get(stNum)).size() > 1) {
-            builder.append(" ");
-            builder.append("\n");
+//            builder.append(" ");
+//            builder.append("\n");
+            builder.append(";");
         }
     }
 

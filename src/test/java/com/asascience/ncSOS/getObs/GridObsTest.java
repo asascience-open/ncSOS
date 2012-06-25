@@ -7,7 +7,7 @@ package thredds.server.sos.getObs;
 import java.io.*;
 import java.lang.String;
 import java.util.Map;
-import thredds.server.sos.service.SOSParser;
+import thredds.server.sos.service.SOSParserOld;
 import ucar.nc2.dataset.NetcdfDataset;
 import java.util.HashMap;
 import org.junit.AfterClass;
@@ -75,7 +75,7 @@ public class GridObsTest {
         SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + sst_1);
         Writer writer = new CharArrayWriter();
-        SOSParser parser = new SOSParser();
+        SOSParserOld parser = new SOSParserOld();
         parser.enhance(dataset, writer, sst_1_reqs, baseLocalDir + sst_1);
         assertFalse(writer.toString().contains("Exception"));
         writer.flush();
@@ -90,7 +90,7 @@ public class GridObsTest {
         SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + sst_2);
         Writer writer = new CharArrayWriter();
-        SOSParser parser = new SOSParser();
+        SOSParserOld parser = new SOSParserOld();
         parser.enhance(dataset, writer, sst_2_reqs, baseLocalDir + sst_2);
         assertFalse(writer.toString().contains("Exception"));
         writer.flush();
@@ -104,7 +104,7 @@ public class GridObsTest {
 //        System.out.println("----GRID1------");
 //        NetcdfDataset dataset = NetcdfDataset.openDataset("D:/Data/20120417.108.1357.n16.EC1.nc");
 //        Writer write = new CharArrayWriter();
-//        SOSParser.enhance(dataset, write, GridReq1, "D:/Data/20120417.108.1357.n16.EC1.nc");
+//        SOSParserOld.enhance(dataset, write, GridReq1, "D:/Data/20120417.108.1357.n16.EC1.nc");
 //        write.flush();
 //        write.close();
 //        assertTrue(write.toString().contains("Exception"));
@@ -117,7 +117,7 @@ public class GridObsTest {
 //        System.out.println("----GRID2------");
 //        NetcdfDataset dataset = NetcdfDataset.openDataset("D:/Data/20120417.108.1357.n16.EC1.nc");
 //        Writer write = new CharArrayWriter();
-//        SOSParser.enhance(dataset, write, GridReq2, "D:/Data/20120417.108.1357.n16.EC1.nc");
+//        SOSParserOld.enhance(dataset, write, GridReq2, "D:/Data/20120417.108.1357.n16.EC1.nc");
 //        write.flush();
 //        write.close();
 //        assertFalse(write.toString().contains("Exception"));
@@ -147,7 +147,7 @@ public class GridObsTest {
 //        System.out.println("----GRID3------");
 //        NetcdfDataset dataset = NetcdfDataset.openDataset("D:/Data/20120417.108.1357.n16.EC1.nc");
 //        Writer write = new CharArrayWriter();
-//        SOSParser.enhance(dataset, write, GridReq3, "D:/Data/20120417.108.1357.n16.EC1.nc");
+//        SOSParserOld.enhance(dataset, write, GridReq3, "D:/Data/20120417.108.1357.n16.EC1.nc");
 //        write.flush();
 //        write.close();
 //        assertFalse(write.toString().contains("Exception"));
@@ -163,7 +163,7 @@ public class GridObsTest {
 //        System.out.println("----GRID4------");
 //        NetcdfDataset dataset = NetcdfDataset.openDataset("D:/Data/201204201200_HFRadar_USWC_6km_rtv_NDBC.nc");
 //        Writer write = new CharArrayWriter();
-//        SOSParser.enhance(dataset, write, GridReq4, "D:/Data/201204201200_HFRadar_USWC_6km_rtv_NDBC.nc");
+//        SOSParserOld.enhance(dataset, write, GridReq4, "D:/Data/201204201200_HFRadar_USWC_6km_rtv_NDBC.nc");
 //        write.flush();
 //        write.close();
 //        assertFalse(write.toString().contains("Exception"));
@@ -217,7 +217,7 @@ public class GridObsTest {
 //         System.out.println("----GRID5------");
 //        NetcdfDataset dataset = NetcdfDataset.openDataset("D:/Data/ncom_relo_amseas_u_2012041800_t036.nc");
 //        Writer write = new CharArrayWriter();
-//        SOSParser.enhance(dataset, write, GridReq5, "D:/Data/ncom_relo_amseas_u_2012041800_t036.nc");
+//        SOSParserOld.enhance(dataset, write, GridReq5, "D:/Data/ncom_relo_amseas_u_2012041800_t036.nc");
 //        write.flush();
 //        write.close();
 //        assertFalse(write.toString().contains("Exception"));
@@ -233,7 +233,7 @@ public class GridObsTest {
 //         System.out.println("----GRID6------");
 //        NetcdfDataset dataset = NetcdfDataset.openDataset("D:/Data/ncom_relo_amseas_u_2012041800_t036.nc");
 //        Writer write = new CharArrayWriter();
-//        SOSParser.enhance(dataset, write, GridReq6, "D:/Data/ncom_relo_amseas_u_2012041800_t036.nc");
+//        SOSParserOld.enhance(dataset, write, GridReq6, "D:/Data/ncom_relo_amseas_u_2012041800_t036.nc");
 //        write.flush();
 //        write.close();
 //        assertFalse(write.toString().contains("Exception"));

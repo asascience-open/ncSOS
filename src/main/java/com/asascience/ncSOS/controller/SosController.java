@@ -16,7 +16,7 @@ import thredds.server.sos.util.DatasetHandlerAdapter;
 import java.io.IOException;
 import java.io.Writer;
 import org.apache.log4j.Level;
-import thredds.server.sos.service.SOSParser;
+import thredds.server.sos.service.SOSParserOld;
 
 import ucar.nc2.dataset.NetcdfDataset;
 
@@ -72,7 +72,7 @@ public class SosController implements ISosContoller {
             res.setContentType("text/xml");
             Writer writer = res.getWriter();
             //TODO create new service
-            SOSParser md = new SOSParser();
+            SOSParserOld md = new SOSParserOld();
             md.enhance(dataset, writer, req.getQueryString(), req.getRequestURL().toString(),tempdir);          
             _log.info(req.getRequestURL().toString()+"?"+req.getQueryString().toString());
             writer.flush();

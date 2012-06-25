@@ -53,6 +53,10 @@ public class Trajectory extends baseCDMClass implements iStationData {
 
     public void addDataLine(List<String> valueList, DateFormatter dateFormatter, PointFeature trajFeature, StringBuilder builder) throws IOException {
         valueList.add(dateFormatter.toDateTimeStringISO(trajFeature.getObservationTimeAsDate()));
+        // add filler for depth, lat, lon
+        valueList.add("-");
+        valueList.add("-");
+        valueList.add("-");
 
         for (int i = 0; i < variableNames.length; i++) {
             valueList.add(trajFeature.getData().getScalarObject(variableNames[i]).toString());

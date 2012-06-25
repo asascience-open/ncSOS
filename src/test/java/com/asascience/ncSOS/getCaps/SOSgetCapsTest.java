@@ -18,7 +18,7 @@ import ucar.nc2.dataset.NetcdfDataset;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import thredds.server.sos.service.SOSParser;
+import thredds.server.sos.service.SOSParserOld;
 import thredds.server.sos.service.SOSBaseRequestHandler;
 import ucar.nc2.util.CancelTask;
 import static org.junit.Assert.*;
@@ -130,7 +130,7 @@ public class SOSgetCapsTest {
         SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + TCRMTH43);
         assertNotNull(dataset);
-        SOSParser md = new SOSParser();
+        SOSParserOld md = new SOSParserOld();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", baseLocalDir + TCRMTH43);
         write.flush();
@@ -146,7 +146,7 @@ public class SOSgetCapsTest {
     public void testTrajLatLongCorrect() throws IOException {
         SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + TCRMTH43);
-        SOSParser md = new SOSParser();
+        SOSParserOld md = new SOSParserOld();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", baseLocalDir + TCRMTH43);
         write.flush();
@@ -163,7 +163,7 @@ public class SOSgetCapsTest {
     public void testTrajStartEndTimeCorrect() throws IOException {
         SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + TCRMTH43);
-        SOSParser md = new SOSParser();
+        SOSParserOld md = new SOSParserOld();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", baseLocalDir + TCRMTH43);
         write.flush();
@@ -190,7 +190,7 @@ public class SOSgetCapsTest {
 //        fail("removed - test takes too long");
         SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
-        SOSParser md = new SOSParser();
+        SOSParserOld md = new SOSParserOld();
         Writer write = new CharArrayWriter();
         File f = new File(baseTomcatDir + catalinaThredds + "/xmlFile.xml");
         f.delete();
@@ -207,7 +207,7 @@ public class SOSgetCapsTest {
 //        fail("removed - test is expensive");
         SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
-        SOSParser md = new SOSParser();
+        SOSParserOld md = new SOSParserOld();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos&useCache=true", imeds13, baseTomcatDir + catalinaThredds);
         File f = new File(baseTomcatDir + catalinaThredds + "/watlev_IKE.xml");
@@ -221,7 +221,7 @@ public class SOSgetCapsTest {
     public void testCanGetCorrectDataSetFileName() throws IOException {
         
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
-        SOSParser md = new SOSParser();
+        SOSParserOld md = new SOSParserOld();
         assertEquals("/watlev_IKE.xml", md.getCacheXmlFileName(imeds13));
     }
 
@@ -230,7 +230,7 @@ public class SOSgetCapsTest {
 //        fail("removed - test is expensive");
         SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
-        SOSParser md = new SOSParser();
+        SOSParserOld md = new SOSParserOld();
         Writer write = new CharArrayWriter();
 
         String fileName = baseTomcatDir + catalinaThredds + "/watlev_IKE.xml";
@@ -260,7 +260,7 @@ public class SOSgetCapsTest {
         SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
 
-        SOSParser md = new SOSParser();
+        SOSParserOld md = new SOSParserOld();
         Writer write = new CharArrayWriter();
 
         long start = System.currentTimeMillis();
@@ -288,7 +288,7 @@ public class SOSgetCapsTest {
         SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
 
-        SOSParser md = new SOSParser();
+        SOSParserOld md = new SOSParserOld();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", tsIncompleteMultiDimensionalMultipleStations);
         write.flush();
@@ -305,7 +305,7 @@ public class SOSgetCapsTest {
         SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsOrthogonalMultidimenstionalMultipleStations);
 
-        SOSParser md = new SOSParser();
+        SOSParserOld md = new SOSParserOld();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", tsOrthogonalMultidimenstionalMultipleStations);
         write.flush();
@@ -330,7 +330,7 @@ public class SOSgetCapsTest {
         SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(RaggedSingleConventions);
 
-        SOSParser md = new SOSParser();
+        SOSParserOld md = new SOSParserOld();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", RaggedSingleConventions);
         write.flush();
@@ -347,7 +347,7 @@ public class SOSgetCapsTest {
         SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(RaggedMultiConventions);
 
-        SOSParser md = new SOSParser();
+        SOSParserOld md = new SOSParserOld();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", RaggedMultiConventions);
         write.flush();
@@ -364,7 +364,7 @@ public class SOSgetCapsTest {
 //        fail("removed - file does not parse correctly in netcdf : Table Structure(record) featureType POINT: lat/lon/time coord not found");
         SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + OrthogonalMultidimensionalMultiStations);
-        SOSParser md = new SOSParser();
+        SOSParserOld md = new SOSParserOld();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", baseLocalDir + OrthogonalMultidimensionalMultiStations);
         write.flush();
@@ -381,7 +381,7 @@ public class SOSgetCapsTest {
         SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalSingleStations);
 
-        SOSParser md = new SOSParser();
+        SOSParserOld md = new SOSParserOld();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", MultiDimensionalSingleStations);
         write.flush();
@@ -397,7 +397,7 @@ public class SOSgetCapsTest {
         SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalMultiStations);
 
-        SOSParser md = new SOSParser();
+        SOSParserOld md = new SOSParserOld();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", MultiDimensionalMultiStations);
         write.flush();
@@ -413,7 +413,7 @@ public class SOSgetCapsTest {
         SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalMultiStations);
 
-        SOSParser md = new SOSParser();
+        SOSParserOld md = new SOSParserOld();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", MultiDimensionalMultiStations);
         write.flush();
@@ -433,7 +433,7 @@ public class SOSgetCapsTest {
         spaceBetweenTests();
         System.out.println("----ContiguousRaggedMultipleProfiles------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(ContiguousRaggedMultipleProfiles);
-        SOSParser md = new SOSParser();
+        SOSParserOld md = new SOSParserOld();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1.0.0&service=SOS", ContiguousRaggedMultipleProfiles);
         write.flush();
@@ -455,7 +455,7 @@ public class SOSgetCapsTest {
         SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(IncompleteMultiDimensionalMultipleProfiles);
 
-        SOSParser md = new SOSParser();
+        SOSParserOld md = new SOSParserOld();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", IncompleteMultiDimensionalMultipleProfiles);
         write.flush();
@@ -470,7 +470,7 @@ public class SOSgetCapsTest {
     public void testIndexedRaggedMultipleProfiles() throws IOException {
         SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(IndexedRaggedMultipleProfiles);
-        SOSParser md = new SOSParser();
+        SOSParserOld md = new SOSParserOld();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1.0.0&service=SOS", IndexedRaggedMultipleProfiles);
         write.flush();
@@ -485,7 +485,7 @@ public class SOSgetCapsTest {
     public void testOrthogonalMultiDimensionalMultipleProfiles() throws IOException {
         SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(OrthogonalMultiDimensionalMultipleProfiles);
-        SOSParser md = new SOSParser();
+        SOSParserOld md = new SOSParserOld();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1.0.0&service=SOS", OrthogonalMultiDimensionalMultipleProfiles);
         write.flush();
@@ -502,7 +502,7 @@ public class SOSgetCapsTest {
         spaceBetweenTests();
         System.out.println("----OrthogonalSingleDimensionalSingleProfile------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(OrthogonalSingleDimensionalSingleProfile);
-        SOSParser md = new SOSParser();
+        SOSParserOld md = new SOSParserOld();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1.0.0&service=SOS", OrthogonalSingleDimensionalSingleProfile);
         write.flush();
@@ -614,7 +614,7 @@ public class SOSgetCapsTest {
         
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds1);
 
-        SOSParser md = new SOSParser();
+        SOSParserOld md = new SOSParserOld();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", imeds1);
         write.flush();
@@ -627,7 +627,7 @@ public class SOSgetCapsTest {
         SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds15);
 
-        SOSParser md = new SOSParser();
+        SOSParserOld md = new SOSParserOld();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", imeds15);
         write.flush();
@@ -646,7 +646,7 @@ public class SOSgetCapsTest {
         SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds15);
 
-        SOSParser md = new SOSParser();
+        SOSParserOld md = new SOSParserOld();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", imeds15);
         write.flush();
@@ -664,7 +664,7 @@ public class SOSgetCapsTest {
         
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds5);
 
-        SOSParser md = new SOSParser();
+        SOSParserOld md = new SOSParserOld();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", imeds5);
         write.flush();
@@ -676,7 +676,7 @@ public class SOSgetCapsTest {
     public void testenhancePoint() throws IOException {
         
         NetcdfDataset dataset = NetcdfDataset.openDataset(cfPoint);
-        SOSParser md = new SOSParser();
+        SOSParserOld md = new SOSParserOld();
         Writer write = new CharArrayWriter();
         md.enhance(dataset, write, "request=GetCapabilities&version=1&service=sos", cfPoint);
         write.flush();

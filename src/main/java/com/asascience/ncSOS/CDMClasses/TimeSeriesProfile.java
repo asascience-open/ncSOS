@@ -11,17 +11,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.joda.time.Chronology;
 import org.joda.time.DateTime;
-import org.joda.time.chrono.ISOChronology;
 import org.w3c.dom.Document;
 import thredds.server.sos.getObs.SOSObservationOffering;
 import thredds.server.sos.service.SOSBaseRequestHandler;
-import ucar.nc2.ft.PointFeature;
-import ucar.nc2.ft.PointFeatureIterator;
-import ucar.nc2.ft.ProfileFeature;
-import ucar.nc2.ft.StationProfileFeature;
-import ucar.nc2.ft.StationProfileFeatureCollection;
+import ucar.nc2.ft.*;
 import ucar.nc2.units.DateFormatter;
 import ucar.unidata.geoloc.Station;
 
@@ -162,6 +156,10 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
             PointFeature pointFeature = it.next();
             valueList.clear();
             valueList.add(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
+            // add filler for depth, lat, lon
+            valueList.add("-");
+            valueList.add("-");
+            valueList.add("-");
 
             for (String variableName : variableNames) {
                 valueList.add(pointFeature.getData().getScalarObject(variableName).toString());
@@ -173,13 +171,13 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
                     builder.append(",");
                 }
             }
-
-
+            
             //builder.append(tokenJoiner.join(valueList));
             // TODO:  conditional inside loop...
             if (tsProfileData.getStationProfileFeature(tsStationList.get(stNum)).size() > 1) {
-                builder.append(" ");
-                builder.append("\n");
+//                builder.append(" ");
+//                builder.append("\n");
+                builder.append(";");
             }
         }
     }

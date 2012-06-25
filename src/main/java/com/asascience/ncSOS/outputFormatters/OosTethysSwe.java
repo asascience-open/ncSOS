@@ -33,12 +33,12 @@ public class OosTethysSwe implements SOSOutputFormatter {
     
     private static final String OM_OBSERVATION = "om:Observation";
     private static final String STATION_GML_BASE = "urn:tds:station.sos:";
+    private static final String NAN = "NaN";
     
     public OosTethysSwe(Document xmlDoc,
             String[] variableNames,
             FeatureDataset featureDataset,
             iStationData cdmDataset) {
-        System.out.println("creating OosTethysSwe");
         infoList = new ArrayList<DataSlice>();
         document = xmlDoc;
         this.featureDataset = featureDataset;
@@ -77,21 +77,54 @@ public class OosTethysSwe implements SOSOutputFormatter {
     
     public void AddDataFormattedStringToInfoList(String dataFormattedString) {
         // CSV that should be of the form: eventtime, depth, lat, lon, data value
-        String[] dataValues = dataFormattedString.split(",");
+        String[] values = dataFormattedString.split(",");
+        double lat, lon, depth;
+        lat = lon = depth = Double.NaN;
+        String eventtime = null;
+        float[] dataValues = null;
         
         if(infoList == null)
             infoList = new ArrayList<DataSlice>();
         
-        try {
-            infoList.add(new DataSlice(
-                    Double.parseDouble(dataValues[2]),
-                    Double.parseDouble(dataValues[3]),
-                    Double.parseDouble(dataValues[1]),
-                    dataValues[0],
-                    Float.parseFloat(dataValues[4])));
-        } catch (Exception e) {
-            System.out.println("Unable to parse string: " + dataFormattedString + " - " + e.getMessage());
+        if(!values[0].equalsIgnoreCase("-")) {
+            eventtime = values[0];
         }
+        if(!values[1].equalsIgnoreCase("-")) {
+            try {
+                depth = Double.parseDouble(values[1]);
+            } catch (Exception e) {
+                System.out.println("Couldn't parse " + values[1] + " - " + e.getMessage());
+            }
+        }
+        if(!values[2].equalsIgnoreCase("-")) {
+            try {
+                lat = Double.parseDouble(values[2]);
+            } catch (Exception e) {
+                System.out.println("Couldn't parse " + values[2] + " - " + e.getMessage());
+            }
+        }
+        if(!values[3].equalsIgnoreCase("-")) {
+            try {
+                lon = Double.parseDouble(values[3]);
+            } catch (Exception e) {
+                System.out.println("Couldn't parse " + values[3] + " - " + e.getMessage());
+            }
+        }
+        if(values.length > 3)
+            dataValues = new float[values.length-4];
+        // remainder of csvs are data values
+        if(dataValues != null) {
+            for(int i=4;i<values.length;i++) {
+                try {
+                    dataValues[i-4] = Float.parseFloat(values[i]);
+                } catch (Exception e) {
+                    System.out.println("unable to parse " + values[i] + " - " + e.getMessage());
+                }
+            }
+        }
+        
+        // add to info list
+        infoList.add(new DataSlice(lat, lon, depth, eventtime, dataValues));
     }
 
     public void EmtpyInfoList() {
@@ -148,7 +181,6 @@ public class OosTethysSwe implements SOSOutputFormatter {
 
         // add observed property
         for (String observedProperty : variableNames) {
-
             VariableSimpleIF variable = featureDataset.getDataVariable(observedProperty);
             document = XMLDomUtils.addNodeAndAttribute(document, "swe:DataRecord", "swe:field", "name", observedProperty, stationNumber);
             document = XMLDomUtils.addNodeAndAttribute(document, "swe:field", "swe:Quantity", fieldIndex++, "definition", "urn:ogc:def:phenomenon:mmisw.org:cf:" + observedProperty, stationNumber);
@@ -163,8 +195,6 @@ public class OosTethysSwe implements SOSOutputFormatter {
     }
     
     private void parseObservations() {
-        System.out.println("parseObservations in OosTethysSwe");
-        
         if (CDMDataSet == null) {
             outputException("CDMDataSet is null");
             return;
@@ -281,11 +311,22 @@ public class OosTethysSwe implements SOSOutputFormatter {
         StringBuilder retVal = new StringBuilder();
         for(DataSlice ds : infoList) {
             // add the slice to the string
-            retVal.append(ds.getEventTime()).append(",");
-            retVal.append(ds.getLatitude()).append(",");
-            retVal.append(ds.getLongitude()).append(",");
-//            retVal.append(ds.getDepth()).append(",");
-            retVal.append(ds.getDataValue()).append(" \n");
+            if(!ds.getEventTime().equalsIgnoreCase("-"))
+                retVal.append(ds.getEventTime()).append(",");
+            if(!ds.getLatitude().toString().equals(NAN))
+                retVal.append(ds.getLatitude().toString()).append(",");
+            if(!ds.getLongitude().toString().equals(NAN))
+                retVal.append(ds.getLongitude().toString()).append(",");
+            if(!ds.getDepth().toString().equals(NAN))
+                retVal.append(ds.getDepth().toString()).append(",");
+            if(ds.getDataValues() != null) {
+                for (Float dv : ds.getDataValues()) {
+                    retVal.append(dv.toString()).append(",");
+                }
+                // remove last comma
+                retVal = retVal.deleteCharAt(retVal.length()-1);
+            }
+            retVal.append(" \n");
         }
         return retVal.toString();
     }

@@ -14,10 +14,10 @@ package com.asascience.ncSOS.outputFormatters;
 class DataSlice {
     private double latitude, longitude, depth;
     private String eventTime;
-    private float dataValue;
+    private float[] dataValue;
     private int stationNumber;
     
-    public DataSlice(double latitude, double longitude, double depth, String eventTime, float dataValue) {
+    public DataSlice(double latitude, double longitude, double depth, String eventTime, float[] dataValue) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.depth = depth;
@@ -35,17 +35,21 @@ class DataSlice {
     public String getEventTime() {
         return eventTime;
     }
-    public double getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
-    public double getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
-    public double getDepth() {
+    public Double getDepth() {
         return depth;
     }
-    public float getDataValue() {
-        return dataValue;
+    public Float[] getDataValues() {
+        Float[] retval = new Float[dataValue.length];
+        for(int i=0;i<dataValue.length;i++) {
+            retval[i] = dataValue[i];
+        }
+        return retval;
     }
 }
 

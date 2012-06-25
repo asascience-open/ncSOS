@@ -335,7 +335,6 @@ public class Grid extends baseCDMClass implements iStationData {
      * @return 
      */    
     public static Document getCapsResponse(GridDataset dataset, Document document, String GMLName, String format) {
-        System.out.println("grid");
         List<GridDatatype> gridData = dataset.getGrids();
         //dataset.getCalendarDateStart();
         //dataset.getCalendarDateEnd();
@@ -501,7 +500,6 @@ public class Grid extends baseCDMClass implements iStationData {
      * @return 
      */
     private Map<String, Integer[]> findDataIndexs(double[] lonDbl, double[] latDbl, Map<String, String> latLonRequest) {
-        System.out.println("Uh, do we get to findDataIndexs?");
         Map<String, Integer[]> latLonIndex = new HashMap<String, Integer[]>();
         String lonVal = latLonRequest.get(LON);
         String latVal = latLonRequest.get(LAT);
@@ -583,7 +581,6 @@ public class Grid extends baseCDMClass implements iStationData {
     }
     
     private double[] arrayFromValueRange(String[] bounds, double[] arrayToSearch, double[] arrayToExpand) {
-        System.out.println("In arrayFromValueRange");
         double minVal, maxVal;
         try {
             minVal = Double.parseDouble(bounds[0]);
