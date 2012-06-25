@@ -119,7 +119,7 @@ public class SOSParser {
                     } else if (request.equalsIgnoreCase("DescribeSensor")) {
                         writeErrorXMLCodeWithError(writer, "DescribeSensor is not currently supported");
                     } else if (request.equalsIgnoreCase("GetObservation")) {
-                        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, offering, observedProperties, eventTime,latLonRequest);
+                        SOSGetObservationRequestHandler handler = new SOSGetObservationRequestHandler(dataset, offering, observedProperties, eventTime, "oostethysswe",latLonRequest);
                         if (handler.getFeatureDataset() == null) {
                             // unknown/bad feature type
                             handler.setDocument(XMLDomUtils.getExceptionDom("Unknown or invalid feature type"));

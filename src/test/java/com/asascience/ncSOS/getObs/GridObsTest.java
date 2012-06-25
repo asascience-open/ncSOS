@@ -30,7 +30,7 @@ public class GridObsTest {
     private static final String sst_1 = "resources/datasets/satellite-sst/20120617.1508.d7.composite.nc";
     private static final String sst_1_reqs = "request=GetObservation&service=sos&version=1.0.0&lat=52.0&lon=-50.0&observedProperty=mcsst&offering=mcsst&eventtime=1990-01-01T00:00:00Z/2012-05-17T09:57:00.000-04:00";
     private static final String sst_2 = "resources/datasets/satellite-sst/20120617.1716.d7.composite.nc";
-    private static final String sst_2_reqs = "request=GetObservation&service=sos&version=1.0.0&lat=52.0,51.004,50.547&lon=-50.0,-52.156,-63.225&observedProperty=mcsst&offering=mcsst&eventtime=1990-01-01T00:00:00Z/2012-05-17T09:57:00.000-04:00";
+    private static final String sst_2_reqs = "request=GetObservation&service=sos&version=1.0.0&lat=52.0,51.004,50.547&lon=-50.0,-52.156,-52.156&observedProperty=mcsst&offering=mcsst&eventtime=1990-01-01T00:00:00Z/2012-05-17T09:57:00.000-04:00";
     public static String baseLocalDir = null;
     public static String outputDir = null;
 

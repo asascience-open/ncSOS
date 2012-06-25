@@ -249,10 +249,6 @@ public class Grid extends baseCDMClass implements iStationData {
                     depthHeights[i] = 0;
                 }
             }
-//            int depthHeight = checkAndGetDepthValue(latLonDepthHash);
-
-
-            
             
             double[] depthDbl = null;
             CoordinateAxis1D depthAxis = (CoordinateAxis1D) GridData.getDataVariable(DEPTH);
@@ -271,10 +267,12 @@ public class Grid extends baseCDMClass implements iStationData {
                 }
                 //modify for requested dates, add in for loop
                 addDateEntry(builder, dates);
-                
-                if (isInVariableNames(DEPTH) && depthDbl != null) {
+
+                if(depthDbl != null) {
                     builder.append(depthDbl[depthHeights[k]]);
                     builder.append(",");
+                } else {
+                    builder.append("0,");
                 }
                 
                 builder.append(latDbl[latLonDepthHash.get(LAT)[k]]);
@@ -293,7 +291,8 @@ public class Grid extends baseCDMClass implements iStationData {
                         }
                     }
                 }
-                builder.append(" ");
+                builder.deleteCharAt(builder.length()-1);
+                builder.append(";");
             }
             appendEndOfEntry(builder);
             return builder.toString();

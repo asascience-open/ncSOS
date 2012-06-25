@@ -23,7 +23,7 @@ public class OosTethysSwe implements SOSOutputFormatter {
     
     private ArrayList<DataSlice> infoList;
     private Document document;
-    private String[] observedProperties, variableNames;
+    private String[] variableNames;
     private FeatureDataset featureDataset;
     private iStationData CDMDataSet;
     private String stationName;
@@ -35,13 +35,12 @@ public class OosTethysSwe implements SOSOutputFormatter {
     private static final String STATION_GML_BASE = "urn:tds:station.sos:";
     
     public OosTethysSwe(Document xmlDoc,
-            String[] observedProperties,
             String[] variableNames,
             FeatureDataset featureDataset,
             iStationData cdmDataset) {
+        System.out.println("creating OosTethysSwe");
         infoList = new ArrayList<DataSlice>();
         document = xmlDoc;
-        this.observedProperties = observedProperties;
         this.featureDataset = featureDataset;
         this.CDMDataSet = cdmDataset;
         this.variableNames = variableNames;
@@ -69,11 +68,30 @@ public class OosTethysSwe implements SOSOutputFormatter {
     /* *****************
      * Interface methods
      ******************* */
-    public void AddToInfoList(double latitude, double longitude, double depth, float dataValue, String eventtime) {
+//    public void AddToInfoList(double latitude, double longitude, double depth, float dataValue, String eventtime) {
+//        if(infoList == null)
+//            infoList = new ArrayList<DataSlice>();
+//        
+//        infoList.add(new DataSlice(latitude, longitude, depth, eventtime, dataValue));
+//    }
+    
+    public void AddDataFormattedStringToInfoList(String dataFormattedString) {
+        // CSV that should be of the form: eventtime, depth, lat, lon, data value
+        String[] dataValues = dataFormattedString.split(",");
+        
         if(infoList == null)
             infoList = new ArrayList<DataSlice>();
         
-        infoList.add(new DataSlice(latitude, longitude, depth, eventtime, dataValue));
+        try {
+            infoList.add(new DataSlice(
+                    Double.parseDouble(dataValues[2]),
+                    Double.parseDouble(dataValues[3]),
+                    Double.parseDouble(dataValues[1]),
+                    dataValues[0],
+                    Float.parseFloat(dataValues[4])));
+        } catch (Exception e) {
+            System.out.println("Unable to parse string: " + dataFormattedString + " - " + e.getMessage());
+        }
     }
 
     public void EmtpyInfoList() {
@@ -129,7 +147,7 @@ public class OosTethysSwe implements SOSOutputFormatter {
         document = XMLDomUtils.addNodeAndAttribute(document, "swe:field", "swe:Time", fieldIndex++, "definition", "urn:ogc:phenomenon:time:iso8601", stationNumber);
 
         // add observed property
-        for (String observedProperty : observedProperties) {
+        for (String observedProperty : variableNames) {
 
             VariableSimpleIF variable = featureDataset.getDataVariable(observedProperty);
             document = XMLDomUtils.addNodeAndAttribute(document, "swe:DataRecord", "swe:field", "name", observedProperty, stationNumber);
@@ -145,6 +163,8 @@ public class OosTethysSwe implements SOSOutputFormatter {
     }
     
     private void parseObservations() {
+        System.out.println("parseObservations in OosTethysSwe");
+        
         if (CDMDataSet == null) {
             outputException("CDMDataSet is null");
             return;
@@ -258,13 +278,13 @@ public class OosTethysSwe implements SOSOutputFormatter {
     }
     
     private String createObservationString() {
-        StringBuilder retVal = null;
+        StringBuilder retVal = new StringBuilder();
         for(DataSlice ds : infoList) {
             // add the slice to the string
             retVal.append(ds.getEventTime()).append(",");
             retVal.append(ds.getLatitude()).append(",");
             retVal.append(ds.getLongitude()).append(",");
-            retVal.append(ds.getDepth()).append(",");
+//            retVal.append(ds.getDepth()).append(",");
             retVal.append(ds.getDataValue()).append(" \n");
         }
         return retVal.toString();
