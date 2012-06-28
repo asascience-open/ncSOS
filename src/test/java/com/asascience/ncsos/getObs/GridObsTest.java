@@ -6,6 +6,7 @@ package com.asascience.ncSOS.getObs;
 
 import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import com.asascience.ncsos.service.SOSParser;
+import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.*;
 import java.util.HashMap;
 import static org.junit.Assert.assertFalse;
@@ -13,7 +14,6 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Document;
-import com.asascience.ncsos.util.XMLDomUtils;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
@@ -26,10 +26,10 @@ public class GridObsTest {
 //    public static final String GridReq1 = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=mcsst&eventtime=1990-01-01T00:00:00Z/2012-05-17T09:57:00.000-04:00";
 //    public static final String GridReq2 = "request=GetObservation&version=1.0.0&service=sos&observedProperty=mcsst&offering=mcsst&eventtime=1990-01-01T00:00:00Z/2012-05-17T09:57:00.000-04:00&lat=29.88603303&lon=-89.0087125";
 //    public static final String GridReq3 = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=mcsst&eventtime=1990-01-01T00:00:00Z/2012-05-17T09:57:00.000-04:00&lat=29.0&lon=-89.0";
-    private static final String sst_1 = "resources/datasets/satellite-sst/20120617.1508.d7.composite.nc";
-    private static final String sst_1_reqs = "request=GetObservation&service=sos&version=1.0.0&lat=52.0&lon=-50.0&observedProperty=mcsst&offering=mcsst&eventtime=1990-01-01T00:00:00Z/2012-05-17T09:57:00.000-04:00&responseFormat=oostethysswe";
-    private static final String sst_2 = "resources/datasets/satellite-sst/20120617.1716.d7.composite.nc";
-    private static final String sst_2_reqs = "request=GetObservation&service=sos&version=1.0.0&lat=52.0,51.004,50.547&lon=-50.0,-52.156,-52.156&observedProperty=mcsst&offering=mcsst&eventtime=1990-01-01T00:00:00Z/2012-05-17T09:57:00.000-04:00&responseFormat=oostethysswe";
+    private static final String sst_1 = "resources/datasets/satellite-sst/SST_Global_2x2deg_20120626_0000.nc";
+    private static final String sst_1_reqs = "request=GetObservation&service=sos&version=1.0.0&lat=-52.0&lon=0.0&observedProperty=sst&offering=sst&eventtime=1990-01-01T00:00:00Z/2013-05-17T09:57:00.000-04:00&responseformat=testxmloutputter";
+    private static final String sst_2 = "resources/datasets/satellite-sst/SST_Global_2x2deg_20120627_0000.nc";
+    private static final String sst_2_reqs = "request=GetObservation&service=sos&version=1.0.0&lat=-54.0,-52.0,-50.0&lon=-120.0,0.0,74.0&observedProperty=sst&offering=sst&eventtime=1990-01-01T00:00:00Z/2013-05-17T09:57:00.000-04:00&responseFormat=oostethysswe";
     public static String baseLocalDir = null;
     public static String outputDir = null;
 

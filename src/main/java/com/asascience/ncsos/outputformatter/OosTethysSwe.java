@@ -21,6 +21,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import ucar.nc2.VariableSimpleIF;
+import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.ft.FeatureDataset;
 
 /**
@@ -42,11 +43,12 @@ public class OosTethysSwe implements SOSOutputFormatter {
     private static final String OM_OBSERVATION = "om:Observation";
     private static final String STATION_GML_BASE = "urn:tds:station.sos:";
     private static final String NAN = "NaN";
-    private static final String TEMPLATE = "templates/sosGetObservation.xml";
+    private static final String TEMPLATE = "templates/oostethysswe.xml";
     
     public OosTethysSwe(String[] variableNames,
             FeatureDataset featureDataset,
-            iStationData cdmDataset) {
+            iStationData cdmDataset,
+            NetcdfDataset netcdfDataset) {
         infoList = new ArrayList<DataSlice>();
         this.featureDataset = featureDataset;
         this.CDMDataSet = cdmDataset;
@@ -55,9 +57,17 @@ public class OosTethysSwe implements SOSOutputFormatter {
         title = history = institution = source = description = location = "none";
         featureOfInterest = "";
         document = parseTemplateXML();
+        
+        setMetaData(netcdfDataset.findAttValueIgnoreCase(null, "title", "empty title"),
+                netcdfDataset.findAttValueIgnoreCase(null, "history", "empty history"),
+                netcdfDataset.findAttValueIgnoreCase(null, "institution", "empty institution"),
+                netcdfDataset.findAttValueIgnoreCase(null, "source", "empty source"),
+                netcdfDataset.findAttValueIgnoreCase(null, "description", "empty description"),
+                netcdfDataset.findAttValueIgnoreCase(null, "location", "empty location"),
+                netcdfDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", "empty featureOfInterest"));
     }
     
-    public void setMetaData(String title,
+    private void setMetaData(String title,
             String history,
             String institution,
             String source,
@@ -265,7 +275,7 @@ public class OosTethysSwe implements SOSOutputFormatter {
             document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:description", description, stNum);
             //}
             //add name
-            document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:name", description, stNum);
+            document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:name", title, stNum);
             //add bounded by
             document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:boundedBy", stNum);
             //add envelope and attribute
