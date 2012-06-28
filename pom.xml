@@ -3,11 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.asascience</groupId>
-  <artifactId>ncSOS</artifactId>
-  <version>1.0</version>
+  <artifactId>ncsos</artifactId>
+  <version>0.1a</version>
   <packaging>jar</packaging>
 
-  <name>ncSOS</name>
+  <name>ncsos</name>
   <url>http://maven.apache.org</url>
 
   <properties>
@@ -89,11 +89,6 @@
 	  <groupId>edu.ucar</groupId>
 	  <artifactId>visadCdm</artifactId>
 	  <version>4.3.10</version>
-	</dependency>
-	<dependency>
-	  <groupId>optional.resources</groupId>
-	  <artifactId>resourcesOptional</artifactId>
-	  <version>1.0</version>
 	</dependency>
 	<dependency>
 	  <groupId>edu.ucar</groupId>
