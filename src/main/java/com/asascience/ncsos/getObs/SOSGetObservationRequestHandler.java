@@ -97,14 +97,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         // set up our formatter
         if(outputFormat.equalsIgnoreCase("oostethysswe")) {
             contentType = "text/xml";
-            output = new OosTethysSwe(this.variableNames, getFeatureDataset(), CDMDataSet);
-            ((OosTethysSwe)output).setMetaData(netCDFDataset.findAttValueIgnoreCase(null, "title", "Empty Title"),
-                    netCDFDataset.findAttValueIgnoreCase(null, "history", "Empty History"),
-                    netCDFDataset.findAttValueIgnoreCase(null, "institution", "Empty Insitution"),
-                    netCDFDataset.findAttValueIgnoreCase(null, "source", "Empty Source"),
-                    netCDFDataset.findAttValueIgnoreCase(null, "description", "Empty Description"),
-                    netCDFDataset.getLocation(),
-                    netCDFDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", null));
+            output = new OosTethysSwe(this.variableNames, getFeatureDataset(), CDMDataSet, netCDFDataset);
         }
     }
 

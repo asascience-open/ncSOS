@@ -21,6 +21,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import ucar.nc2.VariableSimpleIF;
+import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.ft.FeatureDataset;
 
 /**
@@ -46,7 +47,8 @@ public class OosTethysSwe implements SOSOutputFormatter {
     
     public OosTethysSwe(String[] variableNames,
             FeatureDataset featureDataset,
-            iStationData cdmDataset) {
+            iStationData cdmDataset,
+            NetcdfDataset netCDFDataset) {
         infoList = new ArrayList<DataSlice>();
         this.featureDataset = featureDataset;
         this.CDMDataSet = cdmDataset;
@@ -55,9 +57,18 @@ public class OosTethysSwe implements SOSOutputFormatter {
         title = history = institution = source = description = location = "none";
         featureOfInterest = "";
         document = parseTemplateXML();
+        
+        setMetaData(netCDFDataset.findAttValueIgnoreCase(null, "title", "Empty Title"),
+                    netCDFDataset.findAttValueIgnoreCase(null, "history", "Empty History"),
+                    netCDFDataset.findAttValueIgnoreCase(null, "institution", "Empty Insitution"),
+                    netCDFDataset.findAttValueIgnoreCase(null, "source", "Empty Source"),
+                    netCDFDataset.findAttValueIgnoreCase(null, "description", "Empty Description"),
+                    netCDFDataset.getLocation(),
+                    netCDFDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", null));
+        
     }
     
-    public void setMetaData(String title,
+    private void setMetaData(String title,
             String history,
             String institution,
             String source,
