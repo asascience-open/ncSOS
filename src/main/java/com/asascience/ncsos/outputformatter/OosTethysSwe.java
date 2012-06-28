@@ -43,7 +43,7 @@ public class OosTethysSwe implements SOSOutputFormatter {
     private static final String OM_OBSERVATION = "om:Observation";
     private static final String STATION_GML_BASE = "urn:tds:station.sos:";
     private static final String NAN = "NaN";
-    private static final String TEMPLATE = "templates/sosGetObservation.xml";
+    private static final String TEMPLATE = "templates/oostethysswe.xml";
     
     public OosTethysSwe(String[] variableNames,
             FeatureDataset featureDataset,
@@ -65,7 +65,6 @@ public class OosTethysSwe implements SOSOutputFormatter {
                     netCDFDataset.findAttValueIgnoreCase(null, "description", "Empty Description"),
                     netCDFDataset.getLocation(),
                     netCDFDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", null));
-        
     }
     
     private void setMetaData(String title,
@@ -276,7 +275,7 @@ public class OosTethysSwe implements SOSOutputFormatter {
             document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:description", description, stNum);
             //}
             //add name
-            document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:name", description, stNum);
+            document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:name", title, stNum);
             //add bounded by
             document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:boundedBy", stNum);
             //add envelope and attribute

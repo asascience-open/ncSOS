@@ -1,12 +1,8 @@
 package com.asascience.ncsos.getobs;
 
-import com.asascience.ncsos.cdmclasses.iStationData;
-import com.asascience.ncsos.cdmclasses.TimeSeries;
-import com.asascience.ncsos.cdmclasses.Grid;
-import com.asascience.ncsos.cdmclasses.Trajectory;
-import com.asascience.ncsos.cdmclasses.TimeSeriesProfile;
-import com.asascience.ncsos.cdmclasses.Profile;
+import com.asascience.ncsos.cdmclasses.*;
 import com.asascience.ncsos.outputformatter.OosTethysSwe;
+import com.asascience.ncsos.outputformatter.TestXMLOutputter;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -96,6 +92,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         
         // set up our formatter
         if(outputFormat.equalsIgnoreCase("oostethysswe")) {
+            System.out.println("using oostethysswe as output");
             contentType = "text/xml";
             output = new OosTethysSwe(this.variableNames, getFeatureDataset(), CDMDataSet, netCDFDataset);
         }
