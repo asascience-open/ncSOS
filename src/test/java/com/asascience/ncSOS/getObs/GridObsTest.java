@@ -10,6 +10,7 @@ import java.io.*;
 import java.util.HashMap;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import thredds.server.sos.util.XMLDomUtils;
@@ -33,17 +34,15 @@ public class GridObsTest {
     public static String outputDir = null;
 
     private void fileWriter(String base, String fileName, Writer write) throws IOException {
-        Writer output = null;
-        File file = new File(base);
-        file.mkdirs();
-        file = new File(base + fileName);
-        output = new BufferedWriter(new FileWriter(file));
+        File file = new File(base + fileName);
+        Writer output = new BufferedWriter(new FileWriter(file));
         output.write(write.toString());
         output.close();
         System.out.println("Your file has been written");
     }
     
-    public void SetupEnviron() throws FileNotFoundException {
+    @BeforeClass
+    public static void SetupEnviron() throws FileNotFoundException {
         // not really a test, just used to set up the various string values
         if (outputDir != null && baseLocalDir != null) {
             // exit early if the environ is already set
@@ -67,12 +66,14 @@ public class GridObsTest {
                 }
             }
         }
+        
+        File file = new File(outputDir);
+        file.mkdirs();
     }
     
     @Test
     public void testGetObsGridSSTSingleLatLon() throws IOException {
         System.out.println("------SST1------");
-        SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + sst_1);
         Writer writer = new CharArrayWriter();
         SOSParser parser = new SOSParser();
@@ -90,7 +91,6 @@ public class GridObsTest {
     @Test
     public void testGetObsGridSSTMultipleLatLon() throws IOException {
         System.out.println("------SST2------");
-        SetupEnviron();
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + sst_2);
         Writer writer = new CharArrayWriter();
         SOSParser parser = new SOSParser();

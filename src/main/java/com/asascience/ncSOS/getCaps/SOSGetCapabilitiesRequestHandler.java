@@ -231,28 +231,34 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         }
 
         //***************************************
-            // use CDM to get, getCaps;
-        if (getDatasetFeatureType() == FeatureType.TRAJECTORY) {
-            try {
-                setDocument(Trajectory.getCapsResponse(getFeatureTypeDataSet(), getDocument(), getFeatureOfInterestBase(), getGMLNameBase(), format, observedPropertyList));
-            } catch (Exception e) {
-            }
-            
-        } else if (getDatasetFeatureType() == FeatureType.STATION) {            
-            setDocument(TimeSeries.getCapsResponse((StationTimeSeriesFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),format,observedPropertyList));
-            
-        } else if (getDatasetFeatureType() == FeatureType.STATION_PROFILE) {           
-            setDocument(TimeSeriesProfile.getCapsResponse((StationProfileFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),format,observedPropertyList));
-            
-        } else if (getDatasetFeatureType() == FeatureType.PROFILE) {            
-            setDocument(Profile.getCapsResponse((ProfileFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),format,observedPropertyList));
-            
-            
-        } else if (getDatasetFeatureType() == FeatureType.GRID) {            
-            setDocument(Grid.getCapsResponse(getGridDataset(), getDocument(), getGMLNameBase(), format));
+        
+        // use CDM to get, getCaps;
+        switch (getDatasetFeatureType()) {
+            case TRAJECTORY:
+                try {
+                    setDocument(Trajectory.getCapsResponse(getFeatureTypeDataSet(), getDocument(), getFeatureOfInterestBase(), getGMLNameBase(), format, observedPropertyList));
+                } catch (Exception e) {
+                }
+                break;
+            case STATION:
+                setDocument(TimeSeries.getCapsResponse((StationTimeSeriesFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),format,observedPropertyList));
+                break;
+            case STATION_PROFILE:
+                setDocument(TimeSeriesProfile.getCapsResponse((StationProfileFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),format,observedPropertyList));
+                break;
+            case PROFILE:
+                setDocument(Profile.getCapsResponse((ProfileFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),format,observedPropertyList));
+                break;
+            case GRID:
+                setDocument(Grid.getCapsResponse(getGridDataset(), getDocument(), getGMLNameBase(), format));
+                break;
+            default:
+                if (getDatasetFeatureType() != null) {
+                    output.setupExceptionOutput("Unsupported feature type for request of GetCapabilities: " + getDatasetFeatureType().name());
+                } else {
+                    output.setupExceptionOutput("Null feature type for request of GetCapabilities");
+                }
+                break;
         }
-
-
-
     }
 }

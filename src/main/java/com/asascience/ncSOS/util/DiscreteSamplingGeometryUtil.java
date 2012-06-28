@@ -4,21 +4,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import ucar.nc2.Attribute;
-import ucar.nc2.Dimension;
-import ucar.nc2.Structure;
-import ucar.nc2.Variable;
-import ucar.nc2.VariableSimpleIF;
+import ucar.nc2.*;
 import ucar.nc2.constants.CF;
 import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.dt.GridDataset;
-import ucar.nc2.dt.grid.GridAsPointDataset;
 import ucar.nc2.ft.*;
 import ucar.nc2.ft.grid.Grid;
 import ucar.nc2.ft.point.StationPointFeature;
-import ucar.nc2.ft.point.standard.StandardProfileCollectionImpl;
 
 /**
  *

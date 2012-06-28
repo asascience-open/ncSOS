@@ -9,6 +9,7 @@ import com.asascience.ncSOS.service.SOSParser;
 import java.io.*;
 import java.util.HashMap;
 import static org.junit.Assert.*;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import thredds.server.sos.util.XMLDomUtils;
@@ -73,11 +74,8 @@ public class SOSgetObsTest {
     }
 
     private void fileWriter(String base, String fileName, Writer write) throws IOException {
-        Writer output = null;
-        File file = new File(base);
-        file.mkdirs();
-        file = new File(base + fileName);
-        output = new BufferedWriter(new FileWriter(file));
+        File file = new File(base + fileName);
+        Writer output = new BufferedWriter(new FileWriter(file));
         output.write(write.toString());
         output.close();
         System.out.println("Your file has been written");
@@ -89,7 +87,8 @@ public class SOSgetObsTest {
         output.writeOutput(write);
     }
     
-    public void SetupEnviron() throws FileNotFoundException {
+    @BeforeClass
+    public static void SetupEnviron() throws FileNotFoundException {
         // not really a test, just used to set up the various string values
         if (base != null) {
             // exit early if the environ is already set
@@ -112,6 +111,9 @@ public class SOSgetObsTest {
                 }
             }
         }
+        
+        File file = new File(base);
+        file.mkdirs();
     }
     
     private void spaceBetweenTests() {
@@ -125,7 +127,7 @@ public class SOSgetObsTest {
     @Test
     public void testenhanceImeds1() throws IOException {
         System.out.println("----IMEDS1------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds1);
 
         SOSParser md = new SOSParser();
@@ -150,7 +152,7 @@ public class SOSgetObsTest {
     @Test
     public void testenhanceImeds4() throws IOException {
         System.out.println("----IMEDS4------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds4);
 
         SOSParser md = new SOSParser();
@@ -174,7 +176,7 @@ public class SOSgetObsTest {
     @Test
     public void testenhanceImeds5() throws IOException {
         System.out.println("----IMEDS5------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds5);
 
         SOSParser md = new SOSParser();
@@ -198,7 +200,7 @@ public class SOSgetObsTest {
     @Test
     public void testenhanceImeds6() throws IOException {
         System.out.println("----IMEDS6------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds6);
 
         SOSParser md = new SOSParser();
@@ -222,7 +224,7 @@ public class SOSgetObsTest {
     @Test
     public void testenhanceImeds7() throws IOException {
         System.out.println("----IMEDS7------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds7);
 
         SOSParser md = new SOSParser();
@@ -247,7 +249,7 @@ public class SOSgetObsTest {
     @Test
     public void testenhanceImeds8() throws IOException {
         System.out.println("----IMEDS8------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds8);
 
         SOSParser md = new SOSParser();
@@ -272,7 +274,7 @@ public class SOSgetObsTest {
     @Test
     public void testenhanceImeds9() throws IOException {
         System.out.println("----IMEDS9------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds9);
 
         SOSParser md = new SOSParser();
@@ -297,7 +299,7 @@ public class SOSgetObsTest {
     @Test
     public void testenhanceImeds10() throws IOException {
         System.out.println("----IMEDS10------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds10);
 
         SOSParser md = new SOSParser();
@@ -321,7 +323,7 @@ public class SOSgetObsTest {
     @Test
     public void testenhanceImeds11() throws IOException {
         System.out.println("----IMEDS11------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds11);
 
         SOSParser md = new SOSParser();
@@ -345,7 +347,7 @@ public class SOSgetObsTest {
     @Test
     public void testenhanceImeds12() throws IOException {
         System.out.println("----IMEDS12------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds12);
 
         SOSParser md = new SOSParser();
@@ -372,7 +374,7 @@ public class SOSgetObsTest {
     public void testenhanceImeds13() throws IOException {
         
         System.out.println("----IMEDS13------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
 
         SOSParser md = new SOSParser();
@@ -395,7 +397,7 @@ public class SOSgetObsTest {
     public void testenhanceImeds14() throws IOException {
 
         System.out.println("----IMEDS14------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds14);
 
         SOSParser md = new SOSParser();
@@ -419,7 +421,7 @@ public class SOSgetObsTest {
     public void testenhanceImeds15() throws IOException {
 
         System.out.println("----IMEDS15------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds15);
 
         SOSParser md = new SOSParser();
@@ -452,7 +454,7 @@ public class SOSgetObsTest {
     public void testMultiTimeCreateDataStruct3Stations() throws IOException {
 
         System.out.println("----tsData------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
 
         SOSParser md = new SOSParser();
@@ -481,7 +483,7 @@ public class SOSgetObsTest {
     public void testMultiTimeCreateDataStruct() throws IOException {
 
         System.out.println("----tsData------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
 
         SOSParser md = new SOSParser();
@@ -509,7 +511,7 @@ public class SOSgetObsTest {
     @Test
     public void testTimeSeriesIncompleteDataMultiTimeInvalid() throws IOException {
         System.out.println("----tsIncompleteMultiDimensionalMultipleStations------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
 
         SOSParser md = new SOSParser();
@@ -533,7 +535,7 @@ public class SOSgetObsTest {
     @Test
     public void testTimeSeriesIncompleteDataMultiTime() throws IOException {
         System.out.println("----tsIncompleteMultiDimensionalMultipleStations------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
 
         SOSParser md = new SOSParser();
@@ -557,7 +559,7 @@ public class SOSgetObsTest {
     @Test
     public void testTimeSeriesIncomplete() throws IOException {
         System.out.println("----tsIncompleteMultiDimensionalMultipleStations------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
 
         SOSParser md = new SOSParser();
@@ -577,7 +579,7 @@ public class SOSgetObsTest {
     @Test
     public void testTimeSeriesIncompleteTime() throws IOException {
         System.out.println("----tsIncompleteMultiDimensionalMultipleStations------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
 
         SOSParser md = new SOSParser();
@@ -597,7 +599,7 @@ public class SOSgetObsTest {
     @Test
     public void testTimeSeriesOrthogonalMultidimenstionalMultipleStations() throws IOException {
         System.out.println("----tsOrthogonalMultidimenstionalMultipleStations------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsOrthogonalMultidimenstionalMultipleStations);
 
         SOSParser md = new SOSParser();
@@ -623,7 +625,7 @@ public class SOSgetObsTest {
     @Test
     public void testMultiTimeSeriesProfileRequest() throws IOException {
         System.out.println("----RaggedMultiConventions------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(RaggedMultiConventions);
 
         SOSParser md = new SOSParser();
@@ -652,7 +654,7 @@ public class SOSgetObsTest {
     @Test
     public void testMultiTimeSeriesProfileRequestInvalidDates() throws IOException {
         System.out.println("----RaggedMultiConventions------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(RaggedMultiConventions);
 
         SOSParser md = new SOSParser();
@@ -680,7 +682,7 @@ public class SOSgetObsTest {
     @Test
     public void testenhanceMultiRaggedDataset() throws IOException {
         System.out.println("----RaggedMultiConventions------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(RaggedMultiConventions);
 
         SOSParser md = new SOSParser();
@@ -705,7 +707,7 @@ public class SOSgetObsTest {
     @Test
     public void testMultiDimensionalSingleStations() throws IOException {
         System.out.println("----MultiDimensionalSingleStations------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalSingleStations);
 
         SOSParser md = new SOSParser();
@@ -727,7 +729,7 @@ public class SOSgetObsTest {
     @Test
     public void testMultiDimensionalSingleStationsTimeTestT2() throws IOException {
         System.out.println("----MultiDimensionalSingleStations------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(RaggedMultiConventions);
 
         SOSParser md = new SOSParser();
@@ -754,7 +756,7 @@ public class SOSgetObsTest {
     @Test
     public void testMultiDimensionalSingleStationsTimeTestT1() throws IOException {
         System.out.println("----MultiDimensionalSingleStations------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(RaggedMultiConventions);
 
         SOSParser md = new SOSParser();
@@ -781,7 +783,7 @@ public class SOSgetObsTest {
     @Test
     public void testMultiDimensionalMultiStations() throws IOException {
         System.out.println("----MultiDimensionalMultiStations------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalMultiStations);
 
         SOSParser md = new SOSParser();
@@ -802,7 +804,7 @@ public class SOSgetObsTest {
     @Test
     public void testMultiDimensionalMultiStationsStation2() throws IOException {
         System.out.println("----MultiDimensionalMultiStations------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalMultiStations);
 
         SOSParser md = new SOSParser();
@@ -822,7 +824,7 @@ public class SOSgetObsTest {
     @Test
     public void testMultiDimensionalMultiStation() throws IOException {
         System.out.println("----MultiDimensionalMultiStations------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalMultiStations);
 
         SOSParser md = new SOSParser();
@@ -864,7 +866,7 @@ public class SOSgetObsTest {
     public void testContiguousRaggedMultipleProfilesMultiTime3() throws IOException {
         spaceBetweenTests();
         System.out.println("----ContiguousRaggedMultipleProfiles------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(ContiguousRaggedMultipleProfiles);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
@@ -887,7 +889,7 @@ public class SOSgetObsTest {
     public void testContiguousRaggedMultipleProfilesMultiTime() throws IOException {
         spaceBetweenTests();
         System.out.println("----ContiguousRaggedMultipleProfiles------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(ContiguousRaggedMultipleProfiles);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
@@ -914,7 +916,7 @@ public class SOSgetObsTest {
     public void testContiguousRaggedMultipleProfilesMultiTime2() throws IOException {
         spaceBetweenTests();
         System.out.println("----ContiguousRaggedMultipleProfiles------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(ContiguousRaggedMultipleProfiles);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
@@ -938,7 +940,7 @@ public class SOSgetObsTest {
     public void testContiguousRaggedMultipleProfiles() throws IOException {
         spaceBetweenTests();
         System.out.println("----ContiguousRaggedMultipleProfiles------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(ContiguousRaggedMultipleProfiles);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
@@ -958,7 +960,7 @@ public class SOSgetObsTest {
     public void testIncompleteMultiDimensionalMultipleProfiles() throws IOException {
         spaceBetweenTests();
         System.out.println("----ContiguousRaggedMultipleProfiles------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(IncompleteMultiDimensionalMultipleProfiles);
 
         SOSParser md = new SOSParser();
@@ -979,7 +981,7 @@ public class SOSgetObsTest {
     public void testIndexedRaggedMultipleProfiles() throws IOException {
         spaceBetweenTests();
         System.out.println("----ContiguousRaggedMultipleProfiles------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(IndexedRaggedMultipleProfiles);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
@@ -998,7 +1000,7 @@ public class SOSgetObsTest {
     public void testOrthogonalMultiDimensionalMultipleProfiles() throws IOException {
         spaceBetweenTests();
         System.out.println("----ContiguousRaggedMultipleProfiles------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(OrthogonalMultiDimensionalMultipleProfiles);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
@@ -1018,7 +1020,7 @@ public class SOSgetObsTest {
     public void testOrthogonalSingleDimensionalSingleProfile() throws IOException {
         spaceBetweenTests();
         System.out.println("----OrthogonalSingleDimensionalSingleProfile------");
-        SetupEnviron();
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(OrthogonalSingleDimensionalSingleProfile);
         SOSParser md = new SOSParser();
         Writer write = new CharArrayWriter();
