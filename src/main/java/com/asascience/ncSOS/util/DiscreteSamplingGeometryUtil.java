@@ -14,17 +14,8 @@ import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.constants.CF;
 import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.dt.GridDataset;
-import ucar.nc2.ft.FeatureCollection;
-import ucar.nc2.ft.FeatureDataset;
-import ucar.nc2.ft.FeatureDatasetPoint;
-import ucar.nc2.ft.ProfileFeature;
-import ucar.nc2.ft.ProfileFeatureCollection;
-import ucar.nc2.ft.StationProfileFeature;
-import ucar.nc2.ft.StationProfileFeatureCollection;
-import ucar.nc2.ft.StationTimeSeriesFeature;
-import ucar.nc2.ft.StationTimeSeriesFeatureCollection;
-import ucar.nc2.ft.TrajectoryFeature;
-import ucar.nc2.ft.TrajectoryFeatureCollection;
+import ucar.nc2.dt.grid.GridAsPointDataset;
+import ucar.nc2.ft.*;
 import ucar.nc2.ft.grid.Grid;
 import ucar.nc2.ft.point.StationPointFeature;
 import ucar.nc2.ft.point.standard.StandardProfileCollectionImpl;
@@ -255,11 +246,11 @@ public class DiscreteSamplingGeometryUtil {
                     } else if (featureCollection instanceof ProfileFeatureCollection) {
                         return (ProfileFeatureCollection) featureCollection;
                     } else if (featureCollection instanceof TrajectoryFeature) {
-                        System.out.println("Trajectory");
                         return (TrajectoryFeature) featureCollection;
                     } else if (featureCollection instanceof TrajectoryFeatureCollection) {
-                        System.out.println("Trajectory Collection");
                         return (TrajectoryFeatureCollection) featureCollection;
+                    } else if (featureCollection instanceof PointFeatureCollection) {
+                        return (PointFeatureCollection) featureCollection;
                     }
                     //********** 
 

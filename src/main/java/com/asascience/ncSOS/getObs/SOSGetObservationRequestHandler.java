@@ -1,7 +1,6 @@
 package thredds.server.sos.getObs;
 
 import com.asascience.ncSOS.outputFormatters.OosTethysSwe;
-import com.asascience.ncSOS.outputFormatters.SOSOutputFormatter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +20,6 @@ import ucar.nc2.dataset.NetcdfDataset;
  */
 public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
 
-    public final static String TEMPLATE = "templates/sosGetObservation.xml";
-//    private static final String OM_OBSERVATION = "om:Observation";
 //    private String stationName;
     public static final String DEPTH = "depth";
     public static final String LAT = "lat";
@@ -30,9 +27,9 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     private String[] variableNames;
     private boolean isMultiTime;
     private iStationData CDMDataSet;
-    private SOSOutputFormatter output;
     
     private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(SOSGetObservationRequestHandler.class);
+    private String contentType;
 
     /**
      * SOS get obs request handler
@@ -88,20 +85,21 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             
             //only set the data is it is valid
             if (CDMDataSet!=null){
-            CDMDataSet.setData(getFeatureTypeDataSet());
+                CDMDataSet.setData(getFeatureTypeDataSet());
             }
         }
         
         // set up our formatter
         if(outputFormat.equalsIgnoreCase("oostethysswe")) {
-            output = new OosTethysSwe(document, this.variableNames, getFeatureDataset(), CDMDataSet);
+            contentType = "text/xml";
+            output = new OosTethysSwe(this.variableNames, getFeatureDataset(), CDMDataSet);
             ((OosTethysSwe)output).setMetaData(netCDFDataset.findAttValueIgnoreCase(null, "title", "Empty Title"),
                     netCDFDataset.findAttValueIgnoreCase(null, "history", "Empty History"),
                     netCDFDataset.findAttValueIgnoreCase(null, "institution", "Empty Insitution"),
                     netCDFDataset.findAttValueIgnoreCase(null, "source", "Empty Source"),
                     netCDFDataset.findAttValueIgnoreCase(null, "description", "Empty Description"),
                     netCDFDataset.getLocation(),
-                    netCDFDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", "empty FeatureOfInterestBase"));
+                    netCDFDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", null));
         }
     }
 
@@ -140,17 +138,12 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         return variableNames1;
     }
 
-    @Override
-    public String getTemplateLocation() {
-        return TEMPLATE;
-    }
-
     public boolean getIfMultiTime() {
         return isMultiTime;
     }
     
     public void setException(String exceptionMessage) {
-        output.outputException(exceptionMessage);
+        output.setupExceptionOutput(exceptionMessage);
     }
 
     /*
@@ -159,17 +152,19 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     public void parseObservations() {
         for(int s = 0;s<CDMDataSet.getNumberOfStations();s++) {
             String dataString = CDMDataSet.getDataResponse(s);
-            System.out.println("Got string: " + dataString);
+//            System.out.println("Got string: " + dataString);
             for (String dataPoint : dataString.split(";")) {
                 if(!dataPoint.equals(""))
                     output.AddDataFormattedStringToInfoList(dataPoint);
             }
-        }
-                
-        output.writeObservationsFromInfoList();
+        }                
     }
     
     public iStationData getCDMDataset() {
         return CDMDataSet;
+    }
+
+    public String getContentType() {
+        return contentType;
     }
 }

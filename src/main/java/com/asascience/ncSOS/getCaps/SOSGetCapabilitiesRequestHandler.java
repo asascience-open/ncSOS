@@ -1,38 +1,23 @@
 package thredds.server.sos.getCaps;
 
+import com.asascience.ncSOS.outputFormatters.GetCapsOutputter;
 import java.io.IOException;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.DOMException;
-import thredds.server.sos.getObs.ObservationOffering;
-import thredds.server.sos.getObs.SOSObservationOffering;
-import thredds.server.sos.util.DiscreteSamplingGeometryUtil;
-import ucar.nc2.VariableSimpleIF;
-import ucar.nc2.dataset.NetcdfDataset;
-import ucar.nc2.ft.ProfileFeature;
-import ucar.nc2.ft.ProfileFeatureCollection;
-import ucar.nc2.ft.StationProfileFeature;
-import ucar.nc2.ft.StationProfileFeatureCollection;
-import ucar.nc2.ft.StationTimeSeriesFeature;
-import ucar.nc2.ft.StationTimeSeriesFeatureCollection;
-import ucar.unidata.geoloc.Station;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import org.joda.time.Chronology;
 import org.joda.time.chrono.ISOChronology;
-import thredds.server.sos.CDMClasses.Grid;
-import thredds.server.sos.CDMClasses.Profile;
-import thredds.server.sos.CDMClasses.TimeSeries;
-import thredds.server.sos.CDMClasses.TimeSeriesProfile;
-import thredds.server.sos.CDMClasses.Trajectory;
+import org.w3c.dom.*;
+import thredds.server.sos.CDMClasses.*;
+import thredds.server.sos.getObs.ObservationOffering;
 import thredds.server.sos.service.SOSBaseRequestHandler;
-import thredds.server.sos.service.StationData;
+import thredds.server.sos.util.DiscreteSamplingGeometryUtil;
 import thredds.server.sos.util.XMLDomUtils;
+import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.constants.FeatureType;
-import ucar.nc2.ft.PointFeature;
-import ucar.nc2.ft.PointFeatureIterator;
+import ucar.nc2.dataset.NetcdfDataset;
+import ucar.nc2.ft.ProfileFeatureCollection;
+import ucar.nc2.ft.StationProfileFeatureCollection;
+import ucar.nc2.ft.StationTimeSeriesFeatureCollection;
 import ucar.nc2.units.DateFormatter;
 
 /**
@@ -41,7 +26,6 @@ import ucar.nc2.units.DateFormatter;
  */
 public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
 
-    private final static String TEMPLATE = "templates/sosGetCapabilities.xml";
     private final String threddsURI;
     private final String format = "text/xml; subtype=\"om/1.0.0\"";
     Chronology chrono = ISOChronology.getInstance();
@@ -50,18 +34,21 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
     public SOSGetCapabilitiesRequestHandler(NetcdfDataset netCDFDataset, String threddsURI) throws IOException {
         super(netCDFDataset);
         this.threddsURI = threddsURI;
+        output = new GetCapsOutputter();
     }
-
-    @Override
-    public String getTemplateLocation() {
-        return TEMPLATE;
+    
+    private Document getDocument() {
+        return ((GetCapsOutputter)output).getDocument();
+    }
+    private void setDocument(Document setter) {
+        ((GetCapsOutputter)output).setDocument(setter);
     }
 
     /**
      * sets the service identification information 
      */
     public void parseServiceIdentification() {
-        NodeList nodeLst = document.getElementsByTagName("ows:ServiceIdentification");
+        NodeList nodeLst = getDocument().getElementsByTagName("ows:ServiceIdentification");
 
         for (int s = 0; s < nodeLst.getLength(); s++) {
 
@@ -102,7 +89,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         if ((offering.getObservationTimeEnd().isEmpty()) || (offering.getObservationTimeEnd().length() < 2) || (offering.getObservationTimeEnd().contentEquals(""))) {
             obsOfferingTimeEndEl.setAttribute("indeterminatePosition", "unknown");
         } else {
-            obsOfferingTimeEndEl.appendChild(document.createTextNode(offering.getObservationTimeEnd()));
+            obsOfferingTimeEndEl.appendChild(getDocument().createTextNode(offering.getObservationTimeEnd()));
         }
     }
 
@@ -146,7 +133,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
      */
     public void parseServiceDescription() {
         //get service provider node list
-        NodeList serviceProviderNodeList = document.getElementsByTagName("ows:ServiceProvider");
+        NodeList serviceProviderNodeList = getDocument().getElementsByTagName("ows:ServiceProvider");
         //get the first node in the the list matching the above name
         Node fstNode = serviceProviderNodeList.item(0);
         //create an element from the node
@@ -157,7 +144,6 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         setServiceContractName(fstElmnt, "ows:IndividualName");
         setServiceContractPositionName(fstElmnt, "ows:PositionName");
         setServiceContractPhoneNumber(fstElmnt, "ows:Voice");
-
     }
 
     private void setServiceContractName(Element fstElmnt, String xmlLocation) {
@@ -177,7 +163,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
 
     public void parseOperationsMetaData() {
         //get operations meta data
-        NodeList operationsNodeList = document.getElementsByTagName("ows:OperationsMetadata");
+        NodeList operationsNodeList = getDocument().getElementsByTagName("ows:OperationsMetadata");
         //set get capabilities meta data
         for (int s = 0; s < operationsNodeList.getLength(); s++) {
 
@@ -204,7 +190,6 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                     }
                 }
             }
-
         }
     }
 
@@ -230,7 +215,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         
         // check for null feature type and return error if it is
         if(getDatasetFeatureType() == null) {
-            this.document = XMLDomUtils.getExceptionDom("Invalid or unknown feature type");
+            setDocument(XMLDomUtils.getExceptionDom("Invalid or unknown feature type"));
             return;
         }
 
@@ -249,22 +234,22 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
             // use CDM to get, getCaps;
         if (getDatasetFeatureType() == FeatureType.TRAJECTORY) {
             try {
-                this.document = Trajectory.getCapsResponse(getFeatureTypeDataSet(), getDocument(), getFeatureOfInterestBase(), getGMLNameBase(), format, observedPropertyList);
+                setDocument(Trajectory.getCapsResponse(getFeatureTypeDataSet(), getDocument(), getFeatureOfInterestBase(), getGMLNameBase(), format, observedPropertyList));
             } catch (Exception e) {
             }
             
         } else if (getDatasetFeatureType() == FeatureType.STATION) {            
-            this.document = TimeSeries.getCapsResponse((StationTimeSeriesFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),format,observedPropertyList);
+            setDocument(TimeSeries.getCapsResponse((StationTimeSeriesFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),format,observedPropertyList));
             
         } else if (getDatasetFeatureType() == FeatureType.STATION_PROFILE) {           
-            this.document = TimeSeriesProfile.getCapsResponse((StationProfileFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),format,observedPropertyList);
+            setDocument(TimeSeriesProfile.getCapsResponse((StationProfileFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),format,observedPropertyList));
             
         } else if (getDatasetFeatureType() == FeatureType.PROFILE) {            
-            this.document = Profile.getCapsResponse((ProfileFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),format,observedPropertyList);
+            setDocument(Profile.getCapsResponse((ProfileFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),format,observedPropertyList));
             
             
         } else if (getDatasetFeatureType() == FeatureType.GRID) {            
-            this.document = Grid.getCapsResponse(getGridDataset(), getDocument(), getGMLNameBase(), format);
+            setDocument(Grid.getCapsResponse(getGridDataset(), getDocument(), getGMLNameBase(), format));
         }
 
 

@@ -155,14 +155,10 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
         while (it.hasNext()) {
             PointFeature pointFeature = it.next();
             valueList.clear();
-            valueList.add(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
-            // add filler for depth, lat, lon
-            valueList.add("-");
-            valueList.add("-");
-            valueList.add("-");
+            valueList.add("time=" + dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
 
             for (String variableName : variableNames) {
-                valueList.add(pointFeature.getData().getScalarObject(variableName).toString());
+                valueList.add(variableName + "=" + pointFeature.getData().getScalarObject(variableName).toString());
             }
 
             for (int i = 0; i < valueList.size(); i++) {

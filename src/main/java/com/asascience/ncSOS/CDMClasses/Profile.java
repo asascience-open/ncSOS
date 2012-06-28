@@ -125,7 +125,6 @@ public class Profile extends baseCDMClass implements iStationData {
 
     /*******************PROFILE**************************/
     private String createProfileFeature(int stNum) throws IOException {
-
         StringBuilder builder = new StringBuilder();
         DateFormatter dateFormatter = new DateFormatter();
         List<String> valueList = new ArrayList<String>();
@@ -144,7 +143,7 @@ public class Profile extends baseCDMClass implements iStationData {
                     DateTime dtStart = new DateTime(df.getISODate(eventTimes.get(0)), chrono);
                     DateTime dtEnd = new DateTime(df.getISODate(eventTimes.get(1)), chrono);
                     DateTime tsDt = new DateTime(pFeature.getName(), chrono);
-
+                    
                     //find out if current time(searchtime) is one or after startTime
                     //same as start
                     if (tsDt.isEqual(dtStart)) {
@@ -155,6 +154,8 @@ public class Profile extends baseCDMClass implements iStationData {
                     } //afterStart and before end       
                     else if (tsDt.isAfter(dtStart) && (tsDt.isBefore(dtEnd))) {
                         addProfileData(valueList, dateFormatter, builder, pFeature.getPointFeatureIterator(-1), stNum);
+                    } else {
+                        System.out.println("tsDt is not equal to any known case");
                     }
                     //setCount(pFeature.size());
 
@@ -175,11 +176,7 @@ public class Profile extends baseCDMClass implements iStationData {
         while (profileIterator.hasNext()) {
             PointFeature pointFeature = profileIterator.next();
             valueList.clear();
-            valueList.add(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
-            // add depth, lat, lon filler
-            valueList.add("-");
-            valueList.add("-");
-            valueList.add("-");
+            valueList.add("time=" + dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
 
             String profileID = getProfileIDFromProfile(pointFeature);
             //if there is a profile id use it against the data that is requested
@@ -187,6 +184,8 @@ public class Profile extends baseCDMClass implements iStationData {
                 //System.out.println(profileID);
                 if (profileID.equalsIgnoreCase(reqStationNames.get(stNum))) {
                     addProfileDataToBuilder(valueList, pointFeature, builder);
+                } else {
+                    System.out.println("Not adding profile data to builder");
                 }
             } else {
                 addProfileDataToBuilder(valueList, pointFeature, builder);
@@ -196,7 +195,7 @@ public class Profile extends baseCDMClass implements iStationData {
 
     public void addProfileDataToBuilder(List<String> valueList, PointFeature pointFeature, StringBuilder builder) throws IOException {
         for (String variableName : variableNames) {
-            valueList.add(pointFeature.getData().getScalarObject(variableName).toString());
+            valueList.add(variableName + "=" + pointFeature.getData().getScalarObject(variableName).toString());
         }
 
         for (int i = 0; i < valueList.size(); i++) {
@@ -321,7 +320,6 @@ public class Profile extends baseCDMClass implements iStationData {
                     }
                 }
             }
-
             setStartDate(df.toDateTimeStringISO(dtStart.toDate()));
             setEndDate(df.toDateTimeStringISO(dtEnd.toDate()));
             if (reqStationNames != null) {
@@ -340,6 +338,8 @@ public class Profile extends baseCDMClass implements iStationData {
         try {
             if (profileData != null) {
                 return createProfileFeature(stNum);
+            } else {
+                System.out.println("profileData is null, not creating a string");
             }
         } catch (IOException ex) {
             Logger.getLogger(Profile.class.getName()).log(Level.SEVERE, null, ex);

@@ -5,15 +5,15 @@
 
 package thredds.server.sos.controller;
 
-import java.util.List;
-import javax.servlet.ServletException;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import org.jdom.Document;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+import static org.junit.Assert.assertTrue;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * TEST a number of the SOS properties including GUI functionality
@@ -34,6 +34,7 @@ public class SosControllerTest {
     * 
     */
 
+    @Ignore
     @Test
     public void testSaxBuilderForNULL42099() throws IOException, JDOMException {
     SAXBuilder parser = new SAXBuilder();
@@ -48,6 +49,7 @@ public class SosControllerTest {
     assertTrue(doc2!=null);
     }
 
+    @Ignore
      @Test
     public void testSaxBuilderForNULL42059() throws IOException, JDOMException {
     if(true) {
@@ -68,6 +70,7 @@ public class SosControllerTest {
 
     }
 
+    @Ignore
      @Test
     public void testSaxBuilderForNULL42080() throws IOException, JDOMException {
     if(true) {

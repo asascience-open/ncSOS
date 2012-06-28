@@ -4,21 +4,20 @@ based on iso controller NOAA - ASA
  */
 package thredds.server.sos.controller;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
-
-import thredds.server.sos.util.DatasetHandlerAdapter;
-
+import com.asascience.ncSOS.service.SOSParser;
 import java.io.IOException;
 import java.io.Writer;
-import org.apache.log4j.Level;
-import thredds.server.sos.service.SOSParserOld;
-
+import java.util.HashMap;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import thredds.server.sos.getCaps.SOSGetCapabilitiesRequestHandler;
+import thredds.server.sos.getObs.SOSGetObservationRequestHandler;
+import thredds.server.sos.util.DatasetHandlerAdapter;
 import ucar.nc2.dataset.NetcdfDataset;
+import com.asascience.ncSOS.outputFormatters.SOSOutputFormatter;
 
 /**
  * Controller for SOS service
@@ -32,6 +31,8 @@ public class SosController implements ISosContoller {
 
     private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(SosController.class);
     private static org.slf4j.Logger _logServerStartup = org.slf4j.LoggerFactory.getLogger("serverStartup");
+    
+    private HashMap<String, Object> respMap;
 
     protected String getPath() {
         return "Sos/";
@@ -60,6 +61,8 @@ public class SosController implements ISosContoller {
         _log.info("Handling SOS metadata request.");
 
         NetcdfDataset dataset = null;
+        
+        respMap = new HashMap<String, Object>();
 
         try {
             //see http://tomcat.apache.org/tomcat-5.5-doc/config/context.html ----- workdir    
@@ -69,11 +72,17 @@ public class SosController implements ISosContoller {
             dataset = DatasetHandlerAdapter.openDataset(req, res);
             
             //set the response type
-            res.setContentType("text/xml");
             Writer writer = res.getWriter();
-            //TODO create new service
-            SOSParserOld md = new SOSParserOld();
-            md.enhance(dataset, writer, req.getQueryString(), req.getRequestURL().toString(),tempdir);          
+            //TODO create new service???
+            SOSParser md = new SOSParser();
+            respMap = md.enhance(dataset, req.getQueryString(), req.getRequestURL().toString(),tempdir);
+            res.setContentType(respMap.get("responseContentType").toString());
+            
+            // tell our handler to write out the response
+            SOSOutputFormatter output = (SOSOutputFormatter)respMap.get("outputHandler");
+            output.writeOutput(writer);
+            
+            // log and flush writer
             _log.info(req.getRequestURL().toString()+"?"+req.getQueryString().toString());
             writer.flush();
             writer.close();

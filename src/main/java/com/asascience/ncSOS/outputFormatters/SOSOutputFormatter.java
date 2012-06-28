@@ -4,6 +4,8 @@
  */
 package com.asascience.ncSOS.outputFormatters;
 
+import java.io.Writer;
+
 /**
  *
  * @author SCowan
@@ -45,11 +47,14 @@ class DataSlice {
         return depth;
     }
     public Float[] getDataValues() {
-        Float[] retval = new Float[dataValue.length];
-        for(int i=0;i<dataValue.length;i++) {
-            retval[i] = dataValue[i];
+        if (dataValue != null) {
+            Float[] retval = new Float[dataValue.length];
+            for(int i=0;i<dataValue.length;i++) {
+                retval[i] = dataValue[i];
+            }
+            return retval;
         }
-        return retval;
+        return null;
     }
 }
 
@@ -59,6 +64,6 @@ public interface SOSOutputFormatter {
 //    public void AddToInfoList(double latitude, double longitude, double depth, float dataValue, String eventtime);
     public void AddDataFormattedStringToInfoList(String dataFormattedString);
     public void EmtpyInfoList();
-    public void outputException(String message);
-    public void writeObservationsFromInfoList();
+    public void setupExceptionOutput(String message);
+    public void writeOutput(Writer writer);
 }

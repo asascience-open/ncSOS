@@ -1,25 +1,17 @@
 package thredds.server.sos.service;
 
+import com.asascience.ncSOS.outputFormatters.SOSOutputFormatter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.NumberFormat;
 import java.util.Date;
 import java.util.Formatter;
-import org.w3c.dom.Document;
 import thredds.server.sos.util.DiscreteSamplingGeometryUtil;
-import thredds.server.sos.util.XMLDomUtils;
-import ucar.nc2.Variable;
 import ucar.nc2.constants.FeatureType;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dt.GridDataset;
 import ucar.nc2.ft.FeatureCollection;
 import ucar.nc2.ft.FeatureDataset;
 import ucar.nc2.ft.FeatureDatasetFactoryManager;
-import ucar.nc2.ft.ProfileFeatureCollection;
-import ucar.nc2.ft.StationProfileFeatureCollection;
-import ucar.nc2.ft.StationTimeSeriesFeatureCollection;
-import ucar.nc2.ft.grid.Grid;
-import ucar.nc2.ft.point.standard.StandardProfileCollectionImpl;
 import ucar.nc2.units.DateFormatter;
 
 /**
@@ -37,7 +29,6 @@ public abstract class SOSBaseRequestHandler {
     private String source;
     private String description;
     private String featureOfInterestBaseQueryURL;
-    protected Document document;
     private final static NumberFormat FORMAT_DEGREE;
     private FeatureCollection CDMPointFeatureCollection;
     private GridDataset gridDataSet = null;
@@ -50,6 +41,7 @@ public abstract class SOSBaseRequestHandler {
         FORMAT_DEGREE.setMaximumFractionDigits(14);
     }
     private FeatureType dataFeatureType;
+    protected SOSOutputFormatter output;
 
     public SOSBaseRequestHandler(NetcdfDataset netCDFDataset) throws IOException {
         if(netCDFDataset == null) {
@@ -71,12 +63,14 @@ public abstract class SOSBaseRequestHandler {
                 _log.info("FeatureType is GRID");
                 dataFeatureType = FeatureType.GRID;
             }
+            else {
+                System.out.println("Uknown feature type!");            
+            }
         } else {
             dataFeatureType = CDMPointFeatureCollection.getCollectionFeatureType();
         }
 
         parseGlobalAttributes();
-        document = parseTemplateXML();
     }
 
     private void parseGlobalAttributes() {
@@ -89,32 +83,6 @@ public abstract class SOSBaseRequestHandler {
         featureOfInterestBaseQueryURL = netCDFDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", null);
     }
 
-    public abstract String getTemplateLocation();
-
-    protected final Document parseTemplateXML() {
-        InputStream templateInputStream = null;
-        try {
-            templateInputStream = getClass().getClassLoader().getResourceAsStream(getTemplateLocation());
-            return XMLDomUtils.getTemplateDom(templateInputStream);
-        } finally {
-            if (templateInputStream != null) {
-                try {
-                    templateInputStream.close();
-                } catch (IOException e) {
-                    // ignore, closing..
-                }
-            }
-        }
-    }
-
-    public final Document getDocument() {
-        return document;
-    }
-
-    public void setDocument(Document document) {
-        this.document = document;
-    }
-
     public NetcdfDataset getNetCDFDataset() {
         return netCDFDataset;
     }
@@ -125,6 +93,10 @@ public abstract class SOSBaseRequestHandler {
 
     public GridDataset getGridDataset() {
         return gridDataSet;
+    }
+    
+    public SOSOutputFormatter getOutputHandler() {
+        return output;
     }
 
     /**
@@ -218,7 +190,6 @@ public abstract class SOSBaseRequestHandler {
         source = null;
         description = null;
         featureOfInterestBaseQueryURL = null;
-        document = null;
         CDMPointFeatureCollection =null;
 
     }

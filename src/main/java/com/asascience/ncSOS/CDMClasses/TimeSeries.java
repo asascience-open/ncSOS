@@ -144,13 +144,9 @@ public class TimeSeries extends baseCDMClass implements iStationData {
     private void createTimeSeriesData(List<String> valueList, DateFormatter dateFormatter, PointFeature pointFeature, StringBuilder builder, int stNum) throws IOException {
         //count++;
         valueList.clear();
-        valueList.add(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
-        // add fillers for data not supplied by this request
-        valueList.add("-"); // depth 
-        valueList.add("-"); // lat
-        valueList.add("-"); // lon
+        valueList.add("time=" + dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
         for (String variableName : variableNames) {
-            valueList.add(pointFeature.getData().getScalarObject(variableName).toString());
+            valueList.add(variableName + "=" + pointFeature.getData().getScalarObject(variableName).toString());
         }
 
         for (int i = 0; i < valueList.size(); i++) {

@@ -51,24 +51,27 @@ public class Grid extends baseCDMClass implements iStationData {
         this.reqStationNames = new ArrayList<String>();
         this.reqStationNames.addAll(Arrays.asList(requestedStationNames));
         this.eventTimes = new ArrayList<String>();
-        eventTimes.addAll(Arrays.asList(eventTime));
+        this.eventTimes.addAll(Arrays.asList(eventTime));
+//        for (String et : eventTime) {
+//            this.eventTimes.add(et);
+//        }
         this.latLonRequest = latLonRequest;
         this.stationNameList = new ArrayList<String>();
         this.stationDescripList = new ArrayList<String>();
     }
 
     public void addDateEntry(StringBuilder builder, Date[] dates) {
-        builder.append(dateFormatter.toDateTimeStringISO(dates[0]));
+        builder.append("time=").append(dateFormatter.toDateTimeStringISO(dates[0]));
         builder.append(",");
     }
 
-    public void addDepthEntry(StringBuilder builder, int depthHeight) {
-        //add depth data entry to variable if available
-        if ((CoordinateAxis1D) GridData.getDataVariable(DEPTH) != null) {
-            builder.append(depthHeight);
-            builder.append(",");
-        }
-    }
+//    public void addDepthEntry(StringBuilder builder, int depthHeight) {
+//        //add depth data entry to variable if available
+//        if ((CoordinateAxis1D) GridData.getDataVariable(DEPTH) != null) {
+//            builder.append(depthHeight);
+//            builder.append(",");
+//        }
+//    }
 
     public void addVariableEntrys(StringBuilder builder, double[] latDbl, Map<String, Integer> latlon, double[] lonDbl, GridDatatype grid, Array data) {
     }
@@ -268,24 +271,21 @@ public class Grid extends baseCDMClass implements iStationData {
                 //modify for requested dates, add in for loop
                 addDateEntry(builder, dates);
 
+                // add depth
                 if(depthDbl != null) {
-                    builder.append(depthDbl[depthHeights[k]]);
-                    builder.append(",");
-                } else {
-                    builder.append("0,");
+                    builder.append("depth=").append(depthDbl[depthHeights[k]]).append(",");
                 }
                 
-                builder.append(latDbl[latLonDepthHash.get(LAT)[k]]);
-                builder.append(",");
-                builder.append(lonDbl[latLonDepthHash.get(LON)[k]]);
-                builder.append(",");
+                builder.append("lat=").append(latDbl[latLonDepthHash.get(LAT)[k]]).append(",");
+                builder.append("lon=").append(lonDbl[latLonDepthHash.get(LON)[k]]).append(",");
                 // get data slices
+                String dataName;
                 for (int l=0; l<GridData.getGrids().size();l++) {
+                    dataName = GridData.getGrids().get(l).getName();
                     if (isInVariableNames(GridData.getGrids().get(l).getName())) {
                         try {
                             data = grid.readDataSlice(0, depthHeights[k], latLonDepthHash.get(LAT)[k], latLonDepthHash.get(LON)[k]);
-                            builder.append(data.getFloat(0));
-                            builder.append(",");
+                            builder.append(dataName).append("=").append(data.getFloat(0)).append(",");
                         } catch (Exception e) {
                             System.out.println("Error in reading data slice, index " + l + " - " + e.getMessage());
                         }

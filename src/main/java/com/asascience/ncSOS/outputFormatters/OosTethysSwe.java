@@ -4,9 +4,17 @@
  */
 package com.asascience.ncSOS.outputFormatters;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.transform.Result;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import thredds.server.sos.CDMClasses.iStationData;
 import thredds.server.sos.getObs.SOSGetObservationRequestHandler;
@@ -34,19 +42,19 @@ public class OosTethysSwe implements SOSOutputFormatter {
     private static final String OM_OBSERVATION = "om:Observation";
     private static final String STATION_GML_BASE = "urn:tds:station.sos:";
     private static final String NAN = "NaN";
+    private static final String TEMPLATE = "templates/sosGetObservation.xml";
     
-    public OosTethysSwe(Document xmlDoc,
-            String[] variableNames,
+    public OosTethysSwe(String[] variableNames,
             FeatureDataset featureDataset,
             iStationData cdmDataset) {
         infoList = new ArrayList<DataSlice>();
-        document = xmlDoc;
         this.featureDataset = featureDataset;
         this.CDMDataSet = cdmDataset;
         this.variableNames = variableNames;
         
         title = history = institution = source = description = location = "none";
         featureOfInterest = "";
+        document = parseTemplateXML();
     }
     
     public void setMetaData(String title,
@@ -64,18 +72,15 @@ public class OosTethysSwe implements SOSOutputFormatter {
         this.location = location;
         this.featureOfInterest = featureOfInterest;
     }
+    
+    public String getTemplateLocation() {
+        return TEMPLATE;
+    }
 
     /* *****************
      * Interface methods
      ******************* */
-//    public void AddToInfoList(double latitude, double longitude, double depth, float dataValue, String eventtime) {
-//        if(infoList == null)
-//            infoList = new ArrayList<DataSlice>();
-//        
-//        infoList.add(new DataSlice(latitude, longitude, depth, eventtime, dataValue));
-//    }
-    
-    public void AddDataFormattedStringToInfoList(String dataFormattedString) {
+    public void AddDataFormattedStringToInfoList(String dataFormattedString) throws IllegalArgumentException {
         // CSV that should be of the form: eventtime, depth, lat, lon, data value
         String[] values = dataFormattedString.split(",");
         double lat, lon, depth;
@@ -86,39 +91,47 @@ public class OosTethysSwe implements SOSOutputFormatter {
         if(infoList == null)
             infoList = new ArrayList<DataSlice>();
         
-        if(!values[0].equalsIgnoreCase("-")) {
-            eventtime = values[0];
-        }
-        if(!values[1].equalsIgnoreCase("-")) {
-            try {
-                depth = Double.parseDouble(values[1]);
-            } catch (Exception e) {
-                System.out.println("Couldn't parse " + values[1] + " - " + e.getMessage());
-            }
-        }
-        if(!values[2].equalsIgnoreCase("-")) {
-            try {
-                lat = Double.parseDouble(values[2]);
-            } catch (Exception e) {
-                System.out.println("Couldn't parse " + values[2] + " - " + e.getMessage());
-            }
-        }
-        if(!values[3].equalsIgnoreCase("-")) {
-            try {
-                lon = Double.parseDouble(values[3]);
-            } catch (Exception e) {
-                System.out.println("Couldn't parse " + values[3] + " - " + e.getMessage());
-            }
-        }
-        if(values.length > 3)
-            dataValues = new float[values.length-4];
-        // remainder of csvs are data values
-        if(dataValues != null) {
-            for(int i=4;i<values.length;i++) {
+        for (String val : values) {
+            // skip an empty pieces
+            if (!val.contains("="))
+                continue;
+            String[] valuePiece = val.split("=");
+            // if..else if..else for determining piece
+            if (valuePiece[0].equals("depth")) {
                 try {
-                    dataValues[i-4] = Float.parseFloat(values[i]);
+                    depth = Double.parseDouble(valuePiece[1]);
                 } catch (Exception e) {
-                    System.out.println("unable to parse " + values[i] + " - " + e.getMessage());
+                    depth = Double.NaN;
+                    System.out.println("Error parsing depth " + valuePiece[1] + " - " + e.getMessage());
+                }
+            } else if (valuePiece[0].equals("lat")) {
+                try {
+                    lat = Double.parseDouble(valuePiece[1]);
+                } catch (Exception e) {
+                    lat = Double.NaN;
+                    System.out.println("Error parsing lat " + valuePiece[1] + " - " + e.getMessage());
+                }
+            } else if (valuePiece[0].equals("lon")) {
+                try {
+                    lon = Double.parseDouble(valuePiece[1]);
+                } catch (Exception e) {
+                    lon = Double.NaN;
+                    System.out.println("Error parsing lon " + valuePiece[1] + " - " + e.getMessage());
+                }
+            } else if (valuePiece[0].equals("time")) {
+                eventtime = valuePiece[1];
+            } else {
+                // assume a data value and add it to the string array
+                if (dataValues == null) {
+                    dataValues = new float[1];
+                } else {
+                    dataValues = expandDataArray(dataValues);
+                }
+                try {
+                    dataValues[dataValues.length - 1] = Float.parseFloat(valuePiece[1]);
+                } catch (Exception e) {
+                    dataValues[dataValues.length - 1] = Float.NaN;
+                    System.out.println("Error parsing data value " + valuePiece[1] + " - " + e.getMessage());
                 }
             }
         }
@@ -131,15 +144,50 @@ public class OosTethysSwe implements SOSOutputFormatter {
         infoList = null;
     }
 
-    public void outputException(String message) {
+    public void setupExceptionOutput(String message) {
         document = XMLDomUtils.getExceptionDom(message);
     }
 
-    public void writeObservationsFromInfoList() {
+    public void writeOutput(Writer writer) {
         parseObservations();
+        // output our document to the writer
+        DOMSource domSource = new DOMSource(document);
+        Result result = new StreamResult(writer);
+        try {
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.transform(domSource, result);
+        } catch (Exception e) {
+            System.out.println("Error in writing OosTethysSwe - " + e.getMessage());
+        }
     }
     
     /********************************************/
+    
+    private Document parseTemplateXML() {
+        InputStream templateInputStream = null;
+        try {
+            templateInputStream = getClass().getClassLoader().getResourceAsStream(getTemplateLocation());
+            return XMLDomUtils.getTemplateDom(templateInputStream);
+        } finally {
+            if (templateInputStream != null) {
+                try {
+                    templateInputStream.close();
+                } catch (IOException e) {
+                    // ignore, closing..
+                }
+            }
+        }
+    }
+    
+    private float[] expandDataArray(float[] dataArray) {
+        float[] retval = new float[dataArray.length+1];
+        
+        for(int i=0;i<dataArray.length;i++) {
+            retval[i] = dataArray[i];
+        }
+        
+        return retval;
+    }
     
     private void addDatasetResults(int stationNumber) {
         //add Data Block Definition
@@ -166,7 +214,7 @@ public class OosTethysSwe implements SOSOutputFormatter {
             //set the data
             document = XMLDomUtils.addNodeAllOptions(document, "swe:DataArray", "swe:values", createObservationString(), stationNumber);
         } catch (Exception ex) {
-            outputException(ex.getMessage());
+            setupExceptionOutput(ex.getMessage());
             Logger.getLogger(SOSGetObservationRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -196,7 +244,7 @@ public class OosTethysSwe implements SOSOutputFormatter {
     
     private void parseObservations() {
         if (CDMDataSet == null) {
-            outputException("CDMDataSet is null");
+            setupExceptionOutput("CDMDataSet is null");
             return;
         }
         
@@ -250,7 +298,11 @@ public class OosTethysSwe implements SOSOutputFormatter {
             //}
 
             //add feature of interest
-            document = XMLDomUtils.addNodeAndAttribute(document, OM_OBSERVATION, "om:featureOfInterest", "xlink:href", featureOfInterest + CDMDataSet.getStationName(stNum), stNum);
+            if (featureOfInterest != null) {
+                document = XMLDomUtils.addNodeAndAttribute(document, OM_OBSERVATION, "om:featureOfInterest", "xlink:href", featureOfInterest + CDMDataSet.getStationName(stNum), stNum);
+            } else {
+                document = XMLDomUtils.addNodeAndAttribute(document, OM_OBSERVATION, "om:featureOfInterest", "xlink:href", CDMDataSet.getStationName(stNum), stNum);
+            }
             //add results Node
             document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "om:result", stNum);
 
@@ -311,7 +363,7 @@ public class OosTethysSwe implements SOSOutputFormatter {
         StringBuilder retVal = new StringBuilder();
         for(DataSlice ds : infoList) {
             // add the slice to the string
-            if(!ds.getEventTime().equalsIgnoreCase("-"))
+            if(ds.getEventTime() != null)
                 retVal.append(ds.getEventTime()).append(",");
             if(!ds.getLatitude().toString().equals(NAN))
                 retVal.append(ds.getLatitude().toString()).append(",");
