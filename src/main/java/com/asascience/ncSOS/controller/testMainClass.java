@@ -2,9 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package thredds.server.sos.controller;
+package com.asascience.ncsos.controller;
 
-import com.asascience.ncSOS.service.SOSParser;
+import com.asascience.ncsos.service.SOSParser;
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.Writer;

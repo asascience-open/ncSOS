@@ -1,4 +1,4 @@
-package thredds.server.sos.util;
+package com.asascience.ncsos.util;
 
 import java.io.IOException;
 import java.util.ArrayList;

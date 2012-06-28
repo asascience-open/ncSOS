@@ -26,7 +26,7 @@
  * CONTRACT, NEGLIGENCE OR OTHER TORTUOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE ACCESS, USE OR PERFORMANCE OF THIS SOFTWARE. 
  */
-package thredds.server.sos.util;
+package com.asascience.ncsos.util;
 
 import java.io.IOException;
 import java.util.Enumeration;

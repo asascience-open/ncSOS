@@ -1,4 +1,4 @@
-package thredds.server.sos.util;
+package com.asascience.ncsos.util;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

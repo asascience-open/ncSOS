@@ -1,3 +1,5 @@
+package com.asascience.ncsos.service;
+
 //package thredds.server.sos.service;
 //
 //import java.io.File;

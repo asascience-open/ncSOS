@@ -4,8 +4,9 @@
  */
 package thredds.server.sos.getCaps;
 
-import com.asascience.ncSOS.outputFormatters.SOSOutputFormatter;
-import com.asascience.ncSOS.service.SOSParser;
+import com.asascience.ncsos.getcaps.SOSGetCapabilitiesRequestHandler;
+import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
+import com.asascience.ncsos.service.SOSParser;
 import java.io.*;
 import java.util.Formatter;
 import java.util.HashMap;
@@ -14,7 +15,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
-import thredds.server.sos.util.XMLDomUtils;
+import com.asascience.ncsos.util.XMLDomUtils;
 import ucar.nc2.constants.FeatureType;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.ft.FeatureDataset;

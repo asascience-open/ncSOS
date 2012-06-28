@@ -1,12 +1,17 @@
-package thredds.server.sos.getObs;
+package com.asascience.ncsos.getobs;
 
-import com.asascience.ncSOS.outputFormatters.OosTethysSwe;
+import com.asascience.ncsos.cdmclasses.iStationData;
+import com.asascience.ncsos.cdmclasses.TimeSeries;
+import com.asascience.ncsos.cdmclasses.Grid;
+import com.asascience.ncsos.cdmclasses.Trajectory;
+import com.asascience.ncsos.cdmclasses.TimeSeriesProfile;
+import com.asascience.ncsos.cdmclasses.Profile;
+import com.asascience.ncsos.outputformatter.OosTethysSwe;
+import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import thredds.server.sos.CDMClasses.*;
-import thredds.server.sos.service.SOSBaseRequestHandler;
 import ucar.nc2.Variable;
 import ucar.nc2.constants.AxisType;
 import ucar.nc2.constants.FeatureType;

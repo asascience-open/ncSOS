@@ -1,10 +1,10 @@
-package thredds.server.sos.CDMClasses;
+package com.asascience.ncsos.cdmclasses;
 
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.DOMException;
-import thredds.server.sos.getObs.ObservationOffering;
+import com.asascience.ncsos.getobs.ObservationOffering;
 
 /**
  * RPS - ASA

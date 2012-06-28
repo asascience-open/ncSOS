@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package thredds.server.sos.CDMClasses;
+package com.asascience.ncsos.cdmclasses;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,8 +13,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
-import thredds.server.sos.getObs.SOSObservationOffering;
-import thredds.server.sos.service.SOSBaseRequestHandler;
+import com.asascience.ncsos.getobs.SOSObservationOffering;
+import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import ucar.nc2.ft.*;
 import ucar.nc2.units.DateFormatter;
 import ucar.unidata.geoloc.Station;

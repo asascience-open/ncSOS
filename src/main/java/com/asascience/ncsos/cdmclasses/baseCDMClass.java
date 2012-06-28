@@ -2,12 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package thredds.server.sos.CDMClasses;
+package com.asascience.ncsos.cdmclasses;
 
 import java.util.List;
 import org.joda.time.Chronology;
 import org.joda.time.chrono.ISOChronology;
-import org.w3c.dom.Document;
 import ucar.nc2.units.DateFormatter;
 import ucar.unidata.geoloc.Station;
 

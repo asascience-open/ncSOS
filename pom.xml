@@ -3,11 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.asascience</groupId>
-  <artifactId>ncSOS</artifactId>
+  <artifactId>ncsos</artifactId>
   <version>0.1a</version>
   <packaging>jar</packaging>
 
-  <name>ncSOS</name>
+  <name>ncsos</name>
   <url>http://maven.apache.org</url>
 
   <properties>

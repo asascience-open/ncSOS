@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.asascience.ncSOS.service;
+package com.asascience.ncsos.service;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,8 +10,8 @@ import java.util.*;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import thredds.server.sos.getCaps.SOSGetCapabilitiesRequestHandler;
-import thredds.server.sos.getObs.SOSGetObservationRequestHandler;
+import com.asascience.ncsos.getcaps.SOSGetCapabilitiesRequestHandler;
+import com.asascience.ncsos.getobs.SOSGetObservationRequestHandler;
 import ucar.nc2.dataset.NetcdfDataset;
 /**
  * Reads and parses a request coming in from thredds

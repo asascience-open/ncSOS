@@ -1,9 +1,8 @@
-package thredds.server.sos.CDMClasses;
+package com.asascience.ncsos.cdmclasses;
 
 import java.io.IOException;
 import java.util.List;
 import ucar.unidata.geoloc.Station;
-import org.w3c.dom.Document;
 
 /**
  * @author abird

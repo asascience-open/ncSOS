@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package thredds.server.sos.getObs;
+package com.asascience.ncsos.getobs;
 
 import java.util.List;
 

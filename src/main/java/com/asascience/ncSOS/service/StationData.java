@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package thredds.server.sos.service;
+package com.asascience.ncsos.service;
 
 import java.io.IOException;
 import java.util.ArrayList;

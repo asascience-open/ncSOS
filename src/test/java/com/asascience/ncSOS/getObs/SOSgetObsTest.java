@@ -2,17 +2,17 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package thredds.server.sos.getObs;
+package com.asascience.ncSOS.getObs;
 
-import com.asascience.ncSOS.outputFormatters.SOSOutputFormatter;
-import com.asascience.ncSOS.service.SOSParser;
+import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
+import com.asascience.ncsos.service.SOSParser;
 import java.io.*;
 import java.util.HashMap;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Document;
-import thredds.server.sos.util.XMLDomUtils;
+import com.asascience.ncsos.util.XMLDomUtils;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**

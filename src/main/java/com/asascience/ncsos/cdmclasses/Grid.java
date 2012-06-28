@@ -1,18 +1,12 @@
-package thredds.server.sos.CDMClasses;
+package com.asascience.ncsos.cdmclasses;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import ucar.nc2.units.DateFormatter;
+import java.util.*;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.w3c.dom.Document;
-import thredds.server.sos.getObs.SOSObservationOffering;
+import com.asascience.ncsos.getobs.SOSObservationOffering;
 import ucar.ma2.Array;
 import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.dataset.CoordinateAxis1D;
@@ -20,6 +14,7 @@ import ucar.nc2.dataset.CoordinateAxis1DTime;
 import ucar.nc2.dt.GridCoordSystem;
 import ucar.nc2.dt.GridDataset;
 import ucar.nc2.dt.GridDatatype;
+import ucar.nc2.units.DateFormatter;
 import ucar.unidata.geoloc.Station;
 
 /**

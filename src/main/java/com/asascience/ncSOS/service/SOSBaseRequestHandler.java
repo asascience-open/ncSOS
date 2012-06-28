@@ -1,11 +1,11 @@
-package thredds.server.sos.service;
+package com.asascience.ncsos.service;
 
-import com.asascience.ncSOS.outputFormatters.SOSOutputFormatter;
+import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.Date;
 import java.util.Formatter;
-import thredds.server.sos.util.DiscreteSamplingGeometryUtil;
+import com.asascience.ncsos.util.DiscreteSamplingGeometryUtil;
 import ucar.nc2.constants.FeatureType;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dt.GridDataset;

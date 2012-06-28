@@ -1,8 +1,8 @@
-package thredds.server.sos.describeSen;
+package com.asascience.ncsos.describesen;
 
 
 import java.io.InputStream;
-import thredds.server.sos.util.XMLDomUtils;
+import com.asascience.ncsos.util.XMLDomUtils;
 import org.w3c.dom.Document;
 
 

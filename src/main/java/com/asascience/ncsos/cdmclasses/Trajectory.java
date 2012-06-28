@@ -1,14 +1,5 @@
-package thredds.server.sos.CDMClasses;
+package com.asascience.ncsos.cdmclasses;
 
-import org.joda.time.DateTime;
-import ucar.unidata.geoloc.Station;
-import org.w3c.dom.Document;
-import thredds.server.sos.getObs.SOSObservationOffering;
-import ucar.nc2.ft.FeatureCollection;
-import ucar.nc2.ft.PointFeature;
-import ucar.nc2.ft.PointFeatureIterator;
-import ucar.nc2.ft.TrajectoryFeature;
-import ucar.nc2.ft.TrajectoryFeatureCollection;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,7 +7,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.joda.time.DateTime;
+import org.w3c.dom.Document;
+import com.asascience.ncsos.getobs.SOSObservationOffering;
+import ucar.nc2.ft.*;
 import ucar.nc2.units.DateFormatter;
+import ucar.unidata.geoloc.Station;
 
 /**
  * RPS - ASA

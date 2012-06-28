@@ -1,4 +1,4 @@
-package thredds.server.sos.service;
+package com.asascience.ncsos.service;
 
 import javax.servlet.http.HttpServletRequest;
 
