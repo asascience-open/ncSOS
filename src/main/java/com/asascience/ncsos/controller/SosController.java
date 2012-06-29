@@ -6,6 +6,7 @@ package com.asascience.ncsos.controller;
 
 import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import com.asascience.ncsos.service.SOSParser;
+import com.asascience.ncsos.util.DatasetHandlerAdapter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
@@ -14,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import com.asascience.ncsos.util.DatasetHandlerAdapter;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
