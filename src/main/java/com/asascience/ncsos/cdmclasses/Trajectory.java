@@ -1,5 +1,6 @@
 package com.asascience.ncsos.cdmclasses;
 
+import com.asascience.ncsos.getobs.SOSObservationOffering;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,7 +10,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
-import com.asascience.ncsos.getobs.SOSObservationOffering;
 import ucar.nc2.ft.*;
 import ucar.nc2.units.DateFormatter;
 import ucar.unidata.geoloc.Station;
@@ -241,7 +241,7 @@ public class Trajectory extends baseCDMClass implements iStationData {
      * @return
      * @throws IOException 
      */
-    public static Document getCapsResponse(FeatureCollection dataset, Document document, String featureOfInterest, String GMLName, String format, List<String> observedPropertyList) throws IOException {
+    public static Document getCapsResponse(FeatureCollection dataset, Document document, String featureOfInterest, String GMLName, List<String> observedPropertyList) throws IOException {
         //PointFeatureIterator trajIter;
 
 
@@ -271,7 +271,6 @@ public class Trajectory extends baseCDMClass implements iStationData {
             newOffering.setObservationProcedureLink(GMLName + ((tFeature.getName())));
             newOffering.setObservationSrsName("EPSG:4326");  // TODO?  
             newOffering.setObservationObserveredList(observedPropertyList);
-            newOffering.setObservationFormat(format);
 
             document = CDMUtils.addObsOfferingToDoc(newOffering, document);
         }

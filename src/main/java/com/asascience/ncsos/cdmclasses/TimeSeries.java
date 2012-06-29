@@ -58,7 +58,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
      * @return
      * @throws IOException 
      */
-    public static Document getCapsResponse(StationTimeSeriesFeatureCollection featureCollection, Document document, String featureOfInterest, String GMLName, String format, List<String> observedPropertyList) throws IOException {
+    public static Document getCapsResponse(StationTimeSeriesFeatureCollection featureCollection, Document document, String featureOfInterest, String GMLName, List<String> observedPropertyList) throws IOException {
         String stationName = null;
         String stationLat = null;
         String stationLon = null;
@@ -100,7 +100,6 @@ public class TimeSeries extends baseCDMClass implements iStationData {
             newOffering.setObservationProcedureLink(GMLName + stationName);
             newOffering.setObservationObserveredList(observedPropertyList);
             newOffering.setObservationFeatureOfInterest(featureOfInterest + stationName);
-            newOffering.setObservationFormat(format);
 
             document = CDMUtils.addObsOfferingToDoc(newOffering, document);
         }

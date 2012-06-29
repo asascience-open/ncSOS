@@ -27,7 +27,6 @@ import ucar.nc2.units.DateFormatter;
 public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
 
     private final String threddsURI;
-    private final String format = "text/xml; subtype=\"om/1.0.0\"";
     Chronology chrono = ISOChronology.getInstance();
     DateFormatter dateFormatter = new DateFormatter();
 
@@ -236,21 +235,21 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         switch (getDatasetFeatureType()) {
             case TRAJECTORY:
                 try {
-                    setDocument(Trajectory.getCapsResponse(getFeatureTypeDataSet(), getDocument(), getFeatureOfInterestBase(), getGMLNameBase(), format, observedPropertyList));
+                    setDocument(Trajectory.getCapsResponse(getFeatureTypeDataSet(), getDocument(), getFeatureOfInterestBase(), getGMLNameBase(), observedPropertyList));
                 } catch (Exception e) {
                 }
                 break;
             case STATION:
-                setDocument(TimeSeries.getCapsResponse((StationTimeSeriesFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),format,observedPropertyList));
+                setDocument(TimeSeries.getCapsResponse((StationTimeSeriesFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),observedPropertyList));
                 break;
             case STATION_PROFILE:
-                setDocument(TimeSeriesProfile.getCapsResponse((StationProfileFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),format,observedPropertyList));
+                setDocument(TimeSeriesProfile.getCapsResponse((StationProfileFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),observedPropertyList));
                 break;
             case PROFILE:
-                setDocument(Profile.getCapsResponse((ProfileFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),format,observedPropertyList));
+                setDocument(Profile.getCapsResponse((ProfileFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),observedPropertyList));
                 break;
             case GRID:
-                setDocument(Grid.getCapsResponse(getGridDataset(), getDocument(), getGMLNameBase(), format));
+                setDocument(Grid.getCapsResponse(getGridDataset(), getDocument(), getGMLNameBase()));
                 break;
             default:
                 if (getDatasetFeatureType() != null) {

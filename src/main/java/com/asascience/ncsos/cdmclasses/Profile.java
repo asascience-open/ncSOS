@@ -41,7 +41,7 @@ public class Profile extends baseCDMClass implements iStationData {
      * @param observedPropertyList
      * @return 
      */
-    public static Document getCapsResponse(ProfileFeatureCollection profileCollection, Document document, String featureOfInterestBase, String GMLName, String format, List<String> observedPropertyList) throws IOException {
+    public static Document getCapsResponse(ProfileFeatureCollection profileCollection, Document document, String featureOfInterestBase, String GMLName, List<String> observedPropertyList) throws IOException {
         String profileID = null;
         
         PointFeatureIterator pp = null;
@@ -90,7 +90,6 @@ public class Profile extends baseCDMClass implements iStationData {
             }
             newOffering.setObservationSrsName("EPSG:4326");  // TODO?  
             newOffering.setObservationObserveredList(observedPropertyList);
-            newOffering.setObservationFormat(format);
             document = CDMUtils.addObsOfferingToDoc(newOffering,document);
         }
 

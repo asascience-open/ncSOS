@@ -69,9 +69,6 @@ public interface ObservationOffering {
     public String getObservationFeatureOfInterest();
     public void setObservationFeatureOfInterest(String FeatureOfInterest);
 
-    public String getObservationFormat();
-    public void setObservationFormat(String format);
-
     public String getObservationModel();
     public void setObservationModel(String obsResultModel);
 

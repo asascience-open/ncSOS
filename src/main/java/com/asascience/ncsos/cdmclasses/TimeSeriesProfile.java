@@ -4,6 +4,8 @@
  */
 package com.asascience.ncsos.cdmclasses;
 
+import com.asascience.ncsos.getobs.SOSObservationOffering;
+import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,8 +15,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
-import com.asascience.ncsos.getobs.SOSObservationOffering;
-import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import ucar.nc2.ft.*;
 import ucar.nc2.units.DateFormatter;
 import ucar.unidata.geoloc.Station;
@@ -57,7 +57,7 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
      * @return
      * @throws IOException 
      */
-    public static Document getCapsResponse(StationProfileFeatureCollection featureCollection1, Document document, String featureOfInterestBase, String GMLBase, String format, List<String> observedPropertyList) throws IOException {
+    public static Document getCapsResponse(StationProfileFeatureCollection featureCollection1, Document document, String featureOfInterestBase, String GMLBase, List<String> observedPropertyList) throws IOException {
         StationProfileFeature stationProfileFeature = null;
         SOSObservationOffering newOffering = null;
         DateFormatter timePeriodFormatter = new DateFormatter();
@@ -81,7 +81,6 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
             newOffering.setObservationProcedureLink(GMLBase + stationName);
             newOffering.setObservationObserveredList(observedPropertyList);
             newOffering.setObservationFeatureOfInterest(featureOfInterestBase + stationName);
-            newOffering.setObservationFormat(format);
             document = CDMUtils.addObsOfferingToDoc(newOffering, document);
         }
 
