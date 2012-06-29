@@ -33,7 +33,7 @@ public class SOSParser {
     
     // enum for supported request types (used primarily for string comparison)
     private enum SupportedRequests {
-        GetCapabilities, GetObservation
+        GetCapabilities, GetObservation, DescribeSensor
     }
     
     public SOSParser() {
@@ -188,6 +188,12 @@ public class SOSParser {
                         _log.error(ex.getMessage());
                         retval.put("outputHandler", null);
                     }
+                    break;
+                case DescribeSensor:
+                    // resposne will always be text/xml
+                    retval.put("responseContentType", "text/xml");
+                    // create a describe sensor handler
+                    
                     break;
                 default:
                     // return a 'not supported' error
