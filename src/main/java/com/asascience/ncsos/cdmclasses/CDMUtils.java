@@ -23,7 +23,7 @@ public class CDMUtils {
      */
     public static Document addObsOfferingToDoc(ObservationOffering offering,Document document ) {
 
-        NodeList obsOfferingList = document.getElementsByTagName("ObservationOfferingList");
+        NodeList obsOfferingList = document.getElementsByTagName("sos:ObservationOfferingList");
         Element obsOfferEl = (Element) obsOfferingList.item(0);
         obsOfferEl.appendChild(constructObsOfferingNodes(offering,document));
         offering = null;
@@ -38,7 +38,7 @@ public class CDMUtils {
      */
     public static Element constructObsOfferingNodes(ObservationOffering offering,Document document) {
         //Create the observation offering
-        Element obsOfferingEl = document.createElement("ObservationOffering");
+        Element obsOfferingEl = document.createElement("sos:ObservationOffering");
         //add the station ID to the created element
         obsOfferingEl.setAttribute("gml:id", offering.getObservationStationID());
 
@@ -91,11 +91,11 @@ public class CDMUtils {
         obsOfferingTimeEl.appendChild(obsOfferingTimePeriodEl);
 
         //create procedure node and add element
-        Element obsOfferingProcedureEl = document.createElement("procedure");
+        Element obsOfferingProcedureEl = document.createElement("sos:procedure");
         obsOfferingProcedureEl.setAttribute("xlink:href", offering.getObservationProcedureLink());
 
         //create feature of interest node and add element
-        Element obsOfferingFeatureOfInterestEl = document.createElement("featureOfInterest");
+        Element obsOfferingFeatureOfInterestEl = document.createElement("sos:featureOfInterest");
         obsOfferingFeatureOfInterestEl.setAttribute("xlink:href", offering.getObservationFeatureOfInterest());
 
         //create response format(s)
@@ -103,13 +103,12 @@ public class CDMUtils {
         if (responseFormats == null) {
             System.out.println("Could not find responseFormat in ows:Operation 'GetObservation'");
         }
-
         //create response model
-        Element obsOfferingModelEl = document.createElement("responseModel");
+        Element obsOfferingModelEl = document.createElement("sos:responseModel");
         obsOfferingModelEl.appendChild(document.createTextNode(offering.getObservationModel()));
 
         //create response model
-        Element obsOfferingModeEl = document.createElement("responseMode");
+        Element obsOfferingModeEl = document.createElement("sos:responseMode");
         obsOfferingModeEl.appendChild(document.createTextNode(offering.getObservationResponseMode()));
 
         //add the new elements to the XML doc
@@ -122,7 +121,7 @@ public class CDMUtils {
 
         //create obs property node and add element
         for (int i = 0; i < offering.getObservationObserveredList().size(); i++) {
-            Element obsOfferingObsPropertyEll = document.createElement("observedProperty");
+            Element obsOfferingObsPropertyEll = document.createElement("sos:observedProperty");
             obsOfferingObsPropertyEll.setAttribute("xlink:href", (String) offering.getObservationObserveredList().get(i));
             obsOfferingEl.appendChild(obsOfferingObsPropertyEll);
         }
