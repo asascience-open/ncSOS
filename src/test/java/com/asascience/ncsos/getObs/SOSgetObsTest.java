@@ -6,13 +6,13 @@ package com.asascience.ncSOS.getObs;
 
 import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import com.asascience.ncsos.service.SOSParser;
+import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.*;
 import java.util.HashMap;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Document;
-import com.asascience.ncsos.util.XMLDomUtils;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
@@ -60,7 +60,7 @@ public class SOSgetObsTest {
 //    private static String sst3 = datasetFolder + "satellite-sst/20120617..d7.composite.nc";
     public static String base = null;
     
-    public static final String baseRequest = "responseformat=oostethysswe&request=GetObservation&version=1.0.0&service=sos";
+    public static final String baseRequest = "request=GetObservation&version=1.0.0&service=sos&responseformat=text%2Fxml%3Bsubtype%3D%22om%2F1.0.0%22";
     
     public static final String profileRequest = baseRequest + "&observedProperty=temperature,humidity&offering=0&eventTime=1990-01-01T00:00:00Z";
     public static final String profileRequestIndexed = baseRequest + "&observedProperty=temperature,humidity&offering=1&eventTime=1990-01-01T01:00:00Z/1990-01-01T04:00:00Z";

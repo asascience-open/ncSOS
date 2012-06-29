@@ -170,7 +170,6 @@ public class CDMUtils {
         Element getObservation = null;
         for (int i=0; i<nodeList.getLength(); i++) {
             if ("GetObservation".equals(nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue())) {
-                System.out.println("Found GetObservation node");
                 getObservation = (Element) nodeList.item(i);
                 break;
             }
@@ -186,7 +185,6 @@ public class CDMUtils {
         Element responseFormat = null;
         for (int j=0; j<nodeList.getLength(); j++) {
             if("responseFormat".equals(nodeList.item(j).getAttributes().getNamedItem("name").getNodeValue())) {
-                System.out.println("Found responseFormat node");
                 responseFormat = (Element) nodeList.item(j);
                 break;
             }
@@ -215,11 +213,6 @@ public class CDMUtils {
             respForm = doc.createElement("responseFormat");
             respForm.setTextContent(((Element) nodeList.item(k)).getTextContent());
             retval.add(respForm);
-        }
-        
-        // debug
-        for (Element item : retval) {
-            System.out.println("value: " + item.getTextContent());
         }
         
         return retval;

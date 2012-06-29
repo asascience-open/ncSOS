@@ -1,6 +1,7 @@
 package com.asascience.ncsos.getobs;
 
 import com.asascience.ncsos.cdmclasses.*;
+import com.asascience.ncsos.outputformatter.GetCapsOutputter;
 import com.asascience.ncsos.outputformatter.OosTethysSwe;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import java.io.IOException;
@@ -80,6 +81,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             } else {
                 _log.error("Have a null CDMDataSet, this will cause a null reference exception! - SOSGetObservationRequestHandler.87");
                 // print exception and then return the doc
+                output = new GetCapsOutputter();
                 output.setupExceptionOutput("Null Dataset; could not recognize feature type");
                 CDMDataSet = null;
                 return;
@@ -98,6 +100,8 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             output = new OosTethysSwe(this.variableNames, getFeatureDataset(), CDMDataSet, netCDFDataset);
         } else {
             _log.error("Uknown/Unhandled responseFormat: " + outputFormat);
+            output = new GetCapsOutputter();
+            output.setupExceptionOutput("Null Dataset; could not recognize output format");
         }
     }
 

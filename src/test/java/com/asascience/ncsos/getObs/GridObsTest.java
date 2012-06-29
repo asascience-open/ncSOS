@@ -8,6 +8,7 @@ import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import com.asascience.ncsos.service.SOSParser;
 import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.*;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -27,9 +28,9 @@ public class GridObsTest {
 //    public static final String GridReq2 = "request=GetObservation&version=1.0.0&service=sos&observedProperty=mcsst&offering=mcsst&eventtime=1990-01-01T00:00:00Z/2012-05-17T09:57:00.000-04:00&lat=29.88603303&lon=-89.0087125";
 //    public static final String GridReq3 = "request=GetObservation&version=1.0.0&service=sos&observedProperty=temperature&offering=mcsst&eventtime=1990-01-01T00:00:00Z/2012-05-17T09:57:00.000-04:00&lat=29.0&lon=-89.0";
     private static final String sst_1 = "resources/datasets/satellite-sst/SST_Global_2x2deg_20120626_0000.nc";
-    private static final String sst_1_reqs = "request=GetObservation&service=sos&version=1.0.0&lat=-52.0&lon=0.0&observedProperty=sst&offering=sst&eventtime=1990-01-01T00:00:00Z/2013-05-17T09:57:00.000-04:00&responseformat=testxmloutputter";
+    private static String sst_1_reqs = "request=GetObservation&service=sos&version=1.0.0&lat=-52.0&lon=0.0&observedProperty=sst&offering=sst&eventtime=1990-01-01T00:00:00Z/2013-05-17T09:57:00.000-04:00&responseformat=";
     private static final String sst_2 = "resources/datasets/satellite-sst/SST_Global_2x2deg_20120627_0000.nc";
-    private static final String sst_2_reqs = "request=GetObservation&service=sos&version=1.0.0&lat=-54.0,-52.0,-50.0&lon=-120.0,0.0,74.0&observedProperty=sst&offering=sst&eventtime=1990-01-01T00:00:00Z/2013-05-17T09:57:00.000-04:00&responseFormat=oostethysswe";
+    private static String sst_2_reqs = "request=GetObservation&service=sos&version=1.0.0&lat=-54.0,-52.0,-50.0&lon=-120.0,0.0,74.0&observedProperty=sst&offering=sst&eventtime=1990-01-01T00:00:00Z/2013-05-17T09:57:00.000-04:00&responseformat=";
     public static String baseLocalDir = null;
     public static String outputDir = null;
 
@@ -77,6 +78,11 @@ public class GridObsTest {
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + sst_1);
         Writer writer = new CharArrayWriter();
         SOSParser parser = new SOSParser();
+        try {
+            sst_1_reqs += URLEncoder.encode("text/xml;subtype=\"om/1.0.0\"", "UTF-8");
+        } catch (Exception e) {
+            System.out.println("couldn't encode for sst1");
+        }
         HashMap<String, Object> outMap = parser.enhance(dataset, sst_1_reqs, baseLocalDir + sst_1);
         SOSOutputFormatter output = (SOSOutputFormatter)outMap.get("outputHandler");
         assertNotNull("output is null", output);
@@ -94,6 +100,11 @@ public class GridObsTest {
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + sst_2);
         Writer writer = new CharArrayWriter();
         SOSParser parser = new SOSParser();
+        try {
+            sst_2_reqs += URLEncoder.encode("text/xml;subtype=\"om/1.0.0\"", "UTF-8");
+        } catch (Exception e) {
+            System.out.println("couldn't encode for sst1");
+        }
         HashMap<String, Object> outMap = parser.enhance(dataset, sst_2_reqs, baseLocalDir + sst_2);
         SOSOutputFormatter output = (SOSOutputFormatter)outMap.get("outputHandler");
         assertNotNull("output is null", output);

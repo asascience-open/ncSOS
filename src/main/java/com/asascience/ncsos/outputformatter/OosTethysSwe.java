@@ -64,7 +64,7 @@ public class OosTethysSwe implements SOSOutputFormatter {
                 netcdfDataset.findAttValueIgnoreCase(null, "source", "empty source"),
                 netcdfDataset.findAttValueIgnoreCase(null, "description", "empty description"),
                 netcdfDataset.findAttValueIgnoreCase(null, "location", "empty location"),
-                netcdfDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", "empty featureOfInterest"));
+                netcdfDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", null));
     }
     
     private void setMetaData(String title,
