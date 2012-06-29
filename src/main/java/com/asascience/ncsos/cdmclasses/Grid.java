@@ -262,6 +262,59 @@ public class Grid extends baseCDMClass implements iStationData {
         return getBoundTimeBegin();
     }
 
+    /**
+     * get capabilities response
+     * @param dataset
+     * @param document
+     * @param GMLName
+     * @param format
+     * @return 
+     */    
+    public static Document getCapsResponse(GridDataset dataset, Document document, String GMLName) {
+        List<GridDatatype> gridData = dataset.getGrids();
+        //dataset.getCalendarDateStart();
+        //dataset.getCalendarDateEnd();
+
+        DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
+        DateTime dt;
+
+        for (int i = 0; i < gridData.size(); i++) {
+            //check that it is not a cloud land mask
+            if (!gridData.get(i).getFullName().equalsIgnoreCase("cloud_land_mask")) {
+
+                CoordinateAxis1D lonData = (CoordinateAxis1D) dataset.getDataVariable(LON);
+                CoordinateAxis1D latData = (CoordinateAxis1D) dataset.getDataVariable(LAT);
+                double[] lonDbl = lonData.getCoordValues();
+                double[] latDbl = latData.getCoordValues();
+
+                SOSObservationOffering newOffering = new SOSObservationOffering();
+                newOffering.setObservationStationLowerCorner(Double.toString(latDbl[0]), Double.toString(lonDbl[0]));
+                newOffering.setObservationStationUpperCorner(Double.toString(latDbl[latDbl.length - 1]), Double.toString(lonDbl[lonDbl.length - 1]));
+
+                dt = new DateTime(dataset.getCalendarDateStart().toDate());
+                newOffering.setObservationTimeBegin(fmt.print(dt));
+
+                dt = new DateTime(dataset.getCalendarDateEnd().toDate());
+                newOffering.setObservationTimeEnd(fmt.print(dt));
+
+
+                newOffering.setObservationStationDescription(gridData.get(i).getDescription());
+                newOffering.setObservationFeatureOfInterest(gridData.get(i).getFullName());
+                newOffering.setObservationName(GMLName + (gridData.get(i).getName()));
+                newOffering.setObservationStationID((gridData.get(i).getName()));
+                newOffering.setObservationProcedureLink(GMLName + ((gridData.get(i).getName())));
+                newOffering.setObservationSrsName("EPSG:4326");  // TODO?  
+                List<String> obsProperty = new ArrayList<String>();
+                obsProperty.add(gridData.get(i).getDescription());
+
+                newOffering.setObservationObserveredList(obsProperty);
+                
+                document = CDMUtils.addObsOfferingToDoc(newOffering, document);
+            }
+        }
+        return document;
+    }
+    
     @Override
     public double getLowerLat(int stNum) {
 //        return Double.parseDouble(latLonRequest.get(LAT));

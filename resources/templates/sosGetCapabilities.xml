@@ -95,8 +95,8 @@
 	<!--~~~~~~~~~~~~~~~~~~~~~~~-->
 	<!-- Observation Offerings -->
 	<!--~~~~~~~~~~~~~~~~~~~~~~~-->
-	<sos:Contents>
-		<sos:ObservationOfferingList>
+	<Contents>
+		<ObservationOfferingList>
 			
 		</ObservationOfferingList>
 	</Contents>
