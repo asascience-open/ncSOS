@@ -1,10 +1,6 @@
 package com.asascience.ncsos.getcaps;
 
-import com.asascience.ncsos.cdmclasses.TimeSeries;
-import com.asascience.ncsos.cdmclasses.Grid;
-import com.asascience.ncsos.cdmclasses.Trajectory;
-import com.asascience.ncsos.cdmclasses.TimeSeriesProfile;
-import com.asascience.ncsos.cdmclasses.Profile;
+import com.asascience.ncsos.cdmclasses.*;
 import com.asascience.ncsos.getobs.ObservationOffering;
 import com.asascience.ncsos.outputformatter.GetCapsOutputter;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
