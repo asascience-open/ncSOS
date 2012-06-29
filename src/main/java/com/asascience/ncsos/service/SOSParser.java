@@ -12,6 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.asascience.ncsos.getcaps.SOSGetCapabilitiesRequestHandler;
 import com.asascience.ncsos.getobs.SOSGetObservationRequestHandler;
+import com.asascience.ncsos.outputformatter.GetCapsOutputter;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import ucar.nc2.dataset.NetcdfDataset;
 /**
  * Reads and parses a request coming in from thredds
@@ -165,6 +168,11 @@ public class SOSParser {
                                 (String[])queryParameters.get("eventtime"),
                                 queryParameters.get("responseformat").toString(),
                                 coordsHash);
+                        // below indicates that we got an exception and we should return it
+                        if (obsHandler.getOutputHandler().getClass() == GetCapsOutputter.class) {
+                            retval.put("outputHandler", obsHandler.getOutputHandler());
+                            break;
+                        }
                         // set our content type for the response
                         retval.put("responseContentType", obsHandler.getContentType());
                         if (obsHandler.getFeatureDataset() == null) {
@@ -226,6 +234,14 @@ public class SOSParser {
                     }
                     
                     queryParameters.put(keyVal[0].toLowerCase(), (String[]) stList.toArray(new String[stList.size()]) );
+                } else if (keyVal[0].equalsIgnoreCase("responseformat")) {
+                    try {
+                        String val = URLDecoder.decode(keyVal[1], "UTF-8");
+                        queryParameters.put(keyVal[0],val);
+                    } catch (Exception e) {
+                        System.out.println("Exception in decoding: " + keyVal[1] + " - " + e.getMessage());
+                        queryParameters.put(keyVal[0],keyVal[1]);
+                    }
                 } else if (keyVal[0].equalsIgnoreCase("eventtime")) {
                     String[] eventtime;
                     if (keyVal[1].contains("/")) {
