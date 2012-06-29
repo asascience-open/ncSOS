@@ -2,7 +2,6 @@ package com.asascience.ncsos.getobs;
 
 import com.asascience.ncsos.cdmclasses.*;
 import com.asascience.ncsos.outputformatter.OosTethysSwe;
-import com.asascience.ncsos.outputformatter.TestXMLOutputter;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -81,7 +80,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             } else {
                 _log.error("Have a null CDMDataSet, this will cause a null reference exception! - SOSGetObservationRequestHandler.87");
                 // print exception and then return the doc
-                output.setupExceptionOutput("Null Dataset, could not recognize feature type");
+                output.setupExceptionOutput("Null Dataset; could not recognize feature type");
                 CDMDataSet = null;
                 return;
             }

@@ -23,7 +23,6 @@ public final class SOSObservationOffering implements ObservationOffering {
     private String procedureLink;
     private String observedProperty;
     private String featureOfInterest;
-    private String obsResponseFormat;
     private String obsResultModel;
     private String obsResponseMode;
     private List observeredProperties;
@@ -40,7 +39,6 @@ public final class SOSObservationOffering implements ObservationOffering {
         setObservationProcedureLink(" ");
         setObservationObservedProperty(" ");
         setObservationFeatureOfInterest(" ");
-        setObservationFormat(" ");
         setObservationModel(" ");
         setObservationResponseMode(" ");
     }
@@ -163,16 +161,6 @@ public final class SOSObservationOffering implements ObservationOffering {
     @Override
     public void setObservationFeatureOfInterest(String FeatureOfInterest) {
         this.featureOfInterest = FeatureOfInterest;
-    }
-
-    @Override
-    public String getObservationFormat() {
-        return obsResponseFormat;
-    }
-
-    @Override
-    public void setObservationFormat(String format) {
-        this.obsResponseFormat = format;
     }
 
     @Override
