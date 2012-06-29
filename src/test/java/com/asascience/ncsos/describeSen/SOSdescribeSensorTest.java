@@ -9,6 +9,7 @@ import com.asascience.ncsos.service.SOSParser;
 import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.*;
 import java.net.URLEncoder;
+<<<<<<< HEAD
 import java.util.HashMap;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
@@ -44,6 +45,7 @@ public class SOSdescribeSensorTest {
     private static final String bdstp_1_query = "procedure=urn:tds:station.sos:Trajectory2";
     private static final String bdstp_2_set = "resources/datasets/trajectoryProfile-Ragged-MultipleTrajectories-H.6.3/trajectoryProfile-Ragged-MultipleTrajectories-H.6.3.nc";
     private static final String bdstp_2_query = "procedure=urn:tds:station.sos:Trajectory3";
+
     
     private static String baseQuery = "request=DescribeSensor&service=sos&version=1.0.0&responseformat=";
     
