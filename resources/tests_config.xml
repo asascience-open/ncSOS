@@ -14,4 +14,9 @@
 		<outputBase>C:/Users/scowan/Projects/maven/ncSOS/target/test_out/getObsGrid_output/</outputBase>
 		<projectDir>C:/Users/scowan/Projects/maven/ncSOS/</projectDir>
 	</getObsGrid>
+	
+	<describeSensor>
+		<outputDir>C:/Users/scowan/Projects/maven/ncsos/target/test_out/describe_sensor/</outputDir>
+		<projectDir>C:/Users/scowan/Projects/maven/ncsos/</projectDir>
+	</describeSensor>
 </testConfiguration>
