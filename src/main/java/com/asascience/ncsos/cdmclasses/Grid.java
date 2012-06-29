@@ -329,7 +329,7 @@ public class Grid extends baseCDMClass implements iStationData {
      * @param format
      * @return 
      */    
-    public static Document getCapsResponse(GridDataset dataset, Document document, String GMLName, String format) {
+    public static Document getCapsResponse(GridDataset dataset, Document document, String GMLName) {
         List<GridDatatype> gridData = dataset.getGrids();
         //dataset.getCalendarDateStart();
         //dataset.getCalendarDateEnd();
@@ -367,7 +367,6 @@ public class Grid extends baseCDMClass implements iStationData {
                 obsProperty.add(gridData.get(i).getDescription());
 
                 newOffering.setObservationObserveredList(obsProperty);
-                newOffering.setObservationFormat(format);
                 
                 document = CDMUtils.addObsOfferingToDoc(newOffering, document);
             }

@@ -1,6 +1,7 @@
 package com.asascience.ncsos.cdmclasses;
 
 import com.asascience.ncsos.getobs.ObservationOffering;
+import java.util.ArrayList;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -25,7 +26,7 @@ public class CDMUtils {
      */
     public static Document addObsOfferingToDoc(ObservationOffering offering,Document document ) {
 
-        NodeList obsOfferingList = document.getElementsByTagName("sos:ObservationOfferingList");
+        NodeList obsOfferingList = document.getElementsByTagName("ObservationOfferingList");
         Element obsOfferEl = (Element) obsOfferingList.item(0);
         obsOfferEl.appendChild(constructObsOfferingNodes(offering,document));
         offering = null;
@@ -40,7 +41,7 @@ public class CDMUtils {
      */
     public static Element constructObsOfferingNodes(ObservationOffering offering,Document document) {
         //Create the observation offering
-        Element obsOfferingEl = document.createElement("sos:ObservationOffering");
+        Element obsOfferingEl = document.createElement("ObservationOffering");
         //add the station ID to the created element
         obsOfferingEl.setAttribute("gml:id", offering.getObservationStationID());
 
@@ -93,23 +94,25 @@ public class CDMUtils {
         obsOfferingTimeEl.appendChild(obsOfferingTimePeriodEl);
 
         //create procedure node and add element
-        Element obsOfferingProcedureEl = document.createElement("sos:procedure");
+        Element obsOfferingProcedureEl = document.createElement("procedure");
         obsOfferingProcedureEl.setAttribute("xlink:href", offering.getObservationProcedureLink());
 
         //create feature of interest node and add element
-        Element obsOfferingFeatureOfInterestEl = document.createElement("sos:featureOfInterest");
+        Element obsOfferingFeatureOfInterestEl = document.createElement("featureOfInterest");
         obsOfferingFeatureOfInterestEl.setAttribute("xlink:href", offering.getObservationFeatureOfInterest());
 
-        //create response format
-        Element obsOfferingFormatEl = document.createElement("sos:responseFormat");
-        obsOfferingFormatEl.appendChild(document.createTextNode(offering.getObservationFormat()));
+        //create response format(s)
+        ArrayList<Element> responseFormats = createResponseFormatNode(document);
+        if (responseFormats == null) {
+            System.out.println("Could not find responseFormat in ows:Operation 'GetObservation'");
+        }
 
         //create response model
-        Element obsOfferingModelEl = document.createElement("sos:responseModel");
+        Element obsOfferingModelEl = document.createElement("responseModel");
         obsOfferingModelEl.appendChild(document.createTextNode(offering.getObservationModel()));
 
         //create response model
-        Element obsOfferingModeEl = document.createElement("sos:responseMode");
+        Element obsOfferingModeEl = document.createElement("responseMode");
         obsOfferingModeEl.appendChild(document.createTextNode(offering.getObservationResponseMode()));
 
         //add the new elements to the XML doc
@@ -122,13 +125,17 @@ public class CDMUtils {
 
         //create obs property node and add element
         for (int i = 0; i < offering.getObservationObserveredList().size(); i++) {
-            Element obsOfferingObsPropertyEll = document.createElement("sos:observedProperty");
+            Element obsOfferingObsPropertyEll = document.createElement("observedProperty");
             obsOfferingObsPropertyEll.setAttribute("xlink:href", (String) offering.getObservationObserveredList().get(i));
             obsOfferingEl.appendChild(obsOfferingObsPropertyEll);
         }
 
         obsOfferingEl.appendChild(obsOfferingFeatureOfInterestEl);
-        obsOfferingEl.appendChild(obsOfferingFormatEl);
+        // add our response formats
+        for (Element elem : responseFormats) {
+            obsOfferingEl.appendChild(elem);
+        }
+        
         obsOfferingEl.appendChild(obsOfferingModelEl);
         obsOfferingEl.appendChild(obsOfferingModeEl);
         return obsOfferingEl;
@@ -148,6 +155,74 @@ public class CDMUtils {
         } else {
             obsOfferingTimeEndEl.appendChild(document.createTextNode(offering.getObservationTimeEnd()));
         }
+    }
+    
+    /**
+     * Creates the response format nodes for each format contained inside the sosGetCapabilities.xml template
+     * @param doc the xml document which holds the get capabilities response
+     * @return node list of each responseFormat node
+     */
+    private static ArrayList<Element> createResponseFormatNode(Document doc) {
+        System.out.println("in createResponseFormatNode");
+        ArrayList<Element> retval = null;
+        // get a list of the response formats
+        NodeList nodeList = doc.getElementsByTagName("ows:Operation");
+        Element getObservation = null;
+        for (int i=0; i<nodeList.getLength(); i++) {
+            if ("GetObservation".equals(nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue())) {
+                System.out.println("Found GetObservation node");
+                getObservation = (Element) nodeList.item(i);
+                break;
+            }
+        }
+        
+        if (getObservation == null) {
+            System.out.println("Could not find GetObservation! node");
+            return retval;
+        }
+        
+        // now get our "response format" node
+        nodeList = getObservation.getElementsByTagName("ows:Parameter");
+        Element responseFormat = null;
+        for (int j=0; j<nodeList.getLength(); j++) {
+            if("responseFormat".equals(nodeList.item(j).getAttributes().getNamedItem("name").getNodeValue())) {
+                System.out.println("Found responseFormat node");
+                responseFormat = (Element) nodeList.item(j);
+                break;
+            }
+        }
+        
+        if (responseFormat == null) {
+            System.out.println("Could not find responseFormat node");
+            return retval;
+        }
+        
+        // now get all of our values
+        nodeList = responseFormat.getElementsByTagName("ows:AllowedValues");
+        if (nodeList == null) {
+            System.out.println("Could not find ows:AllowedValues");
+            return retval;
+        }
+        nodeList = ((Element) nodeList.item(0)).getElementsByTagName("ows:Value");
+        if (nodeList == null) {
+            System.out.println("Could not find ows:Value(s)");
+            return retval;
+        }
+        // create our array list and populate it with the node list
+        retval = new ArrayList<Element>(nodeList.getLength());
+        Element respForm = null;
+        for (int k=0; k<nodeList.getLength(); k++) {
+            respForm = doc.createElement("responseFormat");
+            respForm.setTextContent(((Element) nodeList.item(k)).getTextContent());
+            retval.add(respForm);
+        }
+        
+        // debug
+        for (Element item : retval) {
+            System.out.println("value: " + item.getTextContent());
+        }
+        
+        return retval;
     }
     
 }

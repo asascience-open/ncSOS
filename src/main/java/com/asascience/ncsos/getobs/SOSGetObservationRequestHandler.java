@@ -91,7 +91,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         }
         
         // set up our formatter
-        if(outputFormat.equalsIgnoreCase("oostethysswe")) {
+        if(outputFormat.equalsIgnoreCase("text/xml;subtype=\"om/1.0.0\"")) {
             System.out.println("using oostethysswe as output");
             contentType = "text/xml";
             output = new OosTethysSwe(this.variableNames, getFeatureDataset(), CDMDataSet, netCDFDataset);
