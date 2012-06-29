@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testConfiguration>
+	<getCaps>
+		<outputBase>C:/Users/scowan/Projects/maven/ncSOS/target/test_out/getCaps_output/</outputBase>
+		<tomcatLocation>C:/apache_tomcat/apache-tomcat-7.0.27/</tomcatLocation>
+		<projectDir>C:/Users/scowan/Projects/maven/ncSOS/</projectDir>
+	</getCaps>
+	
+	<getObs>
+		<outputBase>C:/Users/scowan/Projects/maven/ncSOS/target/test_out/getObs_output/</outputBase>
+	</getObs>
+	
+	<getObsGrid>
+		<outputBase>C:/Users/scowan/Projects/maven/ncSOS/target/test_out/getObsGrid_output/</outputBase>
+		<projectDir>C:/Users/scowan/Projects/maven/ncSOS/</projectDir>
+	</getObsGrid>
+</testConfiguration>
