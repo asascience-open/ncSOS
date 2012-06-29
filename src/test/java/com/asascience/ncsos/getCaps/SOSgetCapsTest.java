@@ -135,15 +135,15 @@ public class SOSgetCapsTest {
     }
     
     
-//    @Test
-//    public void testCanIdentifyTrajectoryCDM() throws IOException {
-//        NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + TCRMTH43);
-//        SOSGetCapabilitiesRequestHandler sosget = new SOSGetCapabilitiesRequestHandler(dataset, "threddsURI");
-//        assertEquals(FeatureType.TRAJECTORY, sosget.getDatasetFeatureType());
-//        //trajectory
-//
-//    }
-//    
+    @Test
+    public void testCanIdentifyTrajectoryCDM() throws IOException {
+        NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + TCRMTH43);
+        SOSGetCapabilitiesRequestHandler sosget = new SOSGetCapabilitiesRequestHandler(dataset, "threddsURI");
+        assertEquals(FeatureType.TRAJECTORY, sosget.getDatasetFeatureType());
+        //trajectory
+
+    }
+    
     @Test
     public void testCanProcessTrajectory() throws IOException {
         
