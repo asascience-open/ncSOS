@@ -4,6 +4,7 @@
  */
 package com.asascience.ncsos.service;
 
+import com.asascience.ncsos.describesen.SOSDescribeSensorHandler;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -46,7 +47,7 @@ public class SOSParser {
      * @param query query string provided by request
      * @param threddsURI 
      */
-    public HashMap<String, Object> enhance(final NetcdfDataset dataset, final String query, String threddsURI) {
+    public HashMap<String, Object> enhance(final NetcdfDataset dataset, final String query, String threddsURI) throws IOException {
         return enhance(dataset, query, threddsURI, null);
     }
 
@@ -57,7 +58,7 @@ public class SOSParser {
      * @param threddsURI
      * @param savePath 
      */
-    public HashMap<String, Object> enhance(final NetcdfDataset dataset, final String query, String threddsURI, String savePath) {
+    public HashMap<String, Object> enhance(final NetcdfDataset dataset, final String query, String threddsURI, String savePath) throws IOException {
         // clear anything that can cause issue if we were to use the same parser for multiple requests
         queryParameters = new HashMap<String, Object>();
         coordsHash = new HashMap<String, String>();
@@ -147,6 +148,7 @@ public class SOSParser {
                             capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
                             capHandler.getOutputHandler().setupExceptionOutput("Observation requests must have offering, observedProperty, eventtime, responseFormat as query parameters");
                             retval.put("outputHandler", capHandler.getOutputHandler());
+                            retval.put("responseContentType", "text/xml");
                         } catch (Exception e) { }
                         break;
                     }
@@ -170,6 +172,7 @@ public class SOSParser {
                                 coordsHash);
                         // below indicates that we got an exception and we should return it
                         if (obsHandler.getOutputHandler().getClass() == GetCapsOutputter.class) {
+                            retval.put("responseContentType", "text/xml");
                             retval.put("outputHandler", obsHandler.getOutputHandler());
                             break;
                         }
@@ -192,8 +195,17 @@ public class SOSParser {
                 case DescribeSensor:
                     // resposne will always be text/xml
                     retval.put("responseContentType", "text/xml");
-                    // create a describe sensor handler
-                    
+                    SOSDescribeSensorHandler sensorHandler;
+                    if (!queryParameters.containsKey("responseformat") || !queryParameters.containsKey("procedure")) {
+                        sensorHandler = new SOSDescribeSensorHandler(dataset);
+                        sensorHandler.getOutputHandler().setupExceptionOutput("responseformat and procedure are required for DescribeSensor requests");
+                    } else {
+                        // create a describe sensor handler
+                        sensorHandler = new SOSDescribeSensorHandler(dataset,
+                                queryParameters.get("responseformat").toString(),
+                                queryParameters.get("procedure").toString());
+                    }
+                    retval.put("outputHandler",sensorHandler.getOutputHandler());
                     break;
                 default:
                     // return a 'not supported' error

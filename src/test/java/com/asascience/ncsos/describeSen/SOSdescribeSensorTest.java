@@ -83,7 +83,7 @@ public class SOSdescribeSensorTest {
     
     @Test
     public void testBasicDescribeSensor() throws IOException {
-        NetcdfDataset cdfDataset = NetcdfDataset.openDataset(outputDir + bsd_1_set);
+        NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + bsd_1_set);
         SOSParser parser = new SOSParser();
         Writer writer = new CharArrayWriter();
         writeOutput(parser.enhance(cdfDataset, baseQuery + bsd_1_query, bsd_1_set), writer);
