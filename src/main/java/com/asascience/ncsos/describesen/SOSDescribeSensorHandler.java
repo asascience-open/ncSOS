@@ -147,6 +147,17 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
                 break;
         }
         
+        // setup our xml doc for writing
+        setupDescribeSensorDoc();
+    }
+
+    /**
+     * Exception version, used to create skeleton SOSDescribeSensorHandler that can throw an exception
+     * @param dataset dataset, mostly unused
+     * @throws IOException 
+     */
+    public SOSDescribeSensorHandler(NetcdfDataset dataset) throws IOException {
+        super(dataset);
     }
     
     private void setNeededInfoForSensor( NetcdfDataset dataset ) {

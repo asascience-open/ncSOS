@@ -9,7 +9,6 @@ import com.asascience.ncsos.service.SOSParser;
 import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.*;
 import java.net.URLEncoder;
-<<<<<<< HEAD
 import java.util.HashMap;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
