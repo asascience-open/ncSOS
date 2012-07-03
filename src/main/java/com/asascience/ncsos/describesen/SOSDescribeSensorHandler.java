@@ -8,16 +8,10 @@ import com.asascience.ncsos.outputformatter.DescribeSensorFormatter;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import org.geotoolkit.util.collection.CheckedHashMap;
-import ucar.ma2.Array;
-import ucar.ma2.Index;
-import ucar.ma2.Section;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
-import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
@@ -37,7 +31,6 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
     private Attribute platformType;
     private ArrayList<Attribute> historyInfo;
     private double[] stationCoords;
-    private String[] components;
 //    private Variable historyVar;  might want to consider having some vars hold info regarding history
     
     private final String ACCEPTABLE_RESPONSE_FORMAT = "text/xml;subtype=\"sensorML/1.0.1\"";
@@ -105,19 +98,13 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
                         url.toArray(new String[url.size()]));
             }
             // set location
-            formatter.setLocationNode((procedure.split(":"))[procedure.length()-1], stationCoords);
+            String[] procedureSplit = procedure.split(":");
+            formatter.setLocationNode(procedureSplit[procedureSplit.length-1], stationCoords);
             // set components
-            HashMap<String, HashMap<String, String>> componentMap = new HashMap<String, HashMap<String, String>>();
-            for (String str : components) {
-                HashMap<String, String> internal = new HashMap<String, String>();
-                // add identification, documentation, system
-                internal.put("identification", str);
-                internal.put("documentation", str);
-                internal.put("system", str);
-                componentMap.put(str, internal);
-            }
-            formatter.setComponentsNode(componentMap);
-            
+            formatter.setComponentsNode(getFeatureDataset().getDataVariables(), procedure);
+            // delete unwanted nodes
+            formatter.deletePosition();
+            formatter.deleteTimePosition();
         } else if (this.procedure.contains("sensor")) {
             setNeededInfoForSensor(dataset);
         } else {
@@ -172,13 +159,30 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
         
         // get the lat/lon of the station
         // station id should be the last value in the procedure
-        String stationId = (procedure.split(":"))[0];
+        String[] procedureSplit = procedure.split(":");
+        String stationId = procedureSplit[procedureSplit.length - 1];
         int stationIndex = -1;
         // get the station index in the array
-        Array stationArray = stationVar.read();
-        for (int i=0; i<stationArray.getSize(); i++) {
-            if (stationArray.getObject(i).toString().equalsIgnoreCase(stationId)) {
-                stationIndex = i;
+        char[] charArray = (char[]) stationVar.read().get1DJavaArray(char.class);
+        // find the length of the strings, assumes that the array has only a rank of 2; string length should be the 1st index
+        int[] aShape = stationVar.read().getShape();
+        String[] names = new String[aShape[0]];
+        StringBuilder strB = null;
+        int ni = 0;
+        for (int i=0;i<charArray.length;i++) {
+            if(i % aShape[1] == 0) {
+                if (strB != null)
+                    names[ni++] = strB.toString();
+                strB = new StringBuilder();
+            }
+            // ignore null
+            if (charArray[i] != '\u0000')
+                strB.append(charArray[i]);
+        }
+        // now find our station index
+        for (int j=0; j<names.length; j++) {
+            if(names[j].equalsIgnoreCase(stationId)) {
+                stationIndex = j;
                 break;
             }
         }
@@ -202,17 +206,6 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
         
         // set our station coords
         stationCoords = new double[] { lat, lon };
-        
-        // lastly get our components
-        ArrayList<String> dataVarNames = new ArrayList<String>();
-        for (Iterator<VariableSimpleIF> it = getFeatureDataset().getDataVariables().iterator(); it.hasNext();) {
-            Variable var = (Variable) it.next();
-            dataVarNames.add(var.getFullName());
-        }
-        components = new String[dataVarNames.size()];
-        for (int i=0; i<components.length; i++) {
-            components[i] = dataVarNames.get(i);
-        }
     }
     
     private void setNeededInfoForSensor( NetcdfDataset dataset ) {
