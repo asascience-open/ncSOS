@@ -216,6 +216,29 @@ public class SOSDescribeStation implements SOSDescribeIF {
     private void formatSetDocumentNodes(DescribeSensorFormatter output) {
         if (documentVariables != null) {
             // add document nodes for each variable
+            ArrayList<String> descriptions, docs, formats;
+            formats = new ArrayList<String>();
+            descriptions = new ArrayList<String>();
+            docs = new ArrayList<String>();
+            for (Variable var : historyVariables) {
+                String format, description, doc;
+                format = description = doc = "";
+                for (Attribute attr : var.getAttributes()) {
+                    if (attr.getName().toLowerCase().contains("format")) {
+                        format = attr.getStringValue();
+                    } else if (attr.getName().toLowerCase().contains("description")) {
+                        description = attr.getStringValue();
+                    } else {
+                        doc = attr.getStringValue();
+                    }
+                }
+                formats.add(format);
+                descriptions.add(description);
+                docs.add(doc);
+            }
+            output.setDocumentationNode(descriptions.toArray(new String[descriptions.size()]),
+                    formats.toArray(new String[formats.size()]),
+                    docs.toArray(new String[docs.size()]));
         } else {
             output.deleteDocumentationNode();
         }
@@ -224,29 +247,37 @@ public class SOSDescribeStation implements SOSDescribeIF {
     private void formatSetHistoryNodes(DescribeSensorFormatter output) {
         if (historyVariables != null) {
             // add history nodes for each variable
+            ArrayList<String> names, descriptions, dates, docs;
+            names = new ArrayList<String>();
+            descriptions = new ArrayList<String>();
+            dates = new ArrayList<String>();
+            docs = new ArrayList<String>();
+            for (Variable var : historyVariables) {
+                String name, description, date, doc;
+                name = description = date = doc = "";
+                for (Attribute attr : var.getAttributes()) {
+                    if (attr.getName().toLowerCase().contains("name")) {
+                        name = attr.getStringValue();
+                    } else if (attr.getName().toLowerCase().contains("description")) {
+                        description = attr.getStringValue();
+                    } else if (attr.getName().toLowerCase().contains("date")) {
+                        date = attr.getStringValue();
+                    } else {
+                        doc = attr.getStringValue();
+                    }
+                }
+                names.add(name);
+                descriptions.add(description);
+                dates.add(date);
+                docs.add(doc);
+            }
+            output.setHistoryEvents(names.toArray(new String[names.size()]),
+                    dates.toArray(new String[dates.size()]),
+                    descriptions.toArray(new String[descriptions.size()]),
+                    docs.toArray(new String[docs.size()]));
         } else {
             output.deleteHistoryNode();
         }
-//        if (historyInfo.size() < 1) {
-//                formatter.deleteHistoryNode();
-//            } else {
-//                ArrayList<String> name, description, date, url;
-//                name = new ArrayList<String>();
-//                description = new ArrayList<String>();
-//                date = new ArrayList<String>();
-//                url = new ArrayList<String>();
-//                for (Iterator<Attribute> it = historyInfo .iterator(); it.hasNext();) {
-//                    Attribute attr = it.next();
-//                    name.add(attr.getName());
-//                    description.add(attr.getStringValue());
-//                    date.add(null);
-//                    url.add(null);
-//                }
-//                formatter.setHistoryEvents(name.toArray(new String[name.size()]),
-//                        date.toArray(new String[date.size()]),
-//                        description.toArray(new String[description.size()]),
-//                        url.toArray(new String[url.size()]));
-//            }
     }
 
     private void formatSetLocationNode(DescribeSensorFormatter output) {

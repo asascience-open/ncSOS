@@ -9,10 +9,8 @@ import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import com.asascience.ncsos.util.DiscreteSamplingGeometryUtil;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import ucar.nc2.Attribute;
-import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
@@ -26,13 +24,6 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
     private ArrayList<Attribute> contactInfo;
     private ArrayList<Attribute> documentationInfo;
     private SOSDescribeIF describer;
-    
-    // stuff needed for all station vars/requests
-    // stuff needed for time series
-    private Variable stationVar;
-    private Attribute platformType;
-    private ArrayList<Attribute> historyInfo;
-//    private Variable historyVar;  might want to consider having some vars hold info regarding history
     
     private final String ACCEPTABLE_RESPONSE_FORMAT = "text/xml;subtype=\"sensorML/1.0.1\"";
     
