@@ -163,7 +163,6 @@ public class CDMUtils {
      * @return node list of each responseFormat node
      */
     private static ArrayList<Element> createResponseFormatNode(Document doc) {
-        System.out.println("in createResponseFormatNode");
         ArrayList<Element> retval = null;
         // get a list of the response formats
         NodeList nodeList = doc.getElementsByTagName("ows:Operation");

@@ -32,9 +32,18 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     private Document document;
     
     private final String TEMPLATE = "templates/sosDescribeSensor.xml";
+    private final String uri;
+    private final String query;
     
     public DescribeSensorFormatter() {
         document = parseTemplateXML();
+        this.uri = this.query = null;
+    }
+
+    public DescribeSensorFormatter(String uri, String query) {
+        document = parseTemplateXML();
+        this.uri = uri;
+        this.query = query;
     }
     
     public Document getDocument() {
@@ -93,10 +102,23 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         return (Element) document.getElementsByTagName("System").item(0);
     }
     
+    private String joinArray(String[] arrayToJoin) {
+        String retval = "";
+        for (String str : arrayToJoin) {
+            retval += str;
+        }
+        return retval;
+    }
+    
     /****************************
      * Public Methods           *
      * Setting the XML document *
      ****************************/
+    
+    public void setSystemId(String id) {
+        Element system = (Element) document.getElementsByTagName("System").item(0);
+        system.setAttribute("gml:id", id);
+    }
     
     public void setDescriptionNode(String description) {
         // get our description node and set its string content
@@ -234,20 +256,22 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
             if (name[i] != null) {
                 member.setAttribute("name", name[i]);
             }
+            Element event = document.createElement("Event");
+            member.appendChild(event);
             if (date[i] != null) {
                 Element tEl = document.createElement("date");
                 tEl.setTextContent(date[i]);
-                member.appendChild(tEl);
+                event.appendChild(tEl);
             }
             if (description[i] != null) {
                 Element tEl = document.createElement("description");
                 tEl.setTextContent(description[i]);
-                member.appendChild(tEl);
+                event.appendChild(tEl);
             }
             if (url[i] != null) {
                 Element tEl = document.createElement("documentation");
                 tEl.setAttribute("xlink:href", url[i]);
-                member.appendChild(tEl);
+                event.appendChild(tEl);
             }
             parent.appendChild(member);
         }
@@ -291,7 +315,18 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
             ident.setAttribute("xlink:href", procedure + "::" + fName);
             // documentation (url) node
             Element doc = document.createElement("documentation");
-            doc.setAttribute("xlink:href", fName);
+            // need to construct url for sensor request
+            String url = this.uri;
+            String[] reqParams = this.query.split("&");
+            // look for procedure
+            for (int j=0; j<reqParams.length; j++) {
+                if (reqParams[j].contains("procedure"))
+                    // add sensor
+                    reqParams[j] += "::" + fName;
+            }
+            // rejoin
+            url += "?" + joinArray(reqParams);
+            doc.setAttribute("xlink:href", url);
             // description
             Element desc = document.createElement("gml:description");
             desc.setTextContent(dataVariables.get(i).getDescription());

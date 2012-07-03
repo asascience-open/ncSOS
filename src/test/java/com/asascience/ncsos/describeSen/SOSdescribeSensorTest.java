@@ -10,8 +10,7 @@ import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.*;
 import java.net.URLEncoder;
 import java.util.HashMap;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -27,6 +26,8 @@ public class SOSdescribeSensorTest {
     
     private static final String bsd_1_set = "resources/datasets/sura/watlev_NOAA_NAVD_PRE.nc";
     private static final String bsd_1_query = "procedure=urn:tds:station.sos:NOAA_8724698";
+    private static final String bsd_2_set = "resources/datasets/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1.nc";
+    private static final String bsd_2_query = "procedure=urn:tds:station.sos:Station1";
     
     private static String baseQuery = "request=DescribeSensor&service=sos&version=1.0.0&responseformat=";
     
@@ -77,7 +78,7 @@ public class SOSdescribeSensorTest {
     }
     
     @Test
-    public void testBasicDescribeSensor() throws IOException {
+    public void testBasicDescribeSensorStation() throws IOException {
         NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + bsd_1_set);
         SOSParser parser = new SOSParser();
         Writer writer = new CharArrayWriter();
@@ -85,5 +86,30 @@ public class SOSdescribeSensorTest {
         fileWriter(outputDir, "NOAA_8724698.xml", writer);
         // test for expected values below
         assertFalse("exception in output", writer.toString().contains("Exception"));
+        assertTrue("missing component", writer.toString().contains("<component name=\"Sensor watlev\">"));
+        assertTrue("station id not as expected", writer.toString().contains("<value>urn:tds:station.sos:NOAA_8724698</value>"));
     }
+    
+    @Test
+    public void testBasicDescribeSensorStation2() throws IOException {
+        NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bsd_2_set);
+        SOSParser parser = new SOSParser();
+        Writer writer = new CharArrayWriter();
+        writeOutput(parser.enhance(dataset, baseQuery + bsd_2_query, bsd_2_set), writer);
+        fileWriter(outputDir, "timeSeriesProfile-Multidimensional-MultipleStations-H.5.1.xml", writer);
+        assertFalse("exception in output", writer.toString().contains("Exception"));
+        assertTrue("missing component", writer.toString().contains("<component name=\"Sensor temperature\">"));
+        assertTrue("missing/invalid coords", writer.toString().contains("<gml:coordinates>37.5 -76.5</gml:coordinates>"));
+    }
+    
+//    @Test
+//    public void testBasicDescribeSensorStation3() throws IOException {
+//        NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bsd_2_set);
+//        SOSParser parser = new SOSParser();
+//        Writer writer = new CharArrayWriter();
+//        writeOutput(parser.enhance(dataset, baseQuery + bsd_2_query, bsd_2_set), writer);
+//        fileWriter(outputDir, "timeSeriesProfile-Multidimensional-MultipleStations-H.5.1.xml", writer);
+//        
+//        assertFalse("exception in output", writer.toString().contains("Exception"));
+//    }
 }

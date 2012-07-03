@@ -6,6 +6,7 @@ package com.asascience.ncsos.describesen;
 
 import com.asascience.ncsos.outputformatter.DescribeSensorFormatter;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
+import com.asascience.ncsos.util.DiscreteSamplingGeometryUtil;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -22,15 +23,15 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
     
     private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(SOSDescribeSensorHandler.class);
     private String procedure;
-    private String description;
     private ArrayList<Attribute> contactInfo;
     private ArrayList<Attribute> documentationInfo;
+    private SOSDescribeIF describer;
     
-    // stuff needed for station vars/requests
+    // stuff needed for all station vars/requests
+    // stuff needed for time series
     private Variable stationVar;
     private Attribute platformType;
     private ArrayList<Attribute> historyInfo;
-    private double[] stationCoords;
 //    private Variable historyVar;  might want to consider having some vars hold info regarding history
     
     private final String ACCEPTABLE_RESPONSE_FORMAT = "text/xml;subtype=\"sensorML/1.0.1\"";
@@ -42,10 +43,10 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
      * @param procedure
      * @throws IOException 
      */
-    public SOSDescribeSensorHandler(NetcdfDataset dataset, String responseFormat, String procedure) throws IOException {
+    public SOSDescribeSensorHandler(NetcdfDataset dataset, String responseFormat, String procedure, String uri, String query) throws IOException {
         super(dataset);
         
-        output = new DescribeSensorFormatter();
+        output = new DescribeSensorFormatter(uri, query);
         
         // make sure that the responseFormat we recieved is acceptable
         if (!responseFormat.equalsIgnoreCase(ACCEPTABLE_RESPONSE_FORMAT)) {
@@ -56,60 +57,19 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
         
         this.procedure = procedure;
         
-        description = dataset.findAttValueIgnoreCase(null, "description", "empty");
-        
         getContactInfoAttributes(dataset.getGlobalAttributes());
         getDocumentationAttributes(dataset.getGlobalAttributes());
         
         // find out needed info based on whether this is a station or sensor look up
         if (this.procedure.contains("station")) {
             setNeededInfoForStation(dataset);
-            // setup our output after having collected all of our needed info
-            DescribeSensorFormatter formatter = (DescribeSensorFormatter)output;
-            formatSetIdentification(formatter);
-            // set our classification
-            if (platformType != null) {
-                formatter.addToClassificationNode(platformType.getName(), "", platformType.getStringValue());
-            } else {
-                formatter.deleteClassificationNode();
-            }
-            // set our contact node(s)
-            // set documentation -- temporary just delete it
-            formatter.deleteDocumentationNode();
-            // set history
-            if (historyInfo.size() < 1) {
-                formatter.deleteHistoryNode();
-            } else {
-                ArrayList<String> name, description, date, url;
-                name = new ArrayList<String>();
-                description = new ArrayList<String>();
-                date = new ArrayList<String>();
-                url = new ArrayList<String>();
-                for (Iterator<Attribute> it = historyInfo .iterator(); it.hasNext();) {
-                    Attribute attr = it.next();
-                    name.add(attr.getName());
-                    description.add(attr.getStringValue());
-                    date.add(null);
-                    url.add(null);
-                }
-                formatter.setHistoryEvents(name.toArray(new String[name.size()]),
-                        date.toArray(new String[date.size()]),
-                        description.toArray(new String[description.size()]),
-                        url.toArray(new String[url.size()]));
-            }
-            // set location
-            String[] procedureSplit = procedure.split(":");
-            formatter.setLocationNode(procedureSplit[procedureSplit.length-1], stationCoords);
-            // set components
-            formatter.setComponentsNode(getFeatureDataset().getDataVariables(), procedure);
-            // delete unwanted nodes
-            formatter.deletePosition();
-            formatter.deleteTimePosition();
+            describer.SetupOutputDocument((DescribeSensorFormatter)output);
+            // need to set the components here should be universal for station inquiries
+            ((DescribeSensorFormatter)output).setComponentsNode(DiscreteSamplingGeometryUtil.getDataVariables(getFeatureDataset()), procedure);
         } else if (this.procedure.contains("sensor")) {
             setNeededInfoForSensor(dataset);
         } else {
             output.setupExceptionOutput("Unknown procedure (not a station or sensor): " + this.procedure);
-            return;
         }
     }
 
@@ -122,90 +82,20 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
         super(dataset);
     }
     
-    private void formatSetIdentification(DescribeSensorFormatter formatter) {
-        formatter.setDescriptionNode(description);
-            ArrayList<String> identNames = new ArrayList<String>();
-            ArrayList<String> identDefinitions = new ArrayList<String>();
-            ArrayList<String> identValues = new ArrayList<String>();
-            identNames.add("StationId"); identDefinitions.add("stationID"); identValues.add(procedure);
-            for (Attribute attr : stationVar.getAttributes()) {
-                identNames.add(attr.getName()); identDefinitions.add(""); identValues.add(attr.getStringValue());
-            }
-            formatter.setIdentificationNode(identNames.toArray(new String[identNames.size()]),
-                    identDefinitions.toArray(new String[identDefinitions.size()]),
-                    identValues.toArray(new String[identValues.size()]));
-    }
-    
     private void setNeededInfoForStation( NetcdfDataset dataset ) throws IOException {
-        // get our station variable
-        for (Variable var : dataset.getVariables()) {
-            if (var.getFullName().matches("(station)[_]*(name)")) {
-                stationVar = var;
+        // get our information based on feature type
+        switch (getFeatureDataset().getFeatureType()) {
+            case STATION:
+            case STATION_PROFILE:
+                describer = new SOSDescribeStation(dataset, procedure);
                 break;
-            }
-        }
-        
-        // classification
-        platformType = dataset.findGlobalAttributeIgnoreCase("platformtype");
-        
-        // get history attributes
-        historyInfo = new ArrayList<Attribute>();
-        for (Attribute attr : dataset.getGlobalAttributes()) {
-            String name = attr.getName();
-            if (name.contains("history") || name.contains("deployment")) {
-                historyInfo.add(attr);
-            }
-        }
-        
-        // get the lat/lon of the station
-        // station id should be the last value in the procedure
-        String[] procedureSplit = procedure.split(":");
-        String stationId = procedureSplit[procedureSplit.length - 1];
-        int stationIndex = -1;
-        // get the station index in the array
-        char[] charArray = (char[]) stationVar.read().get1DJavaArray(char.class);
-        // find the length of the strings, assumes that the array has only a rank of 2; string length should be the 1st index
-        int[] aShape = stationVar.read().getShape();
-        String[] names = new String[aShape[0]];
-        StringBuilder strB = null;
-        int ni = 0;
-        for (int i=0;i<charArray.length;i++) {
-            if(i % aShape[1] == 0) {
-                if (strB != null)
-                    names[ni++] = strB.toString();
-                strB = new StringBuilder();
-            }
-            // ignore null
-            if (charArray[i] != '\u0000')
-                strB.append(charArray[i]);
-        }
-        // now find our station index
-        for (int j=0; j<names.length; j++) {
-            if(names[j].equalsIgnoreCase(stationId)) {
-                stationIndex = j;
+            case TRAJECTORY:
                 break;
-            }
+            default:
+                System.out.println("Unhandled feature type: " + getFeatureDataset().getFeatureType().toString());
+                break;
         }
         
-        if (stationIndex < 0) {
-            output.setupExceptionOutput("Unable to find index of station: " + stationId);
-            return;
-        }
-        
-        // find lat/lon values for the station
-        double lat, lon;
-        lat = lon = Double.NaN;
-        for (Variable var : dataset.getVariables()) {
-            if (var.getFullName().toLowerCase().contains("lat")) {
-                lat = var.read().getDouble(stationIndex);
-            }
-            if (var.getFullName().toLowerCase().contains("lon")) {
-                lon = var.read().getDouble(stationIndex);
-            }
-        }
-        
-        // set our station coords
-        stationCoords = new double[] { lat, lon };
     }
     
     private void setNeededInfoForSensor( NetcdfDataset dataset ) {
@@ -217,10 +107,7 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
         contactInfo = new ArrayList<Attribute>();
         for (Attribute attr : globalAttrs) {
             String name = attr.getName();
-            if (name.contains("creator") ||
-                    name.contains("institution") ||
-                    name.contains("author") || 
-                    name.contains("contact")) {
+            if (name.contains("contact")) {
                 contactInfo.add(attr);
             }
         }

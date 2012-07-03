@@ -203,7 +203,9 @@ public class SOSParser {
                         // create a describe sensor handler
                         sensorHandler = new SOSDescribeSensorHandler(dataset,
                                 queryParameters.get("responseformat").toString(),
-                                queryParameters.get("procedure").toString());
+                                queryParameters.get("procedure").toString(),
+                                threddsURI,
+                                query);
                     }
                     retval.put("outputHandler",sensorHandler.getOutputHandler());
                     break;
