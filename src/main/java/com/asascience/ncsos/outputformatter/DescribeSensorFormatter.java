@@ -208,8 +208,8 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         getParentNode().removeChild(getParentNode().getElementsByTagName("contact").item(0));
     }
     
-    public void setDocumentationNode(String[] description, String[] format, String[] url) {
-        if (description.length != format.length || description.length != url.length) {
+    public void setDocumentationNode(String[] description, String[] format, String[] documentation) {
+        if (description.length != format.length || description.length != documentation.length) {
             setupExceptionOutput("invalid format for documentation node; description, format, url counts are not the same");
             return;
         }
@@ -228,9 +228,9 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
                 form.setTextContent(format[i]);
                 nDoc.appendChild(form);
             }
-            if (url[i] != null) {
+            if (documentation[i] != null) {
                 Element u = document.createElement("onlineResource");
-                u.setAttribute("xlink:href", url[i]);
+                u.setAttribute("xlink:href", documentation[i]);
                 nDoc.appendChild(u);
             }
             parent.appendChild(nDoc);
