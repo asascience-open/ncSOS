@@ -7,12 +7,17 @@ package com.asascience.ncsos.describesen;
 import com.asascience.ncsos.outputformatter.DescribeSensorFormatter;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import java.io.IOException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import org.geotoolkit.util.collection.CheckedHashMap;
+import ucar.ma2.Array;
+import ucar.ma2.Index;
+import ucar.ma2.Section;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
+import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
@@ -24,8 +29,16 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
     private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(SOSDescribeSensorHandler.class);
     private String procedure;
     private String description;
-    private Variable procedureVar;
+    private ArrayList<Attribute> contactInfo;
+    private ArrayList<Attribute> documentationInfo;
+    
+    // stuff needed for station vars/requests
     private Variable stationVar;
+    private Attribute platformType;
+    private ArrayList<Attribute> historyInfo;
+    private double[] stationCoords;
+    private String[] components;
+//    private Variable historyVar;  might want to consider having some vars hold info regarding history
     
     private final String ACCEPTABLE_RESPONSE_FORMAT = "text/xml;subtype=\"sensorML/1.0.1\"";
     
@@ -45,30 +58,72 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
         if (!responseFormat.equalsIgnoreCase(ACCEPTABLE_RESPONSE_FORMAT)) {
             // return exception
             output.setupExceptionOutput("Unhandled response format " + responseFormat);
-        } else {
-            this.procedure = procedure;
+            return;
         }
+        
+        this.procedure = procedure;
         
         description = dataset.findAttValueIgnoreCase(null, "description", "empty");
-        String[] tmpArray = procedure.split(":");
-        System.out.println("variables break down:");
-        for (Variable var : dataset.getVariables()) {
-            System.out.println(var.getNameAndDimensions());
-        }
         
-        procedureVar = dataset.findVariable(tmpArray[tmpArray.length - 1]);
+        getContactInfoAttributes(dataset.getGlobalAttributes());
+        getDocumentationAttributes(dataset.getGlobalAttributes());
         
-        if (procedureVar != null) {
-            System.out.println("Found procedure variable; attributes:");
-            for (Attribute attr : procedureVar.getAttributes()) {
-                System.out.println(attr.getName());
+        // find out needed info based on whether this is a station or sensor look up
+        if (this.procedure.contains("station")) {
+            setNeededInfoForStation(dataset);
+            // setup our output after having collected all of our needed info
+            DescribeSensorFormatter formatter = (DescribeSensorFormatter)output;
+            formatSetIdentification(formatter);
+            // set our classification
+            if (platformType != null) {
+                formatter.addToClassificationNode(platformType.getName(), "", platformType.getStringValue());
+            } else {
+                formatter.deleteClassificationNode();
             }
+            // set our contact node(s)
+            // set documentation -- temporary just delete it
+            formatter.deleteDocumentationNode();
+            // set history
+            if (historyInfo.size() < 1) {
+                formatter.deleteHistoryNode();
+            } else {
+                ArrayList<String> name, description, date, url;
+                name = new ArrayList<String>();
+                description = new ArrayList<String>();
+                date = new ArrayList<String>();
+                url = new ArrayList<String>();
+                for (Iterator<Attribute> it = historyInfo .iterator(); it.hasNext();) {
+                    Attribute attr = it.next();
+                    name.add(attr.getName());
+                    description.add(attr.getStringValue());
+                    date.add(null);
+                    url.add(null);
+                }
+                formatter.setHistoryEvents(name.toArray(new String[name.size()]),
+                        date.toArray(new String[date.size()]),
+                        description.toArray(new String[description.size()]),
+                        url.toArray(new String[url.size()]));
+            }
+            // set location
+            formatter.setLocationNode((procedure.split(":"))[procedure.length()-1], stationCoords);
+            // set components
+            HashMap<String, HashMap<String, String>> componentMap = new HashMap<String, HashMap<String, String>>();
+            for (String str : components) {
+                HashMap<String, String> internal = new HashMap<String, String>();
+                // add identification, documentation, system
+                internal.put("identification", str);
+                internal.put("documentation", str);
+                internal.put("system", str);
+                componentMap.put(str, internal);
+            }
+            formatter.setComponentsNode(componentMap);
+            
+        } else if (this.procedure.contains("sensor")) {
+            setNeededInfoForSensor(dataset);
         } else {
-            System.out.println("Couldn't find procedure variable");
+            output.setupExceptionOutput("Unknown procedure (not a station or sensor): " + this.procedure);
+            return;
         }
-        
-        // setup our xml doc for writing
-        setupDescribeSensorDoc();
     }
 
     /**
@@ -80,76 +135,112 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
         super(dataset);
     }
     
-    /*****************************
-     * XML Node Setter Functions *
-     *****************************/
-    
-    private Document getDocument() {
-        return ((DescribeSensorFormatter)output).getDocument();
+    private void formatSetIdentification(DescribeSensorFormatter formatter) {
+        formatter.setDescriptionNode(description);
+            ArrayList<String> identNames = new ArrayList<String>();
+            ArrayList<String> identDefinitions = new ArrayList<String>();
+            ArrayList<String> identValues = new ArrayList<String>();
+            identNames.add("StationId"); identDefinitions.add("stationID"); identValues.add(procedure);
+            for (Attribute attr : stationVar.getAttributes()) {
+                identNames.add(attr.getName()); identDefinitions.add(""); identValues.add(attr.getStringValue());
+            }
+            formatter.setIdentificationNode(identNames.toArray(new String[identNames.size()]),
+                    identDefinitions.toArray(new String[identDefinitions.size()]),
+                    identValues.toArray(new String[identValues.size()]));
     }
     
-    private void setupDescribeSensorDoc() {
-        Document doc = getDocument();
+    private void setNeededInfoForStation( NetcdfDataset dataset ) throws IOException {
+        // get our station variable
+        for (Variable var : dataset.getVariables()) {
+            if (var.getFullName().matches("(station)[_]*(name)")) {
+                stationVar = var;
+                break;
+            }
+        }
         
-        // call each of our setter functions
-        setDescription(doc);
-        setIdentification(doc);
-        setClassification(doc);
-        setContact(doc);
-        setDocumentation(doc);
-        setHistory(doc);
-        setLocation(doc);
-        setPosition(doc);
-        setTimePosition(doc);
-        setComponents(doc);
+        // classification
+        platformType = dataset.findGlobalAttributeIgnoreCase("platformtype");
+        
+        // get history attributes
+        historyInfo = new ArrayList<Attribute>();
+        for (Attribute attr : dataset.getGlobalAttributes()) {
+            String name = attr.getName();
+            if (name.contains("history") || name.contains("deployment")) {
+                historyInfo.add(attr);
+            }
+        }
+        
+        // get the lat/lon of the station
+        // station id should be the last value in the procedure
+        String stationId = (procedure.split(":"))[0];
+        int stationIndex = -1;
+        // get the station index in the array
+        Array stationArray = stationVar.read();
+        for (int i=0; i<stationArray.getSize(); i++) {
+            if (stationArray.getObject(i).toString().equalsIgnoreCase(stationId)) {
+                stationIndex = i;
+                break;
+            }
+        }
+        
+        if (stationIndex < 0) {
+            output.setupExceptionOutput("Unable to find index of station: " + stationId);
+            return;
+        }
+        
+        // find lat/lon values for the station
+        double lat, lon;
+        lat = lon = Double.NaN;
+        for (Variable var : dataset.getVariables()) {
+            if (var.getFullName().toLowerCase().contains("lat")) {
+                lat = var.read().getDouble(stationIndex);
+            }
+            if (var.getFullName().toLowerCase().contains("lon")) {
+                lon = var.read().getDouble(stationIndex);
+            }
+        }
+        
+        // set our station coords
+        stationCoords = new double[] { lat, lon };
+        
+        // lastly get our components
+        ArrayList<String> dataVarNames = new ArrayList<String>();
+        for (Iterator<VariableSimpleIF> it = getFeatureDataset().getDataVariables().iterator(); it.hasNext();) {
+            Variable var = (Variable) it.next();
+            dataVarNames.add(var.getFullName());
+        }
+        components = new String[dataVarNames.size()];
+        for (int i=0; i<components.length; i++) {
+            components[i] = dataVarNames.get(i);
+        }
     }
     
-    private void SetNodeValue(Document doc, String container, String nodeName, String value ) {
-        NodeList nodeList = doc.getElementsByTagName(container);
-        Node fNode = nodeList.item(0);
-        nodeList = ((Element) fNode).getElementsByTagName(nodeName);
-        Element node = (Element) nodeList.item(0);
-        node.setTextContent(value);
-    }
-    
-    private void setDescription(Document document) {
-        // set out description
-        SetNodeValue(document, "System", "gml:description", description);
-    }
-    
-    private void setIdentification(Document document) {
-        // use station var to print out all of its attributes as part of the identification
-    }
-    
-    private void setClassification(Document document) {
+    private void setNeededInfoForSensor( NetcdfDataset dataset ) {
         
     }
     
-    private void setContact(Document document) {
-        
+    private void getContactInfoAttributes( List<Attribute> globalAttrs ) {
+        // look for creator attributes, as well as institution
+        contactInfo = new ArrayList<Attribute>();
+        for (Attribute attr : globalAttrs) {
+            String name = attr.getName();
+            if (name.contains("creator") ||
+                    name.contains("institution") ||
+                    name.contains("author") || 
+                    name.contains("contact")) {
+                contactInfo.add(attr);
+            }
+        }
     }
     
-    private void setDocumentation(Document document) {
-        
-    }
-    
-    private void setHistory(Document document) {
-        
-    }
-    
-    private void setLocation(Document document) {
-        
-    }
-    
-    private void setPosition(Document document) {
-        
-    }
-    
-    private void setTimePosition(Document document) {
-        
-    }
-    
-    private void setComponents(Document document) {
-        
+    private void getDocumentationAttributes( List<Attribute> globalAttrs ) {
+        // look for any attributes related to documentation
+        documentationInfo = new ArrayList<Attribute>();
+        for (Attribute attr : globalAttrs) {
+            String name = attr.getName();
+            if (name.contains("doc")) {
+                documentationInfo.add(attr);
+            }
+        }
     }
 }

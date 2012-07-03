@@ -4,23 +4,18 @@
  */
 package com.asascience.ncsos.describeSen;
 
-import com.asascience.ncsos.getcaps.SOSGetCapabilitiesRequestHandler;
 import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import com.asascience.ncsos.service.SOSParser;
 import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.*;
 import java.net.URLEncoder;
-import java.util.Formatter;
 import java.util.HashMap;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
-import ucar.nc2.constants.FeatureType;
 import ucar.nc2.dataset.NetcdfDataset;
-import ucar.nc2.ft.FeatureDataset;
-import ucar.nc2.ft.FeatureDatasetFactoryManager;
 
 /**
  *
