@@ -215,6 +215,7 @@ public class SOSParser {
         } catch (IllegalArgumentException ex) {
             // create a get caps respons with exception
             _log.error("Exception with request: " + ex.getMessage());
+            System.out.println("Exception encountered " + ex.getMessage());
             try {
                 capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
             } catch (Exception e) { }

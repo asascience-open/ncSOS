@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.List;
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -20,6 +21,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import ucar.nc2.Attribute;
+import ucar.nc2.VariableSimpleIF;
 
 /**
  *
@@ -38,6 +40,10 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     public Document getDocument() {
         return document;
     }
+    
+    /*********************
+     * Interface Methods *
+     *********************/
 
     public void AddDataFormattedStringToInfoList(String dataFormattedString) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -63,6 +69,10 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         }
     }
     
+    /*******************
+     * Private Methods *
+     *******************/
+    
     private Document parseTemplateXML() {
         InputStream templateInputStream = null;
         try {
@@ -79,6 +89,10 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         }
     }
     
+    private Element getParentNode() {
+        return (Element) document.getElementsByTagName("System").item(0);
+    }
+    
     /****************************
      * Public Methods           *
      * Setting the XML document *
@@ -90,7 +104,7 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     }
     
     public void deleteDescriptionNode() {
-        document.removeChild(document.getElementsByTagName("gml:description").item(0));
+        getParentNode().removeChild(getParentNode().getElementsByTagName("gml:description").item(0));
     }
     
     public void setIdentificationNode(String[] names, String[] definitions, String[] values) {
@@ -114,7 +128,7 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     }
     
     public void deleteIdentificationNode() {
-        document.removeChild(document.getElementsByTagName("identification").item(0));
+        getParentNode().removeChild(getParentNode().getElementsByTagName("identification").item(0));
     }
     
     public void addToClassificationNode(String classifierName, String definition, String classifierValue) {
@@ -131,7 +145,7 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     }
     
     public void deleteClassificationNode() {
-        document.removeChild(document.getElementsByTagName("classification").item(0));
+        getParentNode().removeChild(getParentNode().getElementsByTagName("classification").item(0));
     }
     
     public void addContactNode(String role, String organizationName, HashMap<String, HashMap<String, String>> contactInfo) {
@@ -169,7 +183,7 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     }
     
     public void deleteContactNodeFirst() {
-        document.removeChild(document.getElementsByTagName("contact").item(0));
+        getParentNode().removeChild(getParentNode().getElementsByTagName("contact").item(0));
     }
     
     public void setDocumentationNode(String[] description, String[] format, String[] url) {
@@ -202,7 +216,7 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     }
     
     public void deleteDocumentationNode() {
-        document.removeChild(document.getElementsByTagName("documentation").item(0));
+        getParentNode().removeChild(getParentNode().getElementsByTagName("documentation").item(0));
     }
     
     public void setHistoryEvents(String[] name, String[] date, String[] description, String[] url) {
@@ -213,6 +227,7 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         }
         
         Element parent = (Element) document.getElementsByTagName("history").item(0);
+        parent = (Element) parent.getElementsByTagName("EventList").item(0);
         
         for (int i=0; i<name.length; i++) {
             Element member = document.createElement("member");
@@ -239,7 +254,7 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     }
     
     public void deleteHistoryNode() {
-        document.removeChild(document.getElementsByTagName("history").item(0));
+        getParentNode().removeChild(getParentNode().getElementsByTagName("history").item(0));
     }
     
     public void setLocationNode(String stationName, double[] coords) {
@@ -255,41 +270,49 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     }
     
     public void deleteLocationNode() {
-        document.removeChild(document.getElementsByTagName("location").item(0));
+        getParentNode().removeChild(getParentNode().getElementsByTagName("location").item(0));
     }
     
-    public void setComponentsNode(HashMap<String, HashMap<String, String>> components) {
-        // get our component list
-        Element parent = (Element) document.getElementsByTagName("ComponentList").item(0);
-        
-        // iterate through our hash map and create our list
-        for (String key : components.keySet()) {
+    public void setComponentsNode(List<VariableSimpleIF> dataVariables, String procedure) {
+        // iterate through our list and create the node
+        Element parent = (Element) document.getElementsByTagName("components").item(0);
+        parent = (Element) parent.getElementsByTagName("ComponentList").item(0);
+
+        for (int i=0; i<dataVariables.size(); i++) {
+            String fName = dataVariables.get(i).getFullName();
+            // component node
             Element component = document.createElement("component");
-            component.setAttribute("name", "Sensor " + key.toString());
-            HashMap<String, String> cVals = (HashMap<String, String>)components.get(key);
+            component.setAttribute("name", "Sensor " + fName);
+            // system node
             Element system = document.createElement("System");
-            system.setAttribute("gml:id", "sensor-" + cVals.get("system").toString());
-            for (String vKey : cVals.keySet()) {
-                if (vKey.equalsIgnoreCase("name")) {
-                    component.setAttribute("name", "Sensor " + cVals.get(vKey).toString());
-                } else if (vKey.equalsIgnoreCase("system")) {
-                    // ignore this
-                } else if (vKey.equalsIgnoreCase("description")) {
-                    Element tEl = document.createElement("gml:description");
-                    tEl.setTextContent(cVals.get(vKey).toString());
-                    system.appendChild(tEl);
-                } else {
-                    Element tEl = document.createElement(vKey);
-                    tEl.setAttribute("xlink:href", cVals.get(vKey).toString());
-                    system.appendChild(tEl);
-                }
-            }
+            system.setAttribute("gml:id", "sensor-" + fName);
+            // identification node
+            Element ident = document.createElement("identification");
+            ident.setAttribute("xlink:href", procedure + "::" + fName);
+            // documentation (url) node
+            Element doc = document.createElement("documentation");
+            doc.setAttribute("xlink:href", fName);
+            // description
+            Element desc = document.createElement("gml:description");
+            desc.setTextContent(dataVariables.get(i).getDescription());
+            // add all nodes
+            system.appendChild(ident);
+            system.appendChild(doc);
+            system.appendChild(desc);
             component.appendChild(system);
             parent.appendChild(component);
         }
     }
     
     public void deleteComponentsNode() {
-        document.removeChild(document.getElementsByTagName("components").item(0));
+        getParentNode().removeChild(getParentNode().getElementsByTagName("components").item(0));
+    }
+    
+    public void deleteTimePosition() {
+        getParentNode().removeChild(getParentNode().getElementsByTagName("position").item(0));
+    }
+    
+    public void deletePosition() {
+        getParentNode().removeChild(getParentNode().getElementsByTagName("timePosition").item(0));
     }
 }
