@@ -299,7 +299,6 @@ public class SOSDescribeStation implements SOSDescribeIF {
     protected void formatSetDescription(DescribeSensorFormatter output) {
         output.setDescriptionNode(description);
     }
-
     /**
      * Gives output the value of the history global Attribute, or tells output
      * to delete the History root node if there is no Attribute
