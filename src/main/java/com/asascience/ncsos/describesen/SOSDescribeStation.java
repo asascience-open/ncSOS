@@ -17,15 +17,15 @@ import ucar.nc2.dataset.NetcdfDataset;
  */
 public class SOSDescribeStation implements SOSDescribeIF {
     
-    private Variable stationVariable;
-    private Attribute platformType;
-    private String stationName;
-    private String description;
-    private double[] stationCoords;
-    private ArrayList<Variable> contactVariables;
-    private ArrayList<Variable> documentVariables;
-    private ArrayList<Variable> historyVariables;
-    private final String procedure;
+    protected Variable stationVariable;
+    protected Attribute platformType;
+    protected String stationName;
+    protected String description;
+    protected double[] stationCoords;
+    protected ArrayList<Variable> contactVariables;
+    protected ArrayList<Variable> documentVariables;
+    protected ArrayList<Variable> historyVariables;
+    protected final String procedure;
     
     public SOSDescribeStation( NetcdfDataset dataset, String procedure ) {
         Variable lat, lon;
@@ -99,10 +99,10 @@ public class SOSDescribeStation implements SOSDescribeIF {
     }
     
     /*******************
-     * Private Methods *
+     * Private/Protected Methods *
      *******************/
 
-    private void formatSetClassification(DescribeSensorFormatter output) {
+    protected void formatSetClassification(DescribeSensorFormatter output) {
         if (platformType != null) {
             output.addToClassificationNode(platformType.getName(), "", platformType.getStringValue());
         } else {
@@ -110,7 +110,7 @@ public class SOSDescribeStation implements SOSDescribeIF {
         }
     }
 
-    private void formatSetContactNodes(DescribeSensorFormatter output) {
+    protected void formatSetContactNodes(DescribeSensorFormatter output) {
         if (contactVariables != null) {
             HashMap<String, HashMap<String, String>> domainContactInfo;
             HashMap<String, String> subDomainInfo;
@@ -145,7 +145,7 @@ public class SOSDescribeStation implements SOSDescribeIF {
         }
     }
     
-    private void formatSetIdentification(DescribeSensorFormatter formatter) {
+    protected void formatSetIdentification(DescribeSensorFormatter formatter) {
         ArrayList<String> identNames = new ArrayList<String>();
         ArrayList<String> identDefinitions = new ArrayList<String>();
         ArrayList<String> identValues = new ArrayList<String>();
@@ -209,11 +209,11 @@ public class SOSDescribeStation implements SOSDescribeIF {
         output.deleteTimePosition();
     }
 
-    private void formatSetDescription(DescribeSensorFormatter output) {
+    protected void formatSetDescription(DescribeSensorFormatter output) {
         output.setDescriptionNode(description);
     }
 
-    private void formatSetDocumentNodes(DescribeSensorFormatter output) {
+    protected void formatSetDocumentNodes(DescribeSensorFormatter output) {
         if (documentVariables != null) {
             // add document nodes for each variable
             ArrayList<String> descriptions, docs, formats;
@@ -244,7 +244,7 @@ public class SOSDescribeStation implements SOSDescribeIF {
         }
     }
 
-    private void formatSetHistoryNodes(DescribeSensorFormatter output) {
+    protected void formatSetHistoryNodes(DescribeSensorFormatter output) {
         if (historyVariables != null) {
             // add history nodes for each variable
             ArrayList<String> names, descriptions, dates, docs;
@@ -280,7 +280,7 @@ public class SOSDescribeStation implements SOSDescribeIF {
         }
     }
 
-    private void formatSetLocationNode(DescribeSensorFormatter output) {
+    protected void formatSetLocationNode(DescribeSensorFormatter output) {
         output.setLocationNode(stationName, stationCoords);
     }
 }
