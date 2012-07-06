@@ -12,6 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 import ucar.nc2.Attribute;
 import ucar.nc2.dataset.NetcdfDataset;
+import ucar.nc2.ft.PointFeature;
+import ucar.nc2.ft.TrajectoryFeature;
+import ucar.nc2.ft.TrajectoryFeatureCollection;
+import ucar.nc2.time.CalendarDate;
 
 /**
  *
@@ -81,16 +85,35 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
                 describer = new SOSDescribeStation(dataset, procedure);
                 break;
             case TRAJECTORY:
+                // need our starting date for the observations
+                TrajectoryFeatureCollection feature = (TrajectoryFeatureCollection) getFeatureTypeDataSet();
+                CalendarDate colStart = null;
+                for (feature.resetIteration();feature.hasNext();) {
+                    TrajectoryFeature traj = feature.next();
+                    traj.calcBounds();
+                    for (traj.resetIteration();traj.hasNext();) {
+                        PointFeature pf = traj.next();
+                        if (colStart == null)
+                            colStart = pf.getObservationTimeAsCalendarDate();
+                        else if (pf.getObservationTimeAsCalendarDate().compareTo(colStart) < 0)
+                            colStart = pf.getObservationTimeAsCalendarDate();
+                    }
+                }
+                describer = new SOSDescribeTrajectory(dataset, procedure, colStart);
+                break;
+            case PROFILE:
+                describer = new SOSDescribeProfile(dataset, procedure);
                 break;
             default:
-                System.out.println("Unhandled feature type: " + getFeatureDataset().getFeatureType().toString());
+                _log.error("Unhandled feature type: " + getFeatureDataset().getFeatureType().toString());
                 break;
         }
         
     }
     
     private void setNeededInfoForSensor( NetcdfDataset dataset ) {
-        
+        // describe sensor (sensor) is very similar to describe sensor (station)
+        describer = new SOSDescribeSensor(dataset, procedure);
     }
     
     private void getContactInfoAttributes( List<Attribute> globalAttrs ) {

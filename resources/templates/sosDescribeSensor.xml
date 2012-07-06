@@ -1,44 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<SensorML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<sml:SensorML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd"
  xmlns="http://www.opengis.net/sensorML/1.0.1"
  xmlns:xlink="http://www.w3.org/1999/xlink"
  xmlns:gml="http://www.opengis.net/gml"
  xmlns:swe="http://www.opengis.net/swe/1.0.1"
+ xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
  version="1.0.1">
-    <member>
-        <System>
+    <sml:member>
+        <sml:System>
 			<gml:description></gml:description>
-			<identification>
-				<IdentifierList>
-				</IdentifierList>
-			</identification>
-			<classification>
-				<ClassifierList>
-				</ClassifierList>
-			</classification>
-			<documentation>
-			</documentation>
-			<history>
-				<EventList>
-				</EventList>
-			</history>
-			<location>
-			</location>
-			<position>
-				<dataDefinition>
-				</dataDefinition>
-				<values>
-				</values>
-			</position>
-			<timePosition>
-				<Time>
-				</Time>
-			</timePosition>
-			<components>
-				<ComponentList>
-				</ComponentList>
-			</components>
-		</System>
-    </member>
-</SensorML>
+			<sml:identification>
+				<sml:IdentifierList>
+				</sml:IdentifierList>
+			</sml:identification>
+			<sml:classification>
+				<sml:ClassifierList>
+				</sml:ClassifierList>
+			</sml:classification>
+			<sml:documentation>
+			</sml:documentation>
+			<sml:history>
+				<sml:EventList>
+				</sml:EventList>
+			</sml:history>
+			<sml:location>
+			</sml:location>
+			<sml:position>
+				<sml:dataDefinition>
+				</sml:dataDefinition>
+				<sml:values>
+				</sml:values>
+			</sml:position>
+			<sml:validTime>
+				<sml:TimePeriod>
+				</sml:TimePeriod>
+			</sml:validTime>
+			<sml:positions>
+				<sml:PositionList>
+				</sml:PositionList>
+			</sml:positions>
+			<sml:timePosition>
+				<sml:Time>
+				</sml:Time>
+			</sml:timePosition>
+			<sml:components>
+				<sml:ComponentList>
+				</sml:ComponentList>
+			</sml:components>
+		</sml:System>
+    </sml:member>
+</sml:SensorML>
