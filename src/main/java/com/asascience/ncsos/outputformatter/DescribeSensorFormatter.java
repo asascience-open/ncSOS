@@ -5,7 +5,6 @@
 package com.asascience.ncsos.outputformatter;
 
 import com.asascience.ncsos.util.XMLDomUtils;
-import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
