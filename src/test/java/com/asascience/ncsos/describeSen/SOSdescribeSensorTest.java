@@ -37,6 +37,8 @@ public class SOSdescribeSensorTest {
     private static final String bdsp_1_query = "procedure=urn:tds:station.sos:Profile4";
     private static final String bdsp_2_set = "resources/datasets/profile-Indexed-Ragged-MultipleProfiles-H.3.5/profile-Indexed-Ragged-MultipleProfiles-H.3.5.nc";
     private static final String bdsp_2_query = "procedure=urn:tds:station.sos:Profile5";
+    private static final String bdsg_1_set = "resources/datasets/satellite-sst/SST_Global_2x2deg_20120626_0000.nc";
+    private static final String bdsg_1_query = "procedure=urn:tds:station.sos:SST_Global_2x2deg_20120626_0000";
     
     private static String baseQuery = "request=DescribeSensor&service=sos&version=1.0.0&responseformat=";
     
@@ -151,8 +153,8 @@ public class SOSdescribeSensorTest {
         writeOutput(parser.enhance(dataset, baseQuery + bdsp_1_query, bdsp_1_set), writer);
         fileWriter(outputDir, "profile-Contiguous-Ragged-MultipleProfiles-H.3.4.xml", writer);
         assertFalse("exception in output", writer.toString().contains("Exception"));
-//        assertTrue("missing component", writer.toString().contains("<sml:identification xlink:href=\"urn:tds:station.sos:Trajectory7::temperature\"/>"));
-//        assertTrue("missing/invalid coords", writer.toString().contains("1990-01-01T09:00:00Z,29.956968307495117,-1.6200900077819824"));
+        assertTrue("missing component", writer.toString().contains("<sml:System gml:id=\"sensor-humidity\">"));
+        assertTrue("missing/invalid latitude", writer.toString().contains("<swe:value>104.0</swe:value>"));
         System.out.println("------End testBasicDescribeSensorProfile------");
     }
     
@@ -165,8 +167,8 @@ public class SOSdescribeSensorTest {
         writeOutput(parser.enhance(dataset, baseQuery + bdsp_2_query, bdsp_2_set), writer);
         fileWriter(outputDir, "profile-Indexed-Ragged-MultipleProfiles-H.3.5.xml", writer);
         assertFalse("exception in output", writer.toString().contains("Exception"));
-//        assertTrue("missing component", writer.toString().contains("<sml:identification xlink:href=\"urn:tds:station.sos:Trajectory7::temperature\"/>"));
-//        assertTrue("missing/invalid coords", writer.toString().contains("1990-01-01T09:00:00Z,29.956968307495117,-1.6200900077819824"));
+        assertTrue("missing/invalid unit of measurement", writer.toString().contains("<swe:uom code=\"m\"/>"));
+        assertTrue("missing/invalid altitude", writer.toString().contains("<swe:value>9.813936233520508</swe:value>"));
         System.out.println("------End testBasicDescribeSensorProfile2------");
     }
     
@@ -179,8 +181,22 @@ public class SOSdescribeSensorTest {
         writeOutput(parser.enhance(dataset, baseQuery + bdss_watlev_query, bdss_1_set), writer);
         fileWriter(outputDir, "watlev_NOAA_NAVD_PRE_watlev-sensor.xml", writer);
         assertFalse("exception in output", writer.toString().contains("Exception"));
-//        assertTrue("missing component", writer.toString().contains("<sml:identification xlink:href=\"urn:tds:station.sos:Trajectory7::temperature\"/>"));
-//        assertTrue("missing/invalid coords", writer.toString().contains("1990-01-01T09:00:00Z,29.956968307495117,-1.6200900077819824"));
+        assertTrue("missing/invalid identifier", writer.toString().contains("<sml:identifier name=\"coordinates\">"));
+        assertTrue("missing/invalid sensor id", writer.toString().contains("<sml:value>urn:tds:sensor.sos:NOAA_8724698::watlev</sml:value>"));
         System.out.println("------End testBasicDescribeSensorSensor------");
+    }
+    
+    @Test
+    public void testBasicDescriptSensorGrid() throws IOException {
+        System.out.println("------Start testBasicDescriptSensorGrid------");
+        NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdsg_1_set);
+        SOSParser parser = new SOSParser();
+        Writer writer = new CharArrayWriter();
+        writeOutput(parser.enhance(dataset, baseQuery + bdsg_1_query, bdsg_1_set), writer);
+        fileWriter(outputDir, "SST_Global_2x2deg_20120626_0000.xml", writer);
+        assertFalse("exception in output", writer.toString().contains("Exception"));
+//        assertTrue("missing/invalid identifier", writer.toString().contains("<sml:identifier name=\"coordinates\">"));
+//        assertTrue("missing/invalid sensor id", writer.toString().contains("<sml:value>urn:tds:sensor.sos:NOAA_8724698::watlev</sml:value>"));
+        System.out.println("------End testBasicDescriptSensorGrid------");
     }
 }

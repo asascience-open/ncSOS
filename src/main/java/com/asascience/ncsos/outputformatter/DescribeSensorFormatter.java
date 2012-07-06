@@ -5,7 +5,6 @@
 package com.asascience.ncsos.outputformatter;
 
 import com.asascience.ncsos.util.XMLDomUtils;
-import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
@@ -18,7 +17,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import ucar.nc2.VariableSimpleIF;
 
@@ -250,15 +248,22 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     }
     
     public void setLocationNode(String stationName, double[] coords) {
-        Element parent = (Element) document.getElementsByTagName("sml:location").item(0);
+        Element parent = (Element) getParentNode().getElementsByTagName("sml:location").item(0);
         
-        Element point = document.createElement("gml:Point");
-        point.setAttribute("gml:id", "STATION-LOCATION-" + stationName);
-        Element coordinates = document.createElement("gml:coordinates");
-        coordinates.setTextContent(coords[0] + " " + coords[1]);
-        point.appendChild(coordinates);
+        parent = AddNewNodeToParentWithAttribute("gml:Point", parent, "gml:id", "STATION-LOCATION-" + stationName);
+        AddNewNodeToParentWithTextValue("gml:coordinates", parent, coords[0] + " " + coords[1]);
+    }
+    
+    public void setLocationNodeWithBoundingBox(String[] lowerPoint, String[] upperPoint) {
+        if (lowerPoint.length != 2 || upperPoint.length != 2)
+            throw new IllegalArgumentException("lowerPoint or upperPoint are not valid");
         
-        parent.appendChild(point);
+        Element parent = (Element) getParentNode().getElementsByTagName("sml:location").item(0);
+        
+        parent = AddNewNodeToParent("gml:boundedBy", parent);
+        parent = AddNewNodeToParentWithAttribute("gml:Envelope", parent, "srsName", "");
+        AddNewNodeToParentWithTextValue("gml:lowerCorener", parent, lowerPoint[0] + " " + lowerPoint[1]);
+        AddNewNodeToParentWithTextValue("gml:upperCorner", parent, upperPoint[0] + " " + upperPoint[1]);
     }
     
     public void deleteLocationNode() {
