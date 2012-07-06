@@ -71,6 +71,7 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
                         stationObsIndexLower += rowArray.getInt(i);
                     } else if (i == stationIndex) {
                         stationObsIndexUpper = stationObsIndexLower + rowArray.getInt(i);
+                        break;
                     }
                 }
             } catch (IOException ex) {
@@ -127,7 +128,6 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
     private void RemoveUnusedNodes(DescribeSensorFormatter output) {
         output.deleteLocationNode();
         output.deletePositions();
-        output.deleteValidTime();
         // time position requires data not obtained here
         output.deleteTimePosition();
     }
