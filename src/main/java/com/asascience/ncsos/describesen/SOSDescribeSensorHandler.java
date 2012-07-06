@@ -8,9 +8,6 @@ import com.asascience.ncsos.outputformatter.DescribeSensorFormatter;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import com.asascience.ncsos.util.DiscreteSamplingGeometryUtil;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import ucar.nc2.Attribute;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.ft.PointFeature;
 import ucar.nc2.ft.TrajectoryFeature;
@@ -25,8 +22,6 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
     
     private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(SOSDescribeSensorHandler.class);
     private String procedure;
-    private ArrayList<Attribute> contactInfo;
-    private ArrayList<Attribute> documentationInfo;
     private SOSDescribeIF describer;
     
     private final String ACCEPTABLE_RESPONSE_FORMAT = "text/xml;subtype=\"sensorML/1.0.1\"";
@@ -52,15 +47,10 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
         
         this.procedure = procedure;
         
-        getContactInfoAttributes(dataset.getGlobalAttributes());
-        getDocumentationAttributes(dataset.getGlobalAttributes());
-        
         // find out needed info based on whether this is a station or sensor look up
         if (this.procedure.contains("station")) {
             setNeededInfoForStation(dataset);
             describer.SetupOutputDocument((DescribeSensorFormatter)output);
-            // need to set the components here should be universal for station inquiries
-            ((DescribeSensorFormatter)output).setComponentsNode(DiscreteSamplingGeometryUtil.getDataVariables(getFeatureDataset()), procedure);
         } else if (this.procedure.contains("sensor")) {
             setNeededInfoForSensor(dataset);
             describer.SetupOutputDocument((DescribeSensorFormatter)output);
@@ -84,9 +74,10 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
             case STATION:
             case STATION_PROFILE:
                 describer = new SOSDescribeStation(dataset, procedure);
+                ((DescribeSensorFormatter)output).setComponentsNode(DiscreteSamplingGeometryUtil.getDataVariables(getFeatureDataset()), procedure);
                 break;
             case TRAJECTORY:
-                // need our starting date for the observations
+                // need our starting date for the observations from our FeatureTypeDataSet wrapper
                 TrajectoryFeatureCollection feature = (TrajectoryFeatureCollection) getFeatureTypeDataSet();
                 CalendarDate colStart = null;
                 for (feature.resetIteration();feature.hasNext();) {
@@ -101,9 +92,15 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
                     }
                 }
                 describer = new SOSDescribeTrajectory(dataset, procedure, colStart);
+                ((DescribeSensorFormatter)output).setComponentsNode(DiscreteSamplingGeometryUtil.getDataVariables(getFeatureDataset()), procedure);
                 break;
             case PROFILE:
                 describer = new SOSDescribeProfile(dataset, procedure);
+                ((DescribeSensorFormatter)output).setComponentsNode(DiscreteSamplingGeometryUtil.getDataVariables(getFeatureDataset()), procedure);
+                break;
+            case GRID:
+                describer = new SOSDescribeGrid(dataset, procedure);
+                ((DescribeSensorFormatter)output).setComponentsNode(getGridDataset().getDataVariables(),procedure);
                 break;
             default:
                 _log.error("Unhandled feature type: " + getFeatureDataset().getFeatureType().toString());
@@ -115,27 +112,5 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
     private void setNeededInfoForSensor( NetcdfDataset dataset ) {
         // describe sensor (sensor) is very similar to describe sensor (station)
         describer = new SOSDescribeSensor(dataset, procedure);
-    }
-    
-    private void getContactInfoAttributes( List<Attribute> globalAttrs ) {
-        // look for creator attributes, as well as institution
-        contactInfo = new ArrayList<Attribute>();
-        for (Attribute attr : globalAttrs) {
-            String name = attr.getName();
-            if (name.contains("contact")) {
-                contactInfo.add(attr);
-            }
-        }
-    }
-    
-    private void getDocumentationAttributes( List<Attribute> globalAttrs ) {
-        // look for any attributes related to documentation
-        documentationInfo = new ArrayList<Attribute>();
-        for (Attribute attr : globalAttrs) {
-            String name = attr.getName();
-            if (name.contains("doc")) {
-                documentationInfo.add(attr);
-            }
-        }
     }
 }
