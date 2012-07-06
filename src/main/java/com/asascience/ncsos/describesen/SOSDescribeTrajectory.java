@@ -111,8 +111,6 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
         formatSetClassification(output);
         // contact node
         formatSetContactNodes(output);
-        // document node
-        formatSetDocumentNodes(output);
         // history node
         formatSetHistoryNodes(output);
         // position node

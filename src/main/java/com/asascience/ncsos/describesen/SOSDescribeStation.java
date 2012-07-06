@@ -19,13 +19,12 @@ import ucar.nc2.dataset.NetcdfDataset;
 public class SOSDescribeStation implements SOSDescribeIF {
     
     protected Variable stationVariable;
-    protected Attribute platformType;
+    protected Attribute platformType, historyAttribute;
     protected String stationName;
     protected String description;
     protected double[] stationCoords;
-    protected ArrayList<Variable> contactVariables;
+    protected ArrayList<Attribute> creatorAttributes, contributorAttributes, publisherAttributes;
     protected ArrayList<Variable> documentVariables;
-    protected ArrayList<Variable> historyVariables;
     protected final String procedure;
     
     public SOSDescribeStation( NetcdfDataset dataset, String procedure ) {
@@ -42,20 +41,10 @@ public class SOSDescribeStation implements SOSDescribeIF {
             else if (var.getFullName().toLowerCase().contains("lon")) {
                 lon = var;
             }
-            else if (var.getFullName().toLowerCase().contains("contact")) {
-                if (contactVariables == null)
-                    contactVariables = new ArrayList<Variable>();
-                contactVariables.add(var);
-            }
             else if (var.getFullName().toLowerCase().contains("doc")) {
                 if (documentVariables == null)
                     documentVariables = new ArrayList<Variable>();
                 documentVariables.add(var);
-            }
-            else if (var.getFullName().toLowerCase().contains("history")) {
-                if (historyVariables == null)
-                    historyVariables = new ArrayList<Variable>();
-                historyVariables.add(var);
             }
         }
         
@@ -66,6 +55,27 @@ public class SOSDescribeStation implements SOSDescribeIF {
         
         // get our platform type
         platformType = dataset.findGlobalAttributeIgnoreCase("platformtype");
+        // history attribute
+        historyAttribute = dataset.findGlobalAttributeIgnoreCase("history");
+        // creator contact info
+        for (Attribute attr : dataset.getGlobalAttributes()) {
+            String attrName = attr.getName().toLowerCase();
+            if (attrName.contains("creator") || attrName.contains("institution")) {
+                if (creatorAttributes == null)
+                    creatorAttributes = new ArrayList<Attribute>();
+                creatorAttributes.add(attr);
+            }
+            else if (attrName.contains("publisher")) {
+                if (publisherAttributes == null)
+                    publisherAttributes = new ArrayList<Attribute>();
+                publisherAttributes.add(attr);
+            }
+            else if (attrName.contains("contributor")) {
+                if (contributorAttributes == null)
+                    contributorAttributes = new ArrayList<Attribute>();
+                contributorAttributes.add(attr);
+            }
+        }
         
         // set our coords
         if (stationVariable != null) {
@@ -91,8 +101,6 @@ public class SOSDescribeStation implements SOSDescribeIF {
         formatSetClassification(output);
         // contact node
         formatSetContactNodes(output);
-        // document node
-        formatSetDocumentNodes(output);
         // history node
         formatSetHistoryNodes(output);
         // location node
@@ -114,37 +122,61 @@ public class SOSDescribeStation implements SOSDescribeIF {
     }
 
     protected void formatSetContactNodes(DescribeSensorFormatter output) {
-        if (contactVariables != null) {
-            HashMap<String, HashMap<String, String>> domainContactInfo;
+        if (creatorAttributes != null) {
+            HashMap<String, HashMap<String, String>> domainContactInfo = new HashMap<String, HashMap<String, String>>();
             HashMap<String, String> subDomainInfo;
-            String role, orginizationName;
-            for (Variable cVar : contactVariables) {
-                domainContactInfo = new HashMap<String, HashMap<String, String>>();
-                role = orginizationName = "";
-                // iterate through attributes of contact variable to get desired info
-                for (Attribute attr : cVar.getAttributes()) {
-                    if (attr.getName().contains("role")) {
-                        role = attr.getStringValue();
-                    } else if (attr.getName().contains("orginization")) {
-                        orginizationName = attr.getStringValue();
-                    } else {
-                        // split on '_'; first index is domain name, second is node name
-                        String[] attrSplit = attr.getName().split("_");
-                        if (attrSplit.length < 2) {
-                            output.setupExceptionOutput("error in contact attribute: " + attr.getName());
-                            return;
-                        }
-                        if (domainContactInfo.containsKey(attrSplit[0])) {
-                            ((HashMap<String,String>)domainContactInfo.get(attrSplit[0])).put(attrSplit[1], attr.getStringValue());
-                        } else {
-                            subDomainInfo = new HashMap<String, String>();
-                            subDomainInfo.put(attrSplit[1],attr.getStringValue());
-                            domainContactInfo.put(attrSplit[0],subDomainInfo);
-                        }
-                    }
+            String role, orginizationName = "";
+            role = "creator";
+            for (Attribute attr : creatorAttributes) {
+                String attrName = attr.getName().toLowerCase();
+                if (attrName.contains("institution") || attrName.contains("name")) {
+                    orginizationName = attr.getStringValue();
                 }
-                output.addContactNode(role, orginizationName, domainContactInfo);
+                else if (attrName.contains("url") || attrName.contains("email")) {
+                    if (domainContactInfo.containsKey("electronicAddress")) {
+                        subDomainInfo = (HashMap<String,String>)domainContactInfo.get("electronicAddress");
+                    } else {
+                        subDomainInfo = new HashMap<String, String>();
+                    }
+                    subDomainInfo.put(attr.getName(), attr.getStringValue());
+                    domainContactInfo.put("electronicAddress",subDomainInfo);
+                }
             }
+            output.addContactNode(role, orginizationName, domainContactInfo);
+        }
+        if (publisherAttributes != null) {
+            HashMap<String, HashMap<String, String>> domainContactInfo = new HashMap<String, HashMap<String, String>>();
+            HashMap<String, String> subDomainInfo;
+            String role, orginizationName = "";
+            role = "publisher";
+            for (Attribute attr : publisherAttributes) {
+                String attrName = attr.getName().toLowerCase();
+                if (attrName.contains("name")) {
+                    orginizationName = attr.getStringValue();
+                }
+                else if (attrName.contains("url") || attrName.contains("email")) {
+                    if (domainContactInfo.containsKey("electronicAddress")) {
+                        subDomainInfo = (HashMap<String,String>)domainContactInfo.get("electronicAddress");
+                    } else {
+                        subDomainInfo = new HashMap<String, String>();
+                    }
+                    subDomainInfo.put(attr.getName(), attr.getStringValue());
+                    domainContactInfo.put("electronicAddress",subDomainInfo);
+                }
+            }
+            output.addContactNode(role, orginizationName, domainContactInfo);
+        }
+        if (contributorAttributes != null) {
+            String role = "", name = "";
+            for (Attribute attr : contributorAttributes) {
+                if (attr.getName().toLowerCase().contains("role")) {
+                    role = attr.getStringValue();
+                }
+                else if (attr.getName().toLowerCase().contains("name")) {
+                    name = attr.getStringValue();
+                }
+            }
+            output.addContactNode(role, name, null);
         }
     }
     
@@ -223,68 +255,9 @@ public class SOSDescribeStation implements SOSDescribeIF {
         output.setDescriptionNode(description);
     }
 
-    protected void formatSetDocumentNodes(DescribeSensorFormatter output) {
-        if (documentVariables != null) {
-            // add document nodes for each variable
-            ArrayList<String> descriptions, docs, formats;
-            formats = new ArrayList<String>();
-            descriptions = new ArrayList<String>();
-            docs = new ArrayList<String>();
-            for (Variable var : historyVariables) {
-                String format, description, doc;
-                format = description = doc = "";
-                for (Attribute attr : var.getAttributes()) {
-                    if (attr.getName().toLowerCase().contains("format")) {
-                        format = attr.getStringValue();
-                    } else if (attr.getName().toLowerCase().contains("description")) {
-                        description = attr.getStringValue();
-                    } else {
-                        doc = attr.getStringValue();
-                    }
-                }
-                formats.add(format);
-                descriptions.add(description);
-                docs.add(doc);
-            }
-            output.setDocumentationNode(descriptions.toArray(new String[descriptions.size()]),
-                    formats.toArray(new String[formats.size()]),
-                    docs.toArray(new String[docs.size()]));
-        } else {
-            output.deleteDocumentationNode();
-        }
-    }
-
     protected void formatSetHistoryNodes(DescribeSensorFormatter output) {
-        if (historyVariables != null) {
-            // add history nodes for each variable
-            ArrayList<String> names, descriptions, dates, docs;
-            names = new ArrayList<String>();
-            descriptions = new ArrayList<String>();
-            dates = new ArrayList<String>();
-            docs = new ArrayList<String>();
-            for (Variable var : historyVariables) {
-                String name, description, date, doc;
-                name = description = date = doc = "";
-                for (Attribute attr : var.getAttributes()) {
-                    if (attr.getName().toLowerCase().contains("name")) {
-                        name = attr.getStringValue();
-                    } else if (attr.getName().toLowerCase().contains("description")) {
-                        description = attr.getStringValue();
-                    } else if (attr.getName().toLowerCase().contains("date")) {
-                        date = attr.getStringValue();
-                    } else {
-                        doc = attr.getStringValue();
-                    }
-                }
-                names.add(name);
-                descriptions.add(description);
-                dates.add(date);
-                docs.add(doc);
-            }
-            output.setHistoryEvents(names.toArray(new String[names.size()]),
-                    dates.toArray(new String[dates.size()]),
-                    descriptions.toArray(new String[descriptions.size()]),
-                    docs.toArray(new String[docs.size()]));
+        if (historyAttribute != null) {
+            output.setHistoryEvents(historyAttribute.getStringValue());
         } else {
             output.deleteHistoryNode();
         }
