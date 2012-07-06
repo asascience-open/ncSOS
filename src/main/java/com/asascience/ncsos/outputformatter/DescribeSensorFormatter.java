@@ -591,11 +591,41 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         getParentNode().removeChild(getParentNode().getElementsByTagName("sml:positions").item(0));
     }
     
-    public void deletePositions() {
-        getParentNode().removeChild(getParentNode().getElementsByTagName("positions").item(0));
+    public void setStationPositionsNode(HashMap<String,String> latitudeInfo, HashMap<String,String> longitudeInfo, HashMap<String,String> depthInfo, String definition) {
+        Element parent = (Element) getParentNode().getElementsByTagName("sml:PositionList").item(0);
+        
+        // add position w/ 'stationPosition' attribute
+        parent = AddNewNodeToParentWithAttribute("sml:position", parent, "name", "stationPosition");
+        // add Position, then location nodes
+        parent = AddNewNodeToParent("swe:Position", parent);
+        parent = AddNewNodeToParent("swe:location", parent);
+        // add vector id="STATION_LOCATION" definition=definition
+        parent = AddNewNodeToParentWithAttribute("swe:Vector", parent, "gml:id", "STATION_LOCATION");
+        parent.setAttribute("definition", definition);
+        // add a coordinate for each hashmap
+        // latitude
+        addCoordinateInfoNode(latitudeInfo, parent, "latitude", "Y", "deg");
+        // longitude
+        addCoordinateInfoNode(longitudeInfo, parent, "longitude", "X", "deg");
+        // altitude/depth
+        addCoordinateInfoNode(depthInfo, parent, "altitude", "Z", "m");
     }
     
-    public void deleteValidTime() {
-        getParentNode().removeChild(getParentNode().getElementsByTagName("validTime").item(0));
+    public void setEndPointPositionsNode(HashMap<String,String> latitudeInfo, HashMap<String,String> longitudeInfo, HashMap<String,String> depthInfo, String definition) {
+        Element parent = (Element) getParentNode().getElementsByTagName("sml:PositionList").item(0);
+        
+        // follow steps outlined above with slight alterations
+        parent = AddNewNodeToParentWithAttribute("sml:position", parent, "name", "endPosition");
+        parent = AddNewNodeToParent("swe:Position", parent);
+        parent = AddNewNodeToParent("swe:location", parent);
+        parent = AddNewNodeToParentWithAttribute("swe:Vector", parent, "gml:id", "END_LOCATION");
+        parent.setAttribute("definition", definition);
+        addCoordinateInfoNode(latitudeInfo, parent, "latitude", "Y", "deg");
+        addCoordinateInfoNode(longitudeInfo, parent, "longitude", "X", "deg");
+        addCoordinateInfoNode(depthInfo, parent, "altitude", "Z", "m");
+    }
+    
+    public void deletePositions() {
+        getParentNode().removeChild(getParentNode().getElementsByTagName("sml:positions").item(0));
     }
 }

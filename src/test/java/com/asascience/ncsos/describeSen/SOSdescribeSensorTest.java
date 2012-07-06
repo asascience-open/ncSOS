@@ -272,26 +272,30 @@ public class SOSdescribeSensorTest {
     
     @Test
     public void testBasicDescribeSensorTrajectory() throws IOException {
+        System.out.println("------Start testBasicDescribeSensorTrajectory------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdst_1_set);
         SOSParser parser = new SOSParser();
         Writer writer = new CharArrayWriter();
         writeOutput(parser.enhance(dataset, baseQuery + bdst_1_query, bdst_1_set), writer);
         fileWriter(outputDir, "trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.xml", writer);
         assertFalse("exception in output", writer.toString().contains("Exception"));
-        assertTrue("missing component", writer.toString().contains("<component name=\"Sensor temperature\">"));
+        assertTrue("missing component", writer.toString().contains("<sml:component name=\"Sensor humidity\">"));
         assertTrue("missing/invalid coords", writer.toString().contains("1990-01-01T00:00:00Z,5.429996490478516,-35.31080627441406"));
+        System.out.println("------End testBasicDescribeSensorTrajectory------");
     }
     
     @Test
     public void testBasicDescribeSensorTrajectory2() throws IOException {
+        System.out.println("------Start testBasicDescribeSensorTrajectory2------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdst_2_set);
         SOSParser parser = new SOSParser();
         Writer writer = new CharArrayWriter();
         writeOutput(parser.enhance(dataset, baseQuery + bdst_2_query, bdst_2_set), writer);
         fileWriter(outputDir, "trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4.xml", writer);
         assertFalse("exception in output", writer.toString().contains("Exception"));
-        assertTrue("missing component", writer.toString().contains("<component name=\"Sensor temperature\">"));
-//        assertTrue("missing/invalid coords", writer.toString().contains("1990-01-01T00:00:00Z,5.429996490478516,-35.31080627441406"));
+        assertTrue("missing component", writer.toString().contains("<sml:identification xlink:href=\"urn:tds:station.sos:Trajectory7::temperature\"/>"));
+        assertTrue("missing/invalid coords", writer.toString().contains("1990-01-01T09:00:00Z,29.956968307495117,-1.6200900077819824"));
+        System.out.println("------End testBasicDescribeSensorTrajectory2------");
     }
     
 //    @Test
