@@ -590,4 +590,12 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     public void deletePositions() {
         getParentNode().removeChild(getParentNode().getElementsByTagName("sml:positions").item(0));
     }
+    
+    public void deletePositions() {
+        getParentNode().removeChild(getParentNode().getElementsByTagName("positions").item(0));
+    }
+    
+    public void deleteValidTime() {
+        getParentNode().removeChild(getParentNode().getElementsByTagName("validTime").item(0));
+    }
 }
