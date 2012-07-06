@@ -62,8 +62,6 @@ public class SOSDescribeSensor extends SOSDescribeStation implements SOSDescribe
         formatSetIdentification(output);
         // contact node
         formatSetContactNodes(output);
-        // document node
-        formatSetDocumentNodes(output);
         // location node
         formatSetLocationNode(output);
         // remove unwanted nodes

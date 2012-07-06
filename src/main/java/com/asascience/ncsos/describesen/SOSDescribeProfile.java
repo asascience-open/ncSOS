@@ -99,8 +99,6 @@ public class SOSDescribeProfile extends SOSDescribeStation implements SOSDescrib
         formatSetClassification(output);
         // contact node
         formatSetContactNodes(output);
-        // document node
-        formatSetDocumentNodes(output);
         // history node
         formatSetHistoryNodes(output);
         // positions node

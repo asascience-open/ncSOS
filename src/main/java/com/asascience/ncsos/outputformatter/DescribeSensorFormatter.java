@@ -5,6 +5,7 @@
 package com.asascience.ncsos.outputformatter;
 
 import com.asascience.ncsos.util.XMLDomUtils;
+import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
@@ -17,6 +18,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import ucar.nc2.VariableSimpleIF;
 
 /**
@@ -203,110 +206,43 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     }
     
     public void addContactNode(String role, String organizationName, HashMap<String, HashMap<String, String>> contactInfo) {
-        // setup and and insert a contact node (after classification)
-        Element contact = document.createElement("sml:contact");
+        // setup and and insert a contact node (after history)
+        document = XMLDomUtils.addNodeBeforeNode(document, "sml:System", "sml:contact", "sml:history");
+        NodeList contacts = getParentNode().getElementsByTagName("sml:contact");
+        Element contact = null;
+        for (int i=0; i<contacts.getLength(); i++) {
+            if (!contacts.item(i).hasAttributes()) {
+                contact = (Element) contacts.item(i);
+            }
+        }
         contact.setAttribute("xlink:role", role);
         /* *** */
-        Element prevParent = contact;
-        Element curParent = document.createElement("sml:ResponsibleParty");
-        prevParent.appendChild(curParent);
+        Element parent = AddNewNodeToParent("sml:ResponseibleParty", contact);
         /* *** */
-        prevParent = curParent;
-        curParent = document.createElement("sml:oranizationName");
-        curParent.setTextContent(organizationName);
-        prevParent.appendChild(curParent);
+        AddNewNodeToParentWithTextValue("sml:organizationName", parent, organizationName);
         /* *** */
-        curParent = document.createElement("sml:contactInfo");
-        prevParent.appendChild(curParent);
+        parent = AddNewNodeToParent("sml:contactInfo", parent);
         /* *** */
         // super nesting for great justice
-        prevParent = curParent;
-        for (String key : contactInfo.keySet()) {
-            // add key as node
-            curParent = document.createElement(key);
-            HashMap<String, String> vals = (HashMap<String, String>)contactInfo.get(key);
-            for (String vKey : vals.keySet()) {
-                Element tEl = document.createElement(vKey);
-                tEl.setTextContent(vals.get(vKey).toString());
-                curParent.appendChild(tEl);
+        if (contactInfo != null) {
+            for (String key : contactInfo.keySet()) {
+                // add key as node
+                Element sparent = AddNewNodeToParent(key, parent);
+                HashMap<String, String> vals = (HashMap<String, String>)contactInfo.get(key);
+                for (String vKey : vals.keySet()) {
+                    AddNewNodeToParentWithTextValue(vKey, sparent, vals.get(vKey).toString());
+                }
             }
-            prevParent.appendChild(curParent);
         }
-        // insert before documentation
-        document.insertBefore(contact, document.getElementsByTagName("sml:documentation").item(0));
     }
     
     public void deleteContactNodeFirst() {
         getParentNode().removeChild(getParentNode().getElementsByTagName("sml:contact").item(0));
     }
     
-    public void setDocumentationNode(String[] description, String[] format, String[] documentation) {
-        if (description.length != format.length || description.length != documentation.length) {
-            setupExceptionOutput("invalid format for documentation node; description, format, url counts are not the same");
-            return;
-        }
-        
-        Element parent = (Element) document.getElementsByTagName("sml:documentation").item(0);
-        
-        for (int i=0; i<description.length; i++) {
-            Element nDoc = document.createElement("sml:Document");
-            if (description[i] != null) {
-                Element desc = document.createElement("gml:description");
-                desc.setTextContent(description[i]);
-                nDoc.appendChild(desc);
-            }
-            if (format[i] != null) {
-                Element form = document.createElement("sml:format");
-                form.setTextContent(format[i]);
-                nDoc.appendChild(form);
-            }
-            if (documentation[i] != null) {
-                Element u = document.createElement("sml:onlineResource");
-                u.setAttribute("xlink:href", documentation[i]);
-                nDoc.appendChild(u);
-            }
-            parent.appendChild(nDoc);
-        }
-    }
-    
-    public void deleteDocumentationNode() {
-        getParentNode().removeChild(getParentNode().getElementsByTagName("sml:documentation").item(0));
-    }
-    
-    public void setHistoryEvents(String[] name, String[] date, String[] description, String[] url) {
-        // make sure all of the arrays line up
-        if (name.length != date.length || name.length != description.length || name.length != url.length) {
-            setupExceptionOutput("Invalid history values!");
-            return;
-        }
-        
+    public void setHistoryEvents(String history) {
         Element parent = (Element) document.getElementsByTagName("sml:history").item(0);
-        parent = (Element) parent.getElementsByTagName("sml:EventList").item(0);
-        
-        for (int i=0; i<name.length; i++) {
-            Element member = document.createElement("sml:member");
-            if (name[i] != null) {
-                member.setAttribute("name", name[i]);
-            }
-            Element event = document.createElement("sml:Event");
-            member.appendChild(event);
-            if (date[i] != null) {
-                Element tEl = document.createElement("sml:date");
-                tEl.setTextContent(date[i]);
-                event.appendChild(tEl);
-            }
-            if (description[i] != null) {
-                Element tEl = document.createElement("sml:description");
-                tEl.setTextContent(description[i]);
-                event.appendChild(tEl);
-            }
-            if (url[i] != null) {
-                Element tEl = document.createElement("documentation");
-                tEl.setAttribute("xlink:href", url[i]);
-                event.appendChild(tEl);
-            }
-            parent.appendChild(member);
-        }
+        parent.setTextContent(history);
     }
     
     public void deleteHistoryNode() {
