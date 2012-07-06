@@ -195,7 +195,7 @@ public class SOSDescribeStation implements SOSDescribeIF {
         return retval;
     }
     
-    private double[] getStationCoords(Variable lat, Variable lon) {
+    protected double[] getStationCoords(Variable lat, Variable lon) {
         try {
             // get the lat/lon of the station
             // station id should be the last value in the procedure
@@ -217,7 +217,6 @@ public class SOSDescribeStation implements SOSDescribeIF {
         output.deletePosition();
         output.deleteTimePosition();
         output.deletePositions();
-        output.deleteValidTime();
     }
 
     protected void formatSetDescription(DescribeSensorFormatter output) {
@@ -292,6 +291,7 @@ public class SOSDescribeStation implements SOSDescribeIF {
     }
 
     protected void formatSetLocationNode(DescribeSensorFormatter output) {
-        output.setLocationNode(stationName, stationCoords);
+        if (stationCoords != null)
+            output.setLocationNode(stationName, stationCoords);
     }
 }

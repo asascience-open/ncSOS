@@ -63,6 +63,7 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
             ((DescribeSensorFormatter)output).setComponentsNode(DiscreteSamplingGeometryUtil.getDataVariables(getFeatureDataset()), procedure);
         } else if (this.procedure.contains("sensor")) {
             setNeededInfoForSensor(dataset);
+            describer.SetupOutputDocument((DescribeSensorFormatter)output);
         } else {
             output.setupExceptionOutput("Unknown procedure (not a station or sensor): " + this.procedure);
         }

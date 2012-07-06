@@ -29,13 +29,7 @@
 			<sml:position>
 				<sml:dataDefinition>
 				</sml:dataDefinition>
-				<sml:values>
-				</sml:values>
 			</sml:position>
-			<sml:validTime>
-				<sml:TimePeriod>
-				</sml:TimePeriod>
-			</sml:validTime>
 			<sml:positions>
 				<sml:PositionList>
 				</sml:PositionList>
