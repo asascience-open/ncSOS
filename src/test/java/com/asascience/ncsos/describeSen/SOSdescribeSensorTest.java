@@ -24,10 +24,14 @@ public class SOSdescribeSensorTest {
     private static String outputDir = null;
     private static String baseLocalDir = null;
     
-    private static final String bsd_1_set = "resources/datasets/sura/watlev_NOAA_NAVD_PRE.nc";
-    private static final String bsd_1_query = "procedure=urn:tds:station.sos:NOAA_8724698";
-    private static final String bsd_2_set = "resources/datasets/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1.nc";
-    private static final String bsd_2_query = "procedure=urn:tds:station.sos:Station1";
+    private static final String bdss_1_set = "resources/datasets/sura/watlev_NOAA_NAVD_PRE.nc";
+    private static final String bdss_1_query = "procedure=urn:tds:station.sos:NOAA_8724698";
+    private static final String bdss_2_set = "resources/datasets/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1.nc";
+    private static final String bdss_2_query = "procedure=urn:tds:station.sos:Station1";
+    private static final String bdst_1_set = "resources/datasets/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc";
+    private static final String bdst_1_query = "procedure=urn:tds:station.sos:Trajectory3";
+    private static final String bdst_2_set = "resources/datasets/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4.nc";
+    private static final String bdst_2_query = "procedure=urn:tds:station.sos:Trajectory7";
     
     private static String baseQuery = "request=DescribeSensor&service=sos&version=1.0.0&responseformat=";
     
@@ -79,10 +83,10 @@ public class SOSdescribeSensorTest {
     
     @Test
     public void testBasicDescribeSensorStation() throws IOException {
-        NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + bsd_1_set);
+        NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + bdss_1_set);
         SOSParser parser = new SOSParser();
         Writer writer = new CharArrayWriter();
-        writeOutput(parser.enhance(cdfDataset, baseQuery + bsd_1_query, bsd_1_set), writer);
+        writeOutput(parser.enhance(cdfDataset, baseQuery + bdss_1_query, bdss_1_set), writer);
         fileWriter(outputDir, "NOAA_8724698.xml", writer);
         // test for expected values below
         assertFalse("exception in output", writer.toString().contains("Exception"));
@@ -92,14 +96,38 @@ public class SOSdescribeSensorTest {
     
     @Test
     public void testBasicDescribeSensorStation2() throws IOException {
-        NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bsd_2_set);
+        NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdss_2_set);
         SOSParser parser = new SOSParser();
         Writer writer = new CharArrayWriter();
-        writeOutput(parser.enhance(dataset, baseQuery + bsd_2_query, bsd_2_set), writer);
+        writeOutput(parser.enhance(dataset, baseQuery + bdss_2_query, bdss_2_set), writer);
         fileWriter(outputDir, "timeSeriesProfile-Multidimensional-MultipleStations-H.5.1.xml", writer);
         assertFalse("exception in output", writer.toString().contains("Exception"));
         assertTrue("missing component", writer.toString().contains("<component name=\"Sensor temperature\">"));
         assertTrue("missing/invalid coords", writer.toString().contains("<gml:coordinates>37.5 -76.5</gml:coordinates>"));
+    }
+    
+    @Test
+    public void testBasicDescribeSensorTrajectory() throws IOException {
+        NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdst_1_set);
+        SOSParser parser = new SOSParser();
+        Writer writer = new CharArrayWriter();
+        writeOutput(parser.enhance(dataset, baseQuery + bdst_1_query, bdst_1_set), writer);
+        fileWriter(outputDir, "trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.xml", writer);
+        assertFalse("exception in output", writer.toString().contains("Exception"));
+        assertTrue("missing component", writer.toString().contains("<component name=\"Sensor temperature\">"));
+        assertTrue("missing/invalid coords", writer.toString().contains("1990-01-01T00:00:00Z,5.429996490478516,-35.31080627441406"));
+    }
+    
+    @Test
+    public void testBasicDescribeSensorTrajectory2() throws IOException {
+        NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdst_2_set);
+        SOSParser parser = new SOSParser();
+        Writer writer = new CharArrayWriter();
+        writeOutput(parser.enhance(dataset, baseQuery + bdst_2_query, bdst_2_set), writer);
+        fileWriter(outputDir, "trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4.xml", writer);
+        assertFalse("exception in output", writer.toString().contains("Exception"));
+        assertTrue("missing component", writer.toString().contains("<component name=\"Sensor temperature\">"));
+//        assertTrue("missing/invalid coords", writer.toString().contains("1990-01-01T00:00:00Z,5.429996490478516,-35.31080627441406"));
     }
     
 //    @Test

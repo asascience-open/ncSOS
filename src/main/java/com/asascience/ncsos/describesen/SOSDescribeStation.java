@@ -5,6 +5,7 @@
 package com.asascience.ncsos.describesen;
 
 import com.asascience.ncsos.outputformatter.DescribeSensorFormatter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import ucar.nc2.Attribute;
@@ -67,7 +68,9 @@ public class SOSDescribeStation implements SOSDescribeIF {
         platformType = dataset.findGlobalAttributeIgnoreCase("platformtype");
         
         // set our coords
-        stationCoords = getStationCoords(lat, lon);
+        if (stationVariable != null) {
+            stationCoords = getStationCoords(lat, lon);
+        }
         
         // description
         description = dataset.findAttValueIgnoreCase(null, "description", "no description");
@@ -158,15 +161,13 @@ public class SOSDescribeStation implements SOSDescribeIF {
                 identValues.toArray(new String[identValues.size()]));
     }
     
-    private double[] getStationCoords(Variable lat, Variable lon) {
+    protected int getStationIndex(Variable stationVar, String nameOfStation) {
+        int retval = -1;
         try {
-            // get the lat/lon of the station
-            // station id should be the last value in the procedure
-            int stationIndex = -1;
             // get the station index in the array
-            char[] charArray = (char[]) stationVariable.read().get1DJavaArray(char.class);
+            char[] charArray = (char[]) stationVar.read().get1DJavaArray(char.class);
             // find the length of the strings, assumes that the array has only a rank of 2; string length should be the 1st index
-            int[] aShape = stationVariable.read().getShape();
+            int[] aShape = stationVar.read().getShape();
             String[] names = new String[aShape[0]];
             StringBuilder strB = null;
             int ni = 0;
@@ -182,16 +183,24 @@ public class SOSDescribeStation implements SOSDescribeIF {
             }
             // now find our station index
             for (int j=0; j<names.length; j++) {
-                if(names[j].equalsIgnoreCase(stationName)) {
-                    stationIndex = j;
+                if(names[j].equalsIgnoreCase(nameOfStation)) {
+                    retval = j;
                     break;
                 }
             }
-
-            if (stationIndex < 0) {
-                return null;
-            }
-
+        } catch (IOException ex) {
+            System.out.println("Received error looking for station " + nameOfStation + " - " + ex.getMessage());
+        }
+        
+        return retval;
+    }
+    
+    private double[] getStationCoords(Variable lat, Variable lon) {
+        try {
+            // get the lat/lon of the station
+            // station id should be the last value in the procedure
+            int stationIndex = getStationIndex(stationVariable, stationName);
+            
             // find lat/lon values for the station
             double[] coords = new double[] { Double.NaN, Double.NaN };
             coords[0] = lat.read().getDouble(stationIndex);
@@ -207,6 +216,8 @@ public class SOSDescribeStation implements SOSDescribeIF {
     private void RemoveUnusedNodes(DescribeSensorFormatter output) {
         output.deletePosition();
         output.deleteTimePosition();
+        output.deletePositions();
+        output.deleteValidTime();
     }
 
     protected void formatSetDescription(DescribeSensorFormatter output) {

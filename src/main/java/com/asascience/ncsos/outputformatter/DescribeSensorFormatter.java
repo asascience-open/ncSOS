@@ -8,7 +8,6 @@ import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.List;
 import javax.xml.transform.Result;
@@ -18,9 +17,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import ucar.nc2.Attribute;
 import ucar.nc2.VariableSimpleIF;
 
 /**
@@ -99,7 +95,7 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     }
     
     private Element getParentNode() {
-        return (Element) document.getElementsByTagName("System").item(0);
+        return (Element) document.getElementsByTagName("sml:System").item(0);
     }
     
     private String joinArray(String[] arrayToJoin) {
@@ -110,13 +106,33 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         return retval;
     }
     
+    private Element AddNewNodeToParent(String nameOfNewNode, Element parentNode) {
+        Element retval = document.createElement(nameOfNewNode);
+        parentNode.appendChild(retval);
+        return retval;
+    }
+    
+    private Element AddNewNodeToParentWithAttribute(String nameOfNewNode, Element parentNode, String attributeName, String attributeValue) {
+        Element retval = document.createElement(nameOfNewNode);
+        retval.setAttribute(attributeName, attributeValue);
+        parentNode.appendChild(retval);
+        return retval;
+    }
+    
+    private Element AddNewNodeToParentWithTextValue(String nameOfNewNode, Element parentNode, String textContentValue) {
+        Element retval = document.createElement(nameOfNewNode);
+        retval.setTextContent(textContentValue);
+        parentNode.appendChild(retval);
+        return retval;
+    }
+    
     /****************************
      * Public Methods           *
      * Setting the XML document *
      ****************************/
     
     public void setSystemId(String id) {
-        Element system = (Element) document.getElementsByTagName("System").item(0);
+        Element system = (Element) document.getElementsByTagName("sml:System").item(0);
         system.setAttribute("gml:id", id);
     }
     
@@ -135,7 +151,7 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
             return;
         }
         // get our Identifier List and add nodes to it
-        Element pList = (Element) document.getElementsByTagName("IdentifierList").item(0);
+        Element pList = (Element) document.getElementsByTagName("sml:IdentifierList").item(0);
         for (int i=0; i<names.length; i++) {
             Element ident = document.createElement("identifier");
             ident.setAttribute("name", names[i]);
@@ -150,11 +166,11 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     }
     
     public void deleteIdentificationNode() {
-        getParentNode().removeChild(getParentNode().getElementsByTagName("identification").item(0));
+        getParentNode().removeChild(getParentNode().getElementsByTagName("sml:identification").item(0));
     }
     
     public void addToClassificationNode(String classifierName, String definition, String classifierValue) {
-        Element parent = (Element) document.getElementsByTagName("ClassifierList").item(0);
+        Element parent = (Element) document.getElementsByTagName("sml:ClassifierList").item(0);
         Element classifier = document.createElement("classifier");
         classifier.setAttribute("name", classifierName);
         Element term = document.createElement("Term");
@@ -167,12 +183,12 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     }
     
     public void deleteClassificationNode() {
-        getParentNode().removeChild(getParentNode().getElementsByTagName("classification").item(0));
+        getParentNode().removeChild(getParentNode().getElementsByTagName("sml:classification").item(0));
     }
     
     public void addContactNode(String role, String organizationName, HashMap<String, HashMap<String, String>> contactInfo) {
         // setup and and insert a contact node (after classification)
-        Element contact = document.createElement("contact");
+        Element contact = document.createElement("sml:contact");
         contact.setAttribute("xlink:role", role);
         /* *** */
         Element prevParent = contact;
@@ -201,11 +217,11 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
             prevParent.appendChild(curParent);
         }
         // insert before documentation
-        document.insertBefore(contact, document.getElementsByTagName("documentation").item(0));
+        document.insertBefore(contact, document.getElementsByTagName("sml:documentation").item(0));
     }
     
     public void deleteContactNodeFirst() {
-        getParentNode().removeChild(getParentNode().getElementsByTagName("contact").item(0));
+        getParentNode().removeChild(getParentNode().getElementsByTagName("sml:contact").item(0));
     }
     
     public void setDocumentationNode(String[] description, String[] format, String[] documentation) {
@@ -214,7 +230,7 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
             return;
         }
         
-        Element parent = (Element) document.getElementsByTagName("documentation").item(0);
+        Element parent = (Element) document.getElementsByTagName("sml:documentation").item(0);
         
         for (int i=0; i<description.length; i++) {
             Element nDoc = document.createElement("Document");
@@ -248,7 +264,7 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
             return;
         }
         
-        Element parent = (Element) document.getElementsByTagName("history").item(0);
+        Element parent = (Element) document.getElementsByTagName("sml:history").item(0);
         parent = (Element) parent.getElementsByTagName("EventList").item(0);
         
         for (int i=0; i<name.length; i++) {
@@ -282,7 +298,7 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     }
     
     public void setLocationNode(String stationName, double[] coords) {
-        Element parent = (Element) document.getElementsByTagName("location").item(0);
+        Element parent = (Element) document.getElementsByTagName("sml:location").item(0);
         
         Element point = document.createElement("gml:Point");
         point.setAttribute("gml:id", "STATION-LOCATION-" + stationName);
@@ -299,8 +315,7 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     
     public void setComponentsNode(List<VariableSimpleIF> dataVariables, String procedure) {
         // iterate through our list and create the node
-        Element parent = (Element) document.getElementsByTagName("components").item(0);
-        parent = (Element) parent.getElementsByTagName("ComponentList").item(0);
+        Element parent = (Element) document.getElementsByTagName("sml:ComponentList").item(0);
 
         for (int i=0; i<dataVariables.size(); i++) {
             String fName = dataVariables.get(i).getFullName();
@@ -343,11 +358,77 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         getParentNode().removeChild(getParentNode().getElementsByTagName("components").item(0));
     }
     
-    public void deleteTimePosition() {
-        getParentNode().removeChild(getParentNode().getElementsByTagName("position").item(0));
+    public void setPositionName(String name) {
+        Element position = (Element) getParentNode().getElementsByTagName("position").item(0);
+        position.setAttribute("name", name);
+    }
+    
+    public void setPositionDataDefinition(HashMap<String, HashMap<String, String>> fieldMap, String decimalSeparator, String blockSeparator, String tokenSeparator) {
+        Element dataDefinition = (Element) getParentNode().getElementsByTagName("dataDefinition").item(0);
+        // add data definition block
+        Element parent = AddNewNodeToParent("DataBlockDefinition", dataDefinition);
+        // add components with "whenWhere"
+        parent = AddNewNodeToParentWithAttribute("components", parent, "name", "whenWhere");
+        // add DataRecord for lat, lon, time
+        parent = AddNewNodeToParent("DataRecord", parent);
+        // print each of our maps
+        Element fieldNodeIter;
+        for (String key : fieldMap.keySet()) {
+            if (key.equalsIgnoreCase("time")) {
+                HashMap<String, String> timeMap = (HashMap<String, String>)fieldMap.get(key);
+                // add field node
+                fieldNodeIter = AddNewNodeToParentWithAttribute("field", parent, "name", key);
+                // add time node
+                fieldNodeIter = AddNewNodeToParentWithAttribute("Time", fieldNodeIter, "definition", timeMap.get("definition"));
+                // add uoms for every key that isn't 'definition'
+                for (String sKey : timeMap.keySet()) {
+                    if (!sKey.equalsIgnoreCase("definition")) {
+                        AddNewNodeToParentWithAttribute("uom", fieldNodeIter, sKey, timeMap.get(sKey).toString());
+                    }
+                }
+            } else {
+                HashMap<String, String> quantityMap = (HashMap<String, String>)fieldMap.get(key);
+                // add field node
+                fieldNodeIter = AddNewNodeToParentWithAttribute("field", parent, "name", key);
+                // add quantity node
+                fieldNodeIter = AddNewNodeToParentWithAttribute("Quantity", fieldNodeIter, "definition", quantityMap.get("definition"));
+                // add uoms for every key !definition
+                for (String sKey : quantityMap.keySet()) {
+                    if (!sKey.equalsIgnoreCase("definition")) {
+                        AddNewNodeToParentWithAttribute("uom", fieldNodeIter, sKey, quantityMap.get(sKey).toString());
+                    }
+                }
+            }
+        }
+        // lastly we need to add our encoding
+        parent = (Element) getParentNode().getElementsByTagName("dataDefinition").item(0);
+        // add encoding node
+        parent = AddNewNodeToParent("encoding", parent);
+        // add TextBlock node with above attributes
+        parent = AddNewNodeToParentWithAttribute("TextBlock", parent, "decimalSeparator", decimalSeparator);
+        parent.setAttribute("blockSeparator", blockSeparator);
+        parent.setAttribute("tokenSeparator", tokenSeparator);
+    }
+    
+    public void setPositionValue(String valueText) {
+        // simple, just add values with text content of parameter
+        Element parent = (Element) getParentNode().getElementsByTagName("position").item(0);
+        AddNewNodeToParentWithTextValue("values", parent, valueText);
     }
     
     public void deletePosition() {
+        getParentNode().removeChild(getParentNode().getElementsByTagName("position").item(0));
+    }
+    
+    public void deleteTimePosition() {
         getParentNode().removeChild(getParentNode().getElementsByTagName("timePosition").item(0));
+    }
+    
+    public void deletePositions() {
+        getParentNode().removeChild(getParentNode().getElementsByTagName("positions").item(0));
+    }
+    
+    public void deleteValidTime() {
+        getParentNode().removeChild(getParentNode().getElementsByTagName("validTime").item(0));
     }
 }
