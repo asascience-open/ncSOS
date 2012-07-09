@@ -139,7 +139,7 @@
 						<target>
 							<copy file="resources/sos-servlet.xml" todir="target/"/> 
 							<copy file="resources/README" todir="target/"/>
-							<zip destfile="target/ncSOS-${version}.zip" basedir="target/"/>
+							<zip destfile="target/ncSOS-${project.version}.zip" basedir="target/"/>
 						</target>
 					</configuration>
 					<goals>
