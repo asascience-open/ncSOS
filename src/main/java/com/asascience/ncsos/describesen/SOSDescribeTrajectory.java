@@ -7,7 +7,6 @@ package com.asascience.ncsos.describesen;
 import com.asascience.ncsos.outputformatter.DescribeSensorFormatter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import ucar.ma2.Array;

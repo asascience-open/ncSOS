@@ -39,6 +39,10 @@ public class SOSdescribeSensorTest {
     private static final String bdsp_2_query = "procedure=urn:tds:station.sos:Profile5";
     private static final String bdsg_1_set = "resources/datasets/satellite-sst/SST_Global_2x2deg_20120626_0000.nc";
     private static final String bdsg_1_query = "procedure=urn:tds:station.sos:SST_Global_2x2deg_20120626_0000";
+    private static final String bdstp_1_set = "resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc";
+    private static final String bdstp_1_query = "procedure=urn:tds:station.sos:Trajectory2";
+    private static final String bdstp_2_set = "resources/datasets/trajectoryProfile-Ragged-MultipleTrajectories-H.6.3/trajectoryProfile-Ragged-MultipleTrajectories-H.6.3.nc";
+    private static final String bdstp_2_query = "procedure=urn:tds:station.sos:Trajectory3";
     
     private static String baseQuery = "request=DescribeSensor&service=sos&version=1.0.0&responseformat=";
     
@@ -73,6 +77,15 @@ public class SOSdescribeSensorTest {
         
         baseQuery += URLEncoder.encode("text/xml;subtype=\"sensorML/1.0.1\"", "UTF-8") + "&";
     }
+    
+    private static String getCurrentMethod() {
+        final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
+        for (int i=0; i<ste.length; i++) {
+            if (ste[i].getMethodName().contains(("test")))
+                return ste[i].getMethodName();
+        }
+        return "could not find test name";
+    }
      
     private void writeOutput(HashMap<String, Object> outMap, Writer write) {
         SOSOutputFormatter output = (SOSOutputFormatter)outMap.get("outputHandler");
@@ -87,9 +100,13 @@ public class SOSdescribeSensorTest {
         output.close();
     }
     
+    /***************************************************************************
+     * Tests *******************************************************************
+     ***************************************************************************/
+    
     @Test
     public void testBasicDescribeSensorStation() throws IOException {
-        System.out.println("------Start testBasicDescribeSensorStation------");
+        System.out.println("\n------Start testBasicDescribeSensorStation------");
         NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + bdss_1_set);
         SOSParser parser = new SOSParser();
         Writer writer = new CharArrayWriter();
@@ -104,7 +121,7 @@ public class SOSdescribeSensorTest {
     
     @Test
     public void testBasicDescribeSensorStation2() throws IOException {
-        System.out.println("------Start testBasicDescribeSensorStation2------");
+        System.out.println("\n------Start testBasicDescribeSensorStation2------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdss_2_set);
         SOSParser parser = new SOSParser();
         Writer writer = new CharArrayWriter();
@@ -118,7 +135,7 @@ public class SOSdescribeSensorTest {
     
     @Test
     public void testBasicDescribeSensorTrajectory() throws IOException {
-        System.out.println("------Start testBasicDescribeSensorTrajectory------");
+        System.out.println("\n------Start testBasicDescribeSensorTrajectory------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdst_1_set);
         SOSParser parser = new SOSParser();
         Writer writer = new CharArrayWriter();
@@ -132,7 +149,7 @@ public class SOSdescribeSensorTest {
     
     @Test
     public void testBasicDescribeSensorTrajectory2() throws IOException {
-        System.out.println("------Start testBasicDescribeSensorTrajectory2------");
+        System.out.println("\n------Start testBasicDescribeSensorTrajectory2------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdst_2_set);
         SOSParser parser = new SOSParser();
         Writer writer = new CharArrayWriter();
@@ -146,7 +163,7 @@ public class SOSdescribeSensorTest {
     
     @Test
     public void testBasicDescribeSensorProfile() throws IOException {
-        System.out.println("------Start testBasicDescribeSensorProfile------");
+        System.out.println("\n------Start testBasicDescribeSensorProfile------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdsp_1_set);
         SOSParser parser = new SOSParser();
         Writer writer = new CharArrayWriter();
@@ -160,7 +177,7 @@ public class SOSdescribeSensorTest {
     
     @Test
     public void testBasicDescribeSensorProfile2() throws IOException {
-        System.out.println("------Start testBasicDescribeSensorProfile2------");
+        System.out.println("\n------Start testBasicDescribeSensorProfile2------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdsp_2_set);
         SOSParser parser = new SOSParser();
         Writer writer = new CharArrayWriter();
@@ -174,7 +191,7 @@ public class SOSdescribeSensorTest {
     
     @Test
     public void testBasicDescribeSensorSensor() throws IOException {
-        System.out.println("------Start testBasicDescribeSensorSensor------");
+        System.out.println("\n------Start testBasicDescribeSensorSensor------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdss_1_set);
         SOSParser parser = new SOSParser();
         Writer writer = new CharArrayWriter();
@@ -188,7 +205,7 @@ public class SOSdescribeSensorTest {
     
     @Test
     public void testBasicDescriptSensorGrid() throws IOException {
-        System.out.println("------Start testBasicDescriptSensorGrid------");
+        System.out.println("\n------Start testBasicDescriptSensorGrid------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdsg_1_set);
         SOSParser parser = new SOSParser();
         Writer writer = new CharArrayWriter();
@@ -199,4 +216,53 @@ public class SOSdescribeSensorTest {
 //        assertTrue("missing/invalid sensor id", writer.toString().contains("<sml:value>urn:tds:sensor.sos:NOAA_8724698::watlev</sml:value>"));
         System.out.println("------End testBasicDescriptSensorGrid------");
     }
+    
+    @Test
+    public void testBasicDescribeSensorSection() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdstp_1_set);
+            SOSParser parser = new SOSParser();
+            Writer writer = new CharArrayWriter();
+            writeOutput(parser.enhance(dataset, baseQuery + bdstp_1_query, bdstp_1_set), writer);
+            fileWriter(outputDir, "trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1_trajectory2.xml", writer);
+            assertFalse("exception in output", writer.toString().contains("Exception"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testBasicDescribeSensorSection2() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdstp_2_set);
+            SOSParser parser = new SOSParser();
+            Writer writer = new CharArrayWriter();
+            writeOutput(parser.enhance(dataset, baseQuery + bdstp_2_query, bdstp_2_set), writer);
+            fileWriter(outputDir, "trajectoryProfile-Ragged-MultipleTrajectories-H.6.3_trajectory3.xml", writer);
+            assertFalse("exception in output", writer.toString().contains("Exception"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+//    @Test
+//    public void testInsertClassNameHere() {
+//        System.out.println("\n------" + getCurrentMethod() + "------");
+//        
+//        try {
+//            
+//        } catch (IOException ex) {
+//            System.out.println(ex.getMessage());
+//        } finally {
+//            System.out.println("------END " + getCurrentMethod() + "------");
+//        }
+//    }
 }

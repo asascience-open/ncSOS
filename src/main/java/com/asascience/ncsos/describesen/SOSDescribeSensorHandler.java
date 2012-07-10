@@ -8,11 +8,11 @@ import com.asascience.ncsos.outputformatter.DescribeSensorFormatter;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import com.asascience.ncsos.util.DiscreteSamplingGeometryUtil;
 import java.io.IOException;
+import java.util.ArrayList;
 import ucar.nc2.dataset.NetcdfDataset;
-import ucar.nc2.ft.PointFeature;
-import ucar.nc2.ft.TrajectoryFeature;
-import ucar.nc2.ft.TrajectoryFeatureCollection;
+import ucar.nc2.ft.*;
 import ucar.nc2.time.CalendarDate;
+import ucar.unidata.geoloc.LatLonRect;
 
 /**
  *
@@ -101,6 +101,39 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
             case GRID:
                 describer = new SOSDescribeGrid(dataset, procedure);
                 ((DescribeSensorFormatter)output).setComponentsNode(getGridDataset().getDataVariables(),procedure);
+                break;
+            case SECTION:
+                // trajectory profile; need the trajectory number to get the right info
+                String[] tStr = procedure.split(":");
+                String nStr = tStr[tStr.length-1].toLowerCase();
+                nStr = nStr.replaceAll("(profile)", "");
+                nStr = nStr.replaceAll("(trajectory)", "");
+                int tNumber = Integer.parseInt(nStr);
+                
+                getFeatureDataset().calcBounds();
+                SectionFeatureCollection sectionCollection = (SectionFeatureCollection) getFeatureTypeDataSet();
+                ArrayList<CalendarDate> secColStart = new ArrayList<CalendarDate>();
+                int i=-1;
+                for (sectionCollection.resetIteration();sectionCollection.hasNext();) {
+                    SectionFeature section = sectionCollection.next();
+                    if (++i == (tNumber-1)) {
+                        i=0;
+                        for (section.resetIteration();section.hasNext();) {
+                            ProfileFeature pfeature = section.next();
+                            pfeature.calcBounds();
+                            for (pfeature.resetIteration();pfeature.hasNext();) {
+                                // iterate through data to make sure various items (ie start date) isn't null
+                                PointFeature pointf = pfeature.next();
+                            }
+                            if (pfeature.getCalendarDateRange() != null && pfeature.getCalendarDateRange().getStart() != null)
+                                secColStart.add(pfeature.getCalendarDateRange().getStart());
+                        }
+                        break;
+                    }
+                }
+                
+                describer = new SOSDescribeSection(dataset, procedure, secColStart.toArray(new CalendarDate[secColStart.size()]));
+                ((DescribeSensorFormatter)output).setComponentsNode(DiscreteSamplingGeometryUtil.getDataVariables(getFeatureDataset()), procedure);
                 break;
             default:
                 _log.error("Unhandled feature type: " + getFeatureDataset().getFeatureType().toString());
