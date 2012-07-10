@@ -32,6 +32,15 @@ import ucar.nc2.units.DateFormatter;
  * *Component(s)
  * @author SCowan
  * @version 1.0.0
+=======
+import ucar.unidata.geoloc.LatLonPoint;
+import ucar.unidata.geoloc.LatLonPointImpl;
+import ucar.unidata.geoloc.LatLonRect;
+
+/**
+ *
+ * @author SCowan
+>>>>>>> added functionality for describing trajectory profiles (sections)
  */
 public class SOSDescribeSection extends SOSDescribeStation implements SOSDescribeIF {
     

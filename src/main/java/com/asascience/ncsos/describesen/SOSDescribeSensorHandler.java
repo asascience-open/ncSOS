@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.ft.*;
 import ucar.nc2.time.CalendarDate;
+import ucar.unidata.geoloc.LatLonRect;
 
 /**
  * Main handler class for Describe Sensor requests. Processes the request to determine

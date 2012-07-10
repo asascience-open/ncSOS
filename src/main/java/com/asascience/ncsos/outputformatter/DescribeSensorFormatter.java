@@ -611,6 +611,26 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         addCoordinateInfoNode(depthInfo, parent, "altitude", "Z", "m");
     }
     
+    public void setStationPositionsNode(HashMap<String,String> latitudeInfo, HashMap<String,String> longitudeInfo, HashMap<String,String> depthInfo, String definition, LatLonRect boundingBox) {
+        Element parent = (Element) getParentNode().getElementsByTagName("sml:PositionList").item(0);
+        
+        // add position w/ 'stationPosition' attribute
+        parent = AddNewNodeToParentWithAttribute("sml:position", parent, "name", "stationPosition");
+        // add Position, then location nodes
+        parent = AddNewNodeToParent("swe:Position", parent);
+        parent = AddNewNodeToParent("swe:location", parent);
+        // add vector id="STATION_LOCATION" definition=definition
+        parent = AddNewNodeToParentWithAttribute("swe:Vector", parent, "gml:id", "STATION_LOCATION");
+        parent.setAttribute("definition", definition);
+        // add a bounding box for lat/lon
+        parent = AddNewNodeToParent("gml:boundedBy", parent);
+        parent = AddNewNodeToParentWithAttribute("gml:Envelope", parent, "srsName", "");
+        AddNewNodeToParentWithTextValue("gml:lowerCorener", parent, boundingBox.getLatMin() + " " + boundingBox.getLonMin());
+        AddNewNodeToParentWithTextValue("gml:upperCorner", parent, boundingBox.getLatMax() + " " + boundingBox.getLonMax());
+        // add depth/altitude
+        addCoordinateInfoNode(depthInfo, parent, "altitude", "Z", "m");
+    }
+    
     public void setEndPointPositionsNode(HashMap<String,String> latitudeInfo, HashMap<String,String> longitudeInfo, HashMap<String,String> depthInfo, String definition) {
         Element parent = (Element) getParentNode().getElementsByTagName("sml:PositionList").item(0);
         
@@ -622,6 +642,24 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         parent.setAttribute("definition", definition);
         addCoordinateInfoNode(latitudeInfo, parent, "latitude", "Y", "deg");
         addCoordinateInfoNode(longitudeInfo, parent, "longitude", "X", "deg");
+        addCoordinateInfoNode(depthInfo, parent, "altitude", "Z", "m");
+    }
+    
+    public void setEndPointPositionsNode(HashMap<String,String> latitudeInfo, HashMap<String,String> longitudeInfo, HashMap<String,String> depthInfo, String definition, LatLonRect boundingBox) {
+        Element parent = (Element) getParentNode().getElementsByTagName("sml:PositionList").item(0);
+        
+        // follow steps outlined above with slight alterations
+        parent = AddNewNodeToParentWithAttribute("sml:position", parent, "name", "endPosition");
+        parent = AddNewNodeToParent("swe:Position", parent);
+        parent = AddNewNodeToParent("swe:location", parent);
+        parent = AddNewNodeToParentWithAttribute("swe:Vector", parent, "gml:id", "END_LOCATION");
+        parent.setAttribute("definition", definition);
+        // add a bounding box for lat/lon
+        parent = AddNewNodeToParent("gml:boundedBy", parent);
+        parent = AddNewNodeToParentWithAttribute("gml:Envelope", parent, "srsName", "");
+        AddNewNodeToParentWithTextValue("gml:lowerCorener", parent, boundingBox.getLatMin() + " " + boundingBox.getLonMin());
+        AddNewNodeToParentWithTextValue("gml:upperCorner", parent, boundingBox.getLatMax() + " " + boundingBox.getLonMax());
+        // add depth/altitude
         addCoordinateInfoNode(depthInfo, parent, "altitude", "Z", "m");
     }
     
