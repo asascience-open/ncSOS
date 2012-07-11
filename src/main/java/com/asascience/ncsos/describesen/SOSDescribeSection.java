@@ -10,19 +10,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.joda.time.DateTime;
-import ucar.ma2.*;
-import ucar.nc2.Attribute;
+import ucar.ma2.Array;
+import ucar.ma2.InvalidRangeException;
+import ucar.ma2.Range;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.time.CalendarDate;
 import ucar.nc2.time.CalendarPeriod;
 import ucar.nc2.units.DateFormatter;
-import ucar.unidata.geoloc.LatLonPoint;
-import ucar.unidata.geoloc.LatLonPointImpl;
-import ucar.unidata.geoloc.LatLonRect;
 
 /**
  *
@@ -36,7 +31,6 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
     private Variable lat, lon, depth, time;
     private Variable indexVar;
     private CalendarDate[] startDates;
-    private LatLonRect bbox;
     
     public SOSDescribeSection( NetcdfDataset dataset, String procedure, CalendarDate[] sDate ) {
         super(dataset, procedure);
@@ -56,27 +50,10 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
         
         for (Variable var : dataset.getVariables()) {
             String varName = var.getFullName().toLowerCase();
-            // look for the variable that describes our indexing
-//            if (varName.contains("index")) {
-//                try {
-//                    // this lists the profile number of each obs
-//                    Array obsIndices = var.read();
-//                    ArrayList<Integer> indexBuilder = new ArrayList<Integer>();
-//                    // iterate through the 'Array' to find all values which match our profileNumber
-//                    for (int i=0; i<obsIndices.getSize(); i++) {
-//                        if (profileNumber == obsIndices.getInt(i))
-//                            indexBuilder.add(i);
-//                    }
-//                    // convert to our array
-//                    profileIndices = indexBuilder.toArray(new Integer[indexBuilder.size()]);
-//                } catch (IOException ex) {
-//                    System.out.println("Error in DescribeProfile constructor - " + ex.getMessage());
-//                }
-//            }
-//            else 
             if (varName.contains("rowsize")) {
                 rowsize = var;
-            } else if (varName.contains("index")) {
+            }
+            else if (varName.contains("index")) {
                 indexVar = var;
             }
             // look for lat, lon, depth
@@ -128,9 +105,6 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
                 System.out.println("Error in DescribeProfile constructor - " + ex.getMessage());
             }
         }
-        
-        // calculate our bounding box
-//        this.bbox = getBoundingBox();
     }
     
     @Override
@@ -243,80 +217,6 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
         }
     }
     
-//    private void formatSetPositionsNode(DescribeSensorFormatter output) {
-//        HashMap<String,String> latitude, longitude, depthMap;
-//        // set our hashmaps for our station
-//        latitude = new HashMap<String, String>();
-//        for (Attribute attr : lat.getAttributes()) {
-//            String attrName = attr.getName().toLowerCase();
-//            if (attrName.equals("standard_name")) {
-//                latitude.put("name", attr.getStringValue());
-//            }
-//            else if (attrName.contains("unit")) {
-//                latitude.put("code", attr.getStringValue());
-//            }
-//            else if (attrName.equals("axis")) {
-//                latitude.put("axisID", attr.getStringValue());
-//            }
-//        }
-//        
-//        longitude = new HashMap<String, String>();
-//        for (Attribute attr : lon.getAttributes()) {
-//            String attrName = attr.getName().toLowerCase();
-//            if (attrName.equals("standard_name")) {
-//                longitude.put("name", attr.getStringValue());
-//            }
-//            else if (attrName.contains("unit")) {
-//                longitude.put("code", attr.getStringValue());
-//            }
-//            else if (attrName.equals("axis")) {
-//                longitude.put("axisID", attr.getStringValue());
-//            }
-//        }
-//        
-//        depthMap = new HashMap<String, String>();
-//        for (Attribute attr : depth.getAttributes()) {
-//            String attrName = attr.getName().toLowerCase();
-//            if (attrName.equals("standard_name")) {
-//                depthMap.put("name", attr.getStringValue());
-//            }
-//            else if (attrName.contains("unit")) {
-//                depthMap.put("code", attr.getStringValue());
-//            }
-//            else if (attrName.equals("axis")) {
-//                depthMap.put("axisID", attr.getStringValue());
-//            }
-//        }
-//        depthMap.put("value", "0");
-//        
-//        //set our station
-////        output.setStationPositionsNode(latitude, longitude, depthMap, "", bbox);
-//        // get our depth for the end point
-//        try {
-//            Array array = depth.read();
-//            ArrayList<Double> depthValues = new ArrayList<Double>();
-////            if (profileIndices != null) {
-////                for (int i=0; i<profileIndices.length; i++) {
-////                    depthValues.add(array.getDouble(profileIndices[i]));
-////                }
-////            } else {
-////                for (int j=profileStartIndex; j<profileEndIndex; j++) {
-////                    depthValues.add(array.getDouble(j));
-////                }
-////            }
-//            Double largestVal = 0d;
-//            for (Double dbl : depthValues) {
-//                if (Math.abs(dbl.doubleValue()) > Math.abs(largestVal.doubleValue()))
-//                    largestVal = dbl;
-//            }
-//            depthMap.put("value", largestVal.toString());
-//        } catch (IOException ex) {
-//            System.out.println("Exception in formatSetPositionsNode - " + ex.getMessage());
-//        }
-//        // set our end point
-//        output.setEndPointPositionsNode(latitude, longitude, depthMap, "", bbox);
-//    }
-    
     private Array getDataArrayFrom2Dimension(Variable var) {
         try {
             Range trajectoryRange = new Range(trajectoryNumber,trajectoryNumber);
@@ -360,9 +260,4 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
         
         return null;
     }
-    
-    
-//    private LatLonRect getBoundingBox() {
-//        
-//    }
 }

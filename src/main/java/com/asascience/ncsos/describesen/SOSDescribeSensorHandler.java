@@ -121,6 +121,7 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
                         for (section.resetIteration();section.hasNext();) {
                             ProfileFeature pfeature = section.next();
                             pfeature.calcBounds();
+                            System.out.println("number of pointfeatures " + pfeature.size());
                             for (pfeature.resetIteration();pfeature.hasNext();) {
                                 // iterate through data to make sure various items (ie start date) isn't null
                                 PointFeature pointf = pfeature.next();

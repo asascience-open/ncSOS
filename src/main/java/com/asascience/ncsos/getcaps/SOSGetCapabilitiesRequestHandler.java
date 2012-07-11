@@ -251,6 +251,9 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
             case GRID:
                 setDocument(Grid.getCapsResponse(getGridDataset(), getDocument(), getGMLNameBase()));
                 break;
+            case SECTION:
+                setDocument(Section.getCapsResponse(getFeatureTypeDataSet(), getDocument(), getFeatureOfInterestBase(), getGMLNameBase(), observedPropertyList));
+                break;
             default:
                 if (getDatasetFeatureType() != null) {
                     output.setupExceptionOutput("Unsupported feature type for request of GetCapabilities: " + getDatasetFeatureType().name());
