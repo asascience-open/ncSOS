@@ -171,4 +171,12 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     public String getContentType() {
         return contentType;
     }
+    
+    private String[] addToStringArray(String[] array, String strToAdd) {
+        String retval = "";
+        for (String sr : array)
+            retval += sr + "&;><";
+        retval += strToAdd;
+        return retval.split("&;><");
+    }
 }

@@ -73,6 +73,9 @@ public interface iStationData {
     //Does what is says on the tin
     double getUpperLon(int stNum);
     
+    double getLowerAltitude(int stNum);
+    double getUpperAltitude(int stNum);
+    
     //Does what is says on the tin
     String getTimeEnd(int stNum);
     

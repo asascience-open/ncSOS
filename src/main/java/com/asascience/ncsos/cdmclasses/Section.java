@@ -7,12 +7,15 @@ package com.asascience.ncsos.cdmclasses;
 import com.asascience.ncsos.getobs.SOSObservationOffering;
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import ucar.nc2.ft.*;
 import ucar.nc2.time.CalendarDate;
 import ucar.nc2.time.CalendarDateRange;
 import ucar.nc2.units.DateFormatter;
+import ucar.nc2.units.DateFromString;
 import ucar.unidata.geoloc.LatLonPointImpl;
 import ucar.unidata.geoloc.LatLonRect;
 import ucar.unidata.geoloc.Station;
@@ -159,13 +162,11 @@ public class Section extends baseCDMClass implements iStationData {
     public void setData(Object featureCollection) throws IOException {
         System.out.println("in Section.setData");
         this.sectionData = (SectionFeatureCollection) featureCollection;
-
+        
         sectionList = new ArrayList<SectionFeature>();
 
         DateTime dtSearchStart = null;
         DateTime dtSearchEnd = null;
-
-        boolean firstSet = true;
 
         //check first to see if the event times are not null
         if (eventTimes != null) {
@@ -179,42 +180,32 @@ public class Section extends baseCDMClass implements iStationData {
             }
 
             //temp
-            DateTime dtStart = null;
-            DateTime dtEnd = null;
+            DateTime dtStart = new DateTime();
+            DateTime dtEnd = new DateTime(0);
             //check
             DateTime dtStartt = null;
             DateTime dtEndt = null;
+            
+            upperLat = upperLon = Double.NEGATIVE_INFINITY;
+            lowerLat = lowerLon = Double.POSITIVE_INFINITY;
 
             for (sectionData.resetIteration();sectionData.hasNext();) {
                 SectionFeature sectFeature = sectionData.next();
-                for (sectFeature.resetIteration();sectFeature.hasNext();) {
-                    ProfileFeature pFeature = sectFeature.next();
-                    pFeature.calcBounds();
+                LatLonRect bbox = getBoundingBox(sectFeature);
+                CalendarDateRange dateRange = getDateRange(sectFeature);
+                
+                String trajName = "trajectory" + sectFeature.getName();
 
-                    String n = pFeature.getName();
-                    System.out.println("pFeature name: " + n);
-
-                    //scan through the stationname for a match of id
-                    for (Iterator<String> it = reqStationNames.iterator(); it.hasNext();) {
-                        String stName = it.next();
-                        if (stName.equalsIgnoreCase(n)) {
-                            sectionList.add(sectFeature);
-                        }
-                    }
-
-                    if (firstSet) {
-                        upperLat = pFeature.getBoundingBox().getLatMax();
-                        lowerLat = pFeature.getBoundingBox().getLatMin();
-                        upperLon = pFeature.getBoundingBox().getLonMax();
-                        lowerLon = pFeature.getBoundingBox().getLonMin();
-
-                        dtStart = new DateTime(pFeature.getDateRange().getStart().getDate(), chrono);
-                        dtEnd = new DateTime(pFeature.getDateRange().getEnd().getDate(), chrono);
-                        firstSet = false;
-                    } else {
-
-                        dtStartt = new DateTime(pFeature.getDateRange().getStart().getDate(), chrono);
-                        dtEndt = new DateTime(pFeature.getDateRange().getEnd().getDate(), chrono);
+                //scan through the stationname for a match of id
+                for (Iterator<String> it = reqStationNames.iterator(); it.hasNext();) {
+                    String stName = it.next();
+                    System.out.println("comparing: " + stName + " to " + trajName);
+                    if (stName.equalsIgnoreCase(trajName)) {
+                        System.out.println("adding " + trajName + " to section list");
+                        sectionList.add(sectFeature);
+                
+                        dtStartt = new DateTime(dateRange.getStart().toDate(), chrono);
+                        dtEndt = new DateTime(dateRange.getEnd().toDate(), chrono);
 
                         if (dtStartt.isBefore(dtStart)) {
                             dtStart = dtStartt;
@@ -223,21 +214,22 @@ public class Section extends baseCDMClass implements iStationData {
                             dtEnd = dtEndt;
                         }
 
-                        if (pFeature.getBoundingBox().getLatMax() > upperLat) {
-                            upperLat = pFeature.getBoundingBox().getLatMax();
+                        if (bbox.getLatMax() > upperLat) {
+                            upperLat = bbox.getLatMax();
                         }
-                        if (pFeature.getBoundingBox().getLatMin() < lowerLat) {
-                            lowerLat = pFeature.getBoundingBox().getLatMin();
+                        if (bbox.getLatMin() < lowerLat) {
+                            lowerLat = bbox.getLatMin();
                         }
                         //lon
-                        if (pFeature.getBoundingBox().getLonMax() > upperLon) {
-                            upperLon = pFeature.getBoundingBox().getLonMax();
+                        if (bbox.getLonMax() > upperLon) {
+                            upperLon = bbox.getLonMax();
                         }
-                        if (pFeature.getBoundingBox().getLonMax() < lowerLon) {
-                            lowerLon = pFeature.getBoundingBox().getLonMin();
+                        if (bbox.getLonMax() < lowerLon) {
+                            lowerLon = bbox.getLonMin();
                         }
+                        
+                        break;
                     }
-
                 }
                 setStartDate(df.toDateTimeStringISO(dtStart.toDate()));
                 setEndDate(df.toDateTimeStringISO(dtEnd.toDate()));
@@ -253,39 +245,170 @@ public class Section extends baseCDMClass implements iStationData {
     }
 
     public String getDataResponse(int stNum) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        try {
+            if (sectionData != null) {
+                return createSectionData(stNum);
+            }
+        } catch (Exception ex) {
+//            Logger.getLogger(Trajectory.class.getName()).log(Level.SEVERE, null, ex);
+            return DATA_RESPONSE_ERROR + Profile.class;
+        }
+        return DATA_RESPONSE_ERROR + Profile.class;
     }
 
+    @Override
     public String getStationName(int idNum) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (sectionList != null) {
+            System.out.println("looking for staion number " + idNum);
+            return "Trajectory" + sectionList.get(idNum).getName();
+        } else {
+            return Invalid_Station;
+        }
     }
 
+    @Override
     public double getLowerLat(int stNum) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (sectionList != null) {
+            return (getBoundingBox(sectionList.get(stNum)).getLatMin());
+        } else {
+            return Invalid_Value;
+        }
     }
 
+    @Override
     public double getLowerLon(int stNum) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (sectionList != null) {
+            return (getBoundingBox(sectionList.get(stNum)).getLonMin());
+        } else {
+            return Invalid_Value;
+        }
     }
 
+    @Override
     public double getUpperLat(int stNum) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (sectionList != null) {
+            return (getBoundingBox(sectionList.get(stNum)).getLatMax());
+        } else {
+            return Invalid_Value;
+        }
     }
 
+    @Override
     public double getUpperLon(int stNum) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (sectionList != null) {
+            return (getBoundingBox(sectionList.get(stNum)).getLonMax());
+        } else {
+            return Invalid_Value;
+        }
     }
 
+    @Override
     public String getTimeEnd(int stNum) {
+        if (sectionList != null) {
+            return df.toDateTimeStringISO(getDateRange(sectionList.get(stNum)).getEnd().toDate());
+        } else {
+            return ERROR_NULL_DATE;
+        }
+    }
+
+    @Override
+    public String getTimeBegin(int stNum) {
+        if (sectionList != null) {
+            return df.toDateTimeStringISO(getDateRange(sectionList.get(stNum)).getStart().toDate());
+        } else {
+            return ERROR_NULL_DATE;
+        }
+    }
+    
+    @Override
+    public double getLowerAltitude(int stNum) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public String getTimeBegin(int stNum) {
+    @Override
+    public double getUpperAltitude(int stNum) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public String getDescription(int stNum) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    private String createSectionData(int stNum) {
+        StringBuilder builder = new StringBuilder();
+        SectionFeature sectionFeature = sectionList.get(stNum);
+        addTrajectoryProfileData(builder, sectionFeature, stNum);
+        return builder.toString();
+    }
+
+    private void addTrajectoryProfileData(StringBuilder builder, SectionFeature sectionFeature, int stNum) {
+        try {
+            List<String> valueList = new LinkedList<String>();
+            PointFeatureCollectionIterator profileCollectionIter = sectionFeature.getPointFeatureCollectionIterator(-1);
+            
+            for (;profileCollectionIter.hasNext();) {
+                PointFeatureIterator pointIter = profileCollectionIter.next().getPointFeatureIterator(-1);
+                DateTime pointTime;
+                DateTime dtStart;
+                DateTime dtEnd;
+
+                if (eventTimes != null && eventTimes.size() > 0) {
+                    if (eventTimes.size() == 2) {
+                        dtStart = new DateTime(df.getISODate(eventTimes.get(0)), chrono);
+                        dtEnd = new DateTime(df.getISODate(eventTimes.get(1)), chrono);
+
+                        for (;pointIter.hasNext();) {
+                            PointFeature point = pointIter.next();
+                            valueList.clear();
+                            
+                            pointTime = new DateTime(point.getObservationTimeAsCalendarDate().toDate());
+                            
+                            if (pointTime.isEqual(dtStart) || pointTime.isEqual(dtEnd) || (pointTime.isAfter(dtStart) && pointTime.isBefore(dtEnd))) {
+                                addDataLine(valueList, point, builder);
+                            }
+                        }
+                    } else {
+                        dtStart = new DateTime(df.getISODate(eventTimes.get(0)), chrono);
+
+                        for (;pointIter.hasNext();) {
+                            PointFeature point = pointIter.next();
+                            valueList.clear();
+                            
+                            pointTime = new DateTime(point.getObservationTimeAsCalendarDate().toDate());
+                            
+                            if (pointTime.isEqual(dtStart)) {
+                                addDataLine(valueList, point, builder);
+                            }
+                        }
+                    }
+                } else {
+                    for (;pointIter.hasNext();) {
+                        PointFeature point = pointIter.next();
+                        valueList.clear();
+                        addDataLine(valueList, point, builder);
+                    }
+                }
+                pointIter.finish();
+            }
+            profileCollectionIter.finish();
+        } catch (Exception e) {
+            System.out.println("Error in addTrajectoryProfileData " + e.getMessage());
+        }
+    }
+
+    private void addDataLine(List<String> valueList, PointFeature point, StringBuilder builder) throws IOException {
+        valueList.add("time=" + df.toDateTimeStringISO(point.getObservationTimeAsCalendarDate().toDate()));
+
+        for (String variableName : variableNames) {
+            valueList.add(variableName + "=" + point.getData().getScalarObject(variableName).toString());
+        }
+        
+        for (String str : valueList) {
+            builder.append(str).append(",");
+        }
+        builder.deleteCharAt(builder.length()-1).append(";");
+    }
+
+    
     
 }
