@@ -18,9 +18,14 @@ import ucar.unidata.geoloc.LatLonRect;
 import ucar.unidata.geoloc.Station;
 
 /**
+<<<<<<< HEAD
  * Provides methods to gather information from Section datasets needed for requests: GetCapabilities, GetObservations
  * @author SCowan
  * @version 1.0.0
+=======
+ *
+ * @author SCowan
+>>>>>>> finished describe sensor for trajectory profile (section); started getcaps for section will finish in section branch
  */
 public class Section extends baseCDMClass implements iStationData {
     private final ArrayList<String> eventTimes;
