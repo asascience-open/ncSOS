@@ -107,6 +107,9 @@ public class SOSGetObsTest {
     private static final String trajectoryIncompleteMultidimensionalMultipleTrajectories = "resources/datasets/trajectory-Incomplete-Multidimensional-MultipleTrajectories-H.4.1/trajectory-Incomplete-Multidimensional-MultipleTrajectories-H.4.1.nc";
     private static final String trajectoryIncompleteRequest1 = baseRequest + "&observedProperty=temperature&offering=Trajectory1&eventTime=1970-01-01T00:00:00Z/2012-07-11T00:00:00";
     
+    private static final String trajectoryContiguousRaggedMultipleTrajectories = "resources/datasets/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc";
+    private static final String trajectoryContiguousRequest1 = baseRequest + "&observedProperty=temperature&offering=Trajectory1&eventtime=1970-01-01T00:00:00Z/2012-07-11T00:00:00";
+    
     private static final String trajectoryProfileMultidimensionalMultipleTrajectories = "resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc";
     private static final String sectionRequest1 = baseRequest + "&observedProperty=salinity&offering=Trajectory2&eventTime=1990-01-01T00:00:00Z";
     
@@ -1194,6 +1197,28 @@ public class SOSGetObsTest {
 //            System.out.println("------END " + getCurrentMethod() + "------");
 //        }
 //    }
+    
+    @Test
+    public void testTrajectoryContiguousRaggedMultipleTrajectories() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(trajectoryContiguousRaggedMultipleTrajectories);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, trajectoryContiguousRequest1, trajectoryContiguousRaggedMultipleTrajectories),write);
+            write.flush();
+            write.close();
+            String fileName = "trajectoryContiguousRaggedMultipleTrajectories.xml";
+            fileWriter(base, fileName, write);
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
     
     @Test
     public void testTrajectoryIncompleteMultidimensionalMultipleTrajectories() {
