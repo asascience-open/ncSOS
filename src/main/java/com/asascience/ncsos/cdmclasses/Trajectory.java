@@ -38,7 +38,8 @@ public class Trajectory extends baseCDMClass implements iStationData {
         this.eventTimes = new ArrayList<String>();
         eventTimes.addAll(Arrays.asList(eventTime));
         
-        upperAlt = lowerAlt = 0;
+        upperAlt = Double.NEGATIVE_INFINITY;
+        lowerAlt = Double.POSITIVE_INFINITY;
     }
 
     public void addAllTrajectoryData(PointFeatureIterator trajFeatureIterator, List<String> valueList, DateFormatter dateFormatter, StringBuilder builder) throws IOException {
@@ -54,12 +55,13 @@ public class Trajectory extends baseCDMClass implements iStationData {
 
         for (int i = 0; i < variableNames.length; i++) {
             valueList.add(variableNames[i] + "=" + trajFeature.getData().getScalarObject(variableNames[i]).toString());
-            builder.append(valueList.get(i));
-            if (i < variableNames.length - 1) {
-                builder.append(",");
-            }
         }
-        builder.append(";");
+
+        for (String str : valueList) {
+            builder.append(str).append(",");
+        }
+        
+        builder.deleteCharAt(builder.length() - 1).append(";");
     }
 
     @Override
@@ -103,6 +105,18 @@ public class Trajectory extends baseCDMClass implements iStationData {
                     if (stName.equalsIgnoreCase(n)) {
                         trajList.add(trajFeature);
                     }
+                }
+                
+                // get altitude
+                for (trajFeature.resetIteration();trajFeature.hasNext();) {
+                    PointFeature point = trajFeature.next();
+                    
+                    double altitude = point.getLocation().getAltitude();
+                    
+                    if (altitude > upperAlt)
+                        upperAlt = altitude;
+                    if (altitude < lowerAlt)
+                        lowerAlt = altitude;
                 }
 
                 if (firstSet) {
@@ -210,6 +224,29 @@ public class Trajectory extends baseCDMClass implements iStationData {
         if (trajList != null) {
             return (trajList.get(stNum).getBoundingBox().getLonMax());
         } else {
+            return Invalid_Value;
+        }
+    }
+    
+    @Override
+    public double getLowerAltitude(int stNum) {
+        try {
+            if (trajList != null) {
+                return trajList.get(stNum).next().getLocation().getAltitude();
+            }
+        } catch (Exception e) {}
+        finally {
+            return Invalid_Value;
+        }
+    }
+    @Override
+    public double getUpperAltitude(int stNum) {
+        try {
+            if (trajList != null) {
+                return trajList.get(stNum).next().getLocation().getAltitude();
+            }
+        } catch (Exception e) {}
+        finally {
             return Invalid_Value;
         }
     }
