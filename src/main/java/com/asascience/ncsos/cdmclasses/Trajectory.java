@@ -57,8 +57,7 @@ public class Trajectory extends baseCDMClass implements iStationData {
                 builder.append(",");
             }
         }
-        builder.append(" ");
-        builder.append("\n");
+        builder.append(";");
     }
 
     @Override
@@ -156,6 +155,7 @@ public class Trajectory extends baseCDMClass implements iStationData {
 
     @Override
     public String getDataResponse(int stNum) {
+        System.out.println("getDataResponse Trajectory");
         try {
             if (trajectoryData != null) {
                 return createTrajectoryFeature(stNum);
@@ -343,5 +343,13 @@ public class Trajectory extends baseCDMClass implements iStationData {
         else {
             addAllTrajectoryData(trajFeatureIterator, valueList, dateFormatter, builder);
         }
+    }
+
+    public double getLowerAltitude(int stNum) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public double getUpperAltitude(int stNum) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

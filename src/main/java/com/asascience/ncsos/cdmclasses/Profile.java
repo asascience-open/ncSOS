@@ -415,4 +415,12 @@ public class Profile extends baseCDMClass implements iStationData {
     public String getDescription(int stNum) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    public double getLowerAltitude(int stNum) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public double getUpperAltitude(int stNum) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }
