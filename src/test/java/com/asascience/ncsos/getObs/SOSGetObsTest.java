@@ -104,6 +104,9 @@ public class SOSGetObsTest {
     private static final String timeSeriesTimeRequestT1 = baseRequest + "&observedProperty=temperature&offering=Station1&eventtime=1990-01-01T00:00:00Z";
     private static final String timeSeriesProfileRequest3 = baseRequest + "&observedProperty=temperature&offering=Station2&eventTime=1990-01-01T04:00:00Z";
     
+    private static final String trajectoryProfileMultidimensionalMultipleTrajectories = "resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc";
+    private static final String sectionRequest1 = baseRequest + "&observedProperty=salinity&offering=Trajectory2&eventTime=1990-01-01T00:00:00Z";
+    
     @BeforeClass
     public static void SetupEnviron() {
         // early return if the vars we are setting are already set
@@ -1182,6 +1185,30 @@ public class SOSGetObsTest {
             dataAvailableInOutputFile(write);
             //check depth was entered auto
             assertTrue("depth not added", write.toString().contains("<swe:field name=\"z\">"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testTrajectoryProfileMultidimensionalMultipleTrajectories1() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(trajectoryProfileMultidimensionalMultipleTrajectories);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, sectionRequest1, trajectoryProfileMultidimensionalMultipleTrajectories),write);
+            write.flush();
+            write.close();
+            String fileName = "trajectoryProfileMultidimensionalMultipleTrajectories_request1.xml";
+            fileWriter(base, fileName, write);
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+            //check depth was entered auto
+//            assertTrue("depth not added", write.toString().contains("<swe:field name=\"z\">"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {

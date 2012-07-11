@@ -79,7 +79,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             } else if (getDatasetFeatureType() == FeatureType.PROFILE) {
                 CDMDataSet = new Profile(stationName, eventTime, this.variableNames);
             } else if (getDatasetFeatureType() == FeatureType.SECTION) {
-                CDMDataSet = new TrajectoryProfile();
+                CDMDataSet = new Section(stationName, eventTime, this.variableNames);
             }else {
                 _log.error("Have a null CDMDataSet, this will cause a null reference exception! - SOSGetObservationRequestHandler.87");
                 // print exception and then return the doc
