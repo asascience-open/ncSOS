@@ -37,6 +37,8 @@ public class Trajectory extends baseCDMClass implements iStationData {
         reqStationNames.addAll(Arrays.asList(stationName));
         this.eventTimes = new ArrayList<String>();
         eventTimes.addAll(Arrays.asList(eventTime));
+        
+        upperAlt = lowerAlt = 0;
     }
 
     public void addAllTrajectoryData(PointFeatureIterator trajFeatureIterator, List<String> valueList, DateFormatter dateFormatter, StringBuilder builder) throws IOException {
@@ -343,13 +345,5 @@ public class Trajectory extends baseCDMClass implements iStationData {
         else {
             addAllTrajectoryData(trajFeatureIterator, valueList, dateFormatter, builder);
         }
-    }
-
-    public double getLowerAltitude(int stNum) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public double getUpperAltitude(int stNum) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

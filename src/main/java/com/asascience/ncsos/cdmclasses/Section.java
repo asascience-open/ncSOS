@@ -29,6 +29,8 @@ public class Section extends baseCDMClass implements iStationData {
     private final String[] variableNames;
     private SectionFeatureCollection sectionData;
     private ArrayList<SectionFeature> sectionList;
+    private ArrayList<Double> altMin;
+    private ArrayList<Double> altMax;
     
     public Section(String[] stationName, String[] eventTime, String[] variableNames) {
         startDate = null;
@@ -38,6 +40,9 @@ public class Section extends baseCDMClass implements iStationData {
         reqStationNames.addAll(Arrays.asList(stationName));
         this.eventTimes = new ArrayList<String>();
         eventTimes.addAll(Arrays.asList(eventTime));
+        
+        lowerAlt = Double.POSITIVE_INFINITY;
+        upperAlt = Double.NEGATIVE_INFINITY;
     }
     
     public static Document getCapsResponse(FeatureCollection dataset, Document document, String featureOfInterestBase, String GMLName, List<String> observedPropertyList) {
@@ -167,6 +172,9 @@ public class Section extends baseCDMClass implements iStationData {
 
         DateTime dtSearchStart = null;
         DateTime dtSearchEnd = null;
+        
+        altMin = new ArrayList<Double>();
+        altMax = new ArrayList<Double>();
 
         //check first to see if the event times are not null
         if (eventTimes != null) {
@@ -203,6 +211,28 @@ public class Section extends baseCDMClass implements iStationData {
                     if (stName.equalsIgnoreCase(trajName)) {
                         System.out.println("adding " + trajName + " to section list");
                         sectionList.add(sectFeature);
+                        
+                        double altmin = Double.POSITIVE_INFINITY;
+                        double altmax = Double.NEGATIVE_INFINITY;
+                        // get our min/max altitude
+                        for (sectFeature.resetIteration();sectFeature.hasNext();) {
+                            ProfileFeature profile = sectFeature.next();
+                            for (profile.resetIteration();profile.hasNext();) {
+                                PointFeature point = profile.next();
+                                if (point.getLocation().getAltitude() > altmax)
+                                    altmax = point.getLocation().getAltitude();
+                                if (point.getLocation().getAltitude() < altmin)
+                                    altmin = point.getLocation().getAltitude();
+                            }
+                        }
+                        
+                        altMax.add(altmax);
+                        altMin.add(altmin);
+                        
+                        if (altmin < lowerAlt)
+                            lowerAlt = altmin;
+                        if (altmax > upperAlt)
+                            upperAlt = altmax;
                 
                         dtStartt = new DateTime(dateRange.getStart().toDate(), chrono);
                         dtEndt = new DateTime(dateRange.getEnd().toDate(), chrono);
@@ -322,12 +352,20 @@ public class Section extends baseCDMClass implements iStationData {
     
     @Override
     public double getLowerAltitude(int stNum) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (sectionList != null) {
+            return altMin.get(stNum);
+        } else {
+            return Invalid_Value;
+        }
     }
 
     @Override
     public double getUpperAltitude(int stNum) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (sectionList != null) {
+            return altMax.get(stNum);
+        } else {
+            return Invalid_Value;
+        }
     }
 
     public String getDescription(int stNum) {
@@ -408,7 +446,4 @@ public class Section extends baseCDMClass implements iStationData {
         }
         builder.deleteCharAt(builder.length()-1).append(";");
     }
-
-    
-    
 }

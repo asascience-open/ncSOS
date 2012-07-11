@@ -19,10 +19,7 @@ import ucar.unidata.geoloc.Station;
  */
 public abstract class baseCDMClass implements iStationData {
 
-    public double upperLon;
-    public double lowerLat;
-    public double lowerLon;
-    public double upperLat;
+    public double upperLon, lowerLon, lowerLat, upperLat, lowerAlt, upperAlt;
     public String startDate;
     public String endDate;
     public List<String> reqStationNames;
@@ -107,6 +104,25 @@ public abstract class baseCDMClass implements iStationData {
     @Override
     public int getNumberOfStations() {
         return numberOfStations;
+    }
+    
+    @Override
+    public double getLowerAltitude(int stNum) {
+        return 0;
+    }
+    @Override
+    public double getUpperAltitude(int stNum) {
+        return 0;
+    }
+    
+    @Override
+    public double getBoundLowerAlt() {
+        return lowerAlt;
+    }
+    
+    @Override
+    public double getBoundUpperAlt() {
+        return upperAlt;
     }
     
 }

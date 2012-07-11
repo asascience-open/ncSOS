@@ -53,6 +53,8 @@ public class Grid extends baseCDMClass implements iStationData {
         this.latLonRequest = latLonRequest;
         this.stationNameList = new ArrayList<String>();
         this.stationDescripList = new ArrayList<String>();
+        
+        lowerAlt = upperAlt = 0;
     }
 
     public void addDateEntry(StringBuilder builder, Date[] dates) {
@@ -626,13 +628,5 @@ public class Grid extends baseCDMClass implements iStationData {
     @Override
     public String getDescription(int stNum) {
         return stationDescripList.get(stNum);
-    }
-
-    public double getLowerAltitude(int stNum) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public double getUpperAltitude(int stNum) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

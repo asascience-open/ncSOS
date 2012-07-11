@@ -45,6 +45,8 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         reqStationNames.addAll(Arrays.asList(stationName));
         this.eventTimes = new ArrayList<String>();
         eventTimes.addAll(Arrays.asList(eventTime));
+        
+        lowerAlt = upperAlt = 0;
     }
 
     /**
@@ -324,13 +326,5 @@ public class TimeSeries extends baseCDMClass implements iStationData {
     @Override
     public String getDescription(int stNum) {
        return "descrip";
-    }
-
-    public double getLowerAltitude(int stNum) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public double getUpperAltitude(int stNum) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

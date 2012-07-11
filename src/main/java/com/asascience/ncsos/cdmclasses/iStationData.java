@@ -34,6 +34,9 @@ public interface iStationData {
     //Does what is says on the tin
     double getBoundLowerLat();
     
+    double getBoundLowerAlt();
+    double getBoundUpperAlt();
+    
     //Does what is says on the tin
     String getBoundTimeBegin();
     

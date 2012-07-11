@@ -398,7 +398,7 @@ public class OosTethysSwe implements SOSOutputFormatter {
      * @return 
      */
     private String getStationLowerLatLonStr(int stNum) {
-        return (new StringBuilder()).append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getLowerLat(stNum))).append(" ").append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getLowerLon(stNum))).append(" ").append("0").toString();
+        return (new StringBuilder()).append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getLowerLat(stNum))).append(" ").append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getLowerLon(stNum))).append(" ").append(CDMDataSet.getLowerAltitude(stNum)).toString();
     }
 
     /**
@@ -406,7 +406,7 @@ public class OosTethysSwe implements SOSOutputFormatter {
      * @return 
      */
     private String getStationUpperLatLonStr(int stNum) {
-        return (new StringBuilder()).append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getUpperLat(stNum))).append(" ").append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getUpperLon(stNum))).append(" ").append("0").toString();
+        return (new StringBuilder()).append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getUpperLat(stNum))).append(" ").append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getUpperLon(stNum))).append(" ").append(CDMDataSet.getUpperAltitude(stNum)).toString();
     }
 
     /**
@@ -414,7 +414,7 @@ public class OosTethysSwe implements SOSOutputFormatter {
      * @return 
      */
     private String getBoundUpperLatLonStr() { 
-        return (new StringBuilder()).append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getBoundUpperLat())).append(" ").append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getBoundUpperLon())).append(" ").append("0").toString();
+        return (new StringBuilder()).append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getBoundUpperLat())).append(" ").append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getBoundUpperLon())).append(" ").append(CDMDataSet.getBoundUpperAlt()).toString();
     }
 
     /**
@@ -422,7 +422,7 @@ public class OosTethysSwe implements SOSOutputFormatter {
      * @return 
      */
     private String getBoundLowerLatLonStr() {
-        return (new StringBuilder()).append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getBoundLowerLat())).append(" ").append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getBoundLowerLon())).append(" ").append("0").toString();
+        return (new StringBuilder()).append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getBoundLowerLat())).append(" ").append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getBoundLowerLon())).append(" ").append(CDMDataSet.getBoundLowerAlt()).toString();
 
     }
     
