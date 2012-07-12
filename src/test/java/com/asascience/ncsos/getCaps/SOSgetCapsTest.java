@@ -60,7 +60,7 @@ public class SOSgetCapsTest {
 //    public static String base = "C:/Users/scowan/Projects/maven/ncSOS/src/test/java/com/asascience/ncSOS/getCaps/output/";
     private static String base = null;
     
-    private static String baseRequest = "request=GetCapabilities&version=1.0.0&service=sos&responseformat=oostethysswe";
+    private static String baseRequest = "request=GetCapabilities&version=1.0.0&service=sos";
     // trajectories
     private static String TCRMTH43 = "resources/datasets/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc";
     
