@@ -9,7 +9,8 @@ import com.asascience.ncsos.service.SOSParser;
 import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.*;
 import java.util.HashMap;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -23,6 +24,7 @@ public class GridCapsTest {
 
     private static String baseLocalDir = null;
     private static String outputDir = null;
+    private static String exampleOutputDir = null;
     
     private static final String baseRequest = "request=GetCapabilities&version=1.0.0&service=sos";
     
@@ -45,6 +47,9 @@ public class GridCapsTest {
             // read from the config file
             outputDir = XMLDomUtils.getNodeValue(configDoc, container, "outputBase");
             baseLocalDir = XMLDomUtils.getNodeValue(configDoc, container, "projectDir");
+            
+            container = "examples";
+            exampleOutputDir = XMLDomUtils.getNodeValue(configDoc, container, "outputDir");
         } catch (FileNotFoundException fnfex) {
             System.out.println(fnfex.getMessage());
         } finally {
@@ -100,6 +105,8 @@ public class GridCapsTest {
             writer.close();
             String fileName = "getCapsSST1.xml";
             fileWriter(outputDir, fileName, writer);
+            // write as an example
+            fileWriter(exampleOutputDir, "GetCapabilities-Grid.xml", writer);
             assertFalse(writer.toString().contains("Exception"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());

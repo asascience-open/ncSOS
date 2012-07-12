@@ -12,24 +12,21 @@ import ucar.unidata.geoloc.Station;
 
 /**
  * @author abird
- * @version 
- *
- * 
- *
+ * @version 1.0.0
  */
 public abstract class baseCDMClass implements iStationData {
 
-    public double upperLon, lowerLon, lowerLat, upperLat, lowerAlt, upperAlt;
-    public String startDate;
-    public String endDate;
-    public List<String> reqStationNames;
-    public int numberOfStations;
-    public static final String DATA_RESPONSE_ERROR = "Data Response IO Error: ";
-    public static final String ERROR_NULL_DATE = "ERROR NULL Date!!!!";
-    public static final int Invalid_Value = -9999999;
-    public static final String Invalid_Station = "INVALID_ST";
-    Chronology chrono = ISOChronology.getInstance();
-    DateFormatter df = new DateFormatter();
+    protected double upperLon, lowerLon, lowerLat, upperLat, lowerAlt, upperAlt;
+    protected String startDate;
+    protected String endDate;
+    protected List<String> reqStationNames;
+    protected int numberOfStations;
+    protected static final String DATA_RESPONSE_ERROR = "Data Response IO Error: ";
+    protected static final String ERROR_NULL_DATE = "ERROR NULL Date!!!!";
+    protected static final int Invalid_Value = -9999999;
+    protected static final String Invalid_Station = "INVALID_ST";
+    protected Chronology chrono = ISOChronology.getInstance();
+    protected DateFormatter df = new DateFormatter();
     
     
     @Override

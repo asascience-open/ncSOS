@@ -5,17 +5,16 @@
 package com.asascience.ncsos.service;
 
 import com.asascience.ncsos.describesen.SOSDescribeSensorHandler;
+import com.asascience.ncsos.getcaps.SOSGetCapabilitiesRequestHandler;
+import com.asascience.ncsos.getobs.SOSGetObservationRequestHandler;
+import com.asascience.ncsos.outputformatter.GetCapsOutputter;
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.*;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.asascience.ncsos.getcaps.SOSGetCapabilitiesRequestHandler;
-import com.asascience.ncsos.getobs.SOSGetObservationRequestHandler;
-import com.asascience.ncsos.outputformatter.GetCapsOutputter;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import ucar.nc2.dataset.NetcdfDataset;
 /**
  * Reads and parses a request coming in from thredds

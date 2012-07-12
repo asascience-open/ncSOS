@@ -29,6 +29,7 @@ public class SOSGridObsTest {
     private static String sst_2_reqs = "request=GetObservation&service=sos&version=1.0.0&lat=-54.0,-52.0,-50.0&lon=-120.0,0.0,74.0&observedProperty=sst&offering=sst&eventtime=1990-01-01T00:00:00Z/2013-05-17T09:57:00.000-04:00&responseformat=";
     private static String baseLocalDir = null;
     private static String outputDir = null;
+    private static String exampleOutputDir = null;
     
     @BeforeClass
     public static void SetupEnviron() {
@@ -46,6 +47,9 @@ public class SOSGridObsTest {
             // read from the config file
             outputDir = XMLDomUtils.getNodeValue(configDoc, container, "outputBase");
             baseLocalDir = XMLDomUtils.getNodeValue(configDoc, container, "projectDir");
+            
+            container = "examples";
+            exampleOutputDir = XMLDomUtils.getNodeValue(configDoc, container, "outputDir");
         } catch (FileNotFoundException fnfex) {
             System.out.println(fnfex.getMessage());
         } finally {
@@ -102,6 +106,8 @@ public class SOSGridObsTest {
             writer.flush();
             writer.close();
             fileWriter(outputDir, "testGetObsGridSSTSingleLatLon_output.xml", writer);
+            // write as an example
+            fileWriter(exampleOutputDir, "GetObservation-Grid.xml", writer);
             assertFalse("Have an exception in output", writer.toString().contains("Exception"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
