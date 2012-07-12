@@ -33,7 +33,7 @@ public abstract class baseCDMClass implements iStationData {
     
     
     @Override
-    public void checkLatLonBoundaries(List<Station> stationList, int i) {
+    public void checkLatLonAltBoundaries(List<Station> stationList, int i) {
         //LAT?LON PARSING
         //lat
         if (stationList.get(i).getLatitude() > upperLat) {
@@ -48,6 +48,13 @@ public abstract class baseCDMClass implements iStationData {
         }
         if (stationList.get(i).getLongitude() < lowerLon) {
             lowerLon = stationList.get(i).getLongitude();
+        }
+        // alt
+        if (stationList.get(i).getAltitude() > upperAlt) {
+            upperAlt = stationList.get(i).getAltitude();
+        }
+        if (stationList.get(i).getAltitude() < lowerAlt) {
+            lowerAlt = stationList.get(i).getAltitude();
         }
     }
 
@@ -117,11 +124,15 @@ public abstract class baseCDMClass implements iStationData {
     
     @Override
     public double getBoundLowerAlt() {
+        if (Double.toString(lowerAlt).contains("fin") || Double.toString(lowerAlt).equalsIgnoreCase("nan"))
+            return 0;
         return lowerAlt;
     }
     
     @Override
     public double getBoundUpperAlt() {
+        if (Double.toString(lowerAlt).contains("fin") || Double.toString(upperAlt).equalsIgnoreCase("nan"))
+            return 0;
         return upperAlt;
     }
     

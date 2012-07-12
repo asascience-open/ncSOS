@@ -127,27 +127,15 @@ public class Trajectory extends baseCDMClass implements iStationData {
                             if (altitude < localAltMin)
                                 localAltMin = altitude;
                         }
+                        
+                        if (localAltMin < lowerAlt)
+                            lowerAlt = localAltMin;
+                        if (localAltMax > upperAlt)
+                            upperAlt = localAltMax;
 
                         altMax.add(localAltMax);
                         altMin.add(localAltMin);
                     }
-                }
-                
-                // get altitude
-                for (trajFeature.resetIteration();trajFeature.hasNext();) {
-                    PointFeature point = trajFeature.next();
-                    
-                    if (point == null || point.getLocation() == null)
-                        continue;
-                    
-                    double altitude = point.getLocation().getAltitude();
-                    if (altitude == Invalid_Value)
-                        continue;
-                    
-                    if (altitude > upperAlt)
-                        upperAlt = altitude;
-                    if (altitude < lowerAlt)
-                        lowerAlt = altitude;
                 }
 
                 if (firstSet) {
@@ -202,7 +190,6 @@ public class Trajectory extends baseCDMClass implements iStationData {
 
     @Override
     public String getDataResponse(int stNum) {
-        System.out.println("getDataResponse Trajectory");
         try {
             if (trajectoryData != null) {
                 return createTrajectoryFeature(stNum);

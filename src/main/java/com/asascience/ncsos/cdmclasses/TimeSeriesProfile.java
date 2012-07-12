@@ -33,6 +33,7 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
     private List<Station> tsStationList;
     private final ArrayList<String> eventTimes;
     private final String[] variableNames;
+    private ArrayList<Double> altMin, altMax;
 
     public TimeSeriesProfile(String[] stationName, String[] eventTime, String[] variableNames) {
 
@@ -44,7 +45,8 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
         this.eventTimes = new ArrayList<String>();
         eventTimes.addAll(Arrays.asList(eventTime));
 
-        lowerAlt = upperAlt = 0;
+        lowerAlt = Double.POSITIVE_INFINITY;
+        upperAlt = Double.NEGATIVE_INFINITY;
     }
     
     /**
@@ -101,6 +103,7 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
 
 
         ProfileFeature pf = null;
+        
 
         //count = 0;
         //if not event time is specified get all the data
@@ -187,6 +190,9 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
         tsStationList = tsProfileData.getStations(reqStationNames);
 
         setNumberOfStations(tsStationList.size());
+        
+        altMin = new ArrayList<Double>();
+        altMax = new ArrayList<Double>();
 
         DateTime curTime;
         DateTime dtStart = null;
@@ -203,7 +209,7 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
                     dtStart = new DateTime(times.get(0), chrono);
                     dtEnd = new DateTime(times.get(0), chrono);
                 } else {
-                    checkLatLonBoundaries(tsStationList, i);
+                    checkLatLonAltBoundaries(tsStationList, i);
                 }
 
                 //check the dates
@@ -219,7 +225,32 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
             }
             setStartDate(df.toDateTimeStringISO(dtStart.toDate()));
             setEndDate(df.toDateTimeStringISO(dtEnd.toDate()));
-
+            
+            // iterate through the stations and check the altitudes by their profiles
+            for (int j = 0; j < tsStationList.size(); j++) {
+                StationProfileFeature profile = tsProfileData.getStationProfileFeature(tsStationList.get(j));
+                double altmin = Double.POSITIVE_INFINITY;
+                double altmax = Double.NEGATIVE_INFINITY;
+                for (profile.resetIteration();profile.hasNext();) {
+                    ProfileFeature nProfile = profile.next();
+                    for (nProfile.resetIteration();nProfile.hasNext();) {
+                        PointFeature point = nProfile.next();
+                        double alt = point.getLocation().getAltitude();
+                        if (!Double.toString(alt).equalsIgnoreCase("nan")) {
+                            if (alt > altmax) 
+                                altmax = alt;
+                            if (alt < altmin) 
+                                altmin = alt;
+                            if (alt > upperAlt)
+                                upperAlt = alt;
+                            if (alt < lowerAlt)
+                                lowerAlt = alt;
+                        }
+                    }
+                }
+                altMin.add(altmin);
+                altMax.add(altmax);
+            }
         }
     }
 
@@ -284,6 +315,30 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
     public double getUpperLon(int stNum) {
         if (tsProfileData != null) {
             return (tsStationList.get(stNum).getLongitude());
+        } else {
+            return Invalid_Value;
+        }
+    }
+    
+    @Override
+    public double getLowerAltitude(int stNum) {
+        if (altMin != null && altMin.size() > stNum) {
+            double retval = altMin.get(stNum);
+            if (Double.toString(retval).equalsIgnoreCase("nan"))
+                retval = 0;
+            return retval;
+        } else {
+            return Invalid_Value;
+        }
+    }
+    
+    @Override
+    public double getUpperAltitude(int stNum) {
+        if (altMax != null && altMax.size() > stNum) {
+            double retval = altMax.get(stNum);
+            if (Double.toString(retval).equalsIgnoreCase("nan"))
+                retval = 0;
+            return retval;
         } else {
             return Invalid_Value;
         }
