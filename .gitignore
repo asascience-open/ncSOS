@@ -14,3 +14,5 @@ src/test/java/com/asascience/ncSOS/getCaps/output/*
 *.ncml
 *.cdl
 *.nc
+*dia
+*jpg
