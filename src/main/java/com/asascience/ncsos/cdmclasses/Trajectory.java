@@ -30,6 +30,12 @@ public class Trajectory extends baseCDMClass implements iStationData {
     private ArrayList<TrajectoryFeature> trajList;
     private ArrayList<Double> altMin, altMax;
 
+    /**
+     * 
+     * @param stationName
+     * @param eventTime
+     * @param variableNames
+     */
     public Trajectory(String[] stationName, String[] eventTime, String[] variableNames) {
         startDate = null;
         endDate = null;
@@ -43,6 +49,14 @@ public class Trajectory extends baseCDMClass implements iStationData {
         lowerAlt = Double.POSITIVE_INFINITY;
     }
 
+    /**
+     * 
+     * @param trajFeatureIterator
+     * @param valueList
+     * @param dateFormatter
+     * @param builder
+     * @throws IOException
+     */
     public void addAllTrajectoryData(PointFeatureIterator trajFeatureIterator, List<String> valueList, DateFormatter dateFormatter, StringBuilder builder) throws IOException {
         while (trajFeatureIterator.hasNext()) {
             PointFeature trajFeature = trajFeatureIterator.next();
@@ -51,6 +65,14 @@ public class Trajectory extends baseCDMClass implements iStationData {
         }
     }
 
+    /**
+     * 
+     * @param valueList
+     * @param dateFormatter
+     * @param trajFeature
+     * @param builder
+     * @throws IOException
+     */
     public void addDataLine(List<String> valueList, DateFormatter dateFormatter, PointFeature trajFeature, StringBuilder builder) throws IOException {
         valueList.add("time=" + dateFormatter.toDateTimeStringISO(trajFeature.getObservationTimeAsDate()));
 
@@ -184,7 +206,7 @@ public class Trajectory extends baseCDMClass implements iStationData {
     }
 
     @Override
-    public void setInitialLatLonBounaries(List<Station> tsStationList) {
+    public void setInitialLatLonBoundaries(List<Station> tsStationList) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -293,7 +315,6 @@ public class Trajectory extends baseCDMClass implements iStationData {
      * @param document
      * @param featureOfInterest
      * @param GMLName
-     * @param format
      * @param observedPropertyList
      * @return
      * @throws IOException 

@@ -30,6 +30,7 @@ public class SOSgetCapsTest {
     // base location of resources
     private static String baseLocalDir = null;
     private static String baseTomcatDir = null;
+    private static String exampleOutputDir = null;
     
     // work thredds
     private static String catalinaThredds = "work/Catalina/localhost/thredds";
@@ -70,7 +71,7 @@ public class SOSgetCapsTest {
     @BeforeClass
     public static void SetupEnviron() throws FileNotFoundException {
         // not really a test, just used to set up the various string values
-        if (base != null && baseLocalDir != null && baseTomcatDir != null) {
+        if (base != null && baseLocalDir != null && baseTomcatDir != null && exampleOutputDir != null) {
             // exit early if the environ is already set
             return;
         }
@@ -84,6 +85,9 @@ public class SOSgetCapsTest {
             base = XMLDomUtils.getNodeValue(configDoc, container, "outputBase");
             baseLocalDir = XMLDomUtils.getNodeValue(configDoc, container, "projectDir");
             baseTomcatDir = XMLDomUtils.getNodeValue(configDoc, container, "tomcatLocation");
+            
+            container = "examples";
+            exampleOutputDir = XMLDomUtils.getNodeValue(configDoc, container, "outputDir");
         } finally {
             if (templateInputStream != null) {
                 try {
@@ -153,6 +157,8 @@ public class SOSgetCapsTest {
         assertFalse(write.toString().contains("Exception"));
         String fileName = "trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.xml";
         fileWriter(base, fileName, write);
+        // write as an example
+        fileWriter(exampleOutputDir, "GetCapabilities-Trajectory.xml", write);
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
         //traj
     }
@@ -327,6 +333,8 @@ public class SOSgetCapsTest {
         }
         String fileName = "tsOrthogonalMultidimenstionalMultipleStations.xml";
         fileWriter(base, fileName, write);
+        // write as an example
+        fileWriter(exampleOutputDir, "GetCapabilities-TimeSeries.xml", write);
         if(!write.toString().contains("<ObservationOffering gml:id=")) {
             System.out.println("does not have expected tag - testOrthogonalMultidimenstionalMultipleStations");
             assertTrue(write.toString().contains("<ObservationOffering gml:id="));
@@ -383,6 +391,8 @@ public class SOSgetCapsTest {
         assertFalse(write.toString().contains("Exception"));
         String fileName = "OrthogonalMultidimensionalMultiStations.xml";
         fileWriter(base, fileName, write);
+        // write as an example
+        fileWriter(exampleOutputDir, "GetCapabilities-TimeSeriesProfile.xml", write);
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
         
     }
@@ -452,6 +462,8 @@ public class SOSgetCapsTest {
         assertFalse(write.toString().contains("Exception"));
         String fileName = "ContiguousRaggedMultipleProfiles.xml";
         fileWriter(base, fileName, write);
+        // write as an example
+        fileWriter(exampleOutputDir, "GetCapabilities-Profile.xml", write);
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
         System.out.println("----end------");
         //profile
@@ -712,6 +724,8 @@ public class SOSgetCapsTest {
             write.close();
             String fileName = "trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.xml";
             fileWriter(base, fileName, write);
+            // write as an example
+            fileWriter(exampleOutputDir, "GetCapabilities-Section.xml", write);
             assertFalse(write.toString().contains("Exception"));
             assertTrue(write.toString().contains("<ObservationOffering gml:id="));
         } catch (IOException ex) {

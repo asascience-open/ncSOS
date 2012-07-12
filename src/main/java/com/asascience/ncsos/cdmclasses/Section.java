@@ -20,6 +20,7 @@ import ucar.unidata.geoloc.Station;
 /**
  *
  * @author SCowan
+ * @version 1.0.0
  */
 public class Section extends baseCDMClass implements iStationData {
     private final ArrayList<String> eventTimes;
@@ -29,6 +30,12 @@ public class Section extends baseCDMClass implements iStationData {
     private ArrayList<Double> altMin;
     private ArrayList<Double> altMax;
     
+    /**
+     * 
+     * @param stationName
+     * @param eventTime
+     * @param variableNames
+     */
     public Section(String[] stationName, String[] eventTime, String[] variableNames) {
         startDate = null;
         endDate = null;
@@ -42,6 +49,15 @@ public class Section extends baseCDMClass implements iStationData {
         upperAlt = Double.NEGATIVE_INFINITY;
     }
     
+    /**
+     * 
+     * @param dataset
+     * @param document
+     * @param featureOfInterestBase
+     * @param GMLName
+     * @param observedPropertyList
+     * @return
+     */
     public static Document getCapsResponse(FeatureCollection dataset, Document document, String featureOfInterestBase, String GMLName, List<String> observedPropertyList) {
         try {
             String trajectoryID = null;
@@ -97,6 +113,11 @@ public class Section extends baseCDMClass implements iStationData {
         }
     }
     
+    /**
+     * 
+     * @param section
+     * @return
+     */
     public static LatLonRect getBoundingBox(SectionFeature section) {
         LatLonRect retval = null;
         double lLat, lLon, uLat, uLon;
@@ -128,37 +149,9 @@ public class Section extends baseCDMClass implements iStationData {
         }
     }
     
-    private static CalendarDateRange getDateRange(SectionFeature section) {
-        CalendarDateRange retval = new CalendarDateRange(CalendarDate.of(0), 60);
-        
-        try {
-            Date earliestDate = new Date();
-            Date latestDate = new Date(0);
-
-            for (section.resetIteration();section.hasNext();) {
-                ProfileFeature profile = section.next();
-                profile.calcBounds();
-                // skip if we don't have any points
-                if (profile.size() == 0)
-                    continue;
-                
-                if (profile.getTime().after(latestDate))
-                    latestDate = profile.getTime();
-                if (profile.getTime().before(earliestDate))
-                    earliestDate = profile.getTime();
-            }
-            CalendarDate cDate = CalendarDate.of(earliestDate);
-            retval = new CalendarDateRange(cDate, (CalendarDate.of(latestDate).getDifferenceInMsecs(cDate) / 1000));
-        } catch (Exception ex) {
-            System.out.println("Error in getDateRange - " + ex.getLocalizedMessage());
-        } finally {
-            return retval;
-        }
-    }
-    
     /************************
      * iStationData Methods *
-     ************************/
+     **************************************************************************/
     
     @Override
     public void setData(Object featureCollection) throws IOException {
@@ -267,7 +260,7 @@ public class Section extends baseCDMClass implements iStationData {
         }
     }
 
-    public void setInitialLatLonBounaries(List<Station> tsStationList) {
+    public void setInitialLatLonBoundaries(List<Station> tsStationList) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -368,6 +361,8 @@ public class Section extends baseCDMClass implements iStationData {
     public String getDescription(int stNum) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    
+    /**************************************************************************/
 
     private String createSectionData(int stNum) {
         StringBuilder builder = new StringBuilder();
@@ -443,4 +438,32 @@ public class Section extends baseCDMClass implements iStationData {
         }
         builder.deleteCharAt(builder.length()-1).append(";");
     }
+    
+    private static CalendarDateRange getDateRange(SectionFeature section) {
+        CalendarDateRange retval = new CalendarDateRange(CalendarDate.of(0), 60);
+        
+        try {
+            Date earliestDate = new Date();
+            Date latestDate = new Date(0);
+
+            for (section.resetIteration();section.hasNext();) {
+                ProfileFeature profile = section.next();
+                profile.calcBounds();
+                // skip if we don't have any points
+                if (profile.size() == 0)
+                    continue;
+                
+                if (profile.getTime().after(latestDate))
+                    latestDate = profile.getTime();
+                if (profile.getTime().before(earliestDate))
+                    earliestDate = profile.getTime();
+            }
+            CalendarDate cDate = CalendarDate.of(earliestDate);
+            retval = new CalendarDateRange(cDate, (CalendarDate.of(latestDate).getDifferenceInMsecs(cDate) / 1000));
+        } catch (Exception ex) {
+            System.out.println("Error in getDateRange - " + ex.getLocalizedMessage());
+        } finally {
+            return retval;
+        }
+    }    
 }

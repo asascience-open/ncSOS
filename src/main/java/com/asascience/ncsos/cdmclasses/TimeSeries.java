@@ -37,6 +37,12 @@ public class TimeSeries extends baseCDMClass implements iStationData {
     private final ArrayList<String> eventTimes;
     private final String[] variableNames;
 
+    /**
+     * 
+     * @param stationName
+     * @param eventTime
+     * @param variableNames
+     */
     public TimeSeries(String[] stationName, String[] eventTime, String[] variableNames) {
         startDate = null;
         endDate = null;
@@ -55,7 +61,6 @@ public class TimeSeries extends baseCDMClass implements iStationData {
      * @param document
      * @param featureOfInterest
      * @param GMLName
-     * @param format
      * @param observedPropertyList
      * @return
      * @throws IOException 
@@ -166,6 +171,17 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         }
     }
 
+    /**
+     * 
+     * @param df
+     * @param chrono
+     * @param pointFeature
+     * @param valueList
+     * @param dateFormatter
+     * @param builder
+     * @param stNum
+     * @throws IOException
+     */
     public void parseMultiTimeEventTimeSeries(DateFormatter df, Chronology chrono, PointFeature pointFeature, List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, int stNum) throws IOException {
         //get start/end date based on iso date format date        
 
@@ -187,7 +203,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
     }
 
     @Override
-    public void setInitialLatLonBounaries(List<Station> tsStationList) {
+    public void setInitialLatLonBoundaries(List<Station> tsStationList) {
         upperLat = tsStationList.get(0).getLatitude();
         lowerLat = tsStationList.get(0).getLatitude();
         upperLon = tsStationList.get(0).getLongitude();
@@ -212,7 +228,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
                 //calc bounds in loop
                 tsData.getStationFeature(tsStationList.get(i)).calcBounds();
                 if (i == 0) {
-                    setInitialLatLonBounaries(tsStationList);
+                    setInitialLatLonBoundaries(tsStationList);
 
                     dateRange = tsData.getStationFeature(tsStationList.get(0)).getDateRange();
                     dtStart = new DateTime(dateRange.getStart().getDate(), chrono);

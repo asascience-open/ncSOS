@@ -35,6 +35,12 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
     private final String[] variableNames;
     private ArrayList<Double> altMin, altMax;
 
+    /**
+     * 
+     * @param stationName
+     * @param eventTime
+     * @param variableNames
+     */
     public TimeSeriesProfile(String[] stationName, String[] eventTime, String[] variableNames) {
 
         startDate = null;
@@ -55,7 +61,6 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
      * @param document
      * @param featureOfInterestBase
      * @param GMLBase
-     * @param format
      * @param observedPropertyList
      * @return
      * @throws IOException 
@@ -183,6 +188,7 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
 
     /**
      * sets the time series profile data
+     * @param featureProfileCollection 
      */
     @Override
     public void setData(Object featureProfileCollection) throws IOException {
@@ -205,7 +211,7 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
                 List<Date> times = sPFeature.getTimes();
 
                 if (i == 0) {
-                    setInitialLatLonBounaries(tsStationList);
+                    setInitialLatLonBoundaries(tsStationList);
                     dtStart = new DateTime(times.get(0), chrono);
                     dtEnd = new DateTime(times.get(0), chrono);
                 } else {
@@ -255,7 +261,7 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
     }
 
     @Override
-    public void setInitialLatLonBounaries(List<Station> tsStationList) {
+    public void setInitialLatLonBoundaries(List<Station> tsStationList) {
         upperLat = tsStationList.get(0).getLatitude();
         lowerLat = tsStationList.get(0).getLatitude();
         upperLon = tsStationList.get(0).getLongitude();
