@@ -24,11 +24,9 @@ import ucar.nc2.units.DateRange;
 import ucar.unidata.geoloc.Station;
 
 /**
+ * Provides methods to gather information from TimeSeries datasets needed for requests: GetCapabilities, GetObservations
  * @author abird
- * @version 
- *
- * 
- *
+ * @version 1.0.0
  */
 public class TimeSeries extends baseCDMClass implements iStationData {
 

@@ -11,13 +11,27 @@ import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
- *
+ * Handles Describe Sensor requests specific Grid feature datasets.
+ * Describe Sensor requests to Grid datasets output the following xml subroots:
+ * *Description
+ * *Identification
+ * *Classification
+ * *Contact(s)
+ * *History
+ * *Location
+ * *Component(s)
  * @author SCowan
+ * @version 1.0.0
  */
 public class SOSDescribeGrid extends SOSDescribeStation implements SOSDescribeIF {
     
     String upperLatitude, upperLongitude, lowerLatitude, lowerLongitude;
     
+    /**
+     * 
+     * @param dataset
+     * @param procedure
+     */
     public SOSDescribeGrid( NetcdfDataset dataset, String procedure ) {
         super(dataset, procedure);
         upperLatitude = upperLongitude = lowerLatitude = lowerLongitude = "";
@@ -52,9 +66,11 @@ public class SOSDescribeGrid extends SOSDescribeStation implements SOSDescribeIF
     
     /*********************
      * Interface Methods *
-     *********************/
+     ********************
+     * @param output 
+     */
     @Override
-    public void SetupOutputDocument(DescribeSensorFormatter output) {
+    public void setupOutputDocument(DescribeSensorFormatter output) {
         // system node
         output.setSystemId("station-" + stationName);
         // set description
@@ -82,6 +98,10 @@ public class SOSDescribeGrid extends SOSDescribeStation implements SOSDescribeIF
         output.deleteTimePosition();
     }
     
+    /**
+     * 
+     * @param output
+     */
     @Override
     protected void formatSetLocationNode(DescribeSensorFormatter output) {
         String[] upperCorner = new String[]{ upperLatitude, upperLongitude };

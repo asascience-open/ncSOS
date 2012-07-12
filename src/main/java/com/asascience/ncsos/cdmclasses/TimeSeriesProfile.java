@@ -20,12 +20,9 @@ import ucar.nc2.units.DateFormatter;
 import ucar.unidata.geoloc.Station;
 
 /**
- * RPS - ASA
+ * Provides methods to gather information from TimeSeriesProfile datasets needed for requests: GetCapabilities, GetObservations
  * @author abird
- * @version 
- *
- * handles TIMES SERIES PROFILE CDM DATA TYPE
- *
+ * @version 1.0.0
  */
 public class TimeSeriesProfile extends baseCDMClass implements iStationData {
 

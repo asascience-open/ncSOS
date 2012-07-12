@@ -21,7 +21,16 @@ import ucar.nc2.units.DateFormatter;
 
 /**
  *
+ * Describe Sensor requests to Grid datasets output the following xml subroots:
+ * *Description
+ * *Identification
+ * *Classification
+ * *Contact(s)
+ * *History
+ * *Position
+ * *Component(s)
  * @author SCowan
+ * @version 1.0.0
  */
 public class SOSDescribeSection extends SOSDescribeStation implements SOSDescribeIF {
     
@@ -32,6 +41,12 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
     private Variable indexVar;
     private CalendarDate[] startDates;
     
+    /**
+     * 
+     * @param dataset
+     * @param procedure
+     * @param sDate
+     */
     public SOSDescribeSection( NetcdfDataset dataset, String procedure, CalendarDate[] sDate ) {
         super(dataset, procedure);
         
@@ -108,7 +123,7 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
     }
     
     @Override
-    public void SetupOutputDocument(DescribeSensorFormatter output) {
+    public void setupOutputDocument(DescribeSensorFormatter output) {
         // system node
         output.setSystemId("station-" + stationName);
         // set description
@@ -124,10 +139,10 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
         // position node
         formatSetPositionNode(output);
         // remove unwanted nodes
-        RemoveUnusedNodes(output);
+        removeUnusedNodes(output);
     }
 
-    private void RemoveUnusedNodes(DescribeSensorFormatter output) {
+    private void removeUnusedNodes(DescribeSensorFormatter output) {
         output.deleteLocationNode();
         output.deleteTimePosition();
         output.deletePositions();

@@ -7,9 +7,16 @@ package com.asascience.ncsos.describesen;
 import com.asascience.ncsos.outputformatter.DescribeSensorFormatter;
 
 /**
- *
+ * Provides common methods for Describe Sensor request handling classes.
  * @author SCowan
+ * @version 1.0.0
  */
 public interface SOSDescribeIF {
-    public void SetupOutputDocument(DescribeSensorFormatter output);
+    /**
+     * Tells the output handler to set up the response to a Describe Sensor request
+     * so that when writeOutput is called on the formatter, all data for the response
+     * is available
+     * @param output the formatter to be used for the response
+     */
+    public void setupOutputDocument(DescribeSensorFormatter output);
 }

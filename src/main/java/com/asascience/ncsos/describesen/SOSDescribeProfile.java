@@ -15,7 +15,16 @@ import ucar.nc2.dataset.NetcdfDataset;
 
 /**
  *
+ * Describe Sensor requests to Profile datasets output the following xml subroots:
+ * *Description
+ * *Identification
+ * *Classification
+ * *Contact(s)
+ * *History
+ * *Positions (note the plural)
+ * *Component(s)
  * @author SCowan
+ * @version 1.0.0
  */
 public class SOSDescribeProfile extends SOSDescribeStation implements SOSDescribeIF {
     
@@ -24,6 +33,11 @@ public class SOSDescribeProfile extends SOSDescribeStation implements SOSDescrib
     int profileStartIndex, profileEndIndex;
     Integer[] profileIndices;
     
+    /**
+     * 
+     * @param dataset
+     * @param procedure
+     */
     public SOSDescribeProfile( NetcdfDataset dataset, String procedure ) {
         super(dataset,procedure);
         
@@ -86,9 +100,11 @@ public class SOSDescribeProfile extends SOSDescribeStation implements SOSDescrib
     
     /*********************
      * Interface Methods *
-     *********************/
+     ********************
+     * @param output 
+     */
     @Override
-    public void SetupOutputDocument(DescribeSensorFormatter output) {
+    public void setupOutputDocument(DescribeSensorFormatter output) {
         // system node
         output.setSystemId("station-" + stationName);
         // set description
@@ -104,14 +120,14 @@ public class SOSDescribeProfile extends SOSDescribeStation implements SOSDescrib
         // positions node
         formatSetPositionsNode(output);
         // remove unwanted nodes
-        RemoveUnusedNodes(output);
+        removeUnusedNodes(output);
     }
 
     /*******************
      * Private Methods *
      *******************/
     
-    private void RemoveUnusedNodes(DescribeSensorFormatter output) {
+    private void removeUnusedNodes(DescribeSensorFormatter output) {
         // delete unwanted nodes
         output.deleteLocationNode();
         output.deletePosition();
