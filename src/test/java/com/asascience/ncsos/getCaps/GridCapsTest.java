@@ -106,7 +106,7 @@ public class GridCapsTest {
             String fileName = "getCapsSST1.xml";
             fileWriter(outputDir, fileName, writer);
             // write as an example
-            fileWriter(exampleOutputDir, "GetCapabilities-Grid.xml", writer);
+            fileWriter(exampleOutputDir, "GetCapabilities-Grid-om1.0.0.xml", writer);
             assertFalse(writer.toString().contains("Exception"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
