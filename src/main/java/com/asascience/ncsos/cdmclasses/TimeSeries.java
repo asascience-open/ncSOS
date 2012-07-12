@@ -4,6 +4,8 @@
  */
 package com.asascience.ncsos.cdmclasses;
 
+import com.asascience.ncsos.getobs.SOSObservationOffering;
+import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,8 +15,6 @@ import java.util.logging.Logger;
 import org.joda.time.Chronology;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
-import com.asascience.ncsos.getobs.SOSObservationOffering;
-import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import ucar.nc2.ft.PointFeature;
 import ucar.nc2.ft.PointFeatureIterator;
 import ucar.nc2.ft.StationTimeSeriesFeature;
@@ -46,7 +46,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         this.eventTimes = new ArrayList<String>();
         eventTimes.addAll(Arrays.asList(eventTime));
         
-        lowerAlt = upperAlt = 0;
+        upperAlt = lowerAlt = 0;
     }
 
     /**
@@ -227,7 +227,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
                     if (dtEndt.isAfter(dtEnd)) {
                         dtEnd = dtEndt;
                     }
-                    checkLatLonBoundaries(tsStationList, i);
+                    checkLatLonAltBoundaries(tsStationList, i);
                 }
             }
             setStartDate(df.toDateTimeStringISO(dtStart.toDate()));
@@ -288,6 +288,30 @@ public class TimeSeries extends baseCDMClass implements iStationData {
     public double getUpperLon(int stNum) {
         if (tsData != null) {
             return (tsStationList.get(stNum).getLongitude());
+        } else {
+            return Invalid_Value;
+        }
+    }
+    
+    @Override
+    public double getLowerAltitude(int stNum) {
+        if (tsData != null) {
+            double retval = tsStationList.get(stNum).getAltitude();
+            if (Double.toString(retval).equalsIgnoreCase("nan"))
+                retval = 0;
+            return retval;
+        } else {
+            return Invalid_Value;
+        }
+    }
+    
+    @Override
+    public double getUpperAltitude(int stNum) {
+        if (tsData != null) {
+            double retval = tsStationList.get(stNum).getAltitude();
+            if (Double.toString(retval).equalsIgnoreCase("nan"))
+                retval = 0;
+            return retval;
         } else {
             return Invalid_Value;
         }

@@ -17,7 +17,7 @@ public interface iStationData {
     void setData(Object featureCollection) throws IOException;
     
     //checks the lat lon boundaries for a given station list
-    void checkLatLonBoundaries(List<Station> stationList, int i);
+    void checkLatLonAltBoundaries(List<Station> stationList, int i);
     
     //returns the list of station names
     List<String> getStationNames();

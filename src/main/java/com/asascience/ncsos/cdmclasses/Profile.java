@@ -108,6 +108,7 @@ public class Profile extends baseCDMClass implements iStationData {
     private List<ProfileFeature> profileList;
     private final ArrayList<String> eventTimes;
     private ProfileFeatureCollection profileData;
+    private ArrayList<Double> altMin, altMax;
 
     public Profile(String[] stationName, String[] eventTime, String[] variableNames) {
         startDate = null;
@@ -121,7 +122,8 @@ public class Profile extends baseCDMClass implements iStationData {
         this.eventTimes = new ArrayList<String>();
         eventTimes.addAll(Arrays.asList(eventTime));
         
-        lowerAlt = upperAlt = 0;
+        lowerAlt = Double.POSITIVE_INFINITY;
+        upperAlt = Double.NEGATIVE_INFINITY;
     }
 
     /*******************PROFILE**************************/
@@ -237,6 +239,9 @@ public class Profile extends baseCDMClass implements iStationData {
 
         DateTime dtSearchStart = null;
         DateTime dtSearchEnd = null;
+        
+        altMin = new ArrayList<Double>();
+        altMax = new ArrayList<Double>();
 
         boolean firstSet = true;
 
@@ -277,6 +282,29 @@ public class Profile extends baseCDMClass implements iStationData {
                     String stName = it.next();
                     if (stName.equalsIgnoreCase(profileID)) {
                         profileList.add(pFeature);
+                        
+                        // check local altitude
+                        double altmin = Double.POSITIVE_INFINITY;
+                        double altmax = Double.NEGATIVE_INFINITY;
+                        
+                        for (pFeature.resetIteration();pFeature.hasNext();) {
+                            PointFeature point = pFeature.next();
+                            
+                            double alt = point.getLocation().getAltitude();
+                            
+                            if (alt < altmin)
+                                altmin = alt;
+                            if (alt > altmax)
+                                altmax = alt;
+                        }
+                        
+                        if (altmin < lowerAlt)
+                            lowerAlt = altmin;
+                        if (altmax > upperAlt)
+                            upperAlt = altmax;
+                        
+                        altMin.add(altmin);
+                        altMax.add(altmax);
                     }
                 }
 
@@ -389,6 +417,30 @@ public class Profile extends baseCDMClass implements iStationData {
     public double getUpperLon(int stNum) {
         if (profileData != null) {
             return profileList.get(stNum).getLatLon().getLongitude();
+        } else {
+            return Invalid_Value;
+        }
+    }
+    
+    @Override
+    public double getLowerAltitude(int stNum) {
+        if (altMin != null && altMin.size() > stNum) {
+            double retval = altMin.get(stNum);
+            if (retval == Double.NaN || retval == Double.POSITIVE_INFINITY)
+                retval = 0;
+            return retval;
+        } else {
+            return Invalid_Value;
+        }
+    }
+    
+    @Override
+    public double getUpperAltitude(int stNum) {
+        if (altMax != null && altMax.size() > stNum) {
+            double retval = altMax.get(stNum);
+            if (retval == Double.NaN || retval == Double.POSITIVE_INFINITY)
+                retval = 0;
+            return retval;
         } else {
             return Invalid_Value;
         }
