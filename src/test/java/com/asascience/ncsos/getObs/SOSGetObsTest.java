@@ -716,7 +716,7 @@ public class SOSGetObsTest {
             String fileName = "tsOrthogonalMultidimenstionalMultipleStations.xml";
             fileWriter(base, fileName, write);
             // write as an example
-            fileWriter(exampleOutputDir, "GetObservation-TimeSeries.xml", write);
+            fileWriter(exampleOutputDir, "GetObservation-TimeSeries-om1.0.0.xml", write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
         } catch (IOException ex) {
@@ -741,7 +741,7 @@ public class SOSGetObsTest {
             String fileName = "RaggedMultiConventionsMultiTime.xml";
             fileWriter(base, fileName, write);
             // write as an example
-            fileWriter(exampleOutputDir, "GetObservation-TimeSeriesProfile.xml", write);
+            fileWriter(exampleOutputDir, "GetObservation-TimeSeriesProfile-om1.0.0.xml", write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
             //check depth was entered auto
@@ -1016,7 +1016,7 @@ public class SOSGetObsTest {
             String fileName = "ContiguousRaggedMultipleProfilesMultiTime3.xml";
             fileWriter(base, fileName, write);
             // write as an example
-            fileWriter(exampleOutputDir, "GetObservation-Profile.xml", write);
+            fileWriter(exampleOutputDir, "GetObservation-Profile-om1.0.0.xml", write);
             //dataAvailableInOutputFile(write);
             //check depth was entered auto
             assertFalse(write.toString().contains("Exception"));
@@ -1222,7 +1222,7 @@ public class SOSGetObsTest {
             String fileName = "trajectoryContiguousRaggedMultipleTrajectories.xml";
             fileWriter(base, fileName, write);
             // write as an example
-            fileWriter(exampleOutputDir, "GetObservation-Trajectory.xml", write);
+            fileWriter(exampleOutputDir, "GetObservation-Trajectory-om1.0.0.xml", write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
         } catch (IOException ex) {
@@ -1268,7 +1268,7 @@ public class SOSGetObsTest {
             String fileName = "trajectoryProfileMultidimensionalMultipleTrajectories_request1.xml";
             fileWriter(base, fileName, write);
             // write as an example
-            fileWriter(exampleOutputDir, "GetObservation-Section.xml", write);
+            fileWriter(exampleOutputDir, "GetObservation-Section-om1.0.0.xml", write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
             //check depth was entered auto

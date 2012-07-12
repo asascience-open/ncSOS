@@ -107,7 +107,7 @@ public class SOSGridObsTest {
             writer.close();
             fileWriter(outputDir, "testGetObsGridSSTSingleLatLon_output.xml", writer);
             // write as an example
-            fileWriter(exampleOutputDir, "GetObservation-Grid.xml", writer);
+            fileWriter(exampleOutputDir, "GetObservation-Grid-om1.0.0.xml", writer);
             assertFalse("Have an exception in output", writer.toString().contains("Exception"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
