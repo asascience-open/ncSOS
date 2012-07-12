@@ -11,14 +11,27 @@ import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
- *
+ * Handles Describe Sensor requests specific for calling sensors directly. Due to
+ * the generic output of a direct Describe Sensor call to a station sensor, all
+ * feature types use this for describing their sensor(s).
+ * Describe Sensor requests to sensor(s) output the following xml subroots:
+ * *Description
+ * *Identification
+ * *Contact(s)
+ * *Location
  * @author SCowan
+ * @version 1.0.0
  */
 public class SOSDescribeSensor extends SOSDescribeStation implements SOSDescribeIF {
     
     private String sensorId;
     private Variable sensorVariable;
     
+    /**
+     * 
+     * @param dataset
+     * @param procedure
+     */
     public SOSDescribeSensor( NetcdfDataset dataset, String procedure ) {
         super(dataset, procedure);
         Variable lat, lon;
@@ -51,9 +64,9 @@ public class SOSDescribeSensor extends SOSDescribeStation implements SOSDescribe
     
     /*********************
      * Interface Methods *
-     *********************/
+     **************************************************************************/
     @Override
-    public void SetupOutputDocument(DescribeSensorFormatter output) {
+    public void setupOutputDocument(DescribeSensorFormatter output) {
         // system node
         output.setSystemId("sensor-" + stationName + "-" + sensorId);
         // set description
@@ -65,13 +78,15 @@ public class SOSDescribeSensor extends SOSDescribeStation implements SOSDescribe
         // location node
         formatSetLocationNode(output);
         // remove unwanted nodes
-        RemoveUnusedNodes(output);
+        removeUnusedNodes(output);
     }
+    
+    /**************************************************************************/
 
     /*******************
      * Private Methods *
      *******************/
-    private void RemoveUnusedNodes(DescribeSensorFormatter output) {
+    private void removeUnusedNodes(DescribeSensorFormatter output) {
         output.deleteClassificationNode();
         output.deleteComponentsNode();
         output.deleteHistoryNode();

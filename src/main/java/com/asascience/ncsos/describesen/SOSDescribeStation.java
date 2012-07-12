@@ -13,8 +13,19 @@ import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
- *
+ * Used to populate output for TimeSeries and TimeSeriesProfile feature sets. Is also used
+ * as a parent class for most other feature types.
+ * Describe Sensor requests to TimeSeries and TimeSeriesProfile datasets output
+ * the following xml subroots:
+ * *Description
+ * *Identification
+ * *Classification
+ * *Contact(s)
+ * *History
+ * *Location
+ * *Component(s)
  * @author SCowan
+ * @version 1.0.0
  */
 public class SOSDescribeStation implements SOSDescribeIF {
     
@@ -27,6 +38,11 @@ public class SOSDescribeStation implements SOSDescribeIF {
     protected ArrayList<Variable> documentVariables;
     protected final String procedure;
     
+    /**
+     * 
+     * @param dataset
+     * @param procedure
+     */
     public SOSDescribeStation( NetcdfDataset dataset, String procedure ) {
         Variable lat, lon;
         lat = lon = null;
@@ -89,8 +105,9 @@ public class SOSDescribeStation implements SOSDescribeIF {
 
     /*********************
      * Interface Methods *
-     *********************/
-    public void SetupOutputDocument(DescribeSensorFormatter output) {
+     **************************************************************************/
+    
+    public void setupOutputDocument(DescribeSensorFormatter output) {
         // system node
         output.setSystemId("station-" + stationName);
         // set description
@@ -106,13 +123,19 @@ public class SOSDescribeStation implements SOSDescribeIF {
         // location node
         formatSetLocationNode(output);
         // remove unwanted nodes
-        RemoveUnusedNodes(output);
+        removeUnusedNodes(output);
     }
     
-    /*******************
+    /**************************************************************************/
+    
+    /*****************************
      * Private/Protected Methods *
-     *******************/
+     *****************************/
 
+    /**
+     * 
+     * @param output 
+     */
     protected void formatSetClassification(DescribeSensorFormatter output) {
         if (platformType != null) {
             output.addToClassificationNode(platformType.getName(), "", platformType.getStringValue());
@@ -121,6 +144,10 @@ public class SOSDescribeStation implements SOSDescribeIF {
         }
     }
 
+    /**
+     * 
+     * @param output
+     */
     protected void formatSetContactNodes(DescribeSensorFormatter output) {
         if (creatorAttributes != null) {
             HashMap<String, HashMap<String, String>> domainContactInfo = new HashMap<String, HashMap<String, String>>();
@@ -180,6 +207,10 @@ public class SOSDescribeStation implements SOSDescribeIF {
         }
     }
     
+    /**
+     * 
+     * @param formatter
+     */
     protected void formatSetIdentification(DescribeSensorFormatter formatter) {
         ArrayList<String> identNames = new ArrayList<String>();
         ArrayList<String> identDefinitions = new ArrayList<String>();
@@ -193,6 +224,12 @@ public class SOSDescribeStation implements SOSDescribeIF {
                 identValues.toArray(new String[identValues.size()]));
     }
     
+    /**
+     * 
+     * @param stationVar
+     * @param nameOfStation
+     * @return
+     */
     protected int getStationIndex(Variable stationVar, String nameOfStation) {
         int retval = -1;
         try {
@@ -227,6 +264,12 @@ public class SOSDescribeStation implements SOSDescribeIF {
         return retval;
     }
     
+    /**
+     * 
+     * @param lat
+     * @param lon
+     * @return
+     */
     protected double[] getStationCoords(Variable lat, Variable lon) {
         try {
             // get the lat/lon of the station
@@ -244,17 +287,19 @@ public class SOSDescribeStation implements SOSDescribeIF {
             return null;
         }
     }
-    
-    private void RemoveUnusedNodes(DescribeSensorFormatter output) {
-        output.deletePosition();
-        output.deleteTimePosition();
-        output.deletePositions();
-    }
 
+    /**
+     * 
+     * @param output
+     */
     protected void formatSetDescription(DescribeSensorFormatter output) {
         output.setDescriptionNode(description);
     }
 
+    /**
+     * 
+     * @param output
+     */
     protected void formatSetHistoryNodes(DescribeSensorFormatter output) {
         if (historyAttribute != null) {
             output.setHistoryEvents(historyAttribute.getStringValue());
@@ -263,8 +308,18 @@ public class SOSDescribeStation implements SOSDescribeIF {
         }
     }
 
+    /**
+     * 
+     * @param output
+     */
     protected void formatSetLocationNode(DescribeSensorFormatter output) {
         if (stationCoords != null)
             output.setLocationNode(stationName, stationCoords);
+    }
+    
+    private void removeUnusedNodes(DescribeSensorFormatter output) {
+        output.deletePosition();
+        output.deleteTimePosition();
+        output.deletePositions();
     }
 }

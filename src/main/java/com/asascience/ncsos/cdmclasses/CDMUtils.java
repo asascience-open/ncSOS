@@ -8,12 +8,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * RPS - ASA
+ * Class for common util functions that are used across the CDM classes
  * @author abird
- * @version
- * 
- * this class is for common util functions that are used across the CDM classes
- * 
+ * @version 1.0.0
  */
 public class CDMUtils {
     

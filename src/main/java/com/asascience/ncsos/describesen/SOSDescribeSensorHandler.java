@@ -12,11 +12,13 @@ import java.util.ArrayList;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.ft.*;
 import ucar.nc2.time.CalendarDate;
-import ucar.unidata.geoloc.LatLonRect;
 
 /**
- *
+ * Main handler class for Describe Sensor requests. Processes the request to determine
+ * what output format is being used as well as determine the feature type of the
+ * dataset. Also calls the output handler to prepare the output for the response.
  * @author SCowan
+ * @version 1.0.0
  */
 public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
     
@@ -31,6 +33,8 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
      * @param dataset
      * @param responseFormat
      * @param procedure
+     * @param uri 
+     * @param query 
      * @throws IOException 
      */
     public SOSDescribeSensorHandler(NetcdfDataset dataset, String responseFormat, String procedure, String uri, String query) throws IOException {
@@ -50,10 +54,10 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
         // find out needed info based on whether this is a station or sensor look up
         if (this.procedure.contains("station")) {
             setNeededInfoForStation(dataset);
-            describer.SetupOutputDocument((DescribeSensorFormatter)output);
+            describer.setupOutputDocument((DescribeSensorFormatter)output);
         } else if (this.procedure.contains("sensor")) {
             setNeededInfoForSensor(dataset);
-            describer.SetupOutputDocument((DescribeSensorFormatter)output);
+            describer.setupOutputDocument((DescribeSensorFormatter)output);
         } else {
             output.setupExceptionOutput("Unknown procedure (not a station or sensor): " + this.procedure);
         }

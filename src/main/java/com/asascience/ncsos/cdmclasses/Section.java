@@ -18,7 +18,7 @@ import ucar.unidata.geoloc.LatLonRect;
 import ucar.unidata.geoloc.Station;
 
 /**
- *
+ * Provides methods to gather information from Section datasets needed for requests: GetCapabilities, GetObservations
  * @author SCowan
  * @version 1.0.0
  */

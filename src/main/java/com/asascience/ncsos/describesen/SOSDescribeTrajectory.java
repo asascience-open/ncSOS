@@ -17,8 +17,17 @@ import ucar.nc2.time.CalendarPeriod;
 import ucar.nc2.units.DateFormatter;
 
 /**
- *
+ * Handles Describe Sensor requests for Trajectory feature datasets.
+ * Describe Sensor requests to Trajectory datasets output the following xml subroots:
+ * *Description
+ * *Identification
+ * *Classification
+ * *Contact(s)
+ * *History
+ * *Position
+ * *Component(s)
  * @author SCowan
+ * @version 1.0.0
  */
 public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDescribeIF {
     
@@ -29,6 +38,12 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
     private Integer[] stationObsIndices;
     private CalendarDate startDate;
     
+    /**
+     * 
+     * @param dataset
+     * @param procedure
+     * @param startDate
+     */
     public SOSDescribeTrajectory( NetcdfDataset dataset, String procedure, CalendarDate startDate ) {
         super(dataset, procedure);
         
@@ -96,10 +111,12 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
 
     /*********************
      * Interface Methods *
-     *********************/
+     ********************
+     * @param output 
+     */
     
     @Override
-    public void SetupOutputDocument(DescribeSensorFormatter output) {
+    public void setupOutputDocument(DescribeSensorFormatter output) {
         // system node
         output.setSystemId("station-" + stationName);
         // set description
@@ -115,14 +132,14 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
         // position node
         formatSetPositionNode(output);
         // remove unwanted nodes
-        RemoveUnusedNodes(output);
+        removeUnusedNodes(output);
     }
     
     /*******************
      * Private Methods *
      *******************/
     
-    private void RemoveUnusedNodes(DescribeSensorFormatter output) {
+    private void removeUnusedNodes(DescribeSensorFormatter output) {
         output.deleteLocationNode();
         output.deletePositions();
         // time position requires data not obtained here
@@ -152,20 +169,7 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
         varMap.put("definition", "some:definition");
         varMap.put("code", "deg");
         mapMap.put("lon", varMap);
-//        for (Variable var : PositionVars) {
-//            String name = var.getFullName().toLowerCase();
-//            if (name.contains("lat") || name.contains("lon")) {
-//                varMap = new HashMap<String, String>();
-//                varMap.put("definition", "some:definition");
-//                varMap.put("code", "deg");
-//                mapMap.put(name, varMap);
-//            } else if (name.contains("time")) {
-//                varMap = new HashMap<String, String>();
-//                varMap.put("definition", "OGC:time");
-//                varMap.put("xlink:href", "ISO####:date");
-//                mapMap.put("time", varMap);
-//            }
-//        }
+        
         output.setPositionDataDefinition(mapMap, ".", " ", ",");
         
         // now we need our values

@@ -15,12 +15,9 @@ import ucar.nc2.units.DateFormatter;
 import ucar.unidata.geoloc.Station;
 
 /**
- * RPS - ASA
+ * Provides methods to gather information from Trajectory datasets needed for requests: GetCapabilities, GetObservations
  * @author abird
- * @version 
- *
- *handles TRAJECTORY CDM DATA TYPE 
- *
+ * @version 1.0.0
  */
 public class Trajectory extends baseCDMClass implements iStationData {
 
