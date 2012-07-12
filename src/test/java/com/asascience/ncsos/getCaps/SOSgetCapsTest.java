@@ -755,14 +755,6 @@ public class SOSgetCapsTest {
             String fileName = "trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.xml";
             fileWriter(base, fileName, write);
             assertFalse(write.toString().contains("Exception"));
-        }
-        String fileName = "tsOrthogonalMultidimenstionalMultipleStations.xml";
-        fileWriter(base, fileName, write);
-        // write as an example
-        fileWriter(exampleOutputDir, "GetCapabilities-TimeSeries.xml", write);
-        if(!write.toString().contains("<ObservationOffering gml:id=")) {
-            System.out.println("does not have expected tag - testOrthogonalMultidimenstionalMultipleStations");
-            assertTrue(write.toString().contains("<ObservationOffering gml:id="));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -1138,30 +1130,6 @@ public class SOSgetCapsTest {
         fileWriter(base, "testEnhancePoint.xml", write);
         assertTrue(write.toString().contains("Exception"));
         System.out.println("------end------");
-    }
-    
-    @Test
-    public void testSectionMultidimensionalMultiTrajectories() {
-        System.out.println("\n------" + getCurrentMethod() + "------");
-        
-        try {
-            NetcdfDataset dataset = NetcdfDataset.openDataset(SectionMultidimensionalMultiTrajectories);
-            SOSParser md = new SOSParser();
-            Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, baseRequest, SectionMultidimensionalMultiTrajectories),write);
-            write.flush();
-            write.close();
-            String fileName = "trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.xml";
-            fileWriter(base, fileName, write);
-            // write as an example
-            fileWriter(exampleOutputDir, "GetCapabilities-Section.xml", write);
-            assertFalse(write.toString().contains("Exception"));
-            assertTrue(write.toString().contains("<ObservationOffering gml:id="));
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
-        } finally {
-            System.out.println("------END " + getCurrentMethod() + "------");
-        }
     }
     
 //    @Test
