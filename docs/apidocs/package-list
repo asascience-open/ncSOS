@@ -1,0 +1,8 @@
+com.asascience.ncsos.cdmclasses
+com.asascience.ncsos.controller
+com.asascience.ncsos.describesen
+com.asascience.ncsos.getcaps
+com.asascience.ncsos.getobs
+com.asascience.ncsos.outputformatter
+com.asascience.ncsos.service
+com.asascience.ncsos.util
