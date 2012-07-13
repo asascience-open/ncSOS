@@ -18,7 +18,8 @@ import ucar.nc2.units.DateFormatter;
 
 /**
  * Handles Describe Sensor requests for Trajectory feature datasets.
- * Describe Sensor requests to Trajectory datasets output the following xml subroots:
+ * Describe Sensor requests to Trajectory datasets for response format "sensorML/1.0.1"
+ * output the following xml subroots:
  * *Description
  * *Identification
  * *Classification
@@ -39,10 +40,11 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
     private CalendarDate startDate;
     
     /**
-     * 
-     * @param dataset
-     * @param procedure
-     * @param startDate
+     * Creates a new instance that collects, from the dataset, information needed
+     * for a Describe Sensor response.
+     * @param dataset a netcdf dataset of a Trajectory feature type
+     * @param procedure request procedure (station urn)
+     * @param startDate start date of the dataset (elapsed time is 0)
      */
     public SOSDescribeTrajectory( NetcdfDataset dataset, String procedure, CalendarDate startDate ) {
         super(dataset, procedure);
@@ -109,11 +111,9 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
         }
     }
 
-    /*********************
-     * Interface Methods *
-     ********************
-     * @param output 
-     */
+    /*********************/
+    /* Interface Methods */
+    /**************************************************************************/
     
     @Override
     public void setupOutputDocument(DescribeSensorFormatter output) {
@@ -134,6 +134,8 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
         // remove unwanted nodes
         removeUnusedNodes(output);
     }
+    
+    /**************************************************************************/
     
     /*******************
      * Private Methods *

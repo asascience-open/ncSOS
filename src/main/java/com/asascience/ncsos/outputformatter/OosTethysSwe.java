@@ -45,6 +45,13 @@ public class OosTethysSwe implements SOSOutputFormatter {
     private static final String NAN = "NaN";
     private static final String TEMPLATE = "templates/oostethysswe.xml";
     
+    /**
+     * 
+     * @param variableNames
+     * @param featureDataset
+     * @param cdmDataset
+     * @param netcdfDataset
+     */
     public OosTethysSwe(String[] variableNames,
             FeatureDataset featureDataset,
             iStationData cdmDataset,
@@ -83,6 +90,10 @@ public class OosTethysSwe implements SOSOutputFormatter {
         this.featureOfInterest = featureOfInterest;
     }
     
+    /**
+     * 
+     * @return
+     */
     public String getTemplateLocation() {
         return TEMPLATE;
     }

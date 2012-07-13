@@ -12,7 +12,8 @@ import ucar.nc2.dataset.NetcdfDataset;
 
 /**
  * Handles Describe Sensor requests specific Grid feature datasets.
- * Describe Sensor requests to Grid datasets output the following xml subroots:
+ * Describe Sensor requests to Grid datasets for response format "sensorML/1.0.1"
+ * output the following xml subroots:
  * *Description
  * *Identification
  * *Classification
@@ -25,12 +26,13 @@ import ucar.nc2.dataset.NetcdfDataset;
  */
 public class SOSDescribeGrid extends SOSDescribeStation implements SOSDescribeIF {
     
-    String upperLatitude, upperLongitude, lowerLatitude, lowerLongitude;
+    private String upperLatitude, upperLongitude, lowerLatitude, lowerLongitude;
     
     /**
-     * 
-     * @param dataset
-     * @param procedure
+     * Creates a new instance that collects information from the netCDF dataset
+     * needed for a Describe Sensor response.
+     * @param dataset the dataset with a GRID feature type
+     * @param procedure the procedure of the request (station urn)
      */
     public SOSDescribeGrid( NetcdfDataset dataset, String procedure ) {
         super(dataset, procedure);
@@ -66,9 +68,7 @@ public class SOSDescribeGrid extends SOSDescribeStation implements SOSDescribeIF
     
     /*********************
      * Interface Methods *
-     ********************
-     * @param output 
-     */
+     **************************************************************************/
     @Override
     public void setupOutputDocument(DescribeSensorFormatter output) {
         // system node
@@ -88,6 +88,7 @@ public class SOSDescribeGrid extends SOSDescribeStation implements SOSDescribeIF
         // remove unwanted nodes
         RemoveUnusedNodes(output);
     }
+    /**************************************************************************/
 
     /*****************************
      * Private/Protected Methods *

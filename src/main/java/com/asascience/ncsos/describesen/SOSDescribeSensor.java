@@ -14,7 +14,8 @@ import ucar.nc2.dataset.NetcdfDataset;
  * Handles Describe Sensor requests specific for calling sensors directly. Due to
  * the generic output of a direct Describe Sensor call to a station sensor, all
  * feature types use this for describing their sensor(s).
- * Describe Sensor requests to sensor(s) output the following xml subroots:
+ * Describe Sensor requests to sensor(s) for the response format "sensorML/1.0.1"
+ * output the following xml subroots:
  * *Description
  * *Identification
  * *Contact(s)
@@ -28,9 +29,10 @@ public class SOSDescribeSensor extends SOSDescribeStation implements SOSDescribe
     private Variable sensorVariable;
     
     /**
-     * 
-     * @param dataset
-     * @param procedure
+     * Creates instance to collect information, from the dataset, need for a
+     * Describe Sensor response for Sensors.
+     * @param dataset netcdf dataset of any feature type
+     * @param procedure request procedure (urn of sensor)
      */
     public SOSDescribeSensor( NetcdfDataset dataset, String procedure ) {
         super(dataset, procedure);
@@ -65,6 +67,7 @@ public class SOSDescribeSensor extends SOSDescribeStation implements SOSDescribe
     /*********************
      * Interface Methods *
      **************************************************************************/
+    
     @Override
     public void setupOutputDocument(DescribeSensorFormatter output) {
         // system node
@@ -99,6 +102,10 @@ public class SOSDescribeSensor extends SOSDescribeStation implements SOSDescribe
      * Protected Methods *
      *********************/
     
+    /**
+     * Sets the sml:Identification node for Describe Sensor "sensorML/1.0.1" requests
+     * @param output a DescribeSensorFormatter instance
+     */
     @Override
     protected void formatSetIdentification(DescribeSensorFormatter output) {
         ArrayList<String> identNames = new ArrayList<String>();
@@ -113,6 +120,10 @@ public class SOSDescribeSensor extends SOSDescribeStation implements SOSDescribe
                 identValues.toArray(new String[identValues.size()]));
     }
     
+    /**
+     * Sets the gml:description node for Describe Sensor "sensorML/1.0.1" requests
+     * @param output  a DescribeSensorFormatter instance
+     */
     @Override
     protected void formatSetDescription(DescribeSensorFormatter output) {
         output.setDescriptionNode("Sensor metadata for " + sensorId + " on " + stationName);

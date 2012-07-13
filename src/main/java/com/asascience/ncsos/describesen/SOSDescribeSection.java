@@ -20,8 +20,9 @@ import ucar.nc2.time.CalendarPeriod;
 import ucar.nc2.units.DateFormatter;
 
 /**
- *
- * Describe Sensor requests to Grid datasets output the following xml subroots:
+ * Handles Describe Sensor requests for Section (Trajectory Profiles) feature datasets.
+ * Describe Sensor requests to Grid datasets for response format "sensorML/1.0.1"
+ * output the following xml subroots:
  * *Description
  * *Identification
  * *Classification
@@ -42,10 +43,11 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
     private CalendarDate[] startDates;
     
     /**
-     * 
-     * @param dataset
-     * @param procedure
-     * @param sDate
+     * Creates an instance to collect information, from the dataset, needed for a
+     * Describe Sensor response.
+     * @param dataset netcdf dataset with the Section (TrajectoryProfile) feature type
+     * @param procedure the request procedure (station urn)
+     * @param sDate starting date of the dataset (value of when time elapsed is 0)
      */
     public SOSDescribeSection( NetcdfDataset dataset, String procedure, CalendarDate[] sDate ) {
         super(dataset, procedure);
@@ -122,6 +124,10 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
         }
     }
     
+    /*************************
+     * SOSDescribeIF Methods *
+     **************************************************************************/
+    
     @Override
     public void setupOutputDocument(DescribeSensorFormatter output) {
         // system node
@@ -141,6 +147,8 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
         // remove unwanted nodes
         removeUnusedNodes(output);
     }
+    
+    /**************************************************************************/
 
     private void removeUnusedNodes(DescribeSensorFormatter output) {
         output.deleteLocationNode();
@@ -232,6 +240,13 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
         }
     }
     
+    /**
+     * Reduces a data Array of rank 2 to rank 1 of just the data values. Uses the
+     * current trajectory and profiles to extract which data values are pertinent
+     * to the response.
+     * @param var data Variable from the netcdf dataset
+     * @return Array of rank 1 containing relevant values
+     */
     private Array getDataArrayFrom2Dimension(Variable var) {
         try {
             Range trajectoryRange = new Range(trajectoryNumber,trajectoryNumber);
@@ -253,6 +268,12 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
         return null;
     }
     
+    /**
+     * Reduces an Array of rank 3 to rank 1 of just the data values. Uses current
+     * trajectory and profiles to extract data values pertinent to the response.
+     * @param var data Variable from the netcdf dataset
+     * @return Array of rank 1 with relevant data values.
+     */
     private Array get2DimDataArrayFrom3Dimension(Variable var) {
         try {
             Range trajectoryRange = new Range(trajectoryNumber,trajectoryNumber);

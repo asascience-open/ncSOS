@@ -35,6 +35,12 @@ public class TestXMLOutputter implements SOSOutputFormatter {
     private final String NAN = "NaN";
     private final String TEMPLATE = "templates/testxmloutputter.xml";
     
+    /**
+     * 
+     * @param variableNames
+     * @param cdmDataset
+     * @param netcdfDataset
+     */
     public TestXMLOutputter(String[] variableNames,
             iStationData cdmDataset,
             NetcdfDataset netcdfDataset) {

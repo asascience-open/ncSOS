@@ -9,7 +9,7 @@
 			
 			<sml:history>2003-04-07 12:12:50 - created by gribtocdl</sml:history>
 			<sml:location>
-			<gml:boundedBy><gml:Envelope srsName=""><gml:lowerCorener>-90.0 -180.0</gml:lowerCorener><gml:upperCorner>90.0 180.0</gml:upperCorner></gml:Envelope></gml:boundedBy></sml:location>
+			<gml:boundedBy><gml:Envelope srsName=""><gml:lowerCorner>-90.0 -180.0</gml:lowerCorner><gml:upperCorner>90.0 180.0</gml:upperCorner></gml:Envelope></gml:boundedBy></sml:location>
 			
 			
 			

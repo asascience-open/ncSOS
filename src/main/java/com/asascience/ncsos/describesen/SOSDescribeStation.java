@@ -15,8 +15,8 @@ import ucar.nc2.dataset.NetcdfDataset;
 /**
  * Used to populate output for TimeSeries and TimeSeriesProfile feature sets. Is also used
  * as a parent class for most other feature types.
- * Describe Sensor requests to TimeSeries and TimeSeriesProfile datasets output
- * the following xml subroots:
+ * Describe Sensor requests to TimeSeries and TimeSeriesProfile datasets for
+ * response format "sensorML/1.0.1" output the following xml subroots:
  * *Description
  * *Identification
  * *Classification
@@ -39,9 +39,10 @@ public class SOSDescribeStation implements SOSDescribeIF {
     protected final String procedure;
     
     /**
-     * 
-     * @param dataset
-     * @param procedure
+     * Creates an instance to collect needed information, from the dataset, for
+     * a Describe Sensor response.
+     * @param dataset netcdf dataset of feature type TimeSeries and TimeSeriesProfile
+     * @param procedure procedure of the request (station urn)
      */
     public SOSDescribeStation( NetcdfDataset dataset, String procedure ) {
         Variable lat, lon;
@@ -103,9 +104,9 @@ public class SOSDescribeStation implements SOSDescribeIF {
 
     }
 
-    /*********************
-     * Interface Methods *
-     **************************************************************************/
+    /*********************/
+    /* Interface Methods */
+    /**************************************************************************/
     
     public void setupOutputDocument(DescribeSensorFormatter output) {
         // system node
@@ -133,8 +134,10 @@ public class SOSDescribeStation implements SOSDescribeIF {
      *****************************/
 
     /**
-     * 
-     * @param output 
+     * Reads dataset for platform information (usually just platform type) for the
+     * output. If no info is found, informs output to delete the Classification
+     * root node.
+     * @param output a DescribeSensorFormatter instance (held by the handler)
      */
     protected void formatSetClassification(DescribeSensorFormatter output) {
         if (platformType != null) {
@@ -145,8 +148,8 @@ public class SOSDescribeStation implements SOSDescribeIF {
     }
 
     /**
-     * 
-     * @param output
+     * Reads the dataset for contact information and passes along to output.
+     * @param output a DescribeSensorFormatter instance (held by the handler)
      */
     protected void formatSetContactNodes(DescribeSensorFormatter output) {
         if (creatorAttributes != null) {
@@ -208,8 +211,8 @@ public class SOSDescribeStation implements SOSDescribeIF {
     }
     
     /**
-     * 
-     * @param formatter
+     * Reads the dataset for station Attributes and sends gathered info to formatter.
+     * @param formatter a DescribeSensorFormatter instance (held by the handler)
      */
     protected void formatSetIdentification(DescribeSensorFormatter formatter) {
         ArrayList<String> identNames = new ArrayList<String>();
@@ -225,10 +228,10 @@ public class SOSDescribeStation implements SOSDescribeIF {
     }
     
     /**
-     * 
-     * @param stationVar
-     * @param nameOfStation
-     * @return
+     * Finds the index of the named station in the dataset
+     * @param stationVar variable containing station names
+     * @param nameOfStation name of the station to find
+     * @return index of named station
      */
     protected int getStationIndex(Variable stationVar, String nameOfStation) {
         int retval = -1;
@@ -265,10 +268,11 @@ public class SOSDescribeStation implements SOSDescribeIF {
     }
     
     /**
-     * 
-     * @param lat
-     * @param lon
-     * @return
+     * finds the latitude and longitude of the station defined by fields
+     * stationVariable and stationName
+     * @param lat latitude Variable from the dataset
+     * @param lon longitude Variabe from the dataset
+     * @return an array of the latitude and longitude pair
      */
     protected double[] getStationCoords(Variable lat, Variable lon) {
         try {
@@ -289,16 +293,17 @@ public class SOSDescribeStation implements SOSDescribeIF {
     }
 
     /**
-     * 
-     * @param output
+     * Gives output the value of the description global Attribute
+     * @param output a DescribeSensorFormatter instance (held by the handler)
      */
     protected void formatSetDescription(DescribeSensorFormatter output) {
         output.setDescriptionNode(description);
     }
 
     /**
-     * 
-     * @param output
+     * Gives output the value of the history global Attribute, or tells output
+     * to delete the History root node if there is no Attribute
+     * @param output a DescribeSensorFormatter instance (held by the handler)
      */
     protected void formatSetHistoryNodes(DescribeSensorFormatter output) {
         if (historyAttribute != null) {
@@ -309,8 +314,8 @@ public class SOSDescribeStation implements SOSDescribeIF {
     }
 
     /**
-     * 
-     * @param output
+     * Gives output the station name and coordinates for the Location root node.
+     * @param output a DescribeSensorFormatter instance (held by the handler)
      */
     protected void formatSetLocationNode(DescribeSensorFormatter output) {
         if (stationCoords != null)

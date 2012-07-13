@@ -21,9 +21,12 @@ import org.w3c.dom.NodeList;
 import ucar.nc2.VariableSimpleIF;
 import ucar.unidata.geoloc.LatLonRect;
 
-/**
- *
+/** "sensorML/1.0.1"
+ * Class that formats the output for describe sensor requests. Holds an instance
+ * of w3c document model for printing the xml response following the 
+ * "sensorML/1.0.1" standard.
  * @author SCowan
+ * @version 1.0.0
  */
 public class DescribeSensorFormatter implements SOSOutputFormatter {
     
@@ -33,24 +36,38 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     private final String uri;
     private final String query;
     
+    /**
+     * Creates a new formatter instance that uses the sosDescribeSensor.xml as a
+     * template (found in the resources templates folder)
+     */
     public DescribeSensorFormatter() {
         document = parseTemplateXML();
         this.uri = this.query = null;
     }
 
+    /**
+     * Creates a new formatter instance that uses the sosDescribeSensor.xml as a
+     * template (found in the resources templates folder)
+     * @param uri the uri of the request (used to construct hrefs for components
+     * @param query the query of the request (used to construct hrefs for components)
+     */
     public DescribeSensorFormatter(String uri, String query) {
         document = parseTemplateXML();
         this.uri = uri;
         this.query = query;
     }
     
+    /**
+     * The w3c DOM document that details the response for the request
+     * @return w3c DOM document
+     */
     public Document getDocument() {
         return document;
     }
     
-    /*********************
-     * Interface Methods *
-     *********************/
+    /*********************/
+    /* Interface Methods */
+    /**************************************************************************/
 
     public void AddDataFormattedStringToInfoList(String dataFormattedString) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -75,6 +92,8 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
             System.out.println("Error in writing GetCapsOutputter - " + e.getMessage());
         }
     }
+    
+    /**************************************************************************/
     
     /*******************
      * Private Methods *
@@ -144,25 +163,45 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
             AddNewNodeToParentWithTextValue("swe:value", lat, coordInfo.get("value").toString());
     }
     
-    /****************************
-     * Public Methods           *
-     * Setting the XML document *
-     ****************************/
+    /****************************/
+    /* Public Methods           */
+    /* Setting the XML document */
+    /**************************************************************************/
     
+    /**
+     * Accessor function for setting the system id in the sml:System node
+     * @param id usually a string following the format "station-[station_name]" (or sensor)
+     */    
     public void setSystemId(String id) {
         Element system = (Element) document.getElementsByTagName("sml:System").item(0);
         system.setAttribute("gml:id", id);
     }
     
+    /**
+     * Accessor function for setting the description text of the gml:description node
+     * @param description usually the description attribute value of a netcdf dataset
+     */
     public void setDescriptionNode(String description) {
         // get our description node and set its string content
         document.getElementsByTagName("gml:description").item(0).setTextContent(description);
     }
     
+    /**
+     * Removes the gml:description node from the xml document
+     */
     public void deleteDescriptionNode() {
         getParentNode().removeChild(getParentNode().getElementsByTagName("gml:description").item(0));
     }
     
+    /**
+     * Accessor for setting the sml:identification node with Attributes from the
+     * station/sensor Variable. The parameters are expected to have the same lengths
+     * as one another.
+     * @param names collection of names from the Variable's Attributes
+     * @param definitions collection of definitions for the name-value pairs (the
+     * sml:Term of the Attribute)
+     * @param values collections of the values of the Variable's Attributes
+     */
     public void setIdentificationNode(String[] names, String[] definitions, String[] values) {
         if (names.length != definitions.length && names.length != values.length) {
             setupExceptionOutput("invalid formatting of station attributes");
@@ -171,39 +210,46 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         // get our Identifier List and add nodes to it
         Element pList = (Element) document.getElementsByTagName("sml:IdentifierList").item(0);
         for (int i=0; i<names.length; i++) {
-            Element ident = document.createElement("sml:identifier");
-            ident.setAttribute("name", names[i]);
-            Element term = document.createElement("sml:Term");
-            term.setAttribute("definition", definitions[i]);
-            Element val = document.createElement("sml:value");
-            val.setTextContent(values[i]);
-            term.appendChild(val);
-            ident.appendChild(term);
-            pList.appendChild(ident);
+            Element parent = AddNewNodeToParentWithAttribute("sml:identifier", pList, "name", names[i]);
+            parent = AddNewNodeToParentWithAttribute("sml:Term", parent, "definition", definitions[i]);
+            AddNewNodeToParentWithTextValue("sml:value", parent, values[i]);
         }
     }
     
+    /**
+     * Removes the sml:identification node from the xml document
+     */
     public void deleteIdentificationNode() {
         getParentNode().removeChild(getParentNode().getElementsByTagName("sml:identification").item(0));
     }
     
+    /**
+     * Accessor for setting the sml:classification node in the xml document
+     * @param classifierName name of the station classification (eg 'platformType')
+     * @param definition sml:Term definition of the classification
+     * @param classifierValue value of the classification (eg 'GLIDER')
+     */
     public void addToClassificationNode(String classifierName, String definition, String classifierValue) {
-        Element parent = (Element) document.getElementsByTagName("sml:ClassifierList").item(0);
-        Element classifier = document.createElement("sml:classifier");
-        classifier.setAttribute("name", classifierName);
-        Element term = document.createElement("sml:Term");
-        term.setAttribute("definition", definition);
-        Element value = document.createElement("sml:value");
-        value.setTextContent(classifierValue);
-        term.appendChild(value);
-        classifier.appendChild(term);
-        parent.appendChild(classifier);
+        Element parent = (Element) getParentNode().getElementsByTagName("sml:ClassifierList").item(0);
+        parent = AddNewNodeToParentWithAttribute("sml:classifier", parent, "name", classifierName);
+        parent = AddNewNodeToParentWithAttribute("sml:Term", parent, "definition", definition);
+        AddNewNodeToParentWithTextValue("sml:value", parent, classifierValue);
     }
     
+    /**
+     * Removes the sml:classification node from the xml document
+     */
     public void deleteClassificationNode() {
         getParentNode().removeChild(getParentNode().getElementsByTagName("sml:classification").item(0));
     }
     
+    /**
+     * Accessor method to add a contact node to the sml:System node structure. Most
+     * information is gathered from global Attributes of the dataset
+     * @param role the role of the contact (eg publisher)
+     * @param organizationName the name of the orginization or individual
+     * @param contactInfo info for contacting the...um...contact
+     */
     public void addContactNode(String role, String organizationName, HashMap<String, HashMap<String, String>> contactInfo) {
         // setup and and insert a contact node (after history)
         document = XMLDomUtils.addNodeBeforeNode(document, "sml:System", "sml:contact", "sml:history");
@@ -235,19 +281,35 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         }
     }
     
+    /**
+     * Removes the first contact node instance from the xml document
+     */
     public void deleteContactNodeFirst() {
         getParentNode().removeChild(getParentNode().getElementsByTagName("sml:contact").item(0));
     }
     
+    /**
+     * Accessor method to set the sml:history node in the xml document
+     * @param history the Attribute value of the 
+     */
     public void setHistoryEvents(String history) {
         Element parent = (Element) document.getElementsByTagName("sml:history").item(0);
         parent.setTextContent(history);
     }
     
+    /**
+     * Removes the sml:history node from the xml document
+     */
     public void deleteHistoryNode() {
         getParentNode().removeChild(getParentNode().getElementsByTagName("sml:history").item(0));
     }
     
+    /**
+     * Accessor method for adding a gml:Point node to the sml:location node in the
+     * xml document
+     * @param stationName name of the station
+     * @param coords lat, lon of the station's location
+     */
     public void setLocationNode(String stationName, double[] coords) {
         Element parent = (Element) getParentNode().getElementsByTagName("sml:location").item(0);
         
@@ -255,6 +317,12 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         AddNewNodeToParentWithTextValue("gml:coordinates", parent, coords[0] + " " + coords[1]);
     }
     
+    /**
+     * Accessor method for adding a gml:boundedBy node to the sml:location node
+     * in the xml document
+     * @param lowerPoint lat, lon of the lower corner of the bounding box
+     * @param upperPoint lat, lon of the upper corner of the bounding box
+     */
     public void setLocationNodeWithBoundingBox(String[] lowerPoint, String[] upperPoint) {
         if (lowerPoint.length != 2 || upperPoint.length != 2)
             throw new IllegalArgumentException("lowerPoint or upperPoint are not valid");
@@ -263,14 +331,22 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         
         parent = AddNewNodeToParent("gml:boundedBy", parent);
         parent = AddNewNodeToParentWithAttribute("gml:Envelope", parent, "srsName", "");
-        AddNewNodeToParentWithTextValue("gml:lowerCorener", parent, lowerPoint[0] + " " + lowerPoint[1]);
+        AddNewNodeToParentWithTextValue("gml:lowerCorner", parent, lowerPoint[0] + " " + lowerPoint[1]);
         AddNewNodeToParentWithTextValue("gml:upperCorner", parent, upperPoint[0] + " " + upperPoint[1]);
     }
     
+    /**
+     * Removes the sml:location node from the xml document
+     */
     public void deleteLocationNode() {
         getParentNode().removeChild(getParentNode().getElementsByTagName("sml:location").item(0));
     }
     
+    /**
+     * 
+     * @param dataVariables
+     * @param procedure
+     */
     public void setComponentsNode(List<VariableSimpleIF> dataVariables, String procedure) {
         // iterate through our list and create the node
         Element parent = (Element) document.getElementsByTagName("sml:ComponentList").item(0);
@@ -312,15 +388,29 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         }
     }
     
+    /**
+     * 
+     */
     public void deleteComponentsNode() {
         getParentNode().removeChild(getParentNode().getElementsByTagName("sml:components").item(0));
     }
     
+    /**
+     * 
+     * @param name
+     */
     public void setPositionName(String name) {
         Element position = (Element) getParentNode().getElementsByTagName("sml:position").item(0);
         position.setAttribute("name", name);
     }
     
+    /**
+     * 
+     * @param fieldMap
+     * @param decimalSeparator
+     * @param blockSeparator
+     * @param tokenSeparator
+     */
     public void setPositionDataDefinition(HashMap<String, HashMap<String, String>> fieldMap, String decimalSeparator, String blockSeparator, String tokenSeparator) {
         Element dataDefinition = (Element) getParentNode().getElementsByTagName("sml:dataDefinition").item(0);
         // add data definition block
@@ -368,20 +458,37 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         parent.setAttribute("tokenSeparator", tokenSeparator);
     }
     
+    /**
+     * 
+     * @param valueText
+     */
     public void setPositionValue(String valueText) {
         // simple, just add values with text content of parameter
         Element parent = (Element) getParentNode().getElementsByTagName("sml:position").item(0);
         AddNewNodeToParentWithTextValue("sml:values", parent, valueText);
     }
     
+    /**
+     * 
+     */
     public void deletePosition() {
         getParentNode().removeChild(getParentNode().getElementsByTagName("sml:position").item(0));
     }
     
+    /**
+     * 
+     */
     public void deleteTimePosition() {
         getParentNode().removeChild(getParentNode().getElementsByTagName("sml:timePosition").item(0));
     }
     
+    /**
+     * 
+     * @param latitudeInfo
+     * @param longitudeInfo
+     * @param depthInfo
+     * @param definition
+     */
     public void setStationPositionsNode(HashMap<String,String> latitudeInfo, HashMap<String,String> longitudeInfo, HashMap<String,String> depthInfo, String definition) {
         Element parent = (Element) getParentNode().getElementsByTagName("sml:PositionList").item(0);
         
@@ -402,6 +509,14 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         addCoordinateInfoNode(depthInfo, parent, "altitude", "Z", "m");
     }
     
+    /**
+     * 
+     * @param latitudeInfo
+     * @param longitudeInfo
+     * @param depthInfo
+     * @param definition
+     * @param boundingBox
+     */
     public void setStationPositionsNode(HashMap<String,String> latitudeInfo, HashMap<String,String> longitudeInfo, HashMap<String,String> depthInfo, String definition, LatLonRect boundingBox) {
         Element parent = (Element) getParentNode().getElementsByTagName("sml:PositionList").item(0);
         
@@ -422,6 +537,13 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         addCoordinateInfoNode(depthInfo, parent, "altitude", "Z", "m");
     }
     
+    /**
+     * 
+     * @param latitudeInfo
+     * @param longitudeInfo
+     * @param depthInfo
+     * @param definition
+     */
     public void setEndPointPositionsNode(HashMap<String,String> latitudeInfo, HashMap<String,String> longitudeInfo, HashMap<String,String> depthInfo, String definition) {
         Element parent = (Element) getParentNode().getElementsByTagName("sml:PositionList").item(0);
         
@@ -436,6 +558,14 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         addCoordinateInfoNode(depthInfo, parent, "altitude", "Z", "m");
     }
     
+    /**
+     * 
+     * @param latitudeInfo
+     * @param longitudeInfo
+     * @param depthInfo
+     * @param definition
+     * @param boundingBox
+     */
     public void setEndPointPositionsNode(HashMap<String,String> latitudeInfo, HashMap<String,String> longitudeInfo, HashMap<String,String> depthInfo, String definition, LatLonRect boundingBox) {
         Element parent = (Element) getParentNode().getElementsByTagName("sml:PositionList").item(0);
         
@@ -454,6 +584,9 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         addCoordinateInfoNode(depthInfo, parent, "altitude", "Z", "m");
     }
     
+    /**
+     * 
+     */
     public void deletePositions() {
         getParentNode().removeChild(getParentNode().getElementsByTagName("sml:positions").item(0));
     }

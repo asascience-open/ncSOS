@@ -29,12 +29,14 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
     private final String ACCEPTABLE_RESPONSE_FORMAT = "text/xml;subtype=\"sensorML/1.0.1\"";
     
     /**
-     * Creates a DescribeSensor handler that will parse the information and setup the output handle
-     * @param dataset
-     * @param responseFormat
-     * @param procedure
-     * @param uri 
-     * @param query 
+     * Creates a DescribeSensor handler that will parse the information and setup
+     * the output handler
+     * @param dataset netcdf dataset being read
+     * @param responseFormat response format from the request query string; only
+     * accepted response format is "text/xml;subtype=\"sensorML/1.0.1\""
+     * @param procedure procedure of the request (urn of station or sensor)
+     * @param uri entire uri string from the request
+     * @param query entire query string from the request
      * @throws IOException 
      */
     public SOSDescribeSensorHandler(NetcdfDataset dataset, String responseFormat, String procedure, String uri, String query) throws IOException {
@@ -64,7 +66,8 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
     }
 
     /**
-     * Exception version, used to create skeleton SOSDescribeSensorHandler that can throw an exception
+     * Exception version, used to create skeleton SOSDescribeSensorHandler that
+     * can throw an exception
      * @param dataset dataset, mostly unused
      * @throws IOException 
      */
@@ -110,8 +113,7 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
                 // trajectory profile; need the trajectory number to get the right info
                 String[] tStr = procedure.split(":");
                 String nStr = tStr[tStr.length-1].toLowerCase();
-                nStr = nStr.replaceAll("(profile)", "");
-                nStr = nStr.replaceAll("(trajectory)", "");
+                nStr = nStr.replaceAll("(profile)", "").replaceAll("(trajectory)", "");
                 int tNumber = Integer.parseInt(nStr);
                 
                 getFeatureDataset().calcBounds();
