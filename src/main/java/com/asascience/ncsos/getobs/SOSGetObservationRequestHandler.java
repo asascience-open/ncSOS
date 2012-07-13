@@ -20,13 +20,8 @@ import ucar.nc2.dataset.NetcdfDataset;
  * @author abird
  */
 public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
-
-//    private String stationName;
-    public static final String DEPTH = "depth";
-    public static final String LAT = "lat";
-    public static final String LON = "lon";
+    
     private String[] variableNames;
-    private boolean isMultiTime;
     private iStationData CDMDataSet;
     
     private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(SOSGetObservationRequestHandler.class);
@@ -34,10 +29,12 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
 
     /**
      * SOS get obs request handler
-     * @param netCDFDataset
-     * @param stationName
-     * @param variableNames
-     * @param eventTime
+     * @param netCDFDataset dataset for which the get observation request is being made
+     * @param stationName collection of offerings from the request
+     * @param variableNames collection of observed properties from the request
+     * @param eventTime event time range from the request
+     * @param outputFormat response format from the request
+     * @param latLonRequest map of the latitudes and longitude (points or ranges) from the request
      * @throws IOException 
      */
     public SOSGetObservationRequestHandler(NetcdfDataset netCDFDataset,
@@ -109,9 +106,9 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
 
     /**
      * checks for the presence of height in the netcdf dataset if it finds it but not in the variables selected it adds it
-     * @param Axis
-     * @param variableNames1
-     * @return 
+     * @param Axis the axis being checked
+     * @param variableNames1 the observed properties from the request (split)
+     * @return updated observed properties (with altitude added, if found)
      */
     private String[] checkNetcdfFileForAxis(CoordinateAxis Axis, String[] variableNames1) {
         if (Axis != null) {
@@ -141,17 +138,17 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         }
         return variableNames1;
     }
-
-    public boolean getIfMultiTime() {
-        return isMultiTime;
-    }
     
+    /**
+     * sets the output to display an exception message
+     * @param exceptionMessage the exception message to display in the return
+     */
     public void setException(String exceptionMessage) {
         output.setupExceptionOutput(exceptionMessage);
     }
 
-    /*
-     * Create the observation data for getObs, passing it to our outputter
+    /**
+     * Create the observation data for getObs, passing it to our formatter
      */
     public void parseObservations() {
         for(int s = 0;s<CDMDataSet.getNumberOfStations();s++) {
@@ -164,19 +161,20 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         }                
     }
     
+    /**
+     * Gets the dataset wrapped by the cdm feature type giving multiple easy to 
+     * access functions
+     * @return dataset wrapped by iStationData
+     */
     public iStationData getCDMDataset() {
         return CDMDataSet;
     }
 
+    /**
+     * The content type header for the response
+     * @return the content type of the response (text/xml)
+     */
     public String getContentType() {
         return contentType;
-    }
-    
-    private String[] addToStringArray(String[] array, String strToAdd) {
-        String retval = "";
-        for (String sr : array)
-            retval += sr + "&;><";
-        retval += strToAdd;
-        return retval.split("&;><");
     }
 }

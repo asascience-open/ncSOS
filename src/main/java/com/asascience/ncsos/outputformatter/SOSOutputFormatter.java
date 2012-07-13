@@ -58,6 +58,10 @@ class DataSlice {
     }
 }
 
+/**
+ * 
+ * @author SCowan
+ */
 public interface SOSOutputFormatter {
     
     // Interface methods

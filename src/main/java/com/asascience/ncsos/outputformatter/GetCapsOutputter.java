@@ -25,18 +25,33 @@ public class GetCapsOutputter implements SOSOutputFormatter {
     
     private final static String TEMPLATE = "templates/sosGetCapabilities.xml";
 
+    /**
+     * 
+     */
     public GetCapsOutputter() {
         document = parseTemplateXML();
     }
     
+    /**
+     * 
+     * @return
+     */
     public String getTemplateLocation() {
         return TEMPLATE;
     }
     
+    /**
+     * 
+     * @return
+     */
     public Document getDocument() {
         return document;
     }
     
+    /**
+     * 
+     * @param setter
+     */
     public void setDocument(Document setter) {
         this.document = setter;
     }

@@ -14,8 +14,9 @@ import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
- *
- * Describe Sensor requests to Profile datasets output the following xml subroots:
+ * Handles Describe Sensor requests for Profile feature datasets.
+ * Describe Sensor requests to Profile datasets for response "sensorML/1.0.1"
+ * output the following xml subroots:
  * *Description
  * *Identification
  * *Classification
@@ -34,9 +35,10 @@ public class SOSDescribeProfile extends SOSDescribeStation implements SOSDescrib
     Integer[] profileIndices;
     
     /**
-     * 
-     * @param dataset
-     * @param procedure
+     * Creates a new instance to collect information, from the dataset, needed for
+     * a Describe Sensor response.
+     * @param dataset netcdf dataset with the Profile feature type
+     * @param procedure procedure of the request (station urn)
      */
     public SOSDescribeProfile( NetcdfDataset dataset, String procedure ) {
         super(dataset,procedure);
@@ -100,9 +102,8 @@ public class SOSDescribeProfile extends SOSDescribeStation implements SOSDescrib
     
     /*********************
      * Interface Methods *
-     ********************
-     * @param output 
-     */
+     **************************************************************************/
+    
     @Override
     public void setupOutputDocument(DescribeSensorFormatter output) {
         // system node
@@ -122,6 +123,8 @@ public class SOSDescribeProfile extends SOSDescribeStation implements SOSDescrib
         // remove unwanted nodes
         removeUnusedNodes(output);
     }
+    
+    /**************************************************************************/
 
     /*******************
      * Private Methods *

@@ -14,8 +14,8 @@ import com.asascience.ncsos.outputformatter.DescribeSensorFormatter;
 public interface SOSDescribeIF {
     /**
      * Tells the output handler to set up the response to a Describe Sensor request
-     * so that when writeOutput is called on the formatter, all data for the response
-     * is available
+     * so that when writeOutput is called by the controller, all data for the response
+     * assembly is available.
      * @param output the formatter to be used for the response
      */
     public void setupOutputDocument(DescribeSensorFormatter output);
