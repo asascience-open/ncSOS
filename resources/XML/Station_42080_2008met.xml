@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><Capabilities xmlns="http://www.opengis.net/sos/1.0" xmlns:gml="http://www.opengis.net/gml" xmlns:oost="http://www.oostethys.org/schemas/0.1.0/oostethys" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0.0" xsi:schemaLocation="http://www.opengis.net/sos/1.0 http://schemas.opengis.net/sos/1.0.0/sosGetCapabilities.xsd">
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~-->
+	<!-- Service Identification -->
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~-->
+	<ows:ServiceIdentification>
+		<ows:Title>NOAA NDBC Station 42080 for 2008 (meterological)</ows:Title>
+		<ows:Abstract>Converted from ndbc ascii to netcdf by Applied Science Associates - 2011 for Sura Testbed</ows:Abstract>
+		<ows:Keywords>
+			<ows:Keyword> </ows:Keyword>
+		</ows:Keywords>
+		<ows:ServiceType codeSpace="http://opengeospatial.net">OGC:SOS</ows:ServiceType>
+		<ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
+		<ows:Fees>NONE</ows:Fees>
+		<ows:AccessConstraints>NONE</ows:AccessConstraints>
+	</ows:ServiceIdentification>
+	<!--~~~~~~~~~~~~~~~~~~~~~~-->
+	<!-- Provider Description -->
+	<!--~~~~~~~~~~~~~~~~~~~~~~-->
+	<ows:ServiceProvider>
+		<ows:ProviderName>Sura IOOS Model Testbed Server</ows:ProviderName>
+		<ows:ProviderSite>Owned and maintained by National Data Buoy Center</ows:ProviderSite>
+		<ows:ServiceContact>
+			<ows:IndividualName/>
+			<ows:PositionName/>
+			<ows:ContactInfo>
+				<ows:Phone>
+                                <ows:Voice/>
+                                </ows:Phone>
+				<ows:Address>
+					<ows:DeliveryPoint> </ows:DeliveryPoint>
+					<ows:City> </ows:City>
+					<ows:AdministrativeArea> </ows:AdministrativeArea>
+					<ows:PostalCode> </ows:PostalCode>
+					<ows:Country> </ows:Country>
+					<ows:ElectronicMailAddress> </ows:ElectronicMailAddress>
+				</ows:Address>
+			</ows:ContactInfo>
+		</ows:ServiceContact>
+	</ows:ServiceProvider>
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+	<!-- operations Metadata Section -->
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+	<ows:OperationsMetadata>
+		<ows:Operation name="GetCapabilities">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get xlink:href=""/>
+					<ows:Post xlink:href=""/>
+				</ows:HTTP>
+			</ows:DCP>
+			<ows:Parameter name="service" use="required">
+				<ows:Value>SOS</ows:Value>
+			</ows:Parameter>
+			<ows:Parameter name="version" use="required">
+				<ows:Value>1.0.0</ows:Value>
+			</ows:Parameter>
+		</ows:Operation>
+		<ows:Operation name="GetObservation">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get xlink:href=""/>
+					<ows:Post xlink:href=""/>
+				</ows:HTTP>
+			</ows:DCP>
+			<ows:Parameter name="offering" use="required"/>
+			<ows:Parameter name="observedProperty" use="required"/>
+			<ows:Parameter name="time" use="optional"/>
+		</ows:Operation>
+		<ows:Operation name="DescribeSensor">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get xlink:href=""/>
+					<ows:Post xlink:href=""/>
+				</ows:HTTP>
+			</ows:DCP>
+			<ows:Parameter name="SensorId" use="required"/>
+		</ows:Operation>
+	</ows:OperationsMetadata>
+	<!--~~~~~~~~~~~~~~~~~~~~~~~-->
+	<!-- Observation Offerings -->
+	<!--~~~~~~~~~~~~~~~~~~~~~~~-->
+	<Contents>
+		<ObservationOfferingList>
+			
+		<ObservationOffering gml:id="station-42080"><gml:description>Station 42080 - Offshore Sand Key, FL</gml:description><gml:name>urn:sura:station:sura.tds.sos:42080</gml:name><gml:srsName>urn:sura:station:sura.tds.sos:42080</gml:srsName><gml:boundedBy><gml:Envelope srsName="urn:sura:station:sura.tds.sos:42080"><gml:lowerCorner>24.388 -81.949</gml:lowerCorner><gml:upperCorner>24.388 -81.949</gml:upperCorner></gml:Envelope></gml:boundedBy><time><gml:TimePeriod><gml:beginPosition>2008-01-01T00:05:59Z</gml:beginPosition><gml:endPosition>2008-03-07T11:06:00Z</gml:endPosition></gml:TimePeriod></time><procedure xlink:href="urn:sura:station:sura.tds.sos:42080"/><observedProperty xlink:href="air_temp"/><observedProperty xlink:href="apd"/><observedProperty xlink:href="dew_point"/><observedProperty xlink:href="dom_wv_period"/><observedProperty xlink:href="gust"/><observedProperty xlink:href="mean_wv_dir"/><observedProperty xlink:href="sea_level_pressure"/><observedProperty xlink:href="sea_temp"/><observedProperty xlink:href="sig_wvht"/><observedProperty xlink:href="visibility"/><observedProperty xlink:href="water_level"/><observedProperty xlink:href="wdir"/><observedProperty xlink:href="wspd"/><featureOfInterest xlink:href=" "/><responseFormat>text/xml; subtype="om/1.0.0"</responseFormat><responseModel/><responseMode> </responseMode></ObservationOffering></ObservationOfferingList>
+	</Contents>
+</Capabilities>
