@@ -26,43 +26,33 @@ public class GetCapsOutputter implements SOSOutputFormatter {
     private final static String TEMPLATE = "templates/sosGetCapabilities.xml";
 
     /**
-     * 
+     * Creates instance of a Get Capabilities outputter. Reads the sosGetCapabilities.xml
+     * file as a template for the response.
      */
     public GetCapsOutputter() {
         document = parseTemplateXML();
     }
     
     /**
-     * 
-     * @return
-     */
-    public String getTemplateLocation() {
-        return TEMPLATE;
-    }
-    
-    /**
-     * 
-     * @return
+     * Gets the XML documents being help by the outputter.
+     * @return XML document based on the sosGetCapabilities template
      */
     public Document getDocument() {
         return document;
     }
     
     /**
-     * 
-     * @param setter
+     * Sets the output XML document
+     * @param setter a org.w3c.dom.Document
      */
     public void setDocument(Document setter) {
         this.document = setter;
     }
     
-    /*********************
-     * Interface Methods *
-     *********************
-     * 
-     * 
-     * @param dataFormattedString 
-     */
+    /*********************/
+    /* Interface Methods */
+    /**************************************************************************/
+
     public void AddDataFormattedStringToInfoList(String dataFormattedString) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -86,7 +76,7 @@ public class GetCapsOutputter implements SOSOutputFormatter {
             System.out.println("Error in writing GetCapsOutputter - " + e.getMessage());
         }
     }
-    /****************************************************************/
+    /**************************************************************************/
     
     
     private Document parseTemplateXML() {
@@ -103,6 +93,10 @@ public class GetCapsOutputter implements SOSOutputFormatter {
                 }
             }
         }
+    }
+    
+    private String getTemplateLocation() {
+        return TEMPLATE;
     }
     
 }

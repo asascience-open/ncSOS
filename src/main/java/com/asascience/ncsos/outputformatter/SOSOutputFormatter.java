@@ -59,12 +59,14 @@ class DataSlice {
 }
 
 /**
- * 
+ * Provides common functions for classes that define the response outputs for various
+ * SOS requests. Most importantly, provides a common end point for writing the response
+ * to a writer provided by the controller.
  * @author SCowan
+ * @version 1.0.0
  */
 public interface SOSOutputFormatter {
     
-    // Interface methods
     /**
      * Adds data from a formatted string to some container defined in the individual formatters.
      * @param dataFormattedString a csv string that usually follows the format of key=value,key1=value1,key2=value2,etc

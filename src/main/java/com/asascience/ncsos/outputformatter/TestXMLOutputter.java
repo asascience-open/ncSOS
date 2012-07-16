@@ -36,10 +36,11 @@ public class TestXMLOutputter implements SOSOutputFormatter {
     private final String TEMPLATE = "templates/testxmloutputter.xml";
     
     /**
-     * 
-     * @param variableNames
-     * @param cdmDataset
-     * @param netcdfDataset
+     * Example class for creating a new outputter for observation requests. Mostly
+     * follows the text/xml;subtype="om/1.0.0" standard.
+     * @param variableNames observedProperties from the request.
+     * @param cdmDataset cdmdataset from the base request handler
+     * @param netcdfDataset dataset being polled
      */
     public TestXMLOutputter(String[] variableNames,
             iStationData cdmDataset,
