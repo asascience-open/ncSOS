@@ -4,6 +4,8 @@
  */
 package com.asascience.ncsos.cdmclasses;
 
+import com.asascience.ncsos.getobs.SOSObservationOffering;
+import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,8 +15,6 @@ import java.util.logging.Logger;
 import org.joda.time.Chronology;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
-import com.asascience.ncsos.getobs.SOSObservationOffering;
-import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import ucar.nc2.ft.PointFeature;
 import ucar.nc2.ft.PointFeatureIterator;
 import ucar.nc2.ft.StationTimeSeriesFeature;
@@ -24,11 +24,9 @@ import ucar.nc2.units.DateRange;
 import ucar.unidata.geoloc.Station;
 
 /**
+ * Provides methods to gather information from TimeSeries datasets needed for requests: GetCapabilities, GetObservations
  * @author abird
- * @version 
- *
- * 
- *
+ * @version 1.0.0
  */
 public class TimeSeries extends baseCDMClass implements iStationData {
 
@@ -37,6 +35,12 @@ public class TimeSeries extends baseCDMClass implements iStationData {
     private final ArrayList<String> eventTimes;
     private final String[] variableNames;
 
+    /**
+     * 
+     * @param stationName
+     * @param eventTime
+     * @param variableNames
+     */
     public TimeSeries(String[] stationName, String[] eventTime, String[] variableNames) {
         startDate = null;
         endDate = null;
@@ -45,6 +49,8 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         reqStationNames.addAll(Arrays.asList(stationName));
         this.eventTimes = new ArrayList<String>();
         eventTimes.addAll(Arrays.asList(eventTime));
+        
+        upperAlt = lowerAlt = 0;
     }
 
     /**
@@ -53,12 +59,11 @@ public class TimeSeries extends baseCDMClass implements iStationData {
      * @param document
      * @param featureOfInterest
      * @param GMLName
-     * @param format
      * @param observedPropertyList
      * @return
      * @throws IOException 
      */
-    public static Document getCapsResponse(StationTimeSeriesFeatureCollection featureCollection, Document document, String featureOfInterest, String GMLName, String format, List<String> observedPropertyList) throws IOException {
+    public static Document getCapsResponse(StationTimeSeriesFeatureCollection featureCollection, Document document, String featureOfInterest, String GMLName, List<String> observedPropertyList) throws IOException {
         String stationName = null;
         String stationLat = null;
         String stationLon = null;
@@ -100,7 +105,6 @@ public class TimeSeries extends baseCDMClass implements iStationData {
             newOffering.setObservationProcedureLink(GMLName + stationName);
             newOffering.setObservationObserveredList(observedPropertyList);
             newOffering.setObservationFeatureOfInterest(featureOfInterest + stationName);
-            newOffering.setObservationFormat(format);
 
             document = CDMUtils.addObsOfferingToDoc(newOffering, document);
         }
@@ -165,6 +169,17 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         }
     }
 
+    /**
+     * 
+     * @param df
+     * @param chrono
+     * @param pointFeature
+     * @param valueList
+     * @param dateFormatter
+     * @param builder
+     * @param stNum
+     * @throws IOException
+     */
     public void parseMultiTimeEventTimeSeries(DateFormatter df, Chronology chrono, PointFeature pointFeature, List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, int stNum) throws IOException {
         //get start/end date based on iso date format date        
 
@@ -186,7 +201,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
     }
 
     @Override
-    public void setInitialLatLonBounaries(List<Station> tsStationList) {
+    public void setInitialLatLonBoundaries(List<Station> tsStationList) {
         upperLat = tsStationList.get(0).getLatitude();
         lowerLat = tsStationList.get(0).getLatitude();
         upperLon = tsStationList.get(0).getLongitude();
@@ -211,7 +226,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
                 //calc bounds in loop
                 tsData.getStationFeature(tsStationList.get(i)).calcBounds();
                 if (i == 0) {
-                    setInitialLatLonBounaries(tsStationList);
+                    setInitialLatLonBoundaries(tsStationList);
 
                     dateRange = tsData.getStationFeature(tsStationList.get(0)).getDateRange();
                     dtStart = new DateTime(dateRange.getStart().getDate(), chrono);
@@ -226,7 +241,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
                     if (dtEndt.isAfter(dtEnd)) {
                         dtEnd = dtEndt;
                     }
-                    checkLatLonBoundaries(tsStationList, i);
+                    checkLatLonAltBoundaries(tsStationList, i);
                 }
             }
             setStartDate(df.toDateTimeStringISO(dtStart.toDate()));
@@ -287,6 +302,30 @@ public class TimeSeries extends baseCDMClass implements iStationData {
     public double getUpperLon(int stNum) {
         if (tsData != null) {
             return (tsStationList.get(stNum).getLongitude());
+        } else {
+            return Invalid_Value;
+        }
+    }
+    
+    @Override
+    public double getLowerAltitude(int stNum) {
+        if (tsData != null) {
+            double retval = tsStationList.get(stNum).getAltitude();
+            if (Double.toString(retval).equalsIgnoreCase("nan"))
+                retval = 0;
+            return retval;
+        } else {
+            return Invalid_Value;
+        }
+    }
+    
+    @Override
+    public double getUpperAltitude(int stNum) {
+        if (tsData != null) {
+            double retval = tsStationList.get(stNum).getAltitude();
+            if (Double.toString(retval).equalsIgnoreCase("nan"))
+                retval = 0;
+            return retval;
         } else {
             return Invalid_Value;
         }

@@ -4,6 +4,8 @@
  */
 package com.asascience.ncsos.cdmclasses;
 
+import com.asascience.ncsos.getobs.SOSObservationOffering;
+import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,19 +15,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
-import com.asascience.ncsos.getobs.SOSObservationOffering;
-import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import ucar.nc2.ft.*;
 import ucar.nc2.units.DateFormatter;
 import ucar.unidata.geoloc.Station;
 
 /**
- * RPS - ASA
+ * Provides methods to gather information from TimeSeriesProfile datasets needed for requests: GetCapabilities, GetObservations
  * @author abird
- * @version 
- *
- * handles TIMES SERIES PROFILE CDM DATA TYPE
- *
+ * @version 1.0.0
  */
 public class TimeSeriesProfile extends baseCDMClass implements iStationData {
 
@@ -33,7 +30,14 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
     private List<Station> tsStationList;
     private final ArrayList<String> eventTimes;
     private final String[] variableNames;
+    private ArrayList<Double> altMin, altMax;
 
+    /**
+     * 
+     * @param stationName
+     * @param eventTime
+     * @param variableNames
+     */
     public TimeSeriesProfile(String[] stationName, String[] eventTime, String[] variableNames) {
 
         startDate = null;
@@ -44,6 +48,8 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
         this.eventTimes = new ArrayList<String>();
         eventTimes.addAll(Arrays.asList(eventTime));
 
+        lowerAlt = Double.POSITIVE_INFINITY;
+        upperAlt = Double.NEGATIVE_INFINITY;
     }
     
     /**
@@ -52,12 +58,11 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
      * @param document
      * @param featureOfInterestBase
      * @param GMLBase
-     * @param format
      * @param observedPropertyList
      * @return
      * @throws IOException 
      */
-    public static Document getCapsResponse(StationProfileFeatureCollection featureCollection1, Document document, String featureOfInterestBase, String GMLBase, String format, List<String> observedPropertyList) throws IOException {
+    public static Document getCapsResponse(StationProfileFeatureCollection featureCollection1, Document document, String featureOfInterestBase, String GMLBase, List<String> observedPropertyList) throws IOException {
         StationProfileFeature stationProfileFeature = null;
         SOSObservationOffering newOffering = null;
         DateFormatter timePeriodFormatter = new DateFormatter();
@@ -81,7 +86,6 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
             newOffering.setObservationProcedureLink(GMLBase + stationName);
             newOffering.setObservationObserveredList(observedPropertyList);
             newOffering.setObservationFeatureOfInterest(featureOfInterestBase + stationName);
-            newOffering.setObservationFormat(format);
             document = CDMUtils.addObsOfferingToDoc(newOffering, document);
         }
 
@@ -101,6 +105,7 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
 
 
         ProfileFeature pf = null;
+        
 
         //count = 0;
         //if not event time is specified get all the data
@@ -180,6 +185,7 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
 
     /**
      * sets the time series profile data
+     * @param featureProfileCollection 
      */
     @Override
     public void setData(Object featureProfileCollection) throws IOException {
@@ -187,6 +193,9 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
         tsStationList = tsProfileData.getStations(reqStationNames);
 
         setNumberOfStations(tsStationList.size());
+        
+        altMin = new ArrayList<Double>();
+        altMax = new ArrayList<Double>();
 
         DateTime curTime;
         DateTime dtStart = null;
@@ -199,11 +208,11 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
                 List<Date> times = sPFeature.getTimes();
 
                 if (i == 0) {
-                    setInitialLatLonBounaries(tsStationList);
+                    setInitialLatLonBoundaries(tsStationList);
                     dtStart = new DateTime(times.get(0), chrono);
                     dtEnd = new DateTime(times.get(0), chrono);
                 } else {
-                    checkLatLonBoundaries(tsStationList, i);
+                    checkLatLonAltBoundaries(tsStationList, i);
                 }
 
                 //check the dates
@@ -219,12 +228,37 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
             }
             setStartDate(df.toDateTimeStringISO(dtStart.toDate()));
             setEndDate(df.toDateTimeStringISO(dtEnd.toDate()));
-
+            
+            // iterate through the stations and check the altitudes by their profiles
+            for (int j = 0; j < tsStationList.size(); j++) {
+                StationProfileFeature profile = tsProfileData.getStationProfileFeature(tsStationList.get(j));
+                double altmin = Double.POSITIVE_INFINITY;
+                double altmax = Double.NEGATIVE_INFINITY;
+                for (profile.resetIteration();profile.hasNext();) {
+                    ProfileFeature nProfile = profile.next();
+                    for (nProfile.resetIteration();nProfile.hasNext();) {
+                        PointFeature point = nProfile.next();
+                        double alt = point.getLocation().getAltitude();
+                        if (!Double.toString(alt).equalsIgnoreCase("nan")) {
+                            if (alt > altmax) 
+                                altmax = alt;
+                            if (alt < altmin) 
+                                altmin = alt;
+                            if (alt > upperAlt)
+                                upperAlt = alt;
+                            if (alt < lowerAlt)
+                                lowerAlt = alt;
+                        }
+                    }
+                }
+                altMin.add(altmin);
+                altMax.add(altmax);
+            }
         }
     }
 
     @Override
-    public void setInitialLatLonBounaries(List<Station> tsStationList) {
+    public void setInitialLatLonBoundaries(List<Station> tsStationList) {
         upperLat = tsStationList.get(0).getLatitude();
         lowerLat = tsStationList.get(0).getLatitude();
         upperLon = tsStationList.get(0).getLongitude();
@@ -284,6 +318,30 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
     public double getUpperLon(int stNum) {
         if (tsProfileData != null) {
             return (tsStationList.get(stNum).getLongitude());
+        } else {
+            return Invalid_Value;
+        }
+    }
+    
+    @Override
+    public double getLowerAltitude(int stNum) {
+        if (altMin != null && altMin.size() > stNum) {
+            double retval = altMin.get(stNum);
+            if (Double.toString(retval).equalsIgnoreCase("nan"))
+                retval = 0;
+            return retval;
+        } else {
+            return Invalid_Value;
+        }
+    }
+    
+    @Override
+    public double getUpperAltitude(int stNum) {
+        if (altMax != null && altMax.size() > stNum) {
+            double retval = altMax.get(stNum);
+            if (Double.toString(retval).equalsIgnoreCase("nan"))
+                retval = 0;
+            return retval;
         } else {
             return Invalid_Value;
         }

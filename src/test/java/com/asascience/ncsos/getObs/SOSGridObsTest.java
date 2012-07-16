@@ -2,12 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package thredds.server.sos.getCaps;
+package com.asascience.ncsos.getObs;
 
 import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import com.asascience.ncsos.service.SOSParser;
 import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.*;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -18,19 +19,18 @@ import ucar.nc2.dataset.NetcdfDataset;
 
 /**
  *
- * @author abird
+ * @author SCowan
  */
-public class GridCapsTest {
-
+public class SOSGridObsTest {
+    
+    private static final String sst_1 = "resources/datasets/satellite-sst/SST_Global_2x2deg_20120626_0000.nc";
+    private static String sst_1_reqs = "request=GetObservation&service=sos&version=1.0.0&lat=-52.0&lon=0.0&observedProperty=sst&offering=sst&eventtime=1990-01-01T00:00:00Z/2013-05-17T09:57:00.000-04:00&responseformat=";
+    private static final String sst_2 = "resources/datasets/satellite-sst/SST_Global_2x2deg_20120627_0000.nc";
+    private static String sst_2_reqs = "request=GetObservation&service=sos&version=1.0.0&lat=-54.0,-52.0,-50.0&lon=-120.0,0.0,74.0&observedProperty=sst&offering=sst&eventtime=1990-01-01T00:00:00Z/2013-05-17T09:57:00.000-04:00&responseformat=";
     private static String baseLocalDir = null;
     private static String outputDir = null;
     private static String exampleOutputDir = null;
     
-    private static final String baseRequest = "request=GetCapabilities&version=1.0.0&service=sos";
-    
-    private static final String testGetCapsSST1 = "resources/datasets/satellite-sst/SST_Global_2x2deg_20120626_0000.nc";
-    private static final String testGetCapsSST2 = "resources/datasets/satellite-sst/SST_Global_2x2deg_20120627_0000.nc";
-
     @BeforeClass
     public static void SetupEnviron() {
         // not really a test, just used to set up the various string values
@@ -38,7 +38,7 @@ public class GridCapsTest {
             // exit early if the environ is already set
             return;
         }
-        String container = "getCaps";
+        String container = "getObsGrid";
         InputStream templateInputStream = null;
         try {
             File configFile = new File("resources/tests_config.xml");
@@ -86,28 +86,29 @@ public class GridCapsTest {
         return "could not find test name";
     }
     
-    private void writeOutput(HashMap<String, Object> outMap, Writer write) {
-        SOSOutputFormatter output = (SOSOutputFormatter)outMap.get("outputHandler");
-        assertNotNull("got null output", output);
-        output.writeOutput(write);
-    }
-
     @Test
-    public void testParseSST1() {
+    public void testGetObsGridSSTSingleLatLon() {
         System.out.println("\n------" + getCurrentMethod() + "------");
         
         try {
-            NetcdfDataset dataset = NetcdfDataset.openDataset(testGetCapsSST1);
-            SOSParser md = new SOSParser();
+            NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + sst_1);
             Writer writer = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, baseRequest, testGetCapsSST1),writer);
+            SOSParser parser = new SOSParser();
+            try {
+                sst_1_reqs += URLEncoder.encode("text/xml;subtype=\"om/1.0.0\"", "UTF-8");
+            } catch (Exception e) {
+                System.out.println("couldn't encode for sst1 - " + e.getMessage());
+            }
+            HashMap<String, Object> outMap = parser.enhance(dataset, sst_1_reqs, baseLocalDir + sst_1);
+            SOSOutputFormatter output = (SOSOutputFormatter)outMap.get("outputHandler");
+            assertNotNull("output is null", output);
+            output.writeOutput(writer);
             writer.flush();
             writer.close();
-            String fileName = "getCapsSST1.xml";
-            fileWriter(outputDir, fileName, writer);
+            fileWriter(outputDir, "testGetObsGridSSTSingleLatLon_output.xml", writer);
             // write as an example
-            fileWriter(exampleOutputDir, "GetCapabilities-Grid-om1.0.0.xml", writer);
-            assertFalse(writer.toString().contains("Exception"));
+            fileWriter(exampleOutputDir, "GetObservation-Grid-om1.0.0.xml", writer);
+            assertFalse("Have an exception in output", writer.toString().contains("Exception"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -116,19 +117,26 @@ public class GridCapsTest {
     }
     
     @Test
-    public void testParseSST2() {
+    public void testGetObsGridSSTMultipleLatLon() {
         System.out.println("\n------" + getCurrentMethod() + "------");
         
         try {
-            NetcdfDataset dataset = NetcdfDataset.openDataset(testGetCapsSST2);
-            SOSParser md = new SOSParser();
+            NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + sst_2);
             Writer writer = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, baseRequest, testGetCapsSST2),writer);
+            SOSParser parser = new SOSParser();
+            try {
+                sst_2_reqs += URLEncoder.encode("text/xml;subtype=\"om/1.0.0\"", "UTF-8");
+            } catch (Exception e) {
+                System.out.println("couldn't encode for sst1 - " + e.getMessage());
+            }
+            HashMap<String, Object> outMap = parser.enhance(dataset, sst_2_reqs, baseLocalDir + sst_2);
+            SOSOutputFormatter output = (SOSOutputFormatter)outMap.get("outputHandler");
+            assertNotNull("output is null", output);
+            output.writeOutput(writer);
             writer.flush();
             writer.close();
-            String fileName = "getCapsSST2.xml";
-            fileWriter(outputDir, fileName, writer);
-            assertFalse(writer.toString().contains("Exception"));
+            fileWriter(outputDir, "testGetObsGridSSTMultipleLatLon_output.xml", writer);
+            assertFalse("Have an exception in output", writer.toString().contains("Exception"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -148,5 +156,4 @@ public class GridCapsTest {
 //            System.out.println("------END " + getCurrentMethod() + "------");
 //        }
 //    }
-
 }
