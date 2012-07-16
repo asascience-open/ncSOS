@@ -4,6 +4,7 @@
  */
 package com.asascience.ncsos.outputformatter;
 
+import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
@@ -13,7 +14,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
-import com.asascience.ncsos.util.XMLDomUtils;
 
 /**
  *
@@ -25,18 +25,33 @@ public class GetCapsOutputter implements SOSOutputFormatter {
     
     private final static String TEMPLATE = "templates/sosGetCapabilities.xml";
 
+    /**
+     * 
+     */
     public GetCapsOutputter() {
         document = parseTemplateXML();
     }
     
+    /**
+     * 
+     * @return
+     */
     public String getTemplateLocation() {
         return TEMPLATE;
     }
     
+    /**
+     * 
+     * @return
+     */
     public Document getDocument() {
         return document;
     }
     
+    /**
+     * 
+     * @param setter
+     */
     public void setDocument(Document setter) {
         this.document = setter;
     }

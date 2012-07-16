@@ -2,11 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package thredds.server.sos.getCaps;
+package com.asascience.ncsos.getCaps;
 
 import com.asascience.ncsos.getcaps.SOSGetCapabilitiesRequestHandler;
 import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import com.asascience.ncsos.service.SOSParser;
+import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.*;
 import java.util.Formatter;
 import java.util.HashMap;
@@ -15,7 +16,6 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
-import com.asascience.ncsos.util.XMLDomUtils;
 import ucar.nc2.constants.FeatureType;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.ft.FeatureDataset;
@@ -30,25 +30,16 @@ public class SOSgetCapsTest {
     // base location of resources
     private static String baseLocalDir = null;
     private static String baseTomcatDir = null;
+    private static String exampleOutputDir = null;
     
     // work thredds
     private static String catalinaThredds = "work/Catalina/localhost/thredds";
 
     //imeds data
     private static String imeds1 = "resources/datasets/sura/Hsig_UNDKennedy_IKE_VIMS_3D_WAVEONLY.nc";
-    private static String imeds2 = "resources/datasets/sura/andrw.lft.nc";
-    private static String imeds3 = "resources/datasets/sura/audry.bpt.nc";
-    private static String imeds4 = "resources/datasets/sura/hs_USACE-CHL.nc";
     private static String imeds5 = "resources/datasets/sura/hwm_TCOON_NAVD88.nc";
-    private static String imeds6 = "resources/datasets/sura/tm_CSI.nc";
-    private static String imeds7 = "resources/datasets/sura/tm_IKE.nc";
     private static String imeds8 = "resources/datasets/sura/watlev_CRMS.nc";
-    private static String imeds9 = "resources/datasets/sura/watlev_CRMS_2005.nc";
-    private static String imeds10 = "resources/datasets/sura/watlev_CRMS_2008.F.C_IKE_VIMS_3D_NOWAVE.nc";
-    private static String imeds11 = "resources/datasets/sura/watlev_CRMS_2008.F.C__IKE_VIMS_3D_WITHWAVE.nc";
-    private static String imeds12 = "resources/datasets/sura/watlev_CSI.nc";
     private static String imeds13 = "resources/datasets/sura/watlev_IKE.nc";
-    private static String imeds14 = "resources/datasets/sura/watlev_IKE.P.UL-Ike2Dh.61.nc";
     private static String imeds15 = "resources/datasets/sura/watlev_NOAA_NAVD_PRE.nc";
     //timeseries
     private static String tsIncompleteMultiDimensionalMultipleStations = "resources/datasets/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc";
@@ -68,16 +59,19 @@ public class SOSgetCapsTest {
     private static String OrthogonalMultiDimensionalMultipleProfiles = "resources/datasets/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1.nc";
     private static String OrthogonalSingleDimensionalSingleProfile = "resources/datasets/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3.nc";
 //    public static String base = "C:/Users/scowan/Projects/maven/ncSOS/src/test/java/com/asascience/ncSOS/getCaps/output/";
-    public static String base = null;
+    private static String base = null;
     
-    public static String baseRequest = "request=GetCapabilities&version=1.0.0&service=sos&responseformat=oostethysswe";
+    private static String baseRequest = "request=GetCapabilities&version=1.0.0&service=sos";
     // trajectories
-    public static String TCRMTH43 = "resources/datasets/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc";
+    private static String TCRMTH43 = "resources/datasets/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc";
+    
+    // section
+    private static String SectionMultidimensionalMultiTrajectories = "resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc";
     
     @BeforeClass
     public static void SetupEnviron() throws FileNotFoundException {
         // not really a test, just used to set up the various string values
-        if (base != null && baseLocalDir != null && baseTomcatDir != null) {
+        if (base != null && baseLocalDir != null && baseTomcatDir != null && exampleOutputDir != null) {
             // exit early if the environ is already set
             return;
         }
@@ -91,6 +85,9 @@ public class SOSgetCapsTest {
             base = XMLDomUtils.getNodeValue(configDoc, container, "outputBase");
             baseLocalDir = XMLDomUtils.getNodeValue(configDoc, container, "projectDir");
             baseTomcatDir = XMLDomUtils.getNodeValue(configDoc, container, "tomcatLocation");
+            
+            container = "examples";
+            exampleOutputDir = XMLDomUtils.getNodeValue(configDoc, container, "outputDir");
         } finally {
             if (templateInputStream != null) {
                 try {
@@ -118,6 +115,15 @@ public class SOSgetCapsTest {
         output.close();
         System.out.println("Your file has been written");
     }    
+    
+    private static String getCurrentMethod() {
+        final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
+        for (int i=0; i<ste.length; i++) {
+            if (ste[i].getMethodName().contains(("test")))
+                return ste[i].getMethodName();
+        }
+        return "could not find test name";
+    }
     
     @Test
     public void testCanIdentifyTimeSeriesCDM() throws IOException {
@@ -151,6 +157,8 @@ public class SOSgetCapsTest {
         assertFalse(write.toString().contains("Exception"));
         String fileName = "trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.xml";
         fileWriter(base, fileName, write);
+        // write as an example
+        fileWriter(exampleOutputDir, "GetCapabilities-Trajectory.xml", write);
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
         //traj
     }
@@ -164,9 +172,9 @@ public class SOSgetCapsTest {
         writeOutput(md.enhance(dataset, baseRequest, baseLocalDir + TCRMTH43),write);
         write.flush();
         write.close();
-        assertFalse(write.toString().contains("Exception"));
         String fileName = "trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.xml";
         fileWriter(base, fileName, write);
+        assertFalse(write.toString().contains("Exception"));
         assertTrue(write.toString().contains("<gml:lowerCorner>3.024412155151367 -68.12552642822266</gml:lowerCorner>"));
         assertTrue(write.toString().contains("<gml:upperCorner>43.00862503051758 -1.6318601369857788</gml:upperCorner>"));
         //traj
@@ -325,6 +333,8 @@ public class SOSgetCapsTest {
         }
         String fileName = "tsOrthogonalMultidimenstionalMultipleStations.xml";
         fileWriter(base, fileName, write);
+        // write as an example
+        fileWriter(exampleOutputDir, "GetCapabilities-TimeSeries.xml", write);
         if(!write.toString().contains("<ObservationOffering gml:id=")) {
             System.out.println("does not have expected tag - testOrthogonalMultidimenstionalMultipleStations");
             assertTrue(write.toString().contains("<ObservationOffering gml:id="));
@@ -381,6 +391,8 @@ public class SOSgetCapsTest {
         assertFalse(write.toString().contains("Exception"));
         String fileName = "OrthogonalMultidimensionalMultiStations.xml";
         fileWriter(base, fileName, write);
+        // write as an example
+        fileWriter(exampleOutputDir, "GetCapabilities-TimeSeriesProfile.xml", write);
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
         
     }
@@ -450,6 +462,8 @@ public class SOSgetCapsTest {
         assertFalse(write.toString().contains("Exception"));
         String fileName = "ContiguousRaggedMultipleProfiles.xml";
         fileWriter(base, fileName, write);
+        // write as an example
+        fileWriter(exampleOutputDir, "GetCapabilities-Profile.xml", write);
         assertTrue(write.toString().contains("<ObservationOffering gml:id="));
         System.out.println("----end------");
         //profile
@@ -696,4 +710,41 @@ public class SOSgetCapsTest {
         assertTrue(write.toString().contains("Exception"));
         System.out.println("------end------");
     }
+    
+    @Test
+    public void testSectionMultidimensionalMultiTrajectories() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(SectionMultidimensionalMultiTrajectories);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, baseRequest, SectionMultidimensionalMultiTrajectories),write);
+            write.flush();
+            write.close();
+            String fileName = "trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.xml";
+            fileWriter(base, fileName, write);
+            // write as an example
+            fileWriter(exampleOutputDir, "GetCapabilities-Section.xml", write);
+            assertFalse(write.toString().contains("Exception"));
+            assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+//    @Test
+//    public void testInsertClassNameHere() {
+//        System.out.println("\n------" + getCurrentMethod() + "------");
+//        
+//        try {
+//            
+//        } catch (IOException ex) {
+//            System.out.println(ex.getMessage());
+//        } finally {
+//            System.out.println("------END " + getCurrentMethod() + "------");
+//        }
+//    }
 }

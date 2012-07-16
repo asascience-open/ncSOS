@@ -1,5 +1,6 @@
 package com.asascience.ncsos.cdmclasses;
 
+import com.asascience.ncsos.getobs.SOSObservationOffering;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,18 +10,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
-import com.asascience.ncsos.getobs.SOSObservationOffering;
 import ucar.nc2.ft.*;
 import ucar.nc2.units.DateFormatter;
 import ucar.unidata.geoloc.Station;
 
 /**
- * RPS - ASA
+ * Provides methods to gather information from Trajectory datasets needed for requests: GetCapabilities, GetObservations
  * @author abird
- * @version 
- *
- *handles TRAJECTORY CDM DATA TYPE 
- *
+ * @version 1.0.0
  */
 public class Trajectory extends baseCDMClass implements iStationData {
 
@@ -28,7 +25,14 @@ public class Trajectory extends baseCDMClass implements iStationData {
     private final String[] variableNames;
     private TrajectoryFeatureCollection trajectoryData;
     private ArrayList<TrajectoryFeature> trajList;
+    private ArrayList<Double> altMin, altMax;
 
+    /**
+     * 
+     * @param stationName
+     * @param eventTime
+     * @param variableNames
+     */
     public Trajectory(String[] stationName, String[] eventTime, String[] variableNames) {
         startDate = null;
         endDate = null;
@@ -37,8 +41,19 @@ public class Trajectory extends baseCDMClass implements iStationData {
         reqStationNames.addAll(Arrays.asList(stationName));
         this.eventTimes = new ArrayList<String>();
         eventTimes.addAll(Arrays.asList(eventTime));
+        
+        upperAlt = Double.NEGATIVE_INFINITY;
+        lowerAlt = Double.POSITIVE_INFINITY;
     }
 
+    /**
+     * 
+     * @param trajFeatureIterator
+     * @param valueList
+     * @param dateFormatter
+     * @param builder
+     * @throws IOException
+     */
     public void addAllTrajectoryData(PointFeatureIterator trajFeatureIterator, List<String> valueList, DateFormatter dateFormatter, StringBuilder builder) throws IOException {
         while (trajFeatureIterator.hasNext()) {
             PointFeature trajFeature = trajFeatureIterator.next();
@@ -47,18 +62,26 @@ public class Trajectory extends baseCDMClass implements iStationData {
         }
     }
 
+    /**
+     * 
+     * @param valueList
+     * @param dateFormatter
+     * @param trajFeature
+     * @param builder
+     * @throws IOException
+     */
     public void addDataLine(List<String> valueList, DateFormatter dateFormatter, PointFeature trajFeature, StringBuilder builder) throws IOException {
         valueList.add("time=" + dateFormatter.toDateTimeStringISO(trajFeature.getObservationTimeAsDate()));
 
         for (int i = 0; i < variableNames.length; i++) {
             valueList.add(variableNames[i] + "=" + trajFeature.getData().getScalarObject(variableNames[i]).toString());
-            builder.append(valueList.get(i));
-            if (i < variableNames.length - 1) {
-                builder.append(",");
-            }
         }
-        builder.append(" ");
-        builder.append("\n");
+
+        for (String str : valueList) {
+            builder.append(str).append(",");
+        }
+        
+        builder.deleteCharAt(builder.length() - 1).append(";");
     }
 
     @Override
@@ -69,6 +92,9 @@ public class Trajectory extends baseCDMClass implements iStationData {
 
         DateTime dtSearchStart = null;
         DateTime dtSearchEnd = null;
+        
+        altMax = new ArrayList<Double>();
+        altMin = new ArrayList<Double>();
 
         boolean firstSet = true;
 
@@ -101,6 +127,33 @@ public class Trajectory extends baseCDMClass implements iStationData {
                     String stName = it.next();
                     if (stName.equalsIgnoreCase(n)) {
                         trajList.add(trajFeature);
+                    
+                        double localAltMin = Double.POSITIVE_INFINITY;
+                        double localAltMax = Double.NEGATIVE_INFINITY;
+                        // get altitude
+                        for (trajFeature.resetIteration();trajFeature.hasNext();) {
+                            PointFeature point = trajFeature.next();
+
+                            if (point == null || point.getLocation() == null)
+                                continue;
+
+                            double altitude = point.getLocation().getAltitude();
+                            if (altitude == Invalid_Value)
+                                continue;
+
+                            if (altitude > localAltMax) 
+                                localAltMax = altitude;
+                            if (altitude < localAltMin)
+                                localAltMin = altitude;
+                        }
+                        
+                        if (localAltMin < lowerAlt)
+                            lowerAlt = localAltMin;
+                        if (localAltMax > upperAlt)
+                            upperAlt = localAltMax;
+
+                        altMax.add(localAltMax);
+                        altMin.add(localAltMin);
                     }
                 }
 
@@ -150,7 +203,7 @@ public class Trajectory extends baseCDMClass implements iStationData {
     }
 
     @Override
-    public void setInitialLatLonBounaries(List<Station> tsStationList) {
+    public void setInitialLatLonBoundaries(List<Station> tsStationList) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -211,6 +264,29 @@ public class Trajectory extends baseCDMClass implements iStationData {
             return Invalid_Value;
         }
     }
+    
+    @Override
+    public double getLowerAltitude(int stNum) {
+        try {
+            if (altMin != null) {
+                return altMin.get(stNum);
+            }
+        } catch (Exception e) { 
+            System.out.println("Exception in getLowerAltitude - " + e.getMessage());
+        }
+        return Invalid_Value;
+    }
+    @Override
+    public double getUpperAltitude(int stNum) {
+        try {
+            if (altMax != null) {
+                return altMax.get(stNum);
+            }
+        } catch (Exception e) {
+            System.out.println("error in get upper altitude - " + e.getMessage());
+        }
+        return Invalid_Value;
+    }
 
     @Override
     public String getTimeEnd(int stNum) {
@@ -236,12 +312,11 @@ public class Trajectory extends baseCDMClass implements iStationData {
      * @param document
      * @param featureOfInterest
      * @param GMLName
-     * @param format
      * @param observedPropertyList
      * @return
      * @throws IOException 
      */
-    public static Document getCapsResponse(FeatureCollection dataset, Document document, String featureOfInterest, String GMLName, String format, List<String> observedPropertyList) throws IOException {
+    public static Document getCapsResponse(FeatureCollection dataset, Document document, String featureOfInterest, String GMLName, List<String> observedPropertyList) throws IOException {
         //PointFeatureIterator trajIter;
 
 
@@ -271,7 +346,6 @@ public class Trajectory extends baseCDMClass implements iStationData {
             newOffering.setObservationProcedureLink(GMLName + ((tFeature.getName())));
             newOffering.setObservationSrsName("EPSG:4326");  // TODO?  
             newOffering.setObservationObserveredList(observedPropertyList);
-            newOffering.setObservationFormat(format);
 
             document = CDMUtils.addObsOfferingToDoc(newOffering, document);
         }

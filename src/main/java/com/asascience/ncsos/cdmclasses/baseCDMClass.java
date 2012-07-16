@@ -12,31 +12,25 @@ import ucar.unidata.geoloc.Station;
 
 /**
  * @author abird
- * @version 
- *
- * 
- *
+ * @version 1.0.0
  */
 public abstract class baseCDMClass implements iStationData {
 
-    public double upperLon;
-    public double lowerLat;
-    public double lowerLon;
-    public double upperLat;
-    public String startDate;
-    public String endDate;
-    public List<String> reqStationNames;
-    public int numberOfStations;
-    public static final String DATA_RESPONSE_ERROR = "Data Response IO Error: ";
-    public static final String ERROR_NULL_DATE = "ERROR NULL Date!!!!";
-    public static final int Invalid_Value = -9999999;
-    public static final String Invalid_Station = "INVALID_ST";
-    Chronology chrono = ISOChronology.getInstance();
-    DateFormatter df = new DateFormatter();
+    protected double upperLon, lowerLon, lowerLat, upperLat, lowerAlt, upperAlt;
+    protected String startDate;
+    protected String endDate;
+    protected List<String> reqStationNames;
+    protected int numberOfStations;
+    protected static final String DATA_RESPONSE_ERROR = "Data Response IO Error: ";
+    protected static final String ERROR_NULL_DATE = "ERROR NULL Date!!!!";
+    protected static final int Invalid_Value = -9999999;
+    protected static final String Invalid_Station = "INVALID_ST";
+    protected Chronology chrono = ISOChronology.getInstance();
+    protected DateFormatter df = new DateFormatter();
     
     
     @Override
-    public void checkLatLonBoundaries(List<Station> stationList, int i) {
+    public void checkLatLonAltBoundaries(List<Station> stationList, int i) {
         //LAT?LON PARSING
         //lat
         if (stationList.get(i).getLatitude() > upperLat) {
@@ -51,6 +45,13 @@ public abstract class baseCDMClass implements iStationData {
         }
         if (stationList.get(i).getLongitude() < lowerLon) {
             lowerLon = stationList.get(i).getLongitude();
+        }
+        // alt
+        if (stationList.get(i).getAltitude() > upperAlt) {
+            upperAlt = stationList.get(i).getAltitude();
+        }
+        if (stationList.get(i).getAltitude() < lowerAlt) {
+            lowerAlt = stationList.get(i).getAltitude();
         }
     }
 
@@ -107,6 +108,29 @@ public abstract class baseCDMClass implements iStationData {
     @Override
     public int getNumberOfStations() {
         return numberOfStations;
+    }
+    
+    @Override
+    public double getLowerAltitude(int stNum) {
+        return 0;
+    }
+    @Override
+    public double getUpperAltitude(int stNum) {
+        return 0;
+    }
+    
+    @Override
+    public double getBoundLowerAlt() {
+        if (Double.toString(lowerAlt).contains("fin") || Double.toString(lowerAlt).equalsIgnoreCase("nan"))
+            return 0;
+        return lowerAlt;
+    }
+    
+    @Override
+    public double getBoundUpperAlt() {
+        if (Double.toString(lowerAlt).contains("fin") || Double.toString(upperAlt).equalsIgnoreCase("nan"))
+            return 0;
+        return upperAlt;
     }
     
 }

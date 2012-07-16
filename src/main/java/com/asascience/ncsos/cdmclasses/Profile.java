@@ -4,6 +4,7 @@
  */
 package com.asascience.ncsos.cdmclasses;
 
+import com.asascience.ncsos.getobs.SOSObservationOffering;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,7 +14,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
-import com.asascience.ncsos.getobs.SOSObservationOffering;
 import ucar.nc2.ft.PointFeature;
 import ucar.nc2.ft.PointFeatureIterator;
 import ucar.nc2.ft.ProfileFeature;
@@ -22,26 +22,51 @@ import ucar.nc2.units.DateFormatter;
 import ucar.unidata.geoloc.Station;
 
 /**
+ * Provides methods to gather information from Profile datasets needed for requests: GetCapabilities, GetObservations
  * @author abird
- * @version 
- *
- * 
- *
+ * @version 1.0.0
  */
 public class Profile extends baseCDMClass implements iStationData {
 
+    private final String[] variableNames;
+    private List<ProfileFeature> profileList;
+    private final ArrayList<String> eventTimes;
+    private ProfileFeatureCollection profileData;
+    private ArrayList<Double> altMin, altMax;
    
-/**
+    /**
+     * 
+     * @param stationName
+     * @param eventTime
+     * @param variableNames
+     */
+    public Profile(String[] stationName, String[] eventTime, String[] variableNames) {
+        startDate = null;
+        endDate = null;
+
+        this.variableNames = variableNames;
+
+        this.reqStationNames = new ArrayList<String>();
+        reqStationNames.addAll(Arrays.asList(stationName));
+
+        this.eventTimes = new ArrayList<String>();
+        eventTimes.addAll(Arrays.asList(eventTime));
+        
+        lowerAlt = Double.POSITIVE_INFINITY;
+        upperAlt = Double.NEGATIVE_INFINITY;
+    }
+    
+    /**
      * gets the Profile response for the getcaps request
      * @param profileCollection
      * @param document
      * @param featureOfInterestBase
      * @param GMLName
-     * @param format
      * @param observedPropertyList
-     * @return 
+     * @return
+     * @throws IOException  
      */
-    public static Document getCapsResponse(ProfileFeatureCollection profileCollection, Document document, String featureOfInterestBase, String GMLName, String format, List<String> observedPropertyList) throws IOException {
+    public static Document getCapsResponse(ProfileFeatureCollection profileCollection, Document document, String featureOfInterestBase, String GMLName, List<String> observedPropertyList) throws IOException {
         String profileID = null;
         
         PointFeatureIterator pp = null;
@@ -90,7 +115,6 @@ public class Profile extends baseCDMClass implements iStationData {
             }
             newOffering.setObservationSrsName("EPSG:4326");  // TODO?  
             newOffering.setObservationObserveredList(observedPropertyList);
-            newOffering.setObservationFormat(format);
             document = CDMUtils.addObsOfferingToDoc(newOffering,document);
         }
 
@@ -103,130 +127,9 @@ public class Profile extends baseCDMClass implements iStationData {
          return document;
     }
 
-     
-    
-    private final String[] variableNames;
-    private List<ProfileFeature> profileList;
-    private final ArrayList<String> eventTimes;
-    private ProfileFeatureCollection profileData;
-
-    public Profile(String[] stationName, String[] eventTime, String[] variableNames) {
-        startDate = null;
-        endDate = null;
-
-        this.variableNames = variableNames;
-
-        this.reqStationNames = new ArrayList<String>();
-        reqStationNames.addAll(Arrays.asList(stationName));
-
-        this.eventTimes = new ArrayList<String>();
-        eventTimes.addAll(Arrays.asList(eventTime));
-    }
-
-    /*******************PROFILE**************************/
-    private String createProfileFeature(int stNum) throws IOException {
-        StringBuilder builder = new StringBuilder();
-        DateFormatter dateFormatter = new DateFormatter();
-        List<String> valueList = new ArrayList<String>();
-
-        //if multi Time
-        if (eventTimes.size() > 1) {
-            //get the profile collection, and loop through
-            //while has next
-
-            for (int i = 0; i < profileList.size(); i++) {
-                //grab the profile
-                ProfileFeature pFeature = profileList.get(i);
-                if (pFeature != null) {
-
-                    //output the name
-                    DateTime dtStart = new DateTime(df.getISODate(eventTimes.get(0)), chrono);
-                    DateTime dtEnd = new DateTime(df.getISODate(eventTimes.get(1)), chrono);
-                    DateTime tsDt = new DateTime(pFeature.getName(), chrono);
-                    
-                    //find out if current time(searchtime) is one or after startTime
-                    //same as start
-                    if (tsDt.isEqual(dtStart)) {
-                        addProfileData(valueList, dateFormatter, builder, pFeature.getPointFeatureIterator(-1), stNum);
-                    } //equal end
-                    else if (tsDt.isEqual(dtEnd)) {
-                        addProfileData(valueList, dateFormatter, builder, pFeature.getPointFeatureIterator(-1), stNum);
-                    } //afterStart and before end       
-                    else if (tsDt.isAfter(dtStart) && (tsDt.isBefore(dtEnd))) {
-                        addProfileData(valueList, dateFormatter, builder, pFeature.getPointFeatureIterator(-1), stNum);
-                    } else {
-                        System.out.println("tsDt is not equal to any known case");
-                    }
-                    //setCount(pFeature.size());
-
-                }
-            }
-
-        } //if not multiTime        
-        else {
-            ProfileFeature pFeature = profileList.get(stNum);
-            addProfileData(valueList, dateFormatter, builder, pFeature.getPointFeatureIterator(-1), stNum);
-        }
-        
-        return builder.toString();
-    }
-
-    public void addProfileData(List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, PointFeatureIterator profileIterator, int stNum) throws IOException {
-        //set the iterator the the correct profile
-        while (profileIterator.hasNext()) {
-            PointFeature pointFeature = profileIterator.next();
-            valueList.clear();
-            valueList.add("time=" + dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
-
-            String profileID = getProfileIDFromProfile(pointFeature);
-            //if there is a profile id use it against the data that is requested
-            if (profileID != null) {
-                //System.out.println(profileID);
-                if (profileID.equalsIgnoreCase(reqStationNames.get(stNum))) {
-                    addProfileDataToBuilder(valueList, pointFeature, builder);
-                } else {
-                    System.out.println("Not adding profile data to builder");
-                }
-            } else {
-                addProfileDataToBuilder(valueList, pointFeature, builder);
-            }
-        }
-    }
-
-    public void addProfileDataToBuilder(List<String> valueList, PointFeature pointFeature, StringBuilder builder) throws IOException {
-        for (String variableName : variableNames) {
-            valueList.add(variableName + "=" + pointFeature.getData().getScalarObject(variableName).toString());
-        }
-
-        for (int i = 0; i < valueList.size(); i++) {
-            builder.append(valueList.get(i));
-            if (i < valueList.size() - 1) {
-                builder.append(",");
-            }
-        }
-
-        //builder.append(tokenJoiner.join(valueList));
-//        builder.append(" ");
-//        builder.append("\n");
-        builder.append(";");
-    }
-
-    /**
-     * gets the station/profile id from the point feature
-     * @param pointFeature
-     * @return 
-     */
-    public static String getProfileIDFromProfile(PointFeature pointFeature) {
-        String profileID = null;
-        //Try and get profileID
-        try {
-            profileID = (pointFeature.getData().getScalarObject("profile").toString());
-        } //if it is not there dont USE IT!,,,,,but maybe warn that it is not there?        
-        catch (Exception e) {
-            //Logger.getLogger(SOSGetObservationRequestHandler.class.getName()).log(Level.INFO, "ERROR PROFILE ID NO AVAILABLE \n Must be single Profile \n", e);
-        }
-        return profileID;
-    }
+    /************************
+     * iStationData Methods *
+     **************************************************************************/
 
     @Override
     public void setData(Object profilePeatureCollection) throws IOException {
@@ -236,6 +139,9 @@ public class Profile extends baseCDMClass implements iStationData {
 
         DateTime dtSearchStart = null;
         DateTime dtSearchEnd = null;
+        
+        altMin = new ArrayList<Double>();
+        altMax = new ArrayList<Double>();
 
         boolean firstSet = true;
 
@@ -276,6 +182,29 @@ public class Profile extends baseCDMClass implements iStationData {
                     String stName = it.next();
                     if (stName.equalsIgnoreCase(profileID)) {
                         profileList.add(pFeature);
+                        
+                        // check local altitude
+                        double altmin = Double.POSITIVE_INFINITY;
+                        double altmax = Double.NEGATIVE_INFINITY;
+                        
+                        for (pFeature.resetIteration();pFeature.hasNext();) {
+                            PointFeature point = pFeature.next();
+                            
+                            double alt = point.getLocation().getAltitude();
+                            
+                            if (alt < altmin)
+                                altmin = alt;
+                            if (alt > altmax)
+                                altmax = alt;
+                        }
+                        
+                        if (altmin < lowerAlt)
+                            lowerAlt = altmin;
+                        if (altmax > upperAlt)
+                            upperAlt = altmax;
+                        
+                        altMin.add(altmin);
+                        altMax.add(altmax);
                     }
                 }
 
@@ -329,7 +258,7 @@ public class Profile extends baseCDMClass implements iStationData {
     }
 
     @Override
-    public void setInitialLatLonBounaries(List<Station> tsStationList) {
+    public void setInitialLatLonBoundaries(List<Station> tsStationList) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -392,6 +321,30 @@ public class Profile extends baseCDMClass implements iStationData {
             return Invalid_Value;
         }
     }
+    
+    @Override
+    public double getLowerAltitude(int stNum) {
+        if (altMin != null && altMin.size() > stNum) {
+            double retval = altMin.get(stNum);
+            if (retval == Double.NaN || retval == Double.POSITIVE_INFINITY)
+                retval = 0;
+            return retval;
+        } else {
+            return Invalid_Value;
+        }
+    }
+    
+    @Override
+    public double getUpperAltitude(int stNum) {
+        if (altMax != null && altMax.size() > stNum) {
+            double retval = altMax.get(stNum);
+            if (retval == Double.NaN || retval == Double.POSITIVE_INFINITY)
+                retval = 0;
+            return retval;
+        } else {
+            return Invalid_Value;
+        }
+    }
 
     @Override
     public String getTimeEnd(int stNum) {
@@ -416,4 +369,106 @@ public class Profile extends baseCDMClass implements iStationData {
     public String getDescription(int stNum) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    
+    /**************************************************************************/
+    
+    private void addProfileData(List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, PointFeatureIterator profileIterator, int stNum) throws IOException {
+        //set the iterator the the correct profile
+        while (profileIterator.hasNext()) {
+            PointFeature pointFeature = profileIterator.next();
+            valueList.clear();
+            valueList.add("time=" + dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
+
+            String profileID = getProfileIDFromProfile(pointFeature);
+            //if there is a profile id use it against the data that is requested
+            if (profileID != null) {
+                //System.out.println(profileID);
+                if (profileID.equalsIgnoreCase(reqStationNames.get(stNum))) {
+                    addProfileDataToBuilder(valueList, pointFeature, builder);
+                } else {
+                    System.out.println("Not adding profile data to builder");
+                }
+            } else {
+                addProfileDataToBuilder(valueList, pointFeature, builder);
+            }
+        }
+    }
+
+    private void addProfileDataToBuilder(List<String> valueList, PointFeature pointFeature, StringBuilder builder) throws IOException {
+        for (String variableName : variableNames) {
+            valueList.add(variableName + "=" + pointFeature.getData().getScalarObject(variableName).toString());
+        }
+
+        for (int i = 0; i < valueList.size(); i++) {
+            builder.append(valueList.get(i));
+            if (i < valueList.size() - 1) {
+                builder.append(",");
+            }
+        }
+
+        //builder.append(tokenJoiner.join(valueList));
+//        builder.append(" ");
+//        builder.append("\n");
+        builder.append(";");
+    }
+
+    private static String getProfileIDFromProfile(PointFeature pointFeature) {
+        String profileID = null;
+        //Try and get profileID
+        try {
+            profileID = (pointFeature.getData().getScalarObject("profile").toString());
+        } //if it is not there dont USE IT!,,,,,but maybe warn that it is not there?        
+        catch (Exception e) {
+            //Logger.getLogger(SOSGetObservationRequestHandler.class.getName()).log(Level.INFO, "ERROR PROFILE ID NO AVAILABLE \n Must be single Profile \n", e);
+        }
+        return profileID;
+    }
+    
+    private String createProfileFeature(int stNum) throws IOException {
+        StringBuilder builder = new StringBuilder();
+        DateFormatter dateFormatter = new DateFormatter();
+        List<String> valueList = new ArrayList<String>();
+
+        //if multi Time
+        if (eventTimes.size() > 1) {
+            //get the profile collection, and loop through
+            //while has next
+
+            for (int i = 0; i < profileList.size(); i++) {
+                //grab the profile
+                ProfileFeature pFeature = profileList.get(i);
+                if (pFeature != null) {
+
+                    //output the name
+                    DateTime dtStart = new DateTime(df.getISODate(eventTimes.get(0)), chrono);
+                    DateTime dtEnd = new DateTime(df.getISODate(eventTimes.get(1)), chrono);
+                    DateTime tsDt = new DateTime(pFeature.getName(), chrono);
+                    
+                    //find out if current time(searchtime) is one or after startTime
+                    //same as start
+                    if (tsDt.isEqual(dtStart)) {
+                        addProfileData(valueList, dateFormatter, builder, pFeature.getPointFeatureIterator(-1), stNum);
+                    } //equal end
+                    else if (tsDt.isEqual(dtEnd)) {
+                        addProfileData(valueList, dateFormatter, builder, pFeature.getPointFeatureIterator(-1), stNum);
+                    } //afterStart and before end       
+                    else if (tsDt.isAfter(dtStart) && (tsDt.isBefore(dtEnd))) {
+                        addProfileData(valueList, dateFormatter, builder, pFeature.getPointFeatureIterator(-1), stNum);
+                    } else {
+                        System.out.println("tsDt is not equal to any known case");
+                    }
+                    //setCount(pFeature.size());
+
+                }
+            }
+
+        } //if not multiTime        
+        else {
+            ProfileFeature pFeature = profileList.get(stNum);
+            addProfileData(valueList, dateFormatter, builder, pFeature.getPointFeatureIterator(-1), stNum);
+        }
+        
+        return builder.toString();
+    }
+
 }
