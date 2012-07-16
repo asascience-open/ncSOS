@@ -225,24 +225,40 @@ public class DiscreteSamplingGeometryUtil {
 
                     if (featureCollection instanceof StationTimeSeriesFeatureCollection) {
                         return (StationTimeSeriesFeatureCollection) featureCollection;
+                        
                     } else if (featureCollection instanceof StationProfileFeatureCollection) {
                         return (StationProfileFeatureCollection) featureCollection;
+                        
                     } else if (featureCollection instanceof StationPointFeature) {
                         //System.out.println("point feature");
+                        
                     } else if (featureCollection instanceof StationProfileFeature) {
                         //System.out.println("profile feature");
+                        
                     } else if (featureCollection instanceof StationTimeSeriesFeature) {
                         //System.out.println("StationTimeSeriesFeature feature");
+                        
                     } else if (featureCollection instanceof ProfileFeature) {
                         //System.out.println("profile feature");
+                        
                     } else if (featureCollection instanceof ProfileFeatureCollection) {
                         return (ProfileFeatureCollection) featureCollection;
+                        
                     } else if (featureCollection instanceof TrajectoryFeature) {
                         return (TrajectoryFeature) featureCollection;
+                        
                     } else if (featureCollection instanceof TrajectoryFeatureCollection) {
                         return (TrajectoryFeatureCollection) featureCollection;
+                        
                     } else if (featureCollection instanceof PointFeatureCollection) {
                         return (PointFeatureCollection) featureCollection;
+                        
+                    } else if (featureCollection instanceof SectionFeature) {
+                        return (SectionFeature) featureCollection;
+                        
+                    } else if (featureCollection instanceof SectionFeatureCollection) {
+                        return (SectionFeatureCollection) featureCollection;
+                        
                     }
                     //********** 
 

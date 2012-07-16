@@ -43,12 +43,19 @@ public class OosTethysSwe implements SOSOutputFormatter {
     private static final String OM_OBSERVATION = "om:Observation";
     private static final String STATION_GML_BASE = "urn:tds:station.sos:";
     private static final String NAN = "NaN";
-    private static final String TEMPLATE = "templates/sosGetObservation.xml";
+    private static final String TEMPLATE = "templates/oostethysswe.xml";
     
+    /**
+     * 
+     * @param variableNames
+     * @param featureDataset
+     * @param cdmDataset
+     * @param netcdfDataset
+     */
     public OosTethysSwe(String[] variableNames,
             FeatureDataset featureDataset,
             iStationData cdmDataset,
-            NetcdfDataset netCDFDataset) {
+            NetcdfDataset netcdfDataset) {
         infoList = new ArrayList<DataSlice>();
         this.featureDataset = featureDataset;
         this.CDMDataSet = cdmDataset;
@@ -58,14 +65,13 @@ public class OosTethysSwe implements SOSOutputFormatter {
         featureOfInterest = "";
         document = parseTemplateXML();
         
-        setMetaData(netCDFDataset.findAttValueIgnoreCase(null, "title", "Empty Title"),
-                    netCDFDataset.findAttValueIgnoreCase(null, "history", "Empty History"),
-                    netCDFDataset.findAttValueIgnoreCase(null, "institution", "Empty Insitution"),
-                    netCDFDataset.findAttValueIgnoreCase(null, "source", "Empty Source"),
-                    netCDFDataset.findAttValueIgnoreCase(null, "description", "Empty Description"),
-                    netCDFDataset.getLocation(),
-                    netCDFDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", null));
-        
+        setMetaData(netcdfDataset.findAttValueIgnoreCase(null, "title", "empty title"),
+                netcdfDataset.findAttValueIgnoreCase(null, "history", "empty history"),
+                netcdfDataset.findAttValueIgnoreCase(null, "institution", "empty institution"),
+                netcdfDataset.findAttValueIgnoreCase(null, "source", "empty source"),
+                netcdfDataset.findAttValueIgnoreCase(null, "description", "empty description"),
+                netcdfDataset.findAttValueIgnoreCase(null, "location", "empty location"),
+                netcdfDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", null));
     }
     
     private void setMetaData(String title,
@@ -84,6 +90,10 @@ public class OosTethysSwe implements SOSOutputFormatter {
         this.featureOfInterest = featureOfInterest;
     }
     
+    /**
+     * 
+     * @return
+     */
     public String getTemplateLocation() {
         return TEMPLATE;
     }
@@ -276,7 +286,7 @@ public class OosTethysSwe implements SOSOutputFormatter {
             document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:description", description, stNum);
             //}
             //add name
-            document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:name", description, stNum);
+            document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:name", title, stNum);
             //add bounded by
             document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:boundedBy", stNum);
             //add envelope and attribute
@@ -399,7 +409,7 @@ public class OosTethysSwe implements SOSOutputFormatter {
      * @return 
      */
     private String getStationLowerLatLonStr(int stNum) {
-        return (new StringBuilder()).append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getLowerLat(stNum))).append(" ").append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getLowerLon(stNum))).append(" ").append("0").toString();
+        return (new StringBuilder()).append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getLowerLat(stNum))).append(" ").append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getLowerLon(stNum))).append(" ").append(CDMDataSet.getLowerAltitude(stNum)).toString();
     }
 
     /**
@@ -407,7 +417,7 @@ public class OosTethysSwe implements SOSOutputFormatter {
      * @return 
      */
     private String getStationUpperLatLonStr(int stNum) {
-        return (new StringBuilder()).append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getUpperLat(stNum))).append(" ").append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getUpperLon(stNum))).append(" ").append("0").toString();
+        return (new StringBuilder()).append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getUpperLat(stNum))).append(" ").append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getUpperLon(stNum))).append(" ").append(CDMDataSet.getUpperAltitude(stNum)).toString();
     }
 
     /**
@@ -415,7 +425,7 @@ public class OosTethysSwe implements SOSOutputFormatter {
      * @return 
      */
     private String getBoundUpperLatLonStr() { 
-        return (new StringBuilder()).append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getBoundUpperLat())).append(" ").append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getBoundUpperLon())).append(" ").append("0").toString();
+        return (new StringBuilder()).append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getBoundUpperLat())).append(" ").append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getBoundUpperLon())).append(" ").append(CDMDataSet.getBoundUpperAlt()).toString();
     }
 
     /**
@@ -423,7 +433,7 @@ public class OosTethysSwe implements SOSOutputFormatter {
      * @return 
      */
     private String getBoundLowerLatLonStr() {
-        return (new StringBuilder()).append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getBoundLowerLat())).append(" ").append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getBoundLowerLon())).append(" ").append("0").toString();
+        return (new StringBuilder()).append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getBoundLowerLat())).append(" ").append(SOSBaseRequestHandler.formatDegree(CDMDataSet.getBoundLowerLon())).append(" ").append(CDMDataSet.getBoundLowerAlt()).toString();
 
     }
     

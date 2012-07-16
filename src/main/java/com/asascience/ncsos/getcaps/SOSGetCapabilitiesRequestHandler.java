@@ -1,11 +1,6 @@
 package com.asascience.ncsos.getcaps;
 
-import com.asascience.ncsos.cdmclasses.TimeSeries;
-import com.asascience.ncsos.cdmclasses.Grid;
-import com.asascience.ncsos.cdmclasses.Trajectory;
-import com.asascience.ncsos.cdmclasses.TimeSeriesProfile;
-import com.asascience.ncsos.cdmclasses.Profile;
-import com.asascience.ncsos.getobs.ObservationOffering;
+import com.asascience.ncsos.cdmclasses.*;
 import com.asascience.ncsos.outputformatter.GetCapsOutputter;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import com.asascience.ncsos.util.DiscreteSamplingGeometryUtil;
@@ -13,8 +8,6 @@ import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.joda.time.Chronology;
-import org.joda.time.chrono.ISOChronology;
 import org.w3c.dom.*;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.constants.FeatureType;
@@ -22,19 +15,25 @@ import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.ft.ProfileFeatureCollection;
 import ucar.nc2.ft.StationProfileFeatureCollection;
 import ucar.nc2.ft.StationTimeSeriesFeatureCollection;
-import ucar.nc2.units.DateFormatter;
 
 /**
- *
+ * Creates basic Get Capabilites request handler that can read from a netcdf dataset
+ * the information needed to populate a get capabilities template.
  * @author Abird
+ * @version 1.0.0
  */
 public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
 
     private final String threddsURI;
-    private final String format = "text/xml; subtype=\"om/1.0.0\"";
-    Chronology chrono = ISOChronology.getInstance();
-    DateFormatter dateFormatter = new DateFormatter();
 
+    /**
+     * Creates an instance of SOSGetCapabilitiesRequestHandler to handle the dataset
+     * and uri from the thredds request.
+     * @param netCDFDataset dataset for which the Get Capabilities request is being
+     * directed to
+     * @param threddsURI uri from the thredds Get Capabilities request
+     * @throws IOException
+     */
     public SOSGetCapabilitiesRequestHandler(NetcdfDataset netCDFDataset, String threddsURI) throws IOException {
         super(netCDFDataset);
         this.threddsURI = threddsURI;
@@ -88,15 +87,6 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         return fstNm1;
     }
 
-    private void checkEndDateElementNode(ObservationOffering offering, Element obsOfferingTimeEndEl) throws DOMException {
-        //check the string to see if it either needs attribute of element
-        if ((offering.getObservationTimeEnd().isEmpty()) || (offering.getObservationTimeEnd().length() < 2) || (offering.getObservationTimeEnd().contentEquals(""))) {
-            obsOfferingTimeEndEl.setAttribute("indeterminatePosition", "unknown");
-        } else {
-            obsOfferingTimeEndEl.appendChild(getDocument().createTextNode(offering.getObservationTimeEnd()));
-        }
-    }
-
     private void setProviderName(Element fstElmnt, String xmlLocation) throws DOMException {
         //get the node named be the string
         NodeList fstNm1 = getXMLNode(fstElmnt, xmlLocation);
@@ -116,20 +106,16 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         }
     }
 
-    public String getInvividualNameSP() {
+    private String getInvividualNameSP() {
         return "";
     }
 
-    public String getPositionNameSP() {
+    private String getPositionNameSP() {
         return "";
     }
 
-    public String getPhoneNoSP() {
+    private String getPhoneNoSP() {
         return "";
-    }
-
-    public String getHTTPGetAddress() {
-        return threddsURI;
     }
 
     /**
@@ -165,6 +151,9 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         fstNm1.item(0).setNodeValue(getPhoneNoSP());
     }
 
+    /**
+     * 
+     */
     public void parseOperationsMetaData() {
         //get operations meta data
         NodeList operationsNodeList = getDocument().getElementsByTagName("ows:OperationsMetadata");
@@ -197,7 +186,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         }
     }
 
-    public void setGetCapabilitiesOperationsMetaData(Element fstNmElmnt) {
+    private void setGetCapabilitiesOperationsMetaData(Element fstNmElmnt) {
         //set get capabilities GET request link
         NodeList fstNm1 = fstNmElmnt.getElementsByTagName("ows:Get");
         Element fstNmElmnt1 = (Element) fstNm1.item(0);
@@ -212,6 +201,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
     /**
      * parses the observation list object and add the observations to the node
      * main location for parsing CDM get caps response 
+     * @throws IOException 
      */
     public void parseObservationList() throws IOException {
         List<VariableSimpleIF> variableList = null;
@@ -240,21 +230,24 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         switch (getDatasetFeatureType()) {
             case TRAJECTORY:
                 try {
-                    setDocument(Trajectory.getCapsResponse(getFeatureTypeDataSet(), getDocument(), getFeatureOfInterestBase(), getGMLNameBase(), format, observedPropertyList));
+                    setDocument(Trajectory.getCapsResponse(getFeatureTypeDataSet(), getDocument(), getFeatureOfInterestBase(), getGMLNameBase(), observedPropertyList));
                 } catch (Exception e) {
                 }
                 break;
             case STATION:
-                setDocument(TimeSeries.getCapsResponse((StationTimeSeriesFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),format,observedPropertyList));
+                setDocument(TimeSeries.getCapsResponse((StationTimeSeriesFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),observedPropertyList));
                 break;
             case STATION_PROFILE:
-                setDocument(TimeSeriesProfile.getCapsResponse((StationProfileFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),format,observedPropertyList));
+                setDocument(TimeSeriesProfile.getCapsResponse((StationProfileFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),observedPropertyList));
                 break;
             case PROFILE:
-                setDocument(Profile.getCapsResponse((ProfileFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),format,observedPropertyList));
+                setDocument(Profile.getCapsResponse((ProfileFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),observedPropertyList));
                 break;
             case GRID:
-                setDocument(Grid.getCapsResponse(getGridDataset(), getDocument(), getGMLNameBase(), format));
+                setDocument(Grid.getCapsResponse(getGridDataset(), getDocument(), getGMLNameBase()));
+                break;
+            case SECTION:
+                setDocument(Section.getCapsResponse(getFeatureTypeDataSet(), getDocument(), getFeatureOfInterestBase(), getGMLNameBase(), observedPropertyList));
                 break;
             default:
                 if (getDatasetFeatureType() != null) {

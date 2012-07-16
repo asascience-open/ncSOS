@@ -4,14 +4,17 @@
  */
 package com.asascience.ncsos.service;
 
+import com.asascience.ncsos.describesen.SOSDescribeSensorHandler;
+import com.asascience.ncsos.getcaps.SOSGetCapabilitiesRequestHandler;
+import com.asascience.ncsos.getobs.SOSGetObservationRequestHandler;
+import com.asascience.ncsos.outputformatter.GetCapsOutputter;
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.*;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.asascience.ncsos.getcaps.SOSGetCapabilitiesRequestHandler;
-import com.asascience.ncsos.getobs.SOSGetObservationRequestHandler;
 import ucar.nc2.dataset.NetcdfDataset;
 /**
  * Reads and parses a request coming in from thredds
@@ -30,7 +33,7 @@ public class SOSParser {
     
     // enum for supported request types (used primarily for string comparison)
     private enum SupportedRequests {
-        GetCapabilities, GetObservation
+        GetCapabilities, GetObservation, DescribeSensor
     }
     
     public SOSParser() {
@@ -43,7 +46,7 @@ public class SOSParser {
      * @param query query string provided by request
      * @param threddsURI 
      */
-    public HashMap<String, Object> enhance(final NetcdfDataset dataset, final String query, String threddsURI) {
+    public HashMap<String, Object> enhance(final NetcdfDataset dataset, final String query, String threddsURI) throws IOException {
         return enhance(dataset, query, threddsURI, null);
     }
 
@@ -54,7 +57,7 @@ public class SOSParser {
      * @param threddsURI
      * @param savePath 
      */
-    public HashMap<String, Object> enhance(final NetcdfDataset dataset, final String query, String threddsURI, String savePath) {
+    public HashMap<String, Object> enhance(final NetcdfDataset dataset, final String query, String threddsURI, String savePath) throws IOException {
         // clear anything that can cause issue if we were to use the same parser for multiple requests
         queryParameters = new HashMap<String, Object>();
         coordsHash = new HashMap<String, String>();
@@ -144,6 +147,7 @@ public class SOSParser {
                             capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
                             capHandler.getOutputHandler().setupExceptionOutput("Observation requests must have offering, observedProperty, eventtime, responseFormat as query parameters");
                             retval.put("outputHandler", capHandler.getOutputHandler());
+                            retval.put("responseContentType", "text/xml");
                         } catch (Exception e) { }
                         break;
                     }
@@ -165,6 +169,12 @@ public class SOSParser {
                                 (String[])queryParameters.get("eventtime"),
                                 queryParameters.get("responseformat").toString(),
                                 coordsHash);
+                        // below indicates that we got an exception and we should return it
+                        if (obsHandler.getOutputHandler().getClass() == GetCapsOutputter.class) {
+                            retval.put("responseContentType", "text/xml");
+                            retval.put("outputHandler", obsHandler.getOutputHandler());
+                            break;
+                        }
                         // set our content type for the response
                         retval.put("responseContentType", obsHandler.getContentType());
                         if (obsHandler.getFeatureDataset() == null) {
@@ -181,6 +191,23 @@ public class SOSParser {
                         retval.put("outputHandler", null);
                     }
                     break;
+                case DescribeSensor:
+                    // resposne will always be text/xml
+                    retval.put("responseContentType", "text/xml");
+                    SOSDescribeSensorHandler sensorHandler;
+                    if (!queryParameters.containsKey("responseformat") || !queryParameters.containsKey("procedure")) {
+                        sensorHandler = new SOSDescribeSensorHandler(dataset);
+                        sensorHandler.getOutputHandler().setupExceptionOutput("responseformat and procedure are required for DescribeSensor requests");
+                    } else {
+                        // create a describe sensor handler
+                        sensorHandler = new SOSDescribeSensorHandler(dataset,
+                                queryParameters.get("responseformat").toString(),
+                                queryParameters.get("procedure").toString(),
+                                threddsURI,
+                                query);
+                    }
+                    retval.put("outputHandler",sensorHandler.getOutputHandler());
+                    break;
                 default:
                     // return a 'not supported' error
                     System.out.println(queryParameters.get("request").toString() + " is not a supported request");
@@ -189,6 +216,7 @@ public class SOSParser {
         } catch (IllegalArgumentException ex) {
             // create a get caps respons with exception
             _log.error("Exception with request: " + ex.getMessage());
+            System.out.println("Exception encountered " + ex.getMessage());
             try {
                 capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
             } catch (Exception e) { }
@@ -226,6 +254,14 @@ public class SOSParser {
                     }
                     
                     queryParameters.put(keyVal[0].toLowerCase(), (String[]) stList.toArray(new String[stList.size()]) );
+                } else if (keyVal[0].equalsIgnoreCase("responseformat")) {
+                    try {
+                        String val = URLDecoder.decode(keyVal[1], "UTF-8");
+                        queryParameters.put(keyVal[0],val);
+                    } catch (Exception e) {
+                        System.out.println("Exception in decoding: " + keyVal[1] + " - " + e.getMessage());
+                        queryParameters.put(keyVal[0],keyVal[1]);
+                    }
                 } else if (keyVal[0].equalsIgnoreCase("eventtime")) {
                     String[] eventtime;
                     if (keyVal[1].contains("/")) {

@@ -58,12 +58,31 @@ class DataSlice {
     }
 }
 
+/**
+ * 
+ * @author SCowan
+ */
 public interface SOSOutputFormatter {
     
     // Interface methods
-//    public void AddToInfoList(double latitude, double longitude, double depth, float dataValue, String eventtime);
+    /**
+     * Adds data from a formatted string to some container defined in the individual formatters.
+     * @param dataFormattedString a csv string that usually follows the format of key=value,key1=value1,key2=value2,etc
+     *  'value' can be csvs as well, allowing for multiple values per key
+     */
     public void AddDataFormattedStringToInfoList(String dataFormattedString);
+    /**
+     * Empties the container defined in the individual formatters. Usually something like: infoList = null;
+     */
     public void EmtpyInfoList();
+    /**
+     * Sets up the outputter to write an exception when writeOutput is invoked.
+     * @param message - message to display to the user
+     */
     public void setupExceptionOutput(String message);
+    /**
+     * Writes prepared output to the writer (usually will be a response stream from a http request
+     * @param writer the stream where the output will be written to.
+     */
     public void writeOutput(Writer writer);
 }

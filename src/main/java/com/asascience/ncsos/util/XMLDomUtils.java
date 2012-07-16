@@ -221,6 +221,23 @@ public class XMLDomUtils {
         obsOfferEl.appendChild(obsOfferingNode);
         return doc;
     }
+    
+    public static Document addNodeBeforeNode(Document doc, String parentNodeName, String nodeNameToInsert, String nodeNameToInsertBefore) {
+        NodeList nodeList = doc.getElementsByTagName(parentNodeName);
+        Element parentEl = (Element)nodeList.item(0);
+        nodeList = parentEl.getElementsByTagName(nodeNameToInsertBefore);
+        Element existingEl = (Element)nodeList.item(0);
+        Element newNode = doc.createElement(nodeNameToInsert);
+        parentEl.insertBefore(newNode, existingEl);
+        return doc;
+    }
+    
+    public static Document setAttributeToValue(Document doc, String nodeName, String attributeName, String attributeValue) {
+        NodeList nodeList = doc.getElementsByTagName(nodeName);
+        Element el = (Element)nodeList.item(0);
+        el.setAttribute(attributeName, attributeValue);
+        return doc;
+    }
 
     //METHOD OVERRIDE-------------------------------------------------------------
     @Deprecated

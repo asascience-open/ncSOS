@@ -76,6 +76,11 @@
 			<ows:Parameter name="offering" use="required"/>
 			<ows:Parameter name="observedProperty" use="required"/>
 			<ows:Parameter name="time" use="optional"/>
+			<ows:Parameter name="responseFormat" use="required">
+				<ows:AllowedValues>
+					<ows:Value>text/xml;subtype="om/1.0.0"</ows:Value>
+				</ows:AllowedValues>
+			</ows:Parameter>
 		</ows:Operation>
 		<ows:Operation name="DescribeSensor">
 			<ows:DCP>
