@@ -46,15 +46,7 @@ public class Trajectory extends baseCDMClass implements iStationData {
         lowerAlt = Double.POSITIVE_INFINITY;
     }
 
-    /**
-     * 
-     * @param trajFeatureIterator
-     * @param valueList
-     * @param dateFormatter
-     * @param builder
-     * @throws IOException
-     */
-    public void addAllTrajectoryData(PointFeatureIterator trajFeatureIterator, List<String> valueList, DateFormatter dateFormatter, StringBuilder builder) throws IOException {
+    private void addAllTrajectoryData(PointFeatureIterator trajFeatureIterator, List<String> valueList, DateFormatter dateFormatter, StringBuilder builder) throws IOException {
         while (trajFeatureIterator.hasNext()) {
             PointFeature trajFeature = trajFeatureIterator.next();
             valueList.clear();
@@ -62,15 +54,7 @@ public class Trajectory extends baseCDMClass implements iStationData {
         }
     }
 
-    /**
-     * 
-     * @param valueList
-     * @param dateFormatter
-     * @param trajFeature
-     * @param builder
-     * @throws IOException
-     */
-    public void addDataLine(List<String> valueList, DateFormatter dateFormatter, PointFeature trajFeature, StringBuilder builder) throws IOException {
+    private void addDataLine(List<String> valueList, DateFormatter dateFormatter, PointFeature trajFeature, StringBuilder builder) throws IOException {
         valueList.add("time=" + dateFormatter.toDateTimeStringISO(trajFeature.getObservationTimeAsDate()));
 
         for (int i = 0; i < variableNames.length; i++) {

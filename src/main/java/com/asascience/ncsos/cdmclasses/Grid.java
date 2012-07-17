@@ -121,9 +121,9 @@ public class Grid extends baseCDMClass implements iStationData {
         return lonDbl;
     }
     
-    /************************
-     * iStationData Methods *
-     ************************/
+    /************************/
+    /* iStationData Methods */
+    /**************************************************************************/
     
     @Override
     public void setData(Object griddedDataset) throws IOException {
@@ -379,7 +379,7 @@ public class Grid extends baseCDMClass implements iStationData {
         return stationDescripList.get(stNum);
     }
     
-    /****************************************************************************/
+    /**************************************************************************/
   
     /**
      * Sets up an xml document with needed information for a Get Capabilities request
