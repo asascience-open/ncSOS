@@ -8,12 +8,11 @@ import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
-import javax.xml.transform.Result;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
+import org.w3c.dom.bootstrap.DOMImplementationRegistry;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSOutput;
+import org.w3c.dom.ls.LSSerializer;
 
 /**
  *
@@ -22,6 +21,7 @@ import org.w3c.dom.Document;
 public class GetCapsOutputter implements SOSOutputFormatter {
     
     private Document document;
+    private DOMImplementationLS impl;
     
     private final static String TEMPLATE = "templates/sosGetCapabilities.xml";
 
@@ -31,6 +31,19 @@ public class GetCapsOutputter implements SOSOutputFormatter {
      */
     public GetCapsOutputter() {
         document = parseTemplateXML();
+        
+        try {
+            DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
+            impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
+        } catch (ClassNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        } catch (InstantiationException ex) {
+            System.out.println(ex.getMessage());
+        } catch (IllegalAccessException ex) {
+            System.out.println(ex.getMessage());
+        } catch (ClassCastException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
     
     /**
@@ -53,11 +66,11 @@ public class GetCapsOutputter implements SOSOutputFormatter {
     /* Interface Methods */
     /**************************************************************************/
 
-    public void AddDataFormattedStringToInfoList(String dataFormattedString) {
+    public void addDataFormattedStringToInfoList(String dataFormattedString) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void EmtpyInfoList() {
+    public void emtpyInfoList() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -67,14 +80,11 @@ public class GetCapsOutputter implements SOSOutputFormatter {
 
     public void writeOutput(Writer writer) {
         // output our document to the writer
-        DOMSource domSource = new DOMSource(document);
-        Result result = new StreamResult(writer);
-        try {
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.transform(domSource, result);
-        } catch (Exception e) {
-            System.out.println("Error in writing GetCapsOutputter - " + e.getMessage());
-        }
+        LSSerializer xmlSerializer = impl.createLSSerializer();
+        LSOutput xmlOut = impl.createLSOutput();
+        xmlSerializer.getDomConfig().setParameter("format-pretty-print", Boolean.TRUE);
+        xmlOut.setCharacterStream(writer);
+        xmlSerializer.write(document, xmlOut);
     }
     /**************************************************************************/
     

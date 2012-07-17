@@ -72,11 +72,11 @@ public interface SOSOutputFormatter {
      * @param dataFormattedString a csv string that usually follows the format of key=value,key1=value1,key2=value2,etc
      *  'value' can be csvs as well, allowing for multiple values per key
      */
-    public void AddDataFormattedStringToInfoList(String dataFormattedString);
+    public void addDataFormattedStringToInfoList(String dataFormattedString);
     /**
      * Empties the container defined in the individual formatters. Usually something like: infoList = null;
      */
-    public void EmtpyInfoList();
+    public void emtpyInfoList();
     /**
      * Sets up the outputter to write an exception when writeOutput is invoked.
      * @param message - message to display to the user

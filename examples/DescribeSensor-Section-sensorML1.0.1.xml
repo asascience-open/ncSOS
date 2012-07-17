@@ -1,24 +1,81 @@
-<?xml version="1.0" encoding="UTF-8"?><sml:SensorML xmlns="http://www.opengis.net/sensorML/1.0.1" xmlns:gml="http://www.opengis.net/gml" xmlns:sml="http://www.opengis.net/sensorML/1.0.1" xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0.1" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
     <sml:member>
         <sml:System gml:id="station-Trajectory2">
-			<gml:description>no description</gml:description>
-			<sml:identification>
-				<sml:IdentifierList>
-				<sml:identifier name="StationId"><sml:Term definition="stationID"><sml:value>urn:tds:station.sos:Trajectory2</sml:value></sml:Term></sml:identifier><sml:identifier name="cf_role"><sml:Term definition=""><sml:value>trajectory_id</sml:value></sml:Term></sml:identifier></sml:IdentifierList>
-			</sml:identification>
-			
-			
-			
-			<sml:position name="stationTrajectory">
-				<sml:dataDefinition>
-				<swe:DataBlockDefinition><swe:components name="whenWhere"><swe:DataRecord><swe:field name="time"><swe:Time definition="OGC:time"><swe:uom xlink:href="seconds since 1990-01-01 00:00:00"/></swe:Time></swe:field><swe:field name="lat"><swe:Quantity definition="some:definition"><swe:uom code="degrees_north"/></swe:Quantity></swe:field><swe:field name="lon"><swe:Quantity definition="some:definition"><swe:uom code="degrees_east"/></swe:Quantity></swe:field><swe:field name="altitude"><swe:Quantity definition="some:definition"><swe:uom code="m"/></swe:Quantity></swe:field></swe:DataRecord></swe:components></swe:DataBlockDefinition><swe:encoding><swe:TextBlock blockSeparator=" " decimalSeparator="." tokenSeparator=","/></swe:encoding></sml:dataDefinition>
-			<sml:values>1990-01-01T00:00:00Z,25.534116744995117,-40.95376205444336,0.0 1990-01-01T00:00:00Z,25.534116744995117,-40.95376205444336,1.0 1990-01-01T00:00:00Z,25.534116744995117,-40.95376205444336,2.0 1990-01-01T00:00:00Z,25.534116744995117,-40.95376205444336,-999.9 1990-01-01T00:00:00Z,25.534116744995117,-40.95376205444336,-999.9 1990-01-01T00:00:00Z,25.534116744995117,-40.95376205444336,-999.9 1990-01-01T00:00:00Z,25.534116744995117,-40.95376205444336,-999.9 1990-01-01T00:00:00Z,25.534116744995117,-40.95376205444336,-999.9 1990-01-01T00:00:00Z,25.534116744995117,-40.95376205444336,0.0 1990-01-01T00:00:00Z,25.534116744995117,-40.95376205444336,1.0 1990-01-01T02:00:00Z,11.216864585876465,-36.552799224853516,0.0 1990-01-01T02:00:00Z,11.216864585876465,-36.552799224853516,1.0 1990-01-01T02:00:00Z,11.216864585876465,-36.552799224853516,2.0 1990-01-01T02:00:00Z,11.216864585876465,-36.552799224853516,-999.9 1990-01-01T02:00:00Z,11.216864585876465,-36.552799224853516,-999.9 1990-01-01T02:00:00Z,11.216864585876465,-36.552799224853516,-999.9 1990-01-01T02:00:00Z,11.216864585876465,-36.552799224853516,-999.9 1990-01-01T02:00:00Z,11.216864585876465,-36.552799224853516,-999.9 1990-01-01T02:00:00Z,11.216864585876465,-36.552799224853516,0.0 1990-01-01T02:00:00Z,11.216864585876465,-36.552799224853516,1.0 1990-01-01T04:00:00Z,15.782703399658203,-57.103271484375,0.0 1990-01-01T04:00:00Z,15.782703399658203,-57.103271484375,1.0 1990-01-01T04:00:00Z,15.782703399658203,-57.103271484375,2.0 1990-01-01T04:00:00Z,15.782703399658203,-57.103271484375,-999.9 1990-01-01T04:00:00Z,15.782703399658203,-57.103271484375,-999.9 1990-01-01T04:00:00Z,15.782703399658203,-57.103271484375,-999.9 1990-01-01T04:00:00Z,15.782703399658203,-57.103271484375,-999.9 1990-01-01T04:00:00Z,15.782703399658203,-57.103271484375,-999.9 1990-01-01T04:00:00Z,15.782703399658203,-57.103271484375,0.0 1990-01-01T04:00:00Z,15.782703399658203,-57.103271484375,1.0 1990-01-01T06:00:00Z,32.4442138671875,-44.79283142089844,0.0 1990-01-01T06:00:00Z,32.4442138671875,-44.79283142089844,1.0 1990-01-01T06:00:00Z,32.4442138671875,-44.79283142089844,2.0 1990-01-01T06:00:00Z,32.4442138671875,-44.79283142089844,-999.9 1990-01-01T06:00:00Z,32.4442138671875,-44.79283142089844,-999.9 1990-01-01T06:00:00Z,32.4442138671875,-44.79283142089844,-999.9 1990-01-01T06:00:00Z,32.4442138671875,-44.79283142089844,-999.9 1990-01-01T06:00:00Z,32.4442138671875,-44.79283142089844,-999.9 1990-01-01T06:00:00Z,32.4442138671875,-44.79283142089844,0.0 1990-01-01T06:00:00Z,32.4442138671875,-44.79283142089844,1.0 1990-01-01T08:00:00Z,3.5440261363983154,-56.083011627197266,0.0 1990-01-01T08:00:00Z,3.5440261363983154,-56.083011627197266,1.0 1990-01-01T08:00:00Z,3.5440261363983154,-56.083011627197266,2.0 1990-01-01T08:00:00Z,3.5440261363983154,-56.083011627197266,-999.9 1990-01-01T08:00:00Z,3.5440261363983154,-56.083011627197266,-999.9 1990-01-01T08:00:00Z,3.5440261363983154,-56.083011627197266,-999.9 1990-01-01T08:00:00Z,3.5440261363983154,-56.083011627197266,-999.9 1990-01-01T08:00:00Z,3.5440261363983154,-56.083011627197266,-999.9 1990-01-01T08:00:00Z,3.5440261363983154,-56.083011627197266,0.0 1990-01-01T08:00:00Z,3.5440261363983154,-56.083011627197266,1.0 1990-01-01T10:00:00Z,34.41228485107422,-13.773795127868652,0.0 1990-01-01T10:00:00Z,34.41228485107422,-13.773795127868652,1.0 1990-01-01T10:00:00Z,34.41228485107422,-13.773795127868652,2.0 1990-01-01T10:00:00Z,34.41228485107422,-13.773795127868652,-999.9 1990-01-01T10:00:00Z,34.41228485107422,-13.773795127868652,-999.9 1990-01-01T10:00:00Z,34.41228485107422,-13.773795127868652,-999.9 1990-01-01T10:00:00Z,34.41228485107422,-13.773795127868652,-999.9 1990-01-01T10:00:00Z,34.41228485107422,-13.773795127868652,-999.9 1990-01-01T10:00:00Z,34.41228485107422,-13.773795127868652,0.0 1990-01-01T10:00:00Z,34.41228485107422,-13.773795127868652,1.0 </sml:values></sml:position>
-			
-			
-			<sml:components>
-				<sml:ComponentList>
-				<sml:component name="Sensor temperature"><sml:System gml:id="sensor-temperature"><sml:identification xlink:href="urn:tds:station.sos:Trajectory2::temperature"/><sml:documentation xlink:href="resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc?request=DescribeSensor&amp;service=sos&amp;version=1.0.0&amp;responseformat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%22&amp;procedure=urn:tds:station.sos:Trajectory2::temperature"/><gml:description>Water Temperature</gml:description></sml:System></sml:component><sml:component name="Sensor salinity"><sml:System gml:id="sensor-salinity"><sml:identification xlink:href="urn:tds:station.sos:Trajectory2::salinity"/><sml:documentation xlink:href="resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc?request=DescribeSensor&amp;service=sos&amp;version=1.0.0&amp;responseformat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%22&amp;procedure=urn:tds:station.sos:Trajectory2::salinity"/><gml:description>Sea Water Salinity</gml:description></sml:System></sml:component></sml:ComponentList>
-			</sml:components>
-		</sml:System>
+            <gml:description>no description</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="StationId">
+                        <sml:Term definition="stationID">
+                            <sml:value>urn:tds:station.sos:Trajectory2</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="cf_role">
+                        <sml:Term definition="">
+                            <sml:value>trajectory_id</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:position name="stationTrajectory">
+                <sml:dataDefinition>
+                    <swe:DataBlockDefinition>
+                        <swe:components name="whenWhere">
+                            <swe:DataRecord>
+                                <swe:field name="time">
+                                    <swe:Time definition="OGC:time">
+                                    <swe:uom xlink:href="seconds since 1990-01-01 00:00:00"/>
+                                    </swe:Time>
+                                </swe:field>
+                                <swe:field name="lat">
+                                    <swe:Quantity definition="some:definition">
+                                    <swe:uom code="degrees_north"/>
+                                    </swe:Quantity>
+                                </swe:field>
+                                <swe:field name="lon">
+                                    <swe:Quantity definition="some:definition">
+                                    <swe:uom code="degrees_east"/>
+                                    </swe:Quantity>
+                                </swe:field>
+                                <swe:field name="altitude">
+                                    <swe:Quantity definition="some:definition">
+                                    <swe:uom code="m"/>
+                                    </swe:Quantity>
+                                </swe:field>
+                            </swe:DataRecord>
+                        </swe:components>
+                    </swe:DataBlockDefinition>
+                    <swe:encoding>
+                        <swe:TextBlock blockSeparator=" "
+                            decimalSeparator="." tokenSeparator=","/>
+                    </swe:encoding>
+                </sml:dataDefinition>
+                <sml:values>1990-01-01T00:00:00Z,25.534116744995117,-40.95376205444336,0.0 1990-01-01T00:00:00Z,25.534116744995117,-40.95376205444336,1.0 1990-01-01T00:00:00Z,25.534116744995117,-40.95376205444336,2.0 1990-01-01T00:00:00Z,25.534116744995117,-40.95376205444336,-999.9 1990-01-01T00:00:00Z,25.534116744995117,-40.95376205444336,-999.9 1990-01-01T00:00:00Z,25.534116744995117,-40.95376205444336,-999.9 1990-01-01T00:00:00Z,25.534116744995117,-40.95376205444336,-999.9 1990-01-01T00:00:00Z,25.534116744995117,-40.95376205444336,-999.9 1990-01-01T00:00:00Z,25.534116744995117,-40.95376205444336,0.0 1990-01-01T00:00:00Z,25.534116744995117,-40.95376205444336,1.0 1990-01-01T02:00:00Z,11.216864585876465,-36.552799224853516,0.0 1990-01-01T02:00:00Z,11.216864585876465,-36.552799224853516,1.0 1990-01-01T02:00:00Z,11.216864585876465,-36.552799224853516,2.0 1990-01-01T02:00:00Z,11.216864585876465,-36.552799224853516,-999.9 1990-01-01T02:00:00Z,11.216864585876465,-36.552799224853516,-999.9 1990-01-01T02:00:00Z,11.216864585876465,-36.552799224853516,-999.9 1990-01-01T02:00:00Z,11.216864585876465,-36.552799224853516,-999.9 1990-01-01T02:00:00Z,11.216864585876465,-36.552799224853516,-999.9 1990-01-01T02:00:00Z,11.216864585876465,-36.552799224853516,0.0 1990-01-01T02:00:00Z,11.216864585876465,-36.552799224853516,1.0 1990-01-01T04:00:00Z,15.782703399658203,-57.103271484375,0.0 1990-01-01T04:00:00Z,15.782703399658203,-57.103271484375,1.0 1990-01-01T04:00:00Z,15.782703399658203,-57.103271484375,2.0 1990-01-01T04:00:00Z,15.782703399658203,-57.103271484375,-999.9 1990-01-01T04:00:00Z,15.782703399658203,-57.103271484375,-999.9 1990-01-01T04:00:00Z,15.782703399658203,-57.103271484375,-999.9 1990-01-01T04:00:00Z,15.782703399658203,-57.103271484375,-999.9 1990-01-01T04:00:00Z,15.782703399658203,-57.103271484375,-999.9 1990-01-01T04:00:00Z,15.782703399658203,-57.103271484375,0.0 1990-01-01T04:00:00Z,15.782703399658203,-57.103271484375,1.0 1990-01-01T06:00:00Z,32.4442138671875,-44.79283142089844,0.0 1990-01-01T06:00:00Z,32.4442138671875,-44.79283142089844,1.0 1990-01-01T06:00:00Z,32.4442138671875,-44.79283142089844,2.0 1990-01-01T06:00:00Z,32.4442138671875,-44.79283142089844,-999.9 1990-01-01T06:00:00Z,32.4442138671875,-44.79283142089844,-999.9 1990-01-01T06:00:00Z,32.4442138671875,-44.79283142089844,-999.9 1990-01-01T06:00:00Z,32.4442138671875,-44.79283142089844,-999.9 1990-01-01T06:00:00Z,32.4442138671875,-44.79283142089844,-999.9 1990-01-01T06:00:00Z,32.4442138671875,-44.79283142089844,0.0 1990-01-01T06:00:00Z,32.4442138671875,-44.79283142089844,1.0 1990-01-01T08:00:00Z,3.5440261363983154,-56.083011627197266,0.0 1990-01-01T08:00:00Z,3.5440261363983154,-56.083011627197266,1.0 1990-01-01T08:00:00Z,3.5440261363983154,-56.083011627197266,2.0 1990-01-01T08:00:00Z,3.5440261363983154,-56.083011627197266,-999.9 1990-01-01T08:00:00Z,3.5440261363983154,-56.083011627197266,-999.9 1990-01-01T08:00:00Z,3.5440261363983154,-56.083011627197266,-999.9 1990-01-01T08:00:00Z,3.5440261363983154,-56.083011627197266,-999.9 1990-01-01T08:00:00Z,3.5440261363983154,-56.083011627197266,-999.9 1990-01-01T08:00:00Z,3.5440261363983154,-56.083011627197266,0.0 1990-01-01T08:00:00Z,3.5440261363983154,-56.083011627197266,1.0 1990-01-01T10:00:00Z,34.41228485107422,-13.773795127868652,0.0 1990-01-01T10:00:00Z,34.41228485107422,-13.773795127868652,1.0 1990-01-01T10:00:00Z,34.41228485107422,-13.773795127868652,2.0 1990-01-01T10:00:00Z,34.41228485107422,-13.773795127868652,-999.9 1990-01-01T10:00:00Z,34.41228485107422,-13.773795127868652,-999.9 1990-01-01T10:00:00Z,34.41228485107422,-13.773795127868652,-999.9 1990-01-01T10:00:00Z,34.41228485107422,-13.773795127868652,-999.9 1990-01-01T10:00:00Z,34.41228485107422,-13.773795127868652,-999.9 1990-01-01T10:00:00Z,34.41228485107422,-13.773795127868652,0.0 1990-01-01T10:00:00Z,34.41228485107422,-13.773795127868652,1.0 </sml:values>
+            </sml:position>
+            <sml:components>
+                <sml:ComponentList>
+                    <sml:component name="Sensor temperature">
+                        <sml:System gml:id="sensor-temperature">
+                            <sml:identification xlink:href="urn:tds:station.sos:Trajectory2::temperature"/>
+                            <sml:documentation xlink:href="resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc?request=DescribeSensor&amp;service=sos&amp;version=1.0.0&amp;responseformat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%22&amp;procedure=urn:tds:station.sos:Trajectory2::temperature"/>
+                            <gml:description>Water Temperature</gml:description>
+                        </sml:System>
+                    </sml:component>
+                    <sml:component name="Sensor salinity">
+                        <sml:System gml:id="sensor-salinity">
+                            <sml:identification xlink:href="urn:tds:station.sos:Trajectory2::salinity"/>
+                            <sml:documentation xlink:href="resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc?request=DescribeSensor&amp;service=sos&amp;version=1.0.0&amp;responseformat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%22&amp;procedure=urn:tds:station.sos:Trajectory2::salinity"/>
+                            <gml:description>Sea Water Salinity</gml:description>
+                        </sml:System>
+                    </sml:component>
+                </sml:ComponentList>
+            </sml:components>
+        </sml:System>
     </sml:member>
 </sml:SensorML>

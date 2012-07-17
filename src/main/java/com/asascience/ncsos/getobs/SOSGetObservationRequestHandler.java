@@ -156,7 +156,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
 //            System.out.println("Got string: " + dataString);
             for (String dataPoint : dataString.split(";")) {
                 if(!dataPoint.equals(""))
-                    output.AddDataFormattedStringToInfoList(dataPoint);
+                    output.addDataFormattedStringToInfoList(dataPoint);
             }
         }                
     }
