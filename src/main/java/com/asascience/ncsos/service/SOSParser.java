@@ -17,8 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ucar.nc2.dataset.NetcdfDataset;
 /**
- * Reads and parses a request coming in from thredds
- * @author scowan
+ * Reads and parses a sos request coming in from thredds.
+ * @author abird
+ * @modified scowan
  */
 public class SOSParser {
     private HashMap<String, Object> queryParameters;
@@ -36,6 +37,9 @@ public class SOSParser {
         GetCapabilities, GetObservation, DescribeSensor
     }
     
+    /**
+     * Sets the logger for error output using the SOSParser class.
+     */
     public SOSParser() {
         _log = LoggerFactory.getLogger(SOSParser.class);
     }
@@ -44,7 +48,9 @@ public class SOSParser {
      * enhance - provides direct access to parsing a sos request and create handler for the type of request coming in
      * @param dataset NetcdfDataset to enhance the NCML
      * @param query query string provided by request
-     * @param threddsURI 
+     * @param threddsURI
+     * @return 
+     * @throws IOException  
      */
     public HashMap<String, Object> enhance(final NetcdfDataset dataset, final String query, String threddsURI) throws IOException {
         return enhance(dataset, query, threddsURI, null);
@@ -55,7 +61,9 @@ public class SOSParser {
      * @param dataset NetcdfDataset to enhance the NCML
      * @param query query string provided by request
      * @param threddsURI
-     * @param savePath 
+     * @param savePath provides a directory to cache requests for quick replies (currently unsupported)
+     * @return
+     * @throws IOException  
      */
     public HashMap<String, Object> enhance(final NetcdfDataset dataset, final String query, String threddsURI, String savePath) throws IOException {
         // clear anything that can cause issue if we were to use the same parser for multiple requests

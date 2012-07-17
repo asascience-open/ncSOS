@@ -25,7 +25,8 @@ import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.ft.FeatureDataset;
 
 /**
- *
+ * Sets up a xml document for a response to a Get Observation request that specifies
+ * text/xml;subtype="om/1.0.0" as its response format.
  * @author SCowan
  */
 public class OosTethysSwe implements SOSOutputFormatter {
@@ -46,11 +47,12 @@ public class OosTethysSwe implements SOSOutputFormatter {
     private static final String TEMPLATE = "templates/oostethysswe.xml";
     
     /**
-     * 
-     * @param variableNames
-     * @param featureDataset
-     * @param cdmDataset
-     * @param netcdfDataset
+     * Creates a new text/xml;subtype="om/1.0.0" response, filling in the metadata
+     * from the feature dataset.
+     * @param variableNames the observedProperties from the request query
+     * @param featureDataset the feature dataset from the base request handler
+     * @param cdmDataset the CDMDataset from the base request handler
+     * @param netcdfDataset the netcdf dataset that the request is polling
      */
     public OosTethysSwe(String[] variableNames,
             FeatureDataset featureDataset,
@@ -73,34 +75,11 @@ public class OosTethysSwe implements SOSOutputFormatter {
                 netcdfDataset.findAttValueIgnoreCase(null, "location", "empty location"),
                 netcdfDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", null));
     }
-    
-    private void setMetaData(String title,
-            String history,
-            String institution,
-            String source,
-            String description,
-            String location,
-            String featureOfInterest) {
-        this.title = title;
-        this.history = history;
-        this.institution = institution;
-        this.source = source;
-        this.description = description;
-        this.location = location;
-        this.featureOfInterest = featureOfInterest;
-    }
-    
-    /**
-     * 
-     * @return
-     */
-    public String getTemplateLocation() {
-        return TEMPLATE;
-    }
 
-    /* *****************
-     * Interface methods
-     ******************* */
+    /* ***************** */
+    /* Interface methods */
+    /**************************************************************************/
+    
     public void AddDataFormattedStringToInfoList(String dataFormattedString) throws IllegalArgumentException {
         // CSV that should be of the form: eventtime, depth, lat, lon, data value
         String[] values = dataFormattedString.split(",");
@@ -182,7 +161,11 @@ public class OosTethysSwe implements SOSOutputFormatter {
         }
     }
     
-    /********************************************/
+    /**************************************************************************/
+    
+    private String getTemplateLocation() {
+        return TEMPLATE;
+    }
     
     private Document parseTemplateXML() {
         InputStream templateInputStream = null;
@@ -330,8 +313,24 @@ public class OosTethysSwe implements SOSOutputFormatter {
             addDatasetResults(stNum);
         }
     }
+    
+    private void setMetaData(String title,
+            String history,
+            String institution,
+            String source,
+            String description,
+            String location,
+            String featureOfInterest) {
+        this.title = title;
+        this.history = history;
+        this.institution = institution;
+        this.source = source;
+        this.description = description;
+        this.location = location;
+        this.featureOfInterest = featureOfInterest;
+    }
             
-    void setSystemGMLID() {
+    private void setSystemGMLID() {
 
         StringBuilder b = new StringBuilder();
         if (CDMDataSet != null) {

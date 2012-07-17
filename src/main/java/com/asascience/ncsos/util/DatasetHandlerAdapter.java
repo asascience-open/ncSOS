@@ -29,24 +29,13 @@
 package com.asascience.ncsos.util;
 
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.log4j.Logger;
-import thredds.catalog.InvDatasetFeatureCollection;
-import thredds.catalog.InvDatasetImpl;
-import thredds.servlet.DataRootHandler;
-
 import thredds.servlet.DatasetHandler;
 import thredds.servlet.ServletUtil;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.dataset.NetcdfDataset;
-import ucar.nc2.ncml.NcMLReader;
-import ucar.nc2.util.cache.FileFactory;
 
 /**
  * DatasetHandlerAdapter
