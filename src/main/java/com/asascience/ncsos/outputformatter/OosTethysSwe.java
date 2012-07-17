@@ -20,6 +20,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
+import org.w3c.dom.bootstrap.DOMImplementationRegistry;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSOutput;
+import org.w3c.dom.ls.LSSerializer;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.ft.FeatureDataset;
@@ -45,6 +49,8 @@ public class OosTethysSwe implements SOSOutputFormatter {
     private static final String STATION_GML_BASE = "urn:tds:station.sos:";
     private static final String NAN = "NaN";
     private static final String TEMPLATE = "templates/oostethysswe.xml";
+    
+    private DOMImplementationLS impl;
     
     /**
      * Creates a new text/xml;subtype="om/1.0.0" response, filling in the metadata
@@ -74,13 +80,26 @@ public class OosTethysSwe implements SOSOutputFormatter {
                 netcdfDataset.findAttValueIgnoreCase(null, "description", "empty description"),
                 netcdfDataset.findAttValueIgnoreCase(null, "location", "empty location"),
                 netcdfDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", null));
+        
+        try {
+            DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
+            impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
+        } catch (ClassNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        } catch (InstantiationException ex) {
+            System.out.println(ex.getMessage());
+        } catch (IllegalAccessException ex) {
+            System.out.println(ex.getMessage());
+        } catch (ClassCastException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
     /* ***************** */
     /* Interface methods */
     /**************************************************************************/
     
-    public void AddDataFormattedStringToInfoList(String dataFormattedString) throws IllegalArgumentException {
+    public void addDataFormattedStringToInfoList(String dataFormattedString) throws IllegalArgumentException {
         // CSV that should be of the form: eventtime, depth, lat, lon, data value
         String[] values = dataFormattedString.split(",");
         double lat, lon, depth;
@@ -140,7 +159,7 @@ public class OosTethysSwe implements SOSOutputFormatter {
         infoList.add(new DataSlice(lat, lon, depth, eventtime, dataValues));
     }
 
-    public void EmtpyInfoList() {
+    public void emtpyInfoList() {
         infoList = null;
     }
 
@@ -151,14 +170,11 @@ public class OosTethysSwe implements SOSOutputFormatter {
     public void writeOutput(Writer writer) {
         parseObservations();
         // output our document to the writer
-        DOMSource domSource = new DOMSource(document);
-        Result result = new StreamResult(writer);
-        try {
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.transform(domSource, result);
-        } catch (Exception e) {
-            System.out.println("Error in writing OosTethysSwe - " + e.getMessage());
-        }
+        LSSerializer xmlSerializer = impl.createLSSerializer();
+        LSOutput xmlOut = impl.createLSOutput();
+        xmlSerializer.getDomConfig().setParameter("format-pretty-print", Boolean.TRUE);
+        xmlOut.setCharacterStream(writer);
+        xmlSerializer.write(document, xmlOut);
     }
     
     /**************************************************************************/
