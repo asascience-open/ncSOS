@@ -129,20 +129,20 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         return retval.toString();
     }
     
-    private Element AddNewNodeToParent(String nameOfNewNode, Element parentNode) {
+    private Element addNewNodeToParent(String nameOfNewNode, Element parentNode) {
         Element retval = document.createElement(nameOfNewNode);
         parentNode.appendChild(retval);
         return retval;
     }
     
-    private Element AddNewNodeToParentWithAttribute(String nameOfNewNode, Element parentNode, String attributeName, String attributeValue) {
+    private Element addNewNodeToParentWithAttribute(String nameOfNewNode, Element parentNode, String attributeName, String attributeValue) {
         Element retval = document.createElement(nameOfNewNode);
         retval.setAttribute(attributeName, attributeValue);
         parentNode.appendChild(retval);
         return retval;
     }
     
-    private Element AddNewNodeToParentWithTextValue(String nameOfNewNode, Element parentNode, String textContentValue) {
+    private Element addNewNodeToParentWithTextValue(String nameOfNewNode, Element parentNode, String textContentValue) {
         Element retval = document.createElement(nameOfNewNode);
         retval.setTextContent(textContentValue);
         parentNode.appendChild(retval);
@@ -150,17 +150,17 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     }
     
     private void addCoordinateInfoNode(HashMap<String,String> coordInfo, Element parentNode, String defName, String defAxis, String defUnit) {
-        Element lat = AddNewNodeToParentWithAttribute("swe:coordinate", parentNode, "name", defName);
+        Element lat = addNewNodeToParentWithAttribute("swe:coordinate", parentNode, "name", defName);
         if (coordInfo.containsKey("name"))
             lat.setAttribute("name", coordInfo.get("name").toString());
-        lat = AddNewNodeToParentWithAttribute("swe:Quantity", lat, "axisID", defAxis);
+        lat = addNewNodeToParentWithAttribute("swe:Quantity", lat, "axisID", defAxis);
         if (coordInfo.containsKey("axisID"))
             lat.setAttribute("axisID", coordInfo.get("axisID").toString());
-        Element unit = AddNewNodeToParentWithAttribute("swe:uom", lat, "code", defUnit);
+        Element unit = addNewNodeToParentWithAttribute("swe:uom", lat, "code", defUnit);
         if (coordInfo.containsKey("code"))
             unit.setAttribute("code", coordInfo.get("code").toString());
         if (coordInfo.containsKey("value"))
-            AddNewNodeToParentWithTextValue("swe:value", lat, coordInfo.get("value").toString());
+            addNewNodeToParentWithTextValue("swe:value", lat, coordInfo.get("value").toString());
     }
     
     /****************************/
@@ -210,9 +210,9 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         // get our Identifier List and add nodes to it
         Element pList = (Element) document.getElementsByTagName("sml:IdentifierList").item(0);
         for (int i=0; i<names.length; i++) {
-            Element parent = AddNewNodeToParentWithAttribute("sml:identifier", pList, "name", names[i]);
-            parent = AddNewNodeToParentWithAttribute("sml:Term", parent, "definition", definitions[i]);
-            AddNewNodeToParentWithTextValue("sml:value", parent, values[i]);
+            Element parent = addNewNodeToParentWithAttribute("sml:identifier", pList, "name", names[i]);
+            parent = addNewNodeToParentWithAttribute("sml:Term", parent, "definition", definitions[i]);
+            addNewNodeToParentWithTextValue("sml:value", parent, values[i]);
         }
     }
     
@@ -231,9 +231,9 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
      */
     public void addToClassificationNode(String classifierName, String definition, String classifierValue) {
         Element parent = (Element) getParentNode().getElementsByTagName("sml:ClassifierList").item(0);
-        parent = AddNewNodeToParentWithAttribute("sml:classifier", parent, "name", classifierName);
-        parent = AddNewNodeToParentWithAttribute("sml:Term", parent, "definition", definition);
-        AddNewNodeToParentWithTextValue("sml:value", parent, classifierValue);
+        parent = addNewNodeToParentWithAttribute("sml:classifier", parent, "name", classifierName);
+        parent = addNewNodeToParentWithAttribute("sml:Term", parent, "definition", definition);
+        addNewNodeToParentWithTextValue("sml:value", parent, classifierValue);
     }
     
     /**
@@ -262,20 +262,20 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         }
         contact.setAttribute("xlink:role", role);
         /* *** */
-        Element parent = AddNewNodeToParent("sml:ResponseibleParty", contact);
+        Element parent = addNewNodeToParent("sml:ResponseibleParty", contact);
         /* *** */
-        AddNewNodeToParentWithTextValue("sml:organizationName", parent, organizationName);
+        addNewNodeToParentWithTextValue("sml:organizationName", parent, organizationName);
         /* *** */
-        parent = AddNewNodeToParent("sml:contactInfo", parent);
+        parent = addNewNodeToParent("sml:contactInfo", parent);
         /* *** */
         // super nesting for great justice
         if (contactInfo != null) {
             for (String key : contactInfo.keySet()) {
                 // add key as node
-                Element sparent = AddNewNodeToParent(key, parent);
+                Element sparent = addNewNodeToParent(key, parent);
                 HashMap<String, String> vals = (HashMap<String, String>)contactInfo.get(key);
                 for (String vKey : vals.keySet()) {
-                    AddNewNodeToParentWithTextValue(vKey, sparent, vals.get(vKey).toString());
+                    addNewNodeToParentWithTextValue(vKey, sparent, vals.get(vKey).toString());
                 }
             }
         }
@@ -313,8 +313,8 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     public void setLocationNode(String stationName, double[] coords) {
         Element parent = (Element) getParentNode().getElementsByTagName("sml:location").item(0);
         
-        parent = AddNewNodeToParentWithAttribute("gml:Point", parent, "gml:id", "STATION-LOCATION-" + stationName);
-        AddNewNodeToParentWithTextValue("gml:coordinates", parent, coords[0] + " " + coords[1]);
+        parent = addNewNodeToParentWithAttribute("gml:Point", parent, "gml:id", "STATION-LOCATION-" + stationName);
+        addNewNodeToParentWithTextValue("gml:coordinates", parent, coords[0] + " " + coords[1]);
     }
     
     /**
@@ -329,10 +329,10 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         
         Element parent = (Element) getParentNode().getElementsByTagName("sml:location").item(0);
         
-        parent = AddNewNodeToParent("gml:boundedBy", parent);
-        parent = AddNewNodeToParentWithAttribute("gml:Envelope", parent, "srsName", "");
-        AddNewNodeToParentWithTextValue("gml:lowerCorner", parent, lowerPoint[0] + " " + lowerPoint[1]);
-        AddNewNodeToParentWithTextValue("gml:upperCorner", parent, upperPoint[0] + " " + upperPoint[1]);
+        parent = addNewNodeToParent("gml:boundedBy", parent);
+        parent = addNewNodeToParentWithAttribute("gml:Envelope", parent, "srsName", "");
+        addNewNodeToParentWithTextValue("gml:lowerCorner", parent, lowerPoint[0] + " " + lowerPoint[1]);
+        addNewNodeToParentWithTextValue("gml:upperCorner", parent, upperPoint[0] + " " + upperPoint[1]);
     }
     
     /**
@@ -414,36 +414,36 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     public void setPositionDataDefinition(HashMap<String, HashMap<String, String>> fieldMap, String decimalSeparator, String blockSeparator, String tokenSeparator) {
         Element dataDefinition = (Element) getParentNode().getElementsByTagName("sml:dataDefinition").item(0);
         // add data definition block
-        Element parent = AddNewNodeToParent("swe:DataBlockDefinition", dataDefinition);
+        Element parent = addNewNodeToParent("swe:DataBlockDefinition", dataDefinition);
         // add components with "whenWhere"
-        parent = AddNewNodeToParentWithAttribute("swe:components", parent, "name", "whenWhere");
+        parent = addNewNodeToParentWithAttribute("swe:components", parent, "name", "whenWhere");
         // add DataRecord for lat, lon, time
-        parent = AddNewNodeToParent("swe:DataRecord", parent);
+        parent = addNewNodeToParent("swe:DataRecord", parent);
         // print each of our maps
         Element fieldNodeIter;
         for (String key : fieldMap.keySet()) {
             if (key.equalsIgnoreCase("time")) {
                 HashMap<String, String> timeMap = (HashMap<String, String>)fieldMap.get(key);
                 // add field node
-                fieldNodeIter = AddNewNodeToParentWithAttribute("swe:field", parent, "name", key);
+                fieldNodeIter = addNewNodeToParentWithAttribute("swe:field", parent, "name", key);
                 // add time node
-                fieldNodeIter = AddNewNodeToParentWithAttribute("swe:Time", fieldNodeIter, "definition", timeMap.get("definition"));
+                fieldNodeIter = addNewNodeToParentWithAttribute("swe:Time", fieldNodeIter, "definition", timeMap.get("definition"));
                 // add uoms for every key that isn't 'definition'
                 for (String sKey : timeMap.keySet()) {
                     if (!sKey.equalsIgnoreCase("definition")) {
-                        AddNewNodeToParentWithAttribute("swe:uom", fieldNodeIter, sKey, timeMap.get(sKey).toString());
+                        addNewNodeToParentWithAttribute("swe:uom", fieldNodeIter, sKey, timeMap.get(sKey).toString());
                     }
                 }
             } else {
                 HashMap<String, String> quantityMap = (HashMap<String, String>)fieldMap.get(key);
                 // add field node
-                fieldNodeIter = AddNewNodeToParentWithAttribute("swe:field", parent, "name", key);
+                fieldNodeIter = addNewNodeToParentWithAttribute("swe:field", parent, "name", key);
                 // add quantity node
-                fieldNodeIter = AddNewNodeToParentWithAttribute("swe:Quantity", fieldNodeIter, "definition", quantityMap.get("definition"));
+                fieldNodeIter = addNewNodeToParentWithAttribute("swe:Quantity", fieldNodeIter, "definition", quantityMap.get("definition"));
                 // add uoms for every key !definition
                 for (String sKey : quantityMap.keySet()) {
                     if (!sKey.equalsIgnoreCase("definition")) {
-                        AddNewNodeToParentWithAttribute("swe:uom", fieldNodeIter, sKey, quantityMap.get(sKey).toString());
+                        addNewNodeToParentWithAttribute("swe:uom", fieldNodeIter, sKey, quantityMap.get(sKey).toString());
                     }
                 }
             }
@@ -451,9 +451,9 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         // lastly we need to add our encoding
         parent = (Element) getParentNode().getElementsByTagName("sml:dataDefinition").item(0);
         // add encoding node
-        parent = AddNewNodeToParent("swe:encoding", parent);
+        parent = addNewNodeToParent("swe:encoding", parent);
         // add TextBlock node with above attributes
-        parent = AddNewNodeToParentWithAttribute("swe:TextBlock", parent, "decimalSeparator", decimalSeparator);
+        parent = addNewNodeToParentWithAttribute("swe:TextBlock", parent, "decimalSeparator", decimalSeparator);
         parent.setAttribute("blockSeparator", blockSeparator);
         parent.setAttribute("tokenSeparator", tokenSeparator);
     }
@@ -465,7 +465,7 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     public void setPositionValue(String valueText) {
         // simple, just add values with text content of parameter
         Element parent = (Element) getParentNode().getElementsByTagName("sml:position").item(0);
-        AddNewNodeToParentWithTextValue("sml:values", parent, valueText);
+        addNewNodeToParentWithTextValue("sml:values", parent, valueText);
     }
     
     /**
@@ -493,12 +493,12 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         Element parent = (Element) getParentNode().getElementsByTagName("sml:PositionList").item(0);
         
         // add position w/ 'stationPosition' attribute
-        parent = AddNewNodeToParentWithAttribute("sml:position", parent, "name", "stationPosition");
+        parent = addNewNodeToParentWithAttribute("sml:position", parent, "name", "stationPosition");
         // add Position, then location nodes
-        parent = AddNewNodeToParent("swe:Position", parent);
-        parent = AddNewNodeToParent("swe:location", parent);
+        parent = addNewNodeToParent("swe:Position", parent);
+        parent = addNewNodeToParent("swe:location", parent);
         // add vector id="STATION_LOCATION" definition=definition
-        parent = AddNewNodeToParentWithAttribute("swe:Vector", parent, "gml:id", "STATION_LOCATION");
+        parent = addNewNodeToParentWithAttribute("swe:Vector", parent, "gml:id", "STATION_LOCATION");
         parent.setAttribute("definition", definition);
         // add a coordinate for each hashmap
         // latitude
@@ -519,15 +519,15 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         Element parent = (Element) getParentNode().getElementsByTagName("sml:PositionList").item(0);
         
         // add position w/ 'stationPosition' attribute
-        parent = AddNewNodeToParentWithAttribute("sml:position", parent, "name", "stationPosition");
+        parent = addNewNodeToParentWithAttribute("sml:position", parent, "name", "stationPosition");
         // add Position, then location nodes
-        parent = AddNewNodeToParent("swe:Position", parent);
-        parent = AddNewNodeToParent("swe:location", parent);
+        parent = addNewNodeToParent("swe:Position", parent);
+        parent = addNewNodeToParent("swe:location", parent);
         // add a bounding box for lat/lon/depth
-        parent = AddNewNodeToParent("gml:boundedBy", parent);
-        parent = AddNewNodeToParentWithAttribute("gml:Envelope", parent, "srsName", "");
-        AddNewNodeToParentWithTextValue("gml:lowerCorener", parent, boundingBox.getLatMin() + " " + boundingBox.getLonMin() + " " + upperDepth);
-        AddNewNodeToParentWithTextValue("gml:upperCorner", parent, boundingBox.getLatMax() + " " + boundingBox.getLonMax() + " " + lowerDepth);
+        parent = addNewNodeToParent("gml:boundedBy", parent);
+        parent = addNewNodeToParentWithAttribute("gml:Envelope", parent, "srsName", "");
+        addNewNodeToParentWithTextValue("gml:lowerCorener", parent, boundingBox.getLatMin() + " " + boundingBox.getLonMin() + " " + upperDepth);
+        addNewNodeToParentWithTextValue("gml:upperCorner", parent, boundingBox.getLatMax() + " " + boundingBox.getLonMax() + " " + lowerDepth);
     }
     
     /**
@@ -541,10 +541,10 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         Element parent = (Element) getParentNode().getElementsByTagName("sml:PositionList").item(0);
         
         // follow steps outlined above with slight alterations
-        parent = AddNewNodeToParentWithAttribute("sml:position", parent, "name", "endPosition");
-        parent = AddNewNodeToParent("swe:Position", parent);
-        parent = AddNewNodeToParent("swe:location", parent);
-        parent = AddNewNodeToParentWithAttribute("swe:Vector", parent, "gml:id", "END_LOCATION");
+        parent = addNewNodeToParentWithAttribute("sml:position", parent, "name", "endPosition");
+        parent = addNewNodeToParent("swe:Position", parent);
+        parent = addNewNodeToParent("swe:location", parent);
+        parent = addNewNodeToParentWithAttribute("swe:Vector", parent, "gml:id", "END_LOCATION");
         parent.setAttribute("definition", definition);
         addCoordinateInfoNode(latitudeInfo, parent, "latitude", "Y", "deg");
         addCoordinateInfoNode(longitudeInfo, parent, "longitude", "X", "deg");

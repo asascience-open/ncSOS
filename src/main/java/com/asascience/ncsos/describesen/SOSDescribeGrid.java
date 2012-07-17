@@ -86,14 +86,14 @@ public class SOSDescribeGrid extends SOSDescribeStation implements SOSDescribeIF
         // location node
         formatSetLocationNode(output);
         // remove unwanted nodes
-        RemoveUnusedNodes(output);
+        removeUnusedNodes(output);
     }
     /**************************************************************************/
 
     /*****************************
      * Private/Protected Methods *
      *****************************/
-    private void RemoveUnusedNodes(DescribeSensorFormatter output) {
+    private void removeUnusedNodes(DescribeSensorFormatter output) {
         output.deletePosition();
         output.deletePositions();
         output.deleteTimePosition();
