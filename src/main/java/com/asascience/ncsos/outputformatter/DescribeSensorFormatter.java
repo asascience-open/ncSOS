@@ -10,14 +10,13 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
-import javax.xml.transform.Result;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.bootstrap.DOMImplementationRegistry;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSOutput;
+import org.w3c.dom.ls.LSSerializer;
 import ucar.nc2.VariableSimpleIF;
 import ucar.unidata.geoloc.LatLonRect;
 
@@ -36,6 +35,8 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     private final String uri;
     private final String query;
     
+    private DOMImplementationLS impl;
+    
     /**
      * Creates a new formatter instance that uses the sosDescribeSensor.xml as a
      * template (found in the resources templates folder)
@@ -43,6 +44,18 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     public DescribeSensorFormatter() {
         document = parseTemplateXML();
         this.uri = this.query = null;
+        try {
+            DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
+            impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
+        } catch (ClassNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        } catch (InstantiationException ex) {
+            System.out.println(ex.getMessage());
+        } catch (IllegalAccessException ex) {
+            System.out.println(ex.getMessage());
+        } catch (ClassCastException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
     /**
@@ -55,6 +68,18 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         document = parseTemplateXML();
         this.uri = uri;
         this.query = query;
+        try {
+            DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
+            impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
+        } catch (ClassNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        } catch (InstantiationException ex) {
+            System.out.println(ex.getMessage());
+        } catch (IllegalAccessException ex) {
+            System.out.println(ex.getMessage());
+        } catch (ClassCastException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
     
     /**
@@ -69,11 +94,11 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     /* Interface Methods */
     /**************************************************************************/
 
-    public void AddDataFormattedStringToInfoList(String dataFormattedString) {
+    public void addDataFormattedStringToInfoList(String dataFormattedString) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void EmtpyInfoList() {
+    public void emtpyInfoList() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -83,14 +108,11 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
 
     public void writeOutput(Writer writer) {
         // output our document to the writer
-        DOMSource domSource = new DOMSource(document);
-        Result result = new StreamResult(writer);
-        try {
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.transform(domSource, result);
-        } catch (Exception e) {
-            System.out.println("Error in writing GetCapsOutputter - " + e.getMessage());
-        }
+        LSSerializer xmlSerializer = impl.createLSSerializer();
+        LSOutput xmlOut = impl.createLSOutput();
+        xmlSerializer.getDomConfig().setParameter("format-pretty-print", Boolean.TRUE);
+        xmlOut.setCharacterStream(writer);
+        xmlSerializer.write(document, xmlOut);
     }
     
     /**************************************************************************/

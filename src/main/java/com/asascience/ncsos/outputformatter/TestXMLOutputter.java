@@ -52,7 +52,7 @@ public class TestXMLOutputter implements SOSOutputFormatter {
     /*********************
      * Interface Methods *
      *********************/
-    public void AddDataFormattedStringToInfoList(String dataFormattedString) {
+    public void addDataFormattedStringToInfoList(String dataFormattedString) {
         if (infoList == null) {
             infoList = new ArrayList<DataSlice>();
         }
@@ -60,7 +60,7 @@ public class TestXMLOutputter implements SOSOutputFormatter {
         //parse the formatted string
     }
 
-    public void EmtpyInfoList() {
+    public void emtpyInfoList() {
         infoList = null;
     }
 
