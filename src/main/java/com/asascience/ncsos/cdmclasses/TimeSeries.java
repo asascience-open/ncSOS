@@ -143,7 +143,6 @@ public class TimeSeries extends baseCDMClass implements iStationData {
             }
         }
         //setCount(count);
-        System.out.println("returning: " + builder.toString());
         return builder.toString();
     }
 
@@ -156,7 +155,6 @@ public class TimeSeries extends baseCDMClass implements iStationData {
                 valueList.add(variableName + "=" + pointFeature.getData().getScalarObject(variableName).toString());
             }
         } catch (Exception ex) {
-            System.out.println("recieved exception: " + ex.getMessage());
             // couldn't find a data var
             builder.delete(0, builder.length());
             builder.append("ERROR=received the following error when reading the data of the dataset: ").append(ex.getLocalizedMessage());
@@ -176,7 +174,6 @@ public class TimeSeries extends baseCDMClass implements iStationData {
                 builder.append(";");
             }
         } catch (Exception ex) {
-            System.out.println("recieved exception: " + ex.getMessage());
             builder = new StringBuilder();
             builder.append("ERROR=received the following error when reading the data of the dataset: ").append(ex.getLocalizedMessage());
         }

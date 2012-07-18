@@ -107,7 +107,6 @@ public class OosTethysSwe implements SOSOutputFormatter {
         
         for (String val : values) {
             // print error if one is recieved
-            System.out.println(val);
             if (val.contains("ERROR")) {
                 setupExceptionOutput(val);
                 return;
