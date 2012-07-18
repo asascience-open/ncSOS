@@ -54,18 +54,24 @@ public class Trajectory extends baseCDMClass implements iStationData {
         }
     }
 
-    private void addDataLine(List<String> valueList, DateFormatter dateFormatter, PointFeature trajFeature, StringBuilder builder) throws IOException {
+    private void addDataLine(List<String> valueList, DateFormatter dateFormatter, PointFeature trajFeature, StringBuilder builder) {
         valueList.add("time=" + dateFormatter.toDateTimeStringISO(trajFeature.getObservationTimeAsDate()));
 
-        for (int i = 0; i < variableNames.length; i++) {
-            valueList.add(variableNames[i] + "=" + trajFeature.getData().getScalarObject(variableNames[i]).toString());
-        }
+        try {
+            for (int i = 0; i < variableNames.length; i++) {
+                valueList.add(variableNames[i] + "=" + trajFeature.getData().getScalarObject(variableNames[i]).toString());
+            }
 
-        for (String str : valueList) {
-            builder.append(str).append(",");
+            for (String str : valueList) {
+                builder.append(str).append(",");
+            }
+
+            builder.deleteCharAt(builder.length() - 1).append(";");
+        } catch (Exception ex) {
+            // print error
+            builder.delete(0, builder.length());
+            builder.append("ERROR=reading data from dataset: ").append(ex.getLocalizedMessage());
         }
-        
-        builder.deleteCharAt(builder.length() - 1).append(";");
     }
 
     @Override

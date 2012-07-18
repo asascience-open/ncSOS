@@ -372,25 +372,31 @@ public class Profile extends baseCDMClass implements iStationData {
     
     /**************************************************************************/
     
-    private void addProfileData(List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, PointFeatureIterator profileIterator, int stNum) throws IOException {
+    private void addProfileData(List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, PointFeatureIterator profileIterator, int stNum) {
         //set the iterator the the correct profile
-        while (profileIterator.hasNext()) {
-            PointFeature pointFeature = profileIterator.next();
-            valueList.clear();
-            valueList.add("time=" + dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
+        try {
+            while (profileIterator.hasNext()) {
+                PointFeature pointFeature = profileIterator.next();
+                valueList.clear();
+                valueList.add("time=" + dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
 
-            String profileID = getProfileIDFromProfile(pointFeature);
-            //if there is a profile id use it against the data that is requested
-            if (profileID != null) {
-                //System.out.println(profileID);
-                if (profileID.equalsIgnoreCase(reqStationNames.get(stNum))) {
-                    addProfileDataToBuilder(valueList, pointFeature, builder);
+                String profileID = getProfileIDFromProfile(pointFeature);
+                //if there is a profile id use it against the data that is requested
+                if (profileID != null) {
+                    //System.out.println(profileID);
+                    if (profileID.equalsIgnoreCase(reqStationNames.get(stNum))) {
+                        addProfileDataToBuilder(valueList, pointFeature, builder);
+                    } else {
+                        System.out.println("Not adding profile data to builder");
+                    }
                 } else {
-                    System.out.println("Not adding profile data to builder");
+                    addProfileDataToBuilder(valueList, pointFeature, builder);
                 }
-            } else {
-                addProfileDataToBuilder(valueList, pointFeature, builder);
             }
+        } catch (Exception e) {
+            // error reading
+            builder.delete(0, builder.length());
+            builder.append("ERROR=reading data from dataset: ").append(e.getLocalizedMessage());
         }
     }
 
@@ -458,7 +464,9 @@ public class Profile extends baseCDMClass implements iStationData {
                         System.out.println("tsDt is not equal to any known case");
                     }
                     //setCount(pFeature.size());
-
+                    // exit if we get an error
+                    if (builder.toString().contains("ERROR"))
+                        break;
                 }
             }
 

@@ -396,6 +396,9 @@ public class Section extends baseCDMClass implements iStationData {
                             if (pointTime.isEqual(dtStart) || pointTime.isEqual(dtEnd) || (pointTime.isAfter(dtStart) && pointTime.isBefore(dtEnd))) {
                                 addDataLine(valueList, point, builder);
                             }
+                            // exit if we get an error
+                            if (builder.toString().contains("ERROR"))
+                                break;
                         }
                     } else {
                         dtStart = new DateTime(df.getISODate(eventTimes.get(0)), chrono);
@@ -409,6 +412,10 @@ public class Section extends baseCDMClass implements iStationData {
                             if (pointTime.isEqual(dtStart)) {
                                 addDataLine(valueList, point, builder);
                             }
+                            
+                            // exit if we get an error
+                            if (builder.toString().contains("ERROR"))
+                                break;
                         }
                     }
                 } else {
@@ -416,6 +423,9 @@ public class Section extends baseCDMClass implements iStationData {
                         PointFeature point = pointIter.next();
                         valueList.clear();
                         addDataLine(valueList, point, builder);
+                        // exit if we get an error
+                        if (builder.toString().contains("ERROR"))
+                            break;
                     }
                 }
                 pointIter.finish();
@@ -426,17 +436,23 @@ public class Section extends baseCDMClass implements iStationData {
         }
     }
 
-    private void addDataLine(List<String> valueList, PointFeature point, StringBuilder builder) throws IOException {
+    private void addDataLine(List<String> valueList, PointFeature point, StringBuilder builder) {
         valueList.add("time=" + df.toDateTimeStringISO(point.getObservationTimeAsCalendarDate().toDate()));
 
-        for (String variableName : variableNames) {
-            valueList.add(variableName + "=" + point.getData().getScalarObject(variableName).toString());
+        try {
+            for (String variableName : variableNames) {
+                valueList.add(variableName + "=" + point.getData().getScalarObject(variableName).toString());
+            }
+
+            for (String str : valueList) {
+                builder.append(str).append(",");
+            }
+            builder.deleteCharAt(builder.length()-1).append(";");
+        } catch (Exception ex) {
+            // error in reading data
+            builder.delete(0, builder.length());
+            builder.append("ERROR=reading data from dataset: ").append(ex.getLocalizedMessage());
         }
-        
-        for (String str : valueList) {
-            builder.append(str).append(",");
-        }
-        builder.deleteCharAt(builder.length()-1).append(";");
     }
     
     private static CalendarDateRange getDateRange(SectionFeature section) {
