@@ -6,6 +6,7 @@ import com.asascience.ncsos.outputformatter.OosTethysSwe;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import ucar.nc2.Variable;
@@ -126,9 +127,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             //if it not found add it!
             if (foundZ == false) {
                 variableNamesNew = new ArrayList<String>();
-                for (int i = 0; i < variableNames1.length; i++) {
-                    variableNamesNew.add(variableNames1[i]);
-                }
+                variableNamesNew.addAll(Arrays.asList(variableNames1));
                 variableNamesNew.add(Axis.getFullName());
                 variableNames1 = new String[variableNames1.length + 1];
                 variableNames1 = (String[]) variableNamesNew.toArray(variableNames1);
