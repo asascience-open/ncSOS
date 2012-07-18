@@ -146,8 +146,6 @@ public class Grid extends baseCDMClass implements iStationData {
                         }
                     }
                 }
-
-
             }
         }
 

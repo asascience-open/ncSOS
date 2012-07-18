@@ -45,6 +45,27 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             String outputFormat,
             Map<String, String> latLonRequest) throws IOException {
         super(netCDFDataset);
+        
+        // make sure that all of the variable names are in the dataset
+        for (String vars : variableNames) {
+            boolean isInDataset = false;
+            for (Variable dVar : netCDFDataset.getVariables()) {
+                if (dVar.getFullName().equalsIgnoreCase(vars)) {
+                    isInDataset = true;
+                    break;
+                }
+            }
+            if (!isInDataset) {
+                // make output an exception
+                _log.error("observed property - " + vars + " - was not found in the dataset");
+                // print exception and then return the doc
+                output = new GetCapsOutputter();
+                output.setupExceptionOutput("observed property - " + vars + " - was not found in the dataset");
+                CDMDataSet = null;
+                return;
+            }
+        }
+        
         //this.stationName = stationName[0];        
         CoordinateAxis heightAxis = netCDFDataset.findCoordinateAxis(AxisType.Height);
 
