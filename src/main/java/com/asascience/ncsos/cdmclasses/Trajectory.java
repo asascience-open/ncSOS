@@ -70,7 +70,7 @@ public class Trajectory extends baseCDMClass implements iStationData {
         } catch (Exception ex) {
             // print error
             builder.delete(0, builder.length());
-            builder.append("ERROR=reading data from dataset: ").append(ex.getLocalizedMessage());
+            builder.append("ERROR =reading data from dataset: ").append(ex.getLocalizedMessage()).append(". Most likely this property does not exist or is improperly stored in the dataset.");
         }
     }
 

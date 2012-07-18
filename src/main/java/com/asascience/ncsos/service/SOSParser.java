@@ -102,12 +102,6 @@ public class SOSParser {
             return retval;
         }
         
-        // now attempt to create our request
-        if (queryParameters.containsKey("observedproperty")) {
-            String[] props = (String[])queryParameters.get("observedproperty");
-            for (String str : props)
-                System.out.println(str);
-        }
         try {
             switch (SupportedRequests.valueOf(queryParameters.get("request").toString())) {
                 case GetCapabilities:
@@ -138,7 +132,6 @@ public class SOSParser {
                                 //Check Directory 
                                 capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
                                 parseGetCaps(capHandler);
-                                System.out.println("created GetCaps handler");
                             } catch (IOException ex) {
                                 _log.error(ex.getMessage());
                             }
@@ -150,12 +143,10 @@ public class SOSParser {
                         try {
                             capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
                             parseGetCaps(capHandler);
-                            System.out.println("created GetCaps handler");
                         } catch (IOException ex) {
                             _log.error(ex.getMessage());
                         }
                     }
-                    System.out.println("capHandler output- " + capHandler.getOutputHandler().toString());
                     if (capHandler != null)
                         retval.put("outputHandler", capHandler.getOutputHandler());
                     else
@@ -177,10 +168,8 @@ public class SOSParser {
                         break;
                     }
                     // setup our coordsHash
-                    if (queryParameters.containsKey("lat")) {
+                    if (queryParameters.containsKey("lat") && queryParameters.containsKey("lon")) {
                         coordsHash.put("lat", queryParameters.get("lat").toString());
-                    }
-                    if (queryParameters.containsKey("lon")) {
                         coordsHash.put("lon", queryParameters.get("lon").toString());
                     }
                     if (queryParameters.containsKey("depth")) {
@@ -236,14 +225,13 @@ public class SOSParser {
                 default:
                     // return a 'not supported' error
                     System.out.println(queryParameters.get("request").toString() + " is not a supported request");
+                    _log.error("Invalid request parameter: " + queryParameters.get("request").toString() + " is not a supported request");
                     break;
             }
         } catch (IllegalArgumentException ex) {
             // create a get caps respons with exception
             _log.error("Exception with request: " + ex.getMessage());
             System.out.println("Exception encountered " + ex.getMessage());
-            for (StackTraceElement ste : ex.getStackTrace())
-                System.out.println(ste.getClassName() + " - " + ste.getLineNumber());
             try {
                 capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
             } catch (Exception e) { }
@@ -287,6 +275,7 @@ public class SOSParser {
                         queryParameters.put(keyVal[0],val);
                     } catch (Exception e) {
                         System.out.println("Exception in decoding: " + keyVal[1] + " - " + e.getMessage());
+                        _log.error("Exception in decoding: " + keyVal[1] + " - " + e.getMessage());
                         queryParameters.put(keyVal[0],keyVal[1]);
                     }
                 } else if (keyVal[0].equalsIgnoreCase("eventtime")) {

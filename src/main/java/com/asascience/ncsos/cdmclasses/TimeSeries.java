@@ -156,7 +156,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         } catch (Exception ex) {
             // couldn't find a data var
             builder.delete(0, builder.length());
-            builder.append("ERROR=received the following error when reading the data of the dataset: ").append(ex.getLocalizedMessage());
+            builder.append("ERROR =reading data from dataset: ").append(ex.getLocalizedMessage()).append(". Most likely this property does not exist or is improperly stored in the dataset.");
             return;
         }
 

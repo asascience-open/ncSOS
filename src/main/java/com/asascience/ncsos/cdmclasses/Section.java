@@ -432,7 +432,9 @@ public class Section extends baseCDMClass implements iStationData {
             }
             profileCollectionIter.finish();
         } catch (Exception e) {
-            System.out.println("Error in addTrajectoryProfileData " + e.getMessage());
+            // add exception to output
+            builder.delete(0, builder.length());
+            builder.append("ERROR =building data: ").append(e.getLocalizedMessage()).append(".");
         }
     }
 
@@ -451,7 +453,7 @@ public class Section extends baseCDMClass implements iStationData {
         } catch (Exception ex) {
             // error in reading data
             builder.delete(0, builder.length());
-            builder.append("ERROR=reading data from dataset: ").append(ex.getLocalizedMessage());
+            builder.append("ERROR =reading data from dataset: ").append(ex.getLocalizedMessage()).append(". Most likely this property does not exist or is improperly stored in the dataset.");
         }
     }
     

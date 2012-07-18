@@ -393,10 +393,10 @@ public class Profile extends baseCDMClass implements iStationData {
                     addProfileDataToBuilder(valueList, pointFeature, builder);
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception ex) {
             // error reading
             builder.delete(0, builder.length());
-            builder.append("ERROR=reading data from dataset: ").append(e.getLocalizedMessage());
+            builder.append("ERROR =reading data from dataset: ").append(ex.getLocalizedMessage()).append(". Most likely this property does not exist or is improperly stored in the dataset.");
         }
     }
 

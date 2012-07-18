@@ -100,7 +100,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         } else {
             _log.error("Uknown/Unhandled responseFormat: " + outputFormat);
             output = new GetCapsOutputter();
-            output.setupExceptionOutput("Null Dataset; could not recognize output format");
+            output.setupExceptionOutput("Could not recognize output format");
         }
     }
 
