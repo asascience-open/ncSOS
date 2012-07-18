@@ -90,7 +90,24 @@ public class SOSParser {
             // issue in parsing, return an error
             return retval;
         }
+        
+        // check to make sure needed params are in the query
+        if (!queryParameters.containsKey("request") ||
+                !queryParameters.containsKey("service") ||
+                !queryParameters.containsKey("version")) {
+            capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
+            capHandler.getOutputHandler().setupExceptionOutput("Request is missing key arguments. Check your query string and try again.");
+            retval.put("outputHandler", capHandler.getOutputHandler());
+            retval.put("responseContentType", "text/xml");
+            return retval;
+        }
+        
         // now attempt to create our request
+        if (queryParameters.containsKey("observedproperty")) {
+            String[] props = (String[])queryParameters.get("observedproperty");
+            for (String str : props)
+                System.out.println(str);
+        }
         try {
             switch (SupportedRequests.valueOf(queryParameters.get("request").toString())) {
                 case GetCapabilities:
@@ -225,10 +242,12 @@ public class SOSParser {
             // create a get caps respons with exception
             _log.error("Exception with request: " + ex.getMessage());
             System.out.println("Exception encountered " + ex.getMessage());
+            for (StackTraceElement ste : ex.getStackTrace())
+                System.out.println(ste.getClassName() + " - " + ste.getLineNumber());
             try {
                 capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
             } catch (Exception e) { }
-            capHandler.getOutputHandler().setupExceptionOutput("Request \'" + queryParameters.get("request").toString() + "\' is not supported.");
+            capHandler.getOutputHandler().setupExceptionOutput("Recieved an invalid argument. Exception as follows: " + ex.getLocalizedMessage());
             retval.put("outputHandler", capHandler.getOutputHandler());
         }
         

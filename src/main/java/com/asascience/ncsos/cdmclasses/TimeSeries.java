@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import org.joda.time.Chronology;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
+import ucar.ma2.StructureMembers.Member;
 import ucar.nc2.ft.PointFeature;
 import ucar.nc2.ft.PointFeatureIterator;
 import ucar.nc2.ft.StationTimeSeriesFeature;
@@ -142,15 +143,24 @@ public class TimeSeries extends baseCDMClass implements iStationData {
             }
         }
         //setCount(count);
+        System.out.println("returning: " + builder.toString());
         return builder.toString();
     }
 
-    private void createTimeSeriesData(List<String> valueList, DateFormatter dateFormatter, PointFeature pointFeature, StringBuilder builder, int stNum) throws IOException {
+    private void createTimeSeriesData(List<String> valueList, DateFormatter dateFormatter, PointFeature pointFeature, StringBuilder builder, int stNum) {
         //count++;
         valueList.clear();
         valueList.add("time=" + dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
-        for (String variableName : variableNames) {
-            valueList.add(variableName + "=" + pointFeature.getData().getScalarObject(variableName).toString());
+        try {
+            for (String variableName : variableNames) {
+                valueList.add(variableName + "=" + pointFeature.getData().getScalarObject(variableName).toString());
+            }
+        } catch (Exception ex) {
+            System.out.println("recieved exception: " + ex.getMessage());
+            // couldn't find a data var
+            builder.delete(0, builder.length());
+            builder.append("ERROR=received the following error when reading the data of the dataset: ").append(ex.getLocalizedMessage());
+            return;
         }
 
         for (int i = 0; i < valueList.size(); i++) {
@@ -159,13 +169,16 @@ public class TimeSeries extends baseCDMClass implements iStationData {
                 builder.append(",");
             }
         }
-
-        //builder.append(tokenJoiner.join(valueList));
-        // TODO:  conditional inside loop...
-        if (tsData.getStationFeature(tsStationList.get(stNum)).size() > 1) {
-//            builder.append(" ");
-//            builder.append("\n");
-            builder.append(";");
+        try {
+            //builder.append(tokenJoiner.join(valueList));
+            // TODO:  conditional inside loop...
+            if (tsData.getStationFeature(tsStationList.get(stNum)).size() > 1) {
+                builder.append(";");
+            }
+        } catch (Exception ex) {
+            System.out.println("recieved exception: " + ex.getMessage());
+            builder = new StringBuilder();
+            builder.append("ERROR=received the following error when reading the data of the dataset: ").append(ex.getLocalizedMessage());
         }
     }
 

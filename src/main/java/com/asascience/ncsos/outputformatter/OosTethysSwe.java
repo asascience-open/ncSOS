@@ -14,11 +14,6 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.transform.Result;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
@@ -111,7 +106,13 @@ public class OosTethysSwe implements SOSOutputFormatter {
             infoList = new ArrayList<DataSlice>();
         
         for (String val : values) {
-            // skip an empty pieces
+            // print error if one is recieved
+            System.out.println(val);
+            if (val.contains("ERROR")) {
+                setupExceptionOutput(val);
+                return;
+            }
+            // skip any empty pieces
             if (!val.contains("="))
                 continue;
             String[] valuePiece = val.split("=");
@@ -168,7 +169,8 @@ public class OosTethysSwe implements SOSOutputFormatter {
     }
 
     public void writeOutput(Writer writer) {
-        parseObservations();
+        if (!document.getFirstChild().getNodeName().equalsIgnoreCase("exceptionreport"))
+            parseObservations();
         // output our document to the writer
         LSSerializer xmlSerializer = impl.createLSSerializer();
         LSOutput xmlOut = impl.createLSOutput();
