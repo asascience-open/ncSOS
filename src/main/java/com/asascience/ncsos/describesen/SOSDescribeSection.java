@@ -51,6 +51,8 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
      */
     public SOSDescribeSection( NetcdfDataset dataset, String procedure, CalendarDate[] sDate ) {
         super(dataset, procedure);
+        // ignore errors from parent constructor
+        errorString = null;
         
         // get our profile number
         String tStr = stationName.toLowerCase().replaceAll("(profile)", "");
@@ -89,6 +91,17 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
             else if (varName.equalsIgnoreCase("profile") || varName.equalsIgnoreCase("trajectory")) {
                 stationVariable = var;
             }
+        }
+        
+        if (stationVariable == null)
+            errorString = "Could not find expected variable containing information about stations in dataset";
+        
+        try {
+            if (stationVariable.read().getShape()[0] <= trajectoryNumber)
+                errorString = stationName + " is not in the dataset!";
+        } catch (Exception ex) {
+            errorString = "Error reading station variable: " + ex.getLocalizedMessage();
+            return;
         }
         
         if (rowsize != null) {
@@ -130,22 +143,26 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
     
     @Override
     public void setupOutputDocument(DescribeSensorFormatter output) {
-        // system node
-        output.setSystemId("station-" + stationName);
-        // set description
-        formatSetDescription(output);
-        // identification node
-        formatSetIdentification(output);
-        // classification node
-        formatSetClassification(output);
-        // contact node
-        formatSetContactNodes(output);
-        // history node
-        formatSetHistoryNodes(output);
-        // position node
-        formatSetPositionNode(output);
-        // remove unwanted nodes
-        removeUnusedNodes(output);
+        if (errorString == null) {
+            // system node
+            output.setSystemId("station-" + stationName);
+            // set description
+            formatSetDescription(output);
+            // identification node
+            formatSetIdentification(output);
+            // classification node
+            formatSetClassification(output);
+            // contact node
+            formatSetContactNodes(output);
+            // history node
+            formatSetHistoryNodes(output);
+            // position node
+            formatSetPositionNode(output);
+            // remove unwanted nodes
+            removeUnusedNodes(output);
+        } else {
+            output.setupExceptionOutput(errorString);
+        }
     }
     
     /**************************************************************************/

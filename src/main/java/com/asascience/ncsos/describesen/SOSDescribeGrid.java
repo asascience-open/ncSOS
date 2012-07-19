@@ -37,6 +37,8 @@ public class SOSDescribeGrid extends SOSDescribeStation implements SOSDescribeIF
     public SOSDescribeGrid( NetcdfDataset dataset, String procedure ) {
         super(dataset, procedure);
         upperLatitude = upperLongitude = lowerLatitude = lowerLongitude = "";
+        // ignore errors from super constructor
+        errorString = null;
         // get the bounding box
         try {
             Array coordArray;
@@ -63,7 +65,13 @@ public class SOSDescribeGrid extends SOSDescribeStation implements SOSDescribeIF
                     stationVariable = var;
                 }
             }
-        } catch (IOException ex) {}
+        } catch (IOException ex) {
+            errorString = "Unable to read dataset: " + ex.getMessage();
+        }
+        
+        if (stationVariable == null) {
+            errorString = "Unable to find variable with station info";
+        }
     }
     
     /*********************
@@ -71,22 +79,26 @@ public class SOSDescribeGrid extends SOSDescribeStation implements SOSDescribeIF
      **************************************************************************/
     @Override
     public void setupOutputDocument(DescribeSensorFormatter output) {
-        // system node
-        output.setSystemId("station-" + stationName);
-        // set description
-        formatSetDescription(output);
-        // identification node
-        formatSetIdentification(output);
-        // classification node
-        formatSetClassification(output);
-        // contact node
-        formatSetContactNodes(output);
-        // history node
-        formatSetHistoryNodes(output);
-        // location node
-        formatSetLocationNode(output);
-        // remove unwanted nodes
-        removeUnusedNodes(output);
+        if (errorString == null) {
+            // system node
+            output.setSystemId("station-" + stationName);
+            // set description
+            formatSetDescription(output);
+            // identification node
+            formatSetIdentification(output);
+            // classification node
+            formatSetClassification(output);
+            // contact node
+            formatSetContactNodes(output);
+            // history node
+            formatSetHistoryNodes(output);
+            // location node
+            formatSetLocationNode(output);
+            // remove unwanted nodes
+            removeUnusedNodes(output);
+        } else {
+            output.setupExceptionOutput(errorString);
+        }
     }
     /**************************************************************************/
 

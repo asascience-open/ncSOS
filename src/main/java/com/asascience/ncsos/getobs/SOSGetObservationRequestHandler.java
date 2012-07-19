@@ -6,6 +6,7 @@ import com.asascience.ncsos.outputformatter.OosTethysSwe;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import ucar.nc2.Variable;
@@ -44,6 +45,27 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             String outputFormat,
             Map<String, String> latLonRequest) throws IOException {
         super(netCDFDataset);
+        
+        // make sure that all of the variable names are in the dataset
+        for (String vars : variableNames) {
+            boolean isInDataset = false;
+            for (Variable dVar : netCDFDataset.getVariables()) {
+                if (dVar.getFullName().equalsIgnoreCase(vars)) {
+                    isInDataset = true;
+                    break;
+                }
+            }
+            if (!isInDataset) {
+                // make output an exception
+                _log.error("observed property - " + vars + " - was not found in the dataset");
+                // print exception and then return the doc
+                output = new GetCapsOutputter();
+                output.setupExceptionOutput("observed property - " + vars + " - was not found in the dataset");
+                CDMDataSet = null;
+                return;
+            }
+        }
+        
         //this.stationName = stationName[0];        
         CoordinateAxis heightAxis = netCDFDataset.findCoordinateAxis(AxisType.Height);
 
@@ -94,13 +116,12 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         
         // set up our formatter
         if(outputFormat.equalsIgnoreCase("text/xml;subtype=\"om/1.0.0\"")) {
-            System.out.println("using oostethysswe as output");
             contentType = "text/xml";
             output = new OosTethysSwe(this.variableNames, getFeatureDataset(), CDMDataSet, netCDFDataset);
         } else {
             _log.error("Uknown/Unhandled responseFormat: " + outputFormat);
             output = new GetCapsOutputter();
-            output.setupExceptionOutput("Null Dataset; could not recognize output format");
+            output.setupExceptionOutput("Could not recognize output format");
         }
     }
 
@@ -127,9 +148,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             //if it not found add it!
             if (foundZ == false) {
                 variableNamesNew = new ArrayList<String>();
-                for (int i = 0; i < variableNames1.length; i++) {
-                    variableNamesNew.add(variableNames1[i]);
-                }
+                variableNamesNew.addAll(Arrays.asList(variableNames1));
                 variableNamesNew.add(Axis.getFullName());
                 variableNames1 = new String[variableNames1.length + 1];
                 variableNames1 = (String[]) variableNamesNew.toArray(variableNames1);

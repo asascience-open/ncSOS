@@ -42,6 +42,8 @@ public class SOSDescribeProfile extends SOSDescribeStation implements SOSDescrib
      */
     public SOSDescribeProfile( NetcdfDataset dataset, String procedure ) {
         super(dataset,procedure);
+        // ignore errors from the super constructor
+        errorString = null;
         
         // stripping "profile" out of station name should result in our profile number
         String profileNumStr = stationName.toLowerCase().replaceAll("(profile)", "");
@@ -64,11 +66,13 @@ public class SOSDescribeProfile extends SOSDescribeStation implements SOSDescrib
                     profileIndices = indexBuilder.toArray(new Integer[indexBuilder.size()]);
                 } catch (IOException ex) {
                     System.out.println("Error in DescribeProfile constructor - " + ex.getMessage());
+                    errorString = "Error in DescribeProfile constructor - " + ex.getMessage();
+                    return;
                 }
             }
             else if (varName.contains("rowsize")) {
                 try {
-                    int profileIndex = profileNumber-1;
+                    int profileIndex = profileNumber;
                     Array obsIndices = var.read();
                     // add up our lower and upper index bounds
                     profileStartIndex = profileEndIndex = 0;
@@ -82,6 +86,8 @@ public class SOSDescribeProfile extends SOSDescribeStation implements SOSDescrib
                     }
                 } catch (IOException ex) {
                     System.out.println("Error in DescribeProfile constructor - " + ex.getMessage());
+                    errorString = "Error in DescribeProfile constructor - " + ex.getMessage();
+                    return;
                 }
             }
             // look for lat, lon, depth
@@ -98,6 +104,16 @@ public class SOSDescribeProfile extends SOSDescribeStation implements SOSDescrib
                 stationVariable = var;
             }
         }
+        
+        if (stationVariable == null)
+            errorString = "Could not find expected Variable holding needed station information in the dataset";
+        
+        try {
+            if (stationVariable.read().getShape()[0] <= profileNumber)
+                errorString = stationName + " is not in the dataset!";
+        } catch (Exception ex) {
+            errorString = "Error reading station variable: " + ex.getLocalizedMessage();
+        }
     }
     
     /*********************
@@ -106,22 +122,26 @@ public class SOSDescribeProfile extends SOSDescribeStation implements SOSDescrib
     
     @Override
     public void setupOutputDocument(DescribeSensorFormatter output) {
-        // system node
-        output.setSystemId("station-" + stationName);
-        // set description
-        formatSetDescription(output);
-        // identification node
-        formatSetIdentification(output);
-        // classification node
-        formatSetClassification(output);
-        // contact node
-        formatSetContactNodes(output);
-        // history node
-        formatSetHistoryNodes(output);
-        // positions node
-        formatSetPositionsNode(output);
-        // remove unwanted nodes
-        removeUnusedNodes(output);
+        if (errorString == null) {
+            // system node
+            output.setSystemId("station-" + stationName);
+            // set description
+            formatSetDescription(output);
+            // identification node
+            formatSetIdentification(output);
+            // classification node
+            formatSetClassification(output);
+            // contact node
+            formatSetContactNodes(output);
+            // history node
+            formatSetHistoryNodes(output);
+            // positions node
+            formatSetPositionsNode(output);
+            // remove unwanted nodes
+            removeUnusedNodes(output);
+        } else {
+            output.setupExceptionOutput(errorString);
+        }
     }
     
     /**************************************************************************/

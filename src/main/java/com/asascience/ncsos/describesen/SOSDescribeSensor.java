@@ -36,6 +36,8 @@ public class SOSDescribeSensor extends SOSDescribeStation implements SOSDescribe
      */
     public SOSDescribeSensor( NetcdfDataset dataset, String procedure ) {
         super(dataset, procedure);
+        // ignore errors from the station constructor
+        errorString = null;
         Variable lat, lon;
         lat = lon = null;
         
@@ -58,10 +60,13 @@ public class SOSDescribeSensor extends SOSDescribeStation implements SOSDescribe
         }
         
         if (sensorVariable == null) {
-            throw new IllegalArgumentException("Unable to find sensor " + sensorId + " in dataset!");
+            errorString = "Unable to find sensor " + sensorId + " in the dataset!";
         }
         
         stationCoords = getStationCoords(lat, lon);
+        
+        if (stationCoords[0] == Double.NaN && stationCoords[1] == Double.NaN)
+            errorString = "Unable to find station " + stationName + " in the dataset!";
     }
     
     /*********************
@@ -70,18 +75,22 @@ public class SOSDescribeSensor extends SOSDescribeStation implements SOSDescribe
     
     @Override
     public void setupOutputDocument(DescribeSensorFormatter output) {
-        // system node
-        output.setSystemId("sensor-" + stationName + "-" + sensorId);
-        // set description
-        formatSetDescription(output);
-        // identification node
-        formatSetIdentification(output);
-        // contact node
-        formatSetContactNodes(output);
-        // location node
-        formatSetLocationNode(output);
-        // remove unwanted nodes
-        removeUnusedNodes(output);
+        if (errorString == null) {
+            // system node
+            output.setSystemId("sensor-" + stationName + "-" + sensorId);
+            // set description
+            formatSetDescription(output);
+            // identification node
+            formatSetIdentification(output);
+            // contact node
+            formatSetContactNodes(output);
+            // location node
+            formatSetLocationNode(output);
+            // remove unwanted nodes
+            removeUnusedNodes(output);
+        } else {
+            output.setupExceptionOutput(errorString);
+        }
     }
     
     /**************************************************************************/

@@ -145,12 +145,19 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         return builder.toString();
     }
 
-    private void createTimeSeriesData(List<String> valueList, DateFormatter dateFormatter, PointFeature pointFeature, StringBuilder builder, int stNum) throws IOException {
+    private void createTimeSeriesData(List<String> valueList, DateFormatter dateFormatter, PointFeature pointFeature, StringBuilder builder, int stNum) {
         //count++;
         valueList.clear();
         valueList.add("time=" + dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
-        for (String variableName : variableNames) {
-            valueList.add(variableName + "=" + pointFeature.getData().getScalarObject(variableName).toString());
+        try {
+            for (String variableName : variableNames) {
+                valueList.add(variableName + "=" + pointFeature.getData().getScalarObject(variableName).toString());
+            }
+        } catch (Exception ex) {
+            // couldn't find a data var
+            builder.delete(0, builder.length());
+            builder.append("ERROR =reading data from dataset: ").append(ex.getLocalizedMessage()).append(". Most likely this property does not exist or is improperly stored in the dataset.");
+            return;
         }
 
         for (int i = 0; i < valueList.size(); i++) {
@@ -159,13 +166,15 @@ public class TimeSeries extends baseCDMClass implements iStationData {
                 builder.append(",");
             }
         }
-
-        //builder.append(tokenJoiner.join(valueList));
-        // TODO:  conditional inside loop...
-        if (tsData.getStationFeature(tsStationList.get(stNum)).size() > 1) {
-//            builder.append(" ");
-//            builder.append("\n");
-            builder.append(";");
+        try {
+            //builder.append(tokenJoiner.join(valueList));
+            // TODO:  conditional inside loop...
+            if (tsData.getStationFeature(tsStationList.get(stNum)).size() > 1) {
+                builder.append(";");
+            }
+        } catch (Exception ex) {
+            builder = new StringBuilder();
+            builder.append("ERROR=received the following error when reading the data of the dataset: ").append(ex.getLocalizedMessage());
         }
     }
 

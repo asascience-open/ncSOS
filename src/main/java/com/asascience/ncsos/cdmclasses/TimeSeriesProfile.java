@@ -114,8 +114,9 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
             for (int i = 0; i < z.size(); i++) {
                 pf = stationProfileFeature.getProfileByDate(z.get(i));
                 createStationProfileData(pf, valueList, dateFormatter, builder, stNum);
+                if (builder.toString().contains("ERROR"))
+                    break;
             }
-            return builder.toString();
         } else if (eventTimes.size() > 1) {
             for (int i = 0; i < z.size(); i++) {
 
@@ -136,8 +137,9 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
                 else if (tsDt.isAfter(dtStart) && (tsDt.isBefore(dtEnd))) {
                     createStationProfileData(pf, valueList, dateFormatter, builder, stNum);
                 }
+                if (builder.toString().contains("ERROR"))
+                    break;
             }
-            return builder.toString();
         } //if the event time is specified get the correct data        
         else {
             for (int i = 0; i < z.size(); i++) {
@@ -146,40 +148,49 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
                     pf = stationProfileFeature.getProfileByDate(z.get(i));
                     createStationProfileData(pf, valueList, dateFormatter, builder, stNum);
                 }
+                
+                if (builder.toString().contains("ERROR"))
+                    break;
             }
-            return builder.toString();
         }
+        return builder.toString();
     }
 
-    private void createStationProfileData(ProfileFeature pf, List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, int stNum) throws IOException {
+    private void createStationProfileData(ProfileFeature pf, List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, int stNum) {
 
-        PointFeatureIterator it = pf.getPointFeatureIterator(-1);
+        try {
+            PointFeatureIterator it = pf.getPointFeatureIterator(-1);
 
-        //int num = 0;
+            //int num = 0;
 
-        while (it.hasNext()) {
-            PointFeature pointFeature = it.next();
-            valueList.clear();
-            valueList.add("time=" + dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
+            while (it.hasNext()) {
+                PointFeature pointFeature = it.next();
+                valueList.clear();
+                valueList.add("time=" + dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
 
-            for (String variableName : variableNames) {
-                valueList.add(variableName + "=" + pointFeature.getData().getScalarObject(variableName).toString());
-            }
+                for (String variableName : variableNames) {
+                    valueList.add(variableName + "=" + pointFeature.getData().getScalarObject(variableName).toString());
+                }
 
-            for (int i = 0; i < valueList.size(); i++) {
-                builder.append(valueList.get(i));
-                if (i < valueList.size() - 1) {
-                    builder.append(",");
+                for (int i = 0; i < valueList.size(); i++) {
+                    builder.append(valueList.get(i));
+                    if (i < valueList.size() - 1) {
+                        builder.append(",");
+                    }
+                }
+
+                //builder.append(tokenJoiner.join(valueList));
+                // TODO:  conditional inside loop...
+                if (tsProfileData.getStationProfileFeature(tsStationList.get(stNum)).size() > 1) {
+    //                builder.append(" ");
+    //                builder.append("\n");
+                    builder.append(";");
                 }
             }
-            
-            //builder.append(tokenJoiner.join(valueList));
-            // TODO:  conditional inside loop...
-            if (tsProfileData.getStationProfileFeature(tsStationList.get(stNum)).size() > 1) {
-//                builder.append(" ");
-//                builder.append("\n");
-                builder.append(";");
-            }
+        } catch (Exception ex ) {
+            // print error
+            builder.delete(0, builder.length());
+            builder.append("ERROR =reading data from dataset: ").append(ex.getLocalizedMessage()).append(". Most likely this property does not exist or is improperly stored in the dataset.");
         }
     }
 
