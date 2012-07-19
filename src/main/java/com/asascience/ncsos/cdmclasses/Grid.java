@@ -146,8 +146,6 @@ public class Grid extends baseCDMClass implements iStationData {
                         }
                     }
                 }
-
-
             }
         }
 
@@ -232,8 +230,11 @@ public class Grid extends baseCDMClass implements iStationData {
                         try {
                             data = grid.readDataSlice(0, depthHeights[k], latLonDepthHash.get(LAT)[k], latLonDepthHash.get(LON)[k]);
                             builder.append(dataName).append("=").append(data.getFloat(0)).append(",");
-                        } catch (Exception e) {
-                            System.out.println("Error in reading data slice, index " + l + " - " + e.getMessage());
+                        } catch (Exception ex) {
+                            System.out.println("Error in reading data slice, index " + l + " - " + ex.getMessage());
+                            builder.delete(0, builder.length());
+                            builder.append("ERROR= reading data slice from GridData: ").append(ex.getLocalizedMessage());
+                            return builder.toString();
                         }
                     }
                 }

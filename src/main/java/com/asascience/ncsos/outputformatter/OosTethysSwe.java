@@ -14,11 +14,6 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.transform.Result;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
@@ -111,7 +106,12 @@ public class OosTethysSwe implements SOSOutputFormatter {
             infoList = new ArrayList<DataSlice>();
         
         for (String val : values) {
-            // skip an empty pieces
+            // print error if one is recieved
+            if (val.contains("ERROR")) {
+                setupExceptionOutput(val);
+                return;
+            }
+            // skip any empty pieces
             if (!val.contains("="))
                 continue;
             String[] valuePiece = val.split("=");
@@ -168,7 +168,8 @@ public class OosTethysSwe implements SOSOutputFormatter {
     }
 
     public void writeOutput(Writer writer) {
-        parseObservations();
+        if (!document.getFirstChild().getNodeName().equalsIgnoreCase("exceptionreport"))
+            parseObservations();
         // output our document to the writer
         LSSerializer xmlSerializer = impl.createLSSerializer();
         LSOutput xmlOut = impl.createLSOutput();
@@ -246,18 +247,36 @@ public class OosTethysSwe implements SOSOutputFormatter {
         //add fields
         document = XMLDomUtils.addNodeAndAttribute(document, "swe:DataRecord", "swe:field", "name", "time", stationNumber);
         document = XMLDomUtils.addNodeAndAttribute(document, "swe:field", "swe:Time", fieldIndex++, "definition", "urn:ogc:phenomenon:time:iso8601", stationNumber);
-
-        // add observed property
+        
+        // add lat and lon first
         for (String observedProperty : variableNames) {
-            VariableSimpleIF variable = featureDataset.getDataVariable(observedProperty);
-            document = XMLDomUtils.addNodeAndAttribute(document, "swe:DataRecord", "swe:field", "name", observedProperty, stationNumber);
-            document = XMLDomUtils.addNodeAndAttribute(document, "swe:field", "swe:Quantity", fieldIndex++, "definition", "urn:ogc:def:phenomenon:mmisw.org:cf:" + observedProperty, stationNumber);
+            if (observedProperty.contains("lat") || observedProperty.contains("lon")) {
+                VariableSimpleIF variable = featureDataset.getDataVariable(observedProperty);
+                document = XMLDomUtils.addNodeAndAttribute(document, "swe:DataRecord", "swe:field", "name", observedProperty, stationNumber);
+                document = XMLDomUtils.addNodeAndAttribute(document, "swe:field", "swe:Quantity", fieldIndex++, "definition", "urn:ogc:def:phenomenon:mmisw.org:cf:" + observedProperty, stationNumber);
 
-            //added logic abird
-            if (variable != null) {
-                document = XMLDomUtils.addNodeAndAttribute(document, "swe:Quantity", "swe:uom", quantityIndex++, "code", variable.getUnitsString(), stationNumber);
-            } else {
-                quantityIndex++;
+                //added logic abird
+                if (variable != null) {
+                    document = XMLDomUtils.addNodeAndAttribute(document, "swe:Quantity", "swe:uom", quantityIndex++, "code", variable.getUnitsString(), stationNumber);
+                } else {
+                    quantityIndex++;
+                }
+            }
+        }
+
+        // add other observed property
+        for (String observedProperty : variableNames) {
+            if (!observedProperty.contains("lat") && !observedProperty.contains("lon")) {
+                VariableSimpleIF variable = featureDataset.getDataVariable(observedProperty);
+                document = XMLDomUtils.addNodeAndAttribute(document, "swe:DataRecord", "swe:field", "name", observedProperty, stationNumber);
+                document = XMLDomUtils.addNodeAndAttribute(document, "swe:field", "swe:Quantity", fieldIndex++, "definition", "urn:ogc:def:phenomenon:mmisw.org:cf:" + observedProperty, stationNumber);
+
+                //added logic abird
+                if (variable != null) {
+                    document = XMLDomUtils.addNodeAndAttribute(document, "swe:Quantity", "swe:uom", quantityIndex++, "code", variable.getUnitsString(), stationNumber);
+                } else {
+                    quantityIndex++;
+                }
             }
         }
     }

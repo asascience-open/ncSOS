@@ -28,20 +28,33 @@ public class SOSdescribeSensorTest {
     private static final String bdss_1_set = "resources/datasets/sura/watlev_NOAA_NAVD_PRE.nc";
     private static final String bdss_1_query = "procedure=urn:tds:station.sos:NOAA_8724698";
     private static final String bdss_watlev_query = "procedure=urn:tds:sensor.sos:NOAA_8724698::watlev";
+    private static final String bdss_1_query_bad = "procedure=urn:tds:station.sos:badstationname";
+    
     private static final String bdss_2_set = "resources/datasets/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1.nc";
     private static final String bdss_2_query = "procedure=urn:tds:station.sos:Station1";
+    private static final String bdss_2_bad_sensor = "procedure=urn:tds:sensor.sos:Station1::badsensor";
+    
     private static final String bdst_1_set = "resources/datasets/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc";
     private static final String bdst_1_query = "procedure=urn:tds:station.sos:Trajectory3";
+    private static final String bdst_1_query_bad = "procedure=urn:tds:station.sos:Trajectory100";
+    
     private static final String bdst_2_set = "resources/datasets/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4.nc";
     private static final String bdst_2_query = "procedure=urn:tds:station.sos:Trajectory7";
+    
     private static final String bdsp_1_set = "resources/datasets/profile-Contiguous-Ragged-MultipleProfiles-H.3.4/profile-Contiguous-Ragged-MultipleProfiles-H.3.4.nc";
-    private static final String bdsp_1_query = "procedure=urn:tds:station.sos:Profile4";
+    private static final String bdsp_1_query = "procedure=urn:tds:station.sos:Profile3";
+    private static final String bdsp_1_query_bad = "procedure=urn:tds:station.sos:Profile100";
+    
     private static final String bdsp_2_set = "resources/datasets/profile-Indexed-Ragged-MultipleProfiles-H.3.5/profile-Indexed-Ragged-MultipleProfiles-H.3.5.nc";
     private static final String bdsp_2_query = "procedure=urn:tds:station.sos:Profile5";
+    
     private static final String bdsg_1_set = "resources/datasets/satellite-sst/SST_Global_2x2deg_20120626_0000.nc";
     private static final String bdsg_1_query = "procedure=urn:tds:station.sos:SST_Global_2x2deg_20120626_0000";
+    
     private static final String bdstp_1_set = "resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc";
     private static final String bdstp_1_query = "procedure=urn:tds:station.sos:Trajectory2";
+    private static final String bdstp_1_query_bad = "procedure=urn:tds:station.sos:Trajectory200";
+    
     private static final String bdstp_2_set = "resources/datasets/trajectoryProfile-Ragged-MultipleTrajectories-H.6.3/trajectoryProfile-Ragged-MultipleTrajectories-H.6.3.nc";
     private static final String bdstp_2_query = "procedure=urn:tds:station.sos:Trajectory3";
     
@@ -181,7 +194,7 @@ public class SOSdescribeSensorTest {
         fileWriter(exampleOutputDir, "DescribeSensor-Profile-sensorML1.0.1.xml", writer);
         assertFalse("exception in output", writer.toString().contains("Exception"));
         assertTrue("missing component", writer.toString().contains("<sml:System gml:id=\"sensor-humidity\">"));
-        assertTrue("missing/invalid latitude", writer.toString().contains("<swe:value>104.0</swe:value>"));
+        assertTrue("missing/invalid latitude", writer.toString().contains("<swe:value>134.0</swe:value>"));
         System.out.println("------End testBasicDescribeSensorProfile------");
     }
     
@@ -241,8 +254,8 @@ public class SOSdescribeSensorTest {
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhance(dataset, baseQuery + bdstp_1_query, bdstp_1_set), writer);
             fileWriter(outputDir, "trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1_trajectory2.xml", writer);
-        // write as an example
-        fileWriter(exampleOutputDir, "DescribeSensor-Section-sensorML1.0.1.xml", writer);
+            // write as an example
+            fileWriter(exampleOutputDir, "DescribeSensor-Section-sensorML1.0.1.xml", writer);
             assertFalse("exception in output", writer.toString().contains("Exception"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
@@ -262,6 +275,102 @@ public class SOSdescribeSensorTest {
             writeOutput(parser.enhance(dataset, baseQuery + bdstp_2_query, bdstp_2_set), writer);
             fileWriter(outputDir, "trajectoryProfile-Ragged-MultipleTrajectories-H.6.3_trajectory3.xml", writer);
             assertFalse("exception in output", writer.toString().contains("Exception"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testBadStationNameProfile() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdsp_1_set);
+            SOSParser parser = new SOSParser();
+            Writer writer = new CharArrayWriter();
+            writeOutput(parser.enhance(dataset, baseQuery + bdsp_1_query_bad, bdsp_1_set), writer);
+            fileWriter(outputDir, "profile-bad-station-request.xml", writer);
+            // write as an example
+            fileWriter(exampleOutputDir, "DescribeSensor-Grid-sensorML1.0.1.xml", writer);
+            assertTrue("no exception in output", writer.toString().contains("Exception"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testBadSensorNameStation() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + bdss_2_set);
+            SOSParser parser = new SOSParser();
+            Writer writer = new CharArrayWriter();
+            writeOutput(parser.enhance(cdfDataset, baseQuery + bdss_2_bad_sensor, bdss_2_set), writer);
+            fileWriter(outputDir, "station-bad-sensor-request.xml", writer);
+            // test for expected values below
+            assertTrue("no exception in output", writer.toString().contains("Exception"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testBadStationNameStation() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + bdss_1_set);
+            SOSParser parser = new SOSParser();
+            Writer writer = new CharArrayWriter();
+            writeOutput(parser.enhance(cdfDataset, baseQuery + bdss_1_query_bad, bdss_1_set), writer);
+            fileWriter(outputDir, "station-bad-station-request.xml", writer);
+            // test for expected values below
+            assertTrue("no exception in output", writer.toString().contains("Exception"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testBadStationNameTrajectory() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + bdst_1_set);
+            SOSParser parser = new SOSParser();
+            Writer writer = new CharArrayWriter();
+            writeOutput(parser.enhance(cdfDataset, baseQuery + bdst_1_query_bad, bdst_1_set), writer);
+            fileWriter(outputDir, "trajectory-bad-station-request.xml", writer);
+            // test for expected values below
+            assertTrue("no exception in output", writer.toString().contains("Exception"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testBadStationNameTrajectoryProfile() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + bdstp_1_set);
+            SOSParser parser = new SOSParser();
+            Writer writer = new CharArrayWriter();
+            writeOutput(parser.enhance(cdfDataset, baseQuery + bdstp_1_query_bad, bdstp_1_set), writer);
+            fileWriter(outputDir, "section-bad-station-request.xml", writer);
+            // test for expected values below
+            assertTrue("no exception in output", writer.toString().contains("Exception"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {

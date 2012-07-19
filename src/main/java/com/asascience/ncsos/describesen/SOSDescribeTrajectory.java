@@ -48,6 +48,8 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
      */
     public SOSDescribeTrajectory( NetcdfDataset dataset, String procedure, CalendarDate startDate ) {
         super(dataset, procedure);
+        // ignore errors from parent constructor
+        errorString = null;
         
         PositionVars = new ArrayList<Variable>();
         for (Variable var : dataset.getVariables()) {
@@ -74,6 +76,10 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
         
         // get our station index
         stationIndex = getStationIndex(stationVariable, stationName);
+        
+        if (stationIndex < 0) {
+            errorString = "Station not part of dataset: " + stationName;
+        }
         
         // get our observation indices
         if (indexDescriptor.getFullName().toLowerCase().contains("rowsize")) {
@@ -117,22 +123,26 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
     
     @Override
     public void setupOutputDocument(DescribeSensorFormatter output) {
-        // system node
-        output.setSystemId("station-" + stationName);
-        // set description
-        formatSetDescription(output);
-        // identification node
-        formatSetIdentification(output);
-        // classification node
-        formatSetClassification(output);
-        // contact node
-        formatSetContactNodes(output);
-        // history node
-        formatSetHistoryNodes(output);
-        // position node
-        formatSetPositionNode(output);
-        // remove unwanted nodes
-        removeUnusedNodes(output);
+        if (errorString == null) {
+            // system node
+            output.setSystemId("station-" + stationName);
+            // set description
+            formatSetDescription(output);
+            // identification node
+            formatSetIdentification(output);
+            // classification node
+            formatSetClassification(output);
+            // contact node
+            formatSetContactNodes(output);
+            // history node
+            formatSetHistoryNodes(output);
+            // position node
+            formatSetPositionNode(output);
+            // remove unwanted nodes
+            removeUnusedNodes(output);
+        } else {
+            output.setupExceptionOutput(errorString);
+        }
     }
     
     /**************************************************************************/

@@ -90,7 +90,18 @@ public class SOSParser {
             // issue in parsing, return an error
             return retval;
         }
-        // now attempt to create our request
+        
+        // check to make sure needed params are in the query
+        if (!queryParameters.containsKey("request") ||
+                !queryParameters.containsKey("service") ||
+                !queryParameters.containsKey("version")) {
+            capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
+            capHandler.getOutputHandler().setupExceptionOutput("Request is missing key arguments. Check your query string and try again.");
+            retval.put("outputHandler", capHandler.getOutputHandler());
+            retval.put("responseContentType", "text/xml");
+            return retval;
+        }
+        
         try {
             switch (SupportedRequests.valueOf(queryParameters.get("request").toString())) {
                 case GetCapabilities:
@@ -121,7 +132,6 @@ public class SOSParser {
                                 //Check Directory 
                                 capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
                                 parseGetCaps(capHandler);
-                                System.out.println("created GetCaps handler");
                             } catch (IOException ex) {
                                 _log.error(ex.getMessage());
                             }
@@ -133,12 +143,10 @@ public class SOSParser {
                         try {
                             capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
                             parseGetCaps(capHandler);
-                            System.out.println("created GetCaps handler");
                         } catch (IOException ex) {
                             _log.error(ex.getMessage());
                         }
                     }
-                    System.out.println("capHandler output- " + capHandler.getOutputHandler().toString());
                     if (capHandler != null)
                         retval.put("outputHandler", capHandler.getOutputHandler());
                     else
@@ -160,10 +168,8 @@ public class SOSParser {
                         break;
                     }
                     // setup our coordsHash
-                    if (queryParameters.containsKey("lat")) {
+                    if (queryParameters.containsKey("lat") && queryParameters.containsKey("lon")) {
                         coordsHash.put("lat", queryParameters.get("lat").toString());
-                    }
-                    if (queryParameters.containsKey("lon")) {
                         coordsHash.put("lon", queryParameters.get("lon").toString());
                     }
                     if (queryParameters.containsKey("depth")) {
@@ -219,6 +225,7 @@ public class SOSParser {
                 default:
                     // return a 'not supported' error
                     System.out.println(queryParameters.get("request").toString() + " is not a supported request");
+                    _log.error("Invalid request parameter: " + queryParameters.get("request").toString() + " is not a supported request");
                     break;
             }
         } catch (IllegalArgumentException ex) {
@@ -228,7 +235,7 @@ public class SOSParser {
             try {
                 capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
             } catch (Exception e) { }
-            capHandler.getOutputHandler().setupExceptionOutput("Request \'" + queryParameters.get("request").toString() + "\' is not supported.");
+            capHandler.getOutputHandler().setupExceptionOutput("Recieved an invalid argument. Exception as follows: " + ex.getLocalizedMessage());
             retval.put("outputHandler", capHandler.getOutputHandler());
         }
         
@@ -265,9 +272,10 @@ public class SOSParser {
                 } else if (keyVal[0].equalsIgnoreCase("responseformat")) {
                     try {
                         String val = URLDecoder.decode(keyVal[1], "UTF-8");
-                        queryParameters.put(keyVal[0],val);
+                        queryParameters.put(keyVal[0].toLowerCase(),val);
                     } catch (Exception e) {
                         System.out.println("Exception in decoding: " + keyVal[1] + " - " + e.getMessage());
+                        _log.error("Exception in decoding: " + keyVal[1] + " - " + e.getMessage());
                         queryParameters.put(keyVal[0],keyVal[1]);
                     }
                 } else if (keyVal[0].equalsIgnoreCase("eventtime")) {

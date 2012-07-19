@@ -47,9 +47,6 @@
                             <swe:field name="time">
                                 <swe:Time definition="urn:ogc:phenomenon:time:iso8601"/>
                             </swe:field>
-                            <swe:field name="sst">
-                                <swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:sst"/>
-                            </swe:field>
                             <swe:field name="lat">
                                 <swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:lat">
                                     <swe:uom code="degrees_north"/>
@@ -59,6 +56,9 @@
                                 <swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:lon">
                                     <swe:uom code="degrees_east"/>
                                 </swe:Quantity>
+                            </swe:field>
+                            <swe:field name="sst">
+                                <swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:sst"/>
                             </swe:field>
                         </swe:DataRecord>
                     </swe:elementType>
