@@ -37,6 +37,7 @@ public class SOSDescribeStation implements SOSDescribeIF {
     protected ArrayList<Attribute> creatorAttributes, contributorAttributes, publisherAttributes;
     protected ArrayList<Variable> documentVariables;
     protected final String procedure;
+    protected String errorString;
     
     /**
      * Creates an instance to collect needed information, from the dataset, for
@@ -64,6 +65,8 @@ public class SOSDescribeStation implements SOSDescribeIF {
                 documentVariables.add(var);
             }
         }
+        
+        errorString = null;
         
         this.procedure = procedure;
         
@@ -97,6 +100,10 @@ public class SOSDescribeStation implements SOSDescribeIF {
         // set our coords
         if (stationVariable != null) {
             stationCoords = getStationCoords(lat, lon);
+            if (stationCoords == null || (stationCoords[0] == Double.NaN && stationCoords[1] == Double.NaN))
+                errorString = "Could not find station " + stationName + " in dataset";
+        } else {
+            errorString = "Could not find a variable containing station info.";
         }
         
         // description
@@ -109,22 +116,26 @@ public class SOSDescribeStation implements SOSDescribeIF {
     /**************************************************************************/
     
     public void setupOutputDocument(DescribeSensorFormatter output) {
-        // system node
-        output.setSystemId("station-" + stationName);
-        // set description
-        formatSetDescription(output);
-        // identification node
-        formatSetIdentification(output);
-        // classification node
-        formatSetClassification(output);
-        // contact node
-        formatSetContactNodes(output);
-        // history node
-        formatSetHistoryNodes(output);
-        // location node
-        formatSetLocationNode(output);
-        // remove unwanted nodes
-        removeUnusedNodes(output);
+        if (errorString == null) {
+            // system node
+            output.setSystemId("station-" + stationName);
+            // set description
+            formatSetDescription(output);
+            // identification node
+            formatSetIdentification(output);
+            // classification node
+            formatSetClassification(output);
+            // contact node
+            formatSetContactNodes(output);
+            // history node
+            formatSetHistoryNodes(output);
+            // location node
+            formatSetLocationNode(output);
+            // remove unwanted nodes
+            removeUnusedNodes(output);
+        } else {
+            output.setupExceptionOutput(errorString);
+        }
     }
     
     /**************************************************************************/
@@ -260,8 +271,9 @@ public class SOSDescribeStation implements SOSDescribeIF {
                     break;
                 }
             }
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             System.out.println("Received error looking for station " + nameOfStation + " - " + ex.getMessage());
+            errorString = "Error reading from station variable, while looking for " + nameOfStation + ": " + ex.getLocalizedMessage();
         }
         
         return retval;
@@ -274,16 +286,18 @@ public class SOSDescribeStation implements SOSDescribeIF {
      * @param lon longitude Variabe from the dataset
      * @return an array of the latitude and longitude pair
      */
-    protected double[] getStationCoords(Variable lat, Variable lon) {
+    protected final double[] getStationCoords(Variable lat, Variable lon) {
         try {
             // get the lat/lon of the station
             // station id should be the last value in the procedure
             int stationIndex = getStationIndex(stationVariable, stationName);
-            
-            // find lat/lon values for the station
             double[] coords = new double[] { Double.NaN, Double.NaN };
-            coords[0] = lat.read().getDouble(stationIndex);
-            coords[1] = lon.read().getDouble(stationIndex);
+            
+            if (stationIndex >= 0) {
+                // find lat/lon values for the station
+                coords[0] = lat.read().getDouble(stationIndex);
+                coords[1] = lon.read().getDouble(stationIndex);
+            }
 
             return coords;
         } catch (Exception e) {
