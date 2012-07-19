@@ -272,7 +272,7 @@ public class SOSParser {
                 } else if (keyVal[0].equalsIgnoreCase("responseformat")) {
                     try {
                         String val = URLDecoder.decode(keyVal[1], "UTF-8");
-                        queryParameters.put(keyVal[0],val);
+                        queryParameters.put(keyVal[0].toLowerCase(),val);
                     } catch (Exception e) {
                         System.out.println("Exception in decoding: " + keyVal[1] + " - " + e.getMessage());
                         _log.error("Exception in decoding: " + keyVal[1] + " - " + e.getMessage());
