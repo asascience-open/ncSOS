@@ -16,3 +16,4 @@ src/test/java/com/asascience/ncSOS/getCaps/output/*
 *.nc
 *.dia*
 *.jpeg
+*.war

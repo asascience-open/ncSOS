@@ -56,10 +56,14 @@
                 </ows:HTTP>
             </ows:DCP>
             <ows:Parameter name="service" use="required">
-                <ows:Value>SOS</ows:Value>
+                <ows:AllowedValues>
+                    <ows:Value>SOS</ows:Value>
+                </ows:AllowedValues>
             </ows:Parameter>
             <ows:Parameter name="version" use="required">
-                <ows:Value>1.0.0</ows:Value>
+                <ows:AllowedValues>
+                    <ows:Value>1.0.0</ows:Value>
+                </ows:AllowedValues>
             </ows:Parameter>
         </ows:Operation>
         <ows:Operation name="GetObservation">
@@ -70,11 +74,21 @@
                 </ows:HTTP>
             </ows:DCP>
             <ows:Parameter name="offering" use="required"/>
-            <ows:Parameter name="observedProperty" use="required"/>
+            <ows:Parameter name="observedproperty" use="required"/>
             <ows:Parameter name="time" use="optional"/>
-            <ows:Parameter name="responseFormat" use="required">
+            <ows:Parameter name="resposneformat" use="required">
                 <ows:AllowedValues>
                     <ows:Value>text/xml;subtype="om/1.0.0"</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="service" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>SOS</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="version" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>1.0.0</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
         </ows:Operation>
@@ -85,7 +99,22 @@
                     <ows:Post xlink:href="resources/datasets/profile-Contiguous-Ragged-MultipleProfiles-H.3.4/profile-Contiguous-Ragged-MultipleProfiles-H.3.4.nc"/>
                 </ows:HTTP>
             </ows:DCP>
-            <ows:Parameter name="SensorId" use="required"/>
+            <ows:Parameter name="procedure" use="required"/>
+            <ows:Parameter name="responseformat" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>text/xml;subtype="sensorML/1.0.1"</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="service" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>SOS</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="version" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>1.0.0</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
         </ows:Operation>
     </ows:OperationsMetadata>
     <!--~~~~~~~~~~~~~~~~~~~~~~~-->
@@ -113,7 +142,6 @@
                 <observedProperty xlink:href="temperature"/>
                 <observedProperty xlink:href="humidity"/>
                 <featureOfInterest xlink:href="PROFILE_0"/>
-                <responseFormat>text/xml;subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
             </ObservationOffering>
@@ -137,7 +165,6 @@
                 <observedProperty xlink:href="temperature"/>
                 <observedProperty xlink:href="humidity"/>
                 <featureOfInterest xlink:href="PROFILE_1"/>
-                <responseFormat>text/xml;subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
             </ObservationOffering>
@@ -161,7 +188,6 @@
                 <observedProperty xlink:href="temperature"/>
                 <observedProperty xlink:href="humidity"/>
                 <featureOfInterest xlink:href="PROFILE_2"/>
-                <responseFormat>text/xml;subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
             </ObservationOffering>
@@ -185,7 +211,6 @@
                 <observedProperty xlink:href="temperature"/>
                 <observedProperty xlink:href="humidity"/>
                 <featureOfInterest xlink:href="PROFILE_3"/>
-                <responseFormat>text/xml;subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
             </ObservationOffering>
