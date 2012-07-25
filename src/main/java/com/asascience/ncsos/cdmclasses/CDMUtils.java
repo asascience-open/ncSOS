@@ -99,10 +99,10 @@ public class CDMUtils {
         obsOfferingFeatureOfInterestEl.setAttribute("xlink:href", offering.getObservationFeatureOfInterest());
 
         //create response format(s)
-        ArrayList<Element> responseFormats = createResponseFormatNode(document);
-        if (responseFormats == null) {
-            System.out.println("Could not find responseFormat in ows:Operation 'GetObservation'");
-        }
+//        ArrayList<Element> responseFormats = createResponseFormatNode(document);
+//        if (responseFormats == null) {
+//            System.out.println("Could not find responseFormat in ows:Operation 'GetObservation'");
+//        }
 
         //create response model
         Element obsOfferingModelEl = document.createElement("responseModel");
@@ -129,9 +129,9 @@ public class CDMUtils {
 
         obsOfferingEl.appendChild(obsOfferingFeatureOfInterestEl);
         // add our response formats
-        for (Element elem : responseFormats) {
-            obsOfferingEl.appendChild(elem);
-        }
+//        for (Element elem : responseFormats) {
+//            obsOfferingEl.appendChild(elem);
+//        }
         
         obsOfferingEl.appendChild(obsOfferingModelEl);
         obsOfferingEl.appendChild(obsOfferingModeEl);

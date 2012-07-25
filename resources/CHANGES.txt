@@ -1,0 +1,9 @@
+Changes for NcSOS TDS Service
+Version RC-1
+BuildDate = 20120725.0920
+
+Release Details RC1:
+  Supports GetCapabilities, GetObservation, DescribeSensor requests
+  Several datasets supported (see https://github.com/asascience-open/ncSOS/wiki for information regarding supported datasets)
+  More comprehensive exception output for users' requests
+  
