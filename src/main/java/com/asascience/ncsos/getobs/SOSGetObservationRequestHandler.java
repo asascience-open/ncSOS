@@ -71,6 +71,12 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
 
         this.variableNames = checkNetcdfFileForAxis(heightAxis, variableNames);
         
+        System.out.println("after checkNetcdfFileForAxis");
+        for (String varName : this.variableNames) {
+            System.out.println(varName);
+        }
+        System.out.println();
+        
         //grid operation
         if (getDatasetFeatureType() == FeatureType.GRID) {
             Variable depthAxis;
@@ -92,6 +98,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             if (getDatasetFeatureType() == FeatureType.TRAJECTORY) {
                 CDMDataSet = new Trajectory(stationName, eventTime, this.variableNames);
             } else if (getDatasetFeatureType() == FeatureType.STATION) {
+                System.out.println("Recognized as a STATION type\n");
                 CDMDataSet = new TimeSeries(stationName, eventTime, this.variableNames);
             } else if (getDatasetFeatureType() == FeatureType.STATION_PROFILE) {
                 CDMDataSet = new TimeSeriesProfile(stationName, eventTime, this.variableNames);
@@ -146,7 +153,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             }
 
             //if it not found add it!
-            if (foundZ == false) {
+            if (!foundZ && !Axis.getDimensions().isEmpty()) {
                 variableNamesNew = new ArrayList<String>();
                 variableNamesNew.addAll(Arrays.asList(variableNames1));
                 variableNamesNew.add(Axis.getFullName());

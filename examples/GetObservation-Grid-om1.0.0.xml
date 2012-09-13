@@ -39,7 +39,7 @@
                 <swe:DataArray>
                     <swe:elementCount>
                         <swe:Count>
-                            <swe:value>COUNT!!!!</swe:value>
+                            <swe:value>4</swe:value>
                         </swe:Count>
                     </swe:elementCount>
                     <swe:elementType name="SimpleDataArray">
@@ -66,9 +66,7 @@
                         <swe:TextBlock blockSeparator=" "
                             decimalSeparator="." tokenSeparator=","/>
                     </swe:encoding>
-                    <swe:values>2012-06-26T00:00:00Z,-52.0,0.0,274.07 
- 
-</swe:values>
+                    <swe:values>2012-06-26T00:00:00Z,-52.0,0.0,274.07 </swe:values>
                 </swe:DataArray>
             </om:result>
         </om:Observation>

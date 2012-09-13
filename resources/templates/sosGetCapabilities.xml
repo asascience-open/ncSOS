@@ -79,7 +79,7 @@
 			</ows:DCP>
 			<ows:Parameter name="offering" use="required"/>
 			<ows:Parameter name="observedproperty" use="required"/>
-			<ows:Parameter name="time" use="optional"/>
+			<ows:Parameter name="eventtime" use="optional"/>
 			<ows:Parameter name="resposneformat" use="required">
 				<ows:AllowedValues>
 					<ows:Value>text/xml;subtype="om/1.0.0"</ows:Value>

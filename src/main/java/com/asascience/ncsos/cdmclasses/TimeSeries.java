@@ -51,6 +51,12 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         eventTimes.addAll(Arrays.asList(eventTime));
         
         upperAlt = lowerAlt = 0;
+        
+        System.out.println("after initializing TimeSeries");
+        for (String varName : variableNames) {
+            System.out.println(varName);
+        }
+        System.out.println();
     }
 
     /**
@@ -141,6 +147,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
                 }
             }
         }
+        iterator.finish();
         //setCount(count);
         return builder.toString();
     }
@@ -149,6 +156,10 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         //count++;
         valueList.clear();
         valueList.add("time=" + dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
+        // iter through the value list and see what is in there
+        for (String varName : variableNames) {
+            System.out.println("Variable Name: " + varName);
+        }
         try {
             for (String variableName : variableNames) {
                 valueList.add(variableName + "=" + pointFeature.getData().getScalarObject(variableName).toString());
@@ -215,6 +226,8 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         lowerLat = tsStationList.get(0).getLatitude();
         upperLon = tsStationList.get(0).getLongitude();
         lowerLon = tsStationList.get(0).getLongitude();
+        upperAlt = tsStationList.get(0).getAltitude();
+        lowerAlt = tsStationList.get(0).getAltitude();
     }
 
     @Override
@@ -321,7 +334,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         if (tsData != null) {
             double retval = tsStationList.get(stNum).getAltitude();
             if (Double.toString(retval).equalsIgnoreCase("nan"))
-                retval = 0;
+                retval = 0.0;
             return retval;
         } else {
             return Invalid_Value;
@@ -333,7 +346,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         if (tsData != null) {
             double retval = tsStationList.get(stNum).getAltitude();
             if (Double.toString(retval).equalsIgnoreCase("nan"))
-                retval = 0;
+                retval = 0.0;
             return retval;
         } else {
             return Invalid_Value;

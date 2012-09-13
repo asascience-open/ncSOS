@@ -44,6 +44,9 @@ public class OosTethysSwe implements SOSOutputFormatter {
     private static final String STATION_GML_BASE = "urn:tds:station.sos:";
     private static final String NAN = "NaN";
     private static final String TEMPLATE = "templates/oostethysswe.xml";
+    private static final String BLOCK_SEPERATOR = " ";
+    private static final String TOKEN_SEPERATOR = ",";
+    private static final String DECIMAL_SEPERATOR = ".";
     
     private DOMImplementationLS impl;
     
@@ -211,12 +214,13 @@ public class OosTethysSwe implements SOSOutputFormatter {
     }
     
     private void addDatasetResults(int stationNumber) {
+        String varNameLen = Integer.toString(variableNames.length+1);
         //add Data Block Definition
         document = XMLDomUtils.addNodeAllOptions(document, "om:result", "swe:DataArray", stationNumber);
         //element count
         document = XMLDomUtils.addNodeAllOptions(document, "swe:DataArray", "swe:elementCount", stationNumber);
         document = XMLDomUtils.addNodeAllOptions(document, "swe:elementCount", "swe:Count", stationNumber);
-        document = XMLDomUtils.addNodeAllOptions(document, "swe:Count", "swe:value", "COUNT!!!!", stationNumber);
+        document = XMLDomUtils.addNodeAllOptions(document, "swe:Count", "swe:value", varNameLen, stationNumber);
         //element Type
         document = XMLDomUtils.addNodeAndAttribute(document, "swe:DataArray", "swe:elementType", "name", "SimpleDataArray", stationNumber);
         //add data record
@@ -227,9 +231,9 @@ public class OosTethysSwe implements SOSOutputFormatter {
         //add encoding value
         document = XMLDomUtils.addNodeAllOptions(document, "swe:DataArray", "swe:encoding", stationNumber);
         // text block
-        document = XMLDomUtils.addNodeAndAttribute(document, "swe:encoding", "swe:TextBlock", "blockSeparator", " ", stationNumber);
-        XMLDomUtils.setAttributeFromNode(document, "swe:encoding", "swe:TextBlock", "decimalSeparator", ".");
-        XMLDomUtils.setAttributeFromNode(document, "swe:encoding", "swe:TextBlock", "tokenSeparator", ",");
+        document = XMLDomUtils.addNodeAndAttribute(document, "swe:encoding", "swe:TextBlock", "blockSeparator", BLOCK_SEPERATOR, stationNumber);
+        XMLDomUtils.setAttributeFromNode(document, "swe:encoding", "swe:TextBlock", "decimalSeparator", DECIMAL_SEPERATOR);
+        XMLDomUtils.setAttributeFromNode(document, "swe:encoding", "swe:TextBlock", "tokenSeparator", TOKEN_SEPERATOR);
 
         try {
             //set the data
@@ -419,22 +423,24 @@ public class OosTethysSwe implements SOSOutputFormatter {
         for(DataSlice ds : infoList) {
             // add the slice to the string
             if(ds.getEventTime() != null)
-                retVal.append(ds.getEventTime()).append(",");
+                retVal.append(ds.getEventTime()).append(TOKEN_SEPERATOR);
             if(!ds.getLatitude().toString().equals(NAN))
-                retVal.append(ds.getLatitude().toString()).append(",");
+                retVal.append(ds.getLatitude().toString()).append(TOKEN_SEPERATOR);
             if(!ds.getLongitude().toString().equals(NAN))
-                retVal.append(ds.getLongitude().toString()).append(",");
+                retVal.append(ds.getLongitude().toString()).append(TOKEN_SEPERATOR);
             if(!ds.getDepth().toString().equals(NAN))
-                retVal.append(ds.getDepth().toString()).append(",");
+                retVal.append(ds.getDepth().toString()).append(TOKEN_SEPERATOR);
             if(ds.getDataValues() != null) {
                 for (Float dv : ds.getDataValues()) {
-                    retVal.append(dv.toString()).append(",");
+                    retVal.append(dv.toString()).append(TOKEN_SEPERATOR);
                 }
-                // remove last comma
+                // remove last TOKEN_SEPERATOR
                 retVal = retVal.deleteCharAt(retVal.length()-1);
             }
-            retVal.append(" \n");
+            retVal.append(BLOCK_SEPERATOR);
         }
+        // remove last BLOCK_SEPERATOR
+        retVal = retVal.deleteCharAt(retVal.length()-1);
         return retVal.toString();
     }
     
