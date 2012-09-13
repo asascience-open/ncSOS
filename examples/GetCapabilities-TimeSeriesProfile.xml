@@ -52,7 +52,6 @@
             <ows:DCP>
                 <ows:HTTP>
                     <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1.nc"/>
-                    <ows:Post xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1.nc"/>
                 </ows:HTTP>
             </ows:DCP>
             <ows:Parameter name="service" use="required">
@@ -70,7 +69,6 @@
             <ows:DCP>
                 <ows:HTTP>
                     <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1.nc"/>
-                    <ows:Post xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1.nc"/>
                 </ows:HTTP>
             </ows:DCP>
             <ows:Parameter name="offering" use="required"/>
@@ -96,7 +94,6 @@
             <ows:DCP>
                 <ows:HTTP>
                     <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1.nc"/>
-                    <ows:Post xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1.nc"/>
                 </ows:HTTP>
             </ows:DCP>
             <ows:Parameter name="procedure" use="required"/>

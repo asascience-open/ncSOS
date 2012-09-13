@@ -47,16 +47,12 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         this.variableNames = variableNames;
         this.reqStationNames = new ArrayList<String>();
         reqStationNames.addAll(Arrays.asList(stationName));
-        this.eventTimes = new ArrayList<String>();
-        eventTimes.addAll(Arrays.asList(eventTime));
-        
-        upperAlt = lowerAlt = 0;
-        
-        System.out.println("after initializing TimeSeries");
-        for (String varName : variableNames) {
-            System.out.println(varName);
+        if (eventTime != null) {
+            this.eventTimes = new ArrayList<String>();
+            this.eventTimes.addAll(Arrays.asList(eventTime));
         }
-        System.out.println();
+        else
+            this.eventTimes = null;
     }
 
     /**
@@ -156,10 +152,6 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         //count++;
         valueList.clear();
         valueList.add("time=" + dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
-        // iter through the value list and see what is in there
-        for (String varName : variableNames) {
-            System.out.println("Variable Name: " + varName);
-        }
         try {
             for (String variableName : variableNames) {
                 valueList.add(variableName + "=" + pointFeature.getData().getScalarObject(variableName).toString());

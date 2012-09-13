@@ -85,9 +85,18 @@ public class SOSParser {
             queryParameters.put("version", defVersion);
         }
         
+        System.out.println("Received request with " + queryParameters.size() + " parameters:");
+        for(Map.Entry<String,Object> map : queryParameters.entrySet()) {
+            System.out.println(map.getKey() + " - " + map.getValue().toString());
+        }
+        
         // make sure we do not have any errors in our query
         if (queryParameters.containsKey("error")) {
             // issue in parsing, return an error
+            capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
+            capHandler.getOutputHandler().setupExceptionOutput("Error with request - " + queryParameters.get("error").toString());
+            retval.put("outputHandler", capHandler.getOutputHandler());
+            retval.put("responseContentType", "text/xml");
             return retval;
         }
         
@@ -97,6 +106,24 @@ public class SOSParser {
                 !queryParameters.containsKey("version")) {
             capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
             capHandler.getOutputHandler().setupExceptionOutput("Request is missing key arguments. Check your query string and try again.");
+            retval.put("outputHandler", capHandler.getOutputHandler());
+            retval.put("responseContentType", "text/xml");
+            return retval;
+        }
+        
+        // check version number
+        if (!queryParameters.get("version").toString().equalsIgnoreCase("1.0.0")) {
+            capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
+            capHandler.getOutputHandler().setupExceptionOutput("Only version 1.0.0 is acceptable for SOS requests.");
+            retval.put("outputHandler", capHandler.getOutputHandler());
+            retval.put("responseContentType", "text/xml");
+            return retval;
+        }
+        
+        // check service param
+        if (!queryParameters.get("service").toString().equalsIgnoreCase("sos")) {
+            capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
+            capHandler.getOutputHandler().setupExceptionOutput("Expected service argument to be 'SOS'. Unrecognized service request: " + queryParameters.get("service").toString());
             retval.put("outputHandler", capHandler.getOutputHandler());
             retval.put("responseContentType", "text/xml");
             return retval;
@@ -112,7 +139,7 @@ public class SOSParser {
                         //Check to see if get caps exists, if it does not actual parse the file
                         _log.info("Cache enabled for GetCapabilities");
                         File f = new File(savePath + getCacheXmlFileName(threddsURI));
-                        long start = System.currentTimeMillis();
+//                        long start = System.currentTimeMillis();
                         if (f.exists()) {
                             //if the file exists check the modified data against current data
                             long fileDateTime = f.lastModified();
@@ -134,34 +161,38 @@ public class SOSParser {
                                 parseGetCaps(capHandler);
                             } catch (IOException ex) {
                                 _log.error(ex.getMessage());
+                                capHandler = null;
                             }
                         }
-                        long elapsedTimeMillis = System.currentTimeMillis() - start;
-                        float elapsedTimeSec = elapsedTimeMillis / 1000F;
-                        _log.info("Time to complete cached request - MILI:" + elapsedTimeMillis + ":SEC: " + elapsedTimeSec);
+//                        long elapsedTimeMillis = System.currentTimeMillis() - start;
+//                        float elapsedTimeSec = elapsedTimeMillis / 1000F;
+//                        _log.info("Time to complete cached request - MILI:" + elapsedTimeMillis + ":SEC: " + elapsedTimeSec);
                     } else {
                         try {
                             capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
                             parseGetCaps(capHandler);
                         } catch (IOException ex) {
                             _log.error(ex.getMessage());
+                            capHandler = null;
                         }
                     }
                     if (capHandler != null)
                         retval.put("outputHandler", capHandler.getOutputHandler());
-                    else
-                        retval.put("outputHandler", null);
+                    else {
+                        capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
+                        capHandler.getOutputHandler().setupExceptionOutput("Internal Error in preparing output for GetCapabilities request, received null handler.");
+                        retval.put("outputHandler", capHandler.getOutputHandler());
+                    }
                     break;
                 case GetObservation:
                     // assert that we have our needed parameters
                     if (!queryParameters.containsKey("offering") ||
                             !queryParameters.containsKey("observedproperty") ||
-                            !queryParameters.containsKey("eventtime") ||
                             !queryParameters.containsKey("responseformat")) {
                         // print out xml error using get caps error?
                         try {
                             capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
-                            capHandler.getOutputHandler().setupExceptionOutput("Observation requests must have offering, observedProperty, eventtime, responseFormat as query parameters");
+                            capHandler.getOutputHandler().setupExceptionOutput("Observation requests must have offering, observedProperty, responseFormat as query parameters");
                             retval.put("outputHandler", capHandler.getOutputHandler());
                             retval.put("responseContentType", "text/xml");
                         } catch (Exception e) { }
@@ -202,28 +233,43 @@ public class SOSParser {
                         retval.put("outputHandler", obsHandler.getOutputHandler());
                     } catch (IOException ex) {
                         _log.error(ex.getMessage());
-                        retval.put("outputHandler", null);
+                        capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
+                        capHandler.getOutputHandler().setupExceptionOutput("Internal Error in creating output for GetObservation request - " + ex.toString());
+                        retval.put("outputHandler", capHandler.getOutputHandler());
                     }
                     break;
                 case DescribeSensor:
                     // resposne will always be text/xml
-                    retval.put("responseContentType", "text/xml");
-                    SOSDescribeSensorHandler sensorHandler;
-                    if (!queryParameters.containsKey("responseformat") || !queryParameters.containsKey("procedure")) {
-                        sensorHandler = new SOSDescribeSensorHandler(dataset);
-                        sensorHandler.getOutputHandler().setupExceptionOutput("responseformat and procedure are required for DescribeSensor requests");
-                    } else {
-                        // create a describe sensor handler
-                        sensorHandler = new SOSDescribeSensorHandler(dataset,
-                                queryParameters.get("responseformat").toString(),
-                                queryParameters.get("procedure").toString(),
-                                threddsURI,
-                                query);
+                    try {
+                        retval.put("responseContentType", "text/xml");
+                        SOSDescribeSensorHandler sensorHandler;
+                        if (!queryParameters.containsKey("responseformat")) {
+                            sensorHandler = new SOSDescribeSensorHandler(dataset);
+                            sensorHandler.getOutputHandler().setupExceptionOutput("responseFormat must be supplied for " + queryParameters.get("request").toString() + " requests to the " + queryParameters.get("service").toString() + " version " + queryParameters.get("version").toString() + " service");
+                        } if (!queryParameters.containsKey("procedure")) {
+                            sensorHandler = new SOSDescribeSensorHandler(dataset);
+                            sensorHandler.getOutputHandler().setupExceptionOutput("procedure must be supplied for " + queryParameters.get("request").toString() + " requests to the " + queryParameters.get("service").toString() + " version " + queryParameters.get("version").toString() + " service");
+                        }else {
+                            // create a describe sensor handler
+                            sensorHandler = new SOSDescribeSensorHandler(dataset,
+                                    queryParameters.get("responseformat").toString(),
+                                    queryParameters.get("procedure").toString(),
+                                    threddsURI,
+                                    query);
+                        }
+                        retval.put("outputHandler",sensorHandler.getOutputHandler());
+                    } catch (Exception ex) {
+                        capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
+                        capHandler.getOutputHandler().setupExceptionOutput("Internal System Exception in setting up DescribeSensor handler - " + ex.toString());
+                        retval.put("outputHandler", capHandler.getOutputHandler());
+                        _log.error("Internal System Exception in setting up DescribeSensor handler - " + ex.toString());
                     }
-                    retval.put("outputHandler",sensorHandler.getOutputHandler());
                     break;
                 default:
                     // return a 'not supported' error
+                    capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
+                    capHandler.getOutputHandler().setupExceptionOutput(queryParameters.get("request").toString() + " is not a supported request");
+                    retval.put("outputHandler", capHandler.getOutputHandler());
                     System.out.println(queryParameters.get("request").toString() + " is not a supported request");
                     _log.error("Invalid request parameter: " + queryParameters.get("request").toString() + " is not a supported request");
                     break;
@@ -234,9 +280,9 @@ public class SOSParser {
             System.out.println("Exception encountered " + ex.getMessage());
             try {
                 capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
+                capHandler.getOutputHandler().setupExceptionOutput("Unrecognized request " + queryParameters.get("request").toString());
+                retval.put("outputHandler", capHandler.getOutputHandler());
             } catch (Exception e) { }
-            capHandler.getOutputHandler().setupExceptionOutput("Recieved an invalid argument. Exception as follows: " + ex.getLocalizedMessage());
-            retval.put("outputHandler", capHandler.getOutputHandler());
         }
         
         return retval;

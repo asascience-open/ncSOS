@@ -49,11 +49,13 @@ public class Grid extends baseCDMClass implements iStationData {
 
         this.reqStationNames = new ArrayList<String>();
         this.reqStationNames.addAll(Arrays.asList(requestedStationNames));
-        this.eventTimes = new ArrayList<String>();
-        this.eventTimes.addAll(Arrays.asList(eventTime));
-//        for (String et : eventTime) {
-//            this.eventTimes.add(et);
-//        }
+        
+        if (eventTime != null) {
+            this.eventTimes = new ArrayList<String>();
+            this.eventTimes.addAll(Arrays.asList(eventTime));
+        } else
+            this.eventTimes = null;
+        
         this.latLonRequest = latLonRequest;
         this.stationNameList = new ArrayList<String>();
         this.stationDescripList = new ArrayList<String>();

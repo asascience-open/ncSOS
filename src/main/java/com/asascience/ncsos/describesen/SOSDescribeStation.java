@@ -251,29 +251,44 @@ public class SOSDescribeStation implements SOSDescribeIF {
             char[] charArray = (char[]) stationVar.read().get1DJavaArray(char.class);
             // find the length of the strings, assumes that the array has only a rank of 2; string length should be the 1st index
             int[] aShape = stationVar.read().getShape();
-            String[] names = new String[aShape[0]];
-            StringBuilder strB = null;
-            int ni = 0;
-            for (int i=0;i<charArray.length;i++) {
-                if(i % aShape[1] == 0) {
-                    if (strB != null)
-                        names[ni++] = strB.toString();
-                    strB = new StringBuilder();
-                }
-                // ignore null
-                if (charArray[i] != '\u0000')
-                    strB.append(charArray[i]);
+            if (aShape.length == 1) {
+                // only one name, so... return it if it matches
+                String onlyStationName = String.copyValueOf(charArray);
+                if (onlyStationName.equalsIgnoreCase(nameOfStation))
+                    retval = 0;
+                else
+                    throw new Exception("Only station " + onlyStationName +" does not match.");
             }
-            // now find our station index
-            for (int j=0; j<names.length; j++) {
-                if(names[j].equalsIgnoreCase(nameOfStation)) {
-                    retval = j;
-                    break;
+            else if (aShape.length > 1) {
+                String[] names = new String[aShape[0]];
+                StringBuilder strB = null;
+                int ni = 0;
+                for (int i=0;i<charArray.length;i++) {
+//                    System.out.println("char: " + charArray[i] + "  index: " + i);
+                    if(i % aShape[1] == 0) {
+                        if (strB != null)
+                            names[ni++] = strB.toString();
+                        strB = new StringBuilder();
+                    }
+                    // ignore null
+                    if (charArray[i] != '\u0000')
+                        strB.append(charArray[i]);
+                }
+                // add last index
+                names[ni++] = strB.toString();
+                // now find our station index
+                for (int j=0; j<names.length; j++) {
+                    if(names[j].equalsIgnoreCase(nameOfStation)) {
+                        retval = j;
+                        break;
+                    }
                 }
             }
+            else
+                throw new Exception("Unkown rank for station var: " + aShape.length);
         } catch (Exception ex) {
-            System.out.println("Received error looking for station " + nameOfStation + " - " + ex.getMessage());
-            errorString = "Error reading from station variable, while looking for " + nameOfStation + ": " + ex.getLocalizedMessage();
+            System.out.println("Received error looking for station " + nameOfStation + " - " + ex.toString());
+            errorString = "Error reading from station variable, while looking for " + nameOfStation + ": " + ex.toString();
         }
         
         return retval;
@@ -291,15 +306,18 @@ public class SOSDescribeStation implements SOSDescribeIF {
             // get the lat/lon of the station
             // station id should be the last value in the procedure
             int stationIndex = getStationIndex(stationVariable, stationName);
-            double[] coords = new double[] { Double.NaN, Double.NaN };
             
             if (stationIndex >= 0) {
+                double[] coords = new double[] { Double.NaN, Double.NaN };
+            
                 // find lat/lon values for the station
                 coords[0] = lat.read().getDouble(stationIndex);
                 coords[1] = lon.read().getDouble(stationIndex);
-            }
 
-            return coords;
+                return coords;
+            } else {
+                return null;
+            }
         } catch (Exception e) {
             System.out.println("exception in getStationCoords " + e.getMessage());
             return null;

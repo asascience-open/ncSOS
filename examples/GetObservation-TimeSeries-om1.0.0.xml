@@ -10,8 +10,8 @@
     <gml:boundedBy>
         <gml:Envelope srsName="EPSG:4326">
             <!-- overwrite these with your actual offering ROI -->
-            <gml:lowerCorner>3.0 148.0 0.0</gml:lowerCorner>
-            <gml:upperCorner>3.0 148.0 0.0</gml:upperCorner>
+            <gml:lowerCorner>3.0 148.0 2.7905941009521484</gml:lowerCorner>
+            <gml:upperCorner>3.0 148.0 2.7905941009521484</gml:upperCorner>
         </gml:Envelope>
     </gml:boundedBy>
     <om:member>
@@ -37,7 +37,7 @@
                 <swe:DataArray>
                     <swe:elementCount>
                         <swe:Count>
-                            <swe:value>COUNT!!!!</swe:value>
+                            <swe:value>2</swe:value>
                         </swe:Count>
                     </swe:elementCount>
                     <swe:elementType name="SimpleDataArray">
@@ -54,8 +54,7 @@
                         <swe:TextBlock blockSeparator=" "
                             decimalSeparator="." tokenSeparator=","/>
                     </swe:encoding>
-                    <swe:values>1990-01-01T00:00:00Z,2.790594 
-</swe:values>
+                    <swe:values>1990-01-01T00:00:00Z,2.790594</swe:values>
                 </swe:DataArray>
             </om:result>
         </om:Observation>

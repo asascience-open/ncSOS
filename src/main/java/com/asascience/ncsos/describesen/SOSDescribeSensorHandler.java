@@ -47,11 +47,21 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
         // make sure that the responseFormat we recieved is acceptable
         if (!responseFormat.equalsIgnoreCase(ACCEPTABLE_RESPONSE_FORMAT)) {
             // return exception
+            System.out.println("got unhandled response format " + responseFormat + "; printing exception...");
             output.setupExceptionOutput("Unhandled response format " + responseFormat);
             return;
         }
         
+        System.out.println("Accepted response format " + responseFormat);
+        
         this.procedure = procedure;
+        
+        // test that the dataset can be handled properly
+        if (getFeatureDataset() == null)
+        {
+            output.setupExceptionOutput("Unable to handle requested dataset. Make sure that it has a properly defined feature type.");
+            return;
+        }
         
         // find out needed info based on whether this is a station or sensor look up
         if (this.procedure.contains("station")) {

@@ -39,8 +39,12 @@ public class Trajectory extends baseCDMClass implements iStationData {
         this.variableNames = variableNames;
         this.reqStationNames = new ArrayList<String>();
         reqStationNames.addAll(Arrays.asList(stationName));
-        this.eventTimes = new ArrayList<String>();
-        eventTimes.addAll(Arrays.asList(eventTime));
+        
+        if (eventTime != null) {
+            this.eventTimes = new ArrayList<String>();
+            this.eventTimes.addAll(Arrays.asList(eventTime));
+        } else
+            this.eventTimes = null;
         
         upperAlt = Double.NEGATIVE_INFINITY;
         lowerAlt = Double.POSITIVE_INFINITY;

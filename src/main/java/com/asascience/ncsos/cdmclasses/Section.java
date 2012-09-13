@@ -42,8 +42,12 @@ public class Section extends baseCDMClass implements iStationData {
         this.variableNames = variableNames;
         this.reqStationNames = new ArrayList<String>();
         reqStationNames.addAll(Arrays.asList(stationName));
-        this.eventTimes = new ArrayList<String>();
-        eventTimes.addAll(Arrays.asList(eventTime));
+        
+        if (eventTime != null) {
+            this.eventTimes = new ArrayList<String>();
+            eventTimes.addAll(Arrays.asList(eventTime));
+        } else
+            this.eventTimes = null;
         
         lowerAlt = Double.POSITIVE_INFINITY;
         upperAlt = Double.NEGATIVE_INFINITY;

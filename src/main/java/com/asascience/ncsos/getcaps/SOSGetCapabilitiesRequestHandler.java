@@ -193,9 +193,10 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         fstNmElmnt1.setAttribute("xlink:href", threddsURI);
 
         //set get capabilities Post request link
-        NodeList fstNm12 = fstNmElmnt.getElementsByTagName("ows:Post");
-        Element fstNmElmnt12 = (Element) fstNm12.item(0);
-        fstNmElmnt12.setAttribute("xlink:href", threddsURI);
+//        NodeList fstNm12 = fstNmElmnt.getElementsByTagName("ows:Post");
+//        Element fstNmElmnt12 = (Element) fstNm12.item(0);
+//        if (fstNmElmnt12 != null)
+//            fstNmElmnt12.setAttribute("xlink:href", threddsURI);
     }
 
     /**

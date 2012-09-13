@@ -439,8 +439,10 @@ public class OosTethysSwe implements SOSOutputFormatter {
             }
             retVal.append(BLOCK_SEPERATOR);
         }
-        // remove last BLOCK_SEPERATOR
-        retVal = retVal.deleteCharAt(retVal.length()-1);
+        if (retVal.length() > 1) {
+            // remove last BLOCK_SEPERATOR
+            retVal = retVal.deleteCharAt(retVal.length()-1);
+        }
         return retVal.toString();
     }
     

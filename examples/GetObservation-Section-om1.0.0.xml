@@ -38,7 +38,7 @@
                 <swe:DataArray>
                     <swe:elementCount>
                         <swe:Count>
-                            <swe:value>COUNT!!!!</swe:value>
+                            <swe:value>3</swe:value>
                         </swe:Count>
                     </swe:elementCount>
                     <swe:elementType name="SimpleDataArray">
@@ -62,15 +62,7 @@
                         <swe:TextBlock blockSeparator=" "
                             decimalSeparator="." tokenSeparator=","/>
                     </swe:encoding>
-                    <swe:values>1990-01-01T00:00:00Z,37.15755,0.0 
-1990-01-01T00:00:00Z,9.691621,1.0 
-1990-01-01T00:00:00Z,11.261549,2.0 
-1990-01-01T00:00:00Z,-999.9,-999.9 
-1990-01-01T00:00:00Z,-999.9,-999.9 
-1990-01-01T00:00:00Z,-999.9,-999.9 
-1990-01-01T00:00:00Z,-999.9,-999.9 
-1990-01-01T00:00:00Z,-999.9,-999.9 
-</swe:values>
+                    <swe:values>1990-01-01T00:00:00Z,37.15755,0.0 1990-01-01T00:00:00Z,9.691621,1.0 1990-01-01T00:00:00Z,11.261549,2.0 1990-01-01T00:00:00Z,-999.9,-999.9 1990-01-01T00:00:00Z,-999.9,-999.9 1990-01-01T00:00:00Z,-999.9,-999.9 1990-01-01T00:00:00Z,-999.9,-999.9 1990-01-01T00:00:00Z,-999.9,-999.9</swe:values>
                 </swe:DataArray>
             </om:result>
         </om:Observation>

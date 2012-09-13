@@ -56,7 +56,6 @@
 			<ows:DCP>
 				<ows:HTTP>
 					<ows:Get />
-					<ows:Post />
 				</ows:HTTP>
 			</ows:DCP>
 			<ows:Parameter name="service" use="required">
@@ -74,7 +73,6 @@
 			<ows:DCP>
 				<ows:HTTP>
 					<ows:Get />
-					<ows:Post />
 				</ows:HTTP>
 			</ows:DCP>
 			<ows:Parameter name="offering" use="required"/>
@@ -100,7 +98,6 @@
 			<ows:DCP>
 				<ows:HTTP>
 					<ows:Get />
-					<ows:Post />
 				</ows:HTTP>
 			</ows:DCP>
 			<ows:Parameter name="procedure" use="required"/>
