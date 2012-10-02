@@ -9,6 +9,8 @@ import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import com.asascience.ncsos.util.DiscreteSamplingGeometryUtil;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.ft.*;
 import ucar.nc2.time.CalendarDate;
@@ -52,7 +54,12 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
             return;
         }
         
-        System.out.println("Accepted response format " + responseFormat);
+        // check our procedure
+        if (!checkDatasetForProcedure(procedure)) {
+            // the procedure does not match any known procedure
+            output.setupExceptionOutput("Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.");
+            return;
+        }
         
         this.procedure = procedure;
         
@@ -161,5 +168,27 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
     private void setNeededInfoForSensor( NetcdfDataset dataset ) {
         // describe sensor (sensor) is very similar to describe sensor (station)
         describer = new SOSDescribeSensor(dataset, procedure);
+    }
+
+    private boolean checkDatasetForProcedure(String procedure) {
+        if (procedure == null)
+            return false;
+        // get a list of procedures from dataset and compare it to the passed-in procedure
+        // get list of station names
+        List<String> stationNames = getStationNames();
+        // go through each station urn and compare it to procedure
+        for (String stationName : stationNames) {
+            if (getGMLName(stationName).equals(procedure))
+                return true;
+        }
+        // go through each sensor urn and compare it to procedure
+        for (String sensorName : getSensorNames()) {
+            for (String stationName : stationNames) {
+                if (getSensorGMLName(stationName, sensorName).equals(procedure))
+                    return true;
+            }
+        }
+        
+        return false;
     }
 }

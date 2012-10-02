@@ -4,9 +4,14 @@ import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import com.asascience.ncsos.util.DiscreteSamplingGeometryUtil;
 import java.io.IOException;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Formatter;
+import java.util.List;
+import ucar.nc2.Variable;
+import ucar.nc2.constants.AxisType;
 import ucar.nc2.constants.FeatureType;
+import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dt.GridDataset;
 import ucar.nc2.ft.FeatureCollection;
@@ -23,6 +28,7 @@ import ucar.nc2.units.DateFormatter;
 public abstract class SOSBaseRequestHandler {
 
     private static final String STATION_GML_BASE = "urn:tds:station.sos:";
+    private static final String SENSOR_GML_BASE = "urn:tds:sensor.sos:";
     private final NetcdfDataset netCDFDataset;
     private FeatureDataset featureDataset;
     private String title;
@@ -34,6 +40,10 @@ public abstract class SOSBaseRequestHandler {
     private final static NumberFormat FORMAT_DEGREE;
     private FeatureCollection CDMPointFeatureCollection;
     private GridDataset gridDataSet = null;
+
+    private Variable stationVariable;
+    private List<String> stationNames;
+    private List<String> sensorNames;
     
     private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(SOSBaseRequestHandler.class);
 
@@ -78,6 +88,21 @@ public abstract class SOSBaseRequestHandler {
         }
 
         parseGlobalAttributes();
+        
+        // get station names
+        for (Variable var : netCDFDataset.getVariables()) {
+            String varName = var.getFullName().toLowerCase();
+            if (varName.contains("station") && varName.contains("name")) {
+                this.stationVariable = var;
+                break;
+            }
+        }
+        
+        if (this.stationVariable != null)
+            parseStationNames();
+        
+        // get sensor Variable names
+        parseSensorNames(netCDFDataset);
     }
 
     private void parseGlobalAttributes() {
@@ -92,6 +117,86 @@ public abstract class SOSBaseRequestHandler {
 
     private NetcdfDataset getNetCDFDataset() {
         return netCDFDataset;
+    }
+    
+    /**
+     * Finds all variables that are sensor (data) variables and compiles a list of their names.
+     * @param dataset the dataset to search through
+     */
+    private void parseSensorNames(NetcdfDataset dataset) {
+        // find all variables who's not a coordinate axis and does not have 'station' in the name
+        this.sensorNames = new ArrayList<String>();
+        boolean isCA;
+        for (Variable var : dataset.getVariables()) {
+            isCA = false;
+            // check full name; ensure it is not a station var
+            String fname = var.getFullName().toLowerCase();
+            if (!fname.contains("station")) {
+                // check against coordinate axes
+                for (CoordinateAxis ca : dataset.getCoordinateAxes()) {
+                    if (ca.getFullName().equalsIgnoreCase(fname)) {
+                        isCA = true;
+                        break;
+                    }
+                }
+                if (isCA)
+                    this.sensorNames.add(var.getFullName());
+            }
+        }
+    }
+    
+    /**
+     * Gets a list of station names from the dataset. Useful for procedures and finding station indices.
+     */
+    private void parseStationNames() {
+        this.stationNames = new ArrayList<String>();
+        try {
+            // get the station index in the array
+            char[] charArray = (char[]) this.stationVariable.read().get1DJavaArray(char.class);
+            // find the length of the strings, assumes that the array has only a rank of 2; string length should be the 1st index
+            int[] aShape = this.stationVariable.read().getShape();
+            if (aShape.length == 1) {
+                // add only name to list
+                String onlyStationName = String.copyValueOf(charArray);
+                this.stationNames.add(onlyStationName);
+            }
+            else if (aShape.length > 1) {
+                StringBuilder strB = null;
+                int ni = 0;
+                for (int i=0;i<charArray.length;i++) {
+                    if(i % aShape[1] == 0) {
+                        if (strB != null)
+                            this.stationNames.add(strB.toString());
+                        strB = new StringBuilder();
+                    }
+                    // ignore null
+                    if (charArray[i] != '\u0000')
+                        strB.append(charArray[i]);
+                }
+                // add last index
+                this.stationNames.add(strB.toString());
+            }
+            else
+                throw new Exception("SOSBaseRequestHandler: Unrecognized rank for station var: " + aShape.length);
+        } catch (Exception ex) {
+            System.out.println("SOSBaseRequestHandler: Error parsing station names.\n" + ex.toString());
+        }
+    }
+    
+    /**
+     * Get the station names, parsed from a Variable containing "station" and "name"
+     * @return list of station names
+     */
+    protected List<String> getStationNames() {
+        return this.stationNames;
+    }
+    
+    /**
+     * Return the list of sensor names
+     * @return string list of sensor names
+     */
+    protected List<String> getSensorNames() {
+        return this.sensorNames;
     }
 
     /**
@@ -189,6 +294,24 @@ public abstract class SOSBaseRequestHandler {
      */
     public String getGMLName(String stationName) {
         return STATION_GML_BASE + stationName;
+    }
+    
+    /**
+     * Returns the base string of the a sensor urn (does not include station and sensor name)
+     * @return sensor urn base string
+     */
+    public String getGMLSensorNameBase() {
+        return SENSOR_GML_BASE;
+    }
+    
+    /**
+     * Returns a composite string of the sensor urn
+     * @param stationName name of the station holding the sensor
+     * @param sensorName name of the sensor
+     * @return urn of the station/sensor combo
+     */
+    public String getSensorGMLName(String stationName, String sensorName) {
+        return SENSOR_GML_BASE + stationName + ":" + sensorName;
     }
 
     /**
