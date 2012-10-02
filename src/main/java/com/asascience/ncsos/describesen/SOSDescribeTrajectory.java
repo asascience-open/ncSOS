@@ -46,7 +46,7 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
      * @param procedure request procedure (station urn)
      * @param startDate start date of the dataset (elapsed time is 0)
      */
-    public SOSDescribeTrajectory( NetcdfDataset dataset, String procedure, CalendarDate startDate ) {
+    public SOSDescribeTrajectory( NetcdfDataset dataset, String procedure, CalendarDate startDate ) throws IOException {
         super(dataset, procedure);
         // ignore errors from parent constructor
         errorString = null;

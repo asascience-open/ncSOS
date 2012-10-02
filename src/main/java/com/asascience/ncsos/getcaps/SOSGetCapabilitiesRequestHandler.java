@@ -25,6 +25,8 @@ import ucar.nc2.ft.StationTimeSeriesFeatureCollection;
 public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
 
     private final String threddsURI;
+    
+    private static final String OWS = "http://www.opengis.net/ows/1.1";
 
     /**
      * Creates an instance of SOSGetCapabilitiesRequestHandler to handle the dataset
@@ -75,8 +77,9 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                 } else {
                     lstNm.item(0).setNodeValue(getHistory());
                 }
+                
+                fstElmnt.getElementsByTagName("ows:AccessConstraints").item(0).setNodeValue(Access);
             }
-
         }
     }
 
@@ -85,37 +88,6 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         Element fstNmElmnt1 = (Element) tagNameNodeList.item(0);
         NodeList fstNm1 = fstNmElmnt1.getChildNodes();
         return fstNm1;
-    }
-
-    private void setProviderName(Element fstElmnt, String xmlLocation) throws DOMException {
-        //get the node named be the string
-        NodeList fstNm1 = getXMLNode(fstElmnt, xmlLocation);
-        if (getSource() == null) {
-            fstNm1.item(0).setNodeValue("");
-        } else {
-            fstNm1.item(0).setNodeValue(getSource());
-        }
-    }
-
-    private void setProviderSite(Element fstElmnt, String xmlLocation) throws DOMException {
-        NodeList fstNm1 = getXMLNode(fstElmnt, xmlLocation);
-        if (getInstitution() == null) {
-            fstNm1.item(0).setNodeValue("");
-        } else {
-            fstNm1.item(0).setNodeValue(getInstitution());
-        }
-    }
-
-    private String getInvividualNameSP() {
-        return "";
-    }
-
-    private String getPositionNameSP() {
-        return "";
-    }
-
-    private String getPhoneNoSP() {
-        return "";
     }
 
     /**
@@ -129,26 +101,11 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         //create an element from the node
         Element fstElmnt = (Element) fstNode;
 
-        setProviderName(fstElmnt, "ows:ProviderName");
-        setProviderSite(fstElmnt, "ows:ProviderSite");
-        setServiceContractName(fstElmnt, "ows:IndividualName");
-        setServiceContractPositionName(fstElmnt, "ows:PositionName");
-        setServiceContractPhoneNumber(fstElmnt, "ows:Voice");
-    }
-
-    private void setServiceContractName(Element fstElmnt, String xmlLocation) {
-        NodeList fstNm1 = getXMLNode(fstElmnt, xmlLocation);
-        fstNm1.item(0).setNodeValue(getInvividualNameSP());
-    }
-
-    private void setServiceContractPositionName(Element fstElmnt, String xmlLocation) {
-        NodeList fstNm1 = getXMLNode(fstElmnt, xmlLocation);
-        fstNm1.item(0).setNodeValue(getPositionNameSP());
-    }
-
-    private void setServiceContractPhoneNumber(Element fstElmnt, String xmlLocation) {
-        NodeList fstNm1 = getXMLNode(fstElmnt, xmlLocation);
-        fstNm1.item(0).setNodeValue(getPhoneNoSP());
+        // set org info
+        // url
+        getXMLNode(fstElmnt, "ows:ProviderSite").item(0).setNodeValue(DataPage);
+        // name
+        getXMLNode(fstElmnt, "ows:ProviderName").item(0).setNodeValue(PrimaryOwnership);
     }
 
     /**
@@ -179,8 +136,38 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                     } else if (fstNmElmnt.getAttribute("name").contentEquals("GetObservation")) {
                         setGetCapabilitiesOperationsMetaData(fstNmElmnt);
                     } else if (fstNmElmnt.getAttribute("name").contentEquals("DescribeSensor")) {
-                        setGetCapabilitiesOperationsMetaData(fstNmElmnt);
+                        setGetCapabilitiesDescribeSensorMetadata(fstNmElmnt);
                     }
+                }
+            }
+        }
+    }
+    
+    private void setGetCapabilitiesDescribeSensorMetadata(Element firstNameElement) {
+        // set request link
+        setGetCapabilitiesOperationsMetaData(firstNameElement);
+        // set procedure allowed values of each station and sensor for the dataset
+        Element procedure = null;
+        NodeList nodes = firstNameElement.getElementsByTagName("ows:Parameter");
+        for (int i=0; i<nodes.getLength(); i++) {
+            Element elem = (Element) nodes.item(i);
+            if (elem.getAttribute("name").equalsIgnoreCase("procedure")) {
+                procedure = elem;
+                break;
+            }
+        }
+        if (procedure != null && getStationNames() != null) {
+            // add allowed values node
+            Element allowedValues = getDocument().createElement("ows:AllowedValues");
+            procedure.appendChild(allowedValues);
+            for (String stationName : getStationNames()) {
+                Element elem = getDocument().createElement("ows:Value");
+                elem.setTextContent(getGMLName(stationName));
+                allowedValues.appendChild(elem);
+                for (String senName : getSensorNames()) {
+                    Element sElem = getDocument().createElement("ows:Value");
+                    sElem.setTextContent(getSensorGMLName(stationName, senName));
+                    allowedValues.appendChild(sElem);
                 }
             }
         }

@@ -22,7 +22,7 @@
 		<ows:ServiceType codeSpace="http://opengeospatial.net">OGC:SOS</ows:ServiceType>
 		<ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
 		<ows:Fees>NONE</ows:Fees>
-		<ows:AccessConstraints>NONE</ows:AccessConstraints>
+		<ows:AccessConstraints></ows:AccessConstraints>
 	</ows:ServiceIdentification>
 	<!--~~~~~~~~~~~~~~~~~~~~~~-->
 	<!-- Provider Description -->
@@ -35,8 +35,8 @@
 			<ows:PositionName> </ows:PositionName>
 			<ows:ContactInfo>
 				<ows:Phone>
-                                <ows:Voice> </ows:Voice>
-                                </ows:Phone>
+					<ows:Voice> </ows:Voice>
+                </ows:Phone>
 				<ows:Address>
 					<ows:DeliveryPoint> </ows:DeliveryPoint>
 					<ows:City> </ows:City>

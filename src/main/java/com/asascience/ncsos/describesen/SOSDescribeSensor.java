@@ -5,6 +5,7 @@
 package com.asascience.ncsos.describesen;
 
 import com.asascience.ncsos.outputformatter.DescribeSensorFormatter;
+import java.io.IOException;
 import java.util.ArrayList;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
@@ -34,7 +35,7 @@ public class SOSDescribeSensor extends SOSDescribeStation implements SOSDescribe
      * @param dataset netcdf dataset of any feature type
      * @param procedure request procedure (urn of sensor)
      */
-    public SOSDescribeSensor( NetcdfDataset dataset, String procedure ) {
+    public SOSDescribeSensor( NetcdfDataset dataset, String procedure ) throws IOException {
         super(dataset, procedure);
         // ignore errors from the station constructor
         errorString = null;
@@ -42,10 +43,11 @@ public class SOSDescribeSensor extends SOSDescribeStation implements SOSDescribe
         lat = lon = null;
         
         // set our actual station id (and sensor id)
-        String[] sensorSplit = procedure.split("(::)");
-        sensorId = sensorSplit[1];
-        String[] stationSplit = sensorSplit[0].split(":");
-        stationName = stationSplit[stationSplit.length-1];
+//        String[] sensorSplit = procedure.split("(::)");
+//        sensorId = sensorSplit[1];
+        String[] stationSplit = procedure.split(":");
+        stationName = stationSplit[stationSplit.length-2];
+        sensorId = stationSplit[stationSplit.length-1];
         
         // get our sensor var
         for (Variable var : dataset.getVariables()) {

@@ -31,16 +31,18 @@ public abstract class SOSBaseRequestHandler {
     private static final String SENSOR_GML_BASE = "urn:tds:sensor.sos:";
     private final NetcdfDataset netCDFDataset;
     private FeatureDataset featureDataset;
-    private String title;
-    private String history;
-    private String institution;
-    private String source;
-    private String description;
-    private String featureOfInterestBaseQueryURL;
     private final static NumberFormat FORMAT_DEGREE;
     private FeatureCollection CDMPointFeatureCollection;
     private GridDataset gridDataSet = null;
-
+    
+    // Global Attributes
+    protected String Access, DataContactEmail, DataContactName, DataContactPhone, DataPage, InventoryContactEmail, InventoryContactName, InventoryContactPhone;
+    protected String PrimaryOwnership, Region;
+    private String title;
+    private String history;
+    private String description;
+    private String featureOfInterestBaseQueryURL;
+    
     private Variable stationVariable;
     private List<String> stationNames;
     private List<String> sensorNames;
@@ -96,12 +98,21 @@ public abstract class SOSBaseRequestHandler {
     }
 
     private void parseGlobalAttributes() {
-
-        title = netCDFDataset.findAttValueIgnoreCase(null, "title", "Empty Title");
-        history = netCDFDataset.findAttValueIgnoreCase(null, "history", "Empty History");
-        institution = netCDFDataset.findAttValueIgnoreCase(null, "institution", "Empty Insitution");
-        source = netCDFDataset.findAttValueIgnoreCase(null, "source", "Empty Source");
-        description = netCDFDataset.findAttValueIgnoreCase(null, "description", "Empty Description");
+        
+        Access = netCDFDataset.findAttValueIgnoreCase(null, "license", "NONE");
+        DataContactEmail = netCDFDataset.findAttValueIgnoreCase(null, "publisher_email", "");
+        DataContactName = netCDFDataset.findAttValueIgnoreCase(null, "publisher_name", "");
+        DataContactPhone = netCDFDataset.findAttValueIgnoreCase(null, "publisher_phone", "");
+        DataPage = netCDFDataset.findAttValueIgnoreCase(null, "publisher_url", "");
+        InventoryContactEmail = netCDFDataset.findAttValueIgnoreCase(null, "creator_email","");
+        InventoryContactName = netCDFDataset.findAttValueIgnoreCase(null,"creator_name","");
+        InventoryContactPhone = netCDFDataset.findAttValueIgnoreCase(null,"creator_phone","");
+        PrimaryOwnership = netCDFDataset.findAttValueIgnoreCase(null, "source", "");
+        Region = netCDFDataset.findAttValueIgnoreCase(null, "institution", "");
+        // old attributes, still looking up for now
+        title = netCDFDataset.findAttValueIgnoreCase(null, "title", "");
+        history = netCDFDataset.findAttValueIgnoreCase(null, "history", "");
+        description = netCDFDataset.findAttValueIgnoreCase(null, "description", "");
         featureOfInterestBaseQueryURL = netCDFDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", null);
     }
 
@@ -111,28 +122,33 @@ public abstract class SOSBaseRequestHandler {
     
     private void findAndParseStationVariable() {
         // get station var
-        // first look for a var that has 'station' and 'name' in it
+        // check for station, trajectory, profile and grid station info
         for (Variable var : netCDFDataset.getVariables()) {
             String varName = var.getFullName().toLowerCase();
             if (varName.contains("station") && varName.contains("name")) {
                 this.stationVariable = var;
                 parseStationNames();
                 break;
-            }
-        }
-        // if now found, look for trajectory variable
-        if (this.stationVariable == null) {
-            for (Variable var : netCDFDataset.getVariables()) {
-                String varName = var.getFullName().toLowerCase();
-                if (varName.equals("trajectory")) {
-                    this.stationVariable = var;
-                    parseTrajectoryIdsToNames();
-                    break;
-                } else if (varName.contains("trajectory") && varName.contains("name")) {
-                    this.stationVariable = var;
-                    parseStationNames();
-                    break;
-                }
+            } else if (varName.equals("trajectory")) {
+                this.stationVariable = var;
+                parseTrajectoryIdsToNames();
+                break;
+            } else if (varName.contains("trajectory") && varName.contains("name")) {
+                this.stationVariable = var;
+                parseStationNames();
+                break;
+            } else if (varName.equals("profile")) {
+                this.stationVariable = var;
+                parseProfileIdsToNames();
+                break;
+            } else if (varName.contains("profile") && varName.contains("name")) {
+                this.stationVariable = var;
+                parseStationNames();
+                break;
+            } else if (varName.contains("grid") && varName.contains("name")) {
+                this.stationVariable = var;
+                parseGridIdsToName();
+                break;
             }
         }
     }
@@ -157,7 +173,7 @@ public abstract class SOSBaseRequestHandler {
                         break;
                     }
                 }
-                if (isCA)
+                if (!isCA)
                     this.sensorNames.add(var.getFullName());
             }
         }
@@ -176,6 +192,7 @@ public abstract class SOSBaseRequestHandler {
             if (aShape.length == 1) {
                 // add only name to list
                 String onlyStationName = String.copyValueOf(charArray);
+                onlyStationName = onlyStationName.replaceAll("\u0000", "");
                 this.stationNames.add(onlyStationName);
             }
             else if (aShape.length > 1) {
@@ -215,6 +232,40 @@ public abstract class SOSBaseRequestHandler {
             } else {
                 // assume that the station variable is a scalar so there is only one trajectory of 0
                 this.stationNames.add("trajectory0");
+            }
+        } catch (Exception ex) {
+            System.out.println("SOSBaseRequestHandler: Error parsing station names.\n" + ex.toString());
+            this.stationNames = null;
+        }
+    }
+    
+    private void parseProfileIdsToNames() {
+        this.stationNames = new ArrayList<String>();
+        try {
+            // check the number of dimensions for the shape of the variable
+            if (stationVariable.read().getShape().length == 1) {
+                int[] trajIds = (int[]) this.stationVariable.read().get1DJavaArray(int.class);
+                // iterate through the ids and attach 'trajectory' to the front of it for the station name
+                for (int id : trajIds) {
+                    this.stationNames.add("profile" + id);
+                }
+            } else {
+                // assume that the station variable is a scalar so there is only one trajectory of 0
+                this.stationNames.add("profile0");
+            }
+        } catch (Exception ex) {
+            System.out.println("SOSBaseRequestHandler: Error parsing station names.\n" + ex.toString());
+            this.stationNames = null;
+        }
+    }
+    
+    private void parseGridIdsToName() {
+        this.stationNames = new ArrayList<String>();
+        try {
+            int idLength = stationVariable.read().getShape()[0];
+            // just append ids 0-idLength to 'grid' and count it good
+            for (int i=1; i <= idLength; i++) {
+                stationNames.add("grid"+i);
             }
         } catch (Exception ex) {
             System.out.println("SOSBaseRequestHandler: Error parsing station names.\n" + ex.toString());
@@ -292,22 +343,6 @@ public abstract class SOSBaseRequestHandler {
      */
     public String getHistory() {
         return history;
-    }
-
-    /**
-     * Returns the value of the institution/orginization attribute of the dataset
-     * @return @String
-     */
-    public String getInstitution() {
-        return institution;
-    }
-
-    /**
-     * Returns the value of the source attribute of the dataset
-     * @return
-     */
-    public String getSource() {
-        return source;
     }
 
     /**
@@ -410,8 +445,8 @@ public abstract class SOSBaseRequestHandler {
         }
         title = null;
         history = null;;
-        institution = null;;
-        source = null;
+        Region = null;;
+        PrimaryOwnership = null;
         description = null;
         featureOfInterestBaseQueryURL = null;
         CDMPointFeatureCollection =null;

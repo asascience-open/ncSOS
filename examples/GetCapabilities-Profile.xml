@@ -10,22 +10,22 @@
     <!-- Service Identification -->
     <!--~~~~~~~~~~~~~~~~~~~~~~~~-->
     <ows:ServiceIdentification>
-        <ows:Title>Empty Title</ows:Title>
-        <ows:Abstract>Empty History</ows:Abstract>
+        <ows:Title/>
+        <ows:Abstract/>
         <ows:Keywords>
             <ows:Keyword/>
         </ows:Keywords>
         <ows:ServiceType codeSpace="http://opengeospatial.net">OGC:SOS</ows:ServiceType>
         <ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
         <ows:Fees>NONE</ows:Fees>
-        <ows:AccessConstraints>NONE</ows:AccessConstraints>
+        <ows:AccessConstraints/>
     </ows:ServiceIdentification>
     <!--~~~~~~~~~~~~~~~~~~~~~~-->
     <!-- Provider Description -->
     <!--~~~~~~~~~~~~~~~~~~~~~~-->
     <ows:ServiceProvider>
-        <ows:ProviderName>Empty Source</ows:ProviderName>
-        <ows:ProviderSite>Empty Insitution</ows:ProviderSite>
+        <ows:ProviderName/>
+        <ows:ProviderSite/>
         <ows:ServiceContact>
             <ows:IndividualName/>
             <ows:PositionName/>
@@ -96,7 +96,30 @@
                     <ows:Get xlink:href="resources/datasets/profile-Contiguous-Ragged-MultipleProfiles-H.3.4/profile-Contiguous-Ragged-MultipleProfiles-H.3.4.nc"/>
                 </ows:HTTP>
             </ows:DCP>
-            <ows:Parameter name="procedure" use="required"/>
+            <ows:Parameter name="procedure" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>urn:tds:station.sos:profile0</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:profile0:rowSize</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:profile0:temperature</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:profile0:humidity</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:profile0:record</ows:Value>
+                    <ows:Value>urn:tds:station.sos:profile1</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:profile1:rowSize</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:profile1:temperature</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:profile1:humidity</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:profile1:record</ows:Value>
+                    <ows:Value>urn:tds:station.sos:profile2</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:profile2:rowSize</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:profile2:temperature</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:profile2:humidity</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:profile2:record</ows:Value>
+                    <ows:Value>urn:tds:station.sos:profile3</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:profile3:rowSize</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:profile3:temperature</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:profile3:humidity</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:profile3:record</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
             <ows:Parameter name="responseformat" use="required">
                 <ows:AllowedValues>
                     <ows:Value>text/xml;subtype="sensorML/1.0.1"</ows:Value>

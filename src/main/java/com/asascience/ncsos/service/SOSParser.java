@@ -85,11 +85,6 @@ public class SOSParser {
             queryParameters.put("version", defVersion);
         }
         
-        System.out.println("Received request with " + queryParameters.size() + " parameters:");
-        for(Map.Entry<String,Object> map : queryParameters.entrySet()) {
-            System.out.println(map.getKey() + " - " + map.getValue().toString());
-        }
-        
         // make sure we do not have any errors in our query
         if (queryParameters.containsKey("error")) {
             // issue in parsing, return an error

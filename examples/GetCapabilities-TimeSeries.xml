@@ -10,22 +10,22 @@
     <!-- Service Identification -->
     <!--~~~~~~~~~~~~~~~~~~~~~~~~-->
     <ows:ServiceIdentification>
-        <ows:Title>Empty Title</ows:Title>
-        <ows:Abstract>Empty History</ows:Abstract>
+        <ows:Title/>
+        <ows:Abstract/>
         <ows:Keywords>
             <ows:Keyword/>
         </ows:Keywords>
         <ows:ServiceType codeSpace="http://opengeospatial.net">OGC:SOS</ows:ServiceType>
         <ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
         <ows:Fees>NONE</ows:Fees>
-        <ows:AccessConstraints>NONE</ows:AccessConstraints>
+        <ows:AccessConstraints/>
     </ows:ServiceIdentification>
     <!--~~~~~~~~~~~~~~~~~~~~~~-->
     <!-- Provider Description -->
     <!--~~~~~~~~~~~~~~~~~~~~~~-->
     <ows:ServiceProvider>
-        <ows:ProviderName>Empty Source</ows:ProviderName>
-        <ows:ProviderSite>Empty Insitution</ows:ProviderSite>
+        <ows:ProviderName/>
+        <ows:ProviderSite/>
         <ows:ServiceContact>
             <ows:IndividualName/>
             <ows:PositionName/>
@@ -96,7 +96,50 @@
                     <ows:Get xlink:href="resources/datasets/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1.nc"/>
                 </ows:HTTP>
             </ows:DCP>
-            <ows:Parameter name="procedure" use="required"/>
+            <ows:Parameter name="procedure" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>urn:tds:station.sos:Station-0</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-0:temperature</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-0:humidity</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-0:record</ows:Value>
+                    <ows:Value>urn:tds:station.sos:Station-1</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-1:temperature</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-1:humidity</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-1:record</ows:Value>
+                    <ows:Value>urn:tds:station.sos:Station-2</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-2:temperature</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-2:humidity</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-2:record</ows:Value>
+                    <ows:Value>urn:tds:station.sos:Station-3</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-3:temperature</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-3:humidity</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-3:record</ows:Value>
+                    <ows:Value>urn:tds:station.sos:Station-4</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-4:temperature</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-4:humidity</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-4:record</ows:Value>
+                    <ows:Value>urn:tds:station.sos:Station-5</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-5:temperature</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-5:humidity</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-5:record</ows:Value>
+                    <ows:Value>urn:tds:station.sos:Station-6</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-6:temperature</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-6:humidity</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-6:record</ows:Value>
+                    <ows:Value>urn:tds:station.sos:Station-7</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-7:temperature</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-7:humidity</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-7:record</ows:Value>
+                    <ows:Value>urn:tds:station.sos:Station-8</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-8:temperature</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-8:humidity</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-8:record</ows:Value>
+                    <ows:Value>urn:tds:station.sos:Station-9</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-9:temperature</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-9:humidity</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Station-9:record</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
             <ows:Parameter name="responseformat" use="required">
                 <ows:AllowedValues>
                     <ows:Value>text/xml;subtype="sensorML/1.0.1"</ows:Value>

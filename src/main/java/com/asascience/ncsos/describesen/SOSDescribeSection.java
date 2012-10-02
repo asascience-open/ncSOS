@@ -49,7 +49,7 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
      * @param procedure the request procedure (station urn)
      * @param sDate starting date of the dataset (value of when time elapsed is 0)
      */
-    public SOSDescribeSection( NetcdfDataset dataset, String procedure, CalendarDate[] sDate ) {
+    public SOSDescribeSection( NetcdfDataset dataset, String procedure, CalendarDate[] sDate ) throws IOException {
         super(dataset, procedure);
         // ignore errors from parent constructor
         errorString = null;

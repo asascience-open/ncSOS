@@ -167,7 +167,7 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
         
     }
     
-    private void setNeededInfoForSensor( NetcdfDataset dataset ) {
+    private void setNeededInfoForSensor( NetcdfDataset dataset ) throws IOException {
         // describe sensor (sensor) is very similar to describe sensor (station)
         describer = new SOSDescribeSensor(dataset, procedure);
     }

@@ -40,7 +40,7 @@ public class SOSDescribeProfile extends SOSDescribeStation implements SOSDescrib
      * @param dataset netcdf dataset with the Profile feature type
      * @param procedure procedure of the request (station urn)
      */
-    public SOSDescribeProfile( NetcdfDataset dataset, String procedure ) {
+    public SOSDescribeProfile( NetcdfDataset dataset, String procedure ) throws IOException {
         super(dataset,procedure);
         // ignore errors from the super constructor
         errorString = null;

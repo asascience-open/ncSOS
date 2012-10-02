@@ -34,7 +34,7 @@ public class SOSDescribeGrid extends SOSDescribeStation implements SOSDescribeIF
      * @param dataset the dataset with a GRID feature type
      * @param procedure the procedure of the request (station urn)
      */
-    public SOSDescribeGrid( NetcdfDataset dataset, String procedure ) {
+    public SOSDescribeGrid( NetcdfDataset dataset, String procedure ) throws IOException {
         super(dataset, procedure);
         upperLatitude = upperLongitude = lowerLatitude = lowerLongitude = "";
         // ignore errors from super constructor

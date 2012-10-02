@@ -5,9 +5,11 @@
 package com.asascience.ncsos.describesen;
 
 import com.asascience.ncsos.outputformatter.DescribeSensorFormatter;
+import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import org.geotoolkit.util.collection.CheckedHashMap;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -27,14 +29,14 @@ import ucar.nc2.dataset.NetcdfDataset;
  * @author SCowan
  * @version 1.0.0
  */
-public class SOSDescribeStation implements SOSDescribeIF {
+public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDescribeIF {
     
     protected Variable stationVariable;
     protected Attribute platformType, historyAttribute;
     protected String stationName;
     protected String description;
     protected double[] stationCoords;
-    protected ArrayList<Attribute> creatorAttributes, contributorAttributes, publisherAttributes;
+    protected ArrayList<Attribute> contributorAttributes;
     protected ArrayList<Variable> documentVariables;
     protected final String procedure;
     protected String errorString;
@@ -45,7 +47,8 @@ public class SOSDescribeStation implements SOSDescribeIF {
      * @param dataset netcdf dataset of feature type TimeSeries and TimeSeriesProfile
      * @param procedure procedure of the request (station urn)
      */
-    public SOSDescribeStation( NetcdfDataset dataset, String procedure ) {
+    public SOSDescribeStation( NetcdfDataset dataset, String procedure ) throws IOException {
+        super(dataset);
         Variable lat, lon;
         lat = lon = null;
         // get desired variables
@@ -80,17 +83,7 @@ public class SOSDescribeStation implements SOSDescribeIF {
         // creator contact info
         for (Attribute attr : dataset.getGlobalAttributes()) {
             String attrName = attr.getName().toLowerCase();
-            if (attrName.contains("creator") || attrName.contains("institution")) {
-                if (creatorAttributes == null)
-                    creatorAttributes = new ArrayList<Attribute>();
-                creatorAttributes.add(attr);
-            }
-            else if (attrName.contains("publisher")) {
-                if (publisherAttributes == null)
-                    publisherAttributes = new ArrayList<Attribute>();
-                publisherAttributes.add(attr);
-            }
-            else if (attrName.contains("contributor")) {
+            if (attrName.contains("contributor")) {
                 if (contributorAttributes == null)
                     contributorAttributes = new ArrayList<Attribute>();
                 contributorAttributes.add(attr);
@@ -163,49 +156,27 @@ public class SOSDescribeStation implements SOSDescribeIF {
      * @param output a DescribeSensorFormatter instance (held by the handler)
      */
     protected void formatSetContactNodes(DescribeSensorFormatter output) {
-        if (creatorAttributes != null) {
+        if (!InventoryContactName.equalsIgnoreCase("")) {
+            String role = "http://mmisw.org/ont/ioos/definition/operator";
             HashMap<String, HashMap<String, String>> domainContactInfo = new HashMap<String, HashMap<String, String>>();
-            HashMap<String, String> subDomainInfo;
-            String role, orginizationName = "";
-            role = "creator";
-            for (Attribute attr : creatorAttributes) {
-                String attrName = attr.getName().toLowerCase();
-                if (attrName.contains("institution") || attrName.contains("name")) {
-                    orginizationName = attr.getStringValue();
-                }
-                else if (attrName.contains("url") || attrName.contains("email")) {
-                    if (domainContactInfo.containsKey("electronicAddress")) {
-                        subDomainInfo = (HashMap<String,String>)domainContactInfo.get("electronicAddress");
-                    } else {
-                        subDomainInfo = new HashMap<String, String>();
-                    }
-                    subDomainInfo.put(attr.getName(), attr.getStringValue());
-                    domainContactInfo.put("electronicAddress",subDomainInfo);
-                }
-            }
-            output.addContactNode(role, orginizationName, domainContactInfo);
+            HashMap<String, String> address = new HashMap<String, String>();
+            address.put("sml:electronicMailAddress", InventoryContactEmail);
+            domainContactInfo.put("sml:address", address);
+            HashMap<String, String> phone = new HashMap<String, String>();
+            phone.put("sml:voice", InventoryContactPhone);
+            domainContactInfo.put("sml:phone", phone);
+            output.addContactNode(role, InventoryContactName, domainContactInfo);
         }
-        if (publisherAttributes != null) {
+        if (!DataContactName.equalsIgnoreCase("")) {
+            String role = "http://mmisw.org/ont/ioos/definition/publisher";
             HashMap<String, HashMap<String, String>> domainContactInfo = new HashMap<String, HashMap<String, String>>();
-            HashMap<String, String> subDomainInfo;
-            String role, orginizationName = "";
-            role = "publisher";
-            for (Attribute attr : publisherAttributes) {
-                String attrName = attr.getName().toLowerCase();
-                if (attrName.contains("name")) {
-                    orginizationName = attr.getStringValue();
-                }
-                else if (attrName.contains("url") || attrName.contains("email")) {
-                    if (domainContactInfo.containsKey("electronicAddress")) {
-                        subDomainInfo = (HashMap<String,String>)domainContactInfo.get("electronicAddress");
-                    } else {
-                        subDomainInfo = new HashMap<String, String>();
-                    }
-                    subDomainInfo.put(attr.getName(), attr.getStringValue());
-                    domainContactInfo.put("electronicAddress",subDomainInfo);
-                }
-            }
-            output.addContactNode(role, orginizationName, domainContactInfo);
+            HashMap<String, String> address = new HashMap<String, String>();
+            address.put("sml:electronicMailAddress", DataContactEmail);
+            domainContactInfo.put("sml:address", address);
+            HashMap<String, String> phone = new HashMap<String, String>();
+            phone.put("sml:voice", DataContactPhone);
+            domainContactInfo.put("sml:phone", phone);
+            output.addContactNode(role, InventoryContactName, domainContactInfo);
         }
         if (contributorAttributes != null) {
             String role = "", name = "";

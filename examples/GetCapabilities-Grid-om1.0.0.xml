@@ -18,14 +18,14 @@
         <ows:ServiceType codeSpace="http://opengeospatial.net">OGC:SOS</ows:ServiceType>
         <ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
         <ows:Fees>NONE</ows:Fees>
-        <ows:AccessConstraints>NONE</ows:AccessConstraints>
+        <ows:AccessConstraints/>
     </ows:ServiceIdentification>
     <!--~~~~~~~~~~~~~~~~~~~~~~-->
     <!-- Provider Description -->
     <!--~~~~~~~~~~~~~~~~~~~~~~-->
     <ows:ServiceProvider>
-        <ows:ProviderName>Empty Source</ows:ProviderName>
-        <ows:ProviderSite>Empty Insitution</ows:ProviderSite>
+        <ows:ProviderName/>
+        <ows:ProviderSite/>
         <ows:ServiceContact>
             <ows:IndividualName/>
             <ows:PositionName/>
@@ -96,7 +96,33 @@
                     <ows:Get xlink:href="resources/datasets/satellite-sst/SST_Global_2x2deg_20120626_0000.nc"/>
                 </ows:HTTP>
             </ows:DCP>
-            <ows:Parameter name="procedure" use="required"/>
+            <ows:Parameter name="procedure" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>urn:tds:station.sos:grid1</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:grid1:reftime</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:grid1:datetime</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:grid1:forecasttime</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:grid1:model_id</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:grid1:nav_model</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:grid1:grid_type_code</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:grid1:grid_type</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:grid1:grid_name</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:grid1:grid_center</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:grid1:grid_number</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:grid1:i_dim</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:grid1:j_dim</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:grid1:Ni</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:grid1:Nj</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:grid1:La1</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:grid1:Lo1</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:grid1:La2</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:grid1:Lo2</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:grid1:Di</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:grid1:Dj</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:grid1:ResCompFlag</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:grid1:SST</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
             <ows:Parameter name="responseformat" use="required">
                 <ows:AllowedValues>
                     <ows:Value>text/xml;subtype="sensorML/1.0.1"</ows:Value>
