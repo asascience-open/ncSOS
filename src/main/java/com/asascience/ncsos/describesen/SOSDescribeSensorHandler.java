@@ -90,6 +90,8 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
      */
     public SOSDescribeSensorHandler(NetcdfDataset dataset) throws IOException {
         super(dataset);
+        
+        output = new DescribeSensorFormatter();
     }
     
     private void setNeededInfoForStation( NetcdfDataset dataset ) throws IOException {

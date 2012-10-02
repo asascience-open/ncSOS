@@ -240,13 +240,13 @@ public class SOSParser {
                     break;
                 case DescribeSensor:
                     // resposne will always be text/xml
-                    try {
+//                    try {
                         retval.put("responseContentType", "text/xml");
                         SOSDescribeSensorHandler sensorHandler;
                         if (!queryParameters.containsKey("responseformat")) {
                             sensorHandler = new SOSDescribeSensorHandler(dataset);
                             sensorHandler.getOutputHandler().setupExceptionOutput("responseFormat must be supplied for " + queryParameters.get("request").toString() + " requests to the " + queryParameters.get("service").toString() + " version " + queryParameters.get("version").toString() + " service");
-                        } if (!queryParameters.containsKey("procedure")) {
+                        } else if (!queryParameters.containsKey("procedure")) {
                             sensorHandler = new SOSDescribeSensorHandler(dataset);
                             sensorHandler.getOutputHandler().setupExceptionOutput("procedure must be supplied for " + queryParameters.get("request").toString() + " requests to the " + queryParameters.get("service").toString() + " version " + queryParameters.get("version").toString() + " service");
                         }else {
@@ -258,12 +258,12 @@ public class SOSParser {
                                     query);
                         }
                         retval.put("outputHandler",sensorHandler.getOutputHandler());
-                    } catch (Exception ex) {
-                        capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
-                        capHandler.getOutputHandler().setupExceptionOutput("Internal System Exception in setting up DescribeSensor handler - " + ex.toString());
-                        retval.put("outputHandler", capHandler.getOutputHandler());
-                        _log.error("Internal System Exception in setting up DescribeSensor handler - " + ex.toString());
-                    }
+//                    } catch (Exception ex) {
+//                        capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
+//                        capHandler.getOutputHandler().setupExceptionOutput("Internal System Exception in setting up DescribeSensor handler - " + ex.toString());
+//                        retval.put("outputHandler", capHandler.getOutputHandler());
+//                        _log.error("Internal System Exception in setting up DescribeSensor handler - " + ex.toString());
+//                    }
                     break;
                 default:
                     // return a 'not supported' error

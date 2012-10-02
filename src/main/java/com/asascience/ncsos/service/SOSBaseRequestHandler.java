@@ -89,20 +89,10 @@ public abstract class SOSBaseRequestHandler {
 
         parseGlobalAttributes();
         
-        // get station names
-        for (Variable var : netCDFDataset.getVariables()) {
-            String varName = var.getFullName().toLowerCase();
-            if (varName.contains("station") && varName.contains("name")) {
-                this.stationVariable = var;
-                break;
-            }
-        }
-        
-        if (this.stationVariable != null)
-            parseStationNames();
+        findAndParseStationVariable();
         
         // get sensor Variable names
-        parseSensorNames(netCDFDataset);
+        parseSensorNames();
     }
 
     private void parseGlobalAttributes() {
@@ -119,21 +109,49 @@ public abstract class SOSBaseRequestHandler {
         return netCDFDataset;
     }
     
+    private void findAndParseStationVariable() {
+        // get station var
+        // first look for a var that has 'station' and 'name' in it
+        for (Variable var : netCDFDataset.getVariables()) {
+            String varName = var.getFullName().toLowerCase();
+            if (varName.contains("station") && varName.contains("name")) {
+                this.stationVariable = var;
+                parseStationNames();
+                break;
+            }
+        }
+        // if now found, look for trajectory variable
+        if (this.stationVariable == null) {
+            for (Variable var : netCDFDataset.getVariables()) {
+                String varName = var.getFullName().toLowerCase();
+                if (varName.equals("trajectory")) {
+                    this.stationVariable = var;
+                    parseTrajectoryIdsToNames();
+                    break;
+                } else if (varName.contains("trajectory") && varName.contains("name")) {
+                    this.stationVariable = var;
+                    parseStationNames();
+                    break;
+                }
+            }
+        }
+    }
+    
     /**
      * Finds all variables that are sensor (data) variables and compiles a list of their names.
      * @param dataset the dataset to search through
      */
-    private void parseSensorNames(NetcdfDataset dataset) {
+    private void parseSensorNames() {
         // find all variables who's not a coordinate axis and does not have 'station' in the name
         this.sensorNames = new ArrayList<String>();
         boolean isCA;
-        for (Variable var : dataset.getVariables()) {
+        for (Variable var : netCDFDataset.getVariables()) {
             isCA = false;
             // check full name; ensure it is not a station var
             String fname = var.getFullName().toLowerCase();
             if (!fname.contains("station")) {
                 // check against coordinate axes
-                for (CoordinateAxis ca : dataset.getCoordinateAxes()) {
+                for (CoordinateAxis ca : netCDFDataset.getCoordinateAxes()) {
                     if (ca.getFullName().equalsIgnoreCase(fname)) {
                         isCA = true;
                         break;
@@ -180,6 +198,27 @@ public abstract class SOSBaseRequestHandler {
                 throw new Exception("SOSBaseRequestHandler: Unrecognized rank for station var: " + aShape.length);
         } catch (Exception ex) {
             System.out.println("SOSBaseRequestHandler: Error parsing station names.\n" + ex.toString());
+            this.stationNames = null;
+        }
+    }
+    
+    private void parseTrajectoryIdsToNames() {
+        this.stationNames = new ArrayList<String>();
+        try {
+            // check the number of dimensions for the shape of the variable
+            if (stationVariable.read().getShape().length == 1) {
+                int[] trajIds = (int[]) this.stationVariable.read().get1DJavaArray(int.class);
+                // iterate through the ids and attach 'trajectory' to the front of it for the station name
+                for (int id : trajIds) {
+                    this.stationNames.add("trajectory" + id);
+                }
+            } else {
+                // assume that the station variable is a scalar so there is only one trajectory of 0
+                this.stationNames.add("trajectory0");
+            }
+        } catch (Exception ex) {
+            System.out.println("SOSBaseRequestHandler: Error parsing station names.\n" + ex.toString());
+            this.stationNames = null;
         }
     }
     
