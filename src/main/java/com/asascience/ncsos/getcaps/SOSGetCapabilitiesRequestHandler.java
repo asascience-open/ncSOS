@@ -160,7 +160,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
             // add allowed values node
             Element allowedValues = getDocument().createElement("ows:AllowedValues");
             procedure.appendChild(allowedValues);
-            for (String stationName : getStationNames()) {
+            for (String stationName : getStationNames().values()) {
                 Element elem = getDocument().createElement("ows:Value");
                 elem.setTextContent(getGMLName(stationName));
                 allowedValues.appendChild(elem);

@@ -32,7 +32,6 @@ import ucar.nc2.units.DateFormatter;
  */
 public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDescribeIF {
     
-    private ArrayList<Variable> PositionVars;
     private Variable indexDescriptor;
     private int stationIndex;
     private int stationObsIndexLower, stationObsIndexUpper;
@@ -51,21 +50,8 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
         // ignore errors from parent constructor
         errorString = null;
         
-        PositionVars = new ArrayList<Variable>();
         for (Variable var : dataset.getVariables()) {
-            // look for lat, lon and time
             String varName = var.getFullName().toLowerCase();
-            if (varName.contains("time") ||
-                    varName.contains("lon") ||
-                    varName.contains("lat")) {
-                PositionVars.add(var);
-            }
-            
-            // get our station var
-            if (varName.contains("name")) {
-                stationVariable = var;
-            }
-            
             // look for our var for either index or rowSize vars
             if (varName.contains("rowsize") || varName.contains("index")) {
                 indexDescriptor = var;
@@ -75,7 +61,7 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
         this.startDate = startDate;
         
         // get our station index
-        stationIndex = getStationIndex(stationVariable, stationName);
+        stationIndex = getStationIndex(stationName);
         
         if (stationIndex < 0) {
             errorString = "Station not part of dataset: " + stationName;
@@ -188,18 +174,10 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
         StringBuilder strB = new StringBuilder();
         try {
             DateFormatter formatter = new DateFormatter();
-            Array timeArray, latArray, lonArray;
-            timeArray = latArray = lonArray = null;
-            for (Variable var : PositionVars) {
-                String name = var.getFullName().toLowerCase();
-                if (name.contains("time")) {
-                    timeArray = var.read();
-                } else if (name.contains("lat")) {
-                    latArray = var.read();
-                } else if (name.contains("lon")) {
-                    lonArray = var.read();
-                }
-            }
+            Array timeArray = timeVariable.read();
+            Array latArray = latVariable.read();
+            Array lonArray = lonVariable.read();
+            
             if (stationObsIndices != null) {
                 for (int i=0; i<stationObsIndices.length; i++) {
                     int obsIndex = stationObsIndices[i].intValue();

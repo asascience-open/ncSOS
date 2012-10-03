@@ -4,10 +4,8 @@ import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import com.asascience.ncsos.util.DiscreteSamplingGeometryUtil;
 import java.io.IOException;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Formatter;
-import java.util.List;
+import java.util.*;
+import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
 import ucar.nc2.constants.AxisType;
 import ucar.nc2.constants.FeatureType;
@@ -43,8 +41,10 @@ public abstract class SOSBaseRequestHandler {
     private String description;
     private String featureOfInterestBaseQueryURL;
     
-    private Variable stationVariable;
-    private List<String> stationNames;
+    // Variables and other information commonly needed
+    protected Variable latVariable, lonVariable, timeVariable, depthVariable;
+    protected Variable stationVariable;
+    private HashMap<Integer, String> stationNames;
     private List<String> sensorNames;
     
     private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(SOSBaseRequestHandler.class);
@@ -95,6 +95,12 @@ public abstract class SOSBaseRequestHandler {
         
         // get sensor Variable names
         parseSensorNames();
+        
+        // get other needed vars
+        latVariable = netCDFDataset.findCoordinateAxis(AxisType.Lat);
+        lonVariable = netCDFDataset.findCoordinateAxis(AxisType.Lon);
+        timeVariable = netCDFDataset.findCoordinateAxis(AxisType.Time);
+        depthVariable = netCDFDataset.findCoordinateAxis(AxisType.Height);
     }
 
     private void parseGlobalAttributes() {
@@ -124,31 +130,34 @@ public abstract class SOSBaseRequestHandler {
         // get station var
         // check for station, trajectory, profile and grid station info
         for (Variable var : netCDFDataset.getVariables()) {
+            // look for cf_role attr
+            if (this.stationVariable == null) {
+                for (Attribute attr : var.getAttributes()) {
+                    if(attr.getName().equalsIgnoreCase("cf_role")) {
+                        this.stationVariable = var;
+                        break;
+                    }
+                }
+            }
+            // check name for grid data (does not have cf_role)
             String varName = var.getFullName().toLowerCase();
-            if (varName.contains("station") && varName.contains("name")) {
-                this.stationVariable = var;
-                parseStationNames();
-                break;
-            } else if (varName.equals("trajectory")) {
-                this.stationVariable = var;
-                parseTrajectoryIdsToNames();
-                break;
-            } else if (varName.contains("trajectory") && varName.contains("name")) {
-                this.stationVariable = var;
-                parseStationNames();
-                break;
-            } else if (varName.equals("profile")) {
-                this.stationVariable = var;
-                parseProfileIdsToNames();
-                break;
-            } else if (varName.contains("profile") && varName.contains("name")) {
-                this.stationVariable = var;
-                parseStationNames();
-                break;
-            } else if (varName.contains("grid") && varName.contains("name")) {
+            if (varName.contains("grid") && varName.contains("name")) {
                 this.stationVariable = var;
                 parseGridIdsToName();
+            }
+            
+            if (this.stationVariable != null)
                 break;
+        }
+        
+        if (this.stationVariable != null) {
+            String stationVarName = this.stationVariable.getFullName().toLowerCase();
+            if (stationVarName.contains("name") && !stationVarName.contains("grid")) {
+                parseStationNames();
+            } else if (stationVarName.contains("trajectory")) {
+                parseTrajectoryIdsToNames();
+            } else if (stationVarName.contains("profile")) {
+                parseProfileIdsToNames();
             }
         }
     }
@@ -183,7 +192,8 @@ public abstract class SOSBaseRequestHandler {
      * Gets a list of station names from the dataset. Useful for procedures and finding station indices.
      */
     private void parseStationNames() {
-        this.stationNames = new ArrayList<String>();
+        this.stationNames = new HashMap<Integer, String>();
+        int stationIndex = 0;
         try {
             // get the station index in the array
             char[] charArray = (char[]) this.stationVariable.read().get1DJavaArray(char.class);
@@ -193,7 +203,7 @@ public abstract class SOSBaseRequestHandler {
                 // add only name to list
                 String onlyStationName = String.copyValueOf(charArray);
                 onlyStationName = onlyStationName.replaceAll("\u0000", "");
-                this.stationNames.add(onlyStationName);
+                this.stationNames.put(stationIndex++, onlyStationName);
             }
             else if (aShape.length > 1) {
                 StringBuilder strB = null;
@@ -201,7 +211,7 @@ public abstract class SOSBaseRequestHandler {
                 for (int i=0;i<charArray.length;i++) {
                     if(i % aShape[1] == 0) {
                         if (strB != null)
-                            this.stationNames.add(strB.toString());
+                            this.stationNames.put(stationIndex++, strB.toString());
                         strB = new StringBuilder();
                     }
                     // ignore null
@@ -209,7 +219,7 @@ public abstract class SOSBaseRequestHandler {
                         strB.append(charArray[i]);
                 }
                 // add last index
-                this.stationNames.add(strB.toString());
+                this.stationNames.put(stationIndex++, strB.toString());
             }
             else
                 throw new Exception("SOSBaseRequestHandler: Unrecognized rank for station var: " + aShape.length);
@@ -220,18 +230,19 @@ public abstract class SOSBaseRequestHandler {
     }
     
     private void parseTrajectoryIdsToNames() {
-        this.stationNames = new ArrayList<String>();
+        this.stationNames = new HashMap<Integer, String>();
+        int stationindex = 0;
         try {
             // check the number of dimensions for the shape of the variable
             if (stationVariable.read().getShape().length == 1) {
                 int[] trajIds = (int[]) this.stationVariable.read().get1DJavaArray(int.class);
                 // iterate through the ids and attach 'trajectory' to the front of it for the station name
                 for (int id : trajIds) {
-                    this.stationNames.add("trajectory" + id);
+                    this.stationNames.put(stationindex++, "trajectory" + id);
                 }
             } else {
                 // assume that the station variable is a scalar so there is only one trajectory of 0
-                this.stationNames.add("trajectory0");
+                this.stationNames.put(stationindex++, "trajectory0");
             }
         } catch (Exception ex) {
             System.out.println("SOSBaseRequestHandler: Error parsing station names.\n" + ex.toString());
@@ -240,18 +251,19 @@ public abstract class SOSBaseRequestHandler {
     }
     
     private void parseProfileIdsToNames() {
-        this.stationNames = new ArrayList<String>();
+        this.stationNames = new HashMap<Integer, String>();
+        int stationindex = 0;
         try {
             // check the number of dimensions for the shape of the variable
             if (stationVariable.read().getShape().length == 1) {
                 int[] trajIds = (int[]) this.stationVariable.read().get1DJavaArray(int.class);
                 // iterate through the ids and attach 'trajectory' to the front of it for the station name
                 for (int id : trajIds) {
-                    this.stationNames.add("profile" + id);
+                    this.stationNames.put(stationindex++, "profile" + id);
                 }
             } else {
                 // assume that the station variable is a scalar so there is only one trajectory of 0
-                this.stationNames.add("profile0");
+                this.stationNames.put(stationindex++, "profile0");
             }
         } catch (Exception ex) {
             System.out.println("SOSBaseRequestHandler: Error parsing station names.\n" + ex.toString());
@@ -260,12 +272,13 @@ public abstract class SOSBaseRequestHandler {
     }
     
     private void parseGridIdsToName() {
-        this.stationNames = new ArrayList<String>();
+        this.stationNames = new HashMap<Integer, String>();
+        int stationindex = 0;
         try {
             int idLength = stationVariable.read().getShape()[0];
             // just append ids 0-idLength to 'grid' and count it good
             for (int i=1; i <= idLength; i++) {
-                stationNames.add("grid"+i);
+                stationNames.put(stationindex++, "grid"+i);
             }
         } catch (Exception ex) {
             System.out.println("SOSBaseRequestHandler: Error parsing station names.\n" + ex.toString());
@@ -274,10 +287,33 @@ public abstract class SOSBaseRequestHandler {
     }
     
     /**
+     * Returns the index of the station name
+     * @param stationToLookFor the name of the station to find
+     * @return the index of the station; -1 if no station with the name exists
+     */
+    protected int getStationIndex(String stationToLookFor) {
+        // look for the station in the hashmap and return its index
+        int retval = -1;
+        
+        if (stationNames != null && stationNames.containsValue(stationToLookFor)) {
+            int index = 0;
+            for (String stationName : stationNames.values()) {
+                if (stationToLookFor.equalsIgnoreCase(stationName)) {
+                    retval = index;
+                    break;
+                }
+                index++;
+            }
+        }
+        
+        return retval;
+    }
+    
+    /**
      * Get the station names, parsed from a Variable containing "station" and "name"
      * @return list of station names
      */
-    protected List<String> getStationNames() {
+    protected HashMap<Integer,String> getStationNames() {
         return this.stationNames;
     }
     

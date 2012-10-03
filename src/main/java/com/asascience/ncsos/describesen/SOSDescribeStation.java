@@ -12,6 +12,7 @@ import java.util.HashMap;
 import org.geotoolkit.util.collection.CheckedHashMap;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
+import ucar.nc2.constants.AxisType;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
@@ -31,7 +32,6 @@ import ucar.nc2.dataset.NetcdfDataset;
  */
 public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDescribeIF {
     
-    protected Variable stationVariable;
     protected Attribute platformType, historyAttribute;
     protected String stationName;
     protected String description;
@@ -49,20 +49,16 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
      */
     public SOSDescribeStation( NetcdfDataset dataset, String procedure ) throws IOException {
         super(dataset);
-        Variable lat, lon;
-        lat = lon = null;
         // get desired variables
         for (Variable var : dataset.getVariables()) {
-            if (var.getFullName().matches("(station)[_]*(name)")) {
-                stationVariable = var;
-            }
-            else if (var.getFullName().toLowerCase().contains("lat")) {
-                lat = var;
-            }
-            else if (var.getFullName().toLowerCase().contains("lon")) {
-                lon = var;
-            }
-            else if (var.getFullName().toLowerCase().contains("doc")) {
+            
+//            if (var.getFullName().toLowerCase().contains("lat")) {
+//                lat = var;
+//            }
+//            else if (var.getFullName().toLowerCase().contains("lon")) {
+//                lon = var;
+//            }
+            if (var.getFullName().toLowerCase().contains("doc")) {
                 if (documentVariables == null)
                     documentVariables = new ArrayList<Variable>();
                 documentVariables.add(var);
@@ -92,7 +88,7 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
         
         // set our coords
         if (stationVariable != null) {
-            stationCoords = getStationCoords(lat, lon);
+            stationCoords = getStationCoords(latVariable, lonVariable);
             if (stationCoords == null || (stationCoords[0] == Double.NaN && stationCoords[1] == Double.NaN))
                 errorString = "Could not find station " + stationName + " in dataset";
         } else {
@@ -156,7 +152,7 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
      * @param output a DescribeSensorFormatter instance (held by the handler)
      */
     protected void formatSetContactNodes(DescribeSensorFormatter output) {
-        if (!InventoryContactName.equalsIgnoreCase("")) {
+        if (!InventoryContactName.equalsIgnoreCase("") || !InventoryContactEmail.equalsIgnoreCase("") || !InventoryContactPhone.equalsIgnoreCase("")) {
             String role = "http://mmisw.org/ont/ioos/definition/operator";
             HashMap<String, HashMap<String, String>> domainContactInfo = new HashMap<String, HashMap<String, String>>();
             HashMap<String, String> address = new HashMap<String, String>();
@@ -167,7 +163,7 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
             domainContactInfo.put("sml:phone", phone);
             output.addContactNode(role, InventoryContactName, domainContactInfo);
         }
-        if (!DataContactName.equalsIgnoreCase("")) {
+        if (!DataContactName.equalsIgnoreCase("") || !DataContactEmail.equalsIgnoreCase("") || !DataContactPhone.equalsIgnoreCase("")) {
             String role = "http://mmisw.org/ont/ioos/definition/publisher";
             HashMap<String, HashMap<String, String>> domainContactInfo = new HashMap<String, HashMap<String, String>>();
             HashMap<String, String> address = new HashMap<String, String>();
@@ -202,6 +198,8 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
         ArrayList<String> identValues = new ArrayList<String>();
         identNames.add("StationId"); identDefinitions.add("stationID"); identValues.add(procedure);
         for (Attribute attr : stationVariable.getAttributes()) {
+            if (attr.getName().equalsIgnoreCase("cf_role") || attr.getName().toLowerCase().contains("hdf5"))
+                continue;
             identNames.add(attr.getName()); identDefinitions.add(""); identValues.add(attr.getStringValue());
         }
         formatter.setIdentificationNode(identNames.toArray(new String[identNames.size()]),
@@ -209,61 +207,6 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
                 identValues.toArray(new String[identValues.size()]));
     }
     
-    /**
-     * Finds the index of the named station in the dataset
-     * @param stationVar variable containing station names
-     * @param nameOfStation name of the station to find
-     * @return index of named station
-     */
-    protected int getStationIndex(Variable stationVar, String nameOfStation) {
-        int retval = -1;
-        try {
-            // get the station index in the array
-            char[] charArray = (char[]) stationVar.read().get1DJavaArray(char.class);
-            // find the length of the strings, assumes that the array has only a rank of 2; string length should be the 1st index
-            int[] aShape = stationVar.read().getShape();
-            if (aShape.length == 1) {
-                // only one name, so... return it if it matches
-                String onlyStationName = String.copyValueOf(charArray);
-                if (onlyStationName.equalsIgnoreCase(nameOfStation))
-                    retval = 0;
-                else
-                    throw new Exception("Only station " + onlyStationName +" does not match.");
-            }
-            else if (aShape.length > 1) {
-                String[] names = new String[aShape[0]];
-                StringBuilder strB = null;
-                int ni = 0;
-                for (int i=0;i<charArray.length;i++) {
-//                    System.out.println("char: " + charArray[i] + "  index: " + i);
-                    if(i % aShape[1] == 0) {
-                        if (strB != null)
-                            names[ni++] = strB.toString();
-                        strB = new StringBuilder();
-                    }
-                    // ignore null
-                    if (charArray[i] != '\u0000')
-                        strB.append(charArray[i]);
-                }
-                // add last index
-                names[ni++] = strB.toString();
-                // now find our station index
-                for (int j=0; j<names.length; j++) {
-                    if(names[j].equalsIgnoreCase(nameOfStation)) {
-                        retval = j;
-                        break;
-                    }
-                }
-            }
-            else
-                throw new Exception("Unkown rank for station var: " + aShape.length);
-        } catch (Exception ex) {
-            System.out.println("Received error looking for station " + nameOfStation + " - " + ex.toString());
-            errorString = "Error reading from station variable, while looking for " + nameOfStation + ": " + ex.toString();
-        }
-        
-        return retval;
-    }
     
     /**
      * finds the latitude and longitude of the station defined by fields
@@ -276,7 +219,7 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
         try {
             // get the lat/lon of the station
             // station id should be the last value in the procedure
-            int stationIndex = getStationIndex(stationVariable, stationName);
+            int stationIndex = getStationIndex(stationName);
             
             if (stationIndex >= 0) {
                 double[] coords = new double[] { Double.NaN, Double.NaN };

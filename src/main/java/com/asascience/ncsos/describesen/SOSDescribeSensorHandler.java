@@ -9,6 +9,7 @@ import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import com.asascience.ncsos.util.DiscreteSamplingGeometryUtil;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -177,15 +178,15 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
             return false;
         // get a list of procedures from dataset and compare it to the passed-in procedure
         // get list of station names
-        List<String> stationNames = getStationNames();
+        HashMap<Integer,String> stationNames = getStationNames();
         // go through each station urn and compare it to procedure
-        for (String stationName : stationNames) {
+        for (String stationName : stationNames.values()) {
             if (getGMLName(stationName).equals(procedure))
                 return true;
         }
         // go through each sensor urn and compare it to procedure
         for (String sensorName : getSensorNames()) {
-            for (String stationName : stationNames) {
+            for (String stationName : stationNames.values()) {
                 if (getSensorGMLName(stationName, sensorName).equals(procedure))
                     return true;
             }

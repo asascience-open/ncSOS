@@ -39,8 +39,6 @@ public class SOSDescribeSensor extends SOSDescribeStation implements SOSDescribe
         super(dataset, procedure);
         // ignore errors from the station constructor
         errorString = null;
-        Variable lat, lon;
-        lat = lon = null;
         
         // set our actual station id (and sensor id)
 //        String[] sensorSplit = procedure.split("(::)");
@@ -55,17 +53,13 @@ public class SOSDescribeSensor extends SOSDescribeStation implements SOSDescribe
             if (varName.equalsIgnoreCase(sensorId)) {
                 sensorVariable = var;
             }
-            else if (varName.contains("lat"))
-                lat = var;
-            else if (varName.contains("lon"))
-                lon = var;
         }
         
         if (sensorVariable == null) {
             errorString = "Unable to find sensor " + sensorId + " in the dataset!";
         }
         
-        stationCoords = getStationCoords(lat, lon);
+        stationCoords = getStationCoords(latVariable, lonVariable);
         
         if (stationCoords == null || (stationCoords[0] == Double.NaN && stationCoords[1] == Double.NaN))
             errorString = "Unable to find station " + stationName + " in the dataset!";

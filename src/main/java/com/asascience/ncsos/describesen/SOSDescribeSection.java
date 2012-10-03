@@ -38,7 +38,6 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
     private int trajectoryNumber;
 //    private Integer[] profileIndices;
     private Integer[] profileDataStartIndex, profileDataEndIndex;
-    private Variable lat, lon, depth, time;
     private Variable indexVar;
     private CalendarDate[] startDates;
     
@@ -61,8 +60,6 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
         
         profileDataStartIndex = profileDataEndIndex = null;
         
-        lat = lon = depth = time = null;
-        
         this.startDates = sDate;
         
         Variable rowsize = null;
@@ -76,21 +73,18 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
                 indexVar = var;
             }
             // look for lat, lon, depth
-            else if (varName.contains("lat")) {
-                lat = var;
-            }
-            else if (varName.contains("lon")) {
-                lon = var;
-            }
-            else if (varName.contains("z") || varName.contains("alt")) {
-                depth = var;
-            }
-            else if (varName.contains("time")) {
-                time = var;
-            }
-            else if (varName.equalsIgnoreCase("profile") || varName.equalsIgnoreCase("trajectory")) {
-                stationVariable = var;
-            }
+//            else if (varName.contains("lat")) {
+//                lat = var;
+//            }
+//            else if (varName.contains("lon")) {
+//                lon = var;
+//            }
+//            else if (varName.contains("z") || varName.contains("alt")) {
+//                depth = var;
+//            }
+//            else if (varName.contains("time")) {
+//                time = var;
+//            }
         }
         
         if (stationVariable == null)
@@ -184,22 +178,22 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
         // time
         varMap = new HashMap<String, String>();
         varMap.put("definition", "OGC:time");
-        varMap.put("xlink:href", time.getUnitsString());
+        varMap.put("xlink:href", timeVariable.getUnitsString());
         mapMap.put("time", varMap);
         // lat
         varMap = new HashMap<String, String>();
         varMap.put("definition", "some:definition");
-        varMap.put("code", lat.getUnitsString());
+        varMap.put("code", latVariable.getUnitsString());
         mapMap.put("lat", varMap);
         // lon
         varMap = new HashMap<String, String>();
         varMap.put("definition", "some:definition");
-        varMap.put("code", lon.getUnitsString());
+        varMap.put("code", lonVariable.getUnitsString());
         mapMap.put("lon", varMap);
         //depth
         varMap = new HashMap<String, String>();
         varMap.put("definition", "some:definition");
-        varMap.put("code", depth.getUnitsString());
+        varMap.put("code", depthVariable.getUnitsString());
         mapMap.put("altitude", varMap);
         
         output.setPositionDataDefinition(mapMap, ".", " ", ",");
@@ -218,10 +212,10 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
 //                }
             if (profileDataStartIndex == null) {
                 // read the arrays at our index
-                latArray = getDataArrayFrom2Dimension(lat);
-                lonArray = getDataArrayFrom2Dimension(lon);
-                timeArray = getDataArrayFrom2Dimension(time);
-                float[] depthArray = (float[]) get2DimDataArrayFrom3Dimension(depth).copyTo1DJavaArray();
+                latArray = getDataArrayFrom2Dimension(latVariable);
+                lonArray = getDataArrayFrom2Dimension(lonVariable);
+                timeArray = getDataArrayFrom2Dimension(timeVariable);
+                float[] depthArray = (float[]) get2DimDataArrayFrom3Dimension(depthVariable).copyTo1DJavaArray();
                 for (int i=0; i<startDates.length; i++) {
                     for (int di=0; di<latArray.getSize(); di++) {
                         strB.append(formatter.toDateTimeStringISO(startDates[i].add(timeArray.getDouble(i), CalendarPeriod.Field.Second).toDate())).append(",");
@@ -231,11 +225,11 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
                     }
                 }
             } else {
-                latArray = lat.read();
-                timeArray = time.read();
-                lonArray = lon.read();
+                latArray = latVariable.read();
+                timeArray = timeVariable.read();
+                lonArray = lonVariable.read();
                 indexArray = indexVar.read();
-                Array depthArray = depth.read();
+                Array depthArray = depthVariable.read();
                 int profileNumber = 0;
                 for (int k=0; k<indexArray.getSize(); k++) {
                     if (indexArray.getInt(k) == trajectoryNumber) {

@@ -29,7 +29,6 @@ import ucar.nc2.dataset.NetcdfDataset;
  */
 public class SOSDescribeProfile extends SOSDescribeStation implements SOSDescribeIF {
     
-    private Variable lat, lon, depth;
     int profileNumber;
     int profileStartIndex, profileEndIndex;
     Integer[] profileIndices;
@@ -90,19 +89,6 @@ public class SOSDescribeProfile extends SOSDescribeStation implements SOSDescrib
                     return;
                 }
             }
-            // look for lat, lon, depth
-            else if (varName.contains("lat")) {
-                lat = var;
-            }
-            else if (varName.contains("lon")) {
-                lon = var;
-            }
-            else if (varName.contains("z")) {
-                depth = var;
-            }
-            else if (varName.contains("profile")) {
-                stationVariable = var;
-            }
         }
         
         if (stationVariable == null)
@@ -161,7 +147,7 @@ public class SOSDescribeProfile extends SOSDescribeStation implements SOSDescrib
         HashMap<String,String> latitude, longitude, depthMap;
         // set our hashmaps for our station
         latitude = new HashMap<String, String>();
-        for (Attribute attr : lat.getAttributes()) {
+        for (Attribute attr : latVariable.getAttributes()) {
             String attrName = attr.getName().toLowerCase();
             if (attrName.equals("standard_name")) {
                 latitude.put("name", attr.getStringValue());
@@ -173,10 +159,10 @@ public class SOSDescribeProfile extends SOSDescribeStation implements SOSDescrib
                 latitude.put("axisID", attr.getStringValue());
             }
         }
-        latitude.put("value", getValueAtProfileIndex(lat));
+        latitude.put("value", getValueAtProfileIndex(latVariable));
         
         longitude = new HashMap<String, String>();
-        for (Attribute attr : lon.getAttributes()) {
+        for (Attribute attr : lonVariable.getAttributes()) {
             String attrName = attr.getName().toLowerCase();
             if (attrName.equals("standard_name")) {
                 longitude.put("name", attr.getStringValue());
@@ -188,10 +174,10 @@ public class SOSDescribeProfile extends SOSDescribeStation implements SOSDescrib
                 longitude.put("axisID", attr.getStringValue());
             }
         }
-        longitude.put("value", getValueAtProfileIndex(lon));
+        longitude.put("value", getValueAtProfileIndex(lonVariable));
         
         depthMap = new HashMap<String, String>();
-        for (Attribute attr : depth.getAttributes()) {
+        for (Attribute attr : depthVariable.getAttributes()) {
             String attrName = attr.getName().toLowerCase();
             if (attrName.equals("standard_name")) {
                 depthMap.put("name", attr.getStringValue());
@@ -209,7 +195,7 @@ public class SOSDescribeProfile extends SOSDescribeStation implements SOSDescrib
         output.setStationPositionsNode(latitude, longitude, depthMap, "");
         // get our depth for the end point
         try {
-            Array array = depth.read();
+            Array array = depthVariable.read();
             ArrayList<Double> depthValues = new ArrayList<Double>();
             if (profileIndices != null) {
                 for (int i=0; i<profileIndices.length; i++) {
