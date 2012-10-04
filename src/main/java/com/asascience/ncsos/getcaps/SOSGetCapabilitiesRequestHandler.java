@@ -215,6 +215,45 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                 aV.appendChild(value);
             }
         }
+        // add lat and lon as parameters if we are a grid dataset
+        if (getGridDataset() != null) {
+            addLatLonParameters(firstNameElement);
+        }
+    }
+    
+    private void addLatLonParameters(Element parent) {
+        // add a min and max values for each param
+        LatLonRect rect = getGridDataset().getBoundingBox();
+        // lat
+        Element lat = getDocument().createElement("ows:Parameter");
+        lat.setAttribute("name", "lat");
+        lat.setAttribute("use", "optional");
+        Element latAllowedValues = getDocument().createElement("ows:AllowedValues");
+        // min
+        Element latMin = getDocument().createElement("ows:MinimumValue");
+        latMin.setTextContent(rect.getLowerLeftPoint().getLatitude() + "");
+        latAllowedValues.appendChild(latMin);
+        // max
+        Element latMax = getDocument().createElement("ows:MaximumValue");
+        latMax.setTextContent(rect.getUpperRightPoint().getLatitude() + "");
+        latAllowedValues.appendChild(latMax);
+        lat.appendChild(latAllowedValues);
+        parent.appendChild(lat);
+        // lon
+        Element lon = getDocument().createElement("ows:Parameter");
+        lon.setAttribute("name", "lon");
+        lon.setAttribute("use", "optional");
+        Element lonAllowedValues = getDocument().createElement("ows:AllowedValues");
+        // min
+        Element lonMin = getDocument().createElement("ows:MinimumValue");
+        lonMin.setTextContent(rect.getLowerLeftPoint().getLongitude() + "");
+        lonAllowedValues.appendChild(lonMin);
+        // max
+        Element lonMax = getDocument().createElement("ows:MaximumValue");
+        lonMax.setTextContent(rect.getUpperRightPoint().getLongitude() + "");
+        lonAllowedValues.appendChild(lonMax);
+        lon.appendChild(lonAllowedValues);
+        parent.appendChild(lon);
     }
     
     private void setGetCapabilitiesDescribeSensorMetadata(Element firstNameElement) {
