@@ -265,6 +265,9 @@ public class DiscreteSamplingGeometryUtil {
                         return (SectionFeatureCollection) featureCollection;
                         
                     }
+                    else {
+                        System.out.println("Unable to find the feature dataset collection of " + featureCollection.getName());
+                    }
                     //********** 
 
 

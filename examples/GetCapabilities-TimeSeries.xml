@@ -54,16 +54,6 @@
                     <ows:Get xlink:href="resources/datasets/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1.nc"/>
                 </ows:HTTP>
             </ows:DCP>
-            <ows:Parameter name="service" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>SOS</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="version" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>1.0.0</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
         </ows:Operation>
         <ows:Operation name="GetObservation">
             <ows:DCP>
@@ -71,22 +61,33 @@
                     <ows:Get xlink:href="resources/datasets/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1.nc"/>
                 </ows:HTTP>
             </ows:DCP>
-            <ows:Parameter name="offering" use="required"/>
-            <ows:Parameter name="observedproperty" use="required"/>
-            <ows:Parameter name="eventtime" use="optional"/>
-            <ows:Parameter name="resposneformat" use="required">
+            <ows:Parameter name="offering" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>Station-0</ows:Value>
+                    <ows:Value>Station-1</ows:Value>
+                    <ows:Value>Station-2</ows:Value>
+                    <ows:Value>Station-3</ows:Value>
+                    <ows:Value>Station-4</ows:Value>
+                    <ows:Value>Station-5</ows:Value>
+                    <ows:Value>Station-6</ows:Value>
+                    <ows:Value>Station-7</ows:Value>
+                    <ows:Value>Station-8</ows:Value>
+                    <ows:Value>Station-9</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="observedProperty" use="required">
+                <ows:AllowedValues/>
+            </ows:Parameter>
+            <ows:Parameter name="eventTime" use="optional">
+                <ows:AllowedValues>
+                    <ows:Range/>
+                    <ows:MinimumValue>1990-01-01T00:00:00.000Z</ows:MinimumValue>
+                    <ows:MaximumValue>1990-01-05T03:00:00.000Z</ows:MaximumValue>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="responseFormat" use="required">
                 <ows:AllowedValues>
                     <ows:Value>text/xml;subtype="om/1.0.0"</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="service" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>SOS</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="version" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>1.0.0</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
         </ows:Operation>
@@ -145,17 +146,17 @@
                     <ows:Value>text/xml;subtype="sensorML/1.0.1"</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
-            <ows:Parameter name="service" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>SOS</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="version" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>1.0.0</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
         </ows:Operation>
+        <ows:Parameter name="service" use="required">
+            <ows:AllowedValues>
+                <ows:Value>SOS</ows:Value>
+            </ows:AllowedValues>
+        </ows:Parameter>
+        <ows:Parameter name="version" use="required">
+            <ows:AllowedValues>
+                <ows:Value>1.0.0</ows:Value>
+            </ows:AllowedValues>
+        </ows:Parameter>
     </ows:OperationsMetadata>
     <!--~~~~~~~~~~~~~~~~~~~~~~~-->
     <!-- Observation Offerings -->
@@ -163,232 +164,222 @@
     <Contents>
         <ObservationOfferingList>
             <ObservationOffering gml:id="Station-0">
-                <gml:description/>
                 <gml:name>urn:tds:station.sos:Station-0</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
-                    <gml:Envelope srsName="EPSG:4326">
-                        <gml:lowerCorner>114.0 90.0</gml:lowerCorner>
-                        <gml:upperCorner>114.0 90.0</gml:upperCorner>
+                    <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                        <gml:lowerCorner>90.0 90.0</gml:lowerCorner>
+                        <gml:upperCorner>90.0 90.0001</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
                 <time>
-                    <gml:TimePeriod>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:station.sos:Station-0"/>
-                <observedProperty xlink:href="temperature"/>
-                <observedProperty xlink:href="humidity"/>
-                <featureOfInterest xlink:href="Station-0"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-0:temperature"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-0:humidity"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-0:record"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
             </ObservationOffering>
             <ObservationOffering gml:id="Station-1">
-                <gml:description/>
                 <gml:name>urn:tds:station.sos:Station-1</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
-                    <gml:Envelope srsName="EPSG:4326">
+                    <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
                         <gml:lowerCorner>3.0 148.0</gml:lowerCorner>
-                        <gml:upperCorner>3.0 148.0</gml:upperCorner>
+                        <gml:upperCorner>3.0001 148.0001</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
                 <time>
-                    <gml:TimePeriod>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:station.sos:Station-1"/>
-                <observedProperty xlink:href="temperature"/>
-                <observedProperty xlink:href="humidity"/>
-                <featureOfInterest xlink:href="Station-1"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-1:temperature"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-1:humidity"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-1:record"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
             </ObservationOffering>
             <ObservationOffering gml:id="Station-2">
-                <gml:description/>
                 <gml:name>urn:tds:station.sos:Station-2</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
-                    <gml:Envelope srsName="EPSG:4326">
+                    <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
                         <gml:lowerCorner>62.0 38.0</gml:lowerCorner>
-                        <gml:upperCorner>62.0 38.0</gml:upperCorner>
+                        <gml:upperCorner>62.0001 38.0001</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
                 <time>
-                    <gml:TimePeriod>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:station.sos:Station-2"/>
-                <observedProperty xlink:href="temperature"/>
-                <observedProperty xlink:href="humidity"/>
-                <featureOfInterest xlink:href="Station-2"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-2:temperature"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-2:humidity"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-2:record"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
             </ObservationOffering>
             <ObservationOffering gml:id="Station-3">
-                <gml:description/>
                 <gml:name>urn:tds:station.sos:Station-3</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
-                    <gml:Envelope srsName="EPSG:4326">
-                        <gml:lowerCorner>121.0 149.0</gml:lowerCorner>
-                        <gml:upperCorner>121.0 149.0</gml:upperCorner>
+                    <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                        <gml:lowerCorner>90.0 149.0</gml:lowerCorner>
+                        <gml:upperCorner>90.0 149.0001</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
                 <time>
-                    <gml:TimePeriod>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:station.sos:Station-3"/>
-                <observedProperty xlink:href="temperature"/>
-                <observedProperty xlink:href="humidity"/>
-                <featureOfInterest xlink:href="Station-3"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-3:temperature"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-3:humidity"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-3:record"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
             </ObservationOffering>
             <ObservationOffering gml:id="Station-4">
-                <gml:description/>
                 <gml:name>urn:tds:station.sos:Station-4</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
-                    <gml:Envelope srsName="EPSG:4326">
+                    <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
                         <gml:lowerCorner>67.0 103.0</gml:lowerCorner>
-                        <gml:upperCorner>67.0 103.0</gml:upperCorner>
+                        <gml:upperCorner>67.0001 103.0001</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
                 <time>
-                    <gml:TimePeriod>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:station.sos:Station-4"/>
-                <observedProperty xlink:href="temperature"/>
-                <observedProperty xlink:href="humidity"/>
-                <featureOfInterest xlink:href="Station-4"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-4:temperature"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-4:humidity"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-4:record"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
             </ObservationOffering>
             <ObservationOffering gml:id="Station-5">
-                <gml:description/>
                 <gml:name>urn:tds:station.sos:Station-5</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
-                    <gml:Envelope srsName="EPSG:4326">
-                        <gml:lowerCorner>107.0 84.0</gml:lowerCorner>
-                        <gml:upperCorner>107.0 84.0</gml:upperCorner>
+                    <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                        <gml:lowerCorner>90.0 84.0</gml:lowerCorner>
+                        <gml:upperCorner>90.0 84.0001</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
                 <time>
-                    <gml:TimePeriod>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:station.sos:Station-5"/>
-                <observedProperty xlink:href="temperature"/>
-                <observedProperty xlink:href="humidity"/>
-                <featureOfInterest xlink:href="Station-5"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-5:temperature"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-5:humidity"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-5:record"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
             </ObservationOffering>
             <ObservationOffering gml:id="Station-6">
-                <gml:description/>
                 <gml:name>urn:tds:station.sos:Station-6</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
-                    <gml:Envelope srsName="EPSG:4326">
-                        <gml:lowerCorner>117.0 149.0</gml:lowerCorner>
-                        <gml:upperCorner>117.0 149.0</gml:upperCorner>
+                    <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                        <gml:lowerCorner>90.0 149.0</gml:lowerCorner>
+                        <gml:upperCorner>90.0 149.0001</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
                 <time>
-                    <gml:TimePeriod>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:station.sos:Station-6"/>
-                <observedProperty xlink:href="temperature"/>
-                <observedProperty xlink:href="humidity"/>
-                <featureOfInterest xlink:href="Station-6"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-6:temperature"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-6:humidity"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-6:record"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
             </ObservationOffering>
             <ObservationOffering gml:id="Station-7">
-                <gml:description/>
                 <gml:name>urn:tds:station.sos:Station-7</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
-                    <gml:Envelope srsName="EPSG:4326">
+                    <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
                         <gml:lowerCorner>49.0 93.0</gml:lowerCorner>
-                        <gml:upperCorner>49.0 93.0</gml:upperCorner>
+                        <gml:upperCorner>49.0001 93.0001</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
                 <time>
-                    <gml:TimePeriod>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:station.sos:Station-7"/>
-                <observedProperty xlink:href="temperature"/>
-                <observedProperty xlink:href="humidity"/>
-                <featureOfInterest xlink:href="Station-7"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-7:temperature"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-7:humidity"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-7:record"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
             </ObservationOffering>
             <ObservationOffering gml:id="Station-8">
-                <gml:description/>
                 <gml:name>urn:tds:station.sos:Station-8</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
-                    <gml:Envelope srsName="EPSG:4326">
+                    <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
                         <gml:lowerCorner>10.0 128.0</gml:lowerCorner>
-                        <gml:upperCorner>10.0 128.0</gml:upperCorner>
+                        <gml:upperCorner>10.0001 128.0001</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
                 <time>
-                    <gml:TimePeriod>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:station.sos:Station-8"/>
-                <observedProperty xlink:href="temperature"/>
-                <observedProperty xlink:href="humidity"/>
-                <featureOfInterest xlink:href="Station-8"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-8:temperature"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-8:humidity"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-8:record"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
             </ObservationOffering>
             <ObservationOffering gml:id="Station-9">
-                <gml:description/>
                 <gml:name>urn:tds:station.sos:Station-9</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
-                    <gml:Envelope srsName="EPSG:4326">
-                        <gml:lowerCorner>175.0 174.0</gml:lowerCorner>
-                        <gml:upperCorner>175.0 174.0</gml:upperCorner>
+                    <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                        <gml:lowerCorner>90.0 174.0</gml:lowerCorner>
+                        <gml:upperCorner>90.0 174.0001</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
                 <time>
-                    <gml:TimePeriod>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:station.sos:Station-9"/>
-                <observedProperty xlink:href="temperature"/>
-                <observedProperty xlink:href="humidity"/>
-                <featureOfInterest xlink:href="Station-9"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-9:temperature"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-9:humidity"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Station-9:record"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
             </ObservationOffering>

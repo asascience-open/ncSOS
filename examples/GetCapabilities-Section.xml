@@ -54,16 +54,6 @@
                     <ows:Get xlink:href="resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc"/>
                 </ows:HTTP>
             </ows:DCP>
-            <ows:Parameter name="service" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>SOS</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="version" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>1.0.0</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
         </ows:Operation>
         <ows:Operation name="GetObservation">
             <ows:DCP>
@@ -71,22 +61,34 @@
                     <ows:Get xlink:href="resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc"/>
                 </ows:HTTP>
             </ows:DCP>
-            <ows:Parameter name="offering" use="required"/>
-            <ows:Parameter name="observedproperty" use="required"/>
-            <ows:Parameter name="eventtime" use="optional"/>
-            <ows:Parameter name="resposneformat" use="required">
+            <ows:Parameter name="offering" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>trajectory0</ows:Value>
+                    <ows:Value>trajectory1</ows:Value>
+                    <ows:Value>trajectory2</ows:Value>
+                    <ows:Value>trajectory3</ows:Value>
+                    <ows:Value>trajectory4</ows:Value>
+                    <ows:Value>trajectory5</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="observedProperty" use="required">
+                <ows:AllowedValues>
+                    <ows:value>time</ows:value>
+                    <ows:value>temperature</ows:value>
+                    <ows:value>salinity</ows:value>
+                    <ows:value>alt</ows:value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="eventTime" use="optional">
+                <ows:AllowedValues>
+                    <ows:Range/>
+                    <ows:MinimumValue>1990-01-01T00:00:00.000Z</ows:MinimumValue>
+                    <ows:MaximumValue>1990-01-01T07:00:00.000Z</ows:MaximumValue>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="responseFormat" use="required">
                 <ows:AllowedValues>
                     <ows:Value>text/xml;subtype="om/1.0.0"</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="service" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>SOS</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="version" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>1.0.0</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
         </ows:Operation>
@@ -129,158 +131,176 @@
                     <ows:Value>text/xml;subtype="sensorML/1.0.1"</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
-            <ows:Parameter name="service" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>SOS</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="version" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>1.0.0</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
         </ows:Operation>
+        <ows:Parameter name="service" use="required">
+            <ows:AllowedValues>
+                <ows:Value>SOS</ows:Value>
+            </ows:AllowedValues>
+        </ows:Parameter>
+        <ows:Parameter name="version" use="required">
+            <ows:AllowedValues>
+                <ows:Value>1.0.0</ows:Value>
+            </ows:AllowedValues>
+        </ows:Parameter>
     </ows:OperationsMetadata>
     <!--~~~~~~~~~~~~~~~~~~~~~~~-->
     <!-- Observation Offerings -->
     <!--~~~~~~~~~~~~~~~~~~~~~~~-->
     <Contents>
         <ObservationOfferingList>
-            <ObservationOffering gml:id="Trajectory0">
-                <gml:description>SECTION</gml:description>
-                <gml:name>urn:tds:station.sos:0</gml:name>
+            <ObservationOffering gml:id="trajectory0">
+                <gml:name>urn:tds:station.sos:trajectory0</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
-                    <gml:Envelope srsName="EPSG:4326">
-                        <gml:lowerCorner>-90.0 -64.6443862915039</gml:lowerCorner>
-                        <gml:upperCorner>35.42259216308594 80.0999755859375</gml:upperCorner>
+                    <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                        <gml:lowerCorner>3.5440261363983154 -64.6443862915039</gml:lowerCorner>
+                        <gml:upperCorner>35.42259216308594 -13.773795127868652</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
                 <time>
-                    <gml:TimePeriod>
-                        <gml:beginPosition>1990-01-01T00:00:00Z</gml:beginPosition>
-                        <gml:endPosition>1990-01-01T06:00:00Z</gml:endPosition>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
+                        <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
+                        <gml:endPosition>1990-01-01T06:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:station.sos:Trajectory0"/>
+                <observedProperty xlink:href="time"/>
                 <observedProperty xlink:href="temperature"/>
                 <observedProperty xlink:href="salinity"/>
-                <featureOfInterest xlink:href="Trajectory0"/>
+                <observedProperty xlink:href="alt"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory0:temperature"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory0:salinity"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory0:record"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
             </ObservationOffering>
-            <ObservationOffering gml:id="Trajectory1">
-                <gml:description>SECTION</gml:description>
-                <gml:name>urn:tds:station.sos:1</gml:name>
+            <ObservationOffering gml:id="trajectory1">
+                <gml:name>urn:tds:station.sos:trajectory1</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
-                    <gml:Envelope srsName="EPSG:4326">
-                        <gml:lowerCorner>-90.0 -71.64488220214844</gml:lowerCorner>
-                        <gml:upperCorner>41.65167999267578 80.0999755859375</gml:upperCorner>
+                    <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                        <gml:lowerCorner>5.656859874725342 -71.64488220214844</gml:lowerCorner>
+                        <gml:upperCorner>41.65167999267578 -4.581541061401367</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
                 <time>
-                    <gml:TimePeriod>
-                        <gml:beginPosition>1990-01-01T00:00:00Z</gml:beginPosition>
-                        <gml:endPosition>1990-01-01T05:00:00Z</gml:endPosition>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
+                        <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
+                        <gml:endPosition>1990-01-01T05:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:station.sos:Trajectory1"/>
+                <observedProperty xlink:href="time"/>
                 <observedProperty xlink:href="temperature"/>
                 <observedProperty xlink:href="salinity"/>
-                <featureOfInterest xlink:href="Trajectory1"/>
+                <observedProperty xlink:href="alt"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory1:temperature"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory1:salinity"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory1:record"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
             </ObservationOffering>
-            <ObservationOffering gml:id="Trajectory2">
-                <gml:description>SECTION</gml:description>
-                <gml:name>urn:tds:station.sos:2</gml:name>
+            <ObservationOffering gml:id="trajectory2">
+                <gml:name>urn:tds:station.sos:trajectory2</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
-                    <gml:Envelope srsName="EPSG:4326">
-                        <gml:lowerCorner>-90.0 -70.85932922363281</gml:lowerCorner>
-                        <gml:upperCorner>42.09935760498047 80.0999755859375</gml:upperCorner>
+                    <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                        <gml:lowerCorner>0.8920255899429321 -70.85932922363281</gml:lowerCorner>
+                        <gml:upperCorner>42.09935760498047 -6.60825252532959</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
                 <time>
-                    <gml:TimePeriod>
-                        <gml:beginPosition>1990-01-01T00:00:00Z</gml:beginPosition>
-                        <gml:endPosition>1990-01-01T06:00:00Z</gml:endPosition>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
+                        <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
+                        <gml:endPosition>1990-01-01T06:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:station.sos:Trajectory2"/>
+                <observedProperty xlink:href="time"/>
                 <observedProperty xlink:href="temperature"/>
                 <observedProperty xlink:href="salinity"/>
-                <featureOfInterest xlink:href="Trajectory2"/>
+                <observedProperty xlink:href="alt"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory2:temperature"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory2:salinity"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory2:record"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
             </ObservationOffering>
-            <ObservationOffering gml:id="Trajectory3">
-                <gml:description>SECTION</gml:description>
-                <gml:name>urn:tds:station.sos:3</gml:name>
+            <ObservationOffering gml:id="trajectory3">
+                <gml:name>urn:tds:station.sos:trajectory3</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
-                    <gml:Envelope srsName="EPSG:4326">
-                        <gml:lowerCorner>-90.0 80.0999755859375</gml:lowerCorner>
-                        <gml:upperCorner>34.77362060546875 80.0999755859375</gml:upperCorner>
+                    <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                        <gml:lowerCorner>16.195266723632812 -7.6103835105896</gml:lowerCorner>
+                        <gml:upperCorner>34.77362060546875 -0.9158166646957397</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
                 <time>
-                    <gml:TimePeriod>
-                        <gml:beginPosition>1990-01-01T00:00:00Z</gml:beginPosition>
-                        <gml:endPosition>1990-01-01T01:00:00Z</gml:endPosition>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
+                        <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
+                        <gml:endPosition>1990-01-01T01:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:station.sos:Trajectory3"/>
+                <observedProperty xlink:href="time"/>
                 <observedProperty xlink:href="temperature"/>
                 <observedProperty xlink:href="salinity"/>
-                <featureOfInterest xlink:href="Trajectory3"/>
+                <observedProperty xlink:href="alt"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory3:temperature"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory3:salinity"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory3:record"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
             </ObservationOffering>
-            <ObservationOffering gml:id="Trajectory4">
-                <gml:description>SECTION</gml:description>
-                <gml:name>urn:tds:station.sos:4</gml:name>
+            <ObservationOffering gml:id="trajectory4">
+                <gml:name>urn:tds:station.sos:trajectory4</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
-                    <gml:Envelope srsName="EPSG:4326">
-                        <gml:lowerCorner>-90.0 -61.646942138671875</gml:lowerCorner>
-                        <gml:upperCorner>42.54350280761719 80.0999755859375</gml:upperCorner>
+                    <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                        <gml:lowerCorner>1.462846279144287 -66.27335357666016</gml:lowerCorner>
+                        <gml:upperCorner>42.54350280761719 -4.636869430541992</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
                 <time>
-                    <gml:TimePeriod>
-                        <gml:beginPosition>1990-01-01T00:00:00Z</gml:beginPosition>
-                        <gml:endPosition>1990-01-01T07:00:00Z</gml:endPosition>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
+                        <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
+                        <gml:endPosition>1990-01-01T07:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:station.sos:Trajectory4"/>
+                <observedProperty xlink:href="time"/>
                 <observedProperty xlink:href="temperature"/>
                 <observedProperty xlink:href="salinity"/>
-                <featureOfInterest xlink:href="Trajectory4"/>
+                <observedProperty xlink:href="alt"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory4:temperature"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory4:salinity"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory4:record"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
             </ObservationOffering>
-            <ObservationOffering gml:id="Trajectory5">
-                <gml:description>SECTION</gml:description>
-                <gml:name>urn:tds:station.sos:5</gml:name>
+            <ObservationOffering gml:id="trajectory5">
+                <gml:name>urn:tds:station.sos:trajectory5</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
-                    <gml:Envelope srsName="EPSG:4326">
-                        <gml:lowerCorner>-90.0 -65.63434600830078</gml:lowerCorner>
-                        <gml:upperCorner>44.54783248901367 80.0999755859375</gml:upperCorner>
+                    <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                        <gml:lowerCorner>6.93269157409668 -65.63434600830078</gml:lowerCorner>
+                        <gml:upperCorner>44.54783248901367 -5.0322957038879395</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
                 <time>
-                    <gml:TimePeriod>
-                        <gml:beginPosition>1990-01-01T00:00:00Z</gml:beginPosition>
-                        <gml:endPosition>1990-01-01T04:00:00Z</gml:endPosition>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
+                        <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
+                        <gml:endPosition>1990-01-01T04:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:station.sos:Trajectory5"/>
+                <observedProperty xlink:href="time"/>
                 <observedProperty xlink:href="temperature"/>
                 <observedProperty xlink:href="salinity"/>
-                <featureOfInterest xlink:href="Trajectory5"/>
+                <observedProperty xlink:href="alt"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory5:temperature"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory5:salinity"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory5:record"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
             </ObservationOffering>

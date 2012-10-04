@@ -22,6 +22,7 @@ public class GetCapsOutputter implements SOSOutputFormatter {
     
     private Document document;
     private DOMImplementationLS impl;
+    private boolean exceptionFlag;
     
     private final static String TEMPLATE = "templates/sosGetCapabilities.xml";
 
@@ -31,6 +32,8 @@ public class GetCapsOutputter implements SOSOutputFormatter {
      */
     public GetCapsOutputter() {
         document = parseTemplateXML();
+        
+        exceptionFlag = false;
         
         try {
             DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
@@ -62,6 +65,10 @@ public class GetCapsOutputter implements SOSOutputFormatter {
         this.document = setter;
     }
     
+    public boolean hasExceptionOut() {
+        return exceptionFlag;
+    }
+    
     /*********************/
     /* Interface Methods */
     /**************************************************************************/
@@ -76,6 +83,7 @@ public class GetCapsOutputter implements SOSOutputFormatter {
 
     public void setupExceptionOutput(String message) {
         document = XMLDomUtils.getExceptionDom(message);
+        exceptionFlag = true;
     }
 
     public void writeOutput(Writer writer) {

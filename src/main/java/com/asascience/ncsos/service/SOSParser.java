@@ -88,7 +88,7 @@ public class SOSParser {
         // make sure we do not have any errors in our query
         if (queryParameters.containsKey("error")) {
             // issue in parsing, return an error
-            capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
+            capHandler = new SOSGetCapabilitiesRequestHandler(null);
             capHandler.getOutputHandler().setupExceptionOutput("Error with request - " + queryParameters.get("error").toString());
             retval.put("outputHandler", capHandler.getOutputHandler());
             retval.put("responseContentType", "text/xml");
@@ -96,29 +96,29 @@ public class SOSParser {
         }
         
         // check to make sure needed params are in the query
-        if (!queryParameters.containsKey("request") ||
-                !queryParameters.containsKey("service") ||
-                !queryParameters.containsKey("version")) {
-            capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
-            capHandler.getOutputHandler().setupExceptionOutput("Request is missing key arguments. Check your query string and try again.");
+        if (!queryParameters.containsKey("request")) {
+            capHandler = new SOSGetCapabilitiesRequestHandler(null);
+            capHandler.getOutputHandler().setupExceptionOutput("Missing required parameter 'request'.");
             retval.put("outputHandler", capHandler.getOutputHandler());
             retval.put("responseContentType", "text/xml");
             return retval;
         }
         
         // check version number
-        if (!queryParameters.get("version").toString().equalsIgnoreCase("1.0.0")) {
-            capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
-            capHandler.getOutputHandler().setupExceptionOutput("Only version 1.0.0 is acceptable for SOS requests.");
+        if (!queryParameters.containsKey("version") ||
+            !queryParameters.get("version").toString().equalsIgnoreCase("1.0.0")) {
+            capHandler = new SOSGetCapabilitiesRequestHandler(null);
+            capHandler.getOutputHandler().setupExceptionOutput("Version is a required parameter for all requests. Currently 1.0.0 is accepted.");
             retval.put("outputHandler", capHandler.getOutputHandler());
             retval.put("responseContentType", "text/xml");
             return retval;
         }
         
         // check service param
-        if (!queryParameters.get("service").toString().equalsIgnoreCase("sos")) {
-            capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
-            capHandler.getOutputHandler().setupExceptionOutput("Expected service argument to be 'SOS'. Unrecognized service request: " + queryParameters.get("service").toString());
+        if (!queryParameters.containsKey("service") ||
+            !queryParameters.get("service").toString().equalsIgnoreCase("sos")) {
+            capHandler = new SOSGetCapabilitiesRequestHandler(null);
+            capHandler.getOutputHandler().setupExceptionOutput("Expected service parameter with a value of 'SOS'.");
             retval.put("outputHandler", capHandler.getOutputHandler());
             retval.put("responseContentType", "text/xml");
             return retval;
@@ -174,7 +174,7 @@ public class SOSParser {
                     if (capHandler != null)
                         retval.put("outputHandler", capHandler.getOutputHandler());
                     else {
-                        capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
+                        capHandler = new SOSGetCapabilitiesRequestHandler(null);
                         capHandler.getOutputHandler().setupExceptionOutput("Internal Error in preparing output for GetCapabilities request, received null handler.");
                         retval.put("outputHandler", capHandler.getOutputHandler());
                     }
@@ -186,7 +186,7 @@ public class SOSParser {
                             !queryParameters.containsKey("responseformat")) {
                         // print out xml error using get caps error?
                         try {
-                            capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
+                            capHandler = new SOSGetCapabilitiesRequestHandler(null);
                             capHandler.getOutputHandler().setupExceptionOutput("Observation requests must have offering, observedProperty, responseFormat as query parameters");
                             retval.put("outputHandler", capHandler.getOutputHandler());
                             retval.put("responseContentType", "text/xml");
@@ -228,14 +228,14 @@ public class SOSParser {
                         retval.put("outputHandler", obsHandler.getOutputHandler());
                     } catch (IOException ex) {
                         _log.error(ex.getMessage());
-                        capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
+                        capHandler = new SOSGetCapabilitiesRequestHandler(null);
                         capHandler.getOutputHandler().setupExceptionOutput("Internal Error in creating output for GetObservation request - " + ex.toString());
                         retval.put("outputHandler", capHandler.getOutputHandler());
                     }
                     break;
                 case DescribeSensor:
-                    // resposne will always be text/xml
-//                    try {
+                    try {
+                        // resposne will always be text/xml
                         retval.put("responseContentType", "text/xml");
                         SOSDescribeSensorHandler sensorHandler;
                         if (!queryParameters.containsKey("responseformat")) {
@@ -253,16 +253,16 @@ public class SOSParser {
                                     query);
                         }
                         retval.put("outputHandler",sensorHandler.getOutputHandler());
-//                    } catch (Exception ex) {
-//                        capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
-//                        capHandler.getOutputHandler().setupExceptionOutput("Internal System Exception in setting up DescribeSensor handler - " + ex.toString());
-//                        retval.put("outputHandler", capHandler.getOutputHandler());
-//                        _log.error("Internal System Exception in setting up DescribeSensor handler - " + ex.toString());
-//                    }
+                    } catch (Exception ex) {
+                        capHandler = new SOSGetCapabilitiesRequestHandler(null);
+                        capHandler.getOutputHandler().setupExceptionOutput("Internal System Exception in setting up DescribeSensor handler - " + ex.toString());
+                        retval.put("outputHandler", capHandler.getOutputHandler());
+                        _log.error("Internal System Exception in setting up DescribeSensor handler - " + ex.toString());
+                    }
                     break;
                 default:
                     // return a 'not supported' error
-                    capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
+                    capHandler = new SOSGetCapabilitiesRequestHandler(null);
                     capHandler.getOutputHandler().setupExceptionOutput(queryParameters.get("request").toString() + " is not a supported request");
                     retval.put("outputHandler", capHandler.getOutputHandler());
                     System.out.println(queryParameters.get("request").toString() + " is not a supported request");
@@ -274,7 +274,7 @@ public class SOSParser {
             _log.error("Exception with request: " + ex.getMessage());
             System.out.println("Exception encountered " + ex.getMessage());
             try {
-                capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
+                capHandler = new SOSGetCapabilitiesRequestHandler(null);
                 capHandler.getOutputHandler().setupExceptionOutput("Unrecognized request " + queryParameters.get("request").toString());
                 retval.put("outputHandler", capHandler.getOutputHandler());
             } catch (Exception e) { }
@@ -285,6 +285,8 @@ public class SOSParser {
     
     private void parseGetCaps(SOSGetCapabilitiesRequestHandler capHandler) throws IOException {
         // do our parsing
+        if (((GetCapsOutputter)capHandler.getOutputHandler()).hasExceptionOut())
+            return;
         capHandler.parseServiceIdentification();
         capHandler.parseServiceDescription();
         capHandler.parseOperationsMetaData();

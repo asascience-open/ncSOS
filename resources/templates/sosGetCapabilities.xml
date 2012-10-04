@@ -58,16 +58,6 @@
 					<ows:Get />
 				</ows:HTTP>
 			</ows:DCP>
-			<ows:Parameter name="service" use="required">
-				<ows:AllowedValues>
-					<ows:Value>SOS</ows:Value>
-				</ows:AllowedValues>
-			</ows:Parameter>
-			<ows:Parameter name="version" use="required">
-				<ows:AllowedValues>
-					<ows:Value>1.0.0</ows:Value>
-				</ows:AllowedValues>
-			</ows:Parameter>
 		</ows:Operation>
 		<ows:Operation name="GetObservation">
 			<ows:DCP>
@@ -76,21 +66,11 @@
 				</ows:HTTP>
 			</ows:DCP>
 			<ows:Parameter name="offering" use="required"/>
-			<ows:Parameter name="observedproperty" use="required"/>
-			<ows:Parameter name="eventtime" use="optional"/>
-			<ows:Parameter name="resposneformat" use="required">
+			<ows:Parameter name="observedProperty" use="required"/>
+			<ows:Parameter name="eventTime" use="optional"/>
+			<ows:Parameter name="responseFormat" use="required">
 				<ows:AllowedValues>
 					<ows:Value>text/xml;subtype="om/1.0.0"</ows:Value>
-				</ows:AllowedValues>
-			</ows:Parameter>
-			<ows:Parameter name="service" use="required">
-				<ows:AllowedValues>
-					<ows:Value>SOS</ows:Value>
-				</ows:AllowedValues>
-			</ows:Parameter>
-			<ows:Parameter name="version" use="required">
-				<ows:AllowedValues>
-					<ows:Value>1.0.0</ows:Value>
 				</ows:AllowedValues>
 			</ows:Parameter>
 		</ows:Operation>
@@ -106,17 +86,17 @@
 					<ows:Value>text/xml;subtype="sensorML/1.0.1"</ows:Value>
 				</ows:AllowedValues>
 			</ows:Parameter>
-			<ows:Parameter name="service" use="required">
-				<ows:AllowedValues>
-					<ows:Value>SOS</ows:Value>
-				</ows:AllowedValues>
-			</ows:Parameter>
-			<ows:Parameter name="version" use="required">
-				<ows:AllowedValues>
-					<ows:Value>1.0.0</ows:Value>
-				</ows:AllowedValues>
-			</ows:Parameter>
 		</ows:Operation>
+		<ows:Parameter name="service" use="required">
+			<ows:AllowedValues>
+				<ows:Value>SOS</ows:Value>
+			</ows:AllowedValues>
+		</ows:Parameter>
+		<ows:Parameter name="version" use="required">
+			<ows:AllowedValues>
+				<ows:Value>1.0.0</ows:Value>
+			</ows:AllowedValues>
+		</ows:Parameter>
 	</ows:OperationsMetadata>
 	<!--~~~~~~~~~~~~~~~~~~~~~~~-->
 	<!-- Observation Offerings -->
