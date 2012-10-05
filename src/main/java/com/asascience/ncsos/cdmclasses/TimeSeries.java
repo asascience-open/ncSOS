@@ -224,8 +224,15 @@ public class TimeSeries extends baseCDMClass implements iStationData {
 
     @Override
     public void setData(Object featureCollection) throws IOException {
+        try {
         this.tsData = (StationTimeSeriesFeatureCollection) featureCollection;
         tsStationList = tsData.getStations(reqStationNames);
+        for (Station st : tsStationList) {
+            if (st == null)
+                System.out.println("null station in station list");
+            else
+                System.out.println(st.getName());
+        }
 
         setNumberOfStations(tsStationList.size());
 
@@ -260,6 +267,13 @@ public class TimeSeries extends baseCDMClass implements iStationData {
             }
             setStartDate(df.toDateTimeStringISO(dtStart.toDate()));
             setEndDate(df.toDateTimeStringISO(dtEnd.toDate()));
+        }
+        } catch (Exception ex) {
+            System.out.println("TimeSeries - setData; exception:\n" + ex.toString());
+            for(StackTraceElement e : ex.getStackTrace()) {
+                System.out.println(e.toString());
+            }
+            throw new IOException(ex.toString());
         }
     }
 

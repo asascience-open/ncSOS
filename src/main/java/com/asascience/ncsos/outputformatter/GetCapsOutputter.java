@@ -9,8 +9,6 @@ import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -20,7 +18,6 @@ import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSOutput;
 import org.w3c.dom.ls.LSSerializer;
-import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.time.CalendarDate;
 import ucar.nc2.time.CalendarDateRange;
 import ucar.unidata.geoloc.LatLonRect;
@@ -463,7 +460,7 @@ public class GetCapsOutputter implements SOSOutputFormatter {
         // lat
         Element lat = getDocument().createElement("ows:Parameter");
         lat.setAttribute("name", "lat");
-        lat.setAttribute("use", "optional");
+        lat.setAttribute("use", "required");
         Element latAllowedValues = getDocument().createElement("ows:AllowedValues");
         // min
         Element latMin = getDocument().createElement("ows:MinimumValue");
@@ -478,7 +475,7 @@ public class GetCapsOutputter implements SOSOutputFormatter {
         // lon
         Element lon = getDocument().createElement("ows:Parameter");
         lon.setAttribute("name", "lon");
-        lon.setAttribute("use", "optional");
+        lon.setAttribute("use", "required");
         Element lonAllowedValues = getDocument().createElement("ows:AllowedValues");
         // min
         Element lonMin = getDocument().createElement("ows:MinimumValue");

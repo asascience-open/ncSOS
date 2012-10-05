@@ -10,7 +10,6 @@ import ucar.nc2.Variable;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.constants.AxisType;
 import ucar.nc2.constants.FeatureType;
-import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dt.GridDataset;
 import ucar.nc2.ft.FeatureCollection;
@@ -458,24 +457,4 @@ public abstract class SOSBaseRequestHandler {
         return (new DateFormatter()).toDateTimeStringISO(date);
     }
 
-    private void finished() {
-        try {
-            featureDataset.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            netCDFDataset.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        title = null;
-        history = null;;
-        Region = null;;
-        PrimaryOwnership = null;
-        description = null;
-        featureOfInterestBaseQueryURL = null;
-        CDMPointFeatureCollection =null;
-
-    }
 }

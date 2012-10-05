@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.w3c.dom.Document;
 import ucar.nc2.ft.*;
 import ucar.nc2.units.DateFormatter;
@@ -102,97 +103,101 @@ public class Trajectory extends baseCDMClass implements iStationData {
 
                 dtSearchEnd = new DateTime(df.getISODate(eventTimes.get(1)), chrono);
             }
+        } else {
+            // set search start to earliest possible
+            dtSearchStart = new DateTime(0, chrono);
+        }
 
-            //temp
-            DateTime dtStart = null;
-            DateTime dtEnd = null;
-            //check
-            DateTime dtStartt = null;
-            DateTime dtEndt = null;
+        //temp
+        DateTime dtStart = null;
+        DateTime dtEnd = null;
+        //check
+        DateTime dtStartt = null;
+        DateTime dtEndt = null;
 
-            while (trajectoryData.hasNext()) {
-                TrajectoryFeature trajFeature = trajectoryData.next();
-                trajFeature.calcBounds();
+        while (trajectoryData.hasNext()) {
+            TrajectoryFeature trajFeature = trajectoryData.next();
+            trajFeature.calcBounds();
 
-                String n = trajFeature.getName();
+            String n = trajFeature.getName();
 
-                //scan through the stationname for a match of id
-                for (Iterator<String> it = reqStationNames.iterator(); it.hasNext();) {
-                    String stName = it.next();
-                    if (stName.equalsIgnoreCase(n)) {
-                        trajList.add(trajFeature);
-                    
-                        double localAltMin = Double.POSITIVE_INFINITY;
-                        double localAltMax = Double.NEGATIVE_INFINITY;
-                        // get altitude
-                        for (trajFeature.resetIteration();trajFeature.hasNext();) {
-                            PointFeature point = trajFeature.next();
+            //scan through the stationname for a match of id
+            for (Iterator<String> it = reqStationNames.iterator(); it.hasNext();) {
+                String stName = it.next();
+                if (stName.equalsIgnoreCase(n)) {
+                    System.out.println("add 'station' " + stName);
+                    trajList.add(trajFeature);
 
-                            if (point == null || point.getLocation() == null)
-                                continue;
+                    double localAltMin = Double.POSITIVE_INFINITY;
+                    double localAltMax = Double.NEGATIVE_INFINITY;
+                    // get altitude
+                    for (trajFeature.resetIteration();trajFeature.hasNext();) {
+                        PointFeature point = trajFeature.next();
 
-                            double altitude = point.getLocation().getAltitude();
-                            if (altitude == Invalid_Value)
-                                continue;
+                        if (point == null || point.getLocation() == null)
+                            continue;
 
-                            if (altitude > localAltMax) 
-                                localAltMax = altitude;
-                            if (altitude < localAltMin)
-                                localAltMin = altitude;
-                        }
-                        
-                        if (localAltMin < lowerAlt)
-                            lowerAlt = localAltMin;
-                        if (localAltMax > upperAlt)
-                            upperAlt = localAltMax;
+                        double altitude = point.getLocation().getAltitude();
+                        if (altitude == Invalid_Value)
+                            continue;
 
-                        altMax.add(localAltMax);
-                        altMin.add(localAltMin);
+                        if (altitude > localAltMax) 
+                            localAltMax = altitude;
+                        if (altitude < localAltMin)
+                            localAltMin = altitude;
                     }
+
+                    if (localAltMin < lowerAlt)
+                        lowerAlt = localAltMin;
+                    if (localAltMax > upperAlt)
+                        upperAlt = localAltMax;
+
+                    altMax.add(localAltMax);
+                    altMin.add(localAltMin);
+                }
+            }
+
+            if (firstSet) {
+                upperLat = trajFeature.getBoundingBox().getLatMax();
+                lowerLat = trajFeature.getBoundingBox().getLatMin();
+                upperLon = trajFeature.getBoundingBox().getLonMax();
+                lowerLon = trajFeature.getBoundingBox().getLonMin();
+
+                dtStart = new DateTime(trajFeature.getDateRange().getStart().getDate(), chrono);
+                dtEnd = new DateTime(trajFeature.getDateRange().getEnd().getDate(), chrono);
+                firstSet = false;
+            } else {
+
+                dtStartt = new DateTime(trajFeature.getDateRange().getStart().getDate(), chrono);
+                dtEndt = new DateTime(trajFeature.getDateRange().getEnd().getDate(), chrono);
+
+                if (dtStartt.isBefore(dtStart)) {
+                    dtStart = dtStartt;
+                }
+                if (dtEndt.isAfter(dtEnd)) {
+                    dtEnd = dtEndt;
                 }
 
-                if (firstSet) {
+                if (trajFeature.getBoundingBox().getLatMax() > upperLat) {
                     upperLat = trajFeature.getBoundingBox().getLatMax();
-                    lowerLat = trajFeature.getBoundingBox().getLatMin();
-                    upperLon = trajFeature.getBoundingBox().getLonMax();
-                    lowerLon = trajFeature.getBoundingBox().getLonMin();
-
-                    dtStart = new DateTime(trajFeature.getDateRange().getStart().getDate(), chrono);
-                    dtEnd = new DateTime(trajFeature.getDateRange().getEnd().getDate(), chrono);
-                    firstSet = false;
-                } else {
-
-                    dtStartt = new DateTime(trajFeature.getDateRange().getStart().getDate(), chrono);
-                    dtEndt = new DateTime(trajFeature.getDateRange().getEnd().getDate(), chrono);
-
-                    if (dtStartt.isBefore(dtStart)) {
-                        dtStart = dtStartt;
-                    }
-                    if (dtEndt.isAfter(dtEnd)) {
-                        dtEnd = dtEndt;
-                    }
-
-                    if (trajFeature.getBoundingBox().getLatMax() > upperLat) {
-                        upperLat = trajFeature.getBoundingBox().getLatMax();
-                    }
-                    if (trajFeature.getBoundingBox().getLatMin() < lowerLat) {
-                        lowerLat = trajFeature.getBoundingBox().getLatMin();
-                    }
-                    //lon
-                    if (trajFeature.getBoundingBox().getLonMax() > upperLon) {
-                        upperLon = trajFeature.getBoundingBox().getLonMax();
-                    }
-                    if (trajFeature.getBoundingBox().getLonMax() < lowerLon) {
-                        lowerLon = trajFeature.getBoundingBox().getLonMin();
-                    }
                 }
+                if (trajFeature.getBoundingBox().getLatMin() < lowerLat) {
+                    lowerLat = trajFeature.getBoundingBox().getLatMin();
+                }
+                //lon
+                if (trajFeature.getBoundingBox().getLonMax() > upperLon) {
+                    upperLon = trajFeature.getBoundingBox().getLonMax();
+                }
+                if (trajFeature.getBoundingBox().getLonMax() < lowerLon) {
+                    lowerLon = trajFeature.getBoundingBox().getLonMin();
+                }
+            }
 
-            }
-            setStartDate(df.toDateTimeStringISO(dtStart.toDate()));
-            setEndDate(df.toDateTimeStringISO(dtEnd.toDate()));
-            if (reqStationNames != null) {
-                setNumberOfStations(reqStationNames.size());
-            }
+        }
+        setStartDate(df.toDateTimeStringISO(dtStart.toDate()));
+        setEndDate(df.toDateTimeStringISO(dtEnd.toDate()));
+        if (reqStationNames != null) {
+            setNumberOfStations(reqStationNames.size());
         }
     }
 

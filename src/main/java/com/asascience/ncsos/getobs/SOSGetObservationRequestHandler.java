@@ -71,48 +71,16 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
 
         this.variableNames = checkNetcdfFileForAxis(heightAxis, variableNames);
         
-        //grid operation
-        if (getDatasetFeatureType() == FeatureType.GRID) {
-            Variable depthAxis;
-            if (!latLonRequest.isEmpty()) {
-                depthAxis = (netCDFDataset.findVariable("depth"));
-                if (depthAxis != null) {
-                    this.variableNames = checkNetcdfFileForAxis((CoordinateAxis1D) depthAxis, this.variableNames);
-                }
-                this.variableNames = checkNetcdfFileForAxis(netCDFDataset.findCoordinateAxis(AxisType.Lat), this.variableNames);
-                this.variableNames = checkNetcdfFileForAxis(netCDFDataset.findCoordinateAxis(AxisType.Lon), this.variableNames);
-
-                CDMDataSet = new Grid(stationName, eventTime, this.variableNames, latLonRequest);
-                CDMDataSet.setData(getGridDataset());
-            } 
+        // get all station names if 'network-all'
+        if (stationName.length == 1 && stationName[0].equalsIgnoreCase("network-all")) {
+            stationName = getStationNames().values().toArray(new String[getStationNames().values().size()]);
         }
-        //if the stations are not of cdm type grid then check to see and set cdm data type        
-        else {
-
-            if (getDatasetFeatureType() == FeatureType.TRAJECTORY) {
-                CDMDataSet = new Trajectory(stationName, eventTime, this.variableNames);
-            } else if (getDatasetFeatureType() == FeatureType.STATION) {
-                CDMDataSet = new TimeSeries(stationName, eventTime, this.variableNames);
-            } else if (getDatasetFeatureType() == FeatureType.STATION_PROFILE) {
-                CDMDataSet = new TimeSeriesProfile(stationName, eventTime, this.variableNames);
-            } else if (getDatasetFeatureType() == FeatureType.PROFILE) {
-                CDMDataSet = new Profile(stationName, eventTime, this.variableNames);
-            } else if (getDatasetFeatureType() == FeatureType.SECTION) {
-                CDMDataSet = new Section(stationName, eventTime, this.variableNames);
-            }else {
-                _log.error("Have a null CDMDataSet, this will cause a null reference exception! - SOSGetObservationRequestHandler.87");
-                // print exception and then return the doc
-                output = new GetCapsOutputter();
-                output.setupExceptionOutput("Null Dataset; could not recognize feature type");
-                CDMDataSet = null;
-                return;
-            }
-            
-            //only set the data is it is valid
-            if (CDMDataSet!=null){
-                CDMDataSet.setData(getFeatureTypeDataSet());
-            }
+        
+        for (String str : stationName) {
+            System.out.println("GetObs on station: " + str);
         }
+        
+        setCDMDatasetForStations(netCDFDataset, stationName, eventTime, latLonRequest);
         
         // set up our formatter
         if(outputFormat.equalsIgnoreCase("text/xml;subtype=\"om/1.0.0\"")) {
@@ -124,7 +92,54 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             output.setupExceptionOutput("Could not recognize output format");
         }
     }
+    
+    private void setCDMDatasetForStations(NetcdfDataset netCDFDataset, String[] stationNames, String[] eventTime, Map<String, String> latLonRequest) throws IOException {
+        System.out.println("In setCMDDatasetForStations - " + getDatasetFeatureType().name());
+        //grid operation
+        if (getDatasetFeatureType() == FeatureType.GRID) {
+            Variable depthAxis;
+            if (!latLonRequest.isEmpty()) {
+                depthAxis = (netCDFDataset.findVariable("depth"));
+                if (depthAxis != null) {
+                    this.variableNames = checkNetcdfFileForAxis((CoordinateAxis1D) depthAxis, this.variableNames);
+                }
+                this.variableNames = checkNetcdfFileForAxis(netCDFDataset.findCoordinateAxis(AxisType.Lat), this.variableNames);
+                this.variableNames = checkNetcdfFileForAxis(netCDFDataset.findCoordinateAxis(AxisType.Lon), this.variableNames);
 
+                CDMDataSet = new Grid(stationNames, eventTime, this.variableNames, latLonRequest);
+                CDMDataSet.setData(getGridDataset());
+            } 
+        }
+        //if the stations are not of cdm type grid then check to see and set cdm data type        
+        else {
+
+            if (getDatasetFeatureType() == FeatureType.TRAJECTORY) {
+                CDMDataSet = new Trajectory(stationNames, eventTime, this.variableNames);
+            } else if (getDatasetFeatureType() == FeatureType.STATION) {
+                CDMDataSet = new TimeSeries(stationNames, eventTime, this.variableNames);
+            } else if (getDatasetFeatureType() == FeatureType.STATION_PROFILE) {
+                CDMDataSet = new TimeSeriesProfile(stationNames, eventTime, this.variableNames);
+            } else if (getDatasetFeatureType() == FeatureType.PROFILE) {
+                CDMDataSet = new Profile(stationNames, eventTime, this.variableNames);
+            } else if (getDatasetFeatureType() == FeatureType.SECTION) {
+                CDMDataSet = new Section(stationNames, eventTime, this.variableNames);
+            }else {
+                _log.error("Have a null CDMDataSet, this will cause a null reference exception! - SOSGetObservationRequestHandler.87");
+                // print exception and then return the doc
+                output = new GetCapsOutputter();
+                output.setupExceptionOutput("Null Dataset; could not recognize feature type");
+                CDMDataSet = null;
+                return;
+            }
+            System.out.println("Before setData");
+            //only set the data is it is valid
+            if (CDMDataSet!=null){
+                CDMDataSet.setData(getFeatureTypeDataSet());
+            }
+            System.out.println("Out setCMDDatasetForStations");
+        }
+    }
+    
     /**
      * checks for the presence of height in the netcdf dataset if it finds it but not in the variables selected it adds it
      * @param Axis the axis being checked

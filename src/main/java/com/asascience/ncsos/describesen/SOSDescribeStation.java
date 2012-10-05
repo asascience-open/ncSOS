@@ -9,10 +9,8 @@ import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import org.geotoolkit.util.collection.CheckedHashMap;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
-import ucar.nc2.constants.AxisType;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**

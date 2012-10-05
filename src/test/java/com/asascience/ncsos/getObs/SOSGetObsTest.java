@@ -117,6 +117,15 @@ public class SOSGetObsTest {
     private static final String externalHawaiiStation = "resources/datasets/sura/wqbkn_2012_08_01.nc";
     private static final String externalHawaiiRequest1 = baseRequest + "&observedProperty=temp&offering=WQBKN";
     
+    private static final String networkAllStation1 = tsOrthogonalMultidimenstionalMultipleStations;
+    private static final String networkAllStation1Request1 = baseRequest + "&observedProperty=alt&offering=network-all";
+    
+    private static final String networkAllTrajectory = trajectoryContiguousRaggedMultipleTrajectories;
+    private static final String networkAllTrajectoryRequest1 = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllTrajectoryRequest2 = baseRequest + "&observedProperty=temperature&offering=network-all&eventtime=1970-01-01T00:00:00Z/2012-07-11T00:00:00";
+    private static final String networkAllTrajectoryRequest3 = baseRequest + "&observedProperty=humidity&offering=network-all";
+    
+    
     @BeforeClass
     public static void SetupEnviron() {
         // early return if the vars we are setting are already set
@@ -1295,6 +1304,98 @@ public class SOSGetObsTest {
             write.flush();
             write.close();
             String fileName = "external_Hawaii_request1.xml";
+            fileWriter(base, fileName, write);
+            // write as an example
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllStationTimeSeries1() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllStation1);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllStation1Request1, networkAllStation1),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            // write as an example
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllTrajectoryRequestAllTemperature() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTrajectoryRequest1, networkAllTrajectory),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            // write as an example
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllTrajectoryRequestTemperatureWithTimeConstraint() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTrajectoryRequest2, networkAllTrajectory),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            // write as an example
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllTrajectoryRequestAllHumidity() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTrajectoryRequest3, networkAllTrajectory),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
             fileWriter(base, fileName, write);
             // write as an example
             assertFalse("exception in output", write.toString().contains("Exception"));
