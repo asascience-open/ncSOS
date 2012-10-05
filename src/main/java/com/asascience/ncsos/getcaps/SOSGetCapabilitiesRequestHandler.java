@@ -83,6 +83,20 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         
         // Contents
         // observation offering list
+        // network-all
+        // get the bounds
+        Double latMin = Double.MAX_VALUE, latMax = Double.NEGATIVE_INFINITY, lonMin = Double.MAX_VALUE, lonMax = Double.NEGATIVE_INFINITY;
+        for (LatLonRect rect : stationBBox.values()) {
+            latMin = (latMin > rect.getLatMin()) ? rect.getLatMin() : latMin;
+            latMax = (latMax < rect.getLatMax()) ? rect.getLatMax() : latMax;
+            lonMin = (lonMin > rect.getLonMin()) ? rect.getLonMin() : lonMin;
+            lonMax = (lonMax < rect.getLonMax()) ? rect.getLonMax() : lonMax;
+        }
+        LatLonRect setRange = new LatLonRect(new LatLonPointImpl(latMin, lonMin), new LatLonPointImpl(latMax, lonMax));
+        CalendarDateRange setTime = null;
+        if (setStartDate != null && setEndDate != null)
+            setTime = CalendarDateRange.of(setStartDate,setEndDate);
+        out.setObservationOfferingNetwork(setRange, getStationNames().values().toArray(new String[getStationNames().values().size()]), getSensorNames(), setTime);
         // iterate through our stations and add them
         for (Integer index : getStationNames().keySet()) {
             ((GetCapsOutputter)output).setObservationOfferingList(getStationNames().get(index), index.intValue(), stationBBox.get(index), getSensorNames(), stationDateRange.get(index));

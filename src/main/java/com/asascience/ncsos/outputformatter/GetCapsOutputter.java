@@ -207,6 +207,10 @@ public class GetCapsOutputter implements SOSOutputFormatter {
         if (offering != null && stationNames != null) {
             Element aV = getDocument().createElement("ows:AllowedValues");
             offering.appendChild(aV);
+            // add network-all as an offering
+            Element network = document.createElement("ows:Value");
+            network.setTextContent("network-all");
+            aV.appendChild(network);
             for (String name : stationNames) {
                 Element value = getDocument().createElement("ows:Value");
                 value.setTextContent(name);
@@ -252,48 +256,92 @@ public class GetCapsOutputter implements SOSOutputFormatter {
         }
     }
     
+    public void setObservationOfferingNetwork(LatLonRect datasetRect, String[] stations, List<String> sensors, CalendarDateRange datasetTime) {
+        // add the network-all observation offering
+        Element offeringList = (Element) document.getElementsByTagName("ObservationOfferingList").item(0);
+        Element obsOffering = document.createElement("ObservationOffering");
+        obsOffering.setAttribute("gml:id", "network-all");
+        // add description, name and srs
+        Element desc = document.createElement("gml:description");
+        desc.setTextContent("All stations in the netCDF dataset.");
+        obsOffering.appendChild(desc);
+        Element name = document.createElement("gml:name");
+        name.setTextContent("urn:tds:network:all");
+        obsOffering.appendChild(name);
+        Element srsName = getDocument().createElement("gml:srsName");
+        srsName.setTextContent("EPSG:4326");
+        obsOffering.appendChild(srsName);
+        // bounds
+        obsOffering.appendChild(getStationBounds(datasetRect));
+        // time
+        if (datasetTime != null)
+            obsOffering.appendChild(getStationPeriod(datasetTime));
+        // procedures
+        for (String str : stations) {
+            Element proc = getDocument().createElement("procedure");
+            proc.setAttribute("xlink:href", SOSBaseRequestHandler.getGMLName(str));
+            obsOffering.appendChild(proc);
+        }
+        // observed properties
+        for (String str : sensors) {
+            Element value = getDocument().createElement("observedProperty");
+            value.setAttribute("xlink:href", str);
+            obsOffering.appendChild(value);
+        }
+        // response format
+        Element rf = getDocument().createElement("responseFormat");
+        rf.setTextContent("text/xml; subtype=\"om/1.0.0\"");
+        obsOffering.appendChild(rf);
+        // response model/mode -- blank for now?
+        obsOffering.appendChild(getDocument().createElement("responseModel"));
+        obsOffering.appendChild(getDocument().createElement("responseMode"));
+
+        // add offering
+        offeringList.appendChild(obsOffering);
+    }
+    
     public void setObservationOfferingList(String stationName, int stationIndex, LatLonRect rect, List<String> sensorNames, CalendarDateRange stationDates) {
         Element offeringList = (Element) getDocument().getElementsByTagName("ObservationOfferingList").item(0);
-            // iterate through offerings (stations)
-            Element obsOffering = getDocument().createElement("ObservationOffering");
-            obsOffering.setAttribute("gml:id", stationName);
-            // gml:name
-            Element gmlName = getDocument().createElement("gml:name");
-            gmlName.setTextContent(SOSBaseRequestHandler.getGMLName(stationName));
-            obsOffering.appendChild(gmlName);
-            // gml:srsName - default to EPSG:4326 for now
-            Element srsName = getDocument().createElement("gml:srsName");
-            srsName.setTextContent("EPSG:4326");
-            obsOffering.appendChild(srsName);
-            // bounds
-            obsOffering.appendChild(getStationBounds(rect));
-            // add time envelope
-            obsOffering.appendChild(getStationPeriod(stationDates));
-            // feature of interest -- station name?
-            Element foi = getDocument().createElement("featureOfInterest");
-            foi.setAttribute("xlink:href", stationName);
-            // observed properties
-            for (String str : sensorNames) {
-                Element value = getDocument().createElement("observedProperty");
-                value.setAttribute("xlink:href", str);
-                obsOffering.appendChild(value);
-            }
-            // procedures
-            for (String str : sensorNames) {
-                Element proc = getDocument().createElement("procedure");
-                proc.setAttribute("xlink:href", SOSBaseRequestHandler.getSensorGMLName(stationName, str));
-                obsOffering.appendChild(proc);
-            }
-            // response format
-            Element rf = getDocument().createElement("responseFormat");
-            rf.setTextContent("text/xml; subtype=\"om/1.0.0\"");
-            obsOffering.appendChild(rf);
-            // response model/mode -- blank for now?
-            obsOffering.appendChild(getDocument().createElement("responseModel"));
-            obsOffering.appendChild(getDocument().createElement("responseMode"));
+        // iterate through offerings (stations)
+        Element obsOffering = getDocument().createElement("ObservationOffering");
+        obsOffering.setAttribute("gml:id", stationName);
+        // gml:name
+        Element gmlName = getDocument().createElement("gml:name");
+        gmlName.setTextContent(SOSBaseRequestHandler.getGMLName(stationName));
+        obsOffering.appendChild(gmlName);
+        // gml:srsName - default to EPSG:4326 for now
+        Element srsName = getDocument().createElement("gml:srsName");
+        srsName.setTextContent("EPSG:4326");
+        obsOffering.appendChild(srsName);
+        // bounds
+        obsOffering.appendChild(getStationBounds(rect));
+        // add time envelope
+        obsOffering.appendChild(getStationPeriod(stationDates));
+        // feature of interest -- station name?
+        Element foi = getDocument().createElement("featureOfInterest");
+        foi.setAttribute("xlink:href", stationName);
+        // observed properties
+        for (String str : sensorNames) {
+            Element value = getDocument().createElement("observedProperty");
+            value.setAttribute("xlink:href", str);
+            obsOffering.appendChild(value);
+        }
+        // procedures
+        for (String str : sensorNames) {
+            Element proc = getDocument().createElement("procedure");
+            proc.setAttribute("xlink:href", SOSBaseRequestHandler.getSensorGMLName(stationName, str));
+            obsOffering.appendChild(proc);
+        }
+        // response format
+        Element rf = getDocument().createElement("responseFormat");
+        rf.setTextContent("text/xml; subtype=\"om/1.0.0\"");
+        obsOffering.appendChild(rf);
+        // response model/mode -- blank for now?
+        obsOffering.appendChild(getDocument().createElement("responseModel"));
+        obsOffering.appendChild(getDocument().createElement("responseMode"));
 
-            // add offering
-            offeringList.appendChild(obsOffering);
+        // add offering
+        offeringList.appendChild(obsOffering);
     }
     
     /*********************/
