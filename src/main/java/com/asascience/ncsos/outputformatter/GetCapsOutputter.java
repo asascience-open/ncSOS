@@ -9,6 +9,7 @@ import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import org.w3c.dom.Document;
@@ -21,6 +22,7 @@ import org.w3c.dom.ls.LSOutput;
 import org.w3c.dom.ls.LSSerializer;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.time.CalendarDate;
+import ucar.nc2.time.CalendarDateRange;
 import ucar.unidata.geoloc.LatLonRect;
 
 /**
@@ -85,6 +87,55 @@ public class GetCapsOutputter implements SOSOutputFormatter {
      */
     public boolean hasExceptionOut() {
         return exceptionFlag;
+    }
+    
+    
+
+    /**
+     * sets the service identification information 
+     */
+    public void parseServiceIdentification(String title, String history, String access) {
+        NodeList nodeLst = getDocument().getElementsByTagName("ows:ServiceIdentification");
+
+        for (int s = 0; s < nodeLst.getLength(); s++) {
+
+            Node fstNode = nodeLst.item(s);
+            if (fstNode.getNodeType() == Node.ELEMENT_NODE) {
+
+                //looks at the one node
+                Element fstElmnt = (Element) fstNode;
+                //looks at title
+                NodeList fstNmElmntLst = fstElmnt.getElementsByTagName("ows:Title");
+                Element fstNmElmnt = (Element) fstNmElmntLst.item(0);
+                NodeList fstNm = fstNmElmnt.getChildNodes();
+                fstNm.item(0).setTextContent(title.trim());
+
+                //looks at the adstract
+                NodeList lstNmElmntLst = fstElmnt.getElementsByTagName("ows:Abstract");
+                Element lstNmElmnt = (Element) lstNmElmntLst.item(0);
+                NodeList lstNm = lstNmElmnt.getChildNodes();
+                lstNm.item(0).setTextContent(history.trim());
+                
+                fstElmnt.getElementsByTagName("ows:AccessConstraints").item(0).setTextContent(access.trim());
+            }
+        }
+    }
+
+    /**
+     * sets the service description, this is typically additional created user/site information
+     */
+    public void parseServiceDescription(String dataPage, String primaryOwnership) {
+        //get service provider node list
+        NodeList serviceProviderNodeList = getDocument().getElementsByTagName("ows:ServiceProvider");
+        //get the first node in the the list matching the above name
+        Node fstNode = serviceProviderNodeList.item(0);
+        //create an element from the node
+        Element fstElmnt = (Element) fstNode;
+        // set org info
+        // url
+        fstElmnt.getElementsByTagName("ows:ProviderSite").item(0).setTextContent(dataPage.trim());
+        // name
+        fstElmnt.getElementsByTagName("ows:ProviderName").item(0).setTextContent(primaryOwnership.trim());
     }
     
     /**
@@ -164,7 +215,7 @@ public class GetCapsOutputter implements SOSOutputFormatter {
         }
         // add lat and lon as parameters if we are a grid dataset
         if (gridDataset)
-            addLatLonParameters(getObs, null);
+            addLatLonParameters(getObs, gridBbox);
     }
     
     /**
@@ -201,54 +252,49 @@ public class GetCapsOutputter implements SOSOutputFormatter {
         }
     }
     
-//    public void setObservationOfferingList() {
-//        Element offeringList = (Element) getDocument().getElementsByTagName("ObservationOfferingList").item(0);
-//        if (getStationNames() != null) {
-//            // iterate through offerings (stations)
-//            for (String stationName : getStationNames().values()) {
-//                Element obsOffering = getDocument().createElement("ObservationOffering");
-//                obsOffering.setAttribute("gml:id", stationName);
-//                // gml:name
-//                Element gmlName = getDocument().createElement("gml:name");
-//                gmlName.setTextContent(getGMLName(stationName));
-//                obsOffering.appendChild(gmlName);
-//                // gml:srsName - default to EPSG:4326 for now
-//                Element srsName = getDocument().createElement("gml:srsName");
-//                srsName.setTextContent("EPSG:4326");
-//                obsOffering.appendChild(srsName);
-//                // bounds
-//                obsOffering.appendChild(getStationBounds(getStationIndex(stationName)));
-//                // add time envelope
-//                obsOffering.appendChild(getStationPeriod(getStationIndex(stationName)));
-//                // feature of interest -- station name?
-//                Element foi = getDocument().createElement("featureOfInterest");
-//                foi.setAttribute("xlink:href", stationName);
-//                // observed properties
-//                for (Iterator<VariableSimpleIF> it = getFeatureDataset().getDataVariables().iterator(); it.hasNext();) {
-//                    VariableSimpleIF var = it.next();
-//                    Element value = getDocument().createElement("observedProperty");
-//                    value.setAttribute("xlink:href", var.getShortName());
-//                    obsOffering.appendChild(value);
-//                }
-//                // procedures
-//                for (String str : getSensorNames()) {
-//                    Element proc = getDocument().createElement("procedure");
-//                    proc.setAttribute("xlink:href", getSensorGMLName(stationName, str));
-//                    obsOffering.appendChild(proc);
-//                }
-//                // response format
-//                Element rf = getDocument().createElement("responseFormat");
-//                rf.setTextContent("text/xml; subtype=\"om/1.0.0\"");
-//                obsOffering.appendChild(rf);
-//                // response model/mode -- blank for now?
-//                obsOffering.appendChild(getDocument().createElement("responseModel"));
-//                obsOffering.appendChild(getDocument().createElement("responseMode"));
-//
-//                // add offering
-//                offeringList.appendChild(obsOffering);
-//            }
-//        }
-//    }
+    public void setObservationOfferingList(String stationName, int stationIndex, LatLonRect rect, List<String> sensorNames, CalendarDateRange stationDates) {
+        Element offeringList = (Element) getDocument().getElementsByTagName("ObservationOfferingList").item(0);
+            // iterate through offerings (stations)
+            Element obsOffering = getDocument().createElement("ObservationOffering");
+            obsOffering.setAttribute("gml:id", stationName);
+            // gml:name
+            Element gmlName = getDocument().createElement("gml:name");
+            gmlName.setTextContent(SOSBaseRequestHandler.getGMLName(stationName));
+            obsOffering.appendChild(gmlName);
+            // gml:srsName - default to EPSG:4326 for now
+            Element srsName = getDocument().createElement("gml:srsName");
+            srsName.setTextContent("EPSG:4326");
+            obsOffering.appendChild(srsName);
+            // bounds
+            obsOffering.appendChild(getStationBounds(rect));
+            // add time envelope
+            obsOffering.appendChild(getStationPeriod(stationDates));
+            // feature of interest -- station name?
+            Element foi = getDocument().createElement("featureOfInterest");
+            foi.setAttribute("xlink:href", stationName);
+            // observed properties
+            for (String str : sensorNames) {
+                Element value = getDocument().createElement("observedProperty");
+                value.setAttribute("xlink:href", str);
+                obsOffering.appendChild(value);
+            }
+            // procedures
+            for (String str : sensorNames) {
+                Element proc = getDocument().createElement("procedure");
+                proc.setAttribute("xlink:href", SOSBaseRequestHandler.getSensorGMLName(stationName, str));
+                obsOffering.appendChild(proc);
+            }
+            // response format
+            Element rf = getDocument().createElement("responseFormat");
+            rf.setTextContent("text/xml; subtype=\"om/1.0.0\"");
+            obsOffering.appendChild(rf);
+            // response model/mode -- blank for now?
+            obsOffering.appendChild(getDocument().createElement("responseModel"));
+            obsOffering.appendChild(getDocument().createElement("responseMode"));
+
+            // add offering
+            offeringList.appendChild(obsOffering);
+    }
     
     /*********************/
     /* Interface Methods */
@@ -311,7 +357,44 @@ public class GetCapsOutputter implements SOSOutputFormatter {
 //            fstNmElmnt12.setAttribute("xlink:href", threddsURI);
     }
     
+    private Element getStationPeriod(CalendarDateRange stationDateRange) {
+        Element retval = getDocument().createElement("time");
+        if (stationDateRange != null) {
+            // time
+            Element timePeriod = getDocument().createElement("gml:TimePeriod");
+            timePeriod.setAttribute("xsi:type", "gml:TimePeriodType");
+            // begin
+            Element begin = getDocument().createElement("gml:beginPosition");
+            begin.setTextContent(stationDateRange.getStart().toString());
+            timePeriod.appendChild(begin);
+            // end
+            Element end = getDocument().createElement("gml:endPosition");
+            end.setTextContent(stationDateRange.getEnd().toString());
+            timePeriod.appendChild(end);
+            retval.appendChild(timePeriod);
+        }
+        return retval;
+    }
     
+    private Element getStationBounds(LatLonRect rect) {
+        Element retval = getDocument().createElement("gml:boundedBy");
+        
+        if (rect != null) {
+            Element envelope = getDocument().createElement("gml:Envelope");
+            envelope.setAttribute("srsName", "http://www.opengis.net/def/crs/EPSG/0/4326");
+            // lower corner
+            Element lowercorner = getDocument().createElement("gml:lowerCorner");
+            lowercorner.setTextContent(rect.getLowerLeftPoint().getLatitude() + " " + rect.getLowerLeftPoint().getLongitude());
+            envelope.appendChild(lowercorner);
+            // upper corner
+            Element uppercorner = getDocument().createElement("gml:upperCorner");
+            uppercorner.setTextContent(rect.getUpperRightPoint().getLatitude() + " " + rect.getUpperRightPoint().getLongitude());
+            envelope.appendChild(uppercorner);
+            retval.appendChild(envelope);
+        }
+        
+        return retval;
+    }
     
     private void prepOperationsMetadata() {
         Element operationMetadata = (Element) document.getElementsByTagName("ows:OperationsMetadata").item(0);

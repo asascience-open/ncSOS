@@ -287,10 +287,7 @@ public class SOSParser {
         // do our parsing
         if (((GetCapsOutputter)capHandler.getOutputHandler()).hasExceptionOut())
             return;
-        capHandler.parseServiceIdentification();
-        capHandler.parseServiceDescription();
-        capHandler.parseOperationsMetaData();
-        capHandler.parseObservationList();
+        capHandler.parseGetCapabilitiesDocument();
     }
     
     private void ParseQuery(String query) {

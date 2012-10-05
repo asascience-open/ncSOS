@@ -551,7 +551,7 @@ public class SOSgetCapsTest {
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds1);
 
         SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, "imeds");
-        handler.parseServiceIdentification();
+        handler.parseGetCapabilitiesDocument();
     }
 
     @Test
@@ -563,8 +563,7 @@ public class SOSgetCapsTest {
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds1);
 
         SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, "imeds");
-        handler.parseServiceIdentification();
-        handler.parseServiceDescription();
+        handler.parseGetCapabilitiesDocument();
     }
 
     @Test
@@ -576,9 +575,7 @@ public class SOSgetCapsTest {
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds1);
 
         SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, "imeds");
-        handler.parseServiceIdentification();
-        handler.parseServiceDescription();
-        handler.parseOperationsMetaData();
+        handler.parseGetCapabilitiesDocument();
     }
 
     @Test
@@ -590,10 +587,7 @@ public class SOSgetCapsTest {
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds1);
 
         SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, "imeds");
-        handler.parseServiceIdentification();
-        handler.parseServiceDescription();
-        handler.parseOperationsMetaData();
-        handler.parseObservationList();
+        handler.parseGetCapabilitiesDocument();
     }
 
     @Test
@@ -607,10 +601,7 @@ public class SOSgetCapsTest {
         String cdm_datatype = dataset.findAttValueIgnoreCase(null, "cdm_data_type", null);
         System.out.println(cdm_datatype);
         SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, "noaa");
-        handler.parseServiceIdentification();
-        handler.parseServiceDescription();
-        handler.parseOperationsMetaData();
-        handler.parseObservationList();
+        handler.parseGetCapabilitiesDocument();
     }
 
     @Test
