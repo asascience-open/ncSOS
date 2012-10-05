@@ -7,6 +7,7 @@ import java.text.NumberFormat;
 import java.util.*;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
+import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.constants.AxisType;
 import ucar.nc2.constants.FeatureType;
 import ucar.nc2.dataset.CoordinateAxis;
@@ -171,22 +172,9 @@ public abstract class SOSBaseRequestHandler {
     private void parseSensorNames() {
         // find all variables who's not a coordinate axis and does not have 'station' in the name
         this.sensorNames = new ArrayList<String>();
-        boolean isCA;
-        for (Variable var : netCDFDataset.getVariables()) {
-            isCA = false;
-            // check full name; ensure it is not a station var
-            String fname = var.getFullName().toLowerCase();
-            if (!fname.contains("station")) {
-                // check against coordinate axes
-                for (CoordinateAxis ca : netCDFDataset.getCoordinateAxes()) {
-                    if (ca.getFullName().equalsIgnoreCase(fname)) {
-                        isCA = true;
-                        break;
-                    }
-                }
-                if (!isCA)
-                    this.sensorNames.add(var.getFullName());
-            }
+        for (Iterator<VariableSimpleIF> it = getFeatureDataset().getDataVariables().iterator(); it.hasNext();) {
+            VariableSimpleIF var = it.next();
+            this.sensorNames.add(var.getShortName());
         }
     }
     
@@ -395,7 +383,7 @@ public abstract class SOSBaseRequestHandler {
      * Returns base urn of a station procedure
      * @return
      */
-    public String getGMLNameBase() {
+    public static String getGMLNameBase() {
         return STATION_GML_BASE;
     }
 
@@ -404,7 +392,7 @@ public abstract class SOSBaseRequestHandler {
      * @param stationName the station name to add to the name base
      * @return
      */
-    public String getGMLName(String stationName) {
+    public static String getGMLName(String stationName) {
         return STATION_GML_BASE + stationName;
     }
     
@@ -412,7 +400,7 @@ public abstract class SOSBaseRequestHandler {
      * Returns the base string of the a sensor urn (does not include station and sensor name)
      * @return sensor urn base string
      */
-    public String getGMLSensorNameBase() {
+    public static String getGMLSensorNameBase() {
         return SENSOR_GML_BASE;
     }
     
@@ -422,7 +410,7 @@ public abstract class SOSBaseRequestHandler {
      * @param sensorName name of the sensor
      * @return urn of the station/sensor combo
      */
-    public String getSensorGMLName(String stationName, String sensorName) {
+    public static String getSensorGMLName(String stationName, String sensorName) {
         return SENSOR_GML_BASE + stationName + ":" + sensorName;
     }
 

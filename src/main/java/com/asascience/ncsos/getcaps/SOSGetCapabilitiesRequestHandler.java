@@ -3,8 +3,10 @@ package com.asascience.ncsos.getcaps;
 import com.asascience.ncsos.outputformatter.GetCapsOutputter;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import org.geotoolkit.util.collection.CheckedHashMap;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -56,13 +58,6 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         this.threddsURI = "";
         output = new GetCapsOutputter();
     }
-    
-    private Document getDocument() {
-        return ((GetCapsOutputter)output).getDocument();
-    }
-    private void setDocument(Document setter) {
-        ((GetCapsOutputter)output).setDocument(setter);
-    }
 
     /**
      * sets the service identification information 
@@ -98,13 +93,6 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         }
     }
 
-    private NodeList getXMLNode(Element fstElmnt, String xmlLocation) {
-        NodeList tagNameNodeList = fstElmnt.getElementsByTagName(xmlLocation);
-        Element fstNmElmnt1 = (Element) tagNameNodeList.item(0);
-        NodeList fstNm1 = fstNmElmnt1.getChildNodes();
-        return fstNm1;
-    }
-
     /**
      * sets the service description, this is typically additional created user/site information
      */
@@ -124,179 +112,28 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
     }
 
     /**
-     * 
+     * sets the data for operationsmetadata tree
      */
     public void parseOperationsMetaData() {
-        //get operations meta data
-        NodeList operationsNodeList = getDocument().getElementsByTagName("ows:OperationsMetadata");
-        //set get capabilities meta data
-        for (int s = 0; s < operationsNodeList.getLength(); s++) {
-
-            Node fstNode = operationsNodeList.item(s);
-            if (fstNode.getNodeType() == Node.ELEMENT_NODE) {
-
-                //looks at the one node
-                Element fstElmnt = (Element) fstNode;
-                //looks at title
-                NodeList fstNmElmntLst = fstElmnt.getElementsByTagName("ows:Operation");
-
-                for (int jj = 0; jj < fstNmElmntLst.getLength(); jj++) {
-
-                    Element fstNmElmnt = (Element) fstNmElmntLst.item(jj);
-                    //String c = fstNmElmnt.getAttribute("name");
-                    //System.out.println("Name: "  + fstNmElmnt.getAttribute("name"));
-
-                    if (fstNmElmnt.getAttribute("name").contentEquals("GetCapabilities")) {
-                        setGetCapabilitiesOperationsMetaData(fstNmElmnt);
-                    } else if (fstNmElmnt.getAttribute("name").contentEquals("GetObservation")) {
-                        setGetCapabilitiesGetObservationMetadata(fstNmElmnt);
-                    } else if (fstNmElmnt.getAttribute("name").contentEquals("DescribeSensor")) {
-                        setGetCapabilitiesDescribeSensorMetadata(fstNmElmnt);
-                    }
-                }
-            }
-        }
+        GetCapsOutputter out = (GetCapsOutputter) output;
+        // set get capabilities output
+        out.setOperationGetCaps(threddsURI);
+        // set get observation output
+        if (getGridDataset() != null)
+            out.setOperationGetObs(threddsURI, setStartDate, setEndDate, getSensorNames(), getStationNames().values().toArray(new String[getStationNames().values().size()]), true, getGridDataset().getBoundingBox());
+        else
+            out.setOperationGetObs(threddsURI, setStartDate, setEndDate, getSensorNames(), getStationNames().values().toArray(new String[getStationNames().values().size()]), false, null);
+        // set describe sensor output
+        out.setOperationDescSen(threddsURI, getStationNames().values().toArray(new String[getStationNames().values().size()]), getSensorNames());
     }
     
-    private void setGetCapabilitiesGetObservationMetadata(Element firstNameElement) {
-        // set request link
-        setGetCapabilitiesOperationsMetaData(firstNameElement);
-        // get our parameters that need to be filled
-        Element eventtime = null, offering = null, observedproperty = null;
-        NodeList nodes = firstNameElement.getElementsByTagName("ows:Parameter");
-        for (int i=0; i<nodes.getLength(); i++) {
-            Element elem = (Element) nodes.item(i);
-            if (elem.getAttribute("name").equalsIgnoreCase("offering")) {
-                offering = elem;
-                continue;
-            }
-            if (elem.getAttribute("name").equalsIgnoreCase("observedProperty")) {
-                observedproperty = elem;
-                continue;
-            }
-            if (elem.getAttribute("name").equalsIgnoreCase("eventTime")) {
-                eventtime = elem;
-                continue;
-            }
-        }
-        // set eventtime
-        if (eventtime != null && setEndDate != null && setStartDate != null) {
-            Element allowedValues = getDocument().createElement("ows:AllowedValues");
-            eventtime.appendChild(allowedValues);
-            Element range = getDocument().createElement("ows:Range");
-            allowedValues.appendChild(range);
-            // min value
-            Element min = getDocument().createElement("ows:MinimumValue");
-            min.setTextContent(setStartDate.toString());
-            allowedValues.appendChild(min);
-            // max value
-            Element max = getDocument().createElement("ows:MaximumValue");
-            max.setTextContent(setEndDate.toString());
-            allowedValues.appendChild(max);
-        }
-        // set observedProperty parameter
-        if (observedproperty != null) {
-            Element allowedValues = getDocument().createElement("ows:AllowedValues");
-            observedproperty.appendChild(allowedValues);
-            for (Iterator<VariableSimpleIF> it = getFeatureDataset().getDataVariables().iterator(); it.hasNext();) {
-                VariableSimpleIF var = it.next();
-                Element value = getDocument().createElement("ows:value");
-                value.setTextContent(var.getShortName());
-                allowedValues.appendChild(value);
-            }
-        }
-        // set offering parameter - list of station names
-        if (offering != null && getStationNames() != null) {
-            Element aV = getDocument().createElement("ows:AllowedValues");
-            offering.appendChild(aV);
-            for (String stationName : getStationNames().values()) {
-                Element value = getDocument().createElement("ows:Value");
-                value.setTextContent(stationName);
-                aV.appendChild(value);
-            }
-        }
-        // add lat and lon as parameters if we are a grid dataset
-        if (getGridDataset() != null) {
-            addLatLonParameters(firstNameElement);
-        }
-    }
-    
-    private void addLatLonParameters(Element parent) {
-        // add a min and max values for each param
-        LatLonRect rect = getGridDataset().getBoundingBox();
-        // lat
-        Element lat = getDocument().createElement("ows:Parameter");
-        lat.setAttribute("name", "lat");
-        lat.setAttribute("use", "optional");
-        Element latAllowedValues = getDocument().createElement("ows:AllowedValues");
-        // min
-        Element latMin = getDocument().createElement("ows:MinimumValue");
-        latMin.setTextContent(rect.getLowerLeftPoint().getLatitude() + "");
-        latAllowedValues.appendChild(latMin);
-        // max
-        Element latMax = getDocument().createElement("ows:MaximumValue");
-        latMax.setTextContent(rect.getUpperRightPoint().getLatitude() + "");
-        latAllowedValues.appendChild(latMax);
-        lat.appendChild(latAllowedValues);
-        parent.appendChild(lat);
-        // lon
-        Element lon = getDocument().createElement("ows:Parameter");
-        lon.setAttribute("name", "lon");
-        lon.setAttribute("use", "optional");
-        Element lonAllowedValues = getDocument().createElement("ows:AllowedValues");
-        // min
-        Element lonMin = getDocument().createElement("ows:MinimumValue");
-        lonMin.setTextContent(rect.getLowerLeftPoint().getLongitude() + "");
-        lonAllowedValues.appendChild(lonMin);
-        // max
-        Element lonMax = getDocument().createElement("ows:MaximumValue");
-        lonMax.setTextContent(rect.getUpperRightPoint().getLongitude() + "");
-        lonAllowedValues.appendChild(lonMax);
-        lon.appendChild(lonAllowedValues);
-        parent.appendChild(lon);
-    }
-    
-    private void setGetCapabilitiesDescribeSensorMetadata(Element firstNameElement) {
-        // set request link
-        setGetCapabilitiesOperationsMetaData(firstNameElement);
-        // set procedure allowed values of each station and sensor for the dataset
-        Element procedure = null;
-        NodeList nodes = firstNameElement.getElementsByTagName("ows:Parameter");
-        for (int i=0; i<nodes.getLength(); i++) {
-            Element elem = (Element) nodes.item(i);
-            if (elem.getAttribute("name").equalsIgnoreCase("procedure")) {
-                procedure = elem;
-                break;
-            }
-        }
-        if (procedure != null && getStationNames() != null) {
-            // add allowed values node
-            Element allowedValues = getDocument().createElement("ows:AllowedValues");
-            procedure.appendChild(allowedValues);
-            for (String stationName : getStationNames().values()) {
-                Element elem = getDocument().createElement("ows:Value");
-                elem.setTextContent(getGMLName(stationName));
-                allowedValues.appendChild(elem);
-                for (String senName : getSensorNames()) {
-                    Element sElem = getDocument().createElement("ows:Value");
-                    sElem.setTextContent(getSensorGMLName(stationName, senName));
-                    allowedValues.appendChild(sElem);
-                }
-            }
-        }
-    }
-
-    private void setGetCapabilitiesOperationsMetaData(Element fstNmElmnt) {
-        //set get capabilities GET request link
-        NodeList fstNm1 = fstNmElmnt.getElementsByTagName("ows:Get");
-        Element fstNmElmnt1 = (Element) fstNm1.item(0);
-        fstNmElmnt1.setAttribute("xlink:href", threddsURI);
-
-        //set get capabilities Post request link
-//        NodeList fstNm12 = fstNmElmnt.getElementsByTagName("ows:Post");
-//        Element fstNmElmnt12 = (Element) fstNm12.item(0);
-//        if (fstNmElmnt12 != null)
-//            fstNmElmnt12.setAttribute("xlink:href", threddsURI);
+    /**
+     * parses the observation list object and add the observations to the node
+     * main location for parsing CDM get caps response 
+     * @throws IOException 
+     */
+    public void parseObservationList() {
+        SetObservationOfferingList();
     }
     
     private void CalculateBoundsForFeatureSet() {
@@ -437,6 +274,13 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         }
     }
     
+    private NodeList getXMLNode(Element fstElmnt, String xmlLocation) {
+        NodeList tagNameNodeList = fstElmnt.getElementsByTagName(xmlLocation);
+        Element fstNmElmnt1 = (Element) tagNameNodeList.item(0);
+        NodeList fstNm1 = fstNmElmnt1.getChildNodes();
+        return fstNm1;
+    }
+    
     private void SetObservationOfferingList() {
         Element offeringList = (Element) getDocument().getElementsByTagName("ObservationOfferingList").item(0);
         if (getStationNames() != null) {
@@ -507,6 +351,13 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         return retval;
     }
     
+    private Document getDocument() {
+        return ((GetCapsOutputter)output).getDocument();
+    }
+    private void setDocument(Document setter) {
+        ((GetCapsOutputter)output).setDocument(setter);
+    }
+    
     private Element getStationPeriod(int stationIndex) {
         Element retval = getDocument().createElement("time");
         if (stationDateRange != null && stationDateRange.get(stationIndex) != null) {
@@ -526,67 +377,5 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         return retval;
     }
         
-    /**
-     * parses the observation list object and add the observations to the node
-     * main location for parsing CDM get caps response 
-     * @throws IOException 
-     */
-    public void parseObservationList() {
-        SetObservationOfferingList();
-    }
-//    public void parseObservationList() throws IOException {
-//        List<VariableSimpleIF> variableList = null;
-//        List<String> observedPropertyList = null;
-//        
-//        // check for null feature type and return error if it is
-//        if(getDatasetFeatureType() == null) {
-//            setDocument(XMLDomUtils.getExceptionDom("Invalid or unknown feature type"));
-//            return;
-//        }
-//
-//        if (getDatasetFeatureType() != FeatureType.GRID) {
-//            variableList = DiscreteSamplingGeometryUtil.getDataVariables(getFeatureDataset());
-//            observedPropertyList = new ArrayList<String>(variableList.size());
-//            List<String> observedPropertyUnitList = new ArrayList<String>(variableList.size());
-//
-//            for (VariableSimpleIF variable : variableList) {
-//                observedPropertyList.add(variable.getShortName()); // TODO ? getName() instead?
-//                observedPropertyUnitList.add(variable.getUnitsString());
-//            }
-//        }
-//
-//        //***************************************
-//        
-//        // use CDM to get, getCaps;
-//        switch (getDatasetFeatureType()) {
-//            case TRAJECTORY:
-//                try {
-//                    setDocument(Trajectory.getCapsResponse(getFeatureTypeDataSet(), getDocument(), getFeatureOfInterestBase(), getGMLNameBase(), observedPropertyList));
-//                } catch (Exception e) {
-//                }
-//                break;
-//            case STATION:
-//                setDocument(TimeSeries.getCapsResponse((StationTimeSeriesFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),observedPropertyList));
-//                break;
-//            case STATION_PROFILE:
-//                setDocument(TimeSeriesProfile.getCapsResponse((StationProfileFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),observedPropertyList));
-//                break;
-//            case PROFILE:
-//                setDocument(Profile.getCapsResponse((ProfileFeatureCollection)getFeatureTypeDataSet(),getDocument(),getFeatureOfInterestBase(),getGMLNameBase(),observedPropertyList));
-//                break;
-//            case GRID:
-//                setDocument(Grid.getCapsResponse(getGridDataset(), getDocument(), getGMLNameBase()));
-//                break;
-//            case SECTION:
-//                setDocument(Section.getCapsResponse(getFeatureTypeDataSet(), getDocument(), getFeatureOfInterestBase(), getGMLNameBase(), observedPropertyList));
-//                break;
-//            default:
-//                if (getDatasetFeatureType() != null) {
-//                    output.setupExceptionOutput("Unsupported feature type for request of GetCapabilities: " + getDatasetFeatureType().name());
-//                } else {
-//                    output.setupExceptionOutput("Null feature type for request of GetCapabilities");
-//                }
-//                break;
-//        }
-//    }
+    
 }
