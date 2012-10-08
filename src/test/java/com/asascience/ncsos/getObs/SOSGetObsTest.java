@@ -1074,9 +1074,9 @@ public class SOSGetObsTest {
             //check depth was entered auto
             assertTrue("depth not added", write.toString().contains("<swe:field name=\"z\">"));
             assertFalse("data missing", write.toString().contains("<om:featureOfInterest xlink:href=\"PROFILE_0\"/>"));
+            assertFalse("data missing", write.toString().contains("<om:featureOfInterest xlink:href=\"PROFILE_3\"/>"));
             assertTrue("data missing", write.toString().contains("<om:featureOfInterest xlink:href=\"PROFILE_1\"/>"));
             assertTrue("data missing", write.toString().contains("<om:featureOfInterest xlink:href=\"PROFILE_2\"/>"));
-            assertTrue("data missing", write.toString().contains("<om:featureOfInterest xlink:href=\"PROFILE_3\"/>"));
             assertTrue("data missing", write.toString().contains("1990-01-01T01:00:00Z,"));
             assertTrue("data missing", write.toString().contains("1990-01-01T02:00:00Z,"));
         } catch (IOException ex) {

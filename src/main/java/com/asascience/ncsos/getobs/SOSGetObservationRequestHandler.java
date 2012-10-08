@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import ucar.ma2.DataType;
 import ucar.nc2.Variable;
 import ucar.nc2.constants.AxisType;
 import ucar.nc2.constants.FeatureType;
@@ -76,10 +77,6 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             stationName = getStationNames().values().toArray(new String[getStationNames().values().size()]);
         }
         
-        for (String str : stationName) {
-            System.out.println("GetObs on station: " + str);
-        }
-        
         setCDMDatasetForStations(netCDFDataset, stationName, eventTime, latLonRequest);
         
         // set up our formatter
@@ -94,20 +91,14 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     }
     
     private void setCDMDatasetForStations(NetcdfDataset netCDFDataset, String[] stationNames, String[] eventTime, Map<String, String> latLonRequest) throws IOException {
-        System.out.println("In setCMDDatasetForStations - " + getDatasetFeatureType().name());
         // strip out any text if the station variable has a shape dimension of 1
         String[] editedStationNames = new String[stationNames.length];
-        if (stationVariable.getShape().length <= 1) {
-            System.out.println("Removing characters from station names");
+        if (stationVariable.getShape().length <= 1 && stationVariable.getDataType() != DataType.CHAR) {
             for (int i=0; i<stationNames.length; i++) {
                 editedStationNames[i] = stationNames[i].replaceAll("[A-Za-z]+", "");
             }
             // copy array
             stationNames = editedStationNames.clone();
-            System.out.println("Have " + stationNames.length + " stations after fixing the name\n");
-            for (String str : stationNames) {
-                System.out.print(str + ", ");
-            }
         }
         //grid operation
         if (getDatasetFeatureType() == FeatureType.GRID) {
@@ -145,12 +136,10 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
                 CDMDataSet = null;
                 return;
             }
-            System.out.println("Before setData");
             //only set the data is it is valid
             if (CDMDataSet!=null){
                 CDMDataSet.setData(getFeatureTypeDataSet());
             }
-            System.out.println("Out setCMDDatasetForStations");
         }
     }
     
@@ -201,7 +190,6 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     public void parseObservations() {
         for(int s = 0;s<CDMDataSet.getNumberOfStations();s++) {
             String dataString = CDMDataSet.getDataResponse(s);
-//            System.out.println("Got string: " + dataString);
             for (String dataPoint : dataString.split(";")) {
                 if(!dataPoint.equals(""))
                     output.addDataFormattedStringToInfoList(dataPoint);

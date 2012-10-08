@@ -152,6 +152,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         //count++;
         valueList.clear();
         valueList.add("time=" + dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
+        valueList.add("station=" + stNum);
         try {
             for (String variableName : variableNames) {
                 valueList.add(variableName + "=" + pointFeature.getData().getScalarObject(variableName).toString());
@@ -225,49 +226,43 @@ public class TimeSeries extends baseCDMClass implements iStationData {
     @Override
     public void setData(Object featureCollection) throws IOException {
         try {
-        this.tsData = (StationTimeSeriesFeatureCollection) featureCollection;
-        tsStationList = tsData.getStations(reqStationNames);
-        for (Station st : tsStationList) {
-            if (st == null)
-                System.out.println("null station in station list");
-            else
-                System.out.println(st.getName());
-        }
+            this.tsData = (StationTimeSeriesFeatureCollection) featureCollection;
+            tsStationList = tsData.getStations(reqStationNames);
+            
+            setNumberOfStations(tsStationList.size());
 
-        setNumberOfStations(tsStationList.size());
+            if (tsStationList.size() > 0) {
+                DateTime dtStart = null;
+                DateTime dtEnd = null;
+                DateTime dtStartt = null;
+                DateTime dtEndt = null;
+                DateRange dateRange = null;
+                for (int i = 0; i < tsStationList.size(); i++) {
+                    //set it on the first one
+                    //calc bounds in loop
+                    tsData.getStationFeature(tsStationList.get(i)).calcBounds();
+                    if (i == 0) {
+                        setInitialLatLonBoundaries(tsStationList);
 
-        if (tsStationList.size() > 0) {
-            DateTime dtStart = null;
-            DateTime dtEnd = null;
-            DateTime dtStartt = null;
-            DateTime dtEndt = null;
-            DateRange dateRange = null;
-            for (int i = 0; i < tsStationList.size(); i++) {
-                //set it on the first one
-                //calc bounds in loop
-                tsData.getStationFeature(tsStationList.get(i)).calcBounds();
-                if (i == 0) {
-                    setInitialLatLonBoundaries(tsStationList);
-
-                    dateRange = tsData.getStationFeature(tsStationList.get(0)).getDateRange();
-                    dtStart = new DateTime(dateRange.getStart().getDate(), chrono);
-                    dtEnd = new DateTime(dateRange.getEnd().getDate(), chrono);
-                } else {
-                    dateRange = tsData.getStationFeature(tsStationList.get(i)).getDateRange();
-                    dtStartt = new DateTime(dateRange.getStart().getDate(), chrono);
-                    dtEndt = new DateTime(dateRange.getEnd().getDate(), chrono);
-                    if (dtStartt.isBefore(dtStart)) {
-                        dtStart = dtStartt;
+                        dateRange = tsData.getStationFeature(tsStationList.get(0)).getDateRange();
+                        dtStart = new DateTime(dateRange.getStart().getDate(), chrono);
+                        dtEnd = new DateTime(dateRange.getEnd().getDate(), chrono);
+                    } else {
+                        dateRange = tsData.getStationFeature(tsStationList.get(i)).getDateRange();
+                        dtStartt = new DateTime(dateRange.getStart().getDate(), chrono);
+                        dtEndt = new DateTime(dateRange.getEnd().getDate(), chrono);
+                        if (dtStartt.isBefore(dtStart)) {
+                            dtStart = dtStartt;
+                        }
+                        if (dtEndt.isAfter(dtEnd)) {
+                            dtEnd = dtEndt;
+                        }
+                        checkLatLonAltBoundaries(tsStationList, i);
                     }
-                    if (dtEndt.isAfter(dtEnd)) {
-                        dtEnd = dtEndt;
-                    }
-                    checkLatLonAltBoundaries(tsStationList, i);
                 }
+                setStartDate(df.toDateTimeStringISO(dtStart.toDate()));
+                setEndDate(df.toDateTimeStringISO(dtEnd.toDate()));
             }
-            setStartDate(df.toDateTimeStringISO(dtStart.toDate()));
-            setEndDate(df.toDateTimeStringISO(dtEnd.toDate()));
-        }
         } catch (Exception ex) {
             System.out.println("TimeSeries - setData; exception:\n" + ex.toString());
             for(StackTraceElement e : ex.getStackTrace()) {

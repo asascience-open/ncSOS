@@ -159,7 +159,6 @@ public class Section extends baseCDMClass implements iStationData {
     
     @Override
     public void setData(Object featureCollection) throws IOException {
-        System.out.println("in Section.setData");
         this.sectionData = (SectionFeatureCollection) featureCollection;
         
         sectionList = new ArrayList<SectionFeature>();
@@ -199,14 +198,12 @@ public class Section extends baseCDMClass implements iStationData {
             LatLonRect bbox = getBoundingBox(sectFeature);
             CalendarDateRange dateRange = getDateRange(sectFeature);
 
-            String trajName = "trajectory" + sectFeature.getName();
+            String trajName = sectFeature.getName();
 
             //scan through the stationname for a match of id
             for (Iterator<String> it = reqStationNames.iterator(); it.hasNext();) {
                 String stName = it.next();
-                System.out.println("comparing: " + stName + " to " + trajName);
                 if (stName.equalsIgnoreCase(trajName)) {
-                    System.out.println("adding " + trajName + " to section list");
                     sectionList.add(sectFeature);
 
                     double altmin = Double.POSITIVE_INFINITY;
@@ -285,7 +282,6 @@ public class Section extends baseCDMClass implements iStationData {
     @Override
     public String getStationName(int idNum) {
         if (sectionList != null) {
-            System.out.println("looking for staion number " + idNum);
             return "Trajectory" + sectionList.get(idNum).getName();
         } else {
             return Invalid_Station;

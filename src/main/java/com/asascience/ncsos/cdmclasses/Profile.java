@@ -6,11 +6,13 @@ package com.asascience.ncsos.cdmclasses;
 
 import com.asascience.ncsos.getobs.SOSObservationOffering;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.joda.time.DateTime;
-import org.opengis.temporal.CalendarDate;
 import org.w3c.dom.Document;
 import ucar.nc2.ft.PointFeature;
 import ucar.nc2.ft.PointFeatureIterator;
@@ -45,7 +47,6 @@ public class Profile extends baseCDMClass implements iStationData {
 
         this.reqStationNames = new ArrayList<String>();
         reqStationNames.addAll(Arrays.asList(stationName));
-        System.out.println("received " + reqStationNames.size() + " stations requested");
         
         this.eventTimes = new ArrayList<String>();
         if (eventTime != null)
@@ -78,7 +79,6 @@ public class Profile extends baseCDMClass implements iStationData {
             while (pp.hasNext()) {
                 PointFeature pointFeature = pp.next();
                 profileID = getProfileIDFromProfile(pointFeature);
-                //System.out.println(profileID);
                 break;
             }
 
@@ -139,7 +139,7 @@ public class Profile extends baseCDMClass implements iStationData {
     @Override
     public void setData(Object profilePeatureCollection) throws IOException {
         this.profileData = (ProfileFeatureCollection) profilePeatureCollection;
-
+        
         profileList = new HashMap<Integer, ProfileFeature>();
 
         boolean firstSet = true;
@@ -151,7 +151,7 @@ public class Profile extends baseCDMClass implements iStationData {
         DateTime dtStartt = null;
         DateTime dtEndt = null;
         String profileID = null;
-
+        
         while (profileData.hasNext()) {
             ProfileFeature pFeature = profileData.next();
             pFeature.calcBounds();
@@ -161,7 +161,6 @@ public class Profile extends baseCDMClass implements iStationData {
             while (pp.hasNext()) {
                 PointFeature pointFeature = pp.next();
                 profileID = getProfileIDFromProfile(pointFeature);
-                //System.out.println(profileID);
                 break;
             }
             
@@ -172,12 +171,10 @@ public class Profile extends baseCDMClass implements iStationData {
             if (profileID != null && reqStationNames.contains(profileID)) {
                 // check to make sure the profile falls into the event time
                 if (eventStart != null) {
-                    System.out.println("is " + pFeature.getTime().toGMTString() + " >= " + eventStart.toDate().toGMTString());
                     // does it lie after or at start?
                     if (pFeature.getTime().before(eventStart.toDate()))
                         continue;
                     if (eventEnd != null) {
-                        System.out.println("is " + pFeature.getTime().toGMTString() + " <= " + eventEnd.toDate().toGMTString());
                         // does it lie before or at end?
                         if (pFeature.getTime().after(eventEnd.toDate()))
                             continue;
@@ -211,12 +208,12 @@ public class Profile extends baseCDMClass implements iStationData {
                 if (altmax > upperAlt)
                     upperAlt = altmax;
 
-                    if (firstSet) {
+                if (firstSet) {
                     upperLat = pFeature.getLatLon().getLatitude();
                     lowerLat = pFeature.getLatLon().getLatitude();
                     upperLon = pFeature.getLatLon().getLongitude();
                     lowerLon = pFeature.getLatLon().getLongitude();
-
+                    
                     dtStart = new DateTime(pFeature.getTime(), chrono);
                     dtEnd = new DateTime(pFeature.getTime(), chrono);
                     firstSet = false;
@@ -247,8 +244,7 @@ public class Profile extends baseCDMClass implements iStationData {
                     }
                 }
             } else {
-//                profileID = "0";
-//                profileList.add(pFeature);
+                // null profile id... shouldn't happen (defaults to "0")
             }
         }
         setStartDate(df.toDateTimeStringISO(dtStart.toDate()));
@@ -273,7 +269,6 @@ public class Profile extends baseCDMClass implements iStationData {
     @Override
     public String getDataResponse(int stNum) {
         try {
-            System.out.println("getDataResponse: stNum - " + stNum);
             if (profileData != null && profileList.containsKey((Integer)stNum)) {
                 return createProfileFeature(stNum);
             } else {
@@ -375,7 +370,6 @@ public class Profile extends baseCDMClass implements iStationData {
 
                 String profileID = getProfileIDFromProfile(pointFeature);
                 //if there is a profile id use it against the data that is requested
-                System.out.println("station number: " + stNum + " profileID: " + profileID);
                 if (profileID != null) {
                     valueList.clear();
                     valueList.add("time=" + dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
@@ -415,8 +409,10 @@ public class Profile extends baseCDMClass implements iStationData {
             profileID = (pointFeature.getData().getScalarObject("profile").toString());
         } //if it is not there dont USE IT!,,,,,but maybe warn that it is not there?        
         catch (Exception e) {
-            //Logger.getLogger(SOSGetObservationRequestHandler.class.getName()).log(Level.INFO, "ERROR PROFILE ID NO AVAILABLE \n Must be single Profile \n", e);
-            System.out.println(e.toString());
+            // this case happend when the 'profile' var is a scalar with no shape/dimensions; other than to catch this and give a default value of "0"
+            // not sure what else can be done (should be a better way of handling it. right?)
+            System.out.println("getProfileIDFromProfile - " + e.toString());
+            profileID = "0";
         }
         return profileID;
     }
