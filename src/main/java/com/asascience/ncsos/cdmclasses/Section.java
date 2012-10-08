@@ -180,86 +180,88 @@ public class Section extends baseCDMClass implements iStationData {
 
                 dtSearchEnd = new DateTime(df.getISODate(eventTimes.get(1)), chrono);
             }
+        } else {
+            dtSearchStart = new DateTime(0, chrono);
+        }
 
-            //temp
-            DateTime dtStart = new DateTime();
-            DateTime dtEnd = new DateTime(0);
-            //check
-            DateTime dtStartt = null;
-            DateTime dtEndt = null;
-            
-            upperLat = upperLon = Double.NEGATIVE_INFINITY;
-            lowerLat = lowerLon = Double.POSITIVE_INFINITY;
+        //temp
+        DateTime dtStart = new DateTime();
+        DateTime dtEnd = new DateTime(0);
+        //check
+        DateTime dtStartt = null;
+        DateTime dtEndt = null;
 
-            for (sectionData.resetIteration();sectionData.hasNext();) {
-                SectionFeature sectFeature = sectionData.next();
-                LatLonRect bbox = getBoundingBox(sectFeature);
-                CalendarDateRange dateRange = getDateRange(sectFeature);
-                
-                String trajName = "trajectory" + sectFeature.getName();
+        upperLat = upperLon = Double.NEGATIVE_INFINITY;
+        lowerLat = lowerLon = Double.POSITIVE_INFINITY;
 
-                //scan through the stationname for a match of id
-                for (Iterator<String> it = reqStationNames.iterator(); it.hasNext();) {
-                    String stName = it.next();
-                    System.out.println("comparing: " + stName + " to " + trajName);
-                    if (stName.equalsIgnoreCase(trajName)) {
-                        System.out.println("adding " + trajName + " to section list");
-                        sectionList.add(sectFeature);
-                        
-                        double altmin = Double.POSITIVE_INFINITY;
-                        double altmax = Double.NEGATIVE_INFINITY;
-                        // get our min/max altitude
-                        for (sectFeature.resetIteration();sectFeature.hasNext();) {
-                            ProfileFeature profile = sectFeature.next();
-                            for (profile.resetIteration();profile.hasNext();) {
-                                PointFeature point = profile.next();
-                                if (point.getLocation().getAltitude() > altmax)
-                                    altmax = point.getLocation().getAltitude();
-                                if (point.getLocation().getAltitude() < altmin)
-                                    altmin = point.getLocation().getAltitude();
-                            }
-                        }
-                        
-                        altMax.add(altmax);
-                        altMin.add(altmin);
-                        
-                        if (altmin < lowerAlt)
-                            lowerAlt = altmin;
-                        if (altmax > upperAlt)
-                            upperAlt = altmax;
-                
-                        dtStartt = new DateTime(dateRange.getStart().toDate(), chrono);
-                        dtEndt = new DateTime(dateRange.getEnd().toDate(), chrono);
+        for (sectionData.resetIteration();sectionData.hasNext();) {
+            SectionFeature sectFeature = sectionData.next();
+            LatLonRect bbox = getBoundingBox(sectFeature);
+            CalendarDateRange dateRange = getDateRange(sectFeature);
 
-                        if (dtStartt.isBefore(dtStart)) {
-                            dtStart = dtStartt;
-                        }
-                        if (dtEndt.isAfter(dtEnd)) {
-                            dtEnd = dtEndt;
-                        }
+            String trajName = "trajectory" + sectFeature.getName();
 
-                        if (bbox.getLatMax() > upperLat) {
-                            upperLat = bbox.getLatMax();
+            //scan through the stationname for a match of id
+            for (Iterator<String> it = reqStationNames.iterator(); it.hasNext();) {
+                String stName = it.next();
+                System.out.println("comparing: " + stName + " to " + trajName);
+                if (stName.equalsIgnoreCase(trajName)) {
+                    System.out.println("adding " + trajName + " to section list");
+                    sectionList.add(sectFeature);
+
+                    double altmin = Double.POSITIVE_INFINITY;
+                    double altmax = Double.NEGATIVE_INFINITY;
+                    // get our min/max altitude
+                    for (sectFeature.resetIteration();sectFeature.hasNext();) {
+                        ProfileFeature profile = sectFeature.next();
+                        for (profile.resetIteration();profile.hasNext();) {
+                            PointFeature point = profile.next();
+                            if (point.getLocation().getAltitude() > altmax)
+                                altmax = point.getLocation().getAltitude();
+                            if (point.getLocation().getAltitude() < altmin)
+                                altmin = point.getLocation().getAltitude();
                         }
-                        if (bbox.getLatMin() < lowerLat) {
-                            lowerLat = bbox.getLatMin();
-                        }
-                        //lon
-                        if (bbox.getLonMax() > upperLon) {
-                            upperLon = bbox.getLonMax();
-                        }
-                        if (bbox.getLonMax() < lowerLon) {
-                            lowerLon = bbox.getLonMin();
-                        }
-                        
-                        break;
                     }
+
+                    altMax.add(altmax);
+                    altMin.add(altmin);
+
+                    if (altmin < lowerAlt)
+                        lowerAlt = altmin;
+                    if (altmax > upperAlt)
+                        upperAlt = altmax;
+
+                    dtStartt = new DateTime(dateRange.getStart().toDate(), chrono);
+                    dtEndt = new DateTime(dateRange.getEnd().toDate(), chrono);
+
+                    if (dtStartt.isBefore(dtStart)) {
+                        dtStart = dtStartt;
+                    }
+                    if (dtEndt.isAfter(dtEnd)) {
+                        dtEnd = dtEndt;
+                    }
+
+                    if (bbox.getLatMax() > upperLat) {
+                        upperLat = bbox.getLatMax();
+                    }
+                    if (bbox.getLatMin() < lowerLat) {
+                        lowerLat = bbox.getLatMin();
+                    }
+                    //lon
+                    if (bbox.getLonMax() > upperLon) {
+                        upperLon = bbox.getLonMax();
+                    }
+                    if (bbox.getLonMax() < lowerLon) {
+                        lowerLon = bbox.getLonMin();
+                    }
+
+                    break;
                 }
-                setStartDate(df.toDateTimeStringISO(dtStart.toDate()));
-                setEndDate(df.toDateTimeStringISO(dtEnd.toDate()));
-                if (reqStationNames != null) {
-                    setNumberOfStations(reqStationNames.size());
-                }
+            }
+            setStartDate(df.toDateTimeStringISO(dtStart.toDate()));
+            setEndDate(df.toDateTimeStringISO(dtEnd.toDate()));
+            if (reqStationNames != null) {
+                setNumberOfStations(reqStationNames.size());
             }
         }
     }

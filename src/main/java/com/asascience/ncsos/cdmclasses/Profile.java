@@ -6,13 +6,11 @@ package com.asascience.ncsos.cdmclasses;
 
 import com.asascience.ncsos.getobs.SOSObservationOffering;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.joda.time.DateTime;
+import org.opengis.temporal.CalendarDate;
 import org.w3c.dom.Document;
 import ucar.nc2.ft.PointFeature;
 import ucar.nc2.ft.PointFeatureIterator;
@@ -29,10 +27,9 @@ import ucar.unidata.geoloc.Station;
 public class Profile extends baseCDMClass implements iStationData {
 
     private final String[] variableNames;
-    private List<ProfileFeature> profileList;
+    private HashMap<Integer, ProfileFeature> profileList;
     private final ArrayList<String> eventTimes;
     private ProfileFeatureCollection profileData;
-    private ArrayList<Double> altMin, altMax;
    
     /**
      * 
@@ -48,12 +45,11 @@ public class Profile extends baseCDMClass implements iStationData {
 
         this.reqStationNames = new ArrayList<String>();
         reqStationNames.addAll(Arrays.asList(stationName));
-
-        if (eventTime != null) {
-            this.eventTimes = new ArrayList<String>();
+        System.out.println("received " + reqStationNames.size() + " stations requested");
+        
+        this.eventTimes = new ArrayList<String>();
+        if (eventTime != null)
             this.eventTimes.addAll(Arrays.asList(eventTime));
-        } else
-            this.eventTimes = null;
         
         lowerAlt = Double.POSITIVE_INFINITY;
         upperAlt = Double.NEGATIVE_INFINITY;
@@ -129,6 +125,12 @@ public class Profile extends baseCDMClass implements iStationData {
         
          return document;
     }
+    
+    public boolean isStationInFinalCollection(int stNum) {
+        if (profileList != null && profileList.containsKey((Integer)stNum))
+            return true;
+        return false;
+    }
 
     /************************
      * iStationData Methods *
@@ -138,85 +140,78 @@ public class Profile extends baseCDMClass implements iStationData {
     public void setData(Object profilePeatureCollection) throws IOException {
         this.profileData = (ProfileFeatureCollection) profilePeatureCollection;
 
-        profileList = new ArrayList<ProfileFeature>();
-
-        DateTime dtSearchStart = null;
-        DateTime dtSearchEnd = null;
-        
-        altMin = new ArrayList<Double>();
-        altMax = new ArrayList<Double>();
+        profileList = new HashMap<Integer, ProfileFeature>();
 
         boolean firstSet = true;
+        
+        //temp
+        DateTime dtStart = null;
+        DateTime dtEnd = null;
+        //check
+        DateTime dtStartt = null;
+        DateTime dtEndt = null;
+        String profileID = null;
 
-        //check first to see if the event times are not null
-        if (eventTimes != null) {
-            //turn event times in to dateTimes to compare
-            if (eventTimes.size() >= 1) {
-                dtSearchStart = new DateTime(df.getISODate(eventTimes.get(0)), chrono);
+        while (profileData.hasNext()) {
+            ProfileFeature pFeature = profileData.next();
+            pFeature.calcBounds();
+            
+            //scan through the data and get the profile id number
+            PointFeatureIterator pp = pFeature.getPointFeatureIterator(-1);
+            while (pp.hasNext()) {
+                PointFeature pointFeature = pp.next();
+                profileID = getProfileIDFromProfile(pointFeature);
+                //System.out.println(profileID);
+                break;
             }
-            if (eventTimes.size() == 2) {
+            
+            DateTime eventStart = (eventTimes.size() >= 1) ? new DateTime(df.getISODate(eventTimes.get(0)), chrono) : null;
+            DateTime eventEnd = (eventTimes.size() > 1) ? new DateTime(df.getISODate(eventTimes.get(1)), chrono) : null;
 
-                dtSearchEnd = new DateTime(df.getISODate(eventTimes.get(1)), chrono);
-            }
-
-            //temp
-            DateTime dtStart = null;
-            DateTime dtEnd = null;
-            //check
-            DateTime dtStartt = null;
-            DateTime dtEndt = null;
-            String profileID = null;
-
-            while (profileData.hasNext()) {
-                ProfileFeature pFeature = profileData.next();
-                pFeature.calcBounds();
-
-                //scan through the data and get the profile id number
-                PointFeatureIterator pp = pFeature.getPointFeatureIterator(-1);
-                while (pp.hasNext()) {
-                    PointFeature pointFeature = pp.next();
-                    profileID = getProfileIDFromProfile(pointFeature);
-                    //System.out.println(profileID);
-                    break;
-                }
-
-                //scan through the stationname for a match of id
-                for (Iterator<String> it = reqStationNames.iterator(); it.hasNext();) {
-                    String stName = it.next();
-                    if (stName.equalsIgnoreCase(profileID)) {
-                        profileList.add(pFeature);
-                        
-                        // check local altitude
-                        double altmin = Double.POSITIVE_INFINITY;
-                        double altmax = Double.NEGATIVE_INFINITY;
-                        
-                        for (pFeature.resetIteration();pFeature.hasNext();) {
-                            PointFeature point = pFeature.next();
-                            
-                            double alt = point.getLocation().getAltitude();
-                            
-                            if (alt < altmin)
-                                altmin = alt;
-                            if (alt > altmax)
-                                altmax = alt;
-                        }
-                        
-                        if (altmin < lowerAlt)
-                            lowerAlt = altmin;
-                        if (altmax > upperAlt)
-                            upperAlt = altmax;
-                        
-                        altMin.add(altmin);
-                        altMax.add(altmax);
+            //scan through the stationname for a match of id
+            if (profileID != null && reqStationNames.contains(profileID)) {
+                // check to make sure the profile falls into the event time
+                if (eventStart != null) {
+                    System.out.println("is " + pFeature.getTime().toGMTString() + " >= " + eventStart.toDate().toGMTString());
+                    // does it lie after or at start?
+                    if (pFeature.getTime().before(eventStart.toDate()))
+                        continue;
+                    if (eventEnd != null) {
+                        System.out.println("is " + pFeature.getTime().toGMTString() + " <= " + eventEnd.toDate().toGMTString());
+                        // does it lie before or at end?
+                        if (pFeature.getTime().after(eventEnd.toDate()))
+                            continue;
                     }
                 }
+                // get the index of the station we are adding
+                Integer stNum = 0;
+                for (int sti =0; sti < reqStationNames.size(); sti++) {
+                    if (reqStationNames.get(sti).equalsIgnoreCase(profileID))
+                        stNum = sti;
+                }
+                profileList.put(stNum, pFeature);
 
-                if (profileID == null) {
-                    profileID = "0";
-                    profileList.add(pFeature);
+                // check local altitude
+                double altmin = Double.POSITIVE_INFINITY;
+                double altmax = Double.NEGATIVE_INFINITY;
+
+                for (pFeature.resetIteration();pFeature.hasNext();) {
+                    PointFeature point = pFeature.next();
+
+                    double alt = point.getLocation().getAltitude();
+
+                    if (alt < altmin)
+                        altmin = alt;
+                    if (alt > altmax)
+                        altmax = alt;
                 }
 
-                if (firstSet) {
+                if (altmin < lowerAlt)
+                    lowerAlt = altmin;
+                if (altmax > upperAlt)
+                    upperAlt = altmax;
+
+                    if (firstSet) {
                     upperLat = pFeature.getLatLon().getLatitude();
                     lowerLat = pFeature.getLatLon().getLatitude();
                     upperLon = pFeature.getLatLon().getLongitude();
@@ -251,13 +246,23 @@ public class Profile extends baseCDMClass implements iStationData {
                         lowerLon = pFeature.getLatLon().getLongitude();
                     }
                 }
-            }
-            setStartDate(df.toDateTimeStringISO(dtStart.toDate()));
-            setEndDate(df.toDateTimeStringISO(dtEnd.toDate()));
-            if (reqStationNames != null) {
-                setNumberOfStations(reqStationNames.size());
+            } else {
+//                profileID = "0";
+//                profileList.add(pFeature);
             }
         }
+        setStartDate(df.toDateTimeStringISO(dtStart.toDate()));
+        setEndDate(df.toDateTimeStringISO(dtEnd.toDate()));
+        if (reqStationNames != null) {
+            setNumberOfStations(reqStationNames.size());
+        }
+    }
+    
+    @Override
+    public boolean isStationInFinalList(int stNum) {
+        if (profileList != null && profileList.containsKey((Integer)stNum))
+            return true;
+        return false;
     }
 
     @Override
@@ -268,7 +273,8 @@ public class Profile extends baseCDMClass implements iStationData {
     @Override
     public String getDataResponse(int stNum) {
         try {
-            if (profileData != null) {
+            System.out.println("getDataResponse: stNum - " + stNum);
+            if (profileData != null && profileList.containsKey((Integer)stNum)) {
                 return createProfileFeature(stNum);
             } else {
                 System.out.println("profileData is null, not creating a string");
@@ -291,7 +297,7 @@ public class Profile extends baseCDMClass implements iStationData {
 
     @Override
     public double getLowerLat(int stNum) {
-        if (profileData != null) {
+        if (profileData != null && profileList.containsKey((Integer)stNum)) {
             return profileList.get(stNum).getLatLon().getLatitude();
         } else {
             return Invalid_Value;
@@ -300,7 +306,7 @@ public class Profile extends baseCDMClass implements iStationData {
 
     @Override
     public double getLowerLon(int stNum) {
-        if (profileData != null) {
+        if (profileData != null && profileList.containsKey((Integer)stNum)) {
             return profileList.get(stNum).getLatLon().getLongitude();
         } else {
             return Invalid_Value;
@@ -309,7 +315,7 @@ public class Profile extends baseCDMClass implements iStationData {
 
     @Override
     public double getUpperLat(int stNum) {
-        if (profileData != null) {
+        if (profileData != null && profileList.containsKey((Integer)stNum)) {
             return profileList.get(stNum).getLatLon().getLatitude();
         } else {
             return Invalid_Value;
@@ -318,7 +324,7 @@ public class Profile extends baseCDMClass implements iStationData {
 
     @Override
     public double getUpperLon(int stNum) {
-        if (profileData != null) {
+        if (profileData != null && profileList.containsKey((Integer)stNum)) {
             return profileList.get(stNum).getLatLon().getLongitude();
         } else {
             return Invalid_Value;
@@ -327,31 +333,17 @@ public class Profile extends baseCDMClass implements iStationData {
     
     @Override
     public double getLowerAltitude(int stNum) {
-        if (altMin != null && altMin.size() > stNum) {
-            double retval = altMin.get(stNum);
-            if (retval == Double.NaN || retval == Double.POSITIVE_INFINITY)
-                retval = 0;
-            return retval;
-        } else {
-            return Invalid_Value;
-        }
+        return this.lowerAlt;
     }
     
     @Override
     public double getUpperAltitude(int stNum) {
-        if (altMax != null && altMax.size() > stNum) {
-            double retval = altMax.get(stNum);
-            if (retval == Double.NaN || retval == Double.POSITIVE_INFINITY)
-                retval = 0;
-            return retval;
-        } else {
-            return Invalid_Value;
-        }
+        return this.upperAlt;
     }
 
     @Override
     public String getTimeEnd(int stNum) {
-        if (profileData != null) {
+        if (profileData != null && profileList.containsKey((Integer)stNum)) {
             return df.toDateTimeStringISO(profileList.get(stNum).getTime());
         } else {
             return ERROR_NULL_DATE;
@@ -361,7 +353,7 @@ public class Profile extends baseCDMClass implements iStationData {
     @Override
     public String getTimeBegin(int stNum) {
 
-        if (profileData != null) {
+        if (profileData != null && profileList.containsKey((Integer)stNum)) {
             return df.toDateTimeStringISO(profileList.get(stNum).getTime());
         } else {
             return ERROR_NULL_DATE;
@@ -380,19 +372,14 @@ public class Profile extends baseCDMClass implements iStationData {
         try {
             while (profileIterator.hasNext()) {
                 PointFeature pointFeature = profileIterator.next();
-                valueList.clear();
-                valueList.add("time=" + dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
 
                 String profileID = getProfileIDFromProfile(pointFeature);
                 //if there is a profile id use it against the data that is requested
+                System.out.println("station number: " + stNum + " profileID: " + profileID);
                 if (profileID != null) {
-                    //System.out.println(profileID);
-                    if (profileID.equalsIgnoreCase(reqStationNames.get(stNum))) {
-                        addProfileDataToBuilder(valueList, pointFeature, builder);
-                    } else {
-                        System.out.println("Not adding profile data to builder");
-                    }
-                } else {
+                    valueList.clear();
+                    valueList.add("time=" + dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
+                    valueList.add("station=" + stNum);
                     addProfileDataToBuilder(valueList, pointFeature, builder);
                 }
             }
@@ -429,57 +416,23 @@ public class Profile extends baseCDMClass implements iStationData {
         } //if it is not there dont USE IT!,,,,,but maybe warn that it is not there?        
         catch (Exception e) {
             //Logger.getLogger(SOSGetObservationRequestHandler.class.getName()).log(Level.INFO, "ERROR PROFILE ID NO AVAILABLE \n Must be single Profile \n", e);
+            System.out.println(e.toString());
         }
         return profileID;
     }
     
     private String createProfileFeature(int stNum) throws IOException {
-        StringBuilder builder = new StringBuilder();
-        DateFormatter dateFormatter = new DateFormatter();
-        List<String> valueList = new ArrayList<String>();
+        if (profileList != null && profileList.containsKey((Integer)stNum)) {
+            StringBuilder builder = new StringBuilder();
+            DateFormatter dateFormatter = new DateFormatter();
+            List<String> valueList = new ArrayList<String>();
 
-        //if multi Time
-        if (eventTimes.size() > 1) {
-            //get the profile collection, and loop through
-            //while has next
-
-            for (int i = 0; i < profileList.size(); i++) {
-                //grab the profile
-                ProfileFeature pFeature = profileList.get(i);
-                if (pFeature != null) {
-
-                    //output the name
-                    DateTime dtStart = new DateTime(df.getISODate(eventTimes.get(0)), chrono);
-                    DateTime dtEnd = new DateTime(df.getISODate(eventTimes.get(1)), chrono);
-                    DateTime tsDt = new DateTime(pFeature.getName(), chrono);
-                    
-                    //find out if current time(searchtime) is one or after startTime
-                    //same as start
-                    if (tsDt.isEqual(dtStart)) {
-                        addProfileData(valueList, dateFormatter, builder, pFeature.getPointFeatureIterator(-1), stNum);
-                    } //equal end
-                    else if (tsDt.isEqual(dtEnd)) {
-                        addProfileData(valueList, dateFormatter, builder, pFeature.getPointFeatureIterator(-1), stNum);
-                    } //afterStart and before end       
-                    else if (tsDt.isAfter(dtStart) && (tsDt.isBefore(dtEnd))) {
-                        addProfileData(valueList, dateFormatter, builder, pFeature.getPointFeatureIterator(-1), stNum);
-                    } else {
-                        System.out.println("tsDt is not equal to any known case");
-                    }
-                    //setCount(pFeature.size());
-                    // exit if we get an error
-                    if (builder.toString().contains("ERROR"))
-                        break;
-                }
-            }
-
-        } //if not multiTime        
-        else {
             ProfileFeature pFeature = profileList.get(stNum);
             addProfileData(valueList, dateFormatter, builder, pFeature.getPointFeatureIterator(-1), stNum);
+
+            return builder.toString();
         }
-        
-        return builder.toString();
+        return "";
     }
 
 }

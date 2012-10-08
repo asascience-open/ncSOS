@@ -111,6 +111,11 @@ public abstract class baseCDMClass implements iStationData {
     }
     
     @Override
+    public boolean isStationInFinalList(int stNum) {
+        return true;
+    }
+    
+    @Override
     public double getLowerAltitude(int stNum) {
         return 0;
     }

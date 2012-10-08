@@ -95,6 +95,20 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     
     private void setCDMDatasetForStations(NetcdfDataset netCDFDataset, String[] stationNames, String[] eventTime, Map<String, String> latLonRequest) throws IOException {
         System.out.println("In setCMDDatasetForStations - " + getDatasetFeatureType().name());
+        // strip out any text if the station variable has a shape dimension of 1
+        String[] editedStationNames = new String[stationNames.length];
+        if (stationVariable.getShape().length <= 1) {
+            System.out.println("Removing characters from station names");
+            for (int i=0; i<stationNames.length; i++) {
+                editedStationNames[i] = stationNames[i].replaceAll("[A-Za-z]+", "");
+            }
+            // copy array
+            stationNames = editedStationNames.clone();
+            System.out.println("Have " + stationNames.length + " stations after fixing the name\n");
+            for (String str : stationNames) {
+                System.out.print(str + ", ");
+            }
+        }
         //grid operation
         if (getDatasetFeatureType() == FeatureType.GRID) {
             Variable depthAxis;
