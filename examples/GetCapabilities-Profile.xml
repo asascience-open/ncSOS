@@ -18,7 +18,7 @@
         <ows:ServiceType codeSpace="http://opengeospatial.net">OGC:SOS</ows:ServiceType>
         <ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
         <ows:Fees>NONE</ows:Fees>
-        <ows:AccessConstraints/>
+        <ows:AccessConstraints>NONE</ows:AccessConstraints>
     </ows:ServiceIdentification>
     <!--~~~~~~~~~~~~~~~~~~~~~~-->
     <!-- Provider Description -->
@@ -63,6 +63,7 @@
             </ows:DCP>
             <ows:Parameter name="offering" use="required">
                 <ows:AllowedValues>
+                    <ows:Value>network-all</ows:Value>
                     <ows:Value>profile0</ows:Value>
                     <ows:Value>profile1</ows:Value>
                     <ows:Value>profile2</ows:Value>
@@ -94,31 +95,35 @@
         <ows:Operation name="DescribeSensor">
             <ows:DCP>
                 <ows:HTTP>
-                    <ows:Get xlink:href="resources/datasets/profile-Contiguous-Ragged-MultipleProfiles-H.3.4/profile-Contiguous-Ragged-MultipleProfiles-H.3.4.nc"/>
+                    <ows:Get/>
                 </ows:HTTP>
             </ows:DCP>
             <ows:Parameter name="procedure" use="required">
                 <ows:AllowedValues>
                     <ows:Value>urn:tds:station.sos:profile0</ows:Value>
                     <ows:Value>urn:tds:sensor.sos:profile0:rowSize</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:profile0:time</ows:Value>
                     <ows:Value>urn:tds:sensor.sos:profile0:temperature</ows:Value>
                     <ows:Value>urn:tds:sensor.sos:profile0:humidity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:profile0:record</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:profile0:z</ows:Value>
                     <ows:Value>urn:tds:station.sos:profile1</ows:Value>
                     <ows:Value>urn:tds:sensor.sos:profile1:rowSize</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:profile1:time</ows:Value>
                     <ows:Value>urn:tds:sensor.sos:profile1:temperature</ows:Value>
                     <ows:Value>urn:tds:sensor.sos:profile1:humidity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:profile1:record</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:profile1:z</ows:Value>
                     <ows:Value>urn:tds:station.sos:profile2</ows:Value>
                     <ows:Value>urn:tds:sensor.sos:profile2:rowSize</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:profile2:time</ows:Value>
                     <ows:Value>urn:tds:sensor.sos:profile2:temperature</ows:Value>
                     <ows:Value>urn:tds:sensor.sos:profile2:humidity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:profile2:record</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:profile2:z</ows:Value>
                     <ows:Value>urn:tds:station.sos:profile3</ows:Value>
                     <ows:Value>urn:tds:sensor.sos:profile3:rowSize</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:profile3:time</ows:Value>
                     <ows:Value>urn:tds:sensor.sos:profile3:temperature</ows:Value>
                     <ows:Value>urn:tds:sensor.sos:profile3:humidity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:profile3:record</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:profile3:z</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
             <ows:Parameter name="responseformat" use="required">
@@ -143,6 +148,35 @@
     <!--~~~~~~~~~~~~~~~~~~~~~~~-->
     <Contents>
         <ObservationOfferingList>
+            <ObservationOffering gml:id="network-all">
+                <gml:description>All stations in the netCDF dataset.</gml:description>
+                <gml:name>urn:tds:network:all</gml:name>
+                <gml:srsName>EPSG:4326</gml:srsName>
+                <gml:boundedBy>
+                    <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                        <gml:lowerCorner>13.0 15.0</gml:lowerCorner>
+                        <gml:upperCorner>90.0 134.001</gml:upperCorner>
+                    </gml:Envelope>
+                </gml:boundedBy>
+                <time>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
+                        <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
+                        <gml:endPosition>1990-01-01T03:00:00.000Z</gml:endPosition>
+                    </gml:TimePeriod>
+                </time>
+                <procedure xlink:href="urn:tds:station.sos:profile0"/>
+                <procedure xlink:href="urn:tds:station.sos:profile1"/>
+                <procedure xlink:href="urn:tds:station.sos:profile2"/>
+                <procedure xlink:href="urn:tds:station.sos:profile3"/>
+                <observedProperty xlink:href="rowSize"/>
+                <observedProperty xlink:href="time"/>
+                <observedProperty xlink:href="temperature"/>
+                <observedProperty xlink:href="humidity"/>
+                <observedProperty xlink:href="z"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
+                <responseModel/>
+                <responseMode/>
+            </ObservationOffering>
             <ObservationOffering gml:id="profile0">
                 <gml:name>urn:tds:station.sos:profile0</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
@@ -164,9 +198,10 @@
                 <observedProperty xlink:href="humidity"/>
                 <observedProperty xlink:href="z"/>
                 <procedure xlink:href="urn:tds:sensor.sos:profile0:rowSize"/>
+                <procedure xlink:href="urn:tds:sensor.sos:profile0:time"/>
                 <procedure xlink:href="urn:tds:sensor.sos:profile0:temperature"/>
                 <procedure xlink:href="urn:tds:sensor.sos:profile0:humidity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:profile0:record"/>
+                <procedure xlink:href="urn:tds:sensor.sos:profile0:z"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
@@ -192,9 +227,10 @@
                 <observedProperty xlink:href="humidity"/>
                 <observedProperty xlink:href="z"/>
                 <procedure xlink:href="urn:tds:sensor.sos:profile1:rowSize"/>
+                <procedure xlink:href="urn:tds:sensor.sos:profile1:time"/>
                 <procedure xlink:href="urn:tds:sensor.sos:profile1:temperature"/>
                 <procedure xlink:href="urn:tds:sensor.sos:profile1:humidity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:profile1:record"/>
+                <procedure xlink:href="urn:tds:sensor.sos:profile1:z"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
@@ -220,9 +256,10 @@
                 <observedProperty xlink:href="humidity"/>
                 <observedProperty xlink:href="z"/>
                 <procedure xlink:href="urn:tds:sensor.sos:profile2:rowSize"/>
+                <procedure xlink:href="urn:tds:sensor.sos:profile2:time"/>
                 <procedure xlink:href="urn:tds:sensor.sos:profile2:temperature"/>
                 <procedure xlink:href="urn:tds:sensor.sos:profile2:humidity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:profile2:record"/>
+                <procedure xlink:href="urn:tds:sensor.sos:profile2:z"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
@@ -248,9 +285,10 @@
                 <observedProperty xlink:href="humidity"/>
                 <observedProperty xlink:href="z"/>
                 <procedure xlink:href="urn:tds:sensor.sos:profile3:rowSize"/>
+                <procedure xlink:href="urn:tds:sensor.sos:profile3:time"/>
                 <procedure xlink:href="urn:tds:sensor.sos:profile3:temperature"/>
                 <procedure xlink:href="urn:tds:sensor.sos:profile3:humidity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:profile3:record"/>
+                <procedure xlink:href="urn:tds:sensor.sos:profile3:z"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>

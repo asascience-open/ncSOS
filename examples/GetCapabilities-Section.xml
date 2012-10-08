@@ -18,7 +18,7 @@
         <ows:ServiceType codeSpace="http://opengeospatial.net">OGC:SOS</ows:ServiceType>
         <ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
         <ows:Fees>NONE</ows:Fees>
-        <ows:AccessConstraints/>
+        <ows:AccessConstraints>NONE</ows:AccessConstraints>
     </ows:ServiceIdentification>
     <!--~~~~~~~~~~~~~~~~~~~~~~-->
     <!-- Provider Description -->
@@ -63,6 +63,7 @@
             </ows:DCP>
             <ows:Parameter name="offering" use="required">
                 <ows:AllowedValues>
+                    <ows:Value>network-all</ows:Value>
                     <ows:Value>trajectory0</ows:Value>
                     <ows:Value>trajectory1</ows:Value>
                     <ows:Value>trajectory2</ows:Value>
@@ -95,35 +96,41 @@
         <ows:Operation name="DescribeSensor">
             <ows:DCP>
                 <ows:HTTP>
-                    <ows:Get xlink:href="resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc"/>
+                    <ows:Get/>
                 </ows:HTTP>
             </ows:DCP>
             <ows:Parameter name="procedure" use="required">
                 <ows:AllowedValues>
                     <ows:Value>urn:tds:station.sos:trajectory0</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:trajectory0:time</ows:Value>
                     <ows:Value>urn:tds:sensor.sos:trajectory0:temperature</ows:Value>
                     <ows:Value>urn:tds:sensor.sos:trajectory0:salinity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:trajectory0:record</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:trajectory0:alt</ows:Value>
                     <ows:Value>urn:tds:station.sos:trajectory1</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:trajectory1:time</ows:Value>
                     <ows:Value>urn:tds:sensor.sos:trajectory1:temperature</ows:Value>
                     <ows:Value>urn:tds:sensor.sos:trajectory1:salinity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:trajectory1:record</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:trajectory1:alt</ows:Value>
                     <ows:Value>urn:tds:station.sos:trajectory2</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:trajectory2:time</ows:Value>
                     <ows:Value>urn:tds:sensor.sos:trajectory2:temperature</ows:Value>
                     <ows:Value>urn:tds:sensor.sos:trajectory2:salinity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:trajectory2:record</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:trajectory2:alt</ows:Value>
                     <ows:Value>urn:tds:station.sos:trajectory3</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:trajectory3:time</ows:Value>
                     <ows:Value>urn:tds:sensor.sos:trajectory3:temperature</ows:Value>
                     <ows:Value>urn:tds:sensor.sos:trajectory3:salinity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:trajectory3:record</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:trajectory3:alt</ows:Value>
                     <ows:Value>urn:tds:station.sos:trajectory4</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:trajectory4:time</ows:Value>
                     <ows:Value>urn:tds:sensor.sos:trajectory4:temperature</ows:Value>
                     <ows:Value>urn:tds:sensor.sos:trajectory4:salinity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:trajectory4:record</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:trajectory4:alt</ows:Value>
                     <ows:Value>urn:tds:station.sos:trajectory5</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:trajectory5:time</ows:Value>
                     <ows:Value>urn:tds:sensor.sos:trajectory5:temperature</ows:Value>
                     <ows:Value>urn:tds:sensor.sos:trajectory5:salinity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:trajectory5:record</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:trajectory5:alt</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
             <ows:Parameter name="responseformat" use="required">
@@ -148,6 +155,36 @@
     <!--~~~~~~~~~~~~~~~~~~~~~~~-->
     <Contents>
         <ObservationOfferingList>
+            <ObservationOffering gml:id="network-all">
+                <gml:description>All stations in the netCDF dataset.</gml:description>
+                <gml:name>urn:tds:network:all</gml:name>
+                <gml:srsName>EPSG:4326</gml:srsName>
+                <gml:boundedBy>
+                    <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                        <gml:lowerCorner>0.8920255899429321 -71.64488220214844</gml:lowerCorner>
+                        <gml:upperCorner>44.54783248901367 -0.9158166646957397</gml:upperCorner>
+                    </gml:Envelope>
+                </gml:boundedBy>
+                <time>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
+                        <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
+                        <gml:endPosition>1990-01-01T07:00:00.000Z</gml:endPosition>
+                    </gml:TimePeriod>
+                </time>
+                <procedure xlink:href="urn:tds:station.sos:trajectory0"/>
+                <procedure xlink:href="urn:tds:station.sos:trajectory1"/>
+                <procedure xlink:href="urn:tds:station.sos:trajectory2"/>
+                <procedure xlink:href="urn:tds:station.sos:trajectory3"/>
+                <procedure xlink:href="urn:tds:station.sos:trajectory4"/>
+                <procedure xlink:href="urn:tds:station.sos:trajectory5"/>
+                <observedProperty xlink:href="time"/>
+                <observedProperty xlink:href="temperature"/>
+                <observedProperty xlink:href="salinity"/>
+                <observedProperty xlink:href="alt"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
+                <responseModel/>
+                <responseMode/>
+            </ObservationOffering>
             <ObservationOffering gml:id="trajectory0">
                 <gml:name>urn:tds:station.sos:trajectory0</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
@@ -167,9 +204,10 @@
                 <observedProperty xlink:href="temperature"/>
                 <observedProperty xlink:href="salinity"/>
                 <observedProperty xlink:href="alt"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory0:time"/>
                 <procedure xlink:href="urn:tds:sensor.sos:trajectory0:temperature"/>
                 <procedure xlink:href="urn:tds:sensor.sos:trajectory0:salinity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:trajectory0:record"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory0:alt"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
@@ -193,9 +231,10 @@
                 <observedProperty xlink:href="temperature"/>
                 <observedProperty xlink:href="salinity"/>
                 <observedProperty xlink:href="alt"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory1:time"/>
                 <procedure xlink:href="urn:tds:sensor.sos:trajectory1:temperature"/>
                 <procedure xlink:href="urn:tds:sensor.sos:trajectory1:salinity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:trajectory1:record"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory1:alt"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
@@ -219,9 +258,10 @@
                 <observedProperty xlink:href="temperature"/>
                 <observedProperty xlink:href="salinity"/>
                 <observedProperty xlink:href="alt"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory2:time"/>
                 <procedure xlink:href="urn:tds:sensor.sos:trajectory2:temperature"/>
                 <procedure xlink:href="urn:tds:sensor.sos:trajectory2:salinity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:trajectory2:record"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory2:alt"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
@@ -245,9 +285,10 @@
                 <observedProperty xlink:href="temperature"/>
                 <observedProperty xlink:href="salinity"/>
                 <observedProperty xlink:href="alt"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory3:time"/>
                 <procedure xlink:href="urn:tds:sensor.sos:trajectory3:temperature"/>
                 <procedure xlink:href="urn:tds:sensor.sos:trajectory3:salinity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:trajectory3:record"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory3:alt"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
@@ -271,9 +312,10 @@
                 <observedProperty xlink:href="temperature"/>
                 <observedProperty xlink:href="salinity"/>
                 <observedProperty xlink:href="alt"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory4:time"/>
                 <procedure xlink:href="urn:tds:sensor.sos:trajectory4:temperature"/>
                 <procedure xlink:href="urn:tds:sensor.sos:trajectory4:salinity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:trajectory4:record"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory4:alt"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
@@ -297,9 +339,10 @@
                 <observedProperty xlink:href="temperature"/>
                 <observedProperty xlink:href="salinity"/>
                 <observedProperty xlink:href="alt"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory5:time"/>
                 <procedure xlink:href="urn:tds:sensor.sos:trajectory5:temperature"/>
                 <procedure xlink:href="urn:tds:sensor.sos:trajectory5:salinity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:trajectory5:record"/>
+                <procedure xlink:href="urn:tds:sensor.sos:trajectory5:alt"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>

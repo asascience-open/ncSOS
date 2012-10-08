@@ -18,7 +18,7 @@
         <ows:ServiceType codeSpace="http://opengeospatial.net">OGC:SOS</ows:ServiceType>
         <ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
         <ows:Fees>NONE</ows:Fees>
-        <ows:AccessConstraints/>
+        <ows:AccessConstraints>NONE</ows:AccessConstraints>
     </ows:ServiceIdentification>
     <!--~~~~~~~~~~~~~~~~~~~~~~-->
     <!-- Provider Description -->
@@ -63,6 +63,7 @@
             </ows:DCP>
             <ows:Parameter name="offering" use="required">
                 <ows:AllowedValues>
+                    <ows:Value>network-all</ows:Value>
                     <ows:Value>Station-0</ows:Value>
                     <ows:Value>Station-1</ows:Value>
                     <ows:Value>Station-2</ows:Value>
@@ -94,51 +95,21 @@
         <ows:Operation name="DescribeSensor">
             <ows:DCP>
                 <ows:HTTP>
-                    <ows:Get xlink:href="resources/datasets/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1.nc"/>
+                    <ows:Get/>
                 </ows:HTTP>
             </ows:DCP>
             <ows:Parameter name="procedure" use="required">
                 <ows:AllowedValues>
                     <ows:Value>urn:tds:station.sos:Station-0</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-0:temperature</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-0:humidity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-0:record</ows:Value>
                     <ows:Value>urn:tds:station.sos:Station-1</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-1:temperature</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-1:humidity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-1:record</ows:Value>
                     <ows:Value>urn:tds:station.sos:Station-2</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-2:temperature</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-2:humidity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-2:record</ows:Value>
                     <ows:Value>urn:tds:station.sos:Station-3</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-3:temperature</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-3:humidity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-3:record</ows:Value>
                     <ows:Value>urn:tds:station.sos:Station-4</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-4:temperature</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-4:humidity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-4:record</ows:Value>
                     <ows:Value>urn:tds:station.sos:Station-5</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-5:temperature</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-5:humidity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-5:record</ows:Value>
                     <ows:Value>urn:tds:station.sos:Station-6</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-6:temperature</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-6:humidity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-6:record</ows:Value>
                     <ows:Value>urn:tds:station.sos:Station-7</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-7:temperature</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-7:humidity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-7:record</ows:Value>
                     <ows:Value>urn:tds:station.sos:Station-8</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-8:temperature</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-8:humidity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-8:record</ows:Value>
                     <ows:Value>urn:tds:station.sos:Station-9</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-9:temperature</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-9:humidity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station-9:record</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
             <ows:Parameter name="responseformat" use="required">
@@ -163,6 +134,36 @@
     <!--~~~~~~~~~~~~~~~~~~~~~~~-->
     <Contents>
         <ObservationOfferingList>
+            <ObservationOffering gml:id="network-all">
+                <gml:description>All stations in the netCDF dataset.</gml:description>
+                <gml:name>urn:tds:network:all</gml:name>
+                <gml:srsName>EPSG:4326</gml:srsName>
+                <gml:boundedBy>
+                    <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                        <gml:lowerCorner>3.0 38.0</gml:lowerCorner>
+                        <gml:upperCorner>90.0 174.0001</gml:upperCorner>
+                    </gml:Envelope>
+                </gml:boundedBy>
+                <time>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
+                        <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
+                        <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
+                    </gml:TimePeriod>
+                </time>
+                <procedure xlink:href="urn:tds:station.sos:Station-0"/>
+                <procedure xlink:href="urn:tds:station.sos:Station-1"/>
+                <procedure xlink:href="urn:tds:station.sos:Station-2"/>
+                <procedure xlink:href="urn:tds:station.sos:Station-3"/>
+                <procedure xlink:href="urn:tds:station.sos:Station-4"/>
+                <procedure xlink:href="urn:tds:station.sos:Station-5"/>
+                <procedure xlink:href="urn:tds:station.sos:Station-6"/>
+                <procedure xlink:href="urn:tds:station.sos:Station-7"/>
+                <procedure xlink:href="urn:tds:station.sos:Station-8"/>
+                <procedure xlink:href="urn:tds:station.sos:Station-9"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
+                <responseModel/>
+                <responseMode/>
+            </ObservationOffering>
             <ObservationOffering gml:id="Station-0">
                 <gml:name>urn:tds:station.sos:Station-0</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
@@ -178,9 +179,6 @@
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-0:temperature"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-0:humidity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-0:record"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
@@ -200,9 +198,6 @@
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-1:temperature"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-1:humidity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-1:record"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
@@ -222,9 +217,6 @@
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-2:temperature"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-2:humidity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-2:record"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
@@ -244,9 +236,6 @@
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-3:temperature"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-3:humidity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-3:record"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
@@ -266,9 +255,6 @@
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-4:temperature"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-4:humidity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-4:record"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
@@ -288,9 +274,6 @@
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-5:temperature"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-5:humidity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-5:record"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
@@ -310,9 +293,6 @@
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-6:temperature"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-6:humidity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-6:record"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
@@ -332,9 +312,6 @@
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-7:temperature"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-7:humidity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-7:record"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
@@ -354,9 +331,6 @@
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-8:temperature"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-8:humidity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-8:record"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
@@ -376,9 +350,6 @@
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-9:temperature"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-9:humidity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Station-9:record"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>

@@ -11,14 +11,14 @@
     <!--~~~~~~~~~~~~~~~~~~~~~~~~-->
     <ows:ServiceIdentification>
         <ows:Title>Sea Surface Temperature Analysis Model</ows:Title>
-        <ows:Abstract>2003-04-07 12:12:50 - created by gribtocdl</ows:Abstract>
+        <ows:Abstract/>
         <ows:Keywords>
             <ows:Keyword/>
         </ows:Keywords>
         <ows:ServiceType codeSpace="http://opengeospatial.net">OGC:SOS</ows:ServiceType>
         <ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
         <ows:Fees>NONE</ows:Fees>
-        <ows:AccessConstraints/>
+        <ows:AccessConstraints>NONE</ows:AccessConstraints>
     </ows:ServiceIdentification>
     <!--~~~~~~~~~~~~~~~~~~~~~~-->
     <!-- Provider Description -->
@@ -63,6 +63,7 @@
             </ows:DCP>
             <ows:Parameter name="offering" use="required">
                 <ows:AllowedValues>
+                    <ows:Value>network-all</ows:Value>
                     <ows:Value>grid1</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
@@ -83,37 +84,28 @@
                     <ows:Value>text/xml;subtype="om/1.0.0"</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
+            <ows:Parameter name="lat" use="required">
+                <ows:AllowedValues>
+                    <ows:MinimumValue>-90.0</ows:MinimumValue>
+                    <ows:MaximumValue>90.0</ows:MaximumValue>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="lon" use="required">
+                <ows:AllowedValues>
+                    <ows:MinimumValue>-180.0</ows:MinimumValue>
+                    <ows:MaximumValue>180.0</ows:MaximumValue>
+                </ows:AllowedValues>
+            </ows:Parameter>
         </ows:Operation>
         <ows:Operation name="DescribeSensor">
             <ows:DCP>
                 <ows:HTTP>
-                    <ows:Get xlink:href="resources/datasets/satellite-sst/SST_Global_2x2deg_20120626_0000.nc"/>
+                    <ows:Get/>
                 </ows:HTTP>
             </ows:DCP>
             <ows:Parameter name="procedure" use="required">
                 <ows:AllowedValues>
                     <ows:Value>urn:tds:station.sos:grid1</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:grid1:reftime</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:grid1:datetime</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:grid1:forecasttime</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:grid1:model_id</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:grid1:nav_model</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:grid1:grid_type_code</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:grid1:grid_type</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:grid1:grid_name</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:grid1:grid_center</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:grid1:grid_number</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:grid1:i_dim</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:grid1:j_dim</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:grid1:Ni</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:grid1:Nj</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:grid1:La1</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:grid1:Lo1</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:grid1:La2</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:grid1:Lo2</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:grid1:Di</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:grid1:Dj</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:grid1:ResCompFlag</ows:Value>
                     <ows:Value>urn:tds:sensor.sos:grid1:SST</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
@@ -139,6 +131,28 @@
     <!--~~~~~~~~~~~~~~~~~~~~~~~-->
     <Contents>
         <ObservationOfferingList>
+            <ObservationOffering gml:id="network-all">
+                <gml:description>All stations in the netCDF dataset.</gml:description>
+                <gml:name>urn:tds:network:all</gml:name>
+                <gml:srsName>EPSG:4326</gml:srsName>
+                <gml:boundedBy>
+                    <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                        <gml:lowerCorner>-90.0 NaN</gml:lowerCorner>
+                        <gml:upperCorner>90.0 128.0</gml:upperCorner>
+                    </gml:Envelope>
+                </gml:boundedBy>
+                <time>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
+                        <gml:beginPosition>2012-06-26T00:00:00.000Z</gml:beginPosition>
+                        <gml:endPosition>2012-06-26T00:00:00.000Z</gml:endPosition>
+                    </gml:TimePeriod>
+                </time>
+                <procedure xlink:href="urn:tds:station.sos:grid1"/>
+                <observedProperty xlink:href="SST"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
+                <responseModel/>
+                <responseMode/>
+            </ObservationOffering>
             <ObservationOffering gml:id="grid1">
                 <gml:name>urn:tds:station.sos:grid1</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
@@ -150,27 +164,6 @@
                     </gml:TimePeriod>
                 </time>
                 <observedProperty xlink:href="SST"/>
-                <procedure xlink:href="urn:tds:sensor.sos:grid1:reftime"/>
-                <procedure xlink:href="urn:tds:sensor.sos:grid1:datetime"/>
-                <procedure xlink:href="urn:tds:sensor.sos:grid1:forecasttime"/>
-                <procedure xlink:href="urn:tds:sensor.sos:grid1:model_id"/>
-                <procedure xlink:href="urn:tds:sensor.sos:grid1:nav_model"/>
-                <procedure xlink:href="urn:tds:sensor.sos:grid1:grid_type_code"/>
-                <procedure xlink:href="urn:tds:sensor.sos:grid1:grid_type"/>
-                <procedure xlink:href="urn:tds:sensor.sos:grid1:grid_name"/>
-                <procedure xlink:href="urn:tds:sensor.sos:grid1:grid_center"/>
-                <procedure xlink:href="urn:tds:sensor.sos:grid1:grid_number"/>
-                <procedure xlink:href="urn:tds:sensor.sos:grid1:i_dim"/>
-                <procedure xlink:href="urn:tds:sensor.sos:grid1:j_dim"/>
-                <procedure xlink:href="urn:tds:sensor.sos:grid1:Ni"/>
-                <procedure xlink:href="urn:tds:sensor.sos:grid1:Nj"/>
-                <procedure xlink:href="urn:tds:sensor.sos:grid1:La1"/>
-                <procedure xlink:href="urn:tds:sensor.sos:grid1:Lo1"/>
-                <procedure xlink:href="urn:tds:sensor.sos:grid1:La2"/>
-                <procedure xlink:href="urn:tds:sensor.sos:grid1:Lo2"/>
-                <procedure xlink:href="urn:tds:sensor.sos:grid1:Di"/>
-                <procedure xlink:href="urn:tds:sensor.sos:grid1:Dj"/>
-                <procedure xlink:href="urn:tds:sensor.sos:grid1:ResCompFlag"/>
                 <procedure xlink:href="urn:tds:sensor.sos:grid1:SST"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>

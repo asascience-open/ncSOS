@@ -3040,3 +3040,1767 @@
         </sml:System>
     </sml:member>
 </sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="sensor-NOAA_8724698-watlev">
+            <gml:description>Sensor metadata for watlev on NOAA_8724698</gml:description>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="SensorId">
+                        <sml:Term definition="sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="units">
+                        <sml:Term definition="">
+                            <sml:value>m</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="_FillValue">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="coordinates">
+                        <sml:Term definition="">
+                            <sml:value>time lat lon</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="HDF5_chunksize">
+                        <sml:Term definition="">
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:location>
+                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
+                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
+                </gml:Point>
+            </sml:location>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
