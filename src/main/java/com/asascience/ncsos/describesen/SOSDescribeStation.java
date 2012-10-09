@@ -4,11 +4,13 @@
  */
 package com.asascience.ncsos.describesen;
 
+import com.asascience.ncsos.outputformatter.DescribeNetworkFormatter;
 import com.asascience.ncsos.outputformatter.DescribeSensorFormatter;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import org.w3c.dom.Element;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -97,6 +99,45 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
         description = dataset.findAttValueIgnoreCase(null, "description", "no description");
 
     }
+    
+    /**
+     * Creates an instance to collect needed information, from the dataset, for
+     * a Describe Sensor 'network-all' response.
+     * @param dataset netcdf dataset of feature type TimeSeries
+     */
+    public SOSDescribeStation( NetcdfDataset dataset ) throws IOException {
+        super(dataset);
+        
+        this.procedure = "";
+        
+        // get desired variables
+        for (Variable var : dataset.getVariables()) {
+            if (var.getFullName().toLowerCase().contains("doc")) {
+                if (documentVariables == null)
+                    documentVariables = new ArrayList<Variable>();
+                documentVariables.add(var);
+            }
+        }
+        
+        errorString = null;
+        
+        // get our platform type
+        platformType = dataset.findGlobalAttributeIgnoreCase("platformtype");
+        // history attribute
+        historyAttribute = dataset.findGlobalAttributeIgnoreCase("history");
+        // creator contact info
+        for (Attribute attr : dataset.getGlobalAttributes()) {
+            String attrName = attr.getName().toLowerCase();
+            if (attrName.contains("contributor")) {
+                if (contributorAttributes == null)
+                    contributorAttributes = new ArrayList<Attribute>();
+                contributorAttributes.add(attr);
+            }
+        }
+        
+        // description
+        description = dataset.findAttValueIgnoreCase(null, "description", "no description");
+    }
 
     /*********************/
     /* Interface Methods */
@@ -125,10 +166,154 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
         }
     }
     
+    public void setupOutputDocument(DescribeNetworkFormatter output) {
+        if (errorString == null) {
+            // system node
+            output.setNetworkSystemId("network-all");
+            // network identification
+            formatSetNetworkIdentification(output);
+            // classification
+            formatSetClassification(output);
+            // set history
+            formatSetHistoryNodes(output);
+            // set components
+            formatSetStationComponentList(output);
+        } else {
+            output.setupExceptionOutput(errorString);
+        }
+    }
+    
     /**************************************************************************/
     
     /*****************************
      * Private/Protected Methods *
+     *****************************/
+    
+    /*****************************
+     * Network-All Formatters    *
+     *****************************/
+    
+    protected void formatSetStationComponentList(DescribeNetworkFormatter output) {
+        // iterate through each station name, add a station to the component list and setup each station
+        for (String stName : getStationNames().values()) {
+            int stIndex = getStationIndex(stName);
+            // add a new station
+            Element stNode = output.addNewStationWithId("station-"+stName);
+            // set a description for each station - TODO
+            output.removeStationDescriptionNode(stNode);
+            // set identification for station
+            formatSetStationIdentification(output, stNode, stName);
+            // set location for station
+            output.setStationLocationNode(stNode, stationName, getStationCoords(stIndex));
+            // remove unwanted nodes for each station
+            output.removeStationPosition(stNode);
+            output.removeStationPositions(stNode);
+            output.removeStationTimePosition(stNode);
+        }
+    }
+    
+    /**
+     * 
+     * @param output 
+     */
+    protected void formatSetClassification(DescribeNetworkFormatter output) {
+        if (platformType != null) {
+            output.addToNetworkClassificationNode(platformType.getName(), "", platformType.getStringValue());
+        } else {
+            output.removeNetworkClassificationNode();
+        }
+    }
+    
+    /**
+     * 
+     * @param output 
+     */
+    protected void formatSetDescription(DescribeNetworkFormatter output) {
+        output.setNetworkDescriptionNode(description);
+    }
+    
+    /**
+     * 
+     * @param output 
+     */
+    protected void formatSetContactNodes(DescribeNetworkFormatter output) {
+        if (!InventoryContactName.equalsIgnoreCase("") || !InventoryContactEmail.equalsIgnoreCase("") || !InventoryContactPhone.equalsIgnoreCase("")) {
+            String role = "http://mmisw.org/ont/ioos/definition/operator";
+            HashMap<String, HashMap<String, String>> domainContactInfo = new HashMap<String, HashMap<String, String>>();
+            HashMap<String, String> address = new HashMap<String, String>();
+            address.put("sml:electronicMailAddress", InventoryContactEmail);
+            domainContactInfo.put("sml:address", address);
+            HashMap<String, String> phone = new HashMap<String, String>();
+            phone.put("sml:voice", InventoryContactPhone);
+            domainContactInfo.put("sml:phone", phone);
+            output.addContactNode(role, InventoryContactName, domainContactInfo);
+        }
+        if (!DataContactName.equalsIgnoreCase("") || !DataContactEmail.equalsIgnoreCase("") || !DataContactPhone.equalsIgnoreCase("")) {
+            String role = "http://mmisw.org/ont/ioos/definition/publisher";
+            HashMap<String, HashMap<String, String>> domainContactInfo = new HashMap<String, HashMap<String, String>>();
+            HashMap<String, String> address = new HashMap<String, String>();
+            address.put("sml:electronicMailAddress", DataContactEmail);
+            domainContactInfo.put("sml:address", address);
+            HashMap<String, String> phone = new HashMap<String, String>();
+            phone.put("sml:voice", DataContactPhone);
+            domainContactInfo.put("sml:phone", phone);
+            output.addContactNode(role, InventoryContactName, domainContactInfo);
+        }
+        if (contributorAttributes != null) {
+            String role = "", name = "";
+            for (Attribute attr : contributorAttributes) {
+                if (attr.getName().toLowerCase().contains("role")) {
+                    role = attr.getStringValue();
+                }
+                else if (attr.getName().toLowerCase().contains("name")) {
+                    name = attr.getStringValue();
+                }
+            }
+            output.addContactNode(role, name, null);
+        }
+    }
+    
+    /**
+     * 
+     * @param formatter 
+     */
+    protected void formatSetNetworkIdentification(DescribeNetworkFormatter formatter) {
+        formatter.setNetworkIdentificationNode();
+    }
+    
+    /**
+     * 
+     * @param output 
+     */
+    protected void formatSetHistoryNodes(DescribeNetworkFormatter output) {
+        if (historyAttribute != null) {
+            output.setHistoryEvents(historyAttribute.getStringValue());
+        } else {
+            output.deleteHistoryNode();
+        }
+    }
+    
+    /**
+     * 
+     * @param formatter 
+     */
+    protected void formatSetStationIdentification(DescribeNetworkFormatter formatter, Element stationNode, String stationName) {
+        ArrayList<String> identNames = new ArrayList<String>();
+        ArrayList<String> identDefinitions = new ArrayList<String>();
+        ArrayList<String> identValues = new ArrayList<String>();
+        identNames.add("StationId"); identDefinitions.add("stationID"); identValues.add("urn:tds:station.sos:" + stationName);
+        for (Attribute attr : stationVariable.getAttributes()) {
+            if (attr.getName().equalsIgnoreCase("cf_role") || attr.getName().toLowerCase().contains("hdf5"))
+                continue;
+            identNames.add(attr.getName()); identDefinitions.add(""); identValues.add(attr.getStringValue());
+        }
+        formatter.setStationIdentificationNode(stationNode, identNames.toArray(new String[identNames.size()]),
+                identDefinitions.toArray(new String[identDefinitions.size()]),
+                identValues.toArray(new String[identValues.size()]));
+    }
+    
+    /*****************************
+     * Single Station Formatters *
      *****************************/
 
     /**

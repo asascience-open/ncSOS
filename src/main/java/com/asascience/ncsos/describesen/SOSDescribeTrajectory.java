@@ -4,11 +4,13 @@
  */
 package com.asascience.ncsos.describesen;
 
+import com.asascience.ncsos.outputformatter.DescribeNetworkFormatter;
 import com.asascience.ncsos.outputformatter.DescribeSensorFormatter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import org.w3c.dom.Element;
 import ucar.ma2.Array;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -102,6 +104,22 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
             }
         }
     }
+    
+    public SOSDescribeTrajectory( NetcdfDataset dataset, CalendarDate calStart ) throws IOException {
+        super(dataset);
+        // ignore errors from parent constructor
+        errorString = null;
+        
+        for (Variable var : dataset.getVariables()) {
+            String varName = var.getFullName().toLowerCase();
+            // look for our var for either index or rowSize vars
+            if (varName.contains("rowsize") || varName.contains("index")) {
+                indexDescriptor = var;
+            }
+        }
+        
+        this.startDate = calStart;
+    }
 
     /*********************/
     /* Interface Methods */
@@ -131,7 +149,43 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
         }
     }
     
+//    @Override
+//    public void setupOutputDocument(DescribeNetworkFormatter output) {
+//        if (errorString == null) {
+//            // system node
+//            output.setNetworkSystemId("network-all");
+//            // set network ident
+//            formatSetNetworkIdentification(output);
+//            // classification
+//            formatSetClassification(output);
+//            // history
+//            formatSetHistoryNodes(output);
+//        } else {
+//            output.setupExceptionOutput(errorString);
+//        }
+//    }
+    
     /**************************************************************************/
+    
+    @Override
+    protected void formatSetStationComponentList(DescribeNetworkFormatter output) {
+        // iterate through each station name, add a station to the component list and setup each station
+        for (String stName : getStationNames().values()) {
+            int stIndex = getStationIndex(stName);
+            // add a new station
+            Element stNode = output.addNewStationWithId("station-"+stName);
+            // set a description for each station - TODO
+            output.removeStationDescriptionNode(stNode);
+            // set identification for station
+            formatSetStationIdentification(output, stNode, stName);
+            // set position node
+            formatSetStationPositionNode(output, stNode, stIndex);
+            // remove unwanted nodes for each station
+            output.removeStationLocationNode(stNode);
+            output.removeStationPositions(stNode);
+            output.removeStationTimePosition(stNode);
+        }
+    }
     
     /*******************
      * Private Methods *
@@ -198,6 +252,166 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
         
         // print out our values
         output.setPositionValue(strB.toString());
+    }
+    
+    private void formatSetStationPositionNode(DescribeNetworkFormatter output, Element stationNode, int stIndex) {
+        // set our position name
+        output.setStationPositionName(stationNode, "stationTrajectory");
+        // set our data definition
+        // first get our contentmap from our vars
+        HashMap<String, String> varMap;
+        HashMap<String, HashMap<String, String>> mapMap = new LinkedHashMap<String, HashMap<String, String>>();
+        // add time, lat and lon in that order
+        // time
+        varMap = new HashMap<String, String>();
+        varMap.put("definition", "OGC:time");
+        varMap.put("xlink:href", "ISO####:date");
+        mapMap.put("time", varMap);
+        // lat
+        varMap = new HashMap<String, String>();
+        varMap.put("definition", "some:definition");
+        varMap.put("code", "deg");
+        mapMap.put("lat", varMap);
+        // lon
+        varMap = new HashMap<String, String>();
+        varMap.put("definition", "some:definition");
+        varMap.put("code", "deg");
+        mapMap.put("lon", varMap);
+        
+        output.setStationPositionDataDefinition(stationNode, mapMap, ".", " ", ",");
+        
+        // now we need our values
+        StringBuilder strB = null;
+        if (indexDescriptor != null)
+            strB = setStationValueStringFromIndexDescriptor(stIndex);
+        else
+            strB = setStationValueStringFromStationIndex(stIndex);
+        
+        
+        // print out our values
+        output.setStationPositionValue(stationNode, strB.toString());
+    }
+    
+    private StringBuilder setStationValueStringFromStationIndex(int stIndex) {
+        StringBuilder strB = new StringBuilder();
+        
+        try {
+            DateFormatter formatter = new DateFormatter();
+            double NAN = -999.9;
+            int timeShape = 0, latShape = 0, lonShape = 0;
+            double[] timeVals, latVals, lonVals;
+            int[] origin;
+            
+            if (timeVariable.getShape().length > 1) {
+                timeShape = timeVariable.getShape(1);
+                latShape = latVariable.getShape(1);
+                lonShape = lonVariable.getShape(1);
+                
+                origin = new int[] { stIndex, 0 };
+                timeVals = (double[]) timeVariable.read().section(origin, new int[] { 1, timeShape }).get1DJavaArray(double.class);
+                latVals = (double[]) latVariable.read().section(origin, new int[] { 1, latShape }).get1DJavaArray(double.class);
+                lonVals = (double[]) lonVariable.read().section(origin, new int[] { 1, lonShape }).get1DJavaArray(double.class);
+            } else {
+                timeShape = timeVariable.getShape(0);
+                latShape = latVariable.getShape(0);
+                lonShape = lonVariable.getShape(0);
+                
+                origin = new int[] { stIndex };
+                timeVals = (double[]) timeVariable.read().section(origin, new int[] { timeShape }).get1DJavaArray(double.class);
+                latVals = (double[]) latVariable.read().section(origin, new int[] { latShape }).get1DJavaArray(double.class);
+                lonVals = (double[]) lonVariable.read().section(origin, new int[] { lonShape }).get1DJavaArray(double.class);
+            }
+            
+            int maxLength = (timeVals.length < latVals.length) ? timeVals.length : latVals.length;
+            maxLength = (maxLength > lonVals.length) ? lonVals.length : maxLength;
+            
+            for (int i=0; i<maxLength; i++) {
+                if (timeVals[i] >= 0 && latVals[i] != NAN && lonVals[i] != NAN) {
+                    strB.append(formatter.toDateTimeStringISO(startDate.add(timeVals[i], CalendarPeriod.Field.Second).toDate())).append(",");
+                    strB.append(latVals[i]).append(",");
+                    strB.append(lonVals[i]).append(" ");
+                }
+            }
+            // iterate through the arrays, adding the values
+        } catch (Exception ex) {
+            System.out.println("setStationValueStringFromStationIndex - Exception " + ex.getMessage());
+        }
+        
+        return strB;
+    }
+    
+    private StringBuilder setStationValueStringFromIndexDescriptor(int stIndex) {
+        StringBuilder strB = new StringBuilder();
+        try {
+            DateFormatter formatter = new DateFormatter();
+            Array timeArray = timeVariable.read();
+            Array latArray = latVariable.read();
+            Array lonArray = lonVariable.read();
+            
+            Integer[] indices = readStationIndices(stIndex);
+            
+            if (indices.length != 3 || indices[0] != -1) {
+                for (int i=0; i<indices.length; i++) {
+                    int obsIndex = indices[i].intValue();
+                    strB.append(formatter.toDateTimeStringISO(startDate.add(timeArray.getDouble(obsIndex), CalendarPeriod.Field.Second).toDate())).append(",");
+                    strB.append(latArray.getDouble(obsIndex)).append(",");
+                    strB.append(lonArray.getDouble(obsIndex)).append(" ");
+                }
+            } else if (indices.length > 2) {
+                for (int j=indices[1]; j<indices[2]; j++) {
+                    strB.append(formatter.toDateTimeStringISO(startDate.add(timeArray.getDouble(j), CalendarPeriod.Field.Second).toDate())).append(",");
+                    strB.append(latArray.getDouble(j)).append(",");
+                    strB.append(lonArray.getDouble(j)).append(" ");
+                }
+            }
+            else {
+                throw new ArrayStoreException("setStationValueStringFromIndexDescriptor - Unexpected index read from station " + stIndex);
+            }
+        } catch (IOException ex) {
+            System.out.println("setStationValueStringFromIndexDescriptor - Exception " + ex.getMessage());
+        } 
+        return strB;
+    }
+    
+    private Integer[] readStationIndices(int stIndex) {
+        Integer[] retval = null;
+        int lowerIndex = 0;
+        int upperIndex = 0;
+        // get our observation indices
+        if (indexDescriptor.getFullName().toLowerCase().contains("rowsize")) {
+            try {
+                // our obs is contiguous, need to find where it starts and ends
+                Array rowArray = indexDescriptor.read();
+                for (int i=0; i<rowArray.getSize(); i++) {
+                    if (i < stIndex) {
+                        lowerIndex += rowArray.getInt(i);
+                    } else if (i == stIndex) {
+                        upperIndex = lowerIndex + rowArray.getInt(i);
+                        break;
+                    }
+                }
+                retval = new Integer[] { -1, lowerIndex, upperIndex };
+            } catch (IOException ex) {
+                System.out.println("readStationIndices - exception " + ex.getMessage());
+            }
+        } else {
+            try {
+                // our observation is not contiguous, so we need to get the indices of each observation that coresponds to our station
+                Array indexArray;
+                indexArray = indexDescriptor.read();
+                ArrayList<Integer> indexBuilder = new ArrayList<Integer>();
+                for (int i=0; i<indexArray.getSize(); i++) {
+                    if (indexArray.getInt(i) == stIndex) {
+                        indexBuilder.add(i);
+                    }
+                }
+                retval = indexBuilder.toArray(new Integer[indexBuilder.size()]);
+            } catch (IOException ex) {
+                System.out.println("readStationIndices - exception " + ex.getMessage());
+            }
+        }
+        
+        return retval;
     }
     
 }

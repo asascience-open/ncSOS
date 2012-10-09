@@ -24,4 +24,9 @@
 		<outputDir>C:/Users/scowan/Projects/maven/ncsos/target/test_out/describe_sensor/</outputDir>
 		<projectDir>C:/Users/scowan/Projects/maven/ncsos/</projectDir>
 	</describeSensor>
+	
+	<describeNetwork>
+		<outputDir>C:/Users/scowan/Projects/maven/ncsos/target/test_out/describe_network/</outputDir>
+		<projectDir>C:/Users/scowan/Projects/maven/ncsos/</projectDir>
+	</describeNetwork>
 </testConfiguration>

@@ -254,6 +254,10 @@ public class SOSParser {
                         }
                         retval.put("outputHandler",sensorHandler.getOutputHandler());
                     } catch (Exception ex) {
+                        System.out.println(ex.toString());
+                        for (int e = 0; e < 10; e++) {
+                            System.out.println("\t" + ex.getStackTrace()[e]);
+                        }
                         capHandler = new SOSGetCapabilitiesRequestHandler(null);
                         capHandler.getOutputHandler().setupExceptionOutput("Internal System Exception in setting up DescribeSensor handler - " + ex.toString());
                         retval.put("outputHandler", capHandler.getOutputHandler());

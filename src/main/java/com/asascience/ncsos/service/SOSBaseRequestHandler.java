@@ -313,6 +313,31 @@ public abstract class SOSBaseRequestHandler {
     protected List<String> getSensorNames() {
         return this.sensorNames;
     }
+    
+    /**
+     * 
+     * @param stationIndex
+     * @return 
+     */
+    protected final double[] getStationCoords(int stationIndex) {
+        try {
+            // get the lat/lon of the station
+            if (stationIndex >= 0) {
+                double[] coords = new double[] { Double.NaN, Double.NaN };
+            
+                // find lat/lon values for the station
+                coords[0] = latVariable.read().getDouble(stationIndex);
+                coords[1] = lonVariable.read().getDouble(stationIndex);
+
+                return coords;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            System.out.println("exception in getStationCoords " + e.getMessage());
+            return null;
+        }
+    }
 
     /**
      * Returns the dataset, wrapped according to its feature type
