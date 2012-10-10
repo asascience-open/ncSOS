@@ -327,10 +327,54 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     }
     
     /**
+     * 
+     * @param stationName
+     * @param coords 
+     */
+    public void setLocationNode2Dimension(String stationName, double[][] coords) {
+        if (coords.length < 1)
+            return;
+        Element parent = (Element) getParentNode().getElementsByTagName("sml:location").item(0);
+        
+        parent = addNewNodeToParentWithAttribute("gml:LineString", parent, "srsName", "http://www.opengis.net/def/crs/EPSG/0/4326");
+        parent = addNewNodeToParentWithAttribute("gml:posList", parent, "srsDimension", "2");
+        // add values for each pair of coords
+        String coordsString = "";
+        for (int i=0; i<coords.length; i++) {
+            if (coords[i].length == 2)
+                coordsString = coords[i][0] + " " + coords[i][1] + "\n";
+        }
+        coordsString = coordsString.substring(0, coordsString.length() - 2);
+        parent.setTextContent(coordsString);
+    }
+    
+    /**
+     * 
+     * @param stationName
+     * @param coords 
+     */
+    public void setLocationNode3Dimension(String stationName, double[][] coords) {
+        if (coords.length < 1)
+            return;
+        Element parent = (Element) getParentNode().getElementsByTagName("sml:location").item(0);
+        
+        parent = addNewNodeToParentWithAttribute("gml:LineString", parent, "srsName", "http://www.opengis.net/def/crs/EPSG/0/4329");
+        parent = addNewNodeToParentWithAttribute("gml:posList", parent, "srsDimension", "3");
+        // add values for each pair of coords
+        String coordsString = "\n";
+        for (int i=0; i<coords.length; i++) {
+            if (coords[i].length == 3)
+                coordsString += coords[i][0] + " " + coords[i][1] + " " + coords[i][2] + "\n";
+        }
+        parent.setTextContent(coordsString);
+    }
+    
+    /**
      * Accessor method for adding a gml:Point node to the sml:location node in the
      * xml document
      * @param stationName name of the station
      * @param coords lat, lon of the station's location
+     * @deprecated 
      */
     public void setLocationNode(String stationName, double[] coords) {
         Element parent = (Element) getParentNode().getElementsByTagName("sml:location").item(0);
@@ -344,6 +388,7 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
      * in the xml document
      * @param lowerPoint lat, lon of the lower corner of the bounding box
      * @param upperPoint lat, lon of the upper corner of the bounding box
+     * @deprecated 
      */
     public void setLocationNodeWithBoundingBox(String[] lowerPoint, String[] upperPoint) {
         if (lowerPoint.length != 2 || upperPoint.length != 2)
@@ -420,6 +465,7 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     /**
      * sets the name attribute of the sml:position node
      * @param name the value of the name attribute
+     * @deprecated 
      */
     public void setPositionName(String name) {
         Element position = (Element) getParentNode().getElementsByTagName("sml:position").item(0);
@@ -432,6 +478,7 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
      * @param decimalSeparator a character (or series thereof) that define the decimal separator of the proceeding values node
      * @param blockSeparator a character (or series thereof) that define the block separator of the proceeding values node (separates group of measurements)
      * @param tokenSeparator a character (or series thereof) that define the token separator of the proceeding values node (separates individual measurements)
+     * @deprecated 
      */
     public void setPositionDataDefinition(HashMap<String, HashMap<String, String>> fieldMap, String decimalSeparator, String blockSeparator, String tokenSeparator) {
         Element dataDefinition = (Element) getParentNode().getElementsByTagName("sml:dataDefinition").item(0);
@@ -483,6 +530,7 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     /**
      * adds a sml:values node to sml:position, with the parameter as its content.
      * @param valueText the content of the sml:values node
+     * @deprecated 
      */
     public void setPositionValue(String valueText) {
         // simple, just add values with text content of parameter
@@ -492,6 +540,7 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     
     /**
      * Removes sml:position node from the xml document
+     * @deprecated 
      */
     public void deletePosition() {
         getParentNode().removeChild(getParentNode().getElementsByTagName("sml:position").item(0));
@@ -499,6 +548,7 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     
     /**
      * Removes the sml:timePosition from the xml document
+     * @deprecated 
      */
     public void deleteTimePosition() {
         getParentNode().removeChild(getParentNode().getElementsByTagName("sml:timePosition").item(0));
@@ -510,6 +560,7 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
      * @param longitudeInfo key-values for filling out needed information for the longitude field of the position (name, axisID, code, value)
      * @param depthInfo key-values for filling out needed information for the depth field of the position (name, axisID, code, value)
      * @param definition definition for the swe:Vector node
+     * @deprecated 
      */
     public void setStationPositionsNode(HashMap<String,String> latitudeInfo, HashMap<String,String> longitudeInfo, HashMap<String,String> depthInfo, String definition) {
         Element parent = (Element) getParentNode().getElementsByTagName("sml:PositionList").item(0);
@@ -536,6 +587,7 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
      * @param upperDepth the upper bounding depth/altitude
      * @param lowerDepth the lower bounding depth/altitude
      * @param boundingBox a LatLonRect that defines the bounding box that encompasses the measurements of interest
+     * @deprecated 
      */
     public void setStationPositionsNode(double upperDepth, double lowerDepth, LatLonRect boundingBox) {
         Element parent = (Element) getParentNode().getElementsByTagName("sml:PositionList").item(0);
@@ -558,6 +610,7 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
      * @param longitudeInfo key-values for filling out needed information for the longitude field of the position (name, axisID, code, value)
      * @param depthInfo key-values for filling out needed information for the depth field of the position (name, axisID, code, value)
      * @param definition definition for the swe:Vector node
+     * @deprecated 
      */
     public void setEndPointPositionsNode(HashMap<String,String> latitudeInfo, HashMap<String,String> longitudeInfo, HashMap<String,String> depthInfo, String definition) {
         Element parent = (Element) getParentNode().getElementsByTagName("sml:PositionList").item(0);
@@ -575,6 +628,7 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     
     /**
      * removes the sml:positions from the xml document
+     * @deprecated 
      */
     public void deletePositions() {
         getParentNode().removeChild(getParentNode().getElementsByTagName("sml:positions").item(0));

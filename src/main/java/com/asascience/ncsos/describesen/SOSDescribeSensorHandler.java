@@ -209,7 +209,6 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
         switch (getFeatureDataset().getFeatureType()) {
             case STATION:
             case STATION_PROFILE:
-            case PROFILE:
                 describer = new SOSDescribeStation(dataset);
                 break;
             case TRAJECTORY:
@@ -232,6 +231,9 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
             case GRID:
                 getFeatureDataset().calcBounds();
                 describer = new SOSDescribeGrid(dataset, getFeatureDataset().getBoundingBox());
+                break;
+            case PROFILE:
+                describer = new SOSDescribeProfile(dataset);
                 break;
         }
     }

@@ -429,6 +429,51 @@ public class DescribeNetworkFormatter implements SOSOutputFormatter {
     }
     
     /**
+     * 
+     * @param parent
+     * @param stationName
+     * @param coords 
+     */
+    public void setStationLocationNode2Dimension(Element parent, String stationName, double[][] coords) {
+        if (coords.length < 1)
+            return;
+        parent = (Element) parent.getElementsByTagName("sml:location").item(0);
+        
+        parent = addNewNodeToParentWithAttribute("gml:LineString", parent, "srsName", "http://www.opengis.net/def/crs/EPSG/0/4326");
+        parent = addNewNodeToParentWithAttribute("gml:posList", parent, "srsDimension", "2");
+        // add values for each pair of coords
+        String coordsString = "";
+        for (int i=0; i<coords.length; i++) {
+            if (coords[i].length == 2)
+                coordsString = coords[i][0] + " " + coords[i][1] + "\n";
+        }
+        coordsString = coordsString.substring(0, coordsString.length() - 2);
+        parent.setTextContent(coordsString);
+    }
+     
+     /**
+      * 
+      * @param parent
+      * @param stationName
+      * @param coords 
+      */
+     public void setStationLocationNode3Dimension(Element parent, String stationName, double[][] coords) {
+        if (coords.length < 1)
+            return;
+        parent = (Element) parent.getElementsByTagName("sml:location").item(0);
+        
+        parent = addNewNodeToParentWithAttribute("gml:LineString", parent, "srsName", "http://www.opengis.net/def/crs/EPSG/0/4329");
+        parent = addNewNodeToParentWithAttribute("gml:posList", parent, "srsDimension", "3");
+        // add values for each pair of coords
+        String coordsString = "\n";
+        for (int i=0; i<coords.length; i++) {
+            if (coords[i].length == 3)
+                coordsString += coords[i][0] + " " + coords[i][1] + " " + coords[i][2] + "\n";
+        }
+        parent.setTextContent(coordsString);
+    }
+    
+    /**
      * Accessor method for adding a gml:boundedBy node to the sml:location node
      * in the xml document
      * @param parent the system node of the station
