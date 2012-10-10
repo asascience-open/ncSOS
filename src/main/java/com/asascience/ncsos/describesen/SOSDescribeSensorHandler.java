@@ -16,6 +16,7 @@ import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.ft.*;
 import ucar.nc2.time.CalendarDate;
+import ucar.unidata.geoloc.LatLonRect;
 
 /**
  * Main handler class for Describe Sensor requests. Processes the request to determine
@@ -131,7 +132,8 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
                 ((DescribeSensorFormatter)output).setComponentsNode(DiscreteSamplingGeometryUtil.getDataVariables(getFeatureDataset()), procedure);
                 break;
             case GRID:
-                describer = new SOSDescribeGrid(dataset, procedure);
+                getFeatureDataset().calcBounds();
+                describer = new SOSDescribeGrid(dataset, procedure, getFeatureDataset().getBoundingBox());
                 ((DescribeSensorFormatter)output).setComponentsNode(getGridDataset().getDataVariables(),procedure);
                 break;
             case SECTION:
@@ -207,7 +209,6 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
         switch (getFeatureDataset().getFeatureType()) {
             case STATION:
             case STATION_PROFILE:
-            case GRID:
             case PROFILE:
                 describer = new SOSDescribeStation(dataset);
                 break;
@@ -227,6 +228,10 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
                     }
                 }
                 describer = new SOSDescribeTrajectory(dataset, colStart);
+                break;
+            case GRID:
+                getFeatureDataset().calcBounds();
+                describer = new SOSDescribeGrid(dataset, getFeatureDataset().getBoundingBox());
                 break;
         }
     }

@@ -44,6 +44,10 @@ public class SOSDescribeSensorNetworkTest {
     private static final String t_test_set3 = data_folder + "trajectory-Incomplete-Multidimensional-SingleTrajectory-H.4.2/trajectory-Incomplete-Multidimensional-SingleTrajectory-H.4.2.nc";
     private static final String t_test_set4 = data_folder + "trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4.nc";
     
+    // grid tests (GRID)
+    private static final String g_test_set1 = data_folder + "satellite-sst/SST_Global_2x2deg_20120626_0000.nc";
+    private static final String g_test_set2 = data_folder + "satellite-sst/SST_Global_2x2deg_20120627_0000.nc";
+    
     @BeforeClass
     public static void setUpClass() throws Exception {
         // not really a test, just used to set up the various string values
@@ -266,6 +270,8 @@ public class SOSDescribeSensorNetworkTest {
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
             // assert(s)
             assertFalse("exception in output", writer.toString().contains("Exception"));
+            // write as an example
+            fileWriter(exampleOutputDir, "DescribeSensor-Network-All-Trajectory-sensorML1.0.1.xml", writer);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
             assertTrue(ex.getMessage(), false);
@@ -326,6 +332,48 @@ public class SOSDescribeSensorNetworkTest {
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
             // assert(s)
             assertFalse("exception in output", writer.toString().contains("Exception"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+            assertTrue(ex.getMessage(), false);
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testGridSet1() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + g_test_set1);
+            SOSParser parser = new SOSParser();
+            Writer writer = new CharArrayWriter();
+            writeOutput(parser.enhance(dataset, query, g_test_set1), writer);
+            fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
+            // assert(s)
+            assertFalse("exception in output", writer.toString().contains("Exception"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+            assertTrue(ex.getMessage(), false);
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testGridSet2() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + g_test_set2);
+            SOSParser parser = new SOSParser();
+            Writer writer = new CharArrayWriter();
+            writeOutput(parser.enhance(dataset, query, g_test_set2), writer);
+            fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
+            // assert(s)
+            assertFalse("exception in output", writer.toString().contains("Exception"));
+            // write as an example
+            fileWriter(exampleOutputDir, "DescribeSensor-Network-All-Grid-sensorML1.0.1.xml", writer);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
             assertTrue(ex.getMessage(), false);
