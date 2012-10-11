@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import org.w3c.dom.Element;
 import ucar.ma2.Array;
+import ucar.ma2.Index;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.time.CalendarDate;
@@ -35,9 +36,9 @@ import ucar.nc2.units.DateFormatter;
 public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDescribeIF {
     
     private Variable indexDescriptor;
-    private int stationIndex;
-    private int stationObsIndexLower, stationObsIndexUpper;
-    private Integer[] stationObsIndices;
+    private int trajectoryIndex;
+    private int trajectoryLowerObsIndex, trajectoryUpperObsIndex;
+    private Integer[] trajectoryObsIndices;
     private CalendarDate startDate;
     
     /**
@@ -62,47 +63,12 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
         
         this.startDate = startDate;
         
-        // get our station index
-        stationIndex = getStationIndex(stationName);
-        
-        if (stationIndex < 0) {
+        if (getStationIndex(stationName) < 0) {
             errorString = "Station not part of dataset: " + stationName;
         }
         
         // get our observation indices
-        if (indexDescriptor.getFullName().toLowerCase().contains("rowsize")) {
-            stationObsIndexLower = 0;
-            stationObsIndexUpper = 0;
-            try {
-                // our obs is contiguous, need to find where it starts and ends
-                Array rowArray = indexDescriptor.read();
-                for (int i=0; i<rowArray.getSize(); i++) {
-                    if (i < stationIndex) {
-                        stationObsIndexLower += rowArray.getInt(i);
-                    } else if (i == stationIndex) {
-                        stationObsIndexUpper = stationObsIndexLower + rowArray.getInt(i);
-                        break;
-                    }
-                }
-            } catch (IOException ex) {
-                System.out.println("exception " + ex.getMessage());
-            }
-        } else {
-            try {
-                // our observation is not contiguous, so we need to get the indices of each observation that coresponds to our station
-                Array indexArray;
-                indexArray = indexDescriptor.read();
-                ArrayList<Integer> indexBuilder = new ArrayList<Integer>();
-                for (int i=0; i<indexArray.getSize(); i++) {
-                    if (indexArray.getInt(i) == stationIndex) {
-                        indexBuilder.add(i);
-                    }
-                }
-                stationObsIndices = indexBuilder.toArray(new Integer[indexBuilder.size()]);
-            } catch (IOException ex) {
-                System.out.println("exception " + ex.getMessage());
-            }
-        }
+        setCurrentTrajectoryInfo(getStationIndex(stationName));
     }
     
     public SOSDescribeTrajectory( NetcdfDataset dataset, CalendarDate calStart ) throws IOException {
@@ -140,10 +106,10 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
             formatSetContactNodes(output);
             // history node
             formatSetHistoryNodes(output);
-            // position node
-            formatSetPositionNode(output);
+            // location
+            formatSetLocation(output);
             // remove unwanted nodes
-            removeUnusedNodes(output);
+//            removeUnusedNodes(output);
         } else {
             output.setupExceptionOutput(errorString);
         }
@@ -178,18 +144,124 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
             output.removeStationDescriptionNode(stNode);
             // set identification for station
             formatSetStationIdentification(output, stNode, stName);
-            // set position node
-            formatSetStationPositionNode(output, stNode, stIndex);
+            // set location info
+            setCurrentTrajectoryInfo(stIndex);
+            formatSetTrajectoryLocation(output, stNode);
             // remove unwanted nodes for each station
-            output.removeStationLocationNode(stNode);
-            output.removeStationPositions(stNode);
-            output.removeStationTimePosition(stNode);
+//            output.removeStationLocationNode(stNode);
+//            output.removeStationPositions(stNode);
+//            output.removeStationTimePosition(stNode);
         }
     }
     
     /*******************
      * Private Methods *
      *******************/
+    
+    private void setCurrentTrajectoryInfo(int trajNumber) {
+        trajectoryIndex = trajNumber;
+        trajectoryLowerObsIndex = trajectoryUpperObsIndex = -1;
+        trajectoryObsIndices = null;
+        // get our observation indices
+        if (indexDescriptor != null) {
+            if (indexDescriptor.getFullName().toLowerCase().contains("rowsize")) {
+                // contiguous ragged
+                trajectoryLowerObsIndex = 0;
+                trajectoryUpperObsIndex = 0;
+                try {
+                    // our obs is contiguous, need to find where it starts and ends
+                    Array rowArray = indexDescriptor.read();
+                    for (int i=0; i<rowArray.getSize(); i++) {
+                        if (i < trajNumber) {
+                            trajectoryLowerObsIndex += rowArray.getInt(i);
+                        } else if (i == trajNumber) {
+                            trajectoryUpperObsIndex = trajectoryLowerObsIndex + rowArray.getInt(i);
+                            break;
+                        }
+                    }
+                } catch (IOException ex) {
+                    System.out.println("exception " + ex.getMessage());
+                }
+            } else {
+                try {
+                    // our observation is not contiguous (indexed ragged), so we need to get the indices of each observation that coresponds to our station
+                    Array indexArray;
+                    indexArray = indexDescriptor.read();
+                    ArrayList<Integer> indexBuilder = new ArrayList<Integer>();
+                    for (int i=0; i<indexArray.getSize(); i++) {
+                        if (indexArray.getInt(i) == trajNumber) {
+                            indexBuilder.add(i);
+                        }
+                    }
+                    trajectoryObsIndices = indexBuilder.toArray(new Integer[indexBuilder.size()]);
+                } catch (IOException ex) {
+                    System.out.println("exception " + ex.getMessage());
+                }
+            }
+        } else {
+            // trajectory has multiple/single dimension(s)
+            
+        }
+    }
+    
+    private void formatSetTrajectoryLocation(DescribeNetworkFormatter output, Element stNode) {
+        output.setStationLocationNode2Dimension(stNode, stationName, getCoordinatesForLocationNode());
+    }
+    
+    private void formatSetLocation(DescribeSensorFormatter output) {
+        output.setLocationNode2Dimension(stationName, getCoordinatesForLocationNode());
+    }
+    
+    private double[][] getCoordinatesForLocationNode() {
+        double[][] coords = new double[0][0];
+        try {
+            // get the coords for each point in the trajectory
+            Array latArray = latVariable.read();
+            Array lonArray = lonVariable.read();
+
+            if (trajectoryObsIndices != null) {
+                // indexed ragged
+                coords = new double[trajectoryObsIndices.length][2];
+                for (int i=0; i<trajectoryObsIndices.length; i++) {
+                    int obsIndex = trajectoryObsIndices[i].intValue();
+                    coords[i][0] = latArray.getDouble(obsIndex);
+                    coords[i][1] = lonArray.getDouble(obsIndex);
+                }
+            } else if (trajectoryLowerObsIndex >= 0 && trajectoryUpperObsIndex >= trajectoryLowerObsIndex) {
+                // contiguous ragged
+                coords = new double[trajectoryUpperObsIndex-trajectoryLowerObsIndex][2];
+                for (int j=trajectoryLowerObsIndex; j<trajectoryUpperObsIndex; j++) {
+                    int coordIndex = j - trajectoryLowerObsIndex;
+                    coords[coordIndex][0] = latArray.getDouble(j);
+                    coords[coordIndex][1] = lonArray.getDouble(j);
+                }
+            } else if (latVariable.getShape().length > 1) {
+                // multiple dimensions (trajectories)
+                int numberOfObs = latVariable.getShape(1);
+                coords = new double[numberOfObs][2];
+                double[] latVals = (double[]) latArray.section(new int[] { trajectoryIndex, 0 }, new int[] { 1, numberOfObs }).get1DJavaArray(double.class);
+                double[] lonVals = (double[]) lonArray.section(new int[] { trajectoryIndex, 0 }, new int[] { 1, numberOfObs }).get1DJavaArray(double.class);
+                for (int i=0; i<numberOfObs; i++) {
+                    coords[i][0] = latVals[i];
+                    coords[i][1] = lonVals[i];
+                }
+            } else {
+                // single dimension (trajectory)
+                int numberOfObs = latVariable.getShape(0);
+                coords = new double[numberOfObs][2];
+                double[] latVals = (double[]) latArray.get1DJavaArray(double.class);
+                double[] lonVals = (double[]) lonArray.get1DJavaArray(double.class);
+                for (int i=0; i<numberOfObs; i++) {
+                    coords[i][0] = latVals[i];
+                    coords[i][1] = lonVals[i];
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println("formatSetLocation - " + ex.toString() + "\n\t" + ex.getStackTrace()[0].toString());
+        }
+        
+        return coords;
+    }
     
     private void removeUnusedNodes(DescribeSensorFormatter output) {
         output.deleteLocationNode();
@@ -232,15 +304,15 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
             Array latArray = latVariable.read();
             Array lonArray = lonVariable.read();
             
-            if (stationObsIndices != null) {
-                for (int i=0; i<stationObsIndices.length; i++) {
-                    int obsIndex = stationObsIndices[i].intValue();
+            if (trajectoryObsIndices != null) {
+                for (int i=0; i<trajectoryObsIndices.length; i++) {
+                    int obsIndex = trajectoryObsIndices[i].intValue();
                     strB.append(formatter.toDateTimeStringISO(startDate.add(timeArray.getDouble(obsIndex), CalendarPeriod.Field.Second).toDate())).append(",");
                     strB.append(latArray.getDouble(obsIndex)).append(",");
                     strB.append(lonArray.getDouble(obsIndex)).append(" ");
                 }
             } else {
-                for (int j=stationObsIndexLower; j<stationObsIndexUpper; j++) {
+                for (int j=trajectoryLowerObsIndex; j<trajectoryUpperObsIndex; j++) {
                     strB.append(formatter.toDateTimeStringISO(startDate.add(timeArray.getDouble(j), CalendarPeriod.Field.Second).toDate())).append(",");
                     strB.append(latArray.getDouble(j)).append(",");
                     strB.append(lonArray.getDouble(j)).append(" ");

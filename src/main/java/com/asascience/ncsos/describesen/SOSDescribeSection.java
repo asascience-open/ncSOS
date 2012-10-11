@@ -258,7 +258,6 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
     private double[][] getCoordsForSetStation() {
         double[][] coords = null;
         try {
-            System.out.println("reading for trajectory " + trajectoryNumber);
             if (profileDataStartIndex == null) {
                 if (depthVariable.getShape().length > 2) {
                     // read the arrays at our index
@@ -268,7 +267,6 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
                     double[] lonArray = (double[]) lonVariable.read().get1DJavaArray(double.class);
                     Array depthArray = depthVariable.read().section(new int[] { trajectoryNumber, 0, 0 }, new int[] { 1, depth1, depth2 });
                     depthArray = depthArray.reduce();
-                    System.out.println("depth array size " + depthArray.getSize());
                     coords = new double[(int)depthArray.getSize()][3];
                     for (int i=0; i<depth1; i++) {
                         for (int j=0; j<depth2; j++) {
@@ -277,8 +275,6 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
                                 coords[curIndex][2] = -999;
                                 continue;
                             } else {
-                                System.out.println("setting depth " + curIndex);
-                                System.out.println (latArray[depth1*trajectoryNumber + i] + " " + lonArray[depth1*trajectoryNumber + i] + " " + depthArray.getDouble(curIndex));
                                 coords[curIndex][0] = latArray[depth1*trajectoryNumber + i];
                                 coords[curIndex][1] = lonArray[depth1*trajectoryNumber + i];
                                 coords[curIndex][2] = depthArray.getDouble(curIndex);

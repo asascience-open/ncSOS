@@ -442,12 +442,11 @@ public class DescribeNetworkFormatter implements SOSOutputFormatter {
         parent = addNewNodeToParentWithAttribute("gml:LineString", parent, "srsName", "http://www.opengis.net/def/crs/EPSG/0/4326");
         parent = addNewNodeToParentWithAttribute("gml:posList", parent, "srsDimension", "2");
         // add values for each pair of coords
-        String coordsString = "";
+        String coordsString = "\n";
         for (int i=0; i<coords.length; i++) {
-            if (coords[i].length == 2)
-                coordsString = coords[i][0] + " " + coords[i][1] + "\n";
+            if (coords[i].length == 2 && Math.abs(coords[i][0]) < 180 && Math.abs(coords[i][1]) < 180)
+                coordsString += coords[i][0] + " " + coords[i][1] + "\n";
         }
-        coordsString = coordsString.substring(0, coordsString.length() - 2);
         parent.setTextContent(coordsString);
     }
      
@@ -467,7 +466,7 @@ public class DescribeNetworkFormatter implements SOSOutputFormatter {
         // add values for each pair of coords
         String coordsString = "\n";
         for (int i=0; i<coords.length; i++) {
-            if (coords[i].length == 3 && coords[i][2] > -999)
+            if (coords[i].length == 3 && Math.abs(coords[i][0]) < 180 && Math.abs(coords[i][1]) < 180 && coords[i][2] > -999)
                 coordsString += coords[i][0] + " " + coords[i][1] + " " + coords[i][2] + "\n";
         }
         parent.setTextContent(coordsString);
@@ -486,7 +485,7 @@ public class DescribeNetworkFormatter implements SOSOutputFormatter {
         
         parent = (Element) parent.getElementsByTagName("sml:location").item(0);
         parent = addNewNodeToParent("gml:boundedBy", parent);
-        parent = addNewNodeToParentWithAttribute("gml:Envelope", parent, "srsName", "");
+        parent = addNewNodeToParentWithAttribute("gml:Envelope", parent, "srsName", "http://www.opengis.net/def/crs/EPSG/0/4326");
         addNewNodeToParentWithTextValue("gml:lowerCorner", parent, lowerPoint[0] + " " + lowerPoint[1]);
         addNewNodeToParentWithTextValue("gml:upperCorner", parent, upperPoint[0] + " " + upperPoint[1]);
     }

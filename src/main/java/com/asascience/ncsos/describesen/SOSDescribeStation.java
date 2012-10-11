@@ -204,7 +204,8 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
             // set identification for station
             formatSetStationIdentification(output, stNode, stName);
             // set location for station
-            output.setStationLocationNode(stNode, stationName, getStationCoords(stIndex));
+            double[][] coords = new double[][] { getStationCoords(stIndex) };
+            output.setStationLocationNode2Dimension(stNode, stationName, coords);
             // remove unwanted nodes for each station
             output.removeStationPosition(stNode);
             output.removeStationPositions(stNode);
