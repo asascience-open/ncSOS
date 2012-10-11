@@ -20,6 +20,7 @@ import ucar.unidata.geoloc.LatLonRect;
 public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
 
     private final String threddsURI;
+    private final String sections;
     
     private static final String OWS = "http://www.opengis.net/ows/1.1";
     
@@ -34,18 +35,33 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
      * @param netCDFDataset dataset for which the Get Capabilities request is being
      * directed to
      * @param threddsURI uri from the thredds Get Capabilities request
+     * @param sections string detailing what sections of the GC response should be returned
      * @throws IOException
      */
-    public SOSGetCapabilitiesRequestHandler(NetcdfDataset netCDFDataset, String threddsURI) throws IOException {
+    public SOSGetCapabilitiesRequestHandler(NetcdfDataset netCDFDataset, String threddsURI, String sections) throws IOException {
         super(netCDFDataset);
         this.threddsURI = threddsURI;
+        this.sections = sections.toLowerCase();
         output = new GetCapsOutputter();
+        
+        // check the value of sections and make sure that it is supported
+        if (!sections.equalsIgnoreCase("serviceidentification") && !sections.equalsIgnoreCase("serviceprovider") && !sections.equalsIgnoreCase("operationsmetadata") && !sections.equalsIgnoreCase("contents") && !sections.equalsIgnoreCase("all")) {
+            // error
+            output.setupExceptionOutput("Unsupported GetCapabilities section - " + sections + ". Please see unfiltered GetCapabilities response for accepted values.");
+            return;
+        }
         
         CalculateBoundsForFeatureSet();
     }
     
+    /**
+     * Used for creating quick exception responses
+     * @param emptyDataset
+     * @throws IOException 
+     */
     public SOSGetCapabilitiesRequestHandler(NetcdfDataset emptyDataset) throws IOException {
         super(emptyDataset);
+        this.sections = "";
         this.threddsURI = "";
         output = new GetCapsOutputter();
     }
@@ -55,42 +71,62 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
      */
     public void parseGetCapabilitiesDocument() {
         GetCapsOutputter out = (GetCapsOutputter) output;
-        // service identification
-        out.parseServiceIdentification(getTitle() ,Region, Access);
-        
-        // service provider
-        out.parseServiceDescription(DataPage, PrimaryOwnership);
-        
-        // operations metadata
-        // set get capabilities output
-        out.setOperationGetCaps(threddsURI);
-        // set get observation output
-        if (getGridDataset() != null)
-            out.setOperationGetObs(threddsURI, setStartDate, setEndDate, getSensorNames(), getStationNames().values().toArray(new String[getStationNames().values().size()]), true, getGridDataset().getBoundingBox());
-        else
-            out.setOperationGetObs(threddsURI, setStartDate, setEndDate, getSensorNames(), getStationNames().values().toArray(new String[getStationNames().values().size()]), false, null);
-        // set describe sensor output
-        out.setOperationDescSen(threddsURI, getStationNames().values().toArray(new String[getStationNames().values().size()]), getSensorNames());
-        
-        // Contents
-        // observation offering list
-        // network-all
-        // get the bounds
-        Double latMin = Double.MAX_VALUE, latMax = Double.NEGATIVE_INFINITY, lonMin = Double.MAX_VALUE, lonMax = Double.NEGATIVE_INFINITY;
-        for (LatLonRect rect : stationBBox.values()) {
-            latMin = (latMin > rect.getLatMin()) ? rect.getLatMin() : latMin;
-            latMax = (latMax < rect.getLatMax()) ? rect.getLatMax() : latMax;
-            lonMin = (lonMin > rect.getLonMin()) ? rect.getLonMin() : lonMin;
-            lonMax = (lonMax < rect.getLonMax()) ? rect.getLonMax() : lonMax;
+        // service identification; parse if it is the section identified or 'all'
+        if (this.sections.contains("identification") || this.sections.contains("all")) {
+            out.parseServiceIdentification(getTitle() ,Region, Access);
+        } else {
+            // remove identification from doc
+            out.removeServiceIdentification();
         }
-        LatLonRect setRange = new LatLonRect(new LatLonPointImpl(latMin, lonMin), new LatLonPointImpl(latMax, lonMax));
-        CalendarDateRange setTime = null;
-        if (setStartDate != null && setEndDate != null)
-            setTime = CalendarDateRange.of(setStartDate,setEndDate);
-        out.setObservationOfferingNetwork(setRange, getStationNames().values().toArray(new String[getStationNames().values().size()]), getSensorNames(), setTime);
-        // iterate through our stations and add them
-        for (Integer index : getStationNames().keySet()) {
-            ((GetCapsOutputter)output).setObservationOfferingList(getStationNames().get(index), index.intValue(), stationBBox.get(index), getSensorNames(), stationDateRange.get(index));
+        
+        // service provider; parse if it is the section identified or 'all'
+        if (this.sections.contains("provider") || this.sections.contains("all")) {
+            out.parseServiceDescription(DataPage, PrimaryOwnership);
+        } else {
+            // remove service provider from doc
+            out.removeServiceProvider();
+        }
+        
+        // operations metadata; parse if it is the section identified or 'all'
+        if (this.sections.contains("operations") || this.sections.contains("all")) {
+            // set get capabilities output
+            out.setOperationGetCaps(threddsURI);
+            // set get observation output
+            if (getGridDataset() != null)
+                out.setOperationGetObs(threddsURI, setStartDate, setEndDate, getSensorNames(), getStationNames().values().toArray(new String[getStationNames().values().size()]), true, getGridDataset().getBoundingBox());
+            else
+                out.setOperationGetObs(threddsURI, setStartDate, setEndDate, getSensorNames(), getStationNames().values().toArray(new String[getStationNames().values().size()]), false, null);
+            // set describe sensor output
+            out.setOperationDescSen(threddsURI, getStationNames().values().toArray(new String[getStationNames().values().size()]), getSensorNames());
+        } else {
+            // remove operations metadata
+            out.removeOperations();
+        }
+        
+        // Contents; parse if it is the section identified or 'all'
+        if (this.sections.contains("contents") || this.sections.contains("all")) {
+            // observation offering list
+            // network-all
+            // get the bounds
+            Double latMin = Double.MAX_VALUE, latMax = Double.NEGATIVE_INFINITY, lonMin = Double.MAX_VALUE, lonMax = Double.NEGATIVE_INFINITY;
+            for (LatLonRect rect : stationBBox.values()) {
+                latMin = (latMin > rect.getLatMin()) ? rect.getLatMin() : latMin;
+                latMax = (latMax < rect.getLatMax()) ? rect.getLatMax() : latMax;
+                lonMin = (lonMin > rect.getLonMin()) ? rect.getLonMin() : lonMin;
+                lonMax = (lonMax < rect.getLonMax()) ? rect.getLonMax() : lonMax;
+            }
+            LatLonRect setRange = new LatLonRect(new LatLonPointImpl(latMin, lonMin), new LatLonPointImpl(latMax, lonMax));
+            CalendarDateRange setTime = null;
+            if (setStartDate != null && setEndDate != null)
+                setTime = CalendarDateRange.of(setStartDate,setEndDate);
+            out.setObservationOfferingNetwork(setRange, getStationNames().values().toArray(new String[getStationNames().values().size()]), getSensorNames(), setTime);
+            // iterate through our stations and add them
+            for (Integer index : getStationNames().keySet()) {
+                ((GetCapsOutputter)output).setObservationOfferingList(getStationNames().get(index), index.intValue(), stationBBox.get(index), getSensorNames(), stationDateRange.get(index));
+            }
+        } else {
+            // remove Contents node
+            out.removeContents();
         }
     }
     
@@ -152,12 +188,13 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                         while(collection.hasNext()) {
                             ProfileFeature feature = collection.next();
                             feature.calcBounds();
-                            if (start == null || start.isAfter(feature.getCalendarDateRange().getStart()))
-                                start = feature.getCalendarDateRange().getStart();
-                            if (end == null || end.isBefore(feature.getCalendarDateRange().getEnd()))
-                                end = feature.getCalendarDateRange().getEnd();
-                            stationDateRange.put(stationIndex, feature.getCalendarDateRange());
-                            stationBBox.put(stationIndex, feature.getBoundingBox());
+                            CalendarDate profileDate = CalendarDate.of(feature.getTime());
+                            if (start == null || start.isAfter(profileDate))
+                                start = profileDate;
+                            if (end == null || end.isBefore(profileDate))
+                                end = profileDate;
+                            stationDateRange.put(stationIndex, CalendarDateRange.of(profileDate, profileDate));
+                            stationBBox.put(stationIndex, new LatLonRect(feature.getLatLon(), feature.getLatLon()));
                             stationIndex++;
                         }
                     } catch (Exception ex) {

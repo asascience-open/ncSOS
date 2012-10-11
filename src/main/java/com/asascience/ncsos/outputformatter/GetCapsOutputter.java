@@ -117,6 +117,12 @@ public class GetCapsOutputter implements SOSOutputFormatter {
             }
         }
     }
+    
+    public void removeServiceIdentification() {
+        Node node = getDocument().getElementsByTagName("ows:ServiceIdentification").item(0);
+        
+        getDocument().removeChild(node);
+    }
 
     /**
      * sets the service description, this is typically additional created user/site information
@@ -135,12 +141,23 @@ public class GetCapsOutputter implements SOSOutputFormatter {
         fstElmnt.getElementsByTagName("ows:ProviderName").item(0).setTextContent(primaryOwnership.trim());
     }
     
+    public void removeServiceProvider() {
+        Node serviceProviderNode = getDocument().getElementsByTagName("ows:ServiceProvider").item(0);
+        
+        getDocument().removeChild(serviceProviderNode);
+    }
+    
     /**
      * 
      * @param threddsURI 
      */
     public void setOperationGetCaps(String threddsURI) {
         setOperationMethods((Element)getCaps.getElementsByTagName("ows:HTTP").item(0), threddsURI);
+    }
+    
+    public void removeOperations() {
+        Node operationsNode = getDocument().getElementsByTagName("ows:OperationsMetadata").item(0);
+        getDocument().removeChild(operationsNode);
     }
     
     /**
@@ -339,6 +356,11 @@ public class GetCapsOutputter implements SOSOutputFormatter {
 
         // add offering
         offeringList.appendChild(obsOffering);
+    }
+    
+    public void removeContents() {
+        Node contentNode = getDocument().getElementsByTagName("Contents").item(0);
+        getDocument().removeChild(contentNode);
     }
     
     /*********************/

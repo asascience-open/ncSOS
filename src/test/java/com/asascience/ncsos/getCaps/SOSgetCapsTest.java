@@ -132,7 +132,7 @@ public class SOSgetCapsTest {
     public void testCanIdentifyTimeSeriesCDM() throws IOException {
         
        NetcdfDataset dataset = NetcdfDataset.openDataset(imeds8);
-        SOSGetCapabilitiesRequestHandler sosget = new SOSGetCapabilitiesRequestHandler(dataset, "threddsURI-IMEDS8");
+        SOSGetCapabilitiesRequestHandler sosget = new SOSGetCapabilitiesRequestHandler(dataset, "threddsURI-IMEDS8", "All");
          assertEquals(FeatureType.STATION, sosget.getDatasetFeatureType());
          //station
     }
@@ -141,7 +141,7 @@ public class SOSgetCapsTest {
     @Test
     public void testCanIdentifyTrajectoryCDM() throws IOException {
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + TCRMTH43);
-        SOSGetCapabilitiesRequestHandler sosget = new SOSGetCapabilitiesRequestHandler(dataset, "threddsURI");
+        SOSGetCapabilitiesRequestHandler sosget = new SOSGetCapabilitiesRequestHandler(dataset, "threddsURI", "All");
         assertEquals(FeatureType.TRAJECTORY, sosget.getDatasetFeatureType());
         //trajectory
 
@@ -550,7 +550,7 @@ public class SOSgetCapsTest {
         //1.sos controller  
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds1);
 
-        SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, "imeds");
+        SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, "imeds", "All");
         handler.parseGetCapabilitiesDocument();
     }
 
@@ -562,7 +562,7 @@ public class SOSgetCapsTest {
         //1.sos controller  
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds1);
 
-        SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, "imeds");
+        SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, "imeds", "All");
         handler.parseGetCapabilitiesDocument();
     }
 
@@ -574,7 +574,7 @@ public class SOSgetCapsTest {
         //1.sos controller  
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds1);
 
-        SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, "imeds");
+        SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, "imeds", "All");
         handler.parseGetCapabilitiesDocument();
     }
 
@@ -586,7 +586,7 @@ public class SOSgetCapsTest {
         //1.sos controller  
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds1);
 
-        SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, "imeds");
+        SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, "imeds", "All");
         handler.parseGetCapabilitiesDocument();
     }
 
@@ -600,7 +600,7 @@ public class SOSgetCapsTest {
 
         String cdm_datatype = dataset.findAttValueIgnoreCase(null, "cdm_data_type", null);
         System.out.println(cdm_datatype);
-        SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, "noaa");
+        SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, "noaa", "All");
         handler.parseGetCapabilitiesDocument();
     }
 

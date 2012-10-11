@@ -152,7 +152,10 @@ public class SOSParser {
                             try {
                                 //create the file as it does not exist
                                 //Check Directory 
-                                capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
+                                String sections = "All";
+                                if (queryParameters.containsKey("sections"))
+                                    sections = queryParameters.get("sections").toString();
+                                capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI, sections);
                                 parseGetCaps(capHandler);
                             } catch (IOException ex) {
                                 _log.error(ex.getMessage());
@@ -164,7 +167,10 @@ public class SOSParser {
 //                        _log.info("Time to complete cached request - MILI:" + elapsedTimeMillis + ":SEC: " + elapsedTimeSec);
                     } else {
                         try {
-                            capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI);
+                            String sections = "All";
+                                if (queryParameters.containsKey("sections"))
+                                    sections = queryParameters.get("sections").toString();
+                            capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI, sections);
                             parseGetCaps(capHandler);
                         } catch (IOException ex) {
                             _log.error(ex.getMessage());
