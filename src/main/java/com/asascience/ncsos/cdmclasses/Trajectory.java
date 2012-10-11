@@ -125,7 +125,6 @@ public class Trajectory extends baseCDMClass implements iStationData {
             for (Iterator<String> it = reqStationNames.iterator(); it.hasNext();) {
                 String stName = it.next();
                 if (stName.equalsIgnoreCase(n)) {
-                    System.out.println("add 'station' " + stName);
                     trajList.add(trajFeature);
 
                     double localAltMin = Double.POSITIVE_INFINITY;

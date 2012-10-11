@@ -508,6 +508,8 @@ public class SOSDescribeSensorNetworkTest {
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
             // assert(s)
             assertFalse("exception in output", writer.toString().contains("Exception"));
+            // example out
+            fileWriter(exampleOutputDir, "DescribeSensor-Network-All-TrajectoryProfile-sensorML1.0.1.xml", writer);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
             assertTrue(ex.getMessage(), false);
