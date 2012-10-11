@@ -55,6 +55,11 @@ public class SOSDescribeSensorNetworkTest {
     private static final String p_test_set4 = data_folder + "profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1.nc";
     private static final String p_test_set5 = data_folder + "profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3.nc";
     
+    // trajectoryprofile tests (SECTION)
+    private static final String tp_test_set1 = data_folder + "trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc";
+    private static final String tp_test_set2 = data_folder + "trajectoryProfile-Multidimensional-SingleTrajectory-H.6.2/trajectoryProfile-Multidimensional-SingleTrajectory-H.6.2.nc";
+    private static final String tp_test_set3 = data_folder + "trajectoryProfile-Ragged-MultipleTrajectories-H.6.3/trajectoryProfile-Ragged-MultipleTrajectories-H.6.3.nc";
+    
     @BeforeClass
     public static void setUpClass() throws Exception {
         // not really a test, just used to set up the various string values
@@ -401,6 +406,8 @@ public class SOSDescribeSensorNetworkTest {
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
             // assert(s)
             assertFalse("exception in output", writer.toString().contains("Exception"));
+            // write as an example
+            fileWriter(exampleOutputDir, "DescribeSensor-Network-All-Profile-sensorML1.0.1.xml", writer);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
             assertTrue(ex.getMessage(), false);
@@ -478,6 +485,66 @@ public class SOSDescribeSensorNetworkTest {
             SOSParser parser = new SOSParser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhance(dataset, query, p_test_set5), writer);
+            fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
+            // assert(s)
+            assertFalse("exception in output", writer.toString().contains("Exception"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+            assertTrue(ex.getMessage(), false);
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testTrajectoryProfileSet1() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + tp_test_set1);
+            SOSParser parser = new SOSParser();
+            Writer writer = new CharArrayWriter();
+            writeOutput(parser.enhance(dataset, query, tp_test_set1), writer);
+            fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
+            // assert(s)
+            assertFalse("exception in output", writer.toString().contains("Exception"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+            assertTrue(ex.getMessage(), false);
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testTrajectoryProfileSet2() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + tp_test_set2);
+            SOSParser parser = new SOSParser();
+            Writer writer = new CharArrayWriter();
+            writeOutput(parser.enhance(dataset, query, tp_test_set2), writer);
+            fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
+            // assert(s)
+            assertFalse("exception in output", writer.toString().contains("Exception"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+            assertTrue(ex.getMessage(), false);
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testTrajectoryProfileSet3() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + tp_test_set3);
+            SOSParser parser = new SOSParser();
+            Writer writer = new CharArrayWriter();
+            writeOutput(parser.enhance(dataset, query, tp_test_set3), writer);
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
             // assert(s)
             assertFalse("exception in output", writer.toString().contains("Exception"));

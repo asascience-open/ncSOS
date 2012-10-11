@@ -467,7 +467,7 @@ public class DescribeNetworkFormatter implements SOSOutputFormatter {
         // add values for each pair of coords
         String coordsString = "\n";
         for (int i=0; i<coords.length; i++) {
-            if (coords[i].length == 3)
+            if (coords[i].length == 3 && coords[i][2] > -999)
                 coordsString += coords[i][0] + " " + coords[i][1] + " " + coords[i][2] + "\n";
         }
         parent.setTextContent(coordsString);

@@ -235,6 +235,10 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
             case PROFILE:
                 describer = new SOSDescribeProfile(dataset);
                 break;
+            case SECTION:
+                getFeatureDataset().calcBounds();
+                describer = new SOSDescribeSection(dataset, (SectionFeatureCollection) getFeatureTypeDataSet());
+                break;
         }
     }
 }
