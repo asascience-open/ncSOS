@@ -295,8 +295,6 @@ public class SOSParser {
     
     private void parseGetCaps(SOSGetCapabilitiesRequestHandler capHandler) throws IOException {
         // do our parsing
-        if (((GetCapsOutputter)capHandler.getOutputHandler()).hasExceptionOut())
-            return;
         capHandler.parseGetCapabilitiesDocument();
     }
     

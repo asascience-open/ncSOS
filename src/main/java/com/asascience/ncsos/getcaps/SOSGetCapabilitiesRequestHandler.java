@@ -44,6 +44,12 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         this.sections = sections.toLowerCase();
         output = new GetCapsOutputter();
         
+        if (getFeatureDataset() == null) {
+            // error, couldn't read dataset
+            output.setupExceptionOutput("Unable to read dataset's feature type. Reported as " + FeatureDatasetFactoryManager.findFeatureType(netCDFDataset).toString() + "; unable to process.");
+            return;
+        }
+        
         // check the value of sections and make sure that it is supported
         if (!sections.equalsIgnoreCase("serviceidentification") && !sections.equalsIgnoreCase("serviceprovider") && !sections.equalsIgnoreCase("operationsmetadata") && !sections.equalsIgnoreCase("contents") && !sections.equalsIgnoreCase("all")) {
             // error
@@ -71,6 +77,9 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
      */
     public void parseGetCapabilitiesDocument() {
         GetCapsOutputter out = (GetCapsOutputter) output;
+        // early exit if we have an exception output
+        if (out.hasExceptionOut())
+            return;
         // service identification; parse if it is the section identified or 'all'
         if (this.sections.contains("identification") || this.sections.contains("all")) {
             out.parseServiceIdentification(getTitle() ,Region, Access);

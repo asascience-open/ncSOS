@@ -69,27 +69,55 @@ public abstract class SOSBaseRequestHandler {
             return;
         }
         this.netCDFDataset = netCDFDataset;
-
-        featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.ANY, netCDFDataset, null, new Formatter(System.err));
-        if (featureDataset == null) {
-            _log.info("featureDataset is null, may be a GRID dataset");
-        }
-        //try and get dataset
-        CDMPointFeatureCollection = DiscreteSamplingGeometryUtil.extractFeatureDatasetCollection(featureDataset);
         
-        //if its null try using grid?
-        if (CDMPointFeatureCollection == null) {
-            gridDataSet = DiscreteSamplingGeometryUtil.extractGridDatasetCollection(featureDataset);
-            if (gridDataSet != null) {
-                _log.info("FeatureType is GRID");
-                dataFeatureType = FeatureType.GRID;
+        if (FeatureDatasetFactoryManager.findFeatureType(netCDFDataset) != null) {
+            switch (FeatureDatasetFactoryManager.findFeatureType(netCDFDataset)) {
+                case STATION_PROFILE:
+                    featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.STATION_PROFILE, netCDFDataset, null, new Formatter(System.err));
+                    break;
+                case PROFILE:
+                    featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.PROFILE, netCDFDataset, null, new Formatter(System.err));
+                    break;
+                case STATION:
+                    featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.STATION, netCDFDataset, null, new Formatter(System.err));
+                    break;
+                case TRAJECTORY:
+                    featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.TRAJECTORY, netCDFDataset, null, new Formatter(System.err));
+                    break;
+                case SECTION:
+                    featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.SECTION, netCDFDataset, null, new Formatter(System.err));
+                    break;
+                case POINT:
+                    featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.POINT, netCDFDataset, null, new Formatter(System.err));
+                    break;
+                case GRID:
+                    featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.GRID, netCDFDataset, null, new Formatter(System.err));
+                    gridDataSet = DiscreteSamplingGeometryUtil.extractGridDatasetCollection(featureDataset);
+                    dataFeatureType = FeatureType.GRID;
+                    break;
+                default:
+                    featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.ANY_POINT, netCDFDataset, null, new Formatter(System.err));
+                    break;
             }
-            else {
-                System.out.println("Uknown feature type!");            
+            if (featureDataset == null) {
+                featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.ANY, netCDFDataset, null, new Formatter(System.err));
             }
         } else {
+            System.out.println("findfeaturetype is null, somehow... getting dataset from any_point");
+            featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.ANY_POINT, netCDFDataset, null, new Formatter(System.err));
+        }
+        
+        if (gridDataSet == null && featureDataset == null) {
+            System.err.println("Unknown feature type! " + FeatureDatasetFactoryManager.findFeatureType(netCDFDataset).toString());
+            return;
+        }
+        
+        if (dataFeatureType == null || dataFeatureType == FeatureType.NONE) {
+            CDMPointFeatureCollection = DiscreteSamplingGeometryUtil.extractFeatureDatasetCollection(featureDataset);
             dataFeatureType = CDMPointFeatureCollection.getCollectionFeatureType();
         }
+        
+        
 
         parseGlobalAttributes();
         
@@ -124,10 +152,6 @@ public abstract class SOSBaseRequestHandler {
         featureOfInterestBaseQueryURL = netCDFDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", null);
     }
 
-    private NetcdfDataset getNetCDFDataset() {
-        return netCDFDataset;
-    }
-    
     private void findAndParseStationVariable() {
         // get station var
         // check for station, trajectory, profile and grid station info
@@ -137,6 +161,14 @@ public abstract class SOSBaseRequestHandler {
                 for (Attribute attr : var.getAttributes()) {
                     if(attr.getName().equalsIgnoreCase("cf_role")) {
                         this.stationVariable = var;
+                        String attrValue = attr.getStringValue().toLowerCase();
+                        // parse name based on role
+                        if (attrValue.contains("trajectory"))
+                            parseTrajectoryIdsToNames();
+                        else if (attrValue.contains("profile"))
+                            parseProfileIdsToNames();
+                        else
+                            parseStationNames();
                         break;
                     }
                 }
@@ -152,16 +184,15 @@ public abstract class SOSBaseRequestHandler {
                 break;
         }
         
-        if (this.stationVariable != null) {
-            String stationVarName = this.stationVariable.getFullName().toLowerCase();
-            if (stationVarName.contains("name") && !stationVarName.contains("grid")) {
-                parseStationNames();
-            } else if (stationVarName.contains("trajectory")) {
-                parseTrajectoryIdsToNames();
-            } else if (stationVarName.contains("profile")) {
-                parseProfileIdsToNames();
-            }
+        if (this.stationVariable == null) {
+            // there is no station variable ... add a single station with index 0?
+            parseDefaultStationName();
         }
+    }
+    
+    private void parseDefaultStationName() {
+        this.stationNames = new HashMap<Integer, String>();
+        this.stationNames.put(0, "station0");
     }
     
     /**
@@ -171,6 +202,7 @@ public abstract class SOSBaseRequestHandler {
     private void parseSensorNames() {
         // find all variables who's not a coordinate axis and does not have 'station' in the name
         this.sensorNames = new ArrayList<String>();
+        getFeatureDataset().getDataVariables();
         for (Iterator<VariableSimpleIF> it = getFeatureDataset().getDataVariables().iterator(); it.hasNext();) {
             VariableSimpleIF var = it.next();
             this.sensorNames.add(var.getShortName());
