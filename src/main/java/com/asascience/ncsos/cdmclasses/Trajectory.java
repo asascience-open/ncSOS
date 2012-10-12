@@ -30,16 +30,16 @@ public class Trajectory extends baseCDMClass implements iStationData {
 
     /**
      * 
-     * @param stationName
+     * @param requestedStationNames
      * @param eventTime
      * @param variableNames
      */
-    public Trajectory(String[] stationName, String[] eventTime, String[] variableNames) {
+    public Trajectory(String[] requestedStationNames, String[] eventTime, String[] variableNames) {
         startDate = null;
         endDate = null;
         this.variableNames = variableNames;
         this.reqStationNames = new ArrayList<String>();
-        reqStationNames.addAll(Arrays.asList(stationName));
+        reqStationNames.addAll(Arrays.asList(requestedStationNames));
         
         if (eventTime != null) {
             this.eventTimes = new ArrayList<String>();
@@ -82,6 +82,9 @@ public class Trajectory extends baseCDMClass implements iStationData {
     @Override
     public void setData(Object featureCollection) throws IOException {
         this.trajectoryData = (TrajectoryFeatureCollection) featureCollection;
+        int collectionCount = 0;
+        while(trajectoryData.hasNext()) { trajectoryData.next(); collectionCount++; }
+        this.trajectoryData.resetIteration();
 
         trajList = new ArrayList<TrajectoryFeature>();
 
@@ -114,61 +117,77 @@ public class Trajectory extends baseCDMClass implements iStationData {
         //check
         DateTime dtStartt = null;
         DateTime dtEndt = null;
-
+        
         while (trajectoryData.hasNext()) {
             TrajectoryFeature trajFeature = trajectoryData.next();
             trajFeature.calcBounds();
 
             String n = trajFeature.getName();
+            
+            // ok, so this is necessary if the collection names are not setup properly. This conditional
+            // will probably only fix 1% of the collections that are improperly set.
+            if (reqStationNames.size() == collectionCount)
+                trajList.add(trajFeature);
 
+            // find a better solution for getting features from the collection - TODO
             //scan through the stationname for a match of id
-            for (Iterator<String> it = reqStationNames.iterator(); it.hasNext();) {
-                String stName = it.next();
+            for (String stName : reqStationNames) {
                 if (stName.equalsIgnoreCase(n)) {
-                    trajList.add(trajFeature);
-
-                    double localAltMin = Double.POSITIVE_INFINITY;
-                    double localAltMax = Double.NEGATIVE_INFINITY;
-                    // get altitude
-                    for (trajFeature.resetIteration();trajFeature.hasNext();) {
-                        PointFeature point = trajFeature.next();
-
-                        if (point == null || point.getLocation() == null)
-                            continue;
-
-                        double altitude = point.getLocation().getAltitude();
-                        if (altitude == Invalid_Value)
-                            continue;
-
-                        if (altitude > localAltMax) 
-                            localAltMax = altitude;
-                        if (altitude < localAltMin)
-                            localAltMin = altitude;
-                    }
-
-                    if (localAltMin < lowerAlt)
-                        lowerAlt = localAltMin;
-                    if (localAltMax > upperAlt)
-                        upperAlt = localAltMax;
-
-                    altMax.add(localAltMax);
-                    altMin.add(localAltMin);
+                    if (!trajList.contains(trajFeature))
+                        trajList.add(trajFeature);
+                    break;
                 }
             }
+        }
+        
+        // Could not find any matching stations in the collection
+        if (trajList.size() < 1) {
+            return;
+        }
+        
+        for (Iterator<TrajectoryFeature> it = trajList.iterator(); it.hasNext();) {
+            TrajectoryFeature feature = it.next();
+            double localAltMin = Double.POSITIVE_INFINITY;
+            double localAltMax = Double.NEGATIVE_INFINITY;
+            for (feature.resetIteration();feature.hasNext();) {
+                PointFeature point = feature.next();
 
+                if (point == null || point.getLocation() == null) {
+                    System.out.println("point or its location is null");
+                    continue;
+                }
+
+                double altitude = point.getLocation().getAltitude();
+                if (altitude == Invalid_Value) {
+                    System.out.println("Invalid value for altitude");
+                    continue;
+                }
+
+                if (altitude > localAltMax) 
+                    localAltMax = altitude;
+                if (altitude < localAltMin)
+                    localAltMin = altitude;
+            }
+            if (localAltMin < lowerAlt)
+                lowerAlt = localAltMin;
+            if (localAltMax > upperAlt)
+                upperAlt = localAltMax;
+            altMax.add(localAltMax);
+            altMin.add(localAltMin);
+            
             if (firstSet) {
-                upperLat = trajFeature.getBoundingBox().getLatMax();
-                lowerLat = trajFeature.getBoundingBox().getLatMin();
-                upperLon = trajFeature.getBoundingBox().getLonMax();
-                lowerLon = trajFeature.getBoundingBox().getLonMin();
+                upperLat = feature.getBoundingBox().getLatMax();
+                lowerLat = feature.getBoundingBox().getLatMin();
+                upperLon = feature.getBoundingBox().getLonMax();
+                lowerLon = feature.getBoundingBox().getLonMin();
 
-                dtStart = new DateTime(trajFeature.getDateRange().getStart().getDate(), chrono);
-                dtEnd = new DateTime(trajFeature.getDateRange().getEnd().getDate(), chrono);
+                dtStart = new DateTime(feature.getDateRange().getStart().getDate(), chrono);
+                dtEnd = new DateTime(feature.getDateRange().getEnd().getDate(), chrono);
                 firstSet = false;
             } else {
 
-                dtStartt = new DateTime(trajFeature.getDateRange().getStart().getDate(), chrono);
-                dtEndt = new DateTime(trajFeature.getDateRange().getEnd().getDate(), chrono);
+                dtStartt = new DateTime(feature.getDateRange().getStart().getDate(), chrono);
+                dtEndt = new DateTime(feature.getDateRange().getEnd().getDate(), chrono);
 
                 if (dtStartt.isBefore(dtStart)) {
                     dtStart = dtStartt;
@@ -177,21 +196,20 @@ public class Trajectory extends baseCDMClass implements iStationData {
                     dtEnd = dtEndt;
                 }
 
-                if (trajFeature.getBoundingBox().getLatMax() > upperLat) {
-                    upperLat = trajFeature.getBoundingBox().getLatMax();
+                if (feature.getBoundingBox().getLatMax() > upperLat) {
+                    upperLat = feature.getBoundingBox().getLatMax();
                 }
-                if (trajFeature.getBoundingBox().getLatMin() < lowerLat) {
-                    lowerLat = trajFeature.getBoundingBox().getLatMin();
+                if (feature.getBoundingBox().getLatMin() < lowerLat) {
+                    lowerLat = feature.getBoundingBox().getLatMin();
                 }
                 //lon
-                if (trajFeature.getBoundingBox().getLonMax() > upperLon) {
-                    upperLon = trajFeature.getBoundingBox().getLonMax();
+                if (feature.getBoundingBox().getLonMax() > upperLon) {
+                    upperLon = feature.getBoundingBox().getLonMax();
                 }
-                if (trajFeature.getBoundingBox().getLonMax() < lowerLon) {
-                    lowerLon = trajFeature.getBoundingBox().getLonMin();
+                if (feature.getBoundingBox().getLonMax() < lowerLon) {
+                    lowerLon = feature.getBoundingBox().getLonMin();
                 }
             }
-
         }
         setStartDate(df.toDateTimeStringISO(dtStart.toDate()));
         setEndDate(df.toDateTimeStringISO(dtEnd.toDate()));

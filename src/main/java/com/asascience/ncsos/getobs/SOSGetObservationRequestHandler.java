@@ -32,7 +32,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     /**
      * SOS get obs request handler
      * @param netCDFDataset dataset for which the get observation request is being made
-     * @param stationName collection of offerings from the request
+     * @param requestedStationNames collection of offerings from the request
      * @param variableNames collection of observed properties from the request
      * @param eventTime event time range from the request
      * @param outputFormat response format from the request
@@ -40,7 +40,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
      * @throws IOException 
      */
     public SOSGetObservationRequestHandler(NetcdfDataset netCDFDataset,
-            String[] stationName,
+            String[] requestedStationNames,
             String[] variableNames,
             String[] eventTime,
             String outputFormat,
@@ -73,11 +73,12 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         this.variableNames = checkNetcdfFileForAxis(heightAxis, variableNames);
         
         // get all station names if 'network-all'
-        if (stationName.length == 1 && stationName[0].equalsIgnoreCase("network-all")) {
-            stationName = getStationNames().values().toArray(new String[getStationNames().values().size()]);
+        if (requestedStationNames.length == 1 && requestedStationNames[0].equalsIgnoreCase("network-all")) {
+            System.out.println("network-all request");
+            requestedStationNames = getStationNames().values().toArray(new String[getStationNames().values().size()]);
         }
         
-        setCDMDatasetForStations(netCDFDataset, stationName, eventTime, latLonRequest);
+        setCDMDatasetForStations(netCDFDataset, requestedStationNames, eventTime, latLonRequest);
         
         // set up our formatter
         if(outputFormat.equalsIgnoreCase("text/xml;subtype=\"om/1.0.0\"")) {
@@ -90,15 +91,15 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         }
     }
     
-    private void setCDMDatasetForStations(NetcdfDataset netCDFDataset, String[] stationNames, String[] eventTime, Map<String, String> latLonRequest) throws IOException {
+    private void setCDMDatasetForStations(NetcdfDataset netCDFDataset, String[] requestedStationNames, String[] eventTime, Map<String, String> latLonRequest) throws IOException {
         // strip out any text if the station variable has a shape dimension of 1
-        String[] editedStationNames = new String[stationNames.length];
+        String[] editedStationNames = new String[requestedStationNames.length];
         if (stationVariable.getShape().length <= 1 && stationVariable.getDataType() != DataType.CHAR) {
-            for (int i=0; i<stationNames.length; i++) {
-                editedStationNames[i] = stationNames[i].replaceAll("[A-Za-z]+", "");
+            for (int i=0; i<requestedStationNames.length; i++) {
+                editedStationNames[i] = requestedStationNames[i].replaceAll("[A-Za-z]+", "");
             }
             // copy array
-            stationNames = editedStationNames.clone();
+            requestedStationNames = editedStationNames.clone();
         }
         //grid operation
         if (getDatasetFeatureType() == FeatureType.GRID) {
@@ -111,7 +112,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
                 this.variableNames = checkNetcdfFileForAxis(netCDFDataset.findCoordinateAxis(AxisType.Lat), this.variableNames);
                 this.variableNames = checkNetcdfFileForAxis(netCDFDataset.findCoordinateAxis(AxisType.Lon), this.variableNames);
 
-                CDMDataSet = new Grid(stationNames, eventTime, this.variableNames, latLonRequest);
+                CDMDataSet = new Grid(requestedStationNames, eventTime, this.variableNames, latLonRequest);
                 CDMDataSet.setData(getGridDataset());
             } 
         }
@@ -119,15 +120,15 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         else {
 
             if (getDatasetFeatureType() == FeatureType.TRAJECTORY) {
-                CDMDataSet = new Trajectory(stationNames, eventTime, this.variableNames);
+                CDMDataSet = new Trajectory(requestedStationNames, eventTime, this.variableNames);
             } else if (getDatasetFeatureType() == FeatureType.STATION) {
-                CDMDataSet = new TimeSeries(stationNames, eventTime, this.variableNames);
+                CDMDataSet = new TimeSeries(requestedStationNames, eventTime, this.variableNames);
             } else if (getDatasetFeatureType() == FeatureType.STATION_PROFILE) {
-                CDMDataSet = new TimeSeriesProfile(stationNames, eventTime, this.variableNames);
+                CDMDataSet = new TimeSeriesProfile(requestedStationNames, eventTime, this.variableNames);
             } else if (getDatasetFeatureType() == FeatureType.PROFILE) {
-                CDMDataSet = new Profile(stationNames, eventTime, this.variableNames);
+                CDMDataSet = new Profile(requestedStationNames, eventTime, this.variableNames);
             } else if (getDatasetFeatureType() == FeatureType.SECTION) {
-                CDMDataSet = new Section(stationNames, eventTime, this.variableNames);
+                CDMDataSet = new Section(requestedStationNames, eventTime, this.variableNames);
             }else {
                 _log.error("Have a null CDMDataSet, this will cause a null reference exception! - SOSGetObservationRequestHandler.87");
                 // print exception and then return the doc

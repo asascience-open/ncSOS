@@ -11,6 +11,7 @@ import java.io.*;
 import java.util.HashMap;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -23,6 +24,7 @@ public class SOSGetObsTest {
     
     private static String base = null;
     private static String exampleOutputDir = null;
+    private static final String datasets = "resources/datasets/";
    
     // final strings
     private static final String baseRequest = "request=GetObservation&version=1.0.0&service=sos&responseformat=text%2Fxml%3Bsubtype%3D%22om%2F1.0.0%22";
@@ -118,18 +120,35 @@ public class SOSGetObsTest {
     private static final String externalHawaiiRequest1 = baseRequest + "&observedProperty=temp&offering=WQBKN";
     
     //network all time series
-    private static final String networkAllStation1 = tsOrthogonalMultidimenstionalMultipleStations;
-    private static final String networkAllStation1Request1 = baseRequest + "&observedProperty=alt&offering=network-all";
+    private static final String networkAllTimeSeries1 = datasets + "timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc";
+    private static final String networkAllTimeSeries1Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllTimeSeries2 = datasets + "timeSeries-Orthogonal-Multidimensional-MultipeStations-H.2.1/timeSeries-Orthogonal-Multidimensional-MultipeStations-H.2.1.nc";
+    private static final String networkAllTimeSeries2Request = baseRequest + "&observedProperty=temperature&offering=network-all";
     
     // network all trajectory
-    private static final String networkAllTrajectory = trajectoryContiguousRaggedMultipleTrajectories;
-    private static final String networkAllTrajectoryRequest1 = baseRequest + "&observedProperty=temperature&offering=network-all";
-    private static final String networkAllTrajectoryRequest2 = baseRequest + "&observedProperty=temperature&offering=network-all&eventtime=1970-01-01T00:00:00Z/2012-07-11T00:00:00";
-    private static final String networkAllTrajectoryRequest3 = baseRequest + "&observedProperty=humidity&offering=network-all";
+    private static final String networkAllTrajectory1 = datasets + "trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc";
+    private static final String networkAllTrajectory1Request1 = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllTrajectory1Request2 = baseRequest + "&observedProperty=temperature&offering=network-all&eventtime=1970-01-01T00:00:00Z/2012-07-11T00:00:00";
+    private static final String networkAllTrajectory1Request3 = baseRequest + "&observedProperty=humidity&offering=network-all";
+    private static final String networkAllTrajectory2 = datasets + "trajectory-Incomplete-Multidimensional-MultipleTrajectories-H.4.1/trajectory-Incomplete-Multidimensional-MultipleTrajectories-H.4.1.nc";
+    private static final String networkAllTrajectory2Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllTrajectory3 = datasets + "trajectory-Incomplete-Multidimensional-SingleTrajectory-H.4.2/trajectory-Incomplete-Multidimensional-SingleTrajectory-H.4.2.nc";
+    private static final String networkAllTrajectory3Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllTrajectory4 = datasets + "trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4.nc";
+    private static final String networkAllTrajectory4Request = baseRequest + "&observedProperty=temperature&offering=network-all";
     
     // network all time series profile
-    private static final String networkAllTimeSeriesProfile = MultiDimensionalMultiStations;
-    private static final String networkAllTimeSeriesProfileRequest = baseRequest + "&observedProperty=temperature&offering=network-all&eventTime=1990-01-01T04:00:00Z";
+    private static final String networkAllTimeSeriesProfile1 = datasets + "timeSeriesProfile-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1.nc";
+    private static final String networkAllTimeSeriesProfile1Request = baseRequest + "&observedProperty=temperature&offering=network-all&eventTime=1990-01-01T04:00:00Z";
+    private static final String networkAllTimeSeriesProfile2 = datasets + "timeSeriesProfile-Multidimensional-SingleStation-H.5.2/timeSeriesProfile-Multidimensional-SingleStation-H.5.2.nc";
+    private static final String networkAllTimeSeriesProfile2Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllTimeSeriesProfile3 = datasets + "timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1.nc";
+    private static final String networkAllTimeSeriesProfile3Request = baseRequest + "&observedProperty=station_info&offering=network-all";
+    private static final String networkAllTimeSeriesProfile4 = datasets + "timeSeriesProfile-Ragged-MultipeStations-H.5.3/timeSeriesProfile-Ragged-MultipeStations-H.5.3.nc";
+    private static final String networkAllTimeSeriesProfile4Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllTimeSeriesProfile5 = datasets + "timeSeriesProfile-Ragged-SingleStation-H.5.3/timeSeriesProfile-Ragged-SingleStation-H.5.3.nc";
+    private static final String networkAllTimeSeriesProfile5Request = baseRequest + "&observedProperty=time&offering=network-all";
+    
     
     // network all profile
     private static final String networkAllProfile = "resources/datasets/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1.nc";
@@ -1329,14 +1348,14 @@ public class SOSGetObsTest {
     }
     
     @Test
-    public void testNetworkAllStationTimeSeries1() {
+    public void testNetworkAllIncompleteTimeSeries() {
         System.out.println("\n------" + getCurrentMethod() + "------");
         
         try {
-            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllStation1);
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeries1);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllStation1Request1, networkAllStation1),write);
+            writeOutput(md.enhance(dataset, networkAllTimeSeries1Request, networkAllTimeSeries1),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
@@ -1352,14 +1371,14 @@ public class SOSGetObsTest {
     }
     
     @Test
-    public void testNetworkAllTrajectoryRequestAllTemperature() {
+    public void testNetworkAllOrthogonalTimeSeries() {
         System.out.println("\n------" + getCurrentMethod() + "------");
         
         try {
-            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory);
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeries2);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllTrajectoryRequest1, networkAllTrajectory),write);
+            writeOutput(md.enhance(dataset, networkAllTimeSeries2Request, networkAllTimeSeries2),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
@@ -1375,14 +1394,14 @@ public class SOSGetObsTest {
     }
     
     @Test
-    public void testNetworkAllTrajectoryRequestTemperatureWithTimeConstraint() {
+    public void testNetworkAllTrajectoryContiguousRagged() {
         System.out.println("\n------" + getCurrentMethod() + "------");
         
         try {
-            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory);
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory1);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllTrajectoryRequest2, networkAllTrajectory),write);
+            writeOutput(md.enhance(dataset, networkAllTrajectory1Request1, networkAllTrajectory1),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
@@ -1398,14 +1417,14 @@ public class SOSGetObsTest {
     }
     
     @Test
-    public void testNetworkAllTrajectoryRequestAllHumidity() {
+    public void testNetworkAllTrajectoryContiguousRaggedTimeConstraint() {
         System.out.println("\n------" + getCurrentMethod() + "------");
         
         try {
-            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory);
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory1);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllTrajectoryRequest3, networkAllTrajectory),write);
+            writeOutput(md.enhance(dataset, networkAllTrajectory1Request2, networkAllTrajectory1),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
@@ -1421,19 +1440,196 @@ public class SOSGetObsTest {
     }
     
     @Test
-    public void testNetworkAllTimeSeriesProfile() {
+    public void testNetworkAllTrajectoryContiguousRaggedHumidity() {
         System.out.println("\n------" + getCurrentMethod() + "------");
         
         try {
-            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeriesProfile);
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory1);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllTimeSeriesProfileRequest, networkAllTimeSeriesProfile),write);
+            writeOutput(md.enhance(dataset, networkAllTrajectory1Request3, networkAllTrajectory1),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
             fileWriter(base, fileName, write);
             // write as an example
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllTrajectoryIncompleteMultiple() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory2);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTrajectory2Request, networkAllTrajectory2),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            assertFalse("exception in output", write.toString().contains("Exception"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    // dataset has some issues which prevent it from being successfully read
+//    @Ignore
+    @Test
+    public void testNetworkAllTrajectoryIncompleteSingle() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory3);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTrajectory3Request, networkAllTrajectory3),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            assertFalse("exception in output", write.toString().contains("Exception"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllTrajectoryIndexedRagged() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory4);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTrajectory4Request, networkAllTrajectory4),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            assertFalse("exception in output", write.toString().contains("Exception"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllTimeSeriesProfileMultiDimMultiStation() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeriesProfile1);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTimeSeriesProfile1Request, networkAllTimeSeriesProfile1),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllTimeSeriesProfileMultiDimSingleStation() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeriesProfile2);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTimeSeriesProfile2Request, networkAllTimeSeriesProfile2),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    // no valid observed properties
+    @Ignore
+    @Test
+    public void testNetworkAllTimeSeriesProfileOrthoMultiDimMultiStation() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeriesProfile3);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTimeSeriesProfile3Request, networkAllTimeSeriesProfile3),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllTimeSeriesProfileRaggedMultiStations() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeriesProfile4);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTimeSeriesProfile4Request, networkAllTimeSeriesProfile4),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllTimeSeriesProfileRaggedSingleStation() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeriesProfile5);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTimeSeriesProfile5Request, networkAllTimeSeriesProfile5),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
         } catch (IOException ex) {

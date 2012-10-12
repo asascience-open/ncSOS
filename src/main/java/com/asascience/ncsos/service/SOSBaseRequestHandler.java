@@ -5,6 +5,7 @@ import com.asascience.ncsos.util.DiscreteSamplingGeometryUtil;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.*;
+import ucar.ma2.DataType;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
 import ucar.nc2.VariableSimpleIF;
@@ -163,9 +164,9 @@ public abstract class SOSBaseRequestHandler {
                         this.stationVariable = var;
                         String attrValue = attr.getStringValue().toLowerCase();
                         // parse name based on role
-                        if (attrValue.contains("trajectory"))
+                        if (attrValue.contains("trajectory") && stationVariable.getDataType() == DataType.INT)
                             parseTrajectoryIdsToNames();
-                        else if (attrValue.contains("profile"))
+                        else if (attrValue.contains("profile") && stationVariable.getDataType() == DataType.INT)
                             parseProfileIdsToNames();
                         else
                             parseStationNames();
@@ -226,9 +227,8 @@ public abstract class SOSBaseRequestHandler {
                 onlyStationName = onlyStationName.replaceAll("\u0000", "");
                 this.stationNames.put(stationIndex++, onlyStationName);
             }
-            else if (aShape.length > 1) {
+            else if (aShape.length == 2) {
                 StringBuilder strB = null;
-                int ni = 0;
                 for (int i=0;i<charArray.length;i++) {
                     if(i % aShape[1] == 0) {
                         if (strB != null)
