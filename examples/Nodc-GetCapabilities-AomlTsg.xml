@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Capabilities version="1.0.0" xmlns="http://www.opengis.net/sos/1.0"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:oost="http://www.oostethys.org/schemas/0.1.0/oostethys"
+    xmlns:ows="http://www.opengis.net/ows/1.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sos/1.0 http://schemas.opengis.net/sos/1.0.0/sosGetCapabilities.xsd">
+    <!--~~~~~~~~~~~~~~~~~~~~~~~~-->
+    <!-- Service Identification -->
+    <!--~~~~~~~~~~~~~~~~~~~~~~~~-->
+    <ows:ServiceIdentification>
+        <ows:Title>Underway sea surface temperature and salinity aboard the David Starr Jordan on 20080615.</ows:Title>
+        <ows:Abstract>US DOC; NOAA; Office of Marine and Aviation Operations</ows:Abstract>
+        <ows:Keywords>
+            <ows:Keyword/>
+        </ows:Keywords>
+        <ows:ServiceType codeSpace="http://opengeospatial.net">OGC:SOS</ows:ServiceType>
+        <ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
+        <ows:Fees>NONE</ows:Fees>
+        <ows:AccessConstraints>NONE</ows:AccessConstraints>
+    </ows:ServiceIdentification>
+    <!--~~~~~~~~~~~~~~~~~~~~~~-->
+    <!-- Provider Description -->
+    <!--~~~~~~~~~~~~~~~~~~~~~~-->
+    <ows:ServiceProvider>
+        <ows:ProviderName>insitu observation</ows:ProviderName>
+        <ows:ProviderSite/>
+        <ows:ServiceContact>
+            <ows:IndividualName/>
+            <ows:PositionName/>
+            <ows:ContactInfo>
+                <ows:Phone>
+                    <ows:Voice/>
+                </ows:Phone>
+                <ows:Address>
+                    <ows:DeliveryPoint/>
+                    <ows:City/>
+                    <ows:AdministrativeArea/>
+                    <ows:PostalCode/>
+                    <ows:Country/>
+                    <ows:ElectronicMailAddress/>
+                </ows:Address>
+            </ows:ContactInfo>
+        </ows:ServiceContact>
+    </ows:ServiceProvider>
+    <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+    <!-- operations Metadata Section -->
+    <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+    <ows:OperationsMetadata>
+        <ows:Operation name="GetCapabilities">
+            <ows:DCP>
+                <ows:HTTP>
+                    <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/nodc/aoml_tsg.nc"/>
+                </ows:HTTP>
+            </ows:DCP>
+            <ows:Parameter name="Sections">
+                <ows:AllowedValues>
+                    <ows:Value>ServiceIdentification</ows:Value>
+                    <ows:Value>ServiceProvider</ows:Value>
+                    <ows:Value>OperationsMetadata</ows:Value>
+                    <ows:Value>Contents</ows:Value>
+                    <ows:Value>All</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+        </ows:Operation>
+        <ows:Operation name="GetObservation">
+            <ows:DCP>
+                <ows:HTTP>
+                    <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/nodc/aoml_tsg.nc"/>
+                </ows:HTTP>
+            </ows:DCP>
+            <ows:Parameter name="offering" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>network-all</ows:Value>
+                    <ows:Value>Trajectory20080615</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="observedProperty" use="required">
+                <ows:AllowedValues>
+                    <ows:value>plt</ows:value>
+                    <ows:value>tsg</ows:value>
+                    <ows:value>tmsr</ows:value>
+                    <ows:value>sstr</ows:value>
+                    <ows:value>crs</ows:value>
+                    <ows:value>intp</ows:value>
+                    <ows:value>sal</ows:value>
+                    <ows:value>cond</ows:value>
+                    <ows:value>ext</ows:value>
+                    <ows:value>sst</ows:value>
+                    <ows:value>flag_a</ows:value>
+                    <ows:value>flag_b</ows:value>
+                    <ows:value>flag_c</ows:value>
+                    <ows:value>flag_d</ows:value>
+                    <ows:value>flag_e</ows:value>
+                    <ows:value>flag_f</ows:value>
+                    <ows:value>flag_g</ows:value>
+                    <ows:value>flag_h</ows:value>
+                    <ows:value>flag_i</ows:value>
+                    <ows:value>flag_j</ows:value>
+                    <ows:value>flag_k</ows:value>
+                    <ows:value>flag_l</ows:value>
+                    <ows:value>time</ows:value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="eventTime" use="optional">
+                <ows:AllowedValues>
+                    <ows:Range/>
+                    <ows:MinimumValue>2008-06-15T00:00:19.000Z</ows:MinimumValue>
+                    <ows:MaximumValue>2008-06-15T23:59:49.000Z</ows:MaximumValue>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="responseFormat" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>text/xml;subtype="om/1.0.0"</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+        </ows:Operation>
+        <ows:Operation name="DescribeSensor">
+            <ows:DCP>
+                <ows:HTTP>
+                    <ows:Get/>
+                </ows:HTTP>
+            </ows:DCP>
+            <ows:Parameter name="procedure" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>urn:tds:network:all</ows:Value>
+                    <ows:Value>urn:tds:station.sos:Trajectory20080615</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Trajectory20080615:plt</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Trajectory20080615:tsg</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Trajectory20080615:tmsr</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Trajectory20080615:sstr</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Trajectory20080615:crs</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Trajectory20080615:intp</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Trajectory20080615:sal</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Trajectory20080615:cond</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Trajectory20080615:ext</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Trajectory20080615:sst</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Trajectory20080615:flag_a</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Trajectory20080615:flag_b</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Trajectory20080615:flag_c</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Trajectory20080615:flag_d</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Trajectory20080615:flag_e</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Trajectory20080615:flag_f</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Trajectory20080615:flag_g</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Trajectory20080615:flag_h</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Trajectory20080615:flag_i</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Trajectory20080615:flag_j</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Trajectory20080615:flag_k</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Trajectory20080615:flag_l</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Trajectory20080615:time</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="responseformat" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>text/xml;subtype="sensorML/1.0.1"</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+        </ows:Operation>
+        <ows:Parameter name="service" use="required">
+            <ows:AllowedValues>
+                <ows:Value>SOS</ows:Value>
+            </ows:AllowedValues>
+        </ows:Parameter>
+        <ows:Parameter name="version" use="required">
+            <ows:AllowedValues>
+                <ows:Value>1.0.0</ows:Value>
+            </ows:AllowedValues>
+        </ows:Parameter>
+    </ows:OperationsMetadata>
+    <!--~~~~~~~~~~~~~~~~~~~~~~~-->
+    <!-- Observation Offerings -->
+    <!--~~~~~~~~~~~~~~~~~~~~~~~-->
+    <Contents>
+        <ObservationOfferingList>
+            <ObservationOffering gml:id="network-all">
+                <gml:description>All stations in the netCDF dataset.</gml:description>
+                <gml:name>urn:tds:network:all</gml:name>
+                <gml:srsName>EPSG:4326</gml:srsName>
+                <gml:boundedBy>
+                    <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                        <gml:lowerCorner>0.0 -120.77133</gml:lowerCorner>
+                        <gml:upperCorner>34.342 0.0</gml:upperCorner>
+                    </gml:Envelope>
+                </gml:boundedBy>
+                <time>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
+                        <gml:beginPosition>2008-06-15T00:00:19.000Z</gml:beginPosition>
+                        <gml:endPosition>2008-06-15T23:59:49.000Z</gml:endPosition>
+                    </gml:TimePeriod>
+                </time>
+                <procedure xlink:href="urn:tds:station.sos:Trajectory20080615"/>
+                <observedProperty xlink:href="plt"/>
+                <observedProperty xlink:href="tsg"/>
+                <observedProperty xlink:href="tmsr"/>
+                <observedProperty xlink:href="sstr"/>
+                <observedProperty xlink:href="crs"/>
+                <observedProperty xlink:href="intp"/>
+                <observedProperty xlink:href="sal"/>
+                <observedProperty xlink:href="cond"/>
+                <observedProperty xlink:href="ext"/>
+                <observedProperty xlink:href="sst"/>
+                <observedProperty xlink:href="flag_a"/>
+                <observedProperty xlink:href="flag_b"/>
+                <observedProperty xlink:href="flag_c"/>
+                <observedProperty xlink:href="flag_d"/>
+                <observedProperty xlink:href="flag_e"/>
+                <observedProperty xlink:href="flag_f"/>
+                <observedProperty xlink:href="flag_g"/>
+                <observedProperty xlink:href="flag_h"/>
+                <observedProperty xlink:href="flag_i"/>
+                <observedProperty xlink:href="flag_j"/>
+                <observedProperty xlink:href="flag_k"/>
+                <observedProperty xlink:href="flag_l"/>
+                <observedProperty xlink:href="time"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
+                <responseModel/>
+                <responseMode/>
+            </ObservationOffering>
+            <ObservationOffering gml:id="Trajectory20080615">
+                <gml:name>urn:tds:station.sos:Trajectory20080615</gml:name>
+                <gml:srsName>EPSG:4326</gml:srsName>
+                <gml:boundedBy>
+                    <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                        <gml:lowerCorner>0.0 -120.77133</gml:lowerCorner>
+                        <gml:upperCorner>34.342 0.0</gml:upperCorner>
+                    </gml:Envelope>
+                </gml:boundedBy>
+                <time>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
+                        <gml:beginPosition>2008-06-15T00:00:19.000Z</gml:beginPosition>
+                        <gml:endPosition>2008-06-15T23:59:49.000Z</gml:endPosition>
+                    </gml:TimePeriod>
+                </time>
+                <featureOfInterest xlink:href="Trajectory20080615"/>
+                <observedProperty xlink:href="plt"/>
+                <observedProperty xlink:href="tsg"/>
+                <observedProperty xlink:href="tmsr"/>
+                <observedProperty xlink:href="sstr"/>
+                <observedProperty xlink:href="crs"/>
+                <observedProperty xlink:href="intp"/>
+                <observedProperty xlink:href="sal"/>
+                <observedProperty xlink:href="cond"/>
+                <observedProperty xlink:href="ext"/>
+                <observedProperty xlink:href="sst"/>
+                <observedProperty xlink:href="flag_a"/>
+                <observedProperty xlink:href="flag_b"/>
+                <observedProperty xlink:href="flag_c"/>
+                <observedProperty xlink:href="flag_d"/>
+                <observedProperty xlink:href="flag_e"/>
+                <observedProperty xlink:href="flag_f"/>
+                <observedProperty xlink:href="flag_g"/>
+                <observedProperty xlink:href="flag_h"/>
+                <observedProperty xlink:href="flag_i"/>
+                <observedProperty xlink:href="flag_j"/>
+                <observedProperty xlink:href="flag_k"/>
+                <observedProperty xlink:href="flag_l"/>
+                <observedProperty xlink:href="time"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Trajectory20080615:plt"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Trajectory20080615:tsg"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Trajectory20080615:tmsr"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Trajectory20080615:sstr"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Trajectory20080615:crs"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Trajectory20080615:intp"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Trajectory20080615:sal"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Trajectory20080615:cond"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Trajectory20080615:ext"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Trajectory20080615:sst"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Trajectory20080615:flag_a"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Trajectory20080615:flag_b"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Trajectory20080615:flag_c"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Trajectory20080615:flag_d"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Trajectory20080615:flag_e"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Trajectory20080615:flag_f"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Trajectory20080615:flag_g"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Trajectory20080615:flag_h"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Trajectory20080615:flag_i"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Trajectory20080615:flag_j"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Trajectory20080615:flag_k"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Trajectory20080615:flag_l"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Trajectory20080615:time"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
+                <responseModel>om:ObservationCollection</responseModel>
+                <responseMode>inline</responseMode>
+            </ObservationOffering>
+        </ObservationOfferingList>
+    </Contents>
+</Capabilities>

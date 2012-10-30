@@ -83,10 +83,10 @@ public class SOSGetObsTest {
     private static final String MultiDimensionalMultiStations = "resources/datasets/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1.nc";
     
     private static final String ContiguousRaggedMultipleProfiles = "resources/datasets/profile-Contiguous-Ragged-MultipleProfiles-H.3.4/profile-Contiguous-Ragged-MultipleProfiles-H.3.4.nc";
-    private static final String profileRequest = baseRequest + "&observedProperty=temperature,humidity&offering=0&eventTime=1990-01-01T00:00:00Z";
-    private static final String profileRequestMultiTime = baseRequest + "&observedProperty=temperature,humidity&offering=1,2,3&eventTime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z";
-    private static final String profileRequestMultiTime2 = baseRequest + "&observedProperty=temperature,humidity&offering=1,2&eventTime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z";
-    private static final String profileRequestMultiTime3 = baseRequest + "&service=sos&observedProperty=temperature,humidity&offering=3&eventTime=1990-01-01T00:00:00Z/1990-01-01T03:00:00Z";
+    private static final String profileRequest = baseRequest + "&observedProperty=temperature,humidity&offering=Profile0&eventTime=1990-01-01T00:00:00Z";
+    private static final String profileRequestMultiTime = baseRequest + "&observedProperty=temperature,humidity&offering=Profile1,Profile2,Profile3&eventTime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z";
+    private static final String profileRequestMultiTime2 = baseRequest + "&observedProperty=temperature,humidity&offering=Profile1,Profile2&eventTime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z";
+    private static final String profileRequestMultiTime3 = baseRequest + "&service=sos&observedProperty=temperature,humidity&offering=Profile3&eventTime=1990-01-01T00:00:00Z/1990-01-01T03:00:00Z";
     
     private static final String IncompleteMultiDimensionalMultipleProfiles = "resources/datasets/profile-Incomplete-MultiDimensional-MultipleProfiles-H.3.2/profile-Incomplete-MultiDimensional-MultipleProfiles-H.3.2.nc";
     
@@ -151,12 +151,24 @@ public class SOSGetObsTest {
     
     
     // network all profile
-    private static final String networkAllProfile = "resources/datasets/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1.nc";
-    private static final String networkAllProfileRequest = baseRequest + "&observedProperty=temperature,humidity&offering=network-all";
+    private static final String networkAllProfile1 = "resources/datasets/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1.nc";
+    private static final String networkAllProfile1Request = baseRequest + "&observedProperty=temperature,humidity&offering=network-all";
+    private static final String networkAllProfile2 = datasets + "profile-Contiguous-Ragged-MultipleProfiles-H.3.4/profile-Contiguous-Ragged-MultipleProfiles-H.3.4.nc";
+    private static final String networkAllProfile2Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllProfile3 = datasets + "profile-Incomplete-MultiDimensional-MultipleProfiles-H.3.2/profile-Incomplete-MultiDimensional-MultipleProfiles-H.3.2.nc";
+    private static final String networkAllProfile3Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllProfile4 = datasets + "profile-Indexed-Ragged-MultipleProfiles-H.3.5/profile-Indexed-Ragged-MultipleProfiles-H.3.5.nc";
+    private static final String networkAllProfile4Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllProfile5 = datasets + "profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3.nc";
+    private static final String networkAllProfile5Request = baseRequest + "&observedProperty=temperature&offering=network-all";
     
     // network all section
-    private static final String networkAllTrajectoryProfile = "resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc";
-    private static final String networkAllTrajectoryProfileRequest = baseRequest + "&observedProperty=salinity&offering=network-all";
+    private static final String networkAllTrajectoryProfile1 = "resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc";
+    private static final String networkAllTrajectoryProfile1Request = baseRequest + "&observedProperty=salinity&offering=network-all";
+    private static final String networkAllTrajectoryProfile2 = datasets + "trajectoryProfile-Multidimensional-SingleTrajectory-H.6.2/trajectoryProfile-Multidimensional-SingleTrajectory-H.6.2.nc";
+    private static final String networkAllTrajectoryProfile2Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllTrajectoryProfile3 = datasets + "trajectoryProfile-Ragged-MultipleTrajectories-H.6.3/trajectoryProfile-Ragged-MultipleTrajectories-H.6.3.nc";
+    private static final String networkAllTrajectoryProfile3Request = baseRequest + "&observedProperty=temperature&offering=network-all";
     
     @BeforeClass
     public static void SetupEnviron() {
@@ -1640,14 +1652,14 @@ public class SOSGetObsTest {
     }
     
     @Test
-    public void testNetworkAllProfile() {
+    public void testNetworkAllProfileOrthoMultiDimMultiProfile() {
         System.out.println("\n------" + getCurrentMethod() + "------");
         
         try {
-            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllProfile);
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllProfile1);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllProfileRequest, networkAllProfile),write);
+            writeOutput(md.enhance(dataset, networkAllProfile1Request, networkAllProfile1),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
@@ -1663,14 +1675,14 @@ public class SOSGetObsTest {
     }
     
     @Test
-    public void testNetworkAllTrajectoryProfile() {
+    public void testNetworkAllProfileContRaggedMultiProfiles() {
         System.out.println("\n------" + getCurrentMethod() + "------");
         
         try {
-            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectoryProfile);
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllProfile2);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllTrajectoryProfileRequest, networkAllTrajectoryProfile),write);
+            writeOutput(md.enhance(dataset, networkAllProfile2Request, networkAllProfile2),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
@@ -1684,6 +1696,147 @@ public class SOSGetObsTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
+    
+    @Test
+    public void testNetworkAllProfileIncompleteMultiDimMultiProfiles() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllProfile3);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllProfile3Request, networkAllProfile3),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            // write as an example
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    // TODO - fix this shit, oostehtysswe is out dated
+    @Ignore
+    @Test
+    public void testNetworkAllProfileIndexedRaggedMultiProfiles() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllProfile4);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllProfile4Request, networkAllProfile4),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            // write as an example
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllProfileSingleDimSingleProfile() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllProfile5);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllProfile5Request, networkAllProfile5),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            // write as an example
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllTrajectoryProfileMultiDimMultiTrajectories() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectoryProfile1);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTrajectoryProfile1Request, networkAllTrajectoryProfile1),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            // write as an example
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllTrajectoryProfileMultiDimSingleTrajectory() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectoryProfile2);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTrajectoryProfile2Request, networkAllTrajectoryProfile2),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            // write as an example
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllTrajectoryProfileRaggedMultiTrajectories() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectoryProfile3);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTrajectoryProfile3Request, networkAllTrajectoryProfile3),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            // write as an example
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
     
 //    @Test
 //    public void testInsertClassNameHere() {

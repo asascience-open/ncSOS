@@ -58,6 +58,15 @@
 					<ows:Get />
 				</ows:HTTP>
 			</ows:DCP>
+			<ows:Parameter name="Sections">
+				<ows:AllowedValues>
+				  <ows:Value>ServiceIdentification</ows:Value>
+				  <ows:Value>ServiceProvider</ows:Value>
+				  <ows:Value>OperationsMetadata</ows:Value>
+				  <ows:Value>Contents</ows:Value>
+				  <ows:Value>All</ows:Value>
+				</ows:AllowedValues>
+			</ows:Parameter>
 		</ows:Operation>
 		<ows:Operation name="GetObservation">
 			<ows:DCP>

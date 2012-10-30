@@ -5,6 +5,7 @@
 package com.asascience.ncsos.cdmclasses;
 
 import com.asascience.ncsos.getobs.SOSObservationOffering;
+import com.asascience.ncsos.util.DatasetHandlerAdapter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,7 +89,7 @@ public class Profile extends baseCDMClass implements iStationData {
             newOffering.setObservationStationLowerCorner(Double.toString(pFeature.getLatLon().getLatitude()), Double.toString(pFeature.getLatLon().getLongitude()));
             newOffering.setObservationStationUpperCorner(Double.toString(pFeature.getLatLon().getLatitude()), Double.toString(pFeature.getLatLon().getLongitude()));
 
-            pFeature.calcBounds();
+            DatasetHandlerAdapter.calcBounds(pFeature);
 
             //check the data
             if (pFeature.getDateRange() != null) {
@@ -127,7 +128,7 @@ public class Profile extends baseCDMClass implements iStationData {
     }
     
     public boolean isStationInFinalCollection(int stNum) {
-        if (profileList != null && profileList.containsKey((Integer)stNum))
+        if (profileList != null && profileList.containsKey(stNum))
             return true;
         return false;
     }
@@ -154,7 +155,7 @@ public class Profile extends baseCDMClass implements iStationData {
         
         while (profileData.hasNext()) {
             ProfileFeature pFeature = profileData.next();
-            pFeature.calcBounds();
+            DatasetHandlerAdapter.calcBounds(pFeature);
             
             //scan through the data and get the profile id number
             PointFeatureIterator pp = pFeature.getPointFeatureIterator(-1);
@@ -269,10 +270,10 @@ public class Profile extends baseCDMClass implements iStationData {
     @Override
     public String getDataResponse(int stNum) {
         try {
-            if (profileData != null && profileList.containsKey((Integer)stNum)) {
+            if (profileData != null && profileList.containsKey(stNum)) {
                 return createProfileFeature(stNum);
             } else {
-                System.out.println("profileData is null, not creating a string");
+                System.out.println("profileData " + stNum + " is null, not creating a string");
             }
         } catch (IOException ex) {
             Logger.getLogger(Profile.class.getName()).log(Level.SEVERE, null, ex);

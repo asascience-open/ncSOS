@@ -892,8 +892,7 @@ public class SOSgetCapsTest {
         }
     }
     
-    // test causes JVM to run out of heap memory, gonna skip it for now
-    @Ignore
+    // test causes JVM to run out of heap memory, but in checking to see if this can be skipped with an exception
     @Test
     public void testNodcOkeanos() {
         System.out.println("\n------" + getCurrentMethod() + "------");
@@ -916,7 +915,6 @@ public class SOSgetCapsTest {
     }
     
     // The feature type cannot be wrapped, for some reason...
-    @Ignore
     @Test
     public void testNodcUsgsInternalWave() {
         System.out.println("\n------" + getCurrentMethod() + "------");

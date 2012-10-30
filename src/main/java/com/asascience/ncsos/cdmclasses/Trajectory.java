@@ -1,6 +1,7 @@
 package com.asascience.ncsos.cdmclasses;
 
 import com.asascience.ncsos.getobs.SOSObservationOffering;
+import com.asascience.ncsos.util.DatasetHandlerAdapter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -120,7 +121,7 @@ public class Trajectory extends baseCDMClass implements iStationData {
         
         while (trajectoryData.hasNext()) {
             TrajectoryFeature trajFeature = trajectoryData.next();
-            trajFeature.calcBounds();
+            DatasetHandlerAdapter.calcBounds(trajFeature);
 
             String n = trajFeature.getName();
             
@@ -338,7 +339,7 @@ public class Trajectory extends baseCDMClass implements iStationData {
 
         while (((TrajectoryFeatureCollection) dataset).hasNext()) {
             TrajectoryFeature tFeature = ((TrajectoryFeatureCollection) dataset).next();
-            tFeature.calcBounds();
+            DatasetHandlerAdapter.calcBounds(tFeature);
 
             //trajIter = tFeature.getPointFeatureIterator(-1);
             //attributes

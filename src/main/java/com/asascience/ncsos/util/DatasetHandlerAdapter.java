@@ -36,6 +36,9 @@ import thredds.servlet.DatasetHandler;
 import thredds.servlet.ServletUtil;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.dataset.NetcdfDataset;
+import ucar.nc2.ft.FeatureDataset;
+import ucar.nc2.ft.PointFeature;
+import ucar.nc2.ft.PointFeatureCollection;
 
 /**
  * DatasetHandlerAdapter
@@ -99,5 +102,39 @@ public class DatasetHandlerAdapter {
         } catch (IOException ioe) {
             _log.warn("Failed to properly close the dataset", ioe);
         }
+    }
+    
+    /**
+     * Encapsulates calcBounds in a try-catch block. Returns whether or not the attempt was succesful
+     * @since authored by Sean Cowan - 10.16.2012
+     * @param collection the feature collection to calc bounds on
+     * @return T if calc bounds was successful, false otherwise
+     */
+    public static boolean calcBounds(final PointFeatureCollection collection) {
+        try {
+            collection.calcBounds();
+        } catch (Exception ex) {
+            _log.error("Could not calculate the bounds of the PointFeatureCollection " + collection.getName() + "\n" + ex.getLocalizedMessage());
+            return false;
+        }
+        
+        return true;
+    }
+
+    /**
+     * 
+     * @since authored by Sean Cowan - 10.16.2012
+     * @param featureDataset
+     * @return 
+     */
+    public static boolean calcBounds(FeatureDataset featureDataset) {
+        try {
+            featureDataset.calcBounds();
+        } catch (Exception ex) {
+            _log.error("Could not calculate the bounds of the FeatureDataset " + featureDataset.getTitle() + "\n" + ex.getLocalizedMessage());
+            return false;
+        }
+        
+        return true;
     }
 }

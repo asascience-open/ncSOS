@@ -7469,3 +7469,423 @@
         <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
     </Exception>
 </ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.UnsupportedOperationException: ucar.nc2.ft.point.standard.StandardProfileCollectionImpl (single nested) PointFeatureCollection does not implement getNestedPointFeatureCollectionIterator()</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.UnsupportedOperationException: ucar.nc2.ft.point.standard.StandardProfileCollectionImpl (single nested) PointFeatureCollection does not implement getNestedPointFeatureCollectionIterator()</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.UnsupportedOperationException: ucar.nc2.ft.point.standard.StandardProfileCollectionImpl (single nested) PointFeatureCollection does not implement getNestedPointFeatureCollectionIterator()</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Internal System Exception in setting up DescribeSensor handler - java.lang.NullPointerException</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>

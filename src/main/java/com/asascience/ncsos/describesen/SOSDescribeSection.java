@@ -6,6 +6,7 @@ package com.asascience.ncsos.describesen;
 
 import com.asascience.ncsos.outputformatter.DescribeNetworkFormatter;
 import com.asascience.ncsos.outputformatter.DescribeSensorFormatter;
+import com.asascience.ncsos.util.DatasetHandlerAdapter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -237,7 +238,7 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
                         i=0;
                         for (section.resetIteration();section.hasNext();) {
                             ProfileFeature pfeature = section.next();
-                            pfeature.calcBounds();
+                            DatasetHandlerAdapter.calcBounds(pfeature);
                             for (pfeature.resetIteration();pfeature.hasNext();) {
                                 // iterate through data to make sure various items (ie start date) isn't null
                                 PointFeature pointf = pfeature.next();

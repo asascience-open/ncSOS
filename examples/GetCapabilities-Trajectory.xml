@@ -54,6 +54,15 @@
                     <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc"/>
                 </ows:HTTP>
             </ows:DCP>
+            <ows:Parameter name="Sections">
+                <ows:AllowedValues>
+                    <ows:Value>ServiceIdentification</ows:Value>
+                    <ows:Value>ServiceProvider</ows:Value>
+                    <ows:Value>OperationsMetadata</ows:Value>
+                    <ows:Value>Contents</ows:Value>
+                    <ows:Value>All</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
         </ows:Operation>
         <ows:Operation name="GetObservation">
             <ows:DCP>
@@ -103,6 +112,7 @@
             </ows:DCP>
             <ows:Parameter name="procedure" use="required">
                 <ows:AllowedValues>
+                    <ows:Value>urn:tds:network:all</ows:Value>
                     <ows:Value>urn:tds:station.sos:Trajectory0</ows:Value>
                     <ows:Value>urn:tds:sensor.sos:Trajectory0:trajectory_info</ows:Value>
                     <ows:Value>urn:tds:sensor.sos:Trajectory0:rowSize</ows:Value>
@@ -216,6 +226,7 @@
                         <gml:endPosition>1990-01-01T23:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
+                <featureOfInterest xlink:href="Trajectory0"/>
                 <observedProperty xlink:href="trajectory_info"/>
                 <observedProperty xlink:href="rowSize"/>
                 <observedProperty xlink:href="temperature"/>
@@ -229,8 +240,8 @@
                 <procedure xlink:href="urn:tds:sensor.sos:Trajectory0:time"/>
                 <procedure xlink:href="urn:tds:sensor.sos:Trajectory0:z"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel/>
-                <responseMode/>
+                <responseModel>om:ObservationCollection</responseModel>
+                <responseMode>inline</responseMode>
             </ObservationOffering>
             <ObservationOffering gml:id="Trajectory1">
                 <gml:name>urn:tds:station.sos:Trajectory1</gml:name>
@@ -247,6 +258,7 @@
                         <gml:endPosition>1990-01-01T12:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
+                <featureOfInterest xlink:href="Trajectory1"/>
                 <observedProperty xlink:href="trajectory_info"/>
                 <observedProperty xlink:href="rowSize"/>
                 <observedProperty xlink:href="temperature"/>
@@ -260,8 +272,8 @@
                 <procedure xlink:href="urn:tds:sensor.sos:Trajectory1:time"/>
                 <procedure xlink:href="urn:tds:sensor.sos:Trajectory1:z"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel/>
-                <responseMode/>
+                <responseModel>om:ObservationCollection</responseModel>
+                <responseMode>inline</responseMode>
             </ObservationOffering>
             <ObservationOffering gml:id="Trajectory2">
                 <gml:name>urn:tds:station.sos:Trajectory2</gml:name>
@@ -278,6 +290,7 @@
                         <gml:endPosition>1990-01-01T10:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
+                <featureOfInterest xlink:href="Trajectory2"/>
                 <observedProperty xlink:href="trajectory_info"/>
                 <observedProperty xlink:href="rowSize"/>
                 <observedProperty xlink:href="temperature"/>
@@ -291,8 +304,8 @@
                 <procedure xlink:href="urn:tds:sensor.sos:Trajectory2:time"/>
                 <procedure xlink:href="urn:tds:sensor.sos:Trajectory2:z"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel/>
-                <responseMode/>
+                <responseModel>om:ObservationCollection</responseModel>
+                <responseMode>inline</responseMode>
             </ObservationOffering>
             <ObservationOffering gml:id="Trajectory3">
                 <gml:name>urn:tds:station.sos:Trajectory3</gml:name>
@@ -309,6 +322,7 @@
                         <gml:endPosition>1990-01-02T17:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
+                <featureOfInterest xlink:href="Trajectory3"/>
                 <observedProperty xlink:href="trajectory_info"/>
                 <observedProperty xlink:href="rowSize"/>
                 <observedProperty xlink:href="temperature"/>
@@ -322,8 +336,8 @@
                 <procedure xlink:href="urn:tds:sensor.sos:Trajectory3:time"/>
                 <procedure xlink:href="urn:tds:sensor.sos:Trajectory3:z"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel/>
-                <responseMode/>
+                <responseModel>om:ObservationCollection</responseModel>
+                <responseMode>inline</responseMode>
             </ObservationOffering>
             <ObservationOffering gml:id="Trajectory4">
                 <gml:name>urn:tds:station.sos:Trajectory4</gml:name>
@@ -340,6 +354,7 @@
                         <gml:endPosition>1990-01-02T10:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
+                <featureOfInterest xlink:href="Trajectory4"/>
                 <observedProperty xlink:href="trajectory_info"/>
                 <observedProperty xlink:href="rowSize"/>
                 <observedProperty xlink:href="temperature"/>
@@ -353,8 +368,8 @@
                 <procedure xlink:href="urn:tds:sensor.sos:Trajectory4:time"/>
                 <procedure xlink:href="urn:tds:sensor.sos:Trajectory4:z"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel/>
-                <responseMode/>
+                <responseModel>om:ObservationCollection</responseModel>
+                <responseMode>inline</responseMode>
             </ObservationOffering>
             <ObservationOffering gml:id="Trajectory5">
                 <gml:name>urn:tds:station.sos:Trajectory5</gml:name>
@@ -371,6 +386,7 @@
                         <gml:endPosition>1990-01-02T13:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
+                <featureOfInterest xlink:href="Trajectory5"/>
                 <observedProperty xlink:href="trajectory_info"/>
                 <observedProperty xlink:href="rowSize"/>
                 <observedProperty xlink:href="temperature"/>
@@ -384,8 +400,8 @@
                 <procedure xlink:href="urn:tds:sensor.sos:Trajectory5:time"/>
                 <procedure xlink:href="urn:tds:sensor.sos:Trajectory5:z"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel/>
-                <responseMode/>
+                <responseModel>om:ObservationCollection</responseModel>
+                <responseMode>inline</responseMode>
             </ObservationOffering>
         </ObservationOfferingList>
     </Contents>

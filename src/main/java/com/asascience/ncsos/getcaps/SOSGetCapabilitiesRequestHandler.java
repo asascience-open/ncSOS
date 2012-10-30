@@ -2,6 +2,7 @@ package com.asascience.ncsos.getcaps;
 
 import com.asascience.ncsos.outputformatter.GetCapsOutputter;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
+import com.asascience.ncsos.util.DatasetHandlerAdapter;
 import java.io.IOException;
 import java.util.HashMap;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -152,7 +153,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                         collection.resetIteration();
                         while(collection.hasNext()) {
                             TrajectoryFeature feature = collection.next();
-                            feature.calcBounds();
+                            DatasetHandlerAdapter.calcBounds(feature);
                             if (start == null || start.isAfter(feature.getCalendarDateRange().getStart()))
                                 start = feature.getCalendarDateRange().getStart();
                             if (end == null || end.isBefore(feature.getCalendarDateRange().getEnd()))
@@ -174,7 +175,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                         collection.resetIteration();
                         while(collection.hasNext()) {
                             StationTimeSeriesFeature feature = collection.next();
-                            feature.calcBounds();
+                            DatasetHandlerAdapter.calcBounds(feature);
                             if (start == null || start.isAfter(feature.getCalendarDateRange().getStart()))
                                 start = feature.getCalendarDateRange().getStart();
                             if (end == null || end.isBefore(feature.getCalendarDateRange().getEnd()))
@@ -196,7 +197,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                         collection.resetIteration();
                         while(collection.hasNext()) {
                             ProfileFeature feature = collection.next();
-                            feature.calcBounds();
+                            DatasetHandlerAdapter.calcBounds(feature);
                             CalendarDate profileDate = CalendarDate.of(feature.getTime());
                             if (start == null || start.isAfter(profileDate))
                                 start = profileDate;
@@ -226,7 +227,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                         while(collection.hasNext()) {
                             StationProfileFeature feature = collection.next();
                             PointFeatureCollection flattened = feature.flatten(null, nullrange);
-                            flattened.calcBounds();
+                            DatasetHandlerAdapter.calcBounds(flattened);
                             if (start == null || start.isAfter(flattened.getCalendarDateRange().getStart()))
                                 start = flattened.getCalendarDateRange().getStart();
                             if (end == null || end.isBefore(flattened.getCalendarDateRange().getEnd()))
@@ -250,7 +251,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                         while(collection.hasNext()) {
                             SectionFeature feature = collection.next();
                             PointFeatureCollection flattened = feature.flatten(null, nullrange);
-                            flattened.calcBounds();
+                            DatasetHandlerAdapter.calcBounds(flattened);
                             if (start == null || start.isAfter(flattened.getCalendarDateRange().getStart()))
                                 start = flattened.getCalendarDateRange().getStart();
                             if (end == null || end.isBefore(flattened.getCalendarDateRange().getEnd()))

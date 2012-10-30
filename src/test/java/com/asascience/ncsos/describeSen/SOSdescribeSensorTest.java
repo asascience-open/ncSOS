@@ -52,7 +52,7 @@ public class SOSdescribeSensorTest {
     private static final String bdsp_3_query = "procedure=urn:tds:station.sos:profile32";
     
     private static final String bdsg_1_set = "resources/datasets/satellite-sst/SST_Global_2x2deg_20120626_0000.nc";
-    private static final String bdsg_1_query = "procedure=urn:tds:station.sos:grid1";
+    private static final String bdsg_1_query = "procedure=urn:tds:station.sos:Grid1";
     
     private static final String bdstp_1_set = "resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc";
     private static final String bdstp_1_query = "procedure=urn:tds:station.sos:trajectory2";

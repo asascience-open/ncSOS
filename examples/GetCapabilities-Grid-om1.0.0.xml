@@ -54,6 +54,15 @@
                     <ows:Get xlink:href="resources/datasets/satellite-sst/SST_Global_2x2deg_20120626_0000.nc"/>
                 </ows:HTTP>
             </ows:DCP>
+            <ows:Parameter name="Sections">
+                <ows:AllowedValues>
+                    <ows:Value>ServiceIdentification</ows:Value>
+                    <ows:Value>ServiceProvider</ows:Value>
+                    <ows:Value>OperationsMetadata</ows:Value>
+                    <ows:Value>Contents</ows:Value>
+                    <ows:Value>All</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
         </ows:Operation>
         <ows:Operation name="GetObservation">
             <ows:DCP>
@@ -64,7 +73,7 @@
             <ows:Parameter name="offering" use="required">
                 <ows:AllowedValues>
                     <ows:Value>network-all</ows:Value>
-                    <ows:Value>grid1</ows:Value>
+                    <ows:Value>Grid0</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
             <ows:Parameter name="observedProperty" use="required">
@@ -105,8 +114,9 @@
             </ows:DCP>
             <ows:Parameter name="procedure" use="required">
                 <ows:AllowedValues>
-                    <ows:Value>urn:tds:station.sos:grid1</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:grid1:SST</ows:Value>
+                    <ows:Value>urn:tds:network:all</ows:Value>
+                    <ows:Value>urn:tds:station.sos:Grid0</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Grid0:SST</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
             <ows:Parameter name="responseformat" use="required">
@@ -147,14 +157,14 @@
                         <gml:endPosition>2012-06-26T00:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:station.sos:grid1"/>
+                <procedure xlink:href="urn:tds:station.sos:Grid0"/>
                 <observedProperty xlink:href="SST"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
             </ObservationOffering>
-            <ObservationOffering gml:id="grid1">
-                <gml:name>urn:tds:station.sos:grid1</gml:name>
+            <ObservationOffering gml:id="Grid0">
+                <gml:name>urn:tds:station.sos:Grid0</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy/>
                 <time>
@@ -163,11 +173,12 @@
                         <gml:endPosition>2012-06-26T00:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
+                <featureOfInterest xlink:href="Grid0"/>
                 <observedProperty xlink:href="SST"/>
-                <procedure xlink:href="urn:tds:sensor.sos:grid1:SST"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Grid0:SST"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel/>
-                <responseMode/>
+                <responseModel>om:ObservationCollection</responseModel>
+                <responseMode>inline</responseMode>
             </ObservationOffering>
         </ObservationOfferingList>
     </Contents>

@@ -67,16 +67,14 @@ public class OosTethysSwe implements SOSOutputFormatter {
         this.CDMDataSet = cdmDataset;
         this.variableNames = variableNames;
         
-        title = history = institution = source = description = location = "none";
-        featureOfInterest = "";
         document = parseTemplateXML();
         
-        setMetaData(netcdfDataset.findAttValueIgnoreCase(null, "title", "empty title"),
-                netcdfDataset.findAttValueIgnoreCase(null, "history", "empty history"),
-                netcdfDataset.findAttValueIgnoreCase(null, "institution", "empty institution"),
-                netcdfDataset.findAttValueIgnoreCase(null, "source", "empty source"),
-                netcdfDataset.findAttValueIgnoreCase(null, "description", "empty description"),
-                netcdfDataset.findAttValueIgnoreCase(null, "location", "empty location"),
+        setMetaData(netcdfDataset.findAttValueIgnoreCase(null, "title", "NONE"),
+                netcdfDataset.findAttValueIgnoreCase(null, "history", "NONE"),
+                netcdfDataset.findAttValueIgnoreCase(null, "institution", "NONE"),
+                netcdfDataset.findAttValueIgnoreCase(null, "source", "NONE"),
+                netcdfDataset.findAttValueIgnoreCase(null, "description", "NONE"),
+                netcdfDataset.findAttValueIgnoreCase(null, "location", "NONE"),
                 netcdfDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", null));
         
         try {
@@ -303,8 +301,7 @@ public class OosTethysSwe implements SOSOutputFormatter {
 
         int numStations;
             numStations = CDMDataSet.getNumberOfStations();
-
-
+            
         //add observation 
         //*********THIS IS FOR NUMBER OF STATIONS!
         for (int stNum = 0; stNum < numStations; stNum++) {
@@ -359,6 +356,10 @@ public class OosTethysSwe implements SOSOutputFormatter {
                 document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "om:result", stNum);
 
                 addDatasetResults(stNum);
+                
+            } else {
+                // add empty observation
+                document = XMLDomUtils.addObservationElement(document);
             }
         }
     }

@@ -7,6 +7,7 @@ package com.asascience.ncsos.describesen;
 import com.asascience.ncsos.outputformatter.DescribeNetworkFormatter;
 import com.asascience.ncsos.outputformatter.DescribeSensorFormatter;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
+import com.asascience.ncsos.util.DatasetHandlerAdapter;
 import com.asascience.ncsos.util.DiscreteSamplingGeometryUtil;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
         this.procedure = procedure;
         
         // test that the dataset can be handled properly
-        if (getFeatureDataset() == null)
+        if (getFeatureDataset() == null && getGridDataset() == null)
         {
             output.setupExceptionOutput("Unable to handle requested dataset. Make sure that it has a properly defined feature type.");
             return;
@@ -115,7 +116,7 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
                 CalendarDate colStart = null;
                 for (feature.resetIteration();feature.hasNext();) {
                     TrajectoryFeature traj = feature.next();
-                    traj.calcBounds();
+                    DatasetHandlerAdapter.calcBounds(traj);
                     for (traj.resetIteration();traj.hasNext();) {
                         PointFeature pf = traj.next();
                         if (colStart == null)
@@ -132,7 +133,7 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
                 ((DescribeSensorFormatter)output).setComponentsNode(DiscreteSamplingGeometryUtil.getDataVariables(getFeatureDataset()), procedure);
                 break;
             case GRID:
-                getFeatureDataset().calcBounds();
+                DatasetHandlerAdapter.calcBounds(getFeatureDataset());
                 describer = new SOSDescribeGrid(dataset, procedure, getFeatureDataset().getBoundingBox());
                 ((DescribeSensorFormatter)output).setComponentsNode(getGridDataset().getDataVariables(),procedure);
                 break;
@@ -143,7 +144,7 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
                 nStr = nStr.replaceAll("(profile)", "").replaceAll("(trajectory)", "");
                 int tNumber = Integer.parseInt(nStr);
                 
-                getFeatureDataset().calcBounds();
+                DatasetHandlerAdapter.calcBounds(getFeatureDataset());
                 SectionFeatureCollection sectionCollection = (SectionFeatureCollection) getFeatureTypeDataSet();
                 ArrayList<CalendarDate> secColStart = new ArrayList<CalendarDate>();
                 int i=-1;
@@ -153,7 +154,7 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
                         i=0;
                         for (section.resetIteration();section.hasNext();) {
                             ProfileFeature pfeature = section.next();
-                            pfeature.calcBounds();
+                            DatasetHandlerAdapter.calcBounds(pfeature);
                             for (pfeature.resetIteration();pfeature.hasNext();) {
                                 // iterate through data to make sure various items (ie start date) isn't null
                                 PointFeature pointf = pfeature.next();
@@ -217,7 +218,7 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
                 CalendarDate colStart = null;
                 for (feature.resetIteration();feature.hasNext();) {
                     TrajectoryFeature traj = feature.next();
-                    traj.calcBounds();
+                    DatasetHandlerAdapter.calcBounds(traj);
                     for (traj.resetIteration();traj.hasNext();) {
                         PointFeature pf = traj.next();
                         if (colStart == null)
@@ -229,14 +230,14 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
                 describer = new SOSDescribeTrajectory(dataset, colStart);
                 break;
             case GRID:
-                getFeatureDataset().calcBounds();
+                DatasetHandlerAdapter.calcBounds(getFeatureDataset());
                 describer = new SOSDescribeGrid(dataset, getFeatureDataset().getBoundingBox());
                 break;
             case PROFILE:
                 describer = new SOSDescribeProfile(dataset);
                 break;
             case SECTION:
-                getFeatureDataset().calcBounds();
+                DatasetHandlerAdapter.calcBounds(getFeatureDataset());
                 describer = new SOSDescribeSection(dataset, (SectionFeatureCollection) getFeatureTypeDataSet());
                 break;
         }

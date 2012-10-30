@@ -257,6 +257,10 @@ public class GetCapsOutputter implements SOSOutputFormatter {
             // add allowed values node
             Element allowedValues = getDocument().createElement("ows:AllowedValues");
             procedure.appendChild(allowedValues);
+            // add network-all value
+            Element na = getDocument().createElement("ows:Value");
+            na.setTextContent("urn:tds:network:all");
+            allowedValues.appendChild(na);
             for (String stationName : stationNames) {
                 Element elem = getDocument().createElement("ows:Value");
                 elem.setTextContent(SOSBaseRequestHandler.getGMLName(stationName));
@@ -334,6 +338,7 @@ public class GetCapsOutputter implements SOSOutputFormatter {
         // feature of interest -- station name?
         Element foi = getDocument().createElement("featureOfInterest");
         foi.setAttribute("xlink:href", stationName);
+        obsOffering.appendChild(foi);
         // observed properties
         for (String str : sensorNames) {
             Element value = getDocument().createElement("observedProperty");
@@ -351,8 +356,12 @@ public class GetCapsOutputter implements SOSOutputFormatter {
         rf.setTextContent("text/xml; subtype=\"om/1.0.0\"");
         obsOffering.appendChild(rf);
         // response model/mode -- blank for now?
-        obsOffering.appendChild(getDocument().createElement("responseModel"));
-        obsOffering.appendChild(getDocument().createElement("responseMode"));
+        Element rm = getDocument().createElement("responseModel");
+        rm.setTextContent("om:ObservationCollection");
+        obsOffering.appendChild(rm);
+        rm = getDocument().createElement("responseMode");
+        rm.setTextContent("inline");
+        obsOffering.appendChild(rm);
 
         // add offering
         offeringList.appendChild(obsOffering);

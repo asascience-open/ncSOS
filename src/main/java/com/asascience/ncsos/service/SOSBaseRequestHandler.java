@@ -13,9 +13,7 @@ import ucar.nc2.constants.AxisType;
 import ucar.nc2.constants.FeatureType;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dt.GridDataset;
-import ucar.nc2.ft.FeatureCollection;
-import ucar.nc2.ft.FeatureDataset;
-import ucar.nc2.ft.FeatureDatasetFactoryManager;
+import ucar.nc2.ft.*;
 import ucar.nc2.units.DateFormatter;
 
 /**
@@ -101,15 +99,24 @@ public abstract class SOSBaseRequestHandler {
                     break;
             }
             if (featureDataset == null) {
-                featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.ANY, netCDFDataset, null, new Formatter(System.err));
+                featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.ANY_POINT, netCDFDataset, null, new Formatter(System.err));
             }
         } else {
             System.out.println("findfeaturetype is null, somehow... getting dataset from any_point");
             featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.ANY_POINT, netCDFDataset, null, new Formatter(System.err));
+            if (featureDataset == null) {
+                // null, which means the dataset should be grid...
+                System.out.println("Attempting to get GRID data after null findfeaturetype");
+                featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.GRID, netCDFDataset, null, new Formatter(System.err));
+                gridDataSet = DiscreteSamplingGeometryUtil.extractGridDatasetCollection(featureDataset);
+                dataFeatureType = FeatureType.GRID;
+            }
         }
         
+        System.out.println("Datafeaturetype = " + dataFeatureType);
+        
         if (gridDataSet == null && featureDataset == null) {
-            System.err.println("Unknown feature type! " + FeatureDatasetFactoryManager.findFeatureType(netCDFDataset).toString());
+            System.err.println("Unknown feature type! " + FeatureDatasetFactoryManager.findFeatureType(netCDFDataset));
             return;
         }
         
@@ -153,7 +160,7 @@ public abstract class SOSBaseRequestHandler {
         featureOfInterestBaseQueryURL = netCDFDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", null);
     }
 
-    private void findAndParseStationVariable() {
+    private void findAndParseStationVariable() throws IOException {
         // get station var
         // check for station, trajectory, profile and grid station info
         for (Variable var : netCDFDataset.getVariables()) {
@@ -185,15 +192,13 @@ public abstract class SOSBaseRequestHandler {
                 break;
         }
         
-        if (this.stationVariable == null) {
+        if (this.stationVariable == null && getGridDataset() == null) {
             // there is no station variable ... add a single station with index 0?
-            parseDefaultStationName();
+//            parseDefaultStationName();
+            parseStationNames();
+        } else if (this.stationVariable == null) {
+            parseGridIdsToName();
         }
-    }
-    
-    private void parseDefaultStationName() {
-        this.stationNames = new HashMap<Integer, String>();
-        this.stationNames.put(0, "station0");
     }
     
     /**
@@ -209,101 +214,108 @@ public abstract class SOSBaseRequestHandler {
             this.sensorNames.add(var.getShortName());
         }
     }
+
+    private int parseNestedCollection(NestedPointFeatureCollection npfc, int stationIndex) throws IOException { 
+        if (npfc.isMultipleNested()) {
+            NestedPointFeatureCollectionIterator npfci = npfc.getNestedPointFeatureCollectionIterator(-1);
+            while (npfci.hasNext()) {
+                NestedPointFeatureCollection nnpfc = npfci.next();
+                String name = nnpfc.getName().replaceAll("[\\s]+", "");
+                stationNames.put(stationIndex, name);
+                stationIndex += 1;
+            }
+        } else {
+            PointFeatureCollectionIterator pfci = npfc.getPointFeatureCollectionIterator(-1);
+            while (pfci.hasNext()) {
+                stationIndex = parsePointFeatureCollectionNames(pfci.next(), stationIndex);
+            }
+        }
+        
+        return stationIndex;
+    }
     
-    /**
-     * Gets a list of station names from the dataset. Useful for procedures and finding station indices.
-     */
-    private void parseStationNames() {
+    private int parsePointFeatureCollectionNames(PointFeatureCollection pfc, int stationIndex) throws IOException {
+        String name = pfc.getName().replaceAll("[\\s]+", "");
+        stationNames.put(stationIndex, name);
+        return stationIndex+1;
+    }
+    
+    private void parseStationNames() throws IOException {
         this.stationNames = new HashMap<Integer, String>();
         int stationIndex = 0;
-        try {
-            // get the station index in the array
-            char[] charArray = (char[]) this.stationVariable.read().get1DJavaArray(char.class);
-            // find the length of the strings, assumes that the array has only a rank of 2; string length should be the 1st index
-            int[] aShape = this.stationVariable.read().getShape();
-            if (aShape.length == 1) {
-                // add only name to list
-                String onlyStationName = String.copyValueOf(charArray);
-                onlyStationName = onlyStationName.replaceAll("\u0000", "");
-                this.stationNames.put(stationIndex++, onlyStationName);
-            }
-            else if (aShape.length == 2) {
-                StringBuilder strB = null;
-                for (int i=0;i<charArray.length;i++) {
-                    if(i % aShape[1] == 0) {
-                        if (strB != null)
-                            this.stationNames.put(stationIndex++, strB.toString());
-                        strB = new StringBuilder();
-                    }
-                    // ignore null
-                    if (charArray[i] != '\u0000')
-                        strB.append(charArray[i]);
-                }
-                // add last index
-                this.stationNames.put(stationIndex++, strB.toString());
-            }
-            else
-                throw new Exception("SOSBaseRequestHandler: Unrecognized rank for station var: " + aShape.length);
-        } catch (Exception ex) {
-            System.out.println("SOSBaseRequestHandler: Error parsing station names.\n" + ex.toString());
-            this.stationNames = null;
+        if (CDMPointFeatureCollection instanceof PointFeatureCollection) {
+            PointFeatureCollection pfc = (PointFeatureCollection) CDMPointFeatureCollection;
+            stationIndex = parsePointFeatureCollectionNames(pfc, stationIndex);
+        } else if (CDMPointFeatureCollection instanceof NestedPointFeatureCollection) {
+            NestedPointFeatureCollection npfc = (NestedPointFeatureCollection) CDMPointFeatureCollection;
+            stationIndex = parseNestedCollection(npfc, stationIndex);
         }
     }
     
-    private void parseTrajectoryIdsToNames() {
+    private void parseTrajectoryIdsToNames() throws IOException {
         this.stationNames = new HashMap<Integer, String>();
         int stationindex = 0;
-        try {
-            // check the number of dimensions for the shape of the variable
-            if (stationVariable.read().getShape().length == 1) {
-                int[] trajIds = (int[]) this.stationVariable.read().get1DJavaArray(int.class);
-                // iterate through the ids and attach 'trajectory' to the front of it for the station name
-                for (int id : trajIds) {
-                    this.stationNames.put(stationindex++, "trajectory" + id);
-                }
-            } else {
-                // assume that the station variable is a scalar so there is only one trajectory of 0
-                this.stationNames.put(stationindex++, "trajectory0");
+        // neseted feature collection
+        NestedPointFeatureCollection npfc = (NestedPointFeatureCollection) CDMPointFeatureCollection;
+        if (npfc.isMultipleNested()) {
+            // iterate through it
+            NestedPointFeatureCollectionIterator npfci = npfc.getNestedPointFeatureCollectionIterator(-1);
+            for (;npfci.hasNext();) {
+                NestedPointFeatureCollection n = npfci.next();
+                String name = n.getName().replaceAll("[\\s]+", "");
+                this.stationNames.put(stationindex++, "Trajectory"+name);
             }
-        } catch (Exception ex) {
-            System.out.println("SOSBaseRequestHandler: Error parsing station names.\n" + ex.toString());
-            this.stationNames = null;
+        } else {
+            // iterate through it
+            PointFeatureCollectionIterator pfci = npfc.getPointFeatureCollectionIterator(-1);
+            for (;pfci.hasNext();) {
+                PointFeatureCollection n = pfci.next();
+                String name = n.getName().replaceAll("[\\s]+", "");
+                this.stationNames.put(stationindex++, "Trajectory"+name);
+            }
         }
     }
     
-    private void parseProfileIdsToNames() {
+    private void parseProfileIdsToNames() throws IOException {
         this.stationNames = new HashMap<Integer, String>();
         int stationindex = 0;
-        try {
-            // check the number of dimensions for the shape of the variable
-            if (stationVariable.read().getShape().length == 1) {
-                int[] trajIds = (int[]) this.stationVariable.read().get1DJavaArray(int.class);
-                // iterate through the ids and attach 'trajectory' to the front of it for the station name
-                for (int id : trajIds) {
-                    this.stationNames.put(stationindex++, "profile" + id);
+        if (CDMPointFeatureCollection instanceof PointFeatureCollection) {
+            // point feature collection; iterate
+            PointFeatureCollection pfc = (PointFeatureCollection) CDMPointFeatureCollection;
+            PointFeatureIterator pfi = pfc.getPointFeatureIterator(-1);
+            for (;pfi.hasNext();) {
+                PointFeature pf = pfi.next();
+                this.stationNames.put(stationindex, "Profile" + stationindex);
+                stationindex++;
+            }
+        } else {
+            // nested feature collection
+            NestedPointFeatureCollection npfc = (NestedPointFeatureCollection) CDMPointFeatureCollection;
+            if (npfc.isMultipleNested()) {
+                // iterate
+                NestedPointFeatureCollectionIterator npfci = npfc.getNestedPointFeatureCollectionIterator(-1);
+                for (;npfci.hasNext();) {
+                    NestedPointFeatureCollection n = npfci.next();
+                    this.stationNames.put(stationindex, "Profile" + stationindex);
+                    stationindex++;
                 }
             } else {
-                // assume that the station variable is a scalar so there is only one trajectory of 0
-                this.stationNames.put(stationindex++, "profile0");
+                // iterate
+                PointFeatureCollectionIterator pfci = npfc.getPointFeatureCollectionIterator(-1);
+                for (;pfci.hasNext();) {
+                    PointFeatureCollection n = pfci.next();
+                    this.stationNames.put(stationindex, "Profile" + stationindex);
+                    stationindex++;
+                }
             }
-        } catch (Exception ex) {
-            System.out.println("SOSBaseRequestHandler: Error parsing station names.\n" + ex.toString());
-            this.stationNames = null;
         }
+        
     }
     
     private void parseGridIdsToName() {
         this.stationNames = new HashMap<Integer, String>();
-        int stationindex = 0;
-        try {
-            int idLength = stationVariable.read().getShape()[0];
-            // just append ids 0-idLength to 'grid' and count it good
-            for (int i=1; i <= idLength; i++) {
-                stationNames.put(stationindex++, "grid"+i);
-            }
-        } catch (Exception ex) {
-            System.out.println("SOSBaseRequestHandler: Error parsing station names.\n" + ex.toString());
-            this.stationNames = null;
+        for (int i=0; i<getGridDataset().getGridsets().size(); i++) {
+            this.stationNames.put(i, "Grid"+i);
         }
     }
     

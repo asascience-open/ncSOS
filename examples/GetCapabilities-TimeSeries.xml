@@ -54,6 +54,15 @@
                     <ows:Get xlink:href="resources/datasets/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1.nc"/>
                 </ows:HTTP>
             </ows:DCP>
+            <ows:Parameter name="Sections">
+                <ows:AllowedValues>
+                    <ows:Value>ServiceIdentification</ows:Value>
+                    <ows:Value>ServiceProvider</ows:Value>
+                    <ows:Value>OperationsMetadata</ows:Value>
+                    <ows:Value>Contents</ows:Value>
+                    <ows:Value>All</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
         </ows:Operation>
         <ows:Operation name="GetObservation">
             <ows:DCP>
@@ -100,6 +109,7 @@
             </ows:DCP>
             <ows:Parameter name="procedure" use="required">
                 <ows:AllowedValues>
+                    <ows:Value>urn:tds:network:all</ows:Value>
                     <ows:Value>urn:tds:station.sos:Station-0</ows:Value>
                     <ows:Value>urn:tds:station.sos:Station-1</ows:Value>
                     <ows:Value>urn:tds:station.sos:Station-2</ows:Value>
@@ -179,9 +189,10 @@
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
+                <featureOfInterest xlink:href="Station-0"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel/>
-                <responseMode/>
+                <responseModel>om:ObservationCollection</responseModel>
+                <responseMode>inline</responseMode>
             </ObservationOffering>
             <ObservationOffering gml:id="Station-1">
                 <gml:name>urn:tds:station.sos:Station-1</gml:name>
@@ -198,9 +209,10 @@
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
+                <featureOfInterest xlink:href="Station-1"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel/>
-                <responseMode/>
+                <responseModel>om:ObservationCollection</responseModel>
+                <responseMode>inline</responseMode>
             </ObservationOffering>
             <ObservationOffering gml:id="Station-2">
                 <gml:name>urn:tds:station.sos:Station-2</gml:name>
@@ -217,9 +229,10 @@
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
+                <featureOfInterest xlink:href="Station-2"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel/>
-                <responseMode/>
+                <responseModel>om:ObservationCollection</responseModel>
+                <responseMode>inline</responseMode>
             </ObservationOffering>
             <ObservationOffering gml:id="Station-3">
                 <gml:name>urn:tds:station.sos:Station-3</gml:name>
@@ -236,9 +249,10 @@
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
+                <featureOfInterest xlink:href="Station-3"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel/>
-                <responseMode/>
+                <responseModel>om:ObservationCollection</responseModel>
+                <responseMode>inline</responseMode>
             </ObservationOffering>
             <ObservationOffering gml:id="Station-4">
                 <gml:name>urn:tds:station.sos:Station-4</gml:name>
@@ -255,9 +269,10 @@
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
+                <featureOfInterest xlink:href="Station-4"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel/>
-                <responseMode/>
+                <responseModel>om:ObservationCollection</responseModel>
+                <responseMode>inline</responseMode>
             </ObservationOffering>
             <ObservationOffering gml:id="Station-5">
                 <gml:name>urn:tds:station.sos:Station-5</gml:name>
@@ -274,9 +289,10 @@
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
+                <featureOfInterest xlink:href="Station-5"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel/>
-                <responseMode/>
+                <responseModel>om:ObservationCollection</responseModel>
+                <responseMode>inline</responseMode>
             </ObservationOffering>
             <ObservationOffering gml:id="Station-6">
                 <gml:name>urn:tds:station.sos:Station-6</gml:name>
@@ -293,9 +309,10 @@
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
+                <featureOfInterest xlink:href="Station-6"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel/>
-                <responseMode/>
+                <responseModel>om:ObservationCollection</responseModel>
+                <responseMode>inline</responseMode>
             </ObservationOffering>
             <ObservationOffering gml:id="Station-7">
                 <gml:name>urn:tds:station.sos:Station-7</gml:name>
@@ -312,9 +329,10 @@
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
+                <featureOfInterest xlink:href="Station-7"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel/>
-                <responseMode/>
+                <responseModel>om:ObservationCollection</responseModel>
+                <responseMode>inline</responseMode>
             </ObservationOffering>
             <ObservationOffering gml:id="Station-8">
                 <gml:name>urn:tds:station.sos:Station-8</gml:name>
@@ -331,9 +349,10 @@
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
+                <featureOfInterest xlink:href="Station-8"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel/>
-                <responseMode/>
+                <responseModel>om:ObservationCollection</responseModel>
+                <responseMode>inline</responseMode>
             </ObservationOffering>
             <ObservationOffering gml:id="Station-9">
                 <gml:name>urn:tds:station.sos:Station-9</gml:name>
@@ -350,9 +369,10 @@
                         <gml:endPosition>1990-01-05T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
+                <featureOfInterest xlink:href="Station-9"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel/>
-                <responseMode/>
+                <responseModel>om:ObservationCollection</responseModel>
+                <responseMode>inline</responseMode>
             </ObservationOffering>
         </ObservationOfferingList>
     </Contents>

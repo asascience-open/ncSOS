@@ -54,6 +54,15 @@
                     <ows:Get xlink:href="resources/datasets/profile-Contiguous-Ragged-MultipleProfiles-H.3.4/profile-Contiguous-Ragged-MultipleProfiles-H.3.4.nc"/>
                 </ows:HTTP>
             </ows:DCP>
+            <ows:Parameter name="Sections">
+                <ows:AllowedValues>
+                    <ows:Value>ServiceIdentification</ows:Value>
+                    <ows:Value>ServiceProvider</ows:Value>
+                    <ows:Value>OperationsMetadata</ows:Value>
+                    <ows:Value>Contents</ows:Value>
+                    <ows:Value>All</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
         </ows:Operation>
         <ows:Operation name="GetObservation">
             <ows:DCP>
@@ -64,10 +73,10 @@
             <ows:Parameter name="offering" use="required">
                 <ows:AllowedValues>
                     <ows:Value>network-all</ows:Value>
-                    <ows:Value>profile0</ows:Value>
-                    <ows:Value>profile1</ows:Value>
-                    <ows:Value>profile2</ows:Value>
-                    <ows:Value>profile3</ows:Value>
+                    <ows:Value>Profile0</ows:Value>
+                    <ows:Value>Profile1</ows:Value>
+                    <ows:Value>Profile2</ows:Value>
+                    <ows:Value>Profile3</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
             <ows:Parameter name="observedProperty" use="required">
@@ -100,30 +109,31 @@
             </ows:DCP>
             <ows:Parameter name="procedure" use="required">
                 <ows:AllowedValues>
-                    <ows:Value>urn:tds:station.sos:profile0</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:profile0:rowSize</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:profile0:time</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:profile0:temperature</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:profile0:humidity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:profile0:z</ows:Value>
-                    <ows:Value>urn:tds:station.sos:profile1</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:profile1:rowSize</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:profile1:time</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:profile1:temperature</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:profile1:humidity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:profile1:z</ows:Value>
-                    <ows:Value>urn:tds:station.sos:profile2</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:profile2:rowSize</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:profile2:time</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:profile2:temperature</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:profile2:humidity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:profile2:z</ows:Value>
-                    <ows:Value>urn:tds:station.sos:profile3</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:profile3:rowSize</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:profile3:time</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:profile3:temperature</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:profile3:humidity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:profile3:z</ows:Value>
+                    <ows:Value>urn:tds:network:all</ows:Value>
+                    <ows:Value>urn:tds:station.sos:Profile0</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Profile0:rowSize</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Profile0:time</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Profile0:temperature</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Profile0:humidity</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Profile0:z</ows:Value>
+                    <ows:Value>urn:tds:station.sos:Profile1</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Profile1:rowSize</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Profile1:time</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Profile1:temperature</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Profile1:humidity</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Profile1:z</ows:Value>
+                    <ows:Value>urn:tds:station.sos:Profile2</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Profile2:rowSize</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Profile2:time</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Profile2:temperature</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Profile2:humidity</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Profile2:z</ows:Value>
+                    <ows:Value>urn:tds:station.sos:Profile3</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Profile3:rowSize</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Profile3:time</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Profile3:temperature</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Profile3:humidity</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Profile3:z</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
             <ows:Parameter name="responseformat" use="required">
@@ -155,7 +165,7 @@
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
                         <gml:lowerCorner>13.0 15.0</gml:lowerCorner>
-                        <gml:upperCorner>90.0 134.001</gml:upperCorner>
+                        <gml:upperCorner>90.0 134.0</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
                 <time>
@@ -164,10 +174,10 @@
                         <gml:endPosition>1990-01-01T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:station.sos:profile0"/>
-                <procedure xlink:href="urn:tds:station.sos:profile1"/>
-                <procedure xlink:href="urn:tds:station.sos:profile2"/>
-                <procedure xlink:href="urn:tds:station.sos:profile3"/>
+                <procedure xlink:href="urn:tds:station.sos:Profile0"/>
+                <procedure xlink:href="urn:tds:station.sos:Profile1"/>
+                <procedure xlink:href="urn:tds:station.sos:Profile2"/>
+                <procedure xlink:href="urn:tds:station.sos:Profile3"/>
                 <observedProperty xlink:href="rowSize"/>
                 <observedProperty xlink:href="time"/>
                 <observedProperty xlink:href="temperature"/>
@@ -177,13 +187,13 @@
                 <responseModel/>
                 <responseMode/>
             </ObservationOffering>
-            <ObservationOffering gml:id="profile0">
-                <gml:name>urn:tds:station.sos:profile0</gml:name>
+            <ObservationOffering gml:id="Profile0">
+                <gml:name>urn:tds:station.sos:Profile0</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
                         <gml:lowerCorner>13.0 34.0</gml:lowerCorner>
-                        <gml:upperCorner>13.001 34.001</gml:upperCorner>
+                        <gml:upperCorner>13.0 34.0</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
                 <time>
@@ -192,27 +202,28 @@
                         <gml:endPosition>1990-01-01T00:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
+                <featureOfInterest xlink:href="Profile0"/>
                 <observedProperty xlink:href="rowSize"/>
                 <observedProperty xlink:href="time"/>
                 <observedProperty xlink:href="temperature"/>
                 <observedProperty xlink:href="humidity"/>
                 <observedProperty xlink:href="z"/>
-                <procedure xlink:href="urn:tds:sensor.sos:profile0:rowSize"/>
-                <procedure xlink:href="urn:tds:sensor.sos:profile0:time"/>
-                <procedure xlink:href="urn:tds:sensor.sos:profile0:temperature"/>
-                <procedure xlink:href="urn:tds:sensor.sos:profile0:humidity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:profile0:z"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Profile0:rowSize"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Profile0:time"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Profile0:temperature"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Profile0:humidity"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Profile0:z"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel/>
-                <responseMode/>
+                <responseModel>om:ObservationCollection</responseModel>
+                <responseMode>inline</responseMode>
             </ObservationOffering>
-            <ObservationOffering gml:id="profile1">
-                <gml:name>urn:tds:station.sos:profile1</gml:name>
+            <ObservationOffering gml:id="Profile1">
+                <gml:name>urn:tds:station.sos:Profile1</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
                         <gml:lowerCorner>82.0 15.0</gml:lowerCorner>
-                        <gml:upperCorner>82.001 15.001</gml:upperCorner>
+                        <gml:upperCorner>82.0 15.0</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
                 <time>
@@ -221,27 +232,28 @@
                         <gml:endPosition>1990-01-01T01:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
+                <featureOfInterest xlink:href="Profile1"/>
                 <observedProperty xlink:href="rowSize"/>
                 <observedProperty xlink:href="time"/>
                 <observedProperty xlink:href="temperature"/>
                 <observedProperty xlink:href="humidity"/>
                 <observedProperty xlink:href="z"/>
-                <procedure xlink:href="urn:tds:sensor.sos:profile1:rowSize"/>
-                <procedure xlink:href="urn:tds:sensor.sos:profile1:time"/>
-                <procedure xlink:href="urn:tds:sensor.sos:profile1:temperature"/>
-                <procedure xlink:href="urn:tds:sensor.sos:profile1:humidity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:profile1:z"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Profile1:rowSize"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Profile1:time"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Profile1:temperature"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Profile1:humidity"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Profile1:z"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel/>
-                <responseMode/>
+                <responseModel>om:ObservationCollection</responseModel>
+                <responseMode>inline</responseMode>
             </ObservationOffering>
-            <ObservationOffering gml:id="profile2">
-                <gml:name>urn:tds:station.sos:profile2</gml:name>
+            <ObservationOffering gml:id="Profile2">
+                <gml:name>urn:tds:station.sos:Profile2</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
                         <gml:lowerCorner>71.0 134.0</gml:lowerCorner>
-                        <gml:upperCorner>71.001 134.001</gml:upperCorner>
+                        <gml:upperCorner>71.0 134.0</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
                 <time>
@@ -250,27 +262,28 @@
                         <gml:endPosition>1990-01-01T02:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
+                <featureOfInterest xlink:href="Profile2"/>
                 <observedProperty xlink:href="rowSize"/>
                 <observedProperty xlink:href="time"/>
                 <observedProperty xlink:href="temperature"/>
                 <observedProperty xlink:href="humidity"/>
                 <observedProperty xlink:href="z"/>
-                <procedure xlink:href="urn:tds:sensor.sos:profile2:rowSize"/>
-                <procedure xlink:href="urn:tds:sensor.sos:profile2:time"/>
-                <procedure xlink:href="urn:tds:sensor.sos:profile2:temperature"/>
-                <procedure xlink:href="urn:tds:sensor.sos:profile2:humidity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:profile2:z"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Profile2:rowSize"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Profile2:time"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Profile2:temperature"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Profile2:humidity"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Profile2:z"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel/>
-                <responseMode/>
+                <responseModel>om:ObservationCollection</responseModel>
+                <responseMode>inline</responseMode>
             </ObservationOffering>
-            <ObservationOffering gml:id="profile3">
-                <gml:name>urn:tds:station.sos:profile3</gml:name>
+            <ObservationOffering gml:id="Profile3">
+                <gml:name>urn:tds:station.sos:Profile3</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
                         <gml:lowerCorner>90.0 130.0</gml:lowerCorner>
-                        <gml:upperCorner>90.0 130.001</gml:upperCorner>
+                        <gml:upperCorner>90.0 130.0</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
                 <time>
@@ -279,19 +292,20 @@
                         <gml:endPosition>1990-01-01T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
+                <featureOfInterest xlink:href="Profile3"/>
                 <observedProperty xlink:href="rowSize"/>
                 <observedProperty xlink:href="time"/>
                 <observedProperty xlink:href="temperature"/>
                 <observedProperty xlink:href="humidity"/>
                 <observedProperty xlink:href="z"/>
-                <procedure xlink:href="urn:tds:sensor.sos:profile3:rowSize"/>
-                <procedure xlink:href="urn:tds:sensor.sos:profile3:time"/>
-                <procedure xlink:href="urn:tds:sensor.sos:profile3:temperature"/>
-                <procedure xlink:href="urn:tds:sensor.sos:profile3:humidity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:profile3:z"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Profile3:rowSize"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Profile3:time"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Profile3:temperature"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Profile3:humidity"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Profile3:z"/>
                 <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel/>
-                <responseMode/>
+                <responseModel>om:ObservationCollection</responseModel>
+                <responseMode>inline</responseMode>
             </ObservationOffering>
         </ObservationOfferingList>
     </Contents>

@@ -6,6 +6,7 @@ package com.asascience.ncsos.cdmclasses;
 
 import com.asascience.ncsos.getobs.SOSObservationOffering;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
+import com.asascience.ncsos.util.DatasetHandlerAdapter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -94,7 +95,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
              */
 
             try {
-                feature.calcBounds();
+                DatasetHandlerAdapter.calcBounds(feature);
                 newOffering.setObservationTimeBegin(feature.getDateRange().getStart().toDateTimeStringISO());
                 newOffering.setObservationTimeEnd(feature.getDateRange().getEnd().toDateTimeStringISO());
             } catch (Exception e) {
@@ -240,7 +241,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
                 for (int i = 0; i < tsStationList.size(); i++) {
                     //set it on the first one
                     //calc bounds in loop
-                    tsData.getStationFeature(tsStationList.get(i)).calcBounds();
+                    DatasetHandlerAdapter.calcBounds(tsData.getStationFeature(tsStationList.get(i)));
                     if (i == 0) {
                         setInitialLatLonBoundaries(tsStationList);
 
@@ -358,7 +359,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
     public String getTimeEnd(int stNum) {
         try {
             if (tsData != null) {
-                tsData.getStationFeature(tsStationList.get(stNum)).calcBounds();
+                DatasetHandlerAdapter.calcBounds(tsData.getStationFeature(tsStationList.get(stNum)));
                 DateRange dateRange = tsData.getStationFeature(tsStationList.get(stNum)).getDateRange();
                 DateTime dtEnd = new DateTime(dateRange.getEnd().getDate(), chrono);
                 return (df.toDateTimeStringISO(dtEnd.toDate()));
@@ -373,7 +374,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
     public String getTimeBegin(int stNum) {
         try {
             if (tsData != null) {
-                tsData.getStationFeature(tsStationList.get(stNum)).calcBounds();
+                DatasetHandlerAdapter.calcBounds(tsData.getStationFeature(tsStationList.get(stNum)));
                 DateRange dateRange = tsData.getStationFeature(tsStationList.get(stNum)).getDateRange();
                 DateTime dtStart = new DateTime(dateRange.getStart().getDate(), chrono);
                 return (df.toDateTimeStringISO(dtStart.toDate()));

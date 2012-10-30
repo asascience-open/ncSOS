@@ -5,6 +5,7 @@
 package com.asascience.ncsos.cdmclasses;
 
 import com.asascience.ncsos.getobs.SOSObservationOffering;
+import com.asascience.ncsos.util.DatasetHandlerAdapter;
 import java.io.IOException;
 import java.util.*;
 import org.joda.time.DateTime;
@@ -71,7 +72,7 @@ public class Section extends baseCDMClass implements iStationData {
                 trajectoryID = sFeature.getName();
                 for (sFeature.resetIteration();sFeature.hasNext();) {
                     ProfileFeature pFeature = sFeature.next();
-                    pFeature.calcBounds();
+                    DatasetHandlerAdapter.calcBounds(pFeature);
                     
                     pFeature.getCalendarDateRange();
                 }
@@ -468,7 +469,7 @@ public class Section extends baseCDMClass implements iStationData {
 
             for (section.resetIteration();section.hasNext();) {
                 ProfileFeature profile = section.next();
-                profile.calcBounds();
+                DatasetHandlerAdapter.calcBounds(profile);
                 // skip if we don't have any points
                 if (profile.size() == 0)
                     continue;

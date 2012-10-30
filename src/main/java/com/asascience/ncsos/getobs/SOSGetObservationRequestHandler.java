@@ -47,6 +47,22 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             Map<String, String> latLonRequest) throws IOException {
         super(netCDFDataset);
         
+        // set up our formatter
+        if(outputFormat.equalsIgnoreCase("text/xml;subtype=\"om/1.0.0\"")) {
+            contentType = "text/xml";
+            output = new OosTethysSwe(this.variableNames, getFeatureDataset(), CDMDataSet, netCDFDataset);
+        } else {
+            _log.error("Uknown/Unhandled responseFormat: " + outputFormat);
+            output = new GetCapsOutputter();
+            output.setupExceptionOutput("Could not recognize output format");
+        }
+        
+//        if (getFeatureDataset() == null && getGridDataset() == null) {
+//            // WHY IS THIS CODE BEING HIT SO MUCH!
+//            System.out.println("NOT EVERYTHING SHOULD GET HERE!!!!!!!!!!!!!!!!!!!!!!!!");
+//            output.setupExceptionOutput("Unable to get the feature dataset for the netcdf file!");
+//        }
+        
         // make sure that all of the variable names are in the dataset
         for (String vars : variableNames) {
             boolean isInDataset = false;
@@ -74,21 +90,12 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         
         // get all station names if 'network-all'
         if (requestedStationNames.length == 1 && requestedStationNames[0].equalsIgnoreCase("network-all")) {
-            System.out.println("network-all request");
             requestedStationNames = getStationNames().values().toArray(new String[getStationNames().values().size()]);
         }
         
         setCDMDatasetForStations(netCDFDataset, requestedStationNames, eventTime, latLonRequest);
         
-        // set up our formatter
-        if(outputFormat.equalsIgnoreCase("text/xml;subtype=\"om/1.0.0\"")) {
-            contentType = "text/xml";
-            output = new OosTethysSwe(this.variableNames, getFeatureDataset(), CDMDataSet, netCDFDataset);
-        } else {
-            _log.error("Uknown/Unhandled responseFormat: " + outputFormat);
-            output = new GetCapsOutputter();
-            output.setupExceptionOutput("Could not recognize output format");
-        }
+        
     }
     
     private void setCDMDatasetForStations(NetcdfDataset netCDFDataset, String[] requestedStationNames, String[] eventTime, Map<String, String> latLonRequest) throws IOException {
