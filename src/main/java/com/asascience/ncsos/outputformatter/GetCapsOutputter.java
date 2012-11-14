@@ -51,13 +51,7 @@ public class GetCapsOutputter implements SOSOutputFormatter {
         try {
             DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
             impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
-        } catch (ClassNotFoundException ex) {
-            System.out.println(ex.getMessage());
-        } catch (InstantiationException ex) {
-            System.out.println(ex.getMessage());
-        } catch (IllegalAccessException ex) {
-            System.out.println(ex.getMessage());
-        } catch (ClassCastException ex) {
+        } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
     }
@@ -119,9 +113,10 @@ public class GetCapsOutputter implements SOSOutputFormatter {
     }
     
     public void removeServiceIdentification() {
-        Node node = getDocument().getElementsByTagName("ows:ServiceIdentification").item(0);
+        Element capsNode = (Element) getDocument().getElementsByTagName("Capabilities").item(0);
+        Node node = capsNode.getElementsByTagName("ows:ServiceIdentification").item(0);
         
-        getDocument().removeChild(node);
+        capsNode.removeChild(node);
     }
 
     /**
@@ -142,9 +137,10 @@ public class GetCapsOutputter implements SOSOutputFormatter {
     }
     
     public void removeServiceProvider() {
-        Node serviceProviderNode = getDocument().getElementsByTagName("ows:ServiceProvider").item(0);
+        Element capsNode = (Element) getDocument().getElementsByTagName("Capabilities").item(0);
+        Node serviceProviderNode = capsNode.getElementsByTagName("ows:ServiceProvider").item(0);
         
-        getDocument().removeChild(serviceProviderNode);
+        capsNode.removeChild(serviceProviderNode);
     }
     
     /**
@@ -156,8 +152,9 @@ public class GetCapsOutputter implements SOSOutputFormatter {
     }
     
     public void removeOperations() {
-        Node operationsNode = getDocument().getElementsByTagName("ows:OperationsMetadata").item(0);
-        getDocument().removeChild(operationsNode);
+        Element capsNode = (Element) getDocument().getElementsByTagName("Capabilities").item(0);
+        Node operationsNode = capsNode.getElementsByTagName("ows:OperationsMetadata").item(0);
+        capsNode.removeChild(operationsNode);
     }
     
     /**
@@ -368,8 +365,9 @@ public class GetCapsOutputter implements SOSOutputFormatter {
     }
     
     public void removeContents() {
-        Node contentNode = getDocument().getElementsByTagName("Contents").item(0);
-        getDocument().removeChild(contentNode);
+        Element capsNode = (Element) getDocument().getElementsByTagName("Capabilities").item(0);
+        Node contentNode = capsNode.getElementsByTagName("Contents").item(0);
+        capsNode.removeChild(contentNode);
     }
     
     /*********************/

@@ -1,14 +1,19 @@
 package com.asascience.ncsos.getcaps;
 
+import com.asascience.ncsos.getobs.SOSGetObservationRequestHandler;
 import com.asascience.ncsos.outputformatter.GetCapsOutputter;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
 import java.io.IOException;
+import java.util.BitSet;
+import java.util.Date;
 import java.util.HashMap;
+import sun.util.logging.resources.logging;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.ft.*;
 import ucar.nc2.time.CalendarDate;
 import ucar.nc2.time.CalendarDateRange;
+import ucar.unidata.geoloc.LatLonPoint;
 import ucar.unidata.geoloc.LatLonPointImpl;
 import ucar.unidata.geoloc.LatLonRect;
 
@@ -23,12 +28,21 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
     private final String threddsURI;
     private final String sections;
     
+    private enum Sections {
+        OPERATIONSMETADATA, SERVICEIDENTIFICATION, SERVICEPROVIDER, CONTENTS
+    }
+    
+    private BitSet requestedSections;
+    private static final int SECTION_COUNT = 4;
+    
     private static final String OWS = "http://www.opengis.net/ows/1.1";
     
     private static CalendarDate setStartDate;
     private static CalendarDate setEndDate;
     private static HashMap<Integer, CalendarDateRange> stationDateRange;
     private static HashMap<Integer, LatLonRect> stationBBox;
+    
+    private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(SOSGetCapabilitiesRequestHandler.class);
 
     /**
      * Creates an instance of SOSGetCapabilitiesRequestHandler to handle the dataset
@@ -45,18 +59,15 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         this.sections = sections.toLowerCase();
         output = new GetCapsOutputter();
         
+        requestedSections = new BitSet(SECTION_COUNT);
+        
         if (getFeatureDataset() == null) {
             // error, couldn't read dataset
             output.setupExceptionOutput("Unable to read dataset's feature type. Reported as " + FeatureDatasetFactoryManager.findFeatureType(netCDFDataset).toString() + "; unable to process.");
             return;
         }
         
-        // check the value of sections and make sure that it is supported
-        if (!sections.equalsIgnoreCase("serviceidentification") && !sections.equalsIgnoreCase("serviceprovider") && !sections.equalsIgnoreCase("operationsmetadata") && !sections.equalsIgnoreCase("contents") && !sections.equalsIgnoreCase("all")) {
-            // error
-            output.setupExceptionOutput("Unsupported GetCapabilities section - " + sections + ". Please see unfiltered GetCapabilities response for accepted values.");
-            return;
-        }
+        SetSectionBits();
         
         CalculateBoundsForFeatureSet();
     }
@@ -82,7 +93,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         if (out.hasExceptionOut())
             return;
         // service identification; parse if it is the section identified or 'all'
-        if (this.sections.contains("identification") || this.sections.contains("all")) {
+        if (this.requestedSections.get(Sections.SERVICEIDENTIFICATION.ordinal())) {
             out.parseServiceIdentification(getTitle() ,Region, Access);
         } else {
             // remove identification from doc
@@ -90,7 +101,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         }
         
         // service provider; parse if it is the section identified or 'all'
-        if (this.sections.contains("provider") || this.sections.contains("all")) {
+        if (this.requestedSections.get(Sections.SERVICEPROVIDER.ordinal())) {
             out.parseServiceDescription(DataPage, PrimaryOwnership);
         } else {
             // remove service provider from doc
@@ -98,7 +109,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         }
         
         // operations metadata; parse if it is the section identified or 'all'
-        if (this.sections.contains("operations") || this.sections.contains("all")) {
+        if (this.requestedSections.get(Sections.OPERATIONSMETADATA.ordinal())) {
             // set get capabilities output
             out.setOperationGetCaps(threddsURI);
             // set get observation output
@@ -114,7 +125,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         }
         
         // Contents; parse if it is the section identified or 'all'
-        if (this.sections.contains("contents") || this.sections.contains("all")) {
+        if (this.requestedSections.get(Sections.CONTENTS.ordinal())) {
             // observation offering list
             // network-all
             // get the bounds
@@ -153,19 +164,22 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                         collection.resetIteration();
                         while(collection.hasNext()) {
                             TrajectoryFeature feature = collection.next();
-                            DatasetHandlerAdapter.calcBounds(feature);
-                            if (start == null || start.isAfter(feature.getCalendarDateRange().getStart()))
-                                start = feature.getCalendarDateRange().getStart();
-                            if (end == null || end.isBefore(feature.getCalendarDateRange().getEnd()))
-                                end = feature.getCalendarDateRange().getEnd();
-                            stationDateRange.put(stationIndex, feature.getCalendarDateRange());
-                            stationBBox.put(stationIndex, feature.getBoundingBox());
-                            stationIndex++;
+                            if (DatasetHandlerAdapter.calcBounds(feature)) {
+                                if (start == null || start.isAfter(feature.getCalendarDateRange().getStart()))
+                                    start = feature.getCalendarDateRange().getStart();
+                                if (end == null || end.isBefore(feature.getCalendarDateRange().getEnd()))
+                                    end = feature.getCalendarDateRange().getEnd();
+                                stationDateRange.put(stationIndex, feature.getCalendarDateRange());
+                                stationBBox.put(stationIndex, feature.getBoundingBox());
+                                stationIndex++;
+                            } else {
+                                GetExtentsFromSubFeatures(feature, stationIndex);
+                            }
                         }
                     } catch (Exception ex) {
-                        System.out.println("CalculateDateRangesForFeatureSet - Exception caught inside TRAJECTORY case: " + ex.toString());
+                        _log.error("CalculateDateRangesForFeatureSet - Exception caught inside TRAJECTORY case: " + ex.toString());
                         for (StackTraceElement elm : ex.getStackTrace()) {
-                            System.out.println("\t" + elm.toString());
+                            _log.error("\t" + elm.toString());
                         }
                     }
                     break;
@@ -175,19 +189,22 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                         collection.resetIteration();
                         while(collection.hasNext()) {
                             StationTimeSeriesFeature feature = collection.next();
-                            DatasetHandlerAdapter.calcBounds(feature);
-                            if (start == null || start.isAfter(feature.getCalendarDateRange().getStart()))
-                                start = feature.getCalendarDateRange().getStart();
-                            if (end == null || end.isBefore(feature.getCalendarDateRange().getEnd()))
-                                end = feature.getCalendarDateRange().getEnd();
-                            stationDateRange.put(stationIndex, feature.getCalendarDateRange());
-                            stationBBox.put(stationIndex, feature.getBoundingBox());
+                            if (DatasetHandlerAdapter.calcBounds(feature)) {
+                                if (start == null || start.isAfter(feature.getCalendarDateRange().getStart()))
+                                    start = feature.getCalendarDateRange().getStart();
+                                if (end == null || end.isBefore(feature.getCalendarDateRange().getEnd()))
+                                    end = feature.getCalendarDateRange().getEnd();
+                                stationDateRange.put(stationIndex, feature.getCalendarDateRange());
+                                stationBBox.put(stationIndex, feature.getBoundingBox());
+                            } else {
+                                GetExtentsFromSubFeatures(feature, stationIndex);
+                            }
                             stationIndex++;
                         }
                     } catch (Exception ex) {
-                        System.out.println("CalculateDateRangesForFeatureSet - Exception caught inside STATION case: " + ex.toString());
+                        _log.error("CalculateDateRangesForFeatureSet - Exception caught inside STATION case: " + ex.toString());
                         for (StackTraceElement elm : ex.getStackTrace()) {
-                            System.out.println("\t" + elm.toString());
+                            _log.error("\t" + elm.toString());
                         }
                     }
                     break;
@@ -197,20 +214,23 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                         collection.resetIteration();
                         while(collection.hasNext()) {
                             ProfileFeature feature = collection.next();
-                            DatasetHandlerAdapter.calcBounds(feature);
-                            CalendarDate profileDate = CalendarDate.of(feature.getTime());
-                            if (start == null || start.isAfter(profileDate))
-                                start = profileDate;
-                            if (end == null || end.isBefore(profileDate))
-                                end = profileDate;
-                            stationDateRange.put(stationIndex, CalendarDateRange.of(profileDate, profileDate));
-                            stationBBox.put(stationIndex, new LatLonRect(feature.getLatLon(), feature.getLatLon()));
-                            stationIndex++;
+                            if (DatasetHandlerAdapter.calcBounds(feature)) {
+                                CalendarDate profileDate = CalendarDate.of(feature.getTime());
+                                if (start == null || start.isAfter(profileDate))
+                                    start = profileDate;
+                                if (end == null || end.isBefore(profileDate))
+                                    end = profileDate;
+                                stationDateRange.put(stationIndex, CalendarDateRange.of(profileDate, profileDate));
+                                stationBBox.put(stationIndex, new LatLonRect(feature.getLatLon(), feature.getLatLon()));
+                                stationIndex++;
+                            } else {
+                                GetExtentsFromSubFeatures(feature, stationIndex);
+                            }
                         }
                     } catch (Exception ex) {
-                        System.out.println("CalculateDateRangesForFeatureSet - Exception caught inside PROFILE case: " + ex.toString());
+                        _log.error("CalculateDateRangesForFeatureSet - Exception caught inside PROFILE case: " + ex.toString());
                         for (StackTraceElement elm : ex.getStackTrace()) {
-                            System.out.println("\t" + elm.toString());
+                            _log.error("\t" + elm.toString());
                         }
                     }
                     break;
@@ -227,19 +247,22 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                         while(collection.hasNext()) {
                             StationProfileFeature feature = collection.next();
                             PointFeatureCollection flattened = feature.flatten(null, nullrange);
-                            DatasetHandlerAdapter.calcBounds(flattened);
-                            if (start == null || start.isAfter(flattened.getCalendarDateRange().getStart()))
-                                start = flattened.getCalendarDateRange().getStart();
-                            if (end == null || end.isBefore(flattened.getCalendarDateRange().getEnd()))
-                                end = flattened.getCalendarDateRange().getEnd();
-                            stationDateRange.put(stationIndex, flattened.getCalendarDateRange());
-                            stationBBox.put(stationIndex, flattened.getBoundingBox());
-                            stationIndex++;
+                            if (DatasetHandlerAdapter.calcBounds(flattened)) {
+                                if (start == null || start.isAfter(flattened.getCalendarDateRange().getStart()))
+                                    start = flattened.getCalendarDateRange().getStart();
+                                if (end == null || end.isBefore(flattened.getCalendarDateRange().getEnd()))
+                                    end = flattened.getCalendarDateRange().getEnd();
+                                stationDateRange.put(stationIndex, flattened.getCalendarDateRange());
+                                stationBBox.put(stationIndex, flattened.getBoundingBox());
+                                stationIndex++;
+                            } else {
+                                GetExtentsFromSubFeatures(flattened, stationIndex);
+                            }
                         }
                     } catch (Exception ex) {
-                        System.out.println("CalculateDateRangesForFeatureSet - Exception caught inside STATION_PROFILE case: " + ex.toString());
+                        _log.error("CalculateDateRangesForFeatureSet - Exception caught inside STATION_PROFILE case: " + ex.toString());
                         for (StackTraceElement elm : ex.getStackTrace()) {
-                            System.out.println("\t" + elm.toString());
+                            _log.error("\t" + elm.toString());
                         }
                     }
                     break;
@@ -251,31 +274,89 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                         while(collection.hasNext()) {
                             SectionFeature feature = collection.next();
                             PointFeatureCollection flattened = feature.flatten(null, nullrange);
-                            DatasetHandlerAdapter.calcBounds(flattened);
-                            if (start == null || start.isAfter(flattened.getCalendarDateRange().getStart()))
-                                start = flattened.getCalendarDateRange().getStart();
-                            if (end == null || end.isBefore(flattened.getCalendarDateRange().getEnd()))
-                                end = flattened.getCalendarDateRange().getEnd();
-                            stationDateRange.put(stationIndex, flattened.getCalendarDateRange());
-                            stationBBox.put(stationIndex, flattened.getBoundingBox());
-                            stationIndex++;
+                            if (DatasetHandlerAdapter.calcBounds(flattened)) {
+                                if (start == null || start.isAfter(flattened.getCalendarDateRange().getStart()))
+                                    start = flattened.getCalendarDateRange().getStart();
+                                if (end == null || end.isBefore(flattened.getCalendarDateRange().getEnd()))
+                                    end = flattened.getCalendarDateRange().getEnd();
+                                stationDateRange.put(stationIndex, flattened.getCalendarDateRange());
+                                stationBBox.put(stationIndex, flattened.getBoundingBox());
+                                stationIndex++;
+                            } else {
+                                GetExtentsFromSubFeatures(flattened, stationIndex);
+                            }
                         }
                     } catch (Exception ex) {
-                        System.out.println("CalculateDateRangesForFeatureSet - Exception caught inside SECTION case: " + ex.toString());
+                        _log.error("CalculateDateRangesForFeatureSet - Exception caught inside SECTION case: " + ex.toString());
                         for (StackTraceElement elm : ex.getStackTrace()) {
-                            System.out.println("\t" + elm.toString());
+                            _log.error("\t" + elm.toString());
                         }
                     }
                     break;
                 default:
-                    System.out.println("Unknown feature type - getDatasetFeatureType is ??");
+                    _log.error("Unknown feature type - getDatasetFeatureType is ??");
                     output.setupExceptionOutput("Feature set is currently unsupported.");
                     return;
             }
             setStartDate = start;
             setEndDate = end;
         } else {
-            System.out.println("Unknown feature type - getDatasetFeatureType is null");
+            _log.error("Unknown feature type - getDatasetFeatureType is null");
+        }
+    }
+    
+    private void GetExtentsFromSubFeatures(PointFeatureCollection coll, int index) {
+        try {
+            // calculate the bounds of this particular station
+            CalendarDate start = CalendarDate.present();
+            CalendarDate end = CalendarDate.of(0);
+            double minLat = Double.POSITIVE_INFINITY, maxLat = Double.NEGATIVE_INFINITY, minLon = Double.POSITIVE_INFINITY, maxLon = Double.NEGATIVE_INFINITY;
+            for (coll.resetIteration();coll.hasNext();) {
+                PointFeature pf = coll.next();
+                if (pf.getObservationTimeAsCalendarDate().isAfter(end))
+                    end = pf.getObservationTimeAsCalendarDate();
+                else if (pf.getObservationTimeAsCalendarDate().isBefore(start))
+                    start = pf.getObservationTimeAsCalendarDate();
+
+                if (minLat > pf.getLocation().getLatitude())
+                    minLat = pf.getLocation().getLatitude();
+                else if (maxLat < pf.getLocation().getLatitude())
+                    maxLat = pf.getLocation().getLatitude();
+
+                if (minLon > pf.getLocation().getLongitude())
+                    minLon = pf.getLocation().getLongitude();
+                else if (maxLon < pf.getLocation().getLongitude())
+                    maxLon = pf.getLocation().getLongitude();
+            }
+            // add the values to the table
+            stationDateRange.put(index, CalendarDateRange.of(start, end));
+            stationBBox.put(index, new LatLonRect(new LatLonPointImpl(minLat, minLon), new LatLonPointImpl(maxLat, maxLon)));
+        } catch (Exception ex) {
+            // failed, um just add global bounds
+            _log.error("GetExtentsFromSubFeatures: Could not manually get extents, adding globals...\n\t" + ex.toString());
+            stationDateRange.put(index, CalendarDateRange.of(CalendarDate.of(0), CalendarDate.of(CalendarDate.present().getDifferenceInMsecs(CalendarDate.of(0)))));
+            stationBBox.put(index, new LatLonRect(new LatLonPointImpl(-90, -180), new LatLonPointImpl(90, 180)));
+        } catch (Error err) {
+            _log.error("GetExtentsFromSubFeatures: Could not manually get extents, adding globals...\n\t" + err.toString());
+            stationDateRange.put(index, CalendarDateRange.of(CalendarDate.of(0), CalendarDate.of(CalendarDate.present().getDifferenceInMsecs(CalendarDate.of(0)))));
+            stationBBox.put(index, new LatLonRect(new LatLonPointImpl(-90, -180), new LatLonPointImpl(90, 180)));
+        }
+    }
+    
+    
+    private void SetSectionBits() {
+        try {
+            for (String sect : sections.split(",")) {
+                if (sect.equals("all")) {
+                    requestedSections.set(0, SECTION_COUNT);
+                } else {
+                    requestedSections.set(Sections.valueOf(sect.toUpperCase()).ordinal());
+                }
+            }
+        } catch (Exception ex) {
+            _log.error(ex.toString());
+            // assume that an invalid value was passed in the sections parameter, print out exception out
+            output.setupExceptionOutput("Invalid value for 'Sections' parameter, please see GetCapabilities for valid values.");
         }
     }
 }

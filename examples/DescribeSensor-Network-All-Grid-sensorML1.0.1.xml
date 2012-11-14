@@ -62,7 +62,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -125,7 +125,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -188,7 +188,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -251,7 +251,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -314,7 +314,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -377,7 +377,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -440,7 +440,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -503,7 +503,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -566,7 +566,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -629,7 +629,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -692,7 +692,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -755,7 +755,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -818,7 +818,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -881,7 +881,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -944,7 +944,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -1007,7 +1007,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -1070,7 +1070,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -1133,7 +1133,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -1196,7 +1196,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -1259,7 +1259,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -1322,7 +1322,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -1385,7 +1385,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -1448,7 +1448,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -1511,7 +1511,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -1574,7 +1574,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -1637,7 +1637,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -1700,7 +1700,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -1763,7 +1763,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -1826,7 +1826,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -1889,7 +1889,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -1952,7 +1952,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -2015,7 +2015,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -2078,7 +2078,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -2141,7 +2141,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -2204,7 +2204,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -2267,7 +2267,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -2330,7 +2330,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -2393,7 +2393,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -2456,7 +2456,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -2519,7 +2519,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -2582,7 +2582,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -2645,7 +2645,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -2708,7 +2708,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -2771,7 +2771,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -2834,7 +2834,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -2897,7 +2897,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -2960,7 +2960,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -3023,7 +3023,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -3086,7 +3086,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -3149,7 +3149,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -3212,7 +3212,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -3275,7 +3275,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -3338,7 +3338,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -3401,7 +3401,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -3464,7 +3464,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -3527,7 +3527,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -3590,7 +3590,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -3653,7 +3653,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -3716,7 +3716,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -3779,7 +3779,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -3842,7 +3842,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -3905,7 +3905,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -3968,7 +3968,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -4031,7 +4031,7 @@
     </sml:member>
 </sml:SensorML>
 
-
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"
@@ -4094,7 +4094,889 @@
     </sml:member>
 </sml:SensorML>
 
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="network-all">
+            <gml:description/>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="NetworkId">
+                        <sml:Term definition="">
+                            <sml:value>urn:tds:network:all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Short Name">
+                        <sml:Term definition="urn:ogc:identifier:OGC:shortName">
+                            <sml:value>all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Long Name">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:longName">
+                            <sml:value>All stations in the dataset</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:history>2003-04-07 12:12:50 - created by gribtocdl</sml:history>
+            <sml:components>
+                <sml:ComponentList>
+                    <sml:System gml:id="station-Grid0">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Grid0</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>grid name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:boundedBy>
+                                <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                    <gml:lowerCorner>-90.0 -180.0</gml:lowerCorner>
+                                    <gml:upperCorner>90.0 180.0</gml:upperCorner>
+                                </gml:Envelope>
+                            </gml:boundedBy>
+                        </sml:location>
+                    </sml:System>
+                </sml:ComponentList>
+            </sml:components>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
 
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="network-all">
+            <gml:description/>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="NetworkId">
+                        <sml:Term definition="">
+                            <sml:value>urn:tds:network:all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Short Name">
+                        <sml:Term definition="urn:ogc:identifier:OGC:shortName">
+                            <sml:value>all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Long Name">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:longName">
+                            <sml:value>All stations in the dataset</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:history>2003-04-07 12:12:50 - created by gribtocdl</sml:history>
+            <sml:components>
+                <sml:ComponentList>
+                    <sml:System gml:id="station-Grid0">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Grid0</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>grid name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:boundedBy>
+                                <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                    <gml:lowerCorner>-90.0 -180.0</gml:lowerCorner>
+                                    <gml:upperCorner>90.0 180.0</gml:upperCorner>
+                                </gml:Envelope>
+                            </gml:boundedBy>
+                        </sml:location>
+                    </sml:System>
+                </sml:ComponentList>
+            </sml:components>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="network-all">
+            <gml:description/>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="NetworkId">
+                        <sml:Term definition="">
+                            <sml:value>urn:tds:network:all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Short Name">
+                        <sml:Term definition="urn:ogc:identifier:OGC:shortName">
+                            <sml:value>all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Long Name">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:longName">
+                            <sml:value>All stations in the dataset</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:history>2003-04-07 12:12:50 - created by gribtocdl</sml:history>
+            <sml:components>
+                <sml:ComponentList>
+                    <sml:System gml:id="station-Grid0">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Grid0</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>grid name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:boundedBy>
+                                <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                    <gml:lowerCorner>-90.0 -180.0</gml:lowerCorner>
+                                    <gml:upperCorner>90.0 180.0</gml:upperCorner>
+                                </gml:Envelope>
+                            </gml:boundedBy>
+                        </sml:location>
+                    </sml:System>
+                </sml:ComponentList>
+            </sml:components>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="network-all">
+            <gml:description/>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="NetworkId">
+                        <sml:Term definition="">
+                            <sml:value>urn:tds:network:all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Short Name">
+                        <sml:Term definition="urn:ogc:identifier:OGC:shortName">
+                            <sml:value>all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Long Name">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:longName">
+                            <sml:value>All stations in the dataset</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:history>2003-04-07 12:12:50 - created by gribtocdl</sml:history>
+            <sml:components>
+                <sml:ComponentList>
+                    <sml:System gml:id="station-Grid0">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Grid0</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>grid name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:boundedBy>
+                                <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                    <gml:lowerCorner>-90.0 -180.0</gml:lowerCorner>
+                                    <gml:upperCorner>90.0 180.0</gml:upperCorner>
+                                </gml:Envelope>
+                            </gml:boundedBy>
+                        </sml:location>
+                    </sml:System>
+                </sml:ComponentList>
+            </sml:components>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="network-all">
+            <gml:description/>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="NetworkId">
+                        <sml:Term definition="">
+                            <sml:value>urn:tds:network:all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Short Name">
+                        <sml:Term definition="urn:ogc:identifier:OGC:shortName">
+                            <sml:value>all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Long Name">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:longName">
+                            <sml:value>All stations in the dataset</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:history>2003-04-07 12:12:50 - created by gribtocdl</sml:history>
+            <sml:components>
+                <sml:ComponentList>
+                    <sml:System gml:id="station-Grid0">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Grid0</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>grid name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:boundedBy>
+                                <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                    <gml:lowerCorner>-90.0 -180.0</gml:lowerCorner>
+                                    <gml:upperCorner>90.0 180.0</gml:upperCorner>
+                                </gml:Envelope>
+                            </gml:boundedBy>
+                        </sml:location>
+                    </sml:System>
+                </sml:ComponentList>
+            </sml:components>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="network-all">
+            <gml:description/>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="NetworkId">
+                        <sml:Term definition="">
+                            <sml:value>urn:tds:network:all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Short Name">
+                        <sml:Term definition="urn:ogc:identifier:OGC:shortName">
+                            <sml:value>all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Long Name">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:longName">
+                            <sml:value>All stations in the dataset</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:history>2003-04-07 12:12:50 - created by gribtocdl</sml:history>
+            <sml:components>
+                <sml:ComponentList>
+                    <sml:System gml:id="station-Grid0">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Grid0</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>grid name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:boundedBy>
+                                <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                    <gml:lowerCorner>-90.0 -180.0</gml:lowerCorner>
+                                    <gml:upperCorner>90.0 180.0</gml:upperCorner>
+                                </gml:Envelope>
+                            </gml:boundedBy>
+                        </sml:location>
+                    </sml:System>
+                </sml:ComponentList>
+            </sml:components>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="network-all">
+            <gml:description/>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="NetworkId">
+                        <sml:Term definition="">
+                            <sml:value>urn:tds:network:all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Short Name">
+                        <sml:Term definition="urn:ogc:identifier:OGC:shortName">
+                            <sml:value>all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Long Name">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:longName">
+                            <sml:value>All stations in the dataset</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:history>2003-04-07 12:12:50 - created by gribtocdl</sml:history>
+            <sml:components>
+                <sml:ComponentList>
+                    <sml:System gml:id="station-Grid0">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Grid0</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>grid name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:boundedBy>
+                                <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                    <gml:lowerCorner>-90.0 -180.0</gml:lowerCorner>
+                                    <gml:upperCorner>90.0 180.0</gml:upperCorner>
+                                </gml:Envelope>
+                            </gml:boundedBy>
+                        </sml:location>
+                    </sml:System>
+                </sml:ComponentList>
+            </sml:components>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="network-all">
+            <gml:description/>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="NetworkId">
+                        <sml:Term definition="">
+                            <sml:value>urn:tds:network:all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Short Name">
+                        <sml:Term definition="urn:ogc:identifier:OGC:shortName">
+                            <sml:value>all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Long Name">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:longName">
+                            <sml:value>All stations in the dataset</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:history>2003-04-07 12:12:50 - created by gribtocdl</sml:history>
+            <sml:components>
+                <sml:ComponentList>
+                    <sml:System gml:id="station-Grid0">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Grid0</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>grid name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:boundedBy>
+                                <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                    <gml:lowerCorner>-90.0 -180.0</gml:lowerCorner>
+                                    <gml:upperCorner>90.0 180.0</gml:upperCorner>
+                                </gml:Envelope>
+                            </gml:boundedBy>
+                        </sml:location>
+                    </sml:System>
+                </sml:ComponentList>
+            </sml:components>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="network-all">
+            <gml:description/>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="NetworkId">
+                        <sml:Term definition="">
+                            <sml:value>urn:tds:network:all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Short Name">
+                        <sml:Term definition="urn:ogc:identifier:OGC:shortName">
+                            <sml:value>all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Long Name">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:longName">
+                            <sml:value>All stations in the dataset</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:history>2003-04-07 12:12:50 - created by gribtocdl</sml:history>
+            <sml:components>
+                <sml:ComponentList>
+                    <sml:System gml:id="station-Grid0">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Grid0</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>grid name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:boundedBy>
+                                <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                    <gml:lowerCorner>-90.0 -180.0</gml:lowerCorner>
+                                    <gml:upperCorner>90.0 180.0</gml:upperCorner>
+                                </gml:Envelope>
+                            </gml:boundedBy>
+                        </sml:location>
+                    </sml:System>
+                </sml:ComponentList>
+            </sml:components>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="network-all">
+            <gml:description/>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="NetworkId">
+                        <sml:Term definition="">
+                            <sml:value>urn:tds:network:all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Short Name">
+                        <sml:Term definition="urn:ogc:identifier:OGC:shortName">
+                            <sml:value>all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Long Name">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:longName">
+                            <sml:value>All stations in the dataset</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:history>2003-04-07 12:12:50 - created by gribtocdl</sml:history>
+            <sml:components>
+                <sml:ComponentList>
+                    <sml:System gml:id="station-Grid0">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Grid0</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>grid name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:boundedBy>
+                                <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                    <gml:lowerCorner>-90.0 -180.0</gml:lowerCorner>
+                                    <gml:upperCorner>90.0 180.0</gml:upperCorner>
+                                </gml:Envelope>
+                            </gml:boundedBy>
+                        </sml:location>
+                    </sml:System>
+                </sml:ComponentList>
+            </sml:components>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="network-all">
+            <gml:description/>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="NetworkId">
+                        <sml:Term definition="">
+                            <sml:value>urn:tds:network:all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Short Name">
+                        <sml:Term definition="urn:ogc:identifier:OGC:shortName">
+                            <sml:value>all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Long Name">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:longName">
+                            <sml:value>All stations in the dataset</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:history>2003-04-07 12:12:50 - created by gribtocdl</sml:history>
+            <sml:components>
+                <sml:ComponentList>
+                    <sml:System gml:id="station-Grid0">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Grid0</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>grid name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:boundedBy>
+                                <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                    <gml:lowerCorner>-90.0 -180.0</gml:lowerCorner>
+                                    <gml:upperCorner>90.0 180.0</gml:upperCorner>
+                                </gml:Envelope>
+                            </gml:boundedBy>
+                        </sml:location>
+                    </sml:System>
+                </sml:ComponentList>
+            </sml:components>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="network-all">
+            <gml:description/>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="NetworkId">
+                        <sml:Term definition="">
+                            <sml:value>urn:tds:network:all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Short Name">
+                        <sml:Term definition="urn:ogc:identifier:OGC:shortName">
+                            <sml:value>all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Long Name">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:longName">
+                            <sml:value>All stations in the dataset</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:history>2003-04-07 12:12:50 - created by gribtocdl</sml:history>
+            <sml:components>
+                <sml:ComponentList>
+                    <sml:System gml:id="station-Grid0">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Grid0</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>grid name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:boundedBy>
+                                <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                    <gml:lowerCorner>-90.0 -180.0</gml:lowerCorner>
+                                    <gml:upperCorner>90.0 180.0</gml:upperCorner>
+                                </gml:Envelope>
+                            </gml:boundedBy>
+                        </sml:location>
+                    </sml:System>
+                </sml:ComponentList>
+            </sml:components>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="network-all">
+            <gml:description/>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="NetworkId">
+                        <sml:Term definition="">
+                            <sml:value>urn:tds:network:all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Short Name">
+                        <sml:Term definition="urn:ogc:identifier:OGC:shortName">
+                            <sml:value>all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Long Name">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:longName">
+                            <sml:value>All stations in the dataset</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:history>2003-04-07 12:12:50 - created by gribtocdl</sml:history>
+            <sml:components>
+                <sml:ComponentList>
+                    <sml:System gml:id="station-Grid0">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Grid0</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>grid name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:boundedBy>
+                                <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                    <gml:lowerCorner>-90.0 -180.0</gml:lowerCorner>
+                                    <gml:upperCorner>90.0 180.0</gml:upperCorner>
+                                </gml:Envelope>
+                            </gml:boundedBy>
+                        </sml:location>
+                    </sml:System>
+                </sml:ComponentList>
+            </sml:components>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="network-all">
+            <gml:description/>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="NetworkId">
+                        <sml:Term definition="">
+                            <sml:value>urn:tds:network:all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Short Name">
+                        <sml:Term definition="urn:ogc:identifier:OGC:shortName">
+                            <sml:value>all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Long Name">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:longName">
+                            <sml:value>All stations in the dataset</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:history>2003-04-07 12:12:50 - created by gribtocdl</sml:history>
+            <sml:components>
+                <sml:ComponentList>
+                    <sml:System gml:id="station-Grid0">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Grid0</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>grid name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:boundedBy>
+                                <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                    <gml:lowerCorner>-90.0 -180.0</gml:lowerCorner>
+                                    <gml:upperCorner>90.0 180.0</gml:upperCorner>
+                                </gml:Envelope>
+                            </gml:boundedBy>
+                        </sml:location>
+                    </sml:System>
+                </sml:ComponentList>
+            </sml:components>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
+
+<?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
     xmlns:gml="http://www.opengis.net/gml"

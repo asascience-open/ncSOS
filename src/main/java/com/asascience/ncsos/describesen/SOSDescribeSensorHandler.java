@@ -53,7 +53,7 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
         // make sure that the responseFormat we recieved is acceptable
         if (!responseFormat.equalsIgnoreCase(ACCEPTABLE_RESPONSE_FORMAT)) {
             // return exception
-            System.out.println("got unhandled response format " + responseFormat + "; printing exception...");
+            _log.error("got unhandled response format " + responseFormat + "; printing exception...");
             output.setupExceptionOutput("Unhandled response format " + responseFormat);
             return;
         }
@@ -61,6 +61,7 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
         // check our procedure
         if (!checkDatasetForProcedure(procedure)) {
             // the procedure does not match any known procedure
+            _log.error("Could not match procedure " + procedure);
             output.setupExceptionOutput("Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.");
             return;
         }
@@ -182,22 +183,30 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
     }
 
     private boolean checkDatasetForProcedure(String procedure) {
-        if (procedure == null)
+        if (procedure == null) {
+            _log.error("procedure is null");
             return false;
+        }
         if (procedure.toLowerCase().contains("network") && procedure.toLowerCase().contains("all"))
             return true;
         // get a list of procedures from dataset and compare it to the passed-in procedure
         // get list of station names
         HashMap<Integer,String> stationNames = getStationNames();
+        if (stationNames == null) {
+            _log.error("stationNames is null");
+            return false;
+        }
         // go through each station urn and compare it to procedure
+        _log.debug("looking for " + procedure);
         for (String stationName : stationNames.values()) {
-            if (getGMLName(stationName).equals(procedure))
+            _log.debug("comparing to " + getGMLName(stationName));
+            if (getGMLName(stationName).equalsIgnoreCase(procedure))
                 return true;
         }
         // go through each sensor urn and compare it to procedure
         for (String sensorName : getSensorNames()) {
             for (String stationName : stationNames.values()) {
-                if (getSensorGMLName(stationName, sensorName).equals(procedure))
+                if (getSensorGMLName(stationName, sensorName).equalsIgnoreCase(procedure))
                     return true;
             }
         }

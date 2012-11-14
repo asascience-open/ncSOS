@@ -41,6 +41,8 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
     protected final String procedure;
     protected String errorString;
     
+    protected static final String MMI_DEF_URL = "http://mmisw.org/ont/ioos/definition/";
+    
     /**
      * Creates an instance to collect needed information, from the dataset, for
      * a Describe Sensor response.
@@ -380,11 +382,11 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
         ArrayList<String> identNames = new ArrayList<String>();
         ArrayList<String> identDefinitions = new ArrayList<String>();
         ArrayList<String> identValues = new ArrayList<String>();
-        identNames.add("StationId"); identDefinitions.add("stationID"); identValues.add(procedure);
+        identNames.add("StationId"); identDefinitions.add(MMI_DEF_URL + "stationID"); identValues.add(procedure);
         for (Attribute attr : stationVariable.getAttributes()) {
             if (attr.getName().equalsIgnoreCase("cf_role") || attr.getName().toLowerCase().contains("hdf5"))
                 continue;
-            identNames.add(attr.getName()); identDefinitions.add(""); identValues.add(attr.getStringValue());
+            identNames.add(attr.getName()); identDefinitions.add(MMI_DEF_URL + attr.getName()); identValues.add(attr.getValue(0).toString());
         }
         formatter.setIdentificationNode(identNames.toArray(new String[identNames.size()]),
                 identDefinitions.toArray(new String[identDefinitions.size()]),

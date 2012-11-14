@@ -10,6 +10,7 @@ import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.*;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import org.apache.log4j.BasicConfigurator;
 import org.junit.*;
 import static org.junit.Assert.*;
 import org.w3c.dom.Document;
@@ -67,6 +68,8 @@ public class SOSDescribeSensorNetworkTest {
             // exit early if the environ is already set
             return;
         }
+        BasicConfigurator.resetConfiguration();
+        BasicConfigurator.configure();
         String container = "describeNetwork";
         InputStream templateInputStream = null;
         try {

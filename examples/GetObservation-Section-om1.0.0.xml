@@ -1,6 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ExceptionReport>
-    <Exception>
-        <ExceptionText>CDMDataSet is null</ExceptionText>
-    </Exception>
-</ExceptionReport>
+<om:ObservationCollection gml:id="SPOT5_DATA"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:om="http://www.opengis.net/om/1.0"
+    xmlns:swe="http://www.opengis.net/swe/1.0"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/om/1.0 http://schemas.opengis.net/om/1.0.0/observation.xsd">
+    <gml:description/>
+    <gml:name/>
+    <gml:boundedBy>
+        <gml:Envelope srsName="urn:ogc:def:crs:EPSG:6.5:4329">
+            <!-- overwrite these with your actual offering ROI -->
+            <gml:lowerCorner/>
+            <gml:upperCorner/>
+        </gml:Envelope>
+    </gml:boundedBy>
+    <om:member>
+        <om:Observation>
+            <gml:description/>
+            <gml:name/>
+            <gml:boundedBy>
+                <gml:Envelope srsName="urn:tds:station.sos:Trajectory2">
+                    <gml:lowerCorner>-90.0 -70.85932922363281</gml:lowerCorner>
+                    <gml:upperCorner>42.09935760498047 80.0999755859375</gml:upperCorner>
+                </gml:Envelope>
+            </gml:boundedBy>
+            <om:samplingTime>
+                <gml:TimePeriod gml:id="DATA_TIME">
+                    <gml:beginPosition>1990-01-01T00:00:00Z</gml:beginPosition>
+                    <gml:endPosition>1990-01-01T06:00:00Z</gml:endPosition>
+                </gml:TimePeriod>
+            </om:samplingTime>
+            <om:procedure xlink:href="urn:tds:station.sos:Trajectory2"/>
+            <om:observedProperty xlink:href="salinity"/>
+            <om:observedProperty xlink:href="alt"/>
+            <om:featureOfInterest xlink:href="Trajectory2"/>
+            <om:result>
+                <swe:dataArray>
+                    <swe:elementCount>
+                        <swe:Count>
+                            <swe:value>2</swe:value>
+                        </swe:Count>
+                    </swe:elementCount>
+                    <swe:elementType name="SimpleDataArray">
+                        <swe:DataRecord>
+                            <swe:field name="time">
+                                <swe:Quantity definition="urn:ogc:phenomenon:time:iso8601"/>
+                            </swe:field>
+                            <swe:field name="salinity">
+                                <swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:salinity">
+                                    <swe:uom code="PSU"/>
+                                </swe:Quantity>
+                            </swe:field>
+                            <swe:field name="alt">
+                                <swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:alt">
+                                    <swe:uom code="m"/>
+                                </swe:Quantity>
+                            </swe:field>
+                        </swe:DataRecord>
+                    </swe:elementType>
+                    <swe:encoding>
+                        <swe:TextBlock blockSeparator=" "
+                            decimalSeparator="." tokenSeparator=","/>
+                    </swe:encoding>
+                    <swe:values>1990-01-01T00:00:00Z,37.15755,0.0 1990-01-01T00:00:00Z,9.691621,1.0 1990-01-01T00:00:00Z,11.261549,2.0 1990-01-01T00:00:00Z,-999.9,-999.9 1990-01-01T00:00:00Z,-999.9,-999.9 1990-01-01T00:00:00Z,-999.9,-999.9 1990-01-01T00:00:00Z,-999.9,-999.9 1990-01-01T00:00:00Z,-999.9,-999.9</swe:values>
+                </swe:dataArray>
+            </om:result>
+        </om:Observation>
+    </om:member>
+</om:ObservationCollection>

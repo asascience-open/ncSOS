@@ -9,6 +9,7 @@ import com.asascience.ncsos.service.SOSParser;
 import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.*;
 import java.util.HashMap;
+import org.apache.log4j.BasicConfigurator;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -119,6 +120,9 @@ public class SOSGetObsTest {
     private static final String externalHawaiiStation = "resources/datasets/sura/wqbkn_2012_08_01.nc";
     private static final String externalHawaiiRequest1 = baseRequest + "&observedProperty=temp&offering=WQBKN";
     
+    private static final String watlevNOAANavdPre = "resources/datasets/sura/watlev_NOAA_NAVD_PRE.nc";
+    private static final String watlevNOAANavdRequest = baseRequest + "&observedProperty=watlev&offering=NOAA_8767961";
+    
     //network all time series
     private static final String networkAllTimeSeries1 = datasets + "timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc";
     private static final String networkAllTimeSeries1Request = baseRequest + "&observedProperty=temperature&offering=network-all";
@@ -176,6 +180,8 @@ public class SOSGetObsTest {
         if (base != null) {
             return;
         }
+        BasicConfigurator.resetConfiguration();
+        BasicConfigurator.configure();
         String container = "getObs";
         InputStream templateInputStream = null;
         try {
@@ -771,8 +777,6 @@ public class SOSGetObsTest {
             write.close();
             String fileName = "tsOrthogonalMultidimenstionalMultipleStations.xml";
             fileWriter(base, fileName, write);
-            // write as an example
-            fileWriter(exampleOutputDir, "GetObservation-TimeSeries-om1.0.0.xml", write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
         } catch (IOException ex) {
@@ -1077,7 +1081,7 @@ public class SOSGetObsTest {
             //check depth was entered auto
             assertFalse(write.toString().contains("Exception"));
             assertTrue("depth not added", write.toString().contains("<swe:field name=\"z\">"));
-            assertTrue("data missing - feature of interest", write.toString().contains("<om:featureOfInterest xlink:href=\"PROFILE_3\"/>"));
+            assertTrue("data missing - feature of interest", write.toString().contains("<om:featureOfInterest xlink:href=\"Profile3\"/>"));
             assertFalse("bad data included - time stamp", write.toString().contains("1990-01-01T01:00:00Z,"));
             assertFalse("bad data included - time stamp", write.toString().contains("1990-01-01T02:00:00Z,"));
         } catch (IOException ex) {
@@ -1104,10 +1108,10 @@ public class SOSGetObsTest {
             dataAvailableInOutputFile(write);
             //check depth was entered auto
             assertTrue("depth not added", write.toString().contains("<swe:field name=\"z\">"));
-            assertFalse("data missing", write.toString().contains("<om:featureOfInterest xlink:href=\"PROFILE_0\"/>"));
-            assertFalse("data missing", write.toString().contains("<om:featureOfInterest xlink:href=\"PROFILE_3\"/>"));
-            assertTrue("data missing", write.toString().contains("<om:featureOfInterest xlink:href=\"PROFILE_1\"/>"));
-            assertTrue("data missing", write.toString().contains("<om:featureOfInterest xlink:href=\"PROFILE_2\"/>"));
+            assertFalse("invalid foi", write.toString().contains("<om:featureOfInterest xlink:href=\"PROFILE_0\"/>"));
+            assertFalse("invalid foi", write.toString().contains("<om:featureOfInterest xlink:href=\"PROFILE_3\"/>"));
+            assertTrue("foi missing", write.toString().contains("<om:featureOfInterest xlink:href=\"Profile1\"/>"));
+            assertTrue("foi missing", write.toString().contains("<om:featureOfInterest xlink:href=\"Profile2\"/>"));
             assertTrue("data missing", write.toString().contains("1990-01-01T01:00:00Z,"));
             assertTrue("data missing", write.toString().contains("1990-01-01T02:00:00Z,"));
         } catch (IOException ex) {
@@ -1836,6 +1840,31 @@ public class SOSGetObsTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
+    
+    @Test
+    public void testWatlevNOAANAVDPRE() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(watlevNOAANavdPre);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, watlevNOAANavdRequest, watlevNOAANavdPre),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+            // write as an example
+            fileWriter(exampleOutputDir, "GetObservation-TimeSeries-om1.0.0.xml", write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
     
     
 //    @Test

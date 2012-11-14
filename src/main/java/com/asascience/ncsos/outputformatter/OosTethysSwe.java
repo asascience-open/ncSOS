@@ -80,14 +80,8 @@ public class OosTethysSwe implements SOSOutputFormatter {
         try {
             DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
             impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
-        } catch (ClassNotFoundException ex) {
-            System.out.println(ex.getMessage());
-        } catch (InstantiationException ex) {
-            System.out.println(ex.getMessage());
-        } catch (IllegalAccessException ex) {
-            System.out.println(ex.getMessage());
-        } catch (ClassCastException ex) {
-            System.out.println(ex.getMessage());
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
         }
     }
 

@@ -10,9 +10,6 @@
                   xsi:schemaLocation="http://www.opengis.net/sos/1.0 http://schemas.opengis.net/sos/1.0.0/sosGetCapabilities.xsd"
                   version="1.0.0">
 
-	<!--~~~~~~~~~~~~~~~~~~~~~~~~-->
-	<!-- Service Identification -->
-	<!--~~~~~~~~~~~~~~~~~~~~~~~~-->
 	<ows:ServiceIdentification>
 		<ows:Title> </ows:Title>
 		<ows:Abstract> </ows:Abstract>
@@ -24,9 +21,6 @@
 		<ows:Fees>NONE</ows:Fees>
 		<ows:AccessConstraints></ows:AccessConstraints>
 	</ows:ServiceIdentification>
-	<!--~~~~~~~~~~~~~~~~~~~~~~-->
-	<!-- Provider Description -->
-	<!--~~~~~~~~~~~~~~~~~~~~~~-->
 	<ows:ServiceProvider>
 		<ows:ProviderName> </ows:ProviderName>
 		<ows:ProviderSite> </ows:ProviderSite>
@@ -48,9 +42,6 @@
 			</ows:ContactInfo>
 		</ows:ServiceContact>
 	</ows:ServiceProvider>
-	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-	<!-- operations Metadata Section -->
-	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 	<ows:OperationsMetadata>
 		<ows:Operation name="GetCapabilities">
 			<ows:DCP>
@@ -107,9 +98,6 @@
 			</ows:AllowedValues>
 		</ows:Parameter>
 	</ows:OperationsMetadata>
-	<!--~~~~~~~~~~~~~~~~~~~~~~~-->
-	<!-- Observation Offerings -->
-	<!--~~~~~~~~~~~~~~~~~~~~~~~-->
 	<Contents>
 		<ObservationOfferingList>
 			

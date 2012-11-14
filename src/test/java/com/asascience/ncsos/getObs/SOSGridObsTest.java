@@ -10,6 +10,7 @@ import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.*;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import org.apache.log4j.BasicConfigurator;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
@@ -32,8 +33,8 @@ public class SOSGridObsTest {
     // NODC Tests
     private static final String datasets = "resources/datasets/";
     private static final String sst_pathfinder = datasets + "nodc/00000110200000-NODC-L4_GHRSST-SSTskin-AVHRR_Pathfinder-PFV5.0_Daily_Climatology_1982_2008_DayNightCombined-v02.0-fv01.0.nc";
-    private static String sst_pathfinder_grid0 = "request=GetObservation&service=sos&version-1.0.0&lat=56.3611&lon=176.2466&observedProperty=analysed_sst&offering=Grid0&responseformat=";
-    private static String sst_pathfinder_network_all = "request=GetObservation&service=sos&version-1.0.0&lat=56.3611&lon=176.2466&observedProperty=sea_ice_fraction&offering=network_all&responseformat=";
+    private static String sst_pathfinder_grid0 = "request=GetObservation&service=sos&version=1.0.0&lat=56.3611&lon=176.2466&observedProperty=analysed_sst&offering=Grid0&responseformat=";
+    private static String sst_pathfinder_network_all = "request=GetObservation&service=sos&version=1.0.0&lat=56.3611&lon=176.2466&observedProperty=sea_ice_fraction&offering=network_all&responseformat=";
     
     private static String baseLocalDir = null;
     private static String outputDir = null;
@@ -46,6 +47,8 @@ public class SOSGridObsTest {
             // exit early if the environ is already set
             return;
         }
+        BasicConfigurator.resetConfiguration();
+        BasicConfigurator.configure();
         String container = "getObsGrid";
         InputStream templateInputStream = null;
         try {
@@ -185,7 +188,7 @@ public class SOSGridObsTest {
         System.out.println("\n------" + getCurrentMethod() + "------");
         
         try {
-            NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + sst_2);
+            NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + sst_pathfinder);
             Writer writer = new CharArrayWriter();
             SOSParser parser = new SOSParser();
             try {
@@ -213,7 +216,7 @@ public class SOSGridObsTest {
         System.out.println("\n------" + getCurrentMethod() + "------");
         
         try {
-            NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + sst_2);
+            NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + sst_pathfinder);
             Writer writer = new CharArrayWriter();
             SOSParser parser = new SOSParser();
             try {

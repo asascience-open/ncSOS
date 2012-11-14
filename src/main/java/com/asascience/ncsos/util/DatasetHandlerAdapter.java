@@ -116,6 +116,9 @@ public class DatasetHandlerAdapter {
         } catch (Exception ex) {
             _log.error("Could not calculate the bounds of the PointFeatureCollection " + collection.getName() + "\n" + ex.getLocalizedMessage());
             return false;
+        } catch (Error err) {
+            _log.error("Could not caluclate the bounds of the PointFeatureCollection " + collection.getName() + "\n" + err.getLocalizedMessage());
+            return false;
         }
         
         return true;

@@ -108,7 +108,7 @@ public class SOSParser {
         if (!queryParameters.containsKey("version") ||
             !queryParameters.get("version").toString().equalsIgnoreCase("1.0.0")) {
             capHandler = new SOSGetCapabilitiesRequestHandler(null);
-            capHandler.getOutputHandler().setupExceptionOutput("Version is a required parameter for all requests. Currently 1.0.0 is accepted.");
+            capHandler.getOutputHandler().setupExceptionOutput("'version' is a required parameter for all requests. Currently 1.0.0 is the only accepted value.");
             retval.put("outputHandler", capHandler.getOutputHandler());
             retval.put("responseContentType", "text/xml");
             return retval;
@@ -152,7 +152,7 @@ public class SOSParser {
                             try {
                                 //create the file as it does not exist
                                 //Check Directory 
-                                String sections = "All";
+                                String sections = "all";
                                 if (queryParameters.containsKey("sections"))
                                     sections = queryParameters.get("sections").toString();
                                 capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI, sections);

@@ -97,7 +97,7 @@ public class Profile extends baseCDMClass implements iStationData {
                 newOffering.setObservationTimeEnd(pFeature.getDateRange().getEnd().toDateTimeStringISO());
             } //find the dates out!
             else {
-                System.out.println("no dates yet");
+                _log.error("no dates yet");
             }
 
 
@@ -116,12 +116,6 @@ public class Profile extends baseCDMClass implements iStationData {
             newOffering.setObservationSrsName("EPSG:4326");  // TODO?  
             newOffering.setObservationObserveredList(observedPropertyList);
             document = CDMUtils.addObsOfferingToDoc(newOffering,document);
-        }
-
-        if (profileCollection.isMultipleNested() == false) {
-            System.out.println("not nested");
-        } else {
-            System.out.println("nested");
         }
         
          return document;
@@ -273,7 +267,7 @@ public class Profile extends baseCDMClass implements iStationData {
             if (profileData != null && profileList.containsKey(stNum)) {
                 return createProfileFeature(stNum);
             } else {
-                System.out.println("profileData " + stNum + " is null, not creating a string");
+                _log.warn("profileData " + stNum + " is null, not creating a string");
             }
         } catch (IOException ex) {
             Logger.getLogger(Profile.class.getName()).log(Level.SEVERE, null, ex);
@@ -412,7 +406,8 @@ public class Profile extends baseCDMClass implements iStationData {
         catch (Exception e) {
             // this case happend when the 'profile' var is a scalar with no shape/dimensions; other than to catch this and give a default value of "0"
             // not sure what else can be done (should be a better way of handling it. right?)
-            System.out.println("getProfileIDFromProfile - " + e.toString());
+            _log.warn("getProfileIDFromProfile - " + e.toString());
+            _log.warn("using default id of 0");
             profileID = "0";
         }
         return profileID;

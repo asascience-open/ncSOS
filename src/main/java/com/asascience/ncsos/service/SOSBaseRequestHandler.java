@@ -34,7 +34,7 @@ public abstract class SOSBaseRequestHandler {
     
     // Global Attributes
     protected String Access, DataContactEmail, DataContactName, DataContactPhone, DataPage, InventoryContactEmail, InventoryContactName, InventoryContactPhone;
-    protected String PrimaryOwnership, Region;
+    protected String PrimaryOwnership, Region, StandardNameVocabulary;
     private String title;
     private String history;
     private String description;
@@ -98,25 +98,22 @@ public abstract class SOSBaseRequestHandler {
                     featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.ANY_POINT, netCDFDataset, null, new Formatter(System.err));
                     break;
             }
-            if (featureDataset == null) {
-                featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.ANY_POINT, netCDFDataset, null, new Formatter(System.err));
-            }
-        } else {
-            System.out.println("findfeaturetype is null, somehow... getting dataset from any_point");
+        } 
+        
+        if (featureDataset == null) {
+            // attempt to get the dataset from an any_point
             featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.ANY_POINT, netCDFDataset, null, new Formatter(System.err));
+            
             if (featureDataset == null) {
                 // null, which means the dataset should be grid...
-                System.out.println("Attempting to get GRID data after null findfeaturetype");
                 featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.GRID, netCDFDataset, null, new Formatter(System.err));
                 gridDataSet = DiscreteSamplingGeometryUtil.extractGridDatasetCollection(featureDataset);
                 dataFeatureType = FeatureType.GRID;
             }
         }
         
-        System.out.println("Datafeaturetype = " + dataFeatureType);
-        
         if (gridDataSet == null && featureDataset == null) {
-            System.err.println("Unknown feature type! " + FeatureDatasetFactoryManager.findFeatureType(netCDFDataset));
+            _log.error("Unknown feature type! " + FeatureDatasetFactoryManager.findFeatureType(netCDFDataset));
             return;
         }
         
@@ -125,8 +122,6 @@ public abstract class SOSBaseRequestHandler {
             dataFeatureType = CDMPointFeatureCollection.getCollectionFeatureType();
         }
         
-        
-
         parseGlobalAttributes();
         
         findAndParseStationVariable();
@@ -158,6 +153,7 @@ public abstract class SOSBaseRequestHandler {
         history = netCDFDataset.findAttValueIgnoreCase(null, "history", "");
         description = netCDFDataset.findAttValueIgnoreCase(null, "description", "");
         featureOfInterestBaseQueryURL = netCDFDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", null);
+        StandardNameVocabulary = netCDFDataset.findAttValueIgnoreCase(null, "standard_name_vocabulary", "none");
     }
 
     private void findAndParseStationVariable() throws IOException {
@@ -378,9 +374,40 @@ public abstract class SOSBaseRequestHandler {
                 return null;
             }
         } catch (Exception e) {
-            System.out.println("exception in getStationCoords " + e.getMessage());
+            _log.error("exception in getStationCoords " + e.getMessage());
             return null;
         }
+    }
+
+    /**
+     * Gets the units string of a variable
+     * @param varName the name of the variable to look for
+     * @return the units string or "none" if the variable could not be found
+     */
+    protected String getUnitsOfVariable(String varName) {
+        Variable var;
+        if (featureDataset != null) {
+            var = (Variable) featureDataset.getDataVariable(varName);
+        } else {
+            var = netCDFDataset.findVariable(varName);
+        }
+        if (var != null) {
+            return var.getUnitsString();
+        }
+        return "none";
+    }
+    
+    protected Attribute[] getAttributesOfVariable(String varName) {
+        Variable var;
+        if (featureDataset != null) {
+            var = (Variable) featureDataset.getDataVariable(varName);
+        } else {
+            var = netCDFDataset.findVariable(varName);
+        }
+        if (var != null) {
+            return var.getAttributes().toArray(new Attribute[var.getAttributes().size()]);
+        }
+        return null;
     }
 
     /**
@@ -510,6 +537,14 @@ public abstract class SOSBaseRequestHandler {
         return featureOfInterestBaseQueryURL == null
                 ? stationName
                 : featureOfInterestBaseQueryURL + stationName;
+    }
+    
+    /**
+     * Returns the standard_name_vocabulary global attribute
+     * @return standard_name_vocabulary
+     */
+    public String getStandardNameVocabulary() {
+        return StandardNameVocabulary;
     }
 
     /**

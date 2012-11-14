@@ -13,6 +13,7 @@ import java.util.HashMap;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.log4j.BasicConfigurator;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -37,6 +38,7 @@ public class SosController implements ISosContoller {
     }
 
     public void init() throws ServletException {
+        BasicConfigurator.configure();
         _logServerStartup.info("SOS Service - initialization start");
     }
 

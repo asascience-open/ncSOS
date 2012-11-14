@@ -91,7 +91,7 @@ public class Section extends baseCDMClass implements iStationData {
                     newOffering.setObservationTimeEnd(formatter.toDateTimeStringISO(sectionDateRange.getEnd().toDate()));
                 } //find the dates out!
                 else {
-                    System.out.println("no dates yet");
+                    _log.error("no dates yet");
                 }
 
 
@@ -112,7 +112,7 @@ public class Section extends baseCDMClass implements iStationData {
                 document = CDMUtils.addObsOfferingToDoc(newOffering,document);
             }
         } catch (IOException ex) {
-            System.out.println(ex.getMessage());
+            _log.error(ex.getMessage());
         } finally {
             return document;
         }
@@ -148,7 +148,7 @@ public class Section extends baseCDMClass implements iStationData {
             }
             retval = new LatLonRect(new LatLonPointImpl(lLat, lLon), new LatLonPointImpl(uLat, uLon));
         } catch (IOException ex) {
-            System.out.println(ex.getMessage());
+            _log.error(ex.getMessage());
         } finally {
             return retval;
         }
@@ -482,7 +482,7 @@ public class Section extends baseCDMClass implements iStationData {
             CalendarDate cDate = CalendarDate.of(earliestDate);
             retval = new CalendarDateRange(cDate, (CalendarDate.of(latestDate).getDifferenceInMsecs(cDate) / 1000));
         } catch (Exception ex) {
-            System.out.println("Error in getDateRange - " + ex.getLocalizedMessage());
+            _log.error("Error in getDateRange - " + ex.getLocalizedMessage());
         } finally {
             return retval;
         }
