@@ -117,9 +117,13 @@ public class SOSDescribeSensorNetworkTest {
         output.writeOutput(write);
     }
     
-    private static void fileWriter(String base, String fileName, Writer write) throws IOException {
+    private static void fileWriter(String base, String fileName, Writer writer) throws IOException {
+        fileWriter(base, fileName, writer, false);
+    }
+    
+    private static void fileWriter(String base, String fileName, Writer write, boolean append) throws IOException {
         File file = new File(base + fileName);
-        Writer output = new BufferedWriter(new FileWriter(file, true));
+        Writer output = new BufferedWriter(new FileWriter(file, append));
         output.write("\n");
         output.write(write.toString());
         output.close();

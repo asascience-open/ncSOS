@@ -1,49 +1,7 @@
 
 <?xml version="1.0" encoding="UTF-8"?>
-<sml:SensorML version="1.0.1"
-    xmlns="http://www.opengis.net/sensorML/1.0.1"
-    xmlns:gml="http://www.opengis.net/gml"
-    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
-    xmlns:swe="http://www.opengis.net/swe/1.0.1"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
-    <sml:member>
-        <sml:System gml:id="station-Grid0">
-            <gml:description>no description</gml:description>
-            <sml:identification>
-                <sml:IdentifierList>
-                    <sml:identifier name="StationId">
-                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/stationID">
-                            <sml:value>urn:tds:station.sos:Grid0</sml:value>
-                        </sml:Term>
-                    </sml:identifier>
-                    <sml:identifier name="long_name">
-                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/long_name">
-                            <sml:value>grid name</sml:value>
-                        </sml:Term>
-                    </sml:identifier>
-                </sml:IdentifierList>
-            </sml:identification>
-            <sml:history>2003-04-07 12:12:50 - created by gribtocdl</sml:history>
-            <sml:location>
-                <gml:boundedBy>
-                    <gml:Envelope srsName="">
-                        <gml:lowerCorner>-90.0 -180.0</gml:lowerCorner>
-                        <gml:upperCorner>90.0 180.0</gml:upperCorner>
-                    </gml:Envelope>
-                </gml:boundedBy>
-            </sml:location>
-            <sml:components>
-                <sml:ComponentList>
-                    <sml:component name="Sensor SST">
-                        <sml:System gml:id="sensor-SST">
-                            <sml:identification xlink:href="urn:tds:station.sos:Grid0::SST"/>
-                            <sml:documentation xlink:href="resources/datasets/satellite-sst/SST_Global_2x2deg_20120626_0000.nc?request=DescribeSensor&amp;service=sos&amp;version=1.0.0&amp;responseformat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%22&amp;procedure=urn:tds:station.sos:Grid0::SST"/>
-                            <gml:description>Sea temperature</gml:description>
-                        </sml:System>
-                    </sml:component>
-                </sml:ComponentList>
-            </sml:components>
-        </sml:System>
-    </sml:member>
-</sml:SensorML>
+<ExceptionReport>
+    <Exception>
+        <ExceptionText>Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.</ExceptionText>
+    </Exception>
+</ExceptionReport>
