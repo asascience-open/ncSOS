@@ -10,7 +10,7 @@
 
   <groupId>com.asascience</groupId>
   <artifactId>ncsos</artifactId>
-  <version>RC1-SNAPSHOT</version>
+  <version>RC2-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>ncsos</name>
