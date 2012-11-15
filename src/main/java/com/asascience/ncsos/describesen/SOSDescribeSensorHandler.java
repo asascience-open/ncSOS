@@ -12,12 +12,9 @@ import com.asascience.ncsos.util.DiscreteSamplingGeometryUtil;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.ft.*;
 import ucar.nc2.time.CalendarDate;
-import ucar.unidata.geoloc.LatLonRect;
 
 /**
  * Main handler class for Describe Sensor requests. Processes the request to determine

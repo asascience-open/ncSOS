@@ -183,9 +183,18 @@ public class SOSdescribeSensorTest {
     private static void fileWriter(String base, String fileName, Writer write, boolean append) throws IOException {
         File file = new File(base + fileName);
         Writer output = new BufferedWriter(new FileWriter(file, append));
-        output.write("\n");
-        output.write(write.toString());
-        output.close();
+        output.flush();
+        try {
+            output.write("\n");
+            output.write(write.toString());
+        } catch (Exception ex) {
+            System.err.println(ex.toString());
+            for (StackTraceElement elem : ex.getStackTrace()) {
+                System.err.println("\t" + elem.toString());
+            }
+        } finally {
+            output.close();
+        }
     }
     
     /***************************************************************************
@@ -499,8 +508,6 @@ public class SOSdescribeSensorTest {
             writeOutput(parser.enhance(dataset, baseQuery + bdsp_1_query_bad, bdsp_1_set), writer);
             fileWriter(outputDir, "profile-bad-station-request.xml", writer, false);
             assertTrue("no exception in output", writer.toString().contains("Exception"));
-            // write as an example
-            fileWriter(exampleOutputDir, "DescribeSensor-Grid-sensorML1.0.1.xml", writer, false);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
