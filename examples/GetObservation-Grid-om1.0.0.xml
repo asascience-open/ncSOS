@@ -6,12 +6,12 @@
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/om/1.0 http://schemas.opengis.net/om/1.0.0/observation.xsd">
     <gml:description/>
-    <gml:name/>
+    <gml:name>Sea Surface Temperature Analysis Model</gml:name>
     <gml:boundedBy>
-        <gml:Envelope srsName="urn:ogc:def:crs:EPSG:6.5:4329">
+        <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
             <!-- overwrite these with your actual offering ROI -->
-            <gml:lowerCorner/>
-            <gml:upperCorner/>
+            <gml:lowerCorner>-90.0 -180.0</gml:lowerCorner>
+            <gml:upperCorner>90.0 180.0</gml:upperCorner>
         </gml:Envelope>
     </gml:boundedBy>
     <om:member>
@@ -19,7 +19,7 @@
             <gml:description/>
             <gml:name/>
             <gml:boundedBy>
-                <gml:Envelope srsName="urn:tds:station.sos:sst">
+                <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
                     <gml:lowerCorner>-52.0 0.0</gml:lowerCorner>
                     <gml:upperCorner>-52.0 0.0</gml:upperCorner>
                 </gml:Envelope>
@@ -45,20 +45,22 @@
                     <swe:elementType name="SimpleDataArray">
                         <swe:DataRecord>
                             <swe:field name="time">
-                                <swe:Quantity definition="urn:ogc:phenomenon:time:iso8601"/>
+                                <swe:Time definition="http://www.opengis.net/def/property/OGC/0/SamplingTime">
+                                    <swe:uom xlink:href="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"/>
+                                </swe:Time>
                             </swe:field>
                             <swe:field name="sst">
-                                <swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:sst">
+                                <swe:Quantity definition="http://mmisw.org/ont/cf/parameter/sst">
                                     <swe:uom code="none"/>
                                 </swe:Quantity>
                             </swe:field>
                             <swe:field name="lat">
-                                <swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:lat">
+                                <swe:Quantity definition="http://mmisw.org/ont/cf/parameter/lat">
                                     <swe:uom code="degrees_north"/>
                                 </swe:Quantity>
                             </swe:field>
                             <swe:field name="lon">
-                                <swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:lon">
+                                <swe:Quantity definition="http://mmisw.org/ont/cf/parameter/lon">
                                     <swe:uom code="degrees_east"/>
                                 </swe:Quantity>
                             </swe:field>

@@ -113,6 +113,12 @@ public class SOSdescribeSensorTest {
     private static final String noaa_navd_set = "resources/datasets/sura/watlev_NOAA_NAVD_PRE.nc";
     private static final String noaa_navd_query = "procedure=urn:tds:station.sos:NOAA_8726347";
     
+    private static final String jason_satellite_set = "resources/datasets/nodc/jason2_satelliteAltimeter.nc";
+    private static final String jason_satellite_query = "procedure=urn:tds:station.sos:unknown";
+    
+    private static final String bodega_marinelab_set = "resources/datasets/nodc/BodegaMarineLabBuoy.nc";
+    private static final String bodega_marinelab_query = "procedure=urn:tds:station.sos:CordellBankBuoy";
+    
     private static final String bad_requests_set = "resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc";
     private static final String bad_request_control_query = "procedure=urn:tds:station.sos:Trajectory2";
     private static final String bad_request_responseformat_query = "request=DescribeSensor&service=sos&version=1.0.0&responseFormat=text/xml;subtype=\"5\"";
@@ -349,7 +355,7 @@ public class SOSdescribeSensorTest {
         fileWriter(outputDir, "timeSeriesProfile-Multidimensional-MultipleStations-H.5.1.xml", writer, false);
         assertFalse("exception in output", writer.toString().contains("Exception"));
         assertTrue("missing component", writer.toString().contains("<sml:component name=\"Sensor temperature\">"));
-        assertTrue("missing/invalid coords", writer.toString().contains("<gml:coordinates>37.5 -76.5</gml:coordinates>"));
+        assertTrue("missing/invalid coords", writer.toString().contains("37.5 -76.5"));
         // write as an example
         fileWriter(exampleOutputDir, "DescribeSensor-TimeSeries-sensorML1.0.1.xml", writer, false);
         System.out.println("------End testBasicDescribeSensorStation2------");
@@ -905,6 +911,44 @@ public class SOSdescribeSensorTest {
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhance(cdfDataset, baseQuery + noaa_navd_query, noaa_navd_set), writer);
             fileWriter(outputDir, "watlev-noaa-navd.xml", writer, false);
+            // test for expected values below
+            assertFalse("exception in output", writer.toString().contains("Exception"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testJasonSatelliteAltemeter() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + jason_satellite_set);
+            SOSParser parser = new SOSParser();
+            Writer writer = new CharArrayWriter();
+            writeOutput(parser.enhance(cdfDataset, baseQuery + jason_satellite_query, jason_satellite_set), writer);
+            fileWriter(outputDir, getCurrentMethod() + ".xml", writer, false);
+            // test for expected values below
+            assertFalse("exception in output", writer.toString().contains("Exception"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testCordellBankBuoy() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + bodega_marinelab_set);
+            SOSParser parser = new SOSParser();
+            Writer writer = new CharArrayWriter();
+            writeOutput(parser.enhance(cdfDataset, baseQuery + bodega_marinelab_query, bodega_marinelab_set), writer);
+            fileWriter(outputDir, getCurrentMethod() + ".xml", writer, false);
             // test for expected values below
             assertFalse("exception in output", writer.toString().contains("Exception"));
         } catch (IOException ex) {

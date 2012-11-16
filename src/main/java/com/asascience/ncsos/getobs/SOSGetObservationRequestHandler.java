@@ -99,9 +99,9 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     }
     
     private void setCDMDatasetForStations(NetcdfDataset netCDFDataset, String[] requestedStationNames, String[] eventTime, Map<String, String> latLonRequest) throws IOException {
-        // strip out any text if the station variable has a shape dimension of 1
-        String[] editedStationNames = new String[requestedStationNames.length];
-        if (stationVariable != null && stationVariable.getShape().length <= 1 && stationVariable.getDataType() != DataType.CHAR) {
+        // strip out text if the station is defined by indices
+        if (isStationDefinedByIndices()) {
+            String[] editedStationNames = new String[requestedStationNames.length];
             for (int i=0; i<requestedStationNames.length; i++) {
                 if (requestedStationNames[i].contains("unknown")) {
                     editedStationNames[i] = "unknown";
@@ -141,7 +141,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             } else if (getDatasetFeatureType() == FeatureType.SECTION) {
                 CDMDataSet = new Section(requestedStationNames, eventTime, this.obsProperties);
             }else {
-                _log.error("Have a null CDMDataSet, this will cause a null reference exception! - SOSGetObservationRequestHandler.87");
+                _log.error("Have a null CDMDataSet, this will cause a null reference exception!");
                 // print exception and then return the doc
                 output = new GetCapsOutputter();
                 output.setupExceptionOutput("Null Dataset; could not recognize feature type");
@@ -237,11 +237,19 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     }
     
     public String getStationLowerCorner(int relIndex) {
-        return CDMDataSet.getLowerLat(relIndex) + " " + CDMDataSet.getLowerLon(relIndex);
+        return formatDegree(CDMDataSet.getLowerLat(relIndex)) + " " + formatDegree(CDMDataSet.getLowerLon(relIndex));
     }
     
     public String getStationUpperCorner(int relIndex) {
-        return CDMDataSet.getUpperLat(relIndex) + " " + CDMDataSet.getUpperLon(relIndex);
+        return formatDegree(CDMDataSet.getUpperLat(relIndex)) + " " + formatDegree(CDMDataSet.getUpperLon(relIndex));
+    }
+    
+    public String getBoundedLowerCorner() {
+        return formatDegree(CDMDataSet.getBoundLowerLat()) + " " + formatDegree(CDMDataSet.getBoundLowerLon());
+    }
+    
+    public String getBoundedUpperCorner() {
+        return formatDegree(CDMDataSet.getBoundUpperLat()) + " " + formatDegree(CDMDataSet.getBoundUpperLon());
     }
     
     public String getStartTime(int relIndex) {

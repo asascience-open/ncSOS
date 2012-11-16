@@ -11,6 +11,8 @@ import ucar.nc2.Variable;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.constants.AxisType;
 import ucar.nc2.constants.FeatureType;
+import ucar.nc2.dataset.CoordinateSystem;
+import ucar.nc2.dataset.CoordinateTransform;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dt.GridDataset;
 import ucar.nc2.ft.*;
@@ -152,7 +154,7 @@ public abstract class SOSBaseRequestHandler {
         title = netCDFDataset.findAttValueIgnoreCase(null, "title", "");
         history = netCDFDataset.findAttValueIgnoreCase(null, "history", "");
         description = netCDFDataset.findAttValueIgnoreCase(null, "description", "");
-        featureOfInterestBaseQueryURL = netCDFDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", null);
+        featureOfInterestBaseQueryURL = netCDFDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", "");
         StandardNameVocabulary = netCDFDataset.findAttValueIgnoreCase(null, "standard_name_vocabulary", "none");
     }
 
@@ -449,6 +451,25 @@ public abstract class SOSBaseRequestHandler {
     public FeatureType getDatasetFeatureType() {
         return dataFeatureType;
     }
+    
+    /**
+     * Are the station defined by indices rather than names
+     * @return T/F
+     */
+    public boolean isStationDefinedByIndices() {
+        return stationVariable != null && stationVariable.getDataType() != DataType.CHAR && stationVariable.getDataType() != DataType.STRING;
+    }
+    
+    /**
+     * Get a list of the station variable attributes
+     * @return a list of attributes; empty if there is no station var
+     */
+    public List<Attribute> getStationAttributes() {
+        if (stationVariable != null) 
+            return stationVariable.getAttributes();
+        else
+            return new ArrayList<Attribute>();
+    }
 
     /**
      * Returns the value of the title attribute of the dataset
@@ -515,6 +536,76 @@ public abstract class SOSBaseRequestHandler {
      */
     public String getLocation() {
         return netCDFDataset.getLocation();
+    }
+    
+    /**
+     * Gets the conventions used to analyse the coordinate system
+     * @return 
+     */
+    public String getConvention() {
+        return netCDFDataset.getConventionUsed();
+    }
+    
+    /**
+     * Finds the CRS/SRS authorities used for the data vars. This method reads
+     * through variables in a highly inefficient manner, therefore if a method
+     * provided by the netcdf-java api is found that provides the same output it
+     * should be favored over this.
+     * @return an array of crs/srs authorities if there are any; else null
+     */
+    public String[] getCRSSRSAuthorities() {
+        ArrayList<String> returnList = new ArrayList<String>();
+        for (VariableSimpleIF var : featureDataset.getDataVariables()) {
+            for (Attribute attr : var.getAttributes()) {
+                if (attr.getName().equalsIgnoreCase("grid_mapping")) {
+                    String stName = attr.getValue(0).toString();
+                    String auth = getAuthorityFromVariable(stName);
+                    if (auth != null && !returnList.contains(auth)) {
+                        returnList.add(auth);
+                    }
+                }
+            }
+        }
+        if (returnList.size() > 0)
+            return returnList.toArray(new String[returnList.size()]);
+        else
+            return null;
+    }
+    
+    private String getAuthorityFromVariable(String varName) {
+        String retval = null;
+
+        Variable crsVar = null;
+        for (Variable var : netCDFDataset.getVariables()) {
+            if (var.getFullName().equalsIgnoreCase(varName)) {
+                crsVar = var;
+                break;
+            }
+        }
+        
+        if (crsVar != null) {
+            for (Attribute attr : crsVar.getAttributes()) {
+                if (attr.getName().toLowerCase().contains("code")) {
+                    retval = attr.getValue(0).toString();
+                    break;
+                }
+            }
+        }
+        
+        return retval;
+    }
+    
+    /**
+     * 
+     * @return 
+     */
+    public ArrayList<String> getCoordinateNames() {
+        ArrayList<String> retval = new ArrayList<String>();
+        for (CoordinateTransform ct : netCDFDataset.getCoordinateTransforms()) {
+            System.out.println(ct.getName());
+            retval.add(ct.getName());
+        }
+        return retval;
     }
 
     /**

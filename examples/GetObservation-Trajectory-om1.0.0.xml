@@ -8,10 +8,10 @@
     <gml:description/>
     <gml:name/>
     <gml:boundedBy>
-        <gml:Envelope srsName="urn:ogc:def:crs:EPSG:6.5:4329">
+        <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
             <!-- overwrite these with your actual offering ROI -->
-            <gml:lowerCorner/>
-            <gml:upperCorner/>
+            <gml:lowerCorner>4.75649118423462 -73.34199523925781</gml:lowerCorner>
+            <gml:upperCorner>44.75994491577148 -7.49585962295532</gml:upperCorner>
         </gml:Envelope>
     </gml:boundedBy>
     <om:member>
@@ -19,9 +19,9 @@
             <gml:description/>
             <gml:name/>
             <gml:boundedBy>
-                <gml:Envelope srsName="urn:tds:station.sos:Trajectory1">
-                    <gml:lowerCorner>4.756491184234619 -73.34199523925781</gml:lowerCorner>
-                    <gml:upperCorner>44.759944915771484 -7.495859622955322</gml:upperCorner>
+                <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                    <gml:lowerCorner>4.75649118423462 -73.34199523925781</gml:lowerCorner>
+                    <gml:upperCorner>44.75994491577148 -7.49585962295532</gml:upperCorner>
                 </gml:Envelope>
             </gml:boundedBy>
             <om:samplingTime>
@@ -44,15 +44,17 @@
                     <swe:elementType name="SimpleDataArray">
                         <swe:DataRecord>
                             <swe:field name="time">
-                                <swe:Quantity definition="urn:ogc:phenomenon:time:iso8601"/>
+                                <swe:Time definition="http://www.opengis.net/def/property/OGC/0/SamplingTime">
+                                    <swe:uom xlink:href="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"/>
+                                </swe:Time>
                             </swe:field>
                             <swe:field name="temperature">
-                                <swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:temperature">
+                                <swe:Quantity definition="http://mmisw.org/ont/cf/parameter/temperature">
                                     <swe:uom code="Celsius"/>
                                 </swe:Quantity>
                             </swe:field>
                             <swe:field name="z">
-                                <swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:z">
+                                <swe:Quantity definition="http://mmisw.org/ont/cf/parameter/z">
                                     <swe:uom code="m"/>
                                 </swe:Quantity>
                             </swe:field>

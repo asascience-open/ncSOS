@@ -25,9 +25,11 @@
                 </sml:IdentifierList>
             </sml:identification>
             <sml:location>
-                <gml:Point gml:id="STATION-LOCATION-Station1">
-                    <gml:coordinates>37.5 -76.5</gml:coordinates>
-                </gml:Point>
+                <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                    <gml:posList srsDimension="2">
+37.5 -76.5
+</gml:posList>
+                </gml:LineString>
             </sml:location>
             <sml:components>
                 <sml:ComponentList>

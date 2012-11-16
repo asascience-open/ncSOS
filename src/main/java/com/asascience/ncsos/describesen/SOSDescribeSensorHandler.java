@@ -194,9 +194,7 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
             return false;
         }
         // go through each station urn and compare it to procedure
-        _log.debug("looking for " + procedure);
         for (String stationName : stationNames.values()) {
-            _log.debug("comparing to " + getGMLName(stationName));
             if (getGMLName(stationName).equalsIgnoreCase(procedure))
                 return true;
         }

@@ -259,10 +259,6 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
-
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:UNDKennedy_X\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:UNDKennedy_S\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:UNDKennedy_Z\">"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -286,10 +282,6 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
-
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:USACE-CHL_2410513B\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:USACE-CHL_2410508B\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:USACE-CHL_2410510B\">"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -313,10 +305,6 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
-
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:TCOON_87747701\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:TCOON_87705701\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:TCOON_87704751\">"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -340,10 +328,6 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
-
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_15\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_09\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_06\">"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -367,11 +351,6 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
-
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:NDBC_42020\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_09\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:USACE-CHL_2410513B\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:NDBC_42059\">"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -395,11 +374,6 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
-
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_DCPBS04\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_DCPBS03\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CS20-15R\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CS20-106\">"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -423,11 +397,6 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
-
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_DCPBS04\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_DCPBS03\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CS20-15R\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CS20-106\">"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -451,10 +420,6 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
-
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CRMS0161-H01\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CRMS0174-H01\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_DCPBA07\">"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -478,10 +443,6 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
-
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CRMS0161-H01\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CRMS0174-H01\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_DCPBA07\">"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -505,11 +466,6 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
-
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_03\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_06\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_09\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_15\">"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -533,9 +489,6 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
-
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_06\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_09\">"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -559,9 +512,6 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
-
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_06\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_09\">"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -585,9 +535,6 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
-
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:NOAA_8727235\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:NOAA_8729501\">"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {

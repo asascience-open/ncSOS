@@ -40,9 +40,11 @@
                 </sml:IdentifierList>
             </sml:identification>
             <sml:location>
-                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
-                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
-                </gml:Point>
+                <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                    <gml:posList srsDimension="2">
+24.631669998168945 -82.91999816894531
+</gml:posList>
+                </gml:LineString>
             </sml:location>
         </sml:System>
     </sml:member>

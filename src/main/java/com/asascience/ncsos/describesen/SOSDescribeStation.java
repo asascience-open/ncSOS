@@ -305,7 +305,7 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
         ArrayList<String> identDefinitions = new ArrayList<String>();
         ArrayList<String> identValues = new ArrayList<String>();
         identNames.add("StationId"); identDefinitions.add("stationID"); identValues.add("urn:tds:station.sos:" + stationName);
-        for (Attribute attr : stationVariable.getAttributes()) {
+        for (Attribute attr : getStationAttributes()) {
             if (attr.getName().equalsIgnoreCase("cf_role") || attr.getName().toLowerCase().contains("hdf5"))
                 continue;
             identNames.add(attr.getName()); identDefinitions.add(""); identValues.add(attr.getStringValue());
@@ -383,7 +383,7 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
         ArrayList<String> identDefinitions = new ArrayList<String>();
         ArrayList<String> identValues = new ArrayList<String>();
         identNames.add("StationId"); identDefinitions.add(MMI_DEF_URL + "stationID"); identValues.add(procedure);
-        for (Attribute attr : stationVariable.getAttributes()) {
+        for (Attribute attr : getStationAttributes()) {
             if (attr.getName().equalsIgnoreCase("cf_role") || attr.getName().toLowerCase().contains("hdf5"))
                 continue;
             identNames.add(attr.getName()); identDefinitions.add(MMI_DEF_URL + attr.getName()); identValues.add(attr.getValue(0).toString());
@@ -450,8 +450,12 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
      * @param output a DescribeSensorFormatter instance (held by the handler)
      */
     protected void formatSetLocationNode(DescribeSensorFormatter output) {
-        if (stationCoords != null)
-            output.setLocationNode(stationName, stationCoords);
+        if (stationCoords != null) {
+            if (getCRSSRSAuthorities() != null)
+                output.setLocationNode2Dimension(stationName, new double[][] { stationCoords }, getCRSSRSAuthorities()[0]);
+            else
+                output.setLocationNode2Dimension(stationName, new double[][] { stationCoords });
+        }
     }
     
     private void removeUnusedNodes(DescribeSensorFormatter output) {

@@ -28,14 +28,14 @@ public class OosTethysSweV2 implements SOSOutputFormatter {
     private static final String XLINK = "xlink:href";
     private static final String OM_OBSERVATION = "om:Observation";
     private static final String STATION_GML_BASE = "urn:tds:station.sos:";
-    private static final String MMI_CF = "urn:ogc:def:phenomenon:mmisw.org:cf:";
+    private static final String MMI_CF = "http://mmisw.org/ont/cf/parameter/";
     private static final String BLOCK_SEPERATOR = " ";
     private static final String TOKEN_SEPERATOR = ",";
     private static final String DECIMAL_SEPERATOR = ".";
     
     private final SOSGetObservationRequestHandler obsHandler;
     
-    private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(baseCDMClass.class);
+    private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(OosTethysSweV2.class);
     
     private DOMImplementationLS impl;
     private Document document;
@@ -50,7 +50,7 @@ public class OosTethysSweV2 implements SOSOutputFormatter {
         }
         
         this.infoList = new ArrayList<DataSlice>();
-        this.document = parseTemplateXML();
+        parseTemplateXML();
         this.obsHandler = obsHandler;
         
         try {
@@ -66,17 +66,20 @@ public class OosTethysSweV2 implements SOSOutputFormatter {
         setupExceptionOutput("Unable to create observation collection - missing or invalid info.");
     }
     
-    private Document parseTemplateXML() {
+    private void parseTemplateXML() {
         InputStream templateInputStream = null;
         try {
             templateInputStream = getClass().getClassLoader().getResourceAsStream(TEMPLATE);
-            return XMLDomUtils.getTemplateDom(templateInputStream);
+            document = XMLDomUtils.getTemplateDom(templateInputStream);
+        } catch (Exception ex) {
+            _log.error(ex.toString());
         } finally {
             if (templateInputStream != null) {
                 try {
                     templateInputStream.close();
                 } catch (IOException e) {
                     // ignore, closing..
+                    _log.error(e.toString());
                 }
             }
         }
@@ -92,6 +95,7 @@ public class OosTethysSweV2 implements SOSOutputFormatter {
     }
     
     public void setupExceptionOutput(String message) {
+        _log.debug(message);
         document = XMLDomUtils.getExceptionDom(message);
     }
     
@@ -104,11 +108,15 @@ public class OosTethysSweV2 implements SOSOutputFormatter {
         LSOutput xmlOut = impl.createLSOutput();
         xmlSerializer.getDomConfig().setParameter("format-pretty-print", Boolean.TRUE);
         xmlOut.setCharacterStream(writer);
+        _log.debug(document.toString());
         xmlSerializer.write(document, xmlOut);
     }
     //</editor-fold>
 
     private void parseObservations(String[] procedures) {
+        _log.debug(procedures.length + " procedures");
+        // set the station observation name, desc and bounds
+        setCollectionInfo();
         // iterate through the requested stations
         for (int index=0; index<procedures.length; index++) {
             String proc = procedures[index];
@@ -122,7 +130,7 @@ public class OosTethysSweV2 implements SOSOutputFormatter {
     
     private Element addNewObservation() {
         Element member = (Element) document.getElementsByTagName("om:member").item(0);
-        Element observation = document.createElement("om:Observation");
+        Element observation = document.createElement(OM_OBSERVATION);
         
         Element parent = document.createElement("gml:description");
         observation.appendChild(parent);
@@ -145,7 +153,7 @@ public class OosTethysSweV2 implements SOSOutputFormatter {
         // set bounded by
         Element bounds = (Element) parent.getElementsByTagName("gml:boundedBy").item(0);
         Element envelope = document.createElement("gml:Envelope");
-        envelope.setAttribute("srsName", STATION_GML_BASE + procName);
+        envelope.setAttribute("srsName", getSRSName());
         envelope.appendChild(createNodeWithText("gml:lowerCorner", obsHandler.getStationLowerCorner(index)));
         envelope.appendChild(createNodeWithText("gml:upperCorner", obsHandler.getStationUpperCorner(index)));
         bounds.appendChild(envelope);
@@ -163,7 +171,16 @@ public class OosTethysSweV2 implements SOSOutputFormatter {
             parent.appendChild(createNodeWithAttribute("om:observedProperty", XLINK, obs));
         }
         // feature of interest
-        parent.appendChild(createNodeWithAttribute("om:featureOfInterest", XLINK, procName));
+        parent.appendChild(createNodeWithAttribute("om:featureOfInterest", XLINK, obsHandler.getFeatureOfInterest(procName)));
+    }
+    
+    private String getSRSName() {
+        if (obsHandler.getCRSSRSAuthorities() != null) {
+            _log.debug(obsHandler.getCRSSRSAuthorities()[0]);
+            return obsHandler.getCRSSRSAuthorities()[0];
+        } else {
+            return "http://www.opengis.net/def/crs/EPSG/0/4326";
+        }
     }
     
     private Element createNodeWithText(String elemName, String text) {
@@ -201,12 +218,10 @@ public class OosTethysSweV2 implements SOSOutputFormatter {
     }
     
     private Element createTimeField(String name, String def) {
-        Element retval = document.createElement("swe:field");
-        retval.setAttribute("name", name);
-        Element quantity = document.createElement("swe:Quantity");
-        String definition = "urn:ogc:phenomenon:" + name + ":" + def;
-        quantity.setAttribute("definition", definition);
-        retval.appendChild(quantity);
+        Element retval = createNodeWithAttribute("swe:field", "name", name);
+        Element time = createNodeWithAttribute("swe:Time", "definition", "http://www.opengis.net/def/property/OGC/0/SamplingTime");
+        time.appendChild(createNodeWithAttribute("swe:uom", XLINK, "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"));
+        retval.appendChild(time);
         return retval;
     }
     
@@ -301,5 +316,16 @@ public class OosTethysSweV2 implements SOSOutputFormatter {
                 return true;
         }
         return false;
+    }
+
+    private void setCollectionInfo() {
+        Element coll = (Element) document.getElementsByTagName("om:ObservationCollection").item(0);
+        coll.getElementsByTagName("gml:name").item(0).setTextContent(obsHandler.getTitle());
+        coll.getElementsByTagName("gml:description").item(0).setTextContent(obsHandler.getDescription());
+        
+        Element bounds = (Element) coll.getElementsByTagName("gml:boundedBy").item(0);
+        ((Element)bounds.getElementsByTagName("gml:Envelope").item(0)).setAttribute("srsName", getSRSName());
+        bounds.getElementsByTagName("gml:lowerCorner").item(0).setTextContent(obsHandler.getBoundedLowerCorner());
+        bounds.getElementsByTagName("gml:upperCorner").item(0).setTextContent(obsHandler.getBoundedUpperCorner());
     }
 }

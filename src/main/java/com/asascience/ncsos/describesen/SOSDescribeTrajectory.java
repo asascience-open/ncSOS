@@ -209,7 +209,12 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
     }
     
     private void formatSetLocation(DescribeSensorFormatter output) {
-        output.setLocationNode2Dimension(stationName, getCoordinatesForLocationNode());
+        if (getCoordinateNames() == null || getCoordinateNames().size() < 1) {
+            output.setLocationNode2Dimension(stationName, getCoordinatesForLocationNode());
+        }
+        else {
+            output.setLocationNode2Dimension(stationName, getCoordinatesForLocationNode(), getCoordinateNames().get(0));
+        }
     }
     
     private double[][] getCoordinatesForLocationNode() {

@@ -326,17 +326,21 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         getParentNode().removeChild(getParentNode().getElementsByTagName("sml:history").item(0));
     }
     
+    public void setLocationNode2Dimension(String stationName, double[][] coords) {
+        setLocationNode2Dimension(stationName, coords, "http://www.opengis.net/def/crs/EPSG/0/4326");
+    }
+    
     /**
      * 
      * @param stationName
      * @param coords 
      */
-    public void setLocationNode2Dimension(String stationName, double[][] coords) {
+    public void setLocationNode2Dimension(String stationName, double[][] coords, String srs) {
         if (coords.length < 1)
             return;
         Element parent = (Element) getParentNode().getElementsByTagName("sml:location").item(0);
         
-        parent = addNewNodeToParentWithAttribute("gml:LineString", parent, "srsName", "http://www.opengis.net/def/crs/EPSG/0/4326");
+        parent = addNewNodeToParentWithAttribute("gml:LineString", parent, "srsName", srs);
         parent = addNewNodeToParentWithAttribute("gml:posList", parent, "srsDimension", "2");
         // add values for each pair of coords
         String coordsString = "\n";
@@ -353,11 +357,20 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
      * @param coords 
      */
     public void setLocationNode3Dimension(String stationName, double[][] coords) {
+        setLocationNode3Dimension(stationName, coords, "http://www.opengis.net/def/crs/EPSG/0/4329");
+    }
+    
+    /**
+     * 
+     * @param stationName
+     * @param coords 
+     */
+    public void setLocationNode3Dimension(String stationName, double[][] coords, String srs) {
         if (coords.length < 1)
             return;
         Element parent = (Element) getParentNode().getElementsByTagName("sml:location").item(0);
         
-        parent = addNewNodeToParentWithAttribute("gml:LineString", parent, "srsName", "http://www.opengis.net/def/crs/EPSG/0/4329");
+        parent = addNewNodeToParentWithAttribute("gml:LineString", parent, "srsName", srs);
         parent = addNewNodeToParentWithAttribute("gml:posList", parent, "srsDimension", "3");
         // add values for each pair of coords
         String coordsString = "\n";
