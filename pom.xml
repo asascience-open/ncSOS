@@ -152,8 +152,6 @@
 			<configuration>
 			  <target>
 				<copy file="resources/sos-servlet.xml" todir="target/"/> 
-				<copy file="resources/README.txt" todir="target/"/>
-				<copy file="resources/CHANGES.txt" todir="target/"/>
 				<zip destfile="target/ncSOS-${project.version}.zip" basedir="target/" includes="*xml *.txt *.jar"/>
 			  </target>
 			</configuration>
