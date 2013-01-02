@@ -11,8 +11,10 @@ import java.io.*;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import org.apache.log4j.BasicConfigurator;
-import org.junit.*;
+import org.junit.AfterClass;
 import static org.junit.Assert.*;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.w3c.dom.Document;
 import ucar.nc2.dataset.NetcdfDataset;
 
