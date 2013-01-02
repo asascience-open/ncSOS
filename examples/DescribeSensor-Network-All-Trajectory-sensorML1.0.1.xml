@@ -1,0 +1,387 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="network-all">
+            <gml:description/>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="NetworkId">
+                        <sml:Term definition="">
+                            <sml:value>urn:tds:network:all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Short Name">
+                        <sml:Term definition="urn:ogc:identifier:OGC:shortName">
+                            <sml:value>all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Long Name">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:longName">
+                            <sml:value>All stations in the dataset</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:components>
+                <sml:ComponentList>
+                    <sml:System gml:id="station-Trajectory0">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Trajectory0</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>trajectory name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                <gml:posList srsDimension="2">
+22.886272430419922 -24.58060073852539
+18.361400604248047 -49.91551208496094
+7.704173564910889 -31.10356330871582
+40.44695281982422 -50.96350860595703
+11.54588508605957 -48.07358932495117
+34.06394577026367 -1.6318601369857788
+24.028961181640625 -32.30714416503906
+42.000213623046875 -3.133451461791992
+25.078445434570312 -33.435787200927734
+33.806297302246094 -64.95127868652344
+27.99671745300293 -40.716522216796875
+6.848514080047607 -29.732784271240234
+42.46003341674805 -61.83161163330078
+15.199225425720215 -36.37775421142578
+40.904476165771484 -31.05533218383789
+36.98008346557617 -61.43505859375
+3.024412155151367 -56.58131408691406
+11.861881256103516 -17.073665618896484
+43.00862503051758 -5.6266889572143555
+4.452939033508301 -62.33763885498047
+16.525127410888672 -45.91680145263672
+23.498262405395508 -35.767189025878906
+34.49140548706055 -68.12552642822266
+14.971857070922852 -37.2292594909668
+</gml:posList>
+                            </gml:LineString>
+                        </sml:location>
+                        <sml:position>
+                            <sml:dataDefinition/>
+                        </sml:position>
+                        <sml:positions>
+                            <sml:PositionList/>
+                        </sml:positions>
+                        <sml:timePosition>
+                            <sml:Time/>
+                        </sml:timePosition>
+                    </sml:System>
+                    <sml:System gml:id="station-Trajectory1">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Trajectory1</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>trajectory name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                <gml:posList srsDimension="2">
+6.6527838706970215 -58.64653396606445
+43.33749008178711 -66.88121795654297
+43.74188232421875 -28.485851287841797
+42.5983772277832 -13.192618370056152
+4.756491184234619 -54.11494064331055
+44.27981185913086 -64.53810119628906
+32.534278869628906 -25.62478256225586
+43.62378692626953 -46.709495544433594
+27.36663246154785 -7.495859622955322
+44.759944915771484 -7.9102606773376465
+14.937915802001953 -68.89103698730469
+34.11381149291992 -15.914085388183594
+32.75175476074219 -73.34199523925781
+</gml:posList>
+                            </gml:LineString>
+                        </sml:location>
+                        <sml:position>
+                            <sml:dataDefinition/>
+                        </sml:position>
+                        <sml:positions>
+                            <sml:PositionList/>
+                        </sml:positions>
+                        <sml:timePosition>
+                            <sml:Time/>
+                        </sml:timePosition>
+                    </sml:System>
+                    <sml:System gml:id="station-Trajectory2">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Trajectory2</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>trajectory name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                <gml:posList srsDimension="2">
+17.80177116394043 -63.52994155883789
+22.025503158569336 -57.195682525634766
+43.104679107666016 -52.413883209228516
+30.557392120361328 -69.25907897949219
+26.375133514404297 -16.306076049804688
+10.049519538879395 -6.194129943847656
+36.00212097167969 -58.51029586791992
+17.61864471435547 -67.21090698242188
+17.968067169189453 -31.793113708496094
+34.779964447021484 -23.15056037902832
+16.05923843383789 -13.938878059387207
+</gml:posList>
+                            </gml:LineString>
+                        </sml:location>
+                        <sml:position>
+                            <sml:dataDefinition/>
+                        </sml:position>
+                        <sml:positions>
+                            <sml:PositionList/>
+                        </sml:positions>
+                        <sml:timePosition>
+                            <sml:Time/>
+                        </sml:timePosition>
+                    </sml:System>
+                    <sml:System gml:id="station-Trajectory3">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Trajectory3</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>trajectory name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                <gml:posList srsDimension="2">
+5.429996490478516 -35.31080627441406
+20.97307586669922 -3.3191161155700684
+16.214902877807617 -23.528024673461914
+17.99095916748047 -2.251742362976074
+24.848644256591797 -24.818201065063477
+37.54940414428711 -22.5494441986084
+7.647387981414795 -52.325775146484375
+23.969743728637695 -73.61405944824219
+43.733821868896484 -54.53622817993164
+43.848636627197266 -23.0891056060791
+43.52723693847656 -66.7712631225586
+37.94393539428711 -37.70144271850586
+29.468849182128906 -51.30703353881836
+33.96772384643555 -54.1752815246582
+14.49646282196045 -47.46202087402344
+6.266347408294678 -27.29397964477539
+24.81795310974121 -20.56072235107422
+40.85786437988281 -34.165096282958984
+11.11335563659668 -51.93360900878906
+38.4896125793457 -43.92966079711914
+4.20206880569458 -26.346349716186523
+15.37482738494873 -30.54296112060547
+33.324378967285156 -44.77650833129883
+21.216032028198242 -61.54010009765625
+21.848451614379883 -36.71026611328125
+5.561836242675781 -67.78382873535156
+22.71580696105957 -70.10535430908203
+14.031022071838379 -55.781227111816406
+25.98822593688965 -28.10633087158203
+29.4498233795166 -57.12901306152344
+38.05986022949219 -6.525465488433838
+19.847801208496094 -50.096900939941406
+25.333877563476562 -23.54252052307129
+32.562232971191406 -32.43115997314453
+36.20415115356445 -38.580936431884766
+6.930793285369873 -40.376441955566406
+6.302959442138672 -23.886600494384766
+1.0819567441940308 -57.76057052612305
+17.766456604003906 -42.80635452270508
+23.058305740356445 -4.686180114746094
+24.051496505737305 -74.40155792236328
+8.259764671325684 -66.04822540283203
+</gml:posList>
+                            </gml:LineString>
+                        </sml:location>
+                        <sml:position>
+                            <sml:dataDefinition/>
+                        </sml:position>
+                        <sml:positions>
+                            <sml:PositionList/>
+                        </sml:positions>
+                        <sml:timePosition>
+                            <sml:Time/>
+                        </sml:timePosition>
+                    </sml:System>
+                    <sml:System gml:id="station-Trajectory4">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Trajectory4</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>trajectory name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                <gml:posList srsDimension="2">
+35.26983642578125 -47.29813003540039
+23.40843391418457 -50.362892150878906
+42.36221694946289 -32.522735595703125
+29.68503189086914 -45.864402770996094
+7.037187576293945 -60.989463806152344
+9.18996810913086 -18.287601470947266
+20.450571060180664 -38.66244888305664
+19.40576934814453 -48.42380142211914
+1.9892216920852661 -13.664674758911133
+29.494516372680664 -7.281890392303467
+30.375381469726562 -59.37916946411133
+42.87063217163086 -40.38127899169922
+42.99815368652344 -2.3874528408050537
+32.818119049072266 -37.967830657958984
+25.9608211517334 -37.99082946777344
+34.21047592163086 -46.746551513671875
+29.927064895629883 -70.5045166015625
+10.501002311706543 -7.855642795562744
+39.78717803955078 -43.203125
+3.4975247383117676 -53.690616607666016
+23.861268997192383 -43.611480712890625
+20.312847137451172 -3.01706600189209
+33.36723709106445 -19.928613662719727
+27.329435348510742 -50.66569137573242
+25.97012710571289 -17.112112045288086
+20.224597930908203 -38.30025863647461
+17.982072830200195 -54.13042449951172
+4.664822578430176 -72.55297088623047
+20.220855712890625 -60.97871780395508
+23.91530418395996 -16.624116897583008
+41.26755142211914 -35.2811164855957
+15.512298583984375 -47.54323959350586
+37.44002151489258 -10.547821044921875
+21.388174057006836 -19.195331573486328
+7.831824779510498 -69.40486907958984
+</gml:posList>
+                            </gml:LineString>
+                        </sml:location>
+                        <sml:position>
+                            <sml:dataDefinition/>
+                        </sml:position>
+                        <sml:positions>
+                            <sml:PositionList/>
+                        </sml:positions>
+                        <sml:timePosition>
+                            <sml:Time/>
+                        </sml:timePosition>
+                    </sml:System>
+                    <sml:System gml:id="station-Trajectory5">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Trajectory5</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>trajectory name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                <gml:posList srsDimension="2">
+6.318604469299316 -3.3196728229522705
+40.11781692504883 -15.971128463745117
+36.0104866027832 -27.090417861938477
+40.3712272644043 -55.12879180908203
+21.811870574951172 -7.643125534057617
+32.940765380859375 -42.910953521728516
+31.794178009033203 -26.189287185668945
+27.719820022583008 -35.8426628112793
+9.2003812789917 -31.53115463256836
+30.457834243774414 -74.40239715576172
+10.06546688079834 -19.893585205078125
+20.23036766052246 -65.63892364501953
+42.115657806396484 -29.94309425354004
+3.9077157974243164 -67.34722137451172
+14.829084396362305 -16.341880798339844
+32.98295593261719 -24.851001739501953
+19.5273380279541 -42.20779037475586
+32.72401428222656 -33.4570426940918
+41.077171325683594 -44.15869140625
+13.911820411682129 -29.90462875366211
+44.764617919921875 -65.63585662841797
+10.345797538757324 -32.53449630737305
+37.230831146240234 -1.8488551378250122
+42.47964859008789 -0.6124314069747925
+29.05372428894043 -36.50298309326172
+41.80509567260742 -44.83074951171875
+27.2996768951416 -14.12711238861084
+19.560083389282227 -18.86597442626953
+6.733976364135742 -24.2279052734375
+5.165067195892334 -64.60633087158203
+12.42786693572998 -67.5613021850586
+29.39808464050293 -44.484920501708984
+6.771280288696289 -67.09617614746094
+40.17636489868164 -22.540691375732422
+22.766618728637695 -0.8341334462165833
+27.903379440307617 -75.11100769042969
+20.907752990722656 -55.10075378417969
+26.435791015625 -68.55722045898438
+</gml:posList>
+                            </gml:LineString>
+                        </sml:location>
+                        <sml:position>
+                            <sml:dataDefinition/>
+                        </sml:position>
+                        <sml:positions>
+                            <sml:PositionList/>
+                        </sml:positions>
+                        <sml:timePosition>
+                            <sml:Time/>
+                        </sml:timePosition>
+                    </sml:System>
+                </sml:ComponentList>
+            </sml:components>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>

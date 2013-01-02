@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Capabilities version="1.0.0" xmlns="http://www.opengis.net/sos/1.0"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:oost="http://www.oostethys.org/schemas/0.1.0/oostethys"
+    xmlns:ows="http://www.opengis.net/ows/1.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sos/1.0 http://schemas.opengis.net/sos/1.0.0/sosGetCapabilities.xsd">
+    <!--~~~~~~~~~~~~~~~~~~~~~~~~-->
+    <!-- Service Identification -->
+    <!--~~~~~~~~~~~~~~~~~~~~~~~~-->
+    <ows:ServiceIdentification>
+        <ows:Title>GDR - Standard dataset</ows:Title>
+        <ows:Abstract>CNES</ows:Abstract>
+        <ows:Keywords>
+            <ows:Keyword/>
+        </ows:Keywords>
+        <ows:ServiceType codeSpace="http://opengeospatial.net">OGC:SOS</ows:ServiceType>
+        <ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
+        <ows:Fees>NONE</ows:Fees>
+        <ows:AccessConstraints>NONE</ows:AccessConstraints>
+    </ows:ServiceIdentification>
+    <!--~~~~~~~~~~~~~~~~~~~~~~-->
+    <!-- Provider Description -->
+    <!--~~~~~~~~~~~~~~~~~~~~~~-->
+    <ows:ServiceProvider>
+        <ows:ProviderName>radar altimeter</ows:ProviderName>
+        <ows:ProviderSite/>
+        <ows:ServiceContact>
+            <ows:IndividualName/>
+            <ows:PositionName/>
+            <ows:ContactInfo>
+                <ows:Phone>
+                    <ows:Voice/>
+                </ows:Phone>
+                <ows:Address>
+                    <ows:DeliveryPoint/>
+                    <ows:City/>
+                    <ows:AdministrativeArea/>
+                    <ows:PostalCode/>
+                    <ows:Country/>
+                    <ows:ElectronicMailAddress/>
+                </ows:Address>
+            </ows:ContactInfo>
+        </ows:ServiceContact>
+    </ows:ServiceProvider>
+    <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+    <!-- operations Metadata Section -->
+    <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+    <ows:OperationsMetadata>
+        <ows:Operation name="GetCapabilities">
+            <ows:DCP>
+                <ows:HTTP>
+                    <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/nodc/jason2_satelliteAltimeter.nc"/>
+                </ows:HTTP>
+            </ows:DCP>
+            <ows:Parameter name="Sections">
+                <ows:AllowedValues>
+                    <ows:Value>ServiceIdentification</ows:Value>
+                    <ows:Value>ServiceProvider</ows:Value>
+                    <ows:Value>OperationsMetadata</ows:Value>
+                    <ows:Value>Contents</ows:Value>
+                    <ows:Value>All</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+        </ows:Operation>
+        <ows:Operation name="GetObservation">
+            <ows:DCP>
+                <ows:HTTP>
+                    <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/nodc/jason2_satelliteAltimeter.nc"/>
+                </ows:HTTP>
+            </ows:DCP>
+            <ows:Parameter name="offering" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>network-all</ows:Value>
+                    <ows:Value>unknown</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="observedProperty" use="required">
+                <ows:AllowedValues>
+                    <ows:value>surface_type</ows:value>
+                    <ows:value>orb_state_flag_rest</ows:value>
+                    <ows:value>ecmwf_meteo_map_avail</ows:value>
+                    <ows:value>interp_flag_meteo</ows:value>
+                    <ows:value>alt</ows:value>
+                    <ows:value>range_numval_ku</ows:value>
+                    <ows:value>model_wet_tropo_corr</ows:value>
+                    <ows:value>atmos_corr_sig0_ku</ows:value>
+                    <ows:value>tb_187</ows:value>
+                    <ows:value>rad_water_vapor</ows:value>
+                    <ows:value>ssha</ows:value>
+                    <ows:value>time</ows:value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="eventTime" use="optional">
+                <ows:AllowedValues>
+                    <ows:Range/>
+                    <ows:MinimumValue>2011-01-20T05:03:00.463Z</ows:MinimumValue>
+                    <ows:MaximumValue>2011-01-20T05:03:02.503Z</ows:MaximumValue>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="responseFormat" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>text/xml;subtype="om/1.0.0"</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+        </ows:Operation>
+        <ows:Operation name="DescribeSensor">
+            <ows:DCP>
+                <ows:HTTP>
+                    <ows:Get/>
+                </ows:HTTP>
+            </ows:DCP>
+            <ows:Parameter name="procedure" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>urn:tds:network:all</ows:Value>
+                    <ows:Value>urn:tds:station.sos:unknown</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:unknown:surface_type</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:unknown:orb_state_flag_rest</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:unknown:ecmwf_meteo_map_avail</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:unknown:interp_flag_meteo</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:unknown:alt</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:unknown:range_numval_ku</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:unknown:model_wet_tropo_corr</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:unknown:atmos_corr_sig0_ku</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:unknown:tb_187</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:unknown:rad_water_vapor</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:unknown:ssha</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:unknown:time</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="responseformat" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>text/xml;subtype="sensorML/1.0.1"</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+        </ows:Operation>
+        <ows:Parameter name="service" use="required">
+            <ows:AllowedValues>
+                <ows:Value>SOS</ows:Value>
+            </ows:AllowedValues>
+        </ows:Parameter>
+        <ows:Parameter name="version" use="required">
+            <ows:AllowedValues>
+                <ows:Value>1.0.0</ows:Value>
+            </ows:AllowedValues>
+        </ows:Parameter>
+    </ows:OperationsMetadata>
+    <!--~~~~~~~~~~~~~~~~~~~~~~~-->
+    <!-- Observation Offerings -->
+    <!--~~~~~~~~~~~~~~~~~~~~~~~-->
+    <Contents>
+        <ObservationOfferingList>
+            <ObservationOffering gml:id="network-all">
+                <gml:description>All stations in the netCDF dataset.</gml:description>
+                <gml:name>urn:tds:network:all</gml:name>
+                <gml:srsName>EPSG:4326</gml:srsName>
+                <gml:boundedBy>
+                    <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                        <gml:lowerCorner>-66.150438 17.011115</gml:lowerCorner>
+                        <gml:upperCorner>-66.14943799999999 17.270479000000005</gml:upperCorner>
+                    </gml:Envelope>
+                </gml:boundedBy>
+                <time>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
+                        <gml:beginPosition>2011-01-20T05:03:00.463Z</gml:beginPosition>
+                        <gml:endPosition>2011-01-20T05:03:02.503Z</gml:endPosition>
+                    </gml:TimePeriod>
+                </time>
+                <procedure xlink:href="urn:tds:station.sos:unknown"/>
+                <observedProperty xlink:href="surface_type"/>
+                <observedProperty xlink:href="orb_state_flag_rest"/>
+                <observedProperty xlink:href="ecmwf_meteo_map_avail"/>
+                <observedProperty xlink:href="interp_flag_meteo"/>
+                <observedProperty xlink:href="alt"/>
+                <observedProperty xlink:href="range_numval_ku"/>
+                <observedProperty xlink:href="model_wet_tropo_corr"/>
+                <observedProperty xlink:href="atmos_corr_sig0_ku"/>
+                <observedProperty xlink:href="tb_187"/>
+                <observedProperty xlink:href="rad_water_vapor"/>
+                <observedProperty xlink:href="ssha"/>
+                <observedProperty xlink:href="time"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
+                <responseModel/>
+                <responseMode/>
+            </ObservationOffering>
+            <ObservationOffering gml:id="unknown">
+                <gml:name>urn:tds:station.sos:unknown</gml:name>
+                <gml:srsName>EPSG:4326</gml:srsName>
+                <gml:boundedBy>
+                    <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                        <gml:lowerCorner>-66.150438 17.011115</gml:lowerCorner>
+                        <gml:upperCorner>-66.14943799999999 17.270478999999998</gml:upperCorner>
+                    </gml:Envelope>
+                </gml:boundedBy>
+                <time>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
+                        <gml:beginPosition>2011-01-20T05:03:00.463Z</gml:beginPosition>
+                        <gml:endPosition>2011-01-20T05:03:02.503Z</gml:endPosition>
+                    </gml:TimePeriod>
+                </time>
+                <featureOfInterest xlink:href="unknown"/>
+                <observedProperty xlink:href="surface_type"/>
+                <observedProperty xlink:href="orb_state_flag_rest"/>
+                <observedProperty xlink:href="ecmwf_meteo_map_avail"/>
+                <observedProperty xlink:href="interp_flag_meteo"/>
+                <observedProperty xlink:href="alt"/>
+                <observedProperty xlink:href="range_numval_ku"/>
+                <observedProperty xlink:href="model_wet_tropo_corr"/>
+                <observedProperty xlink:href="atmos_corr_sig0_ku"/>
+                <observedProperty xlink:href="tb_187"/>
+                <observedProperty xlink:href="rad_water_vapor"/>
+                <observedProperty xlink:href="ssha"/>
+                <observedProperty xlink:href="time"/>
+                <procedure xlink:href="urn:tds:sensor.sos:unknown:surface_type"/>
+                <procedure xlink:href="urn:tds:sensor.sos:unknown:orb_state_flag_rest"/>
+                <procedure xlink:href="urn:tds:sensor.sos:unknown:ecmwf_meteo_map_avail"/>
+                <procedure xlink:href="urn:tds:sensor.sos:unknown:interp_flag_meteo"/>
+                <procedure xlink:href="urn:tds:sensor.sos:unknown:alt"/>
+                <procedure xlink:href="urn:tds:sensor.sos:unknown:range_numval_ku"/>
+                <procedure xlink:href="urn:tds:sensor.sos:unknown:model_wet_tropo_corr"/>
+                <procedure xlink:href="urn:tds:sensor.sos:unknown:atmos_corr_sig0_ku"/>
+                <procedure xlink:href="urn:tds:sensor.sos:unknown:tb_187"/>
+                <procedure xlink:href="urn:tds:sensor.sos:unknown:rad_water_vapor"/>
+                <procedure xlink:href="urn:tds:sensor.sos:unknown:ssha"/>
+                <procedure xlink:href="urn:tds:sensor.sos:unknown:time"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
+                <responseModel>om:ObservationCollection</responseModel>
+                <responseMode>inline</responseMode>
+            </ObservationOffering>
+        </ObservationOfferingList>
+    </Contents>
+</Capabilities>

@@ -1,0 +1,21 @@
+<sml:System>
+	<gml:description></gml:description>
+	<sml:identification>
+		<sml:IdentifierList>
+		</sml:IdentifierList>
+	</sml:identification>
+	<sml:location>
+	</sml:location>
+	<sml:position>
+		<sml:dataDefinition>
+		</sml:dataDefinition>
+	</sml:position>
+	<sml:positions>
+		<sml:PositionList>
+		</sml:PositionList>
+	</sml:positions>
+	<sml:timePosition>
+		<sml:Time>
+		</sml:Time>
+	</sml:timePosition>
+</sml:System>

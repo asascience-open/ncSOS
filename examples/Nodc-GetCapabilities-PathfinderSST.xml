@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Capabilities version="1.0.0" xmlns="http://www.opengis.net/sos/1.0"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:oost="http://www.oostethys.org/schemas/0.1.0/oostethys"
+    xmlns:ows="http://www.opengis.net/ows/1.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sos/1.0 http://schemas.opengis.net/sos/1.0.0/sosGetCapabilities.xsd">
+    <!--~~~~~~~~~~~~~~~~~~~~~~~~-->
+    <!-- Service Identification -->
+    <!--~~~~~~~~~~~~~~~~~~~~~~~~-->
+    <ows:ServiceIdentification>
+        <ows:Title>AVHRR Pathfinder Version 5.0 and 5.1 Harmonic Climatology for Daily Day/Night Combined Sea Surface Temperature, 1982-2008</ows:Title>
+        <ows:Abstract>NODC</ows:Abstract>
+        <ows:Keywords>
+            <ows:Keyword/>
+        </ows:Keywords>
+        <ows:ServiceType codeSpace="http://opengeospatial.net">OGC:SOS</ows:ServiceType>
+        <ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
+        <ows:Fees>NONE</ows:Fees>
+        <ows:AccessConstraints>These data are available for use without restriction.</ows:AccessConstraints>
+    </ows:ServiceIdentification>
+    <!--~~~~~~~~~~~~~~~~~~~~~~-->
+    <!-- Provider Description -->
+    <!--~~~~~~~~~~~~~~~~~~~~~~-->
+    <ows:ServiceProvider>
+        <ows:ProviderName>AVHRR Pathfinder Version 5.0 and 5.1 5-day day/night combined SST, Quality flag 7 only</ows:ProviderName>
+        <ows:ProviderSite>http://www.ghrsst.org</ows:ProviderSite>
+        <ows:ServiceContact>
+            <ows:IndividualName/>
+            <ows:PositionName/>
+            <ows:ContactInfo>
+                <ows:Phone>
+                    <ows:Voice/>
+                </ows:Phone>
+                <ows:Address>
+                    <ows:DeliveryPoint/>
+                    <ows:City/>
+                    <ows:AdministrativeArea/>
+                    <ows:PostalCode/>
+                    <ows:Country/>
+                    <ows:ElectronicMailAddress/>
+                </ows:Address>
+            </ows:ContactInfo>
+        </ows:ServiceContact>
+    </ows:ServiceProvider>
+    <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+    <!-- operations Metadata Section -->
+    <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+    <ows:OperationsMetadata>
+        <ows:Operation name="GetCapabilities">
+            <ows:DCP>
+                <ows:HTTP>
+                    <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/nodc/00000110200000-NODC-L4_GHRSST-SSTskin-AVHRR_Pathfinder-PFV5.0_Daily_Climatology_1982_2008_DayNightCombined-v02.0-fv01.0.nc"/>
+                </ows:HTTP>
+            </ows:DCP>
+            <ows:Parameter name="Sections">
+                <ows:AllowedValues>
+                    <ows:Value>ServiceIdentification</ows:Value>
+                    <ows:Value>ServiceProvider</ows:Value>
+                    <ows:Value>OperationsMetadata</ows:Value>
+                    <ows:Value>Contents</ows:Value>
+                    <ows:Value>All</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+        </ows:Operation>
+        <ows:Operation name="GetObservation">
+            <ows:DCP>
+                <ows:HTTP>
+                    <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/nodc/00000110200000-NODC-L4_GHRSST-SSTskin-AVHRR_Pathfinder-PFV5.0_Daily_Climatology_1982_2008_DayNightCombined-v02.0-fv01.0.nc"/>
+                </ows:HTTP>
+            </ows:DCP>
+            <ows:Parameter name="offering" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>network-all</ows:Value>
+                    <ows:Value>Grid0</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="observedProperty" use="required">
+                <ows:AllowedValues>
+                    <ows:value>analysed_sst</ows:value>
+                    <ows:value>analysis_error</ows:value>
+                    <ows:value>sea_ice_fraction</ows:value>
+                    <ows:value>sea_ice_fraction_error</ows:value>
+                    <ows:value>mask</ows:value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="eventTime" use="optional">
+                <ows:AllowedValues>
+                    <ows:Range/>
+                    <ows:MinimumValue>1995-01-10T20:00:00.000Z</ows:MinimumValue>
+                    <ows:MaximumValue>1995-01-10T20:00:00.000Z</ows:MaximumValue>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="responseFormat" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>text/xml;subtype="om/1.0.0"</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="lat" use="required">
+                <ows:AllowedValues>
+                    <ows:MinimumValue>-89.9800033569336</ows:MinimumValue>
+                    <ows:MaximumValue>89.9800033569336</ows:MaximumValue>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="lon" use="required">
+                <ows:AllowedValues>
+                    <ows:MinimumValue>-179.98199462890625</ows:MinimumValue>
+                    <ows:MaximumValue>179.98199462890625</ows:MaximumValue>
+                </ows:AllowedValues>
+            </ows:Parameter>
+        </ows:Operation>
+        <ows:Operation name="DescribeSensor">
+            <ows:DCP>
+                <ows:HTTP>
+                    <ows:Get/>
+                </ows:HTTP>
+            </ows:DCP>
+            <ows:Parameter name="procedure" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>urn:tds:network:all</ows:Value>
+                    <ows:Value>urn:tds:station.sos:Grid0</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Grid0:analysed_sst</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Grid0:analysis_error</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Grid0:sea_ice_fraction</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Grid0:sea_ice_fraction_error</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Grid0:mask</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="responseformat" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>text/xml;subtype="sensorML/1.0.1"</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+        </ows:Operation>
+        <ows:Parameter name="service" use="required">
+            <ows:AllowedValues>
+                <ows:Value>SOS</ows:Value>
+            </ows:AllowedValues>
+        </ows:Parameter>
+        <ows:Parameter name="version" use="required">
+            <ows:AllowedValues>
+                <ows:Value>1.0.0</ows:Value>
+            </ows:AllowedValues>
+        </ows:Parameter>
+    </ows:OperationsMetadata>
+    <!--~~~~~~~~~~~~~~~~~~~~~~~-->
+    <!-- Observation Offerings -->
+    <!--~~~~~~~~~~~~~~~~~~~~~~~-->
+    <Contents>
+        <ObservationOfferingList>
+            <ObservationOffering gml:id="network-all">
+                <gml:description>All stations in the netCDF dataset.</gml:description>
+                <gml:name>urn:tds:network:all</gml:name>
+                <gml:srsName>EPSG:4326</gml:srsName>
+                <gml:boundedBy>
+                    <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                        <gml:lowerCorner>-90.0 NaN</gml:lowerCorner>
+                        <gml:upperCorner>90.0 128.0</gml:upperCorner>
+                    </gml:Envelope>
+                </gml:boundedBy>
+                <time>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
+                        <gml:beginPosition>1995-01-10T20:00:00.000Z</gml:beginPosition>
+                        <gml:endPosition>1995-01-10T20:00:00.000Z</gml:endPosition>
+                    </gml:TimePeriod>
+                </time>
+                <procedure xlink:href="urn:tds:station.sos:Grid0"/>
+                <observedProperty xlink:href="analysed_sst"/>
+                <observedProperty xlink:href="analysis_error"/>
+                <observedProperty xlink:href="sea_ice_fraction"/>
+                <observedProperty xlink:href="sea_ice_fraction_error"/>
+                <observedProperty xlink:href="mask"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
+                <responseModel/>
+                <responseMode/>
+            </ObservationOffering>
+            <ObservationOffering gml:id="Grid0">
+                <gml:name>urn:tds:station.sos:Grid0</gml:name>
+                <gml:srsName>EPSG:4326</gml:srsName>
+                <gml:boundedBy/>
+                <time>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
+                        <gml:beginPosition>1995-01-10T20:00:00.000Z</gml:beginPosition>
+                        <gml:endPosition>1995-01-10T20:00:00.000Z</gml:endPosition>
+                    </gml:TimePeriod>
+                </time>
+                <featureOfInterest xlink:href="Grid0"/>
+                <observedProperty xlink:href="analysed_sst"/>
+                <observedProperty xlink:href="analysis_error"/>
+                <observedProperty xlink:href="sea_ice_fraction"/>
+                <observedProperty xlink:href="sea_ice_fraction_error"/>
+                <observedProperty xlink:href="mask"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Grid0:analysed_sst"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Grid0:analysis_error"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Grid0:sea_ice_fraction"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Grid0:sea_ice_fraction_error"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Grid0:mask"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
+                <responseModel>om:ObservationCollection</responseModel>
+                <responseMode>inline</responseMode>
+            </ObservationOffering>
+        </ObservationOfferingList>
+    </Contents>
+</Capabilities>

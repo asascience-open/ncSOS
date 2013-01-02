@@ -5,6 +5,7 @@
 package com.asascience.ncsos.describesen;
 
 import com.asascience.ncsos.outputformatter.DescribeSensorFormatter;
+import java.io.IOException;
 import java.util.ArrayList;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
@@ -34,18 +35,17 @@ public class SOSDescribeSensor extends SOSDescribeStation implements SOSDescribe
      * @param dataset netcdf dataset of any feature type
      * @param procedure request procedure (urn of sensor)
      */
-    public SOSDescribeSensor( NetcdfDataset dataset, String procedure ) {
+    public SOSDescribeSensor( NetcdfDataset dataset, String procedure ) throws IOException {
         super(dataset, procedure);
         // ignore errors from the station constructor
         errorString = null;
-        Variable lat, lon;
-        lat = lon = null;
         
         // set our actual station id (and sensor id)
-        String[] sensorSplit = procedure.split("(::)");
-        sensorId = sensorSplit[1];
-        String[] stationSplit = sensorSplit[0].split(":");
-        stationName = stationSplit[stationSplit.length-1];
+//        String[] sensorSplit = procedure.split("(::)");
+//        sensorId = sensorSplit[1];
+        String[] stationSplit = procedure.split(":");
+        stationName = stationSplit[stationSplit.length-2];
+        sensorId = stationSplit[stationSplit.length-1];
         
         // get our sensor var
         for (Variable var : dataset.getVariables()) {
@@ -53,19 +53,15 @@ public class SOSDescribeSensor extends SOSDescribeStation implements SOSDescribe
             if (varName.equalsIgnoreCase(sensorId)) {
                 sensorVariable = var;
             }
-            else if (varName.contains("lat"))
-                lat = var;
-            else if (varName.contains("lon"))
-                lon = var;
         }
         
         if (sensorVariable == null) {
             errorString = "Unable to find sensor " + sensorId + " in the dataset!";
         }
         
-        stationCoords = getStationCoords(lat, lon);
+        stationCoords = getStationCoords(latVariable, lonVariable);
         
-        if (stationCoords[0] == Double.NaN && stationCoords[1] == Double.NaN)
+        if (stationCoords == null || (stationCoords[0] == Double.NaN && stationCoords[1] == Double.NaN))
             errorString = "Unable to find station " + stationName + " in the dataset!";
     }
     
@@ -120,9 +116,9 @@ public class SOSDescribeSensor extends SOSDescribeStation implements SOSDescribe
         ArrayList<String> identNames = new ArrayList<String>();
         ArrayList<String> identDefinitions = new ArrayList<String>();
         ArrayList<String> identValues = new ArrayList<String>();
-        identNames.add("SensorId"); identDefinitions.add("sensorID"); identValues.add(procedure);
+        identNames.add("SensorId"); identDefinitions.add(MMI_DEF_URL + "sensorID"); identValues.add(procedure);
         for (Attribute attr : sensorVariable.getAttributes()) {
-            identNames.add(attr.getName()); identDefinitions.add(""); identValues.add(attr.getStringValue());
+            identNames.add(attr.getName()); identDefinitions.add(MMI_DEF_URL + attr.getName()); identValues.add(attr.getValue(0).toString());
         }
         output.setIdentificationNode(identNames.toArray(new String[identNames.size()]),
                 identDefinitions.toArray(new String[identDefinitions.size()]),

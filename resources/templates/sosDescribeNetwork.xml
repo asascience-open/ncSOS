@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd"
+ xmlns="http://www.opengis.net/sensorML/1.0.1"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:gml="http://www.opengis.net/gml"
+ xmlns:swe="http://www.opengis.net/swe/1.0.1"
+ xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+ version="1.0.1">
+    <sml:member>
+        <sml:System>
+			<gml:description></gml:description>
+			<sml:identification>
+				<sml:IdentifierList>
+				</sml:IdentifierList>
+			</sml:identification>
+			<sml:classification>
+				<sml:ClassifierList>
+				</sml:ClassifierList>
+			</sml:classification>
+			<sml:history>
+			</sml:history>
+			<sml:components>
+				<sml:ComponentList>
+				</sml:ComponentList>
+			</sml:components>
+		</sml:System>
+    </sml:member>
+</sml:SensorML>

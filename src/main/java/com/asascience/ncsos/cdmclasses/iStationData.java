@@ -111,6 +111,13 @@ public interface iStationData {
     public int getNumberOfStations();
     
     /**
+     * 
+     * @param stNum
+     * @return 
+     */
+    public boolean isStationInFinalList(int stNum);
+    
+    /**
      * call to actually get the data response in the form of a create then add
      * @param stNum station index of the set of queried stations
      * @return String that contains a formatted response of values for Get Observation response

@@ -5,6 +5,7 @@
 package com.asascience.ncsos.cdmclasses;
 
 import com.asascience.ncsos.getobs.SOSObservationOffering;
+import com.asascience.ncsos.util.DatasetHandlerAdapter;
 import java.io.IOException;
 import java.util.*;
 import org.joda.time.DateTime;
@@ -42,8 +43,12 @@ public class Section extends baseCDMClass implements iStationData {
         this.variableNames = variableNames;
         this.reqStationNames = new ArrayList<String>();
         reqStationNames.addAll(Arrays.asList(stationName));
-        this.eventTimes = new ArrayList<String>();
-        eventTimes.addAll(Arrays.asList(eventTime));
+        
+        if (eventTime != null) {
+            this.eventTimes = new ArrayList<String>();
+            eventTimes.addAll(Arrays.asList(eventTime));
+        } else
+            this.eventTimes = null;
         
         lowerAlt = Double.POSITIVE_INFINITY;
         upperAlt = Double.NEGATIVE_INFINITY;
@@ -67,7 +72,7 @@ public class Section extends baseCDMClass implements iStationData {
                 trajectoryID = sFeature.getName();
                 for (sFeature.resetIteration();sFeature.hasNext();) {
                     ProfileFeature pFeature = sFeature.next();
-                    pFeature.calcBounds();
+                    DatasetHandlerAdapter.calcBounds(pFeature);
                     
                     pFeature.getCalendarDateRange();
                 }
@@ -86,7 +91,7 @@ public class Section extends baseCDMClass implements iStationData {
                     newOffering.setObservationTimeEnd(formatter.toDateTimeStringISO(sectionDateRange.getEnd().toDate()));
                 } //find the dates out!
                 else {
-                    System.out.println("no dates yet");
+                    _log.error("no dates yet");
                 }
 
 
@@ -107,7 +112,7 @@ public class Section extends baseCDMClass implements iStationData {
                 document = CDMUtils.addObsOfferingToDoc(newOffering,document);
             }
         } catch (IOException ex) {
-            System.out.println(ex.getMessage());
+            _log.error(ex.getMessage());
         } finally {
             return document;
         }
@@ -143,7 +148,7 @@ public class Section extends baseCDMClass implements iStationData {
             }
             retval = new LatLonRect(new LatLonPointImpl(lLat, lLon), new LatLonPointImpl(uLat, uLon));
         } catch (IOException ex) {
-            System.out.println(ex.getMessage());
+            _log.error(ex.getMessage());
         } finally {
             return retval;
         }
@@ -155,7 +160,6 @@ public class Section extends baseCDMClass implements iStationData {
     
     @Override
     public void setData(Object featureCollection) throws IOException {
-        System.out.println("in Section.setData");
         this.sectionData = (SectionFeatureCollection) featureCollection;
         
         sectionList = new ArrayList<SectionFeature>();
@@ -176,86 +180,86 @@ public class Section extends baseCDMClass implements iStationData {
 
                 dtSearchEnd = new DateTime(df.getISODate(eventTimes.get(1)), chrono);
             }
+        } else {
+            dtSearchStart = new DateTime(0, chrono);
+        }
 
-            //temp
-            DateTime dtStart = new DateTime();
-            DateTime dtEnd = new DateTime(0);
-            //check
-            DateTime dtStartt = null;
-            DateTime dtEndt = null;
-            
-            upperLat = upperLon = Double.NEGATIVE_INFINITY;
-            lowerLat = lowerLon = Double.POSITIVE_INFINITY;
+        //temp
+        DateTime dtStart = new DateTime();
+        DateTime dtEnd = new DateTime(0);
+        //check
+        DateTime dtStartt = null;
+        DateTime dtEndt = null;
 
-            for (sectionData.resetIteration();sectionData.hasNext();) {
-                SectionFeature sectFeature = sectionData.next();
-                LatLonRect bbox = getBoundingBox(sectFeature);
-                CalendarDateRange dateRange = getDateRange(sectFeature);
-                
-                String trajName = "trajectory" + sectFeature.getName();
+        upperLat = upperLon = Double.NEGATIVE_INFINITY;
+        lowerLat = lowerLon = Double.POSITIVE_INFINITY;
 
-                //scan through the stationname for a match of id
-                for (Iterator<String> it = reqStationNames.iterator(); it.hasNext();) {
-                    String stName = it.next();
-                    System.out.println("comparing: " + stName + " to " + trajName);
-                    if (stName.equalsIgnoreCase(trajName)) {
-                        System.out.println("adding " + trajName + " to section list");
-                        sectionList.add(sectFeature);
-                        
-                        double altmin = Double.POSITIVE_INFINITY;
-                        double altmax = Double.NEGATIVE_INFINITY;
-                        // get our min/max altitude
-                        for (sectFeature.resetIteration();sectFeature.hasNext();) {
-                            ProfileFeature profile = sectFeature.next();
-                            for (profile.resetIteration();profile.hasNext();) {
-                                PointFeature point = profile.next();
-                                if (point.getLocation().getAltitude() > altmax)
-                                    altmax = point.getLocation().getAltitude();
-                                if (point.getLocation().getAltitude() < altmin)
-                                    altmin = point.getLocation().getAltitude();
-                            }
-                        }
-                        
-                        altMax.add(altmax);
-                        altMin.add(altmin);
-                        
-                        if (altmin < lowerAlt)
-                            lowerAlt = altmin;
-                        if (altmax > upperAlt)
-                            upperAlt = altmax;
-                
-                        dtStartt = new DateTime(dateRange.getStart().toDate(), chrono);
-                        dtEndt = new DateTime(dateRange.getEnd().toDate(), chrono);
+        for (sectionData.resetIteration();sectionData.hasNext();) {
+            SectionFeature sectFeature = sectionData.next();
+            LatLonRect bbox = getBoundingBox(sectFeature);
+            CalendarDateRange dateRange = getDateRange(sectFeature);
 
-                        if (dtStartt.isBefore(dtStart)) {
-                            dtStart = dtStartt;
-                        }
-                        if (dtEndt.isAfter(dtEnd)) {
-                            dtEnd = dtEndt;
-                        }
+            String trajName = sectFeature.getName();
 
-                        if (bbox.getLatMax() > upperLat) {
-                            upperLat = bbox.getLatMax();
+            //scan through the stationname for a match of id
+            for (Iterator<String> it = reqStationNames.iterator(); it.hasNext();) {
+                String stName = it.next();
+                if (stName.equalsIgnoreCase(trajName)) {
+                    sectionList.add(sectFeature);
+
+                    double altmin = Double.POSITIVE_INFINITY;
+                    double altmax = Double.NEGATIVE_INFINITY;
+                    // get our min/max altitude
+                    for (sectFeature.resetIteration();sectFeature.hasNext();) {
+                        ProfileFeature profile = sectFeature.next();
+                        for (profile.resetIteration();profile.hasNext();) {
+                            PointFeature point = profile.next();
+                            if (point.getLocation().getAltitude() > altmax)
+                                altmax = point.getLocation().getAltitude();
+                            if (point.getLocation().getAltitude() < altmin)
+                                altmin = point.getLocation().getAltitude();
                         }
-                        if (bbox.getLatMin() < lowerLat) {
-                            lowerLat = bbox.getLatMin();
-                        }
-                        //lon
-                        if (bbox.getLonMax() > upperLon) {
-                            upperLon = bbox.getLonMax();
-                        }
-                        if (bbox.getLonMax() < lowerLon) {
-                            lowerLon = bbox.getLonMin();
-                        }
-                        
-                        break;
                     }
+
+                    altMax.add(altmax);
+                    altMin.add(altmin);
+
+                    if (altmin < lowerAlt)
+                        lowerAlt = altmin;
+                    if (altmax > upperAlt)
+                        upperAlt = altmax;
+
+                    dtStartt = new DateTime(dateRange.getStart().toDate(), chrono);
+                    dtEndt = new DateTime(dateRange.getEnd().toDate(), chrono);
+
+                    if (dtStartt.isBefore(dtStart)) {
+                        dtStart = dtStartt;
+                    }
+                    if (dtEndt.isAfter(dtEnd)) {
+                        dtEnd = dtEndt;
+                    }
+
+                    if (bbox.getLatMax() > upperLat) {
+                        upperLat = bbox.getLatMax();
+                    }
+                    if (bbox.getLatMin() < lowerLat) {
+                        lowerLat = bbox.getLatMin();
+                    }
+                    //lon
+                    if (bbox.getLonMax() > upperLon) {
+                        upperLon = bbox.getLonMax();
+                    }
+                    if (bbox.getLonMax() < lowerLon) {
+                        lowerLon = bbox.getLonMin();
+                    }
+
+                    break;
                 }
-                setStartDate(df.toDateTimeStringISO(dtStart.toDate()));
-                setEndDate(df.toDateTimeStringISO(dtEnd.toDate()));
-                if (reqStationNames != null) {
-                    setNumberOfStations(reqStationNames.size());
-                }
+            }
+            setStartDate(df.toDateTimeStringISO(dtStart.toDate()));
+            setEndDate(df.toDateTimeStringISO(dtEnd.toDate()));
+            if (reqStationNames != null) {
+                setNumberOfStations(reqStationNames.size());
             }
         }
     }
@@ -279,7 +283,6 @@ public class Section extends baseCDMClass implements iStationData {
     @Override
     public String getStationName(int idNum) {
         if (sectionList != null) {
-            System.out.println("looking for staion number " + idNum);
             return "Trajectory" + sectionList.get(idNum).getName();
         } else {
             return Invalid_Station;
@@ -466,7 +469,7 @@ public class Section extends baseCDMClass implements iStationData {
 
             for (section.resetIteration();section.hasNext();) {
                 ProfileFeature profile = section.next();
-                profile.calcBounds();
+                DatasetHandlerAdapter.calcBounds(profile);
                 // skip if we don't have any points
                 if (profile.size() == 0)
                     continue;
@@ -479,7 +482,7 @@ public class Section extends baseCDMClass implements iStationData {
             CalendarDate cDate = CalendarDate.of(earliestDate);
             retval = new CalendarDateRange(cDate, (CalendarDate.of(latestDate).getDifferenceInMsecs(cDate) / 1000));
         } catch (Exception ex) {
-            System.out.println("Error in getDateRange - " + ex.getLocalizedMessage());
+            _log.error("Error in getDateRange - " + ex.getLocalizedMessage());
         } finally {
             return retval;
         }

@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<om:ObservationCollection gml:id="GML_ID_NAME"
+<om:ObservationCollection gml:id="SPOT5_DATA"
     xmlns:gml="http://www.opengis.net/gml"
     xmlns:om="http://www.opengis.net/om/1.0"
     xmlns:swe="http://www.opengis.net/swe/1.0"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/om/1.0 http://schemas.opengis.net/om/1.0.0/observation.xsd">
-    <gml:description>empty description</gml:description>
+    <gml:description/>
     <gml:name>Sea Surface Temperature Analysis Model</gml:name>
     <gml:boundedBy>
-        <gml:Envelope srsName="EPSG:4326">
+        <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
             <!-- overwrite these with your actual offering ROI -->
-            <gml:lowerCorner>-90.0 -180.0 0.0</gml:lowerCorner>
-            <gml:upperCorner>90.0 180.0 0.0</gml:upperCorner>
+            <gml:lowerCorner>-90.0 -180.0</gml:lowerCorner>
+            <gml:upperCorner>90.0 180.0</gml:upperCorner>
         </gml:Envelope>
     </gml:boundedBy>
     <om:member>
         <om:Observation>
-            <gml:description>empty description</gml:description>
-            <gml:name>Sea Surface Temperature Analysis Model</gml:name>
+            <gml:description/>
+            <gml:name/>
             <gml:boundedBy>
-                <gml:Envelope srsName="urn:tds:station.sos:SST">
-                    <gml:lowerCorner>-52.0 0.0 0.0</gml:lowerCorner>
-                    <gml:upperCorner>-52.0 0.0 0.0</gml:upperCorner>
+                <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                    <gml:lowerCorner>-52.0 0.0</gml:lowerCorner>
+                    <gml:upperCorner>-52.0 0.0</gml:upperCorner>
                 </gml:Envelope>
             </gml:boundedBy>
             <om:samplingTime>
@@ -30,35 +30,39 @@
                     <gml:endPosition>2012-06-26T00:00:00Z</gml:endPosition>
                 </gml:TimePeriod>
             </om:samplingTime>
-            <om:procedure xlink:href="empty location"/>
-            <om:observedProperty xlink:href="http://marinemetadata.org/cf#sst"/>
-            <om:observedProperty xlink:href="http://marinemetadata.org/cf#lat"/>
-            <om:observedProperty xlink:href="http://marinemetadata.org/cf#lon"/>
-            <om:featureOfInterest xlink:href="SST"/>
+            <om:procedure xlink:href="urn:tds:station.sos:sst"/>
+            <om:observedProperty xlink:href="sst"/>
+            <om:observedProperty xlink:href="lat"/>
+            <om:observedProperty xlink:href="lon"/>
+            <om:featureOfInterest xlink:href="sst"/>
             <om:result>
-                <swe:DataArray>
+                <swe:dataArray>
                     <swe:elementCount>
                         <swe:Count>
-                            <swe:value>COUNT!!!!</swe:value>
+                            <swe:value>3</swe:value>
                         </swe:Count>
                     </swe:elementCount>
                     <swe:elementType name="SimpleDataArray">
                         <swe:DataRecord>
                             <swe:field name="time">
-                                <swe:Time definition="urn:ogc:phenomenon:time:iso8601"/>
+                                <swe:Time definition="http://www.opengis.net/def/property/OGC/0/SamplingTime">
+                                    <swe:uom xlink:href="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"/>
+                                </swe:Time>
+                            </swe:field>
+                            <swe:field name="sst">
+                                <swe:Quantity definition="http://mmisw.org/ont/cf/parameter/sst">
+                                    <swe:uom code="none"/>
+                                </swe:Quantity>
                             </swe:field>
                             <swe:field name="lat">
-                                <swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:lat">
+                                <swe:Quantity definition="http://mmisw.org/ont/cf/parameter/lat">
                                     <swe:uom code="degrees_north"/>
                                 </swe:Quantity>
                             </swe:field>
                             <swe:field name="lon">
-                                <swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:lon">
+                                <swe:Quantity definition="http://mmisw.org/ont/cf/parameter/lon">
                                     <swe:uom code="degrees_east"/>
                                 </swe:Quantity>
-                            </swe:field>
-                            <swe:field name="sst">
-                                <swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:sst"/>
                             </swe:field>
                         </swe:DataRecord>
                     </swe:elementType>
@@ -66,10 +70,8 @@
                         <swe:TextBlock blockSeparator=" "
                             decimalSeparator="." tokenSeparator=","/>
                     </swe:encoding>
-                    <swe:values>2012-06-26T00:00:00Z,-52.0,0.0,274.07 
- 
-</swe:values>
-                </swe:DataArray>
+                    <swe:values>2012-06-26T00:00:00Z,-52.0,0.0</swe:values>
+                </swe:dataArray>
             </om:result>
         </om:Observation>
     </om:member>

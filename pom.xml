@@ -10,7 +10,7 @@
 
   <groupId>com.asascience</groupId>
   <artifactId>ncsos</artifactId>
-  <version>RC1-SNAPSHOT</version>
+  <version>RC2-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>ncsos</name>
@@ -151,10 +151,9 @@
 			<phase>package</phase>
 			<configuration>
 			  <target>
-				<copy file="resources/sos-servlet.xml" todir="target/"/> 
-				<copy file="resources/README.txt" todir="target/"/>
-				<copy file="resources/CHANGES.txt" todir="target/"/>
-				<zip destfile="target/ncSOS-${project.version}.zip" basedir="target/" includes="*xml *.txt *.jar"/>
+				<copy file="resources/sos-servlet.xml" todir="target/" /> 
+				<copy file="resources/Readme.txt" todir="target/" />
+				<zip destfile="target/ncSOS-${project.version}.zip" basedir="target/" includes="*xml *.txt *.jar" />
 			  </target>
 			</configuration>
 			<goals>

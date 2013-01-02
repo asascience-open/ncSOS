@@ -6,12 +6,9 @@
     xmlns:swe="http://www.opengis.net/swe/1.0.1"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sos/1.0 http://schemas.opengis.net/sos/1.0.0/sosGetCapabilities.xsd">
-    <!--~~~~~~~~~~~~~~~~~~~~~~~~-->
-    <!-- Service Identification -->
-    <!--~~~~~~~~~~~~~~~~~~~~~~~~-->
     <ows:ServiceIdentification>
         <ows:Title>Sea Surface Temperature Analysis Model</ows:Title>
-        <ows:Abstract>2003-04-07 12:12:50 - created by gribtocdl</ows:Abstract>
+        <ows:Abstract/>
         <ows:Keywords>
             <ows:Keyword/>
         </ows:Keywords>
@@ -20,12 +17,9 @@
         <ows:Fees>NONE</ows:Fees>
         <ows:AccessConstraints>NONE</ows:AccessConstraints>
     </ows:ServiceIdentification>
-    <!--~~~~~~~~~~~~~~~~~~~~~~-->
-    <!-- Provider Description -->
-    <!--~~~~~~~~~~~~~~~~~~~~~~-->
     <ows:ServiceProvider>
-        <ows:ProviderName>Empty Source</ows:ProviderName>
-        <ows:ProviderSite>Empty Insitution</ows:ProviderSite>
+        <ows:ProviderName/>
+        <ows:ProviderSite/>
         <ows:ServiceContact>
             <ows:IndividualName/>
             <ows:PositionName/>
@@ -44,25 +38,20 @@
             </ows:ContactInfo>
         </ows:ServiceContact>
     </ows:ServiceProvider>
-    <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-    <!-- operations Metadata Section -->
-    <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
     <ows:OperationsMetadata>
         <ows:Operation name="GetCapabilities">
             <ows:DCP>
                 <ows:HTTP>
                     <ows:Get xlink:href="resources/datasets/satellite-sst/SST_Global_2x2deg_20120626_0000.nc"/>
-                    <ows:Post xlink:href="resources/datasets/satellite-sst/SST_Global_2x2deg_20120626_0000.nc"/>
                 </ows:HTTP>
             </ows:DCP>
-            <ows:Parameter name="service" use="required">
+            <ows:Parameter name="Sections">
                 <ows:AllowedValues>
-                    <ows:Value>SOS</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="version" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>1.0.0</ows:Value>
+                    <ows:Value>ServiceIdentification</ows:Value>
+                    <ows:Value>ServiceProvider</ows:Value>
+                    <ows:Value>OperationsMetadata</ows:Value>
+                    <ows:Value>Contents</ows:Value>
+                    <ows:Value>All</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
         </ows:Operation>
@@ -70,79 +59,114 @@
             <ows:DCP>
                 <ows:HTTP>
                     <ows:Get xlink:href="resources/datasets/satellite-sst/SST_Global_2x2deg_20120626_0000.nc"/>
-                    <ows:Post xlink:href="resources/datasets/satellite-sst/SST_Global_2x2deg_20120626_0000.nc"/>
                 </ows:HTTP>
             </ows:DCP>
-            <ows:Parameter name="offering" use="required"/>
-            <ows:Parameter name="observedproperty" use="required"/>
-            <ows:Parameter name="time" use="optional"/>
-            <ows:Parameter name="resposneformat" use="required">
+            <ows:Parameter name="offering" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>network-all</ows:Value>
+                    <ows:Value>Grid0</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="observedProperty" use="required">
+                <ows:AllowedValues>
+                    <ows:value>SST</ows:value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="eventTime" use="optional">
+                <ows:AllowedValues>
+                    <ows:Range/>
+                    <ows:MinimumValue>2012-06-26T00:00:00.000Z</ows:MinimumValue>
+                    <ows:MaximumValue>2012-06-26T00:00:00.000Z</ows:MaximumValue>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="responseFormat" use="required">
                 <ows:AllowedValues>
                     <ows:Value>text/xml;subtype="om/1.0.0"</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
-            <ows:Parameter name="service" use="required">
+            <ows:Parameter name="lat" use="required">
                 <ows:AllowedValues>
-                    <ows:Value>SOS</ows:Value>
+                    <ows:MinimumValue>-90.0</ows:MinimumValue>
+                    <ows:MaximumValue>90.0</ows:MaximumValue>
                 </ows:AllowedValues>
             </ows:Parameter>
-            <ows:Parameter name="version" use="required">
+            <ows:Parameter name="lon" use="required">
                 <ows:AllowedValues>
-                    <ows:Value>1.0.0</ows:Value>
+                    <ows:MinimumValue>-180.0</ows:MinimumValue>
+                    <ows:MaximumValue>180.0</ows:MaximumValue>
                 </ows:AllowedValues>
             </ows:Parameter>
         </ows:Operation>
         <ows:Operation name="DescribeSensor">
             <ows:DCP>
                 <ows:HTTP>
-                    <ows:Get xlink:href="resources/datasets/satellite-sst/SST_Global_2x2deg_20120626_0000.nc"/>
-                    <ows:Post xlink:href="resources/datasets/satellite-sst/SST_Global_2x2deg_20120626_0000.nc"/>
+                    <ows:Get/>
                 </ows:HTTP>
             </ows:DCP>
-            <ows:Parameter name="procedure" use="required"/>
+            <ows:Parameter name="procedure" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>urn:tds:network:all</ows:Value>
+                    <ows:Value>urn:tds:station.sos:Grid0</ows:Value>
+                    <ows:Value>urn:tds:sensor.sos:Grid0:SST</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
             <ows:Parameter name="responseformat" use="required">
                 <ows:AllowedValues>
                     <ows:Value>text/xml;subtype="sensorML/1.0.1"</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
-            <ows:Parameter name="service" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>SOS</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="version" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>1.0.0</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
         </ows:Operation>
+        <ows:Parameter name="service" use="required">
+            <ows:AllowedValues>
+                <ows:Value>SOS</ows:Value>
+            </ows:AllowedValues>
+        </ows:Parameter>
+        <ows:Parameter name="version" use="required">
+            <ows:AllowedValues>
+                <ows:Value>1.0.0</ows:Value>
+            </ows:AllowedValues>
+        </ows:Parameter>
     </ows:OperationsMetadata>
-    <!--~~~~~~~~~~~~~~~~~~~~~~~-->
-    <!-- Observation Offerings -->
-    <!--~~~~~~~~~~~~~~~~~~~~~~~-->
     <Contents>
         <ObservationOfferingList>
-            <ObservationOffering gml:id="SST">
-                <gml:description>Sea temperature</gml:description>
-                <gml:name>urn:tds:station.sos:SST</gml:name>
+            <ObservationOffering gml:id="network-all">
+                <gml:description>All stations in the netCDF dataset.</gml:description>
+                <gml:name>urn:tds:network:all</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
-                    <gml:Envelope srsName="EPSG:4326">
-                        <gml:lowerCorner>-90.0 -180.0</gml:lowerCorner>
-                        <gml:upperCorner>90.0 180.0</gml:upperCorner>
+                    <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                        <gml:lowerCorner>-90.0 NaN</gml:lowerCorner>
+                        <gml:upperCorner>90.0 128.0</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
                 <time>
-                    <gml:TimePeriod>
-                        <gml:beginPosition>2012-06-25T20:00:00.000-04:00</gml:beginPosition>
-                        <gml:endPosition>2012-06-25T20:00:00.000-04:00</gml:endPosition>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
+                        <gml:beginPosition>2012-06-26T00:00:00.000Z</gml:beginPosition>
+                        <gml:endPosition>2012-06-26T00:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
                 </time>
-                <procedure xlink:href="urn:tds:station.sos:SST"/>
-                <observedProperty xlink:href="Sea temperature"/>
-                <featureOfInterest xlink:href="SST"/>
+                <procedure xlink:href="urn:tds:station.sos:Grid0"/>
+                <observedProperty xlink:href="SST"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
                 <responseModel/>
                 <responseMode/>
+            </ObservationOffering>
+            <ObservationOffering gml:id="Grid0">
+                <gml:name>urn:tds:station.sos:Grid0</gml:name>
+                <gml:srsName>EPSG:4326</gml:srsName>
+                <gml:boundedBy/>
+                <time>
+                    <gml:TimePeriod xsi:type="gml:TimePeriodType">
+                        <gml:beginPosition>2012-06-26T00:00:00.000Z</gml:beginPosition>
+                        <gml:endPosition>2012-06-26T00:00:00.000Z</gml:endPosition>
+                    </gml:TimePeriod>
+                </time>
+                <featureOfInterest xlink:href="Grid0"/>
+                <observedProperty xlink:href="SST"/>
+                <procedure xlink:href="urn:tds:sensor.sos:Grid0:SST"/>
+                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
+                <responseModel>om:ObservationCollection</responseModel>
+                <responseMode>inline</responseMode>
             </ObservationOffering>
         </ObservationOfferingList>
     </Contents>

@@ -11,6 +11,7 @@ import ucar.nc2.dt.GridDataset;
 import ucar.nc2.ft.*;
 import ucar.nc2.ft.grid.Grid;
 import ucar.nc2.ft.point.StationPointFeature;
+import ucar.nc2.ft.point.StationTimeSeriesCollectionFlattened;
 
 /**
  *
@@ -230,15 +231,19 @@ public class DiscreteSamplingGeometryUtil {
                         return (StationProfileFeatureCollection) featureCollection;
                         
                     } else if (featureCollection instanceof StationPointFeature) {
+                        return (PointFeatureCollection) featureCollection;
                         //System.out.println("point feature");
                         
                     } else if (featureCollection instanceof StationProfileFeature) {
+                        return (StationProfileFeatureCollection) featureCollection;
                         //System.out.println("profile feature");
                         
                     } else if (featureCollection instanceof StationTimeSeriesFeature) {
+                        return (StationTimeSeriesFeatureCollection) featureCollection;
                         //System.out.println("StationTimeSeriesFeature feature");
                         
                     } else if (featureCollection instanceof ProfileFeature) {
+                        return (ProfileFeatureCollection) featureCollection;
                         //System.out.println("profile feature");
                         
                     } else if (featureCollection instanceof ProfileFeatureCollection) {
@@ -259,6 +264,9 @@ public class DiscreteSamplingGeometryUtil {
                     } else if (featureCollection instanceof SectionFeatureCollection) {
                         return (SectionFeatureCollection) featureCollection;
                         
+                    }
+                    else {
+                        System.out.println("Unable to find the feature dataset collection of " + featureCollection.getName());
                     }
                     //********** 
 

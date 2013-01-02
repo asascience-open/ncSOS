@@ -1,0 +1,268 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="network-all">
+            <gml:description/>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="NetworkId">
+                        <sml:Term definition="">
+                            <sml:value>urn:tds:network:all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Short Name">
+                        <sml:Term definition="urn:ogc:identifier:OGC:shortName">
+                            <sml:value>all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Long Name">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:longName">
+                            <sml:value>All stations in the dataset</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:components>
+                <sml:ComponentList>
+                    <sml:System gml:id="station-Station-0">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Station-0</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>station name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                <gml:posList srsDimension="2">
+29.0 160.0
+</gml:posList>
+                            </gml:LineString>
+                        </sml:location>
+                    </sml:System>
+                    <sml:System gml:id="station-Station-1">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Station-1</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>station name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                <gml:posList srsDimension="2">
+87.0 39.0
+</gml:posList>
+                            </gml:LineString>
+                        </sml:location>
+                    </sml:System>
+                    <sml:System gml:id="station-Station-2">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Station-2</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>station name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                <gml:posList srsDimension="2">
+155.0 143.0
+</gml:posList>
+                            </gml:LineString>
+                        </sml:location>
+                    </sml:System>
+                    <sml:System gml:id="station-Station-3">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Station-3</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>station name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                <gml:posList srsDimension="2">
+165.0 68.0
+</gml:posList>
+                            </gml:LineString>
+                        </sml:location>
+                    </sml:System>
+                    <sml:System gml:id="station-Station-4">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Station-4</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>station name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                <gml:posList srsDimension="2">
+37.0 116.0
+</gml:posList>
+                            </gml:LineString>
+                        </sml:location>
+                    </sml:System>
+                    <sml:System gml:id="station-Station-5">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Station-5</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>station name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                <gml:posList srsDimension="2">
+112.0 49.0
+</gml:posList>
+                            </gml:LineString>
+                        </sml:location>
+                    </sml:System>
+                    <sml:System gml:id="station-Station-6">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Station-6</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>station name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                <gml:posList srsDimension="2">
+1.0 58.0
+</gml:posList>
+                            </gml:LineString>
+                        </sml:location>
+                    </sml:System>
+                    <sml:System gml:id="station-Station-7">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Station-7</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>station name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                <gml:posList srsDimension="2">
+4.0 100.0
+</gml:posList>
+                            </gml:LineString>
+                        </sml:location>
+                    </sml:System>
+                    <sml:System gml:id="station-Station-8">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Station-8</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>station name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                <gml:posList srsDimension="2">
+132.0 45.0
+</gml:posList>
+                            </gml:LineString>
+                        </sml:location>
+                    </sml:System>
+                    <sml:System gml:id="station-Station-9">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Station-9</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                                <sml:identifier name="long_name">
+                                    <sml:Term definition="">
+                                    <sml:value>station name</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                <gml:posList srsDimension="2">
+82.0 20.0
+</gml:posList>
+                            </gml:LineString>
+                        </sml:location>
+                    </sml:System>
+                </sml:ComponentList>
+            </sml:components>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>
