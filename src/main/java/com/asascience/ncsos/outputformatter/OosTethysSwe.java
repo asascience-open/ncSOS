@@ -44,6 +44,9 @@ public class OosTethysSwe implements SOSOutputFormatter {
     private static final String STATION_GML_BASE = "urn:tds:station.sos:";
     private static final String NAN = "NaN";
     private static final String TEMPLATE = "templates/oostethysswe.xml";
+    private static final String BLOCK_SEPERATOR = " ";
+    private static final String TOKEN_SEPERATOR = ",";
+    private static final String DECIMAL_SEPERATOR = ".";
     
     private DOMImplementationLS impl;
     
@@ -64,29 +67,21 @@ public class OosTethysSwe implements SOSOutputFormatter {
         this.CDMDataSet = cdmDataset;
         this.variableNames = variableNames;
         
-        title = history = institution = source = description = location = "none";
-        featureOfInterest = "";
         document = parseTemplateXML();
         
-        setMetaData(netcdfDataset.findAttValueIgnoreCase(null, "title", "empty title"),
-                netcdfDataset.findAttValueIgnoreCase(null, "history", "empty history"),
-                netcdfDataset.findAttValueIgnoreCase(null, "institution", "empty institution"),
-                netcdfDataset.findAttValueIgnoreCase(null, "source", "empty source"),
-                netcdfDataset.findAttValueIgnoreCase(null, "description", "empty description"),
-                netcdfDataset.findAttValueIgnoreCase(null, "location", "empty location"),
+        setMetaData(netcdfDataset.findAttValueIgnoreCase(null, "title", "NONE"),
+                netcdfDataset.findAttValueIgnoreCase(null, "history", "NONE"),
+                netcdfDataset.findAttValueIgnoreCase(null, "institution", "NONE"),
+                netcdfDataset.findAttValueIgnoreCase(null, "source", "NONE"),
+                netcdfDataset.findAttValueIgnoreCase(null, "description", "NONE"),
+                netcdfDataset.findAttValueIgnoreCase(null, "location", "NONE"),
                 netcdfDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", null));
         
         try {
             DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
             impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
-        } catch (ClassNotFoundException ex) {
-            System.out.println(ex.getMessage());
-        } catch (InstantiationException ex) {
-            System.out.println(ex.getMessage());
-        } catch (IllegalAccessException ex) {
-            System.out.println(ex.getMessage());
-        } catch (ClassCastException ex) {
-            System.out.println(ex.getMessage());
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
         }
     }
 
@@ -101,6 +96,7 @@ public class OosTethysSwe implements SOSOutputFormatter {
         lat = lon = depth = Double.NaN;
         String eventtime = null;
         float[] dataValues = null;
+        int stationNumber = -1;
         
         if(infoList == null)
             infoList = new ArrayList<DataSlice>();
@@ -139,6 +135,12 @@ public class OosTethysSwe implements SOSOutputFormatter {
                 }
             } else if (valuePiece[0].equals("time")) {
                 eventtime = valuePiece[1];
+            } else if (valuePiece[0].equals("station")) {
+                try {
+                    stationNumber = Integer.parseInt(valuePiece[1]);
+                } catch (Exception ex) {
+                    stationNumber = -1;
+                }
             } else {
                 // assume a data value and add it to the string array
                 if (dataValues == null) {
@@ -157,6 +159,7 @@ public class OosTethysSwe implements SOSOutputFormatter {
         
         // add to info list
         infoList.add(new DataSlice(lat, lon, depth, eventtime, dataValues));
+        infoList.get(infoList.size()-1).setStationNumber(stationNumber);
     }
 
     public void emtpyInfoList() {
@@ -211,12 +214,13 @@ public class OosTethysSwe implements SOSOutputFormatter {
     }
     
     private void addDatasetResults(int stationNumber) {
+        String varNameLen = Integer.toString(variableNames.length+1);
         //add Data Block Definition
         document = XMLDomUtils.addNodeAllOptions(document, "om:result", "swe:DataArray", stationNumber);
         //element count
         document = XMLDomUtils.addNodeAllOptions(document, "swe:DataArray", "swe:elementCount", stationNumber);
         document = XMLDomUtils.addNodeAllOptions(document, "swe:elementCount", "swe:Count", stationNumber);
-        document = XMLDomUtils.addNodeAllOptions(document, "swe:Count", "swe:value", "COUNT!!!!", stationNumber);
+        document = XMLDomUtils.addNodeAllOptions(document, "swe:Count", "swe:value", varNameLen, stationNumber);
         //element Type
         document = XMLDomUtils.addNodeAndAttribute(document, "swe:DataArray", "swe:elementType", "name", "SimpleDataArray", stationNumber);
         //add data record
@@ -227,13 +231,13 @@ public class OosTethysSwe implements SOSOutputFormatter {
         //add encoding value
         document = XMLDomUtils.addNodeAllOptions(document, "swe:DataArray", "swe:encoding", stationNumber);
         // text block
-        document = XMLDomUtils.addNodeAndAttribute(document, "swe:encoding", "swe:TextBlock", "blockSeparator", " ", stationNumber);
-        XMLDomUtils.setAttributeFromNode(document, "swe:encoding", "swe:TextBlock", "decimalSeparator", ".");
-        XMLDomUtils.setAttributeFromNode(document, "swe:encoding", "swe:TextBlock", "tokenSeparator", ",");
+        document = XMLDomUtils.addNodeAndAttribute(document, "swe:encoding", "swe:TextBlock", "blockSeparator", BLOCK_SEPERATOR, stationNumber);
+        XMLDomUtils.setAttributeFromNode(document, "swe:encoding", "swe:TextBlock", "decimalSeparator", DECIMAL_SEPERATOR);
+        XMLDomUtils.setAttributeFromNode(document, "swe:encoding", "swe:TextBlock", "tokenSeparator", TOKEN_SEPERATOR);
 
         try {
             //set the data
-            document = XMLDomUtils.addNodeAllOptions(document, "swe:DataArray", "swe:values", createObservationString(), stationNumber);
+            document = XMLDomUtils.addNodeAllOptions(document, "swe:DataArray", "swe:values", createObservationString(stationNumber), stationNumber);
         } catch (Exception ex) {
             setupExceptionOutput(ex.getMessage());
             Logger.getLogger(SOSGetObservationRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -291,61 +295,66 @@ public class OosTethysSwe implements SOSOutputFormatter {
 
         int numStations;
             numStations = CDMDataSet.getNumberOfStations();
-
-
+            
         //add observation 
         //*********THIS IS FOR NUMBER OF STATIONS!
         for (int stNum = 0; stNum < numStations; stNum++) {
-            document = XMLDomUtils.addObservationElement(document);
-            //add description
-            //if (CDMDataSet != null) {
-            //document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:description", CDMDataSet.getDescription(stNum), stNum);
-            //} else {
-            document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:description", description, stNum);
-            //}
-            //add name
-            document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:name", title, stNum);
-            //add bounded by
-            document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:boundedBy", stNum);
-            //add envelope and attribute
-            document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:boundedBy", "gml:Envelope", "srsName", STATION_GML_BASE + CDMDataSet.getStationName(stNum), stNum);
+            if (CDMDataSet.isStationInFinalList(stNum)) {
+                document = XMLDomUtils.addObservationElement(document);
+                //add description
+                //if (CDMDataSet != null) {
+                //document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:description", CDMDataSet.getDescription(stNum), stNum);
+                //} else {
+                document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:description", description, stNum);
+                //}
+                //add name
+                document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:name", title, stNum);
+                //add bounded by
+                document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:boundedBy", stNum);
+                //add envelope and attribute
+                document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:boundedBy", "gml:Envelope", "srsName", STATION_GML_BASE + CDMDataSet.getStationName(stNum), stNum);
 
-            //add lat lon string
-            document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:Envelope", "gml:lowerCorner", getStationLowerLatLonStr(stNum), stNum);
-            //add Upper GPS coors
-            document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:Envelope", "gml:upperCorner", getStationUpperLatLonStr(stNum), stNum);
-            //add sampling time
-            document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "om:samplingTime", stNum);
-            //add time instant
-            document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "om:samplingTime", "gml:TimePeriod", "gml:id", "DATA_TIME", stNum);
-            //add time positions (being and end)
-            if (CDMDataSet != null) {
-                document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:TimePeriod", "gml:beginPosition", CDMDataSet.getTimeBegin(stNum), stNum);
-                document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:TimePeriod", "gml:endPosition", CDMDataSet.getTimeEnd(stNum), stNum);
-            }
-            //add procedure
-            document = XMLDomUtils.addNodeAndAttribute(document, OM_OBSERVATION, "om:procedure", "xlink:href", location, stNum);
+                //add lat lon string
+                document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:Envelope", "gml:lowerCorner", getStationLowerLatLonStr(stNum), stNum);
+                //add Upper GPS coors
+                document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:Envelope", "gml:upperCorner", getStationUpperLatLonStr(stNum), stNum);
+                //add sampling time
+                document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "om:samplingTime", stNum);
+                //add time instant
+                document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "om:samplingTime", "gml:TimePeriod", "gml:id", "DATA_TIME", stNum);
+                //add time positions (being and end)
+                if (CDMDataSet != null) {
+                    document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:TimePeriod", "gml:beginPosition", CDMDataSet.getTimeBegin(stNum), stNum);
+                    document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:TimePeriod", "gml:endPosition", CDMDataSet.getTimeEnd(stNum), stNum);
+                }
+                //add procedure
+                document = XMLDomUtils.addNodeAndAttribute(document, OM_OBSERVATION, "om:procedure", "xlink:href", location, stNum);
 
-            //add observedProperties
-            for (int i = 0; i < variableNames.length; i++) {
-                String variableName = variableNames[i];
-                document = XMLDomUtils.addNodeAndAttribute(document, OM_OBSERVATION, "om:observedProperty", "xlink:href", "http://marinemetadata.org/cf#" + variableName, stNum);
-            }
+                //add observedProperties
+                for (int i = 0; i < variableNames.length; i++) {
+                    String variableName = variableNames[i];
+                    document = XMLDomUtils.addNodeAndAttribute(document, OM_OBSERVATION, "om:observedProperty", "xlink:href", "http://marinemetadata.org/cf#" + variableName, stNum);
+                }
 
-            //if (isDepthAvailable == true) {
-            //doc = XMLDomUtils.addNodeAndAttribute(doc, OM_OBSERVATION, "om:observedProperty", "xlink:href", "http://marinemetadata.org/cf#" + "depth");
-            //}
+                //if (isDepthAvailable == true) {
+                //doc = XMLDomUtils.addNodeAndAttribute(doc, OM_OBSERVATION, "om:observedProperty", "xlink:href", "http://marinemetadata.org/cf#" + "depth");
+                //}
 
-            //add feature of interest
-            if (featureOfInterest != null) {
-                document = XMLDomUtils.addNodeAndAttribute(document, OM_OBSERVATION, "om:featureOfInterest", "xlink:href", featureOfInterest + CDMDataSet.getStationName(stNum), stNum);
+                //add feature of interest
+                if (featureOfInterest != null) {
+                    document = XMLDomUtils.addNodeAndAttribute(document, OM_OBSERVATION, "om:featureOfInterest", "xlink:href", featureOfInterest + CDMDataSet.getStationName(stNum), stNum);
+                } else {
+                    document = XMLDomUtils.addNodeAndAttribute(document, OM_OBSERVATION, "om:featureOfInterest", "xlink:href", CDMDataSet.getStationName(stNum), stNum);
+                }
+                //add results Node
+                document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "om:result", stNum);
+
+                addDatasetResults(stNum);
+                
             } else {
-                document = XMLDomUtils.addNodeAndAttribute(document, OM_OBSERVATION, "om:featureOfInterest", "xlink:href", CDMDataSet.getStationName(stNum), stNum);
+                // add empty observation
+                document = XMLDomUtils.addObservationElement(document);
             }
-            //add results Node
-            document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "om:result", stNum);
-
-            addDatasetResults(stNum);
         }
     }
     
@@ -414,26 +423,32 @@ public class OosTethysSwe implements SOSOutputFormatter {
         setCollectionUpperCornerEnvelope();
     }
     
-    private String createObservationString() {
+    private String createObservationString(int stationNumber) {
         StringBuilder retVal = new StringBuilder();
         for(DataSlice ds : infoList) {
+            if (ds.getStationNumber() != -1 && ds.getStationNumber() != stationNumber)
+                continue;
             // add the slice to the string
             if(ds.getEventTime() != null)
-                retVal.append(ds.getEventTime()).append(",");
+                retVal.append(ds.getEventTime()).append(TOKEN_SEPERATOR);
             if(!ds.getLatitude().toString().equals(NAN))
-                retVal.append(ds.getLatitude().toString()).append(",");
+                retVal.append(ds.getLatitude().toString()).append(TOKEN_SEPERATOR);
             if(!ds.getLongitude().toString().equals(NAN))
-                retVal.append(ds.getLongitude().toString()).append(",");
+                retVal.append(ds.getLongitude().toString()).append(TOKEN_SEPERATOR);
             if(!ds.getDepth().toString().equals(NAN))
-                retVal.append(ds.getDepth().toString()).append(",");
+                retVal.append(ds.getDepth().toString()).append(TOKEN_SEPERATOR);
             if(ds.getDataValues() != null) {
                 for (Float dv : ds.getDataValues()) {
-                    retVal.append(dv.toString()).append(",");
+                    retVal.append(dv.toString()).append(TOKEN_SEPERATOR);
                 }
-                // remove last comma
+                // remove last TOKEN_SEPERATOR
                 retVal = retVal.deleteCharAt(retVal.length()-1);
             }
-            retVal.append(" \n");
+            retVal.append(BLOCK_SEPERATOR);
+        }
+        if (retVal.length() > 1) {
+            // remove last BLOCK_SEPERATOR
+            retVal = retVal.deleteCharAt(retVal.length()-1);
         }
         return retVal.toString();
     }

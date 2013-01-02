@@ -4,6 +4,7 @@
  */
 package com.asascience.ncsos.cdmclasses;
 
+import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import java.util.List;
 import org.joda.time.Chronology;
 import org.joda.time.chrono.ISOChronology;
@@ -27,6 +28,8 @@ public abstract class baseCDMClass implements iStationData {
     protected static final String Invalid_Station = "INVALID_ST";
     protected Chronology chrono = ISOChronology.getInstance();
     protected DateFormatter df = new DateFormatter();
+    
+    protected static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(baseCDMClass.class);
     
     
     @Override
@@ -108,6 +111,11 @@ public abstract class baseCDMClass implements iStationData {
     @Override
     public int getNumberOfStations() {
         return numberOfStations;
+    }
+    
+    @Override
+    public boolean isStationInFinalList(int stNum) {
+        return true;
     }
     
     @Override

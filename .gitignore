@@ -2,6 +2,7 @@ resources/datasets/*
 target/*
 src/test/java/com/asascience/ncSOS/getObs/output/*
 src/test/java/com/asascience/ncSOS/getCaps/output/*
+nb-configuration.xml
 # Compiled source #
 ###################
 *.com
@@ -17,3 +18,5 @@ src/test/java/com/asascience/ncSOS/getCaps/output/*
 *.dia*
 *.jpeg
 *.war
+*.log
+*out*

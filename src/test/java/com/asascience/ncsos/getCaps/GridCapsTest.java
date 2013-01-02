@@ -9,6 +9,7 @@ import com.asascience.ncsos.service.SOSParser;
 import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.*;
 import java.util.HashMap;
+import org.apache.log4j.BasicConfigurator;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
@@ -38,6 +39,8 @@ public class GridCapsTest {
             // exit early if the environ is already set
             return;
         }
+        BasicConfigurator.resetConfiguration();
+        BasicConfigurator.configure();
         String container = "getCaps";
         InputStream templateInputStream = null;
         try {

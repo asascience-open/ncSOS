@@ -1,0 +1,445 @@
+[INFO] Scanning for projects...
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building ncsos RC1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[WARNING] The artifact jdom:jdom:jar:1.1 has been relocated to org.jdom:jdom:jar:1.1
+[INFO] 
+[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ ncsos ---
+[INFO] Deleting c:\Users\scowan\Projects\maven\ncSOS\target
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0:enforce (enforce-maven) @ ncsos ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.5:resources (default-resources) @ ncsos ---
+[debug] execute contextualize
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 6 resources to templates/
+[INFO] Copying 1 resource to dev/
+[INFO] Copying 1 resource to prod/
+[INFO] Copying 1 resource to spring/
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ ncsos ---
+[INFO] Compiling 38 source files to c:\Users\scowan\Projects\maven\ncSOS\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.5:testResources (default-testResources) @ ncsos ---
+[debug] execute contextualize
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory c:\Users\scowan\Projects\maven\ncSOS\src\test\resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ ncsos ---
+[INFO] Compiling 7 source files to c:\Users\scowan\Projects\maven\ncSOS\target\test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.10:test (default-test) @ ncsos ---
+[INFO] Surefire report directory: c:\Users\scowan\Projects\maven\ncSOS\target\surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running com.asascience.ncsos.describeSen.SOSdescribeSensorTest
+
+------Start testBasicDescribeSensorStation------
+log4j:WARN No appenders could be found for logger (ucar.nc2.NetcdfFile).
+log4j:WARN Please initialize the log4j system properly.
+log4j:WARN See http://logging.apache.org/log4j/1.2/faq.html#noconfig for more info.
+
+------End testBasicDescribeSensorStation------
+
+------Start testBasicDescribeSensorStation2------
+
+------End testBasicDescribeSensorStation2------
+
+------Start testBasicDescribeSensorTrajectory------
+
+------End testBasicDescribeSensorTrajectory------
+
+------Start testBasicDescribeSensorTrajectory2------
+
+------End testBasicDescribeSensorTrajectory2------
+
+------Start testBasicDescribeSensorProfile------
+
+------End testBasicDescribeSensorProfile------
+
+------Start testBasicDescribeSensorProfile2------
+
+------End testBasicDescribeSensorProfile2------
+
+------Start testBasicDescribeSensorSensor------
+
+Received error looking for station watlev - null
+------End testBasicDescribeSensorSensor------
+
+------testBasicDescribeSensorSection------
+
+------END testBasicDescribeSensorSection------
+
+------testBasicDescribeSensorSection2------
+
+------END testBasicDescribeSensorSection2------
+
+------testBadStationNameTrajectoryProfile------
+
+------END testBadStationNameTrajectoryProfile------
+
+------Start testBasicDescriptSensorGrid------
+------End testBasicDescriptSensorGrid------
+
+------testBadStationNameProfile------
+
+------END testBadStationNameProfile------
+
+------testBadSensorNameStation------
+
+Received error looking for station badsensor - null
+------END testBadSensorNameStation------
+
+------testBadStationNameStation------
+
+Received error looking for station badstationname - null
+------END testBadStationNameStation------
+
+------testBadStationNameTrajectory------
+
+Received error looking for station Trajectory100 - null
+------END testBadStationNameTrajectory------
+
+------testExternalHawaiiFile------
+
+------END testExternalHawaiiFile------
+Tests run: 16, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.93 sec
+Running com.asascience.ncsos.getCaps.SOSgetCapsTest
+
+Your file has been written
+
+Your file has been written
+
+Your file has been written
+Your file has been written
+
+Your file has been written
+
+Your file has been written
+
+Your file has been written
+/n
+----ContiguousRaggedMultipleProfiles------
+
+not nested
+Your file has been written
+Your file has been written
+----end------
+
+no dates yet
+not nested
+Your file has been written
+/n
+----OrthogonalSingleDimensionalSingleProfile------
+
+not nested
+Your file has been written
+----end------
+
+
+
+null
+
+null
+
+
+------testSectionMultidimensionalMultiTrajectories------
+
+Your file has been written
+Your file has been written
+------END testSectionMultidimensionalMultiTrajectories------
+
+Your file has been written
+
+Your file has been written
+Your file has been written
+
+not nested
+Your file has been written
+
+not nested
+Your file has been written
+
+
+Your file has been written
+Your file has been written
+
+Your file has been written
+
+Your file has been written
+
+Time To Complete Mil: 89758: SEC: 89.758
+Your file has been written
+
+
+
+Your file has been written
+----end------
+
+Your file has been written
+----end------
+
+------testEnhancePoint-------
+
+Your file has been written
+------end------
+
+------testExternalHawaiiFile------
+
+Your file has been written
+------END testExternalHawaiiFile------
+Tests run: 36, Failures: 0, Errors: 0, Skipped: 5, Time elapsed: 101.41 sec
+Running com.asascience.ncsos.getCaps.SOSgetObsCapTest
+------testCanThisBeRun------
+------end testCanThisBeRun------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.001 sec
+Running com.asascience.ncsos.getObs.SOSGetObsTest
+
+------testenhanceMultiRaggedDataset------
+
+------END testenhanceMultiRaggedDataset------
+
+------testMultiDimensionalSingleStations------
+
+------END testMultiDimensionalSingleStations------
+
+------testMultiDimensionalMultiStations------
+
+------END testMultiDimensionalMultiStations------
+
+------testContiguousRaggedMultipleProfiles------
+
+------END testContiguousRaggedMultipleProfiles------
+
+------testIndexedRaggedMultipleProfiles------
+
+tsDt is not equal to any known case
+------END testIndexedRaggedMultipleProfiles------
+
+------testOrthogonalSingleDimensionalSingleProfile------
+
+------END testOrthogonalSingleDimensionalSingleProfile------
+
+------testMultiTimeCreateDataStruct3Stations------
+
+------END testMultiTimeCreateDataStruct3Stations------
+
+------testMultiTimeCreateDataStruct------
+
+------END testMultiTimeCreateDataStruct------
+
+------testTimeSeriesIncompleteDataMultiTimeInvalid------
+
+------END testTimeSeriesIncompleteDataMultiTimeInvalid------
+
+------testTimeSeriesIncompleteDataMultiTime------
+
+------END testTimeSeriesIncompleteDataMultiTime------
+
+------testMultiTimeSeriesProfileRequest------
+
+------END testMultiTimeSeriesProfileRequest------
+
+------testMultiDimensionalSingleStationsTimeTestT2------
+
+------END testMultiDimensionalSingleStationsTimeTestT2------
+
+------testMultiDimensionalSingleStationsTimeTestT1------
+
+------END testMultiDimensionalSingleStationsTimeTestT1------
+
+------testMultiDimensionalMultiStationsStation2------
+
+------END testMultiDimensionalMultiStationsStation2------
+
+------testMultiDimensionalMultiStation------
+
+------END testMultiDimensionalMultiStation------
+
+------testIncompleteMultiDimensionalMultipleProfiles------
+
+------END testIncompleteMultiDimensionalMultipleProfiles------
+
+------testOrthogonalMultiDimensionalMultipleProfiles------
+
+------END testOrthogonalMultiDimensionalMultipleProfiles------
+
+------testTimeSeriesOrthogonalMultidimenstionalMultipleStations------
+
+------END testTimeSeriesOrthogonalMultidimenstionalMultipleStations------
+
+------testMultiTimeSeriesProfileRequestInvalidDates------
+
+------END testMultiTimeSeriesProfileRequestInvalidDates------
+
+------testContiguousRaggedMultipleProfilesMultiTime3------
+
+------END testContiguousRaggedMultipleProfilesMultiTime3------
+
+------testContiguousRaggedMultipleProfilesMultiTime------
+
+Not adding profile data to builder
+Not adding profile data to builder
+tsDt is not equal to any known case
+Not adding profile data to builder
+Not adding profile data to builder
+Not adding profile data to builder
+Not adding profile data to builder
+Not adding profile data to builder
+Not adding profile data to builder
+tsDt is not equal to any known case
+Not adding profile data to builder
+Not adding profile data to builder
+Not adding profile data to builder
+Not adding profile data to builder
+Not adding profile data to builder
+Not adding profile data to builder
+Not adding profile data to builder
+Not adding profile data to builder
+tsDt is not equal to any known case
+------END testContiguousRaggedMultipleProfilesMultiTime------
+
+------testContiguousRaggedMultipleProfilesMultiTime2------
+
+Not adding profile data to builder
+Not adding profile data to builder
+Not adding profile data to builder
+Not adding profile data to builder
+Not adding profile data to builder
+Not adding profile data to builder
+Not adding profile data to builder
+Not adding profile data to builder
+------END testContiguousRaggedMultipleProfilesMultiTime2------
+
+------testTrajectoryContiguousRaggedMultipleTrajectories------
+
+------END testTrajectoryContiguousRaggedMultipleTrajectories------
+
+------testTrajectoryIncompleteMultidimensionalMultipleTrajectories------
+
+------END testTrajectoryIncompleteMultidimensionalMultipleTrajectories------
+
+------testTrajectoryProfileMultidimensionalMultipleTrajectories1------
+
+in Section.setData
+comparing: Trajectory2 to trajectory0
+comparing: Trajectory2 to trajectory1
+comparing: Trajectory2 to trajectory2
+adding trajectory2 to section list
+comparing: Trajectory2 to trajectory3
+comparing: Trajectory2 to trajectory4
+comparing: Trajectory2 to trajectory5
+looking for staion number 0
+looking for staion number 0
+------END testTrajectoryProfileMultidimensionalMultipleTrajectories1------
+
+------testEnhanceIMEDS1------
+
+------END testEnhanceIMEDS1------
+
+------testEnhanceIMDEDS4------
+
+------END testEnhanceIMDEDS4------
+
+------testEnhanceIMEDS5------
+
+------END testEnhanceIMEDS5------
+
+------testEnhanceIMEDS6------
+
+------END testEnhanceIMEDS6------
+
+------testEnhanceIMEDS7------
+
+------END testEnhanceIMEDS7------
+
+------testEnhanceIMEDS8------
+
+------END testEnhanceIMEDS8------
+
+------testEnhanceIMEDS9------
+
+------END testEnhanceIMEDS9------
+
+------testEnhanceIMEDS10------
+
+------END testEnhanceIMEDS10------
+
+------testEnhanceIMEDS11------
+
+------END testEnhanceIMEDS11------
+
+------testEnhanceIMEDS12------
+
+------END testEnhanceIMEDS12------
+
+------testEnhanceIMEDS13------
+
+------END testEnhanceIMEDS13------
+
+------testEnhanceIMEDS14------
+
+------END testEnhanceIMEDS14------
+
+------testEnhanceIMEDS15------
+
+------END testEnhanceIMEDS15------
+
+------testTimeSeriesIncomplete------
+
+------END testTimeSeriesIncomplete------
+
+------testTimeSeriesIncompleteTime------
+
+------END testTimeSeriesIncompleteTime------
+
+------testExternalHawaiiGetObs------
+
+------END testExternalHawaiiGetObs------
+Tests run: 41, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.762 sec
+Running com.asascience.ncsos.getObs.SOSGridObsTest
+
+------testGetObsGridSSTSingleLatLon------
+------END testGetObsGridSSTSingleLatLon------
+
+------testGetObsGridSSTMultipleLatLon------
+------END testGetObsGridSSTMultipleLatLon------
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.019 sec
+Running thredds.server.sos.controller.SosControllerTest
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 3, Time elapsed: 0.001 sec
+Running thredds.server.sos.getCaps.GridCapsTest
+
+------testParseSST1------
+------END testParseSST1------
+
+------testParseSST2------
+------END testParseSST2------
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.023 sec
+
+Results :
+
+Tests run: 101, Failures: 0, Errors: 0, Skipped: 8
+
+[INFO] 
+[INFO] --- maven-jar-plugin:2.3.2:jar (default-jar) @ ncsos ---
+[INFO] Building jar: c:\Users\scowan\Projects\maven\ncSOS\target\ncsos-RC1-SNAPSHOT.jar
+[INFO] 
+[INFO] --- maven-antrun-plugin:1.7:run (default) @ ncsos ---
+[INFO] Executing tasks
+
+main:
+     [copy] Copying 1 file to c:\Users\scowan\Projects\maven\ncSOS\target
+     [copy] Copying 1 file to c:\Users\scowan\Projects\maven\ncSOS\target
+     [copy] Copying 1 file to c:\Users\scowan\Projects\maven\ncSOS\target
+      [zip] Building zip: c:\Users\scowan\Projects\maven\ncSOS\target\ncSOS-RC1-SNAPSHOT.zip
+[INFO] Executed tasks
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 1:53.708s
+[INFO] Finished at: Thu Sep 13 16:40:26 EDT 2012
+[INFO] Final Memory: 26M/228M
+[INFO] ------------------------------------------------------------------------

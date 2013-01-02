@@ -4,11 +4,14 @@
  */
 package com.asascience.ncsos.describesen;
 
+import com.asascience.ncsos.outputformatter.DescribeNetworkFormatter;
 import com.asascience.ncsos.outputformatter.DescribeSensorFormatter;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
+import com.asascience.ncsos.util.DatasetHandlerAdapter;
 import com.asascience.ncsos.util.DiscreteSamplingGeometryUtil;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.ft.*;
 import ucar.nc2.time.CalendarDate;
@@ -47,11 +50,27 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
         // make sure that the responseFormat we recieved is acceptable
         if (!responseFormat.equalsIgnoreCase(ACCEPTABLE_RESPONSE_FORMAT)) {
             // return exception
+            _log.error("got unhandled response format " + responseFormat + "; printing exception...");
             output.setupExceptionOutput("Unhandled response format " + responseFormat);
             return;
         }
         
+        // check our procedure
+        if (!checkDatasetForProcedure(procedure)) {
+            // the procedure does not match any known procedure
+            _log.error("Could not match procedure " + procedure);
+            output.setupExceptionOutput("Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.");
+            return;
+        }
+        
         this.procedure = procedure;
+        
+        // test that the dataset can be handled properly
+        if (getFeatureDataset() == null && getGridDataset() == null)
+        {
+            output.setupExceptionOutput("Unable to handle requested dataset. Make sure that it has a properly defined feature type.");
+            return;
+        }
         
         // find out needed info based on whether this is a station or sensor look up
         if (this.procedure.contains("station")) {
@@ -60,8 +79,12 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
         } else if (this.procedure.contains("sensor")) {
             setNeededInfoForSensor(dataset);
             describer.setupOutputDocument((DescribeSensorFormatter)output);
+        } else if (this.procedure.contains("network")) {
+            setNeededInfoForNetwork(dataset);
+            output = new DescribeNetworkFormatter(uri, query);
+            describer.setupOutputDocument((DescribeNetworkFormatter)output);
         } else {
-            output.setupExceptionOutput("Unknown procedure (not a station or sensor): " + this.procedure);
+            output.setupExceptionOutput("Unknown procedure (not a station, sensor or 'network'): " + this.procedure);
         }
     }
 
@@ -73,6 +96,8 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
      */
     public SOSDescribeSensorHandler(NetcdfDataset dataset) throws IOException {
         super(dataset);
+        
+        output = new DescribeSensorFormatter();
     }
     
     private void setNeededInfoForStation( NetcdfDataset dataset ) throws IOException {
@@ -89,7 +114,7 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
                 CalendarDate colStart = null;
                 for (feature.resetIteration();feature.hasNext();) {
                     TrajectoryFeature traj = feature.next();
-                    traj.calcBounds();
+                    DatasetHandlerAdapter.calcBounds(traj);
                     for (traj.resetIteration();traj.hasNext();) {
                         PointFeature pf = traj.next();
                         if (colStart == null)
@@ -106,7 +131,8 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
                 ((DescribeSensorFormatter)output).setComponentsNode(DiscreteSamplingGeometryUtil.getDataVariables(getFeatureDataset()), procedure);
                 break;
             case GRID:
-                describer = new SOSDescribeGrid(dataset, procedure);
+                DatasetHandlerAdapter.calcBounds(getFeatureDataset());
+                describer = new SOSDescribeGrid(dataset, procedure, getFeatureDataset().getBoundingBox());
                 ((DescribeSensorFormatter)output).setComponentsNode(getGridDataset().getDataVariables(),procedure);
                 break;
             case SECTION:
@@ -116,7 +142,7 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
                 nStr = nStr.replaceAll("(profile)", "").replaceAll("(trajectory)", "");
                 int tNumber = Integer.parseInt(nStr);
                 
-                getFeatureDataset().calcBounds();
+                DatasetHandlerAdapter.calcBounds(getFeatureDataset());
                 SectionFeatureCollection sectionCollection = (SectionFeatureCollection) getFeatureTypeDataSet();
                 ArrayList<CalendarDate> secColStart = new ArrayList<CalendarDate>();
                 int i=-1;
@@ -126,7 +152,7 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
                         i=0;
                         for (section.resetIteration();section.hasNext();) {
                             ProfileFeature pfeature = section.next();
-                            pfeature.calcBounds();
+                            DatasetHandlerAdapter.calcBounds(pfeature);
                             for (pfeature.resetIteration();pfeature.hasNext();) {
                                 // iterate through data to make sure various items (ie start date) isn't null
                                 PointFeature pointf = pfeature.next();
@@ -148,8 +174,76 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
         
     }
     
-    private void setNeededInfoForSensor( NetcdfDataset dataset ) {
+    private void setNeededInfoForSensor( NetcdfDataset dataset ) throws IOException {
         // describe sensor (sensor) is very similar to describe sensor (station)
         describer = new SOSDescribeSensor(dataset, procedure);
+    }
+
+    private boolean checkDatasetForProcedure(String procedure) {
+        if (procedure == null) {
+            _log.error("procedure is null");
+            return false;
+        }
+        if (procedure.toLowerCase().contains("network") && procedure.toLowerCase().contains("all"))
+            return true;
+        // get a list of procedures from dataset and compare it to the passed-in procedure
+        // get list of station names
+        HashMap<Integer,String> stationNames = getStationNames();
+        if (stationNames == null) {
+            _log.error("stationNames is null");
+            return false;
+        }
+        // go through each station urn and compare it to procedure
+        for (String stationName : stationNames.values()) {
+            if (getGMLName(stationName).equalsIgnoreCase(procedure))
+                return true;
+        }
+        // go through each sensor urn and compare it to procedure
+        for (String sensorName : getSensorNames()) {
+            for (String stationName : stationNames.values()) {
+                if (getSensorGMLName(stationName, sensorName).equalsIgnoreCase(procedure))
+                    return true;
+            }
+        }
+        
+        return false;
+    }
+
+    private void setNeededInfoForNetwork(NetcdfDataset dataset) throws IOException {
+        // get our information based on feature type
+        switch (getFeatureDataset().getFeatureType()) {
+            case STATION:
+            case STATION_PROFILE:
+                describer = new SOSDescribeStation(dataset);
+                break;
+            case TRAJECTORY:
+                // need our starting date for the observations from our FeatureTypeDataSet wrapper
+                TrajectoryFeatureCollection feature = (TrajectoryFeatureCollection) getFeatureTypeDataSet();
+                CalendarDate colStart = null;
+                for (feature.resetIteration();feature.hasNext();) {
+                    TrajectoryFeature traj = feature.next();
+                    DatasetHandlerAdapter.calcBounds(traj);
+                    for (traj.resetIteration();traj.hasNext();) {
+                        PointFeature pf = traj.next();
+                        if (colStart == null)
+                            colStart = pf.getObservationTimeAsCalendarDate();
+                        else if (pf.getObservationTimeAsCalendarDate().compareTo(colStart) < 0)
+                            colStart = pf.getObservationTimeAsCalendarDate();
+                    }
+                }
+                describer = new SOSDescribeTrajectory(dataset, colStart);
+                break;
+            case GRID:
+                DatasetHandlerAdapter.calcBounds(getFeatureDataset());
+                describer = new SOSDescribeGrid(dataset, getFeatureDataset().getBoundingBox());
+                break;
+            case PROFILE:
+                describer = new SOSDescribeProfile(dataset);
+                break;
+            case SECTION:
+                DatasetHandlerAdapter.calcBounds(getFeatureDataset());
+                describer = new SOSDescribeSection(dataset, (SectionFeatureCollection) getFeatureTypeDataSet());
+                break;
+        }
     }
 }

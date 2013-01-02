@@ -3,12 +3,15 @@ package com.asascience.ncsos.getobs;
 import com.asascience.ncsos.cdmclasses.*;
 import com.asascience.ncsos.outputformatter.GetCapsOutputter;
 import com.asascience.ncsos.outputformatter.OosTethysSwe;
+import com.asascience.ncsos.outputformatter.OosTethysSweV2;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import ucar.ma2.DataType;
+import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
 import ucar.nc2.constants.AxisType;
 import ucar.nc2.constants.FeatureType;
@@ -22,16 +25,19 @@ import ucar.nc2.dataset.NetcdfDataset;
  */
 public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     
-    private String[] variableNames;
+    private String[] obsProperties;
+    private String[] procedures;
     private iStationData CDMDataSet;
     
     private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(SOSGetObservationRequestHandler.class);
     private String contentType;
+    
+    private static final String FILL_VALUE_NAME = "_FillValue";
 
     /**
      * SOS get obs request handler
      * @param netCDFDataset dataset for which the get observation request is being made
-     * @param stationName collection of offerings from the request
+     * @param requestedStationNames collection of offerings from the request
      * @param variableNames collection of observed properties from the request
      * @param eventTime event time range from the request
      * @param outputFormat response format from the request
@@ -39,14 +45,25 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
      * @throws IOException 
      */
     public SOSGetObservationRequestHandler(NetcdfDataset netCDFDataset,
-            String[] stationName,
+            String[] requestedStationNames,
             String[] variableNames,
             String[] eventTime,
             String outputFormat,
             Map<String, String> latLonRequest) throws IOException {
         super(netCDFDataset);
         
-        // make sure that all of the variable names are in the dataset
+        // set up our formatter
+        if(outputFormat.equalsIgnoreCase("text/xml;subtype=\"om/1.0.0\"")) {
+            contentType = "text/xml";
+//            output = new OosTethysSwe(this.obsProperties, getFeatureDataset(), CDMDataSet, netCDFDataset);
+            output = new OosTethysSweV2(this);
+        } else {
+            _log.error("Uknown/Unhandled responseFormat: " + outputFormat);
+            output = new GetCapsOutputter();
+            output.setupExceptionOutput("Could not recognize output format");
+        }
+        
+        // make sure that all of the requested variable names are in the dataset
         for (String vars : variableNames) {
             boolean isInDataset = false;
             for (Variable dVar : netCDFDataset.getVariables()) {
@@ -69,20 +86,44 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         //this.stationName = stationName[0];        
         CoordinateAxis heightAxis = netCDFDataset.findCoordinateAxis(AxisType.Height);
 
-        this.variableNames = checkNetcdfFileForAxis(heightAxis, variableNames);
+        this.obsProperties = checkNetcdfFileForAxis(heightAxis, variableNames);
         
+        // get all station names if 'network-all'
+        if (requestedStationNames.length == 1 && requestedStationNames[0].equalsIgnoreCase("network-all")) {
+            requestedStationNames = getStationNames().values().toArray(new String[getStationNames().values().size()]);
+        }
+        
+        this.procedures = requestedStationNames;
+        
+        setCDMDatasetForStations(netCDFDataset, requestedStationNames, eventTime, latLonRequest);
+    }
+    
+    private void setCDMDatasetForStations(NetcdfDataset netCDFDataset, String[] requestedStationNames, String[] eventTime, Map<String, String> latLonRequest) throws IOException {
+        // strip out text if the station is defined by indices
+        if (isStationDefinedByIndices()) {
+            String[] editedStationNames = new String[requestedStationNames.length];
+            for (int i=0; i<requestedStationNames.length; i++) {
+                if (requestedStationNames[i].contains("unknown")) {
+                    editedStationNames[i] = "unknown";
+                } else {
+                    editedStationNames[i] = requestedStationNames[i].replaceAll("[A-Za-z]+", "");
+                }
+            }
+            // copy array
+            requestedStationNames = editedStationNames.clone();
+        }
         //grid operation
         if (getDatasetFeatureType() == FeatureType.GRID) {
             Variable depthAxis;
             if (!latLonRequest.isEmpty()) {
                 depthAxis = (netCDFDataset.findVariable("depth"));
                 if (depthAxis != null) {
-                    this.variableNames = checkNetcdfFileForAxis((CoordinateAxis1D) depthAxis, this.variableNames);
+                    this.obsProperties = checkNetcdfFileForAxis((CoordinateAxis1D) depthAxis, this.obsProperties);
                 }
-                this.variableNames = checkNetcdfFileForAxis(netCDFDataset.findCoordinateAxis(AxisType.Lat), this.variableNames);
-                this.variableNames = checkNetcdfFileForAxis(netCDFDataset.findCoordinateAxis(AxisType.Lon), this.variableNames);
+                this.obsProperties = checkNetcdfFileForAxis(netCDFDataset.findCoordinateAxis(AxisType.Lat), this.obsProperties);
+                this.obsProperties = checkNetcdfFileForAxis(netCDFDataset.findCoordinateAxis(AxisType.Lon), this.obsProperties);
 
-                CDMDataSet = new Grid(stationName, eventTime, this.variableNames, latLonRequest);
+                CDMDataSet = new Grid(requestedStationNames, eventTime, this.obsProperties, latLonRequest);
                 CDMDataSet.setData(getGridDataset());
             } 
         }
@@ -90,41 +131,30 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         else {
 
             if (getDatasetFeatureType() == FeatureType.TRAJECTORY) {
-                CDMDataSet = new Trajectory(stationName, eventTime, this.variableNames);
+                CDMDataSet = new Trajectory(requestedStationNames, eventTime, this.obsProperties);
             } else if (getDatasetFeatureType() == FeatureType.STATION) {
-                CDMDataSet = new TimeSeries(stationName, eventTime, this.variableNames);
+                CDMDataSet = new TimeSeries(requestedStationNames, eventTime, this.obsProperties);
             } else if (getDatasetFeatureType() == FeatureType.STATION_PROFILE) {
-                CDMDataSet = new TimeSeriesProfile(stationName, eventTime, this.variableNames);
+                CDMDataSet = new TimeSeriesProfile(requestedStationNames, eventTime, this.obsProperties);
             } else if (getDatasetFeatureType() == FeatureType.PROFILE) {
-                CDMDataSet = new Profile(stationName, eventTime, this.variableNames);
+                CDMDataSet = new Profile(requestedStationNames, eventTime, this.obsProperties);
             } else if (getDatasetFeatureType() == FeatureType.SECTION) {
-                CDMDataSet = new Section(stationName, eventTime, this.variableNames);
+                CDMDataSet = new Section(requestedStationNames, eventTime, this.obsProperties);
             }else {
-                _log.error("Have a null CDMDataSet, this will cause a null reference exception! - SOSGetObservationRequestHandler.87");
+                _log.error("Have a null CDMDataSet, this will cause a null reference exception!");
                 // print exception and then return the doc
                 output = new GetCapsOutputter();
                 output.setupExceptionOutput("Null Dataset; could not recognize feature type");
                 CDMDataSet = null;
                 return;
             }
-            
             //only set the data is it is valid
             if (CDMDataSet!=null){
                 CDMDataSet.setData(getFeatureTypeDataSet());
             }
         }
-        
-        // set up our formatter
-        if(outputFormat.equalsIgnoreCase("text/xml;subtype=\"om/1.0.0\"")) {
-            contentType = "text/xml";
-            output = new OosTethysSwe(this.variableNames, getFeatureDataset(), CDMDataSet, netCDFDataset);
-        } else {
-            _log.error("Uknown/Unhandled responseFormat: " + outputFormat);
-            output = new GetCapsOutputter();
-            output.setupExceptionOutput("Could not recognize output format");
-        }
     }
-
+    
     /**
      * checks for the presence of height in the netcdf dataset if it finds it but not in the variables selected it adds it
      * @param Axis the axis being checked
@@ -146,7 +176,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             }
 
             //if it not found add it!
-            if (foundZ == false) {
+            if (!foundZ && !Axis.getDimensions().isEmpty()) {
                 variableNamesNew = new ArrayList<String>();
                 variableNamesNew.addAll(Arrays.asList(variableNames1));
                 variableNamesNew.add(Axis.getFullName());
@@ -172,7 +202,6 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     public void parseObservations() {
         for(int s = 0;s<CDMDataSet.getNumberOfStations();s++) {
             String dataString = CDMDataSet.getDataResponse(s);
-//            System.out.println("Got string: " + dataString);
             for (String dataPoint : dataString.split(";")) {
                 if(!dataPoint.equals(""))
                     output.addDataFormattedStringToInfoList(dataPoint);
@@ -195,5 +224,80 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
      */
     public String getContentType() {
         return contentType;
+    }
+    
+    //<editor-fold defaultstate="collapsed" desc="Helper functions for building GetObs XML">
+    /**
+     * Looks up a stations index by a string name
+     * @param stName the name of the station to look for
+     * @return the index of the station (-1 if it does not exist)
+     */
+    public int getIndexFromStationName(String stName) {
+        return getStationIndex(stName);
+    }
+    
+    public String getStationLowerCorner(int relIndex) {
+        return formatDegree(CDMDataSet.getLowerLat(relIndex)) + " " + formatDegree(CDMDataSet.getLowerLon(relIndex));
+    }
+    
+    public String getStationUpperCorner(int relIndex) {
+        return formatDegree(CDMDataSet.getUpperLat(relIndex)) + " " + formatDegree(CDMDataSet.getUpperLon(relIndex));
+    }
+    
+    public String getBoundedLowerCorner() {
+        return formatDegree(CDMDataSet.getBoundLowerLat()) + " " + formatDegree(CDMDataSet.getBoundLowerLon());
+    }
+    
+    public String getBoundedUpperCorner() {
+        return formatDegree(CDMDataSet.getBoundUpperLat()) + " " + formatDegree(CDMDataSet.getBoundUpperLon());
+    }
+    
+    public String getStartTime(int relIndex) {
+        return CDMDataSet.getTimeBegin(relIndex);
+    }
+    
+    public String getEndTime(int relIndex) {
+        return CDMDataSet.getTimeEnd(relIndex);
+    }
+    
+    public String[] getObservedProperties() {
+        return obsProperties;
+    }
+    
+    public String[] getProcedures() {
+        return procedures;
+    }
+    
+    public String getUnitsString(String dataVarName) {
+        return getUnitsOfVariable(dataVarName);
+    }
+    
+    public String getValueBlockForAllObs(String block, String decimal, String token, int relIndex) {
+        String retval = CDMDataSet.getDataResponse(relIndex);
+        return retval.replaceAll("\\.", decimal).replaceAll(",", token).replaceAll(";", block);
+//        return retval;
+    }
+    //</editor-fold>
+
+    public String getFillValue(String obsProp) {
+        Attribute[] attrs = getAttributesOfVariable(obsProp);
+        for (Attribute attr : attrs) {
+            if (attr.getName().equalsIgnoreCase(FILL_VALUE_NAME)) {
+                return attr.getValue(0).toString();
+            }
+        }
+        return "";
+    }
+
+    public boolean hasFillValue(String obsProp) {
+        Attribute[] attrs = getAttributesOfVariable(obsProp);
+        if (attrs == null)
+            return false;
+        for (Attribute attr : attrs) {
+            if (attr.getName().equalsIgnoreCase(FILL_VALUE_NAME))
+                return true;
+        }
+        return false;
+        
     }
 }

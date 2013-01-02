@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<om:ObservationCollection gml:id="GML_ID_NAME"
+<om:ObservationCollection gml:id="SPOT5_DATA"
     xmlns:gml="http://www.opengis.net/gml"
     xmlns:om="http://www.opengis.net/om/1.0"
     xmlns:swe="http://www.opengis.net/swe/1.0"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/om/1.0 http://schemas.opengis.net/om/1.0.0/observation.xsd">
-    <gml:description>empty description</gml:description>
-    <gml:name>empty title</gml:name>
+    <gml:description/>
+    <gml:name/>
     <gml:boundedBy>
-        <gml:Envelope srsName="EPSG:4326">
+        <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
             <!-- overwrite these with your actual offering ROI -->
-            <gml:lowerCorner>-90.0 -70.85932922363281 -999.9000244140625</gml:lowerCorner>
-            <gml:upperCorner>42.09935760498047 80.0999755859375 2.0</gml:upperCorner>
+            <gml:lowerCorner>-90.0 -70.85932922363281</gml:lowerCorner>
+            <gml:upperCorner>42.09935760498047 80.0999755859375</gml:upperCorner>
         </gml:Envelope>
     </gml:boundedBy>
     <om:member>
         <om:Observation>
-            <gml:description>empty description</gml:description>
-            <gml:name>empty title</gml:name>
+            <gml:description/>
+            <gml:name/>
             <gml:boundedBy>
-                <gml:Envelope srsName="urn:tds:station.sos:Trajectory2">
-                    <gml:lowerCorner>-90.0 -70.85932922363281 -999.9000244140625</gml:lowerCorner>
-                    <gml:upperCorner>42.09935760498047 80.0999755859375 2.0</gml:upperCorner>
+                <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                    <gml:lowerCorner>-90.0 -70.85932922363281</gml:lowerCorner>
+                    <gml:upperCorner>42.09935760498047 80.0999755859375</gml:upperCorner>
                 </gml:Envelope>
             </gml:boundedBy>
             <om:samplingTime>
@@ -30,29 +30,31 @@
                     <gml:endPosition>1990-01-01T06:00:00Z</gml:endPosition>
                 </gml:TimePeriod>
             </om:samplingTime>
-            <om:procedure xlink:href="empty location"/>
-            <om:observedProperty xlink:href="http://marinemetadata.org/cf#salinity"/>
-            <om:observedProperty xlink:href="http://marinemetadata.org/cf#alt"/>
+            <om:procedure xlink:href="urn:tds:station.sos:Trajectory2"/>
+            <om:observedProperty xlink:href="salinity"/>
+            <om:observedProperty xlink:href="alt"/>
             <om:featureOfInterest xlink:href="Trajectory2"/>
             <om:result>
-                <swe:DataArray>
+                <swe:dataArray>
                     <swe:elementCount>
                         <swe:Count>
-                            <swe:value>COUNT!!!!</swe:value>
+                            <swe:value>2</swe:value>
                         </swe:Count>
                     </swe:elementCount>
                     <swe:elementType name="SimpleDataArray">
                         <swe:DataRecord>
                             <swe:field name="time">
-                                <swe:Time definition="urn:ogc:phenomenon:time:iso8601"/>
+                                <swe:Time definition="http://www.opengis.net/def/property/OGC/0/SamplingTime">
+                                    <swe:uom xlink:href="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"/>
+                                </swe:Time>
                             </swe:field>
                             <swe:field name="salinity">
-                                <swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:salinity">
+                                <swe:Quantity definition="http://mmisw.org/ont/cf/parameter/salinity">
                                     <swe:uom code="PSU"/>
                                 </swe:Quantity>
                             </swe:field>
                             <swe:field name="alt">
-                                <swe:Quantity definition="urn:ogc:def:phenomenon:mmisw.org:cf:alt">
+                                <swe:Quantity definition="http://mmisw.org/ont/cf/parameter/alt">
                                     <swe:uom code="m"/>
                                 </swe:Quantity>
                             </swe:field>
@@ -62,16 +64,8 @@
                         <swe:TextBlock blockSeparator=" "
                             decimalSeparator="." tokenSeparator=","/>
                     </swe:encoding>
-                    <swe:values>1990-01-01T00:00:00Z,37.15755,0.0 
-1990-01-01T00:00:00Z,9.691621,1.0 
-1990-01-01T00:00:00Z,11.261549,2.0 
-1990-01-01T00:00:00Z,-999.9,-999.9 
-1990-01-01T00:00:00Z,-999.9,-999.9 
-1990-01-01T00:00:00Z,-999.9,-999.9 
-1990-01-01T00:00:00Z,-999.9,-999.9 
-1990-01-01T00:00:00Z,-999.9,-999.9 
-</swe:values>
-                </swe:DataArray>
+                    <swe:values>1990-01-01T00:00:00Z,37.15755,0.0 1990-01-01T00:00:00Z,9.691621,1.0 1990-01-01T00:00:00Z,11.261549,2.0 1990-01-01T00:00:00Z,-999.9,-999.9 1990-01-01T00:00:00Z,-999.9,-999.9 1990-01-01T00:00:00Z,-999.9,-999.9 1990-01-01T00:00:00Z,-999.9,-999.9 1990-01-01T00:00:00Z,-999.9,-999.9</swe:values>
+                </swe:dataArray>
             </om:result>
         </om:Observation>
     </om:member>

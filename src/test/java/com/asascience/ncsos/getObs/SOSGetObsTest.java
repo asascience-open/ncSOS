@@ -9,8 +9,10 @@ import com.asascience.ncsos.service.SOSParser;
 import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.*;
 import java.util.HashMap;
+import org.apache.log4j.BasicConfigurator;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -23,6 +25,7 @@ public class SOSGetObsTest {
     
     private static String base = null;
     private static String exampleOutputDir = null;
+    private static final String datasets = "resources/datasets/";
    
     // final strings
     private static final String baseRequest = "request=GetObservation&version=1.0.0&service=sos&responseformat=text%2Fxml%3Bsubtype%3D%22om%2F1.0.0%22";
@@ -81,10 +84,10 @@ public class SOSGetObsTest {
     private static final String MultiDimensionalMultiStations = "resources/datasets/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1.nc";
     
     private static final String ContiguousRaggedMultipleProfiles = "resources/datasets/profile-Contiguous-Ragged-MultipleProfiles-H.3.4/profile-Contiguous-Ragged-MultipleProfiles-H.3.4.nc";
-    private static final String profileRequest = baseRequest + "&observedProperty=temperature,humidity&offering=0&eventTime=1990-01-01T00:00:00Z";
-    private static final String profileRequestMultiTime = baseRequest + "&observedProperty=temperature,humidity&offering=1,2,3&eventTime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z";
-    private static final String profileRequestMultiTime2 = baseRequest + "&observedProperty=temperature,humidity&offering=1,2&eventTime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z";
-    private static final String profileRequestMultiTime3 = baseRequest + "&service=sos&observedProperty=temperature,humidity&offering=3&eventTime=1990-01-01T00:00:00Z/1990-01-01T03:00:00Z";
+    private static final String profileRequest = baseRequest + "&observedProperty=temperature,humidity&offering=Profile0&eventTime=1990-01-01T00:00:00Z";
+    private static final String profileRequestMultiTime = baseRequest + "&observedProperty=temperature,humidity&offering=Profile1,Profile2,Profile3&eventTime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z";
+    private static final String profileRequestMultiTime2 = baseRequest + "&observedProperty=temperature,humidity&offering=Profile1,Profile2&eventTime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z";
+    private static final String profileRequestMultiTime3 = baseRequest + "&service=sos&observedProperty=temperature,humidity&offering=Profile3&eventTime=1990-01-01T00:00:00Z/1990-01-01T03:00:00Z";
     
     private static final String IncompleteMultiDimensionalMultipleProfiles = "resources/datasets/profile-Incomplete-MultiDimensional-MultipleProfiles-H.3.2/profile-Incomplete-MultiDimensional-MultipleProfiles-H.3.2.nc";
     
@@ -114,12 +117,71 @@ public class SOSGetObsTest {
     private static final String trajectoryProfileMultidimensionalMultipleTrajectories = "resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc";
     private static final String sectionRequest1 = baseRequest + "&observedProperty=salinity&offering=Trajectory2&eventTime=1990-01-01T00:00:00Z";
     
+    private static final String externalHawaiiStation = "resources/datasets/sura/wqbkn_2012_08_01.nc";
+    private static final String externalHawaiiRequest1 = baseRequest + "&observedProperty=temp&offering=WQBKN";
+    
+    private static final String watlevNOAANavdPre = "resources/datasets/sura/watlev_NOAA_NAVD_PRE.nc";
+    private static final String watlevNOAANavdRequest = baseRequest + "&observedProperty=watlev&offering=NOAA_8767961";
+    
+    //network all time series
+    private static final String networkAllTimeSeries1 = datasets + "timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc";
+    private static final String networkAllTimeSeries1Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllTimeSeries2 = datasets + "timeSeries-Orthogonal-Multidimensional-MultipeStations-H.2.1/timeSeries-Orthogonal-Multidimensional-MultipeStations-H.2.1.nc";
+    private static final String networkAllTimeSeries2Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    
+    // network all trajectory
+    private static final String networkAllTrajectory1 = datasets + "trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc";
+    private static final String networkAllTrajectory1Request1 = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllTrajectory1Request2 = baseRequest + "&observedProperty=temperature&offering=network-all&eventtime=1970-01-01T00:00:00Z/2012-07-11T00:00:00";
+    private static final String networkAllTrajectory1Request3 = baseRequest + "&observedProperty=humidity&offering=network-all";
+    private static final String networkAllTrajectory2 = datasets + "trajectory-Incomplete-Multidimensional-MultipleTrajectories-H.4.1/trajectory-Incomplete-Multidimensional-MultipleTrajectories-H.4.1.nc";
+    private static final String networkAllTrajectory2Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllTrajectory3 = datasets + "trajectory-Incomplete-Multidimensional-SingleTrajectory-H.4.2/trajectory-Incomplete-Multidimensional-SingleTrajectory-H.4.2.nc";
+    private static final String networkAllTrajectory3Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllTrajectory4 = datasets + "trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4.nc";
+    private static final String networkAllTrajectory4Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    
+    // network all time series profile
+    private static final String networkAllTimeSeriesProfile1 = datasets + "timeSeriesProfile-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1.nc";
+    private static final String networkAllTimeSeriesProfile1Request = baseRequest + "&observedProperty=temperature&offering=network-all&eventTime=1990-01-01T04:00:00Z";
+    private static final String networkAllTimeSeriesProfile2 = datasets + "timeSeriesProfile-Multidimensional-SingleStation-H.5.2/timeSeriesProfile-Multidimensional-SingleStation-H.5.2.nc";
+    private static final String networkAllTimeSeriesProfile2Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllTimeSeriesProfile3 = datasets + "timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1.nc";
+    private static final String networkAllTimeSeriesProfile3Request = baseRequest + "&observedProperty=station_info&offering=network-all";
+    private static final String networkAllTimeSeriesProfile4 = datasets + "timeSeriesProfile-Ragged-MultipeStations-H.5.3/timeSeriesProfile-Ragged-MultipeStations-H.5.3.nc";
+    private static final String networkAllTimeSeriesProfile4Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllTimeSeriesProfile5 = datasets + "timeSeriesProfile-Ragged-SingleStation-H.5.3/timeSeriesProfile-Ragged-SingleStation-H.5.3.nc";
+    private static final String networkAllTimeSeriesProfile5Request = baseRequest + "&observedProperty=time&offering=network-all";
+    
+    
+    // network all profile
+    private static final String networkAllProfile1 = "resources/datasets/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1.nc";
+    private static final String networkAllProfile1Request = baseRequest + "&observedProperty=temperature,humidity&offering=network-all";
+    private static final String networkAllProfile2 = datasets + "profile-Contiguous-Ragged-MultipleProfiles-H.3.4/profile-Contiguous-Ragged-MultipleProfiles-H.3.4.nc";
+    private static final String networkAllProfile2Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllProfile3 = datasets + "profile-Incomplete-MultiDimensional-MultipleProfiles-H.3.2/profile-Incomplete-MultiDimensional-MultipleProfiles-H.3.2.nc";
+    private static final String networkAllProfile3Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllProfile4 = datasets + "profile-Indexed-Ragged-MultipleProfiles-H.3.5/profile-Indexed-Ragged-MultipleProfiles-H.3.5.nc";
+    private static final String networkAllProfile4Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllProfile5 = datasets + "profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3.nc";
+    private static final String networkAllProfile5Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    
+    // network all section
+    private static final String networkAllTrajectoryProfile1 = "resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc";
+    private static final String networkAllTrajectoryProfile1Request = baseRequest + "&observedProperty=salinity&offering=network-all";
+    private static final String networkAllTrajectoryProfile2 = datasets + "trajectoryProfile-Multidimensional-SingleTrajectory-H.6.2/trajectoryProfile-Multidimensional-SingleTrajectory-H.6.2.nc";
+    private static final String networkAllTrajectoryProfile2Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllTrajectoryProfile3 = datasets + "trajectoryProfile-Ragged-MultipleTrajectories-H.6.3/trajectoryProfile-Ragged-MultipleTrajectories-H.6.3.nc";
+    private static final String networkAllTrajectoryProfile3Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    
     @BeforeClass
     public static void SetupEnviron() {
         // early return if the vars we are setting are already set
         if (base != null) {
             return;
         }
+        BasicConfigurator.resetConfiguration();
+        BasicConfigurator.configure();
         String container = "getObs";
         InputStream templateInputStream = null;
         try {
@@ -197,10 +259,6 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
-
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:UNDKennedy_X\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:UNDKennedy_S\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:UNDKennedy_Z\">"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -224,10 +282,6 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
-
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:USACE-CHL_2410513B\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:USACE-CHL_2410508B\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:USACE-CHL_2410510B\">"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -251,10 +305,6 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
-
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:TCOON_87747701\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:TCOON_87705701\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:TCOON_87704751\">"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -278,10 +328,6 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
-
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_15\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_09\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_06\">"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -305,11 +351,6 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
-
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:NDBC_42020\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_09\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:USACE-CHL_2410513B\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:NDBC_42059\">"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -333,11 +374,6 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
-
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_DCPBS04\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_DCPBS03\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CS20-15R\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CS20-106\">"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -361,11 +397,6 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
-
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_DCPBS04\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_DCPBS03\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CS20-15R\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CS20-106\">"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -389,10 +420,6 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
-
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CRMS0161-H01\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CRMS0174-H01\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_DCPBA07\">"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -416,10 +443,6 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
-
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CRMS0161-H01\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_CRMS0174-H01\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CRMS_DCPBA07\">"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -443,11 +466,6 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
-
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_03\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_06\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_09\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_15\">"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -471,9 +489,6 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
-
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_06\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_09\">"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -497,9 +512,6 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
-
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_06\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:CSI_09\">"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -523,9 +535,6 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
-
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:NOAA_8727235\">"));
-            assertTrue("station", write.toString().contains("srsName=\"urn:tds:station.sos:NOAA_8729501\">"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -715,8 +724,6 @@ public class SOSGetObsTest {
             write.close();
             String fileName = "tsOrthogonalMultidimenstionalMultipleStations.xml";
             fileWriter(base, fileName, write);
-            // write as an example
-            fileWriter(exampleOutputDir, "GetObservation-TimeSeries-om1.0.0.xml", write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
         } catch (IOException ex) {
@@ -1021,7 +1028,7 @@ public class SOSGetObsTest {
             //check depth was entered auto
             assertFalse(write.toString().contains("Exception"));
             assertTrue("depth not added", write.toString().contains("<swe:field name=\"z\">"));
-            assertTrue("data missing - feature of interest", write.toString().contains("<om:featureOfInterest xlink:href=\"PROFILE_3\"/>"));
+            assertTrue("data missing - feature of interest", write.toString().contains("<om:featureOfInterest xlink:href=\"Profile3\"/>"));
             assertFalse("bad data included - time stamp", write.toString().contains("1990-01-01T01:00:00Z,"));
             assertFalse("bad data included - time stamp", write.toString().contains("1990-01-01T02:00:00Z,"));
         } catch (IOException ex) {
@@ -1048,10 +1055,10 @@ public class SOSGetObsTest {
             dataAvailableInOutputFile(write);
             //check depth was entered auto
             assertTrue("depth not added", write.toString().contains("<swe:field name=\"z\">"));
-            assertFalse("data missing", write.toString().contains("<om:featureOfInterest xlink:href=\"PROFILE_0\"/>"));
-            assertTrue("data missing", write.toString().contains("<om:featureOfInterest xlink:href=\"PROFILE_1\"/>"));
-            assertTrue("data missing", write.toString().contains("<om:featureOfInterest xlink:href=\"PROFILE_2\"/>"));
-            assertTrue("data missing", write.toString().contains("<om:featureOfInterest xlink:href=\"PROFILE_3\"/>"));
+            assertFalse("invalid foi", write.toString().contains("<om:featureOfInterest xlink:href=\"PROFILE_0\"/>"));
+            assertFalse("invalid foi", write.toString().contains("<om:featureOfInterest xlink:href=\"PROFILE_3\"/>"));
+            assertTrue("foi missing", write.toString().contains("<om:featureOfInterest xlink:href=\"Profile1\"/>"));
+            assertTrue("foi missing", write.toString().contains("<om:featureOfInterest xlink:href=\"Profile2\"/>"));
             assertTrue("data missing", write.toString().contains("1990-01-01T01:00:00Z,"));
             assertTrue("data missing", write.toString().contains("1990-01-01T02:00:00Z,"));
         } catch (IOException ex) {
@@ -1279,6 +1286,533 @@ public class SOSGetObsTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
+    
+    @Test
+    public void testExternalHawaiiGetObs() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(externalHawaiiStation);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, externalHawaiiRequest1, externalHawaiiStation),write);
+            write.flush();
+            write.close();
+            String fileName = "external_Hawaii_request1.xml";
+            fileWriter(base, fileName, write);
+            // write as an example
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllIncompleteTimeSeries() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeries1);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTimeSeries1Request, networkAllTimeSeries1),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            // write as an example
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllOrthogonalTimeSeries() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeries2);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTimeSeries2Request, networkAllTimeSeries2),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            // write as an example
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllTrajectoryContiguousRagged() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory1);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTrajectory1Request1, networkAllTrajectory1),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            // write as an example
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllTrajectoryContiguousRaggedTimeConstraint() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory1);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTrajectory1Request2, networkAllTrajectory1),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            // write as an example
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllTrajectoryContiguousRaggedHumidity() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory1);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTrajectory1Request3, networkAllTrajectory1),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            // write as an example
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllTrajectoryIncompleteMultiple() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory2);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTrajectory2Request, networkAllTrajectory2),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            assertFalse("exception in output", write.toString().contains("Exception"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    // dataset has some issues which prevent it from being successfully read
+//    @Ignore
+    @Test
+    public void testNetworkAllTrajectoryIncompleteSingle() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory3);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTrajectory3Request, networkAllTrajectory3),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            assertFalse("exception in output", write.toString().contains("Exception"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllTrajectoryIndexedRagged() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory4);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTrajectory4Request, networkAllTrajectory4),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            assertFalse("exception in output", write.toString().contains("Exception"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllTimeSeriesProfileMultiDimMultiStation() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeriesProfile1);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTimeSeriesProfile1Request, networkAllTimeSeriesProfile1),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllTimeSeriesProfileMultiDimSingleStation() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeriesProfile2);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTimeSeriesProfile2Request, networkAllTimeSeriesProfile2),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    // no valid observed properties
+    @Ignore
+    @Test
+    public void testNetworkAllTimeSeriesProfileOrthoMultiDimMultiStation() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeriesProfile3);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTimeSeriesProfile3Request, networkAllTimeSeriesProfile3),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllTimeSeriesProfileRaggedMultiStations() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeriesProfile4);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTimeSeriesProfile4Request, networkAllTimeSeriesProfile4),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllTimeSeriesProfileRaggedSingleStation() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeriesProfile5);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTimeSeriesProfile5Request, networkAllTimeSeriesProfile5),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllProfileOrthoMultiDimMultiProfile() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllProfile1);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllProfile1Request, networkAllProfile1),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            // write as an example
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllProfileContRaggedMultiProfiles() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllProfile2);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllProfile2Request, networkAllProfile2),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            // write as an example
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllProfileIncompleteMultiDimMultiProfiles() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllProfile3);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllProfile3Request, networkAllProfile3),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            // write as an example
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    // TODO - fix this shit, oostehtysswe is out dated
+    @Ignore
+    @Test
+    public void testNetworkAllProfileIndexedRaggedMultiProfiles() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllProfile4);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllProfile4Request, networkAllProfile4),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            // write as an example
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllProfileSingleDimSingleProfile() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllProfile5);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllProfile5Request, networkAllProfile5),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            // write as an example
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllTrajectoryProfileMultiDimMultiTrajectories() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectoryProfile1);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTrajectoryProfile1Request, networkAllTrajectoryProfile1),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            // write as an example
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllTrajectoryProfileMultiDimSingleTrajectory() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectoryProfile2);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTrajectoryProfile2Request, networkAllTrajectoryProfile2),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            // write as an example
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNetworkAllTrajectoryProfileRaggedMultiTrajectories() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectoryProfile3);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, networkAllTrajectoryProfile3Request, networkAllTrajectoryProfile3),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            // write as an example
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testWatlevNOAANAVDPRE() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(watlevNOAANavdPre);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhance(dataset, watlevNOAANavdRequest, watlevNOAANavdPre),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+            // write as an example
+            fileWriter(exampleOutputDir, "GetObservation-TimeSeries-om1.0.0.xml", write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    
     
 //    @Test
 //    public void testInsertClassNameHere() {

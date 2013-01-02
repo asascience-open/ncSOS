@@ -1,3 +1,4 @@
+
 <?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1"
     xmlns="http://www.opengis.net/sensorML/1.0.1"
@@ -12,47 +13,38 @@
             <sml:identification>
                 <sml:IdentifierList>
                     <sml:identifier name="SensorId">
-                        <sml:Term definition="sensorID">
-                            <sml:value>urn:tds:sensor.sos:NOAA_8724698::watlev</sml:value>
+                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/sensorID">
+                            <sml:value>urn:tds:sensor.sos:NOAA_8724698:watlev</sml:value>
                         </sml:Term>
                     </sml:identifier>
                     <sml:identifier name="units">
-                        <sml:Term definition="">
+                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/units">
                             <sml:value>m</sml:value>
                         </sml:Term>
                     </sml:identifier>
                     <sml:identifier name="_FillValue">
-                        <sml:Term definition="">
-                            <sml:value/>
+                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/_FillValue">
+                            <sml:value>-999.0</sml:value>
                         </sml:Term>
                     </sml:identifier>
                     <sml:identifier name="coordinates">
-                        <sml:Term definition="">
+                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/coordinates">
                             <sml:value>time lat lon</sml:value>
                         </sml:Term>
                     </sml:identifier>
                     <sml:identifier name="HDF5_chunksize">
-                        <sml:Term definition="">
-                            <sml:value/>
+                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/HDF5_chunksize">
+                            <sml:value>1</sml:value>
                         </sml:Term>
                     </sml:identifier>
                 </sml:IdentifierList>
             </sml:identification>
-            <sml:contact xlink:role="creator">
-                <sml:ResponseibleParty>
-                    <sml:organizationName/>
-                    <sml:contactInfo>
-                        <electronicAddress>
-                            <creator_url/>
-                            <creator_email/>
-                        </electronicAddress>
-                    </sml:contactInfo>
-                </sml:ResponseibleParty>
-            </sml:contact>
             <sml:location>
-                <gml:Point gml:id="STATION-LOCATION-NOAA_8724698">
-                    <gml:coordinates>24.631669998168945 -82.91999816894531</gml:coordinates>
-                </gml:Point>
+                <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                    <gml:posList srsDimension="2">
+24.631669998168945 -82.91999816894531
+</gml:posList>
+                </gml:LineString>
             </sml:location>
         </sml:System>
     </sml:member>

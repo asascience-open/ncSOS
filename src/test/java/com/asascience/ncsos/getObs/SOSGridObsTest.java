@@ -10,6 +10,7 @@ import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.*;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import org.apache.log4j.BasicConfigurator;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
@@ -27,6 +28,14 @@ public class SOSGridObsTest {
     private static String sst_1_reqs = "request=GetObservation&service=sos&version=1.0.0&lat=-52.0&lon=0.0&observedProperty=sst&offering=sst&eventtime=1990-01-01T00:00:00Z/2013-05-17T09:57:00.000-04:00&responseformat=";
     private static final String sst_2 = "resources/datasets/satellite-sst/SST_Global_2x2deg_20120627_0000.nc";
     private static String sst_2_reqs = "request=GetObservation&service=sos&version=1.0.0&lat=-54.0,-52.0,-50.0&lon=-120.0,0.0,74.0&observedProperty=sst&offering=sst&eventtime=1990-01-01T00:00:00Z/2013-05-17T09:57:00.000-04:00&responseformat=";
+    private static String sst_2_network_all = "request=GetObservation&service=sos&version=1.0.0&lat=-54.0,-52.0,-50.0&lon=-120.0,0.0,74.0&observedProperty=sst&offering=network-all&eventtime=1990-01-01T00:00:00Z/2013-05-17T09:57:00.000-04:00&responseformat=";
+    
+    // NODC Tests
+    private static final String datasets = "resources/datasets/";
+    private static final String sst_pathfinder = datasets + "nodc/00000110200000-NODC-L4_GHRSST-SSTskin-AVHRR_Pathfinder-PFV5.0_Daily_Climatology_1982_2008_DayNightCombined-v02.0-fv01.0.nc";
+    private static String sst_pathfinder_grid0 = "request=GetObservation&service=sos&version=1.0.0&lat=56.3611&lon=176.2466&observedProperty=analysed_sst&offering=Grid0&responseformat=";
+    private static String sst_pathfinder_network_all = "request=GetObservation&service=sos&version=1.0.0&lat=56.3611&lon=176.2466&observedProperty=sea_ice_fraction&offering=network_all&responseformat=";
+    
     private static String baseLocalDir = null;
     private static String outputDir = null;
     private static String exampleOutputDir = null;
@@ -38,6 +47,8 @@ public class SOSGridObsTest {
             // exit early if the environ is already set
             return;
         }
+        BasicConfigurator.resetConfiguration();
+        BasicConfigurator.configure();
         String container = "getObsGrid";
         InputStream templateInputStream = null;
         try {
@@ -136,6 +147,90 @@ public class SOSGridObsTest {
             writer.flush();
             writer.close();
             fileWriter(outputDir, "testGetObsGridSSTMultipleLatLon_output.xml", writer);
+            assertFalse("Have an exception in output", writer.toString().contains("Exception"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testGetObsGridNetworkAll() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + sst_2);
+            Writer writer = new CharArrayWriter();
+            SOSParser parser = new SOSParser();
+            try {
+                sst_2_network_all += URLEncoder.encode("text/xml;subtype=\"om/1.0.0\"", "UTF-8");
+            } catch (Exception e) {
+                System.out.println("couldn't encode for sst1 - " + e.getMessage());
+            }
+            HashMap<String, Object> outMap = parser.enhance(dataset, sst_2_network_all, baseLocalDir + sst_2);
+            SOSOutputFormatter output = (SOSOutputFormatter)outMap.get("outputHandler");
+            assertNotNull("output is null", output);
+            output.writeOutput(writer);
+            writer.flush();
+            writer.close();
+            fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
+            assertFalse("Have an exception in output", writer.toString().contains("Exception"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNodcPathfinderSSTGrid0() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + sst_pathfinder);
+            Writer writer = new CharArrayWriter();
+            SOSParser parser = new SOSParser();
+            try {
+                sst_pathfinder_grid0 += URLEncoder.encode("text/xml;subtype=\"om/1.0.0\"", "UTF-8");
+            } catch (Exception e) {
+                System.out.println("couldn't encode for sst1 - " + e.getMessage());
+            }
+            HashMap<String, Object> outMap = parser.enhance(dataset, sst_pathfinder_grid0, baseLocalDir + sst_pathfinder);
+            SOSOutputFormatter output = (SOSOutputFormatter)outMap.get("outputHandler");
+            assertNotNull("output is null", output);
+            output.writeOutput(writer);
+            writer.flush();
+            writer.close();
+            fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
+            assertFalse("Have an exception in output", writer.toString().contains("Exception"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testNodcPathfinderSSTNetworkAll() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + sst_pathfinder);
+            Writer writer = new CharArrayWriter();
+            SOSParser parser = new SOSParser();
+            try {
+                sst_pathfinder_network_all += URLEncoder.encode("text/xml;subtype=\"om/1.0.0\"", "UTF-8");
+            } catch (Exception e) {
+                System.out.println("couldn't encode for sst1 - " + e.getMessage());
+            }
+            HashMap<String, Object> outMap = parser.enhance(dataset, sst_pathfinder_network_all, baseLocalDir + sst_pathfinder);
+            SOSOutputFormatter output = (SOSOutputFormatter)outMap.get("outputHandler");
+            assertNotNull("output is null", output);
+            output.writeOutput(writer);
+            writer.flush();
+            writer.close();
+            fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
             assertFalse("Have an exception in output", writer.toString().contains("Exception"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());

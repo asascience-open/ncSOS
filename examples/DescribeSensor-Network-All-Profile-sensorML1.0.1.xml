@@ -1,0 +1,164 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML version="1.0.1"
+    xmlns="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:swe="http://www.opengis.net/swe/1.0.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
+    <sml:member>
+        <sml:System gml:id="network-all">
+            <gml:description/>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="NetworkId">
+                        <sml:Term definition="">
+                            <sml:value>urn:tds:network:all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Short Name">
+                        <sml:Term definition="urn:ogc:identifier:OGC:shortName">
+                            <sml:value>all</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="Long Name">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:longName">
+                            <sml:value>All stations in the dataset</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:components>
+                <sml:ComponentList>
+                    <sml:System gml:id="station-Profile0">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Profile0</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4329">
+                                <gml:posList srsDimension="3">
+13.0 34.0 7.868650436401367
+13.0 34.0 0.9842370748519897
+13.0 34.0 2.327223539352417
+13.0 34.0 0.4174230694770813
+13.0 34.0 9.538612365722656
+13.0 34.0 8.072047233581543
+13.0 34.0 5.667146682739258
+13.0 34.0 4.841238498687744
+13.0 34.0 6.417487144470215
+0.0 0.0 0.0
+</gml:posList>
+                            </gml:LineString>
+                        </sml:location>
+                    </sml:System>
+                    <sml:System gml:id="station-Profile1">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Profile1</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4329">
+                                <gml:posList srsDimension="3">
+82.0 15.0 2.5556228160858154
+82.0 15.0 3.6299843788146973
+82.0 15.0 9.82462215423584
+82.0 15.0 0.12355680018663406
+82.0 15.0 2.600933790206909
+82.0 15.0 8.397491455078125
+</gml:posList>
+                            </gml:LineString>
+                        </sml:location>
+                    </sml:System>
+                    <sml:System gml:id="station-Profile2">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Profile2</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4329">
+                                <gml:posList srsDimension="3">
+71.0 134.0 3.5336036682128906
+71.0 134.0 8.285229682922363
+</gml:posList>
+                            </gml:LineString>
+                        </sml:location>
+                    </sml:System>
+                    <sml:System gml:id="station-Profile3">
+                        <sml:identification>
+                            <sml:IdentifierList>
+                                <sml:identifier name="StationId">
+                                    <sml:Term definition="stationID">
+                                    <sml:value>urn:tds:station.sos:Profile3</sml:value>
+                                    </sml:Term>
+                                </sml:identifier>
+                            </sml:IdentifierList>
+                        </sml:identification>
+                        <sml:location>
+                            <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4329">
+                                <gml:posList srsDimension="3">
+104.0 130.0 2.0134501457214355
+104.0 130.0 0.4087260365486145
+104.0 130.0 5.952526569366455
+104.0 130.0 6.739954471588135
+104.0 130.0 2.3391714096069336
+104.0 130.0 6.198770523071289
+104.0 130.0 8.314618110656738
+104.0 130.0 2.1482958793640137
+104.0 130.0 1.9058281183242798
+104.0 130.0 6.902799129486084
+104.0 130.0 4.145098686218262
+104.0 130.0 9.93668270111084
+104.0 130.0 1.8275083303451538
+104.0 130.0 6.753675937652588
+104.0 130.0 0.10387390851974487
+104.0 130.0 2.9291932582855225
+104.0 130.0 6.981412887573242
+104.0 130.0 7.3580427169799805
+104.0 130.0 1.6602355241775513
+104.0 130.0 6.592995643615723
+104.0 130.0 6.391391754150391
+104.0 130.0 1.3327699899673462
+104.0 130.0 0.5493549704551697
+104.0 130.0 7.4824676513671875
+104.0 130.0 6.633851528167725
+104.0 130.0 8.227802276611328
+104.0 130.0 4.503839492797852
+104.0 130.0 0.6971308588981628
+104.0 130.0 6.528759956359863
+104.0 130.0 0.045412030071020126
+104.0 130.0 1.109982967376709
+104.0 130.0 8.062114715576172
+104.0 130.0 8.553851127624512
+104.0 130.0 9.812335968017578
+104.0 130.0 5.078103542327881
+104.0 130.0 2.738007068634033
+104.0 130.0 6.956643581390381
+104.0 130.0 3.449422597885132
+104.0 130.0 8.811883926391602
+104.0 130.0 3.040952444076538
+</gml:posList>
+                            </gml:LineString>
+                        </sml:location>
+                    </sml:System>
+                </sml:ComponentList>
+            </sml:components>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>

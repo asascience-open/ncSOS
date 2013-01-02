@@ -175,7 +175,7 @@ public class XMLDomUtils {
     public static Document addNodeAllOptions() {
         return null;
     }
-
+    
     public static Document addNodeAllOptions(Document doc, String Obs, String nodeName, String value, int stationNumber) {
         NodeList obsOfferingList = doc.getElementsByTagName(Obs);
         Element obsOfferEl = (Element) obsOfferingList.item(stationNumber);

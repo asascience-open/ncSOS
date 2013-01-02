@@ -10,9 +10,6 @@
                   xsi:schemaLocation="http://www.opengis.net/sos/1.0 http://schemas.opengis.net/sos/1.0.0/sosGetCapabilities.xsd"
                   version="1.0.0">
 
-	<!--~~~~~~~~~~~~~~~~~~~~~~~~-->
-	<!-- Service Identification -->
-	<!--~~~~~~~~~~~~~~~~~~~~~~~~-->
 	<ows:ServiceIdentification>
 		<ows:Title> </ows:Title>
 		<ows:Abstract> </ows:Abstract>
@@ -22,11 +19,8 @@
 		<ows:ServiceType codeSpace="http://opengeospatial.net">OGC:SOS</ows:ServiceType>
 		<ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
 		<ows:Fees>NONE</ows:Fees>
-		<ows:AccessConstraints>NONE</ows:AccessConstraints>
+		<ows:AccessConstraints></ows:AccessConstraints>
 	</ows:ServiceIdentification>
-	<!--~~~~~~~~~~~~~~~~~~~~~~-->
-	<!-- Provider Description -->
-	<!--~~~~~~~~~~~~~~~~~~~~~~-->
 	<ows:ServiceProvider>
 		<ows:ProviderName> </ows:ProviderName>
 		<ows:ProviderSite> </ows:ProviderSite>
@@ -35,8 +29,8 @@
 			<ows:PositionName> </ows:PositionName>
 			<ows:ContactInfo>
 				<ows:Phone>
-                                <ows:Voice> </ows:Voice>
-                                </ows:Phone>
+					<ows:Voice> </ows:Voice>
+                </ows:Phone>
 				<ows:Address>
 					<ows:DeliveryPoint> </ows:DeliveryPoint>
 					<ows:City> </ows:City>
@@ -48,25 +42,20 @@
 			</ows:ContactInfo>
 		</ows:ServiceContact>
 	</ows:ServiceProvider>
-	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-	<!-- operations Metadata Section -->
-	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 	<ows:OperationsMetadata>
 		<ows:Operation name="GetCapabilities">
 			<ows:DCP>
 				<ows:HTTP>
 					<ows:Get />
-					<ows:Post />
 				</ows:HTTP>
 			</ows:DCP>
-			<ows:Parameter name="service" use="required">
+			<ows:Parameter name="Sections">
 				<ows:AllowedValues>
-					<ows:Value>SOS</ows:Value>
-				</ows:AllowedValues>
-			</ows:Parameter>
-			<ows:Parameter name="version" use="required">
-				<ows:AllowedValues>
-					<ows:Value>1.0.0</ows:Value>
+				  <ows:Value>ServiceIdentification</ows:Value>
+				  <ows:Value>ServiceProvider</ows:Value>
+				  <ows:Value>OperationsMetadata</ows:Value>
+				  <ows:Value>Contents</ows:Value>
+				  <ows:Value>All</ows:Value>
 				</ows:AllowedValues>
 			</ows:Parameter>
 		</ows:Operation>
@@ -74,25 +63,14 @@
 			<ows:DCP>
 				<ows:HTTP>
 					<ows:Get />
-					<ows:Post />
 				</ows:HTTP>
 			</ows:DCP>
 			<ows:Parameter name="offering" use="required"/>
-			<ows:Parameter name="observedproperty" use="required"/>
-			<ows:Parameter name="time" use="optional"/>
-			<ows:Parameter name="resposneformat" use="required">
+			<ows:Parameter name="observedProperty" use="required"/>
+			<ows:Parameter name="eventTime" use="optional"/>
+			<ows:Parameter name="responseFormat" use="required">
 				<ows:AllowedValues>
 					<ows:Value>text/xml;subtype="om/1.0.0"</ows:Value>
-				</ows:AllowedValues>
-			</ows:Parameter>
-			<ows:Parameter name="service" use="required">
-				<ows:AllowedValues>
-					<ows:Value>SOS</ows:Value>
-				</ows:AllowedValues>
-			</ows:Parameter>
-			<ows:Parameter name="version" use="required">
-				<ows:AllowedValues>
-					<ows:Value>1.0.0</ows:Value>
 				</ows:AllowedValues>
 			</ows:Parameter>
 		</ows:Operation>
@@ -100,7 +78,6 @@
 			<ows:DCP>
 				<ows:HTTP>
 					<ows:Get />
-					<ows:Post />
 				</ows:HTTP>
 			</ows:DCP>
 			<ows:Parameter name="procedure" use="required"/>
@@ -109,21 +86,18 @@
 					<ows:Value>text/xml;subtype="sensorML/1.0.1"</ows:Value>
 				</ows:AllowedValues>
 			</ows:Parameter>
-			<ows:Parameter name="service" use="required">
-				<ows:AllowedValues>
-					<ows:Value>SOS</ows:Value>
-				</ows:AllowedValues>
-			</ows:Parameter>
-			<ows:Parameter name="version" use="required">
-				<ows:AllowedValues>
-					<ows:Value>1.0.0</ows:Value>
-				</ows:AllowedValues>
-			</ows:Parameter>
 		</ows:Operation>
+		<ows:Parameter name="service" use="required">
+			<ows:AllowedValues>
+				<ows:Value>SOS</ows:Value>
+			</ows:AllowedValues>
+		</ows:Parameter>
+		<ows:Parameter name="version" use="required">
+			<ows:AllowedValues>
+				<ows:Value>1.0.0</ows:Value>
+			</ows:AllowedValues>
+		</ows:Parameter>
 	</ows:OperationsMetadata>
-	<!--~~~~~~~~~~~~~~~~~~~~~~~-->
-	<!-- Observation Offerings -->
-	<!--~~~~~~~~~~~~~~~~~~~~~~~-->
 	<Contents>
 		<ObservationOfferingList>
 			
