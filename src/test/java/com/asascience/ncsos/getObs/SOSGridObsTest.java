@@ -49,18 +49,18 @@ public class SOSGridObsTest {
         }
         BasicConfigurator.resetConfiguration();
         BasicConfigurator.configure();
-        String container = "getObsGrid";
+        String container = "testConfiguration";
         InputStream templateInputStream = null;
         try {
             File configFile = new File("resources/tests_config.xml");
             templateInputStream = new FileInputStream(configFile);
             Document configDoc = XMLDomUtils.getTemplateDom(templateInputStream);
             // read from the config file
-            outputDir = XMLDomUtils.getNodeValue(configDoc, container, "outputBase");
-            baseLocalDir = XMLDomUtils.getNodeValue(configDoc, container, "projectDir");
-            
-            container = "examples";
-            exampleOutputDir = XMLDomUtils.getNodeValue(configDoc, container, "outputDir");
+            outputDir = XMLDomUtils.getNodeValue(configDoc, container, "outputDirectory");
+            outputDir += "get_obs/";
+            baseLocalDir = XMLDomUtils.getNodeValue(configDoc, container, "projectDirectory");
+            exampleOutputDir = XMLDomUtils.getNodeValue(configDoc, container, "outputDirectory");
+            exampleOutputDir += "examples/";
         } catch (FileNotFoundException fnfex) {
             System.out.println(fnfex.getMessage());
         } finally {
@@ -74,6 +74,9 @@ public class SOSGridObsTest {
         }
         
         File file = new File(outputDir);
+        file.mkdirs();
+        
+        file = new File(exampleOutputDir);
         file.mkdirs();
     }
     
