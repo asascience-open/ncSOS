@@ -72,18 +72,18 @@ public class SOSDescribeSensorNetworkTest {
         }
         BasicConfigurator.resetConfiguration();
         BasicConfigurator.configure();
-        String container = "describeNetwork";
+        String container = "testConfiguration";
         InputStream templateInputStream = null;
         try {
             File configFile = new File("resources/tests_config.xml");
             templateInputStream = new FileInputStream(configFile);
             Document configDoc = XMLDomUtils.getTemplateDom(templateInputStream);
             // read from the config file
-            outputDir = XMLDomUtils.getNodeValue(configDoc, container, "outputDir");
-            baseLocalDir = XMLDomUtils.getNodeValue(configDoc, container, "projectDir");
-            
-            container = "examples";
-            exampleOutputDir = XMLDomUtils.getNodeValue(configDoc, container, "outputDir");
+            outputDir = XMLDomUtils.getNodeValue(configDoc, container, "outputDirectory");
+            outputDir += "desc_sen/";
+            baseLocalDir = XMLDomUtils.getNodeValue(configDoc, container, "projectDirectory");
+            exampleOutputDir = XMLDomUtils.getNodeValue(configDoc, container, "outputDirectory");
+            exampleOutputDir += "examples/";
         } finally {
             if (templateInputStream != null) {
                 try {
@@ -95,6 +95,9 @@ public class SOSDescribeSensorNetworkTest {
         }
 
         File file = new File(outputDir);
+        file.mkdirs();
+        
+        file = new File(exampleOutputDir);
         file.mkdirs();
         
         query += URLEncoder.encode("text/xml;subtype=\"sensorML/1.0.1\"", "UTF-8") + "&";

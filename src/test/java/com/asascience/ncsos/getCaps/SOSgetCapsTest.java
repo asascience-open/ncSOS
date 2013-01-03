@@ -23,8 +23,9 @@ import ucar.nc2.ft.FeatureDataset;
 import ucar.nc2.ft.FeatureDatasetFactoryManager;
 
 /**
- *
+ * Test suite for Get Capabilities requests.
  * @author abird
+ * @author scowan
  */
 public class SOSgetCapsTest {
     
@@ -106,19 +107,21 @@ public class SOSgetCapsTest {
         }
         BasicConfigurator.resetConfiguration();
         BasicConfigurator.configure();
-        String container = "getCaps";
+        String container = "testConfiguration";
         InputStream templateInputStream = null;
         try {
             File configFile = new File("resources/tests_config.xml");
             templateInputStream = new FileInputStream(configFile);
             Document configDoc = XMLDomUtils.getTemplateDom(templateInputStream);
             // read from the config file
-            base = XMLDomUtils.getNodeValue(configDoc, container, "outputBase");
-            baseLocalDir = XMLDomUtils.getNodeValue(configDoc, container, "projectDir");
+            base = XMLDomUtils.getNodeValue(configDoc, container, "outputDirectory");
+            // add a get_caps for output dir
+            base += "get_caps/";
+            baseLocalDir = XMLDomUtils.getNodeValue(configDoc, container, "projectDirectory");
             baseTomcatDir = XMLDomUtils.getNodeValue(configDoc, container, "tomcatLocation");
-            
-            container = "examples";
-            exampleOutputDir = XMLDomUtils.getNodeValue(configDoc, container, "outputDir");
+            exampleOutputDir = XMLDomUtils.getNodeValue(configDoc, container, "outputDirectory");
+            // add examples for output dir
+            exampleOutputDir += "examples/";
         } finally {
             if (templateInputStream != null) {
                 try {
@@ -130,6 +133,9 @@ public class SOSgetCapsTest {
         }
         
         File file = new File(base);
+        file.mkdirs();
+        
+        file = new File(exampleOutputDir);
         file.mkdirs();
     }
     
