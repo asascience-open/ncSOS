@@ -182,17 +182,18 @@ public class SOSGetObsTest {
         }
         BasicConfigurator.resetConfiguration();
         BasicConfigurator.configure();
-        String container = "getObs";
+        String container = "testConfiguration";
         InputStream templateInputStream = null;
         try {
             File configFile = new File("resources/tests_config.xml");
             templateInputStream = new FileInputStream(configFile);
             Document configDoc = XMLDomUtils.getTemplateDom(templateInputStream);
-            
-            base = XMLDomUtils.getNodeValue(configDoc, container, "outputBase");
-            
-            container = "examples";
-            exampleOutputDir = XMLDomUtils.getNodeValue(configDoc, container, "outputDir");
+            base = XMLDomUtils.getNodeValue(configDoc, container, "outputDirectory");
+            // add get_obs to output dir
+            base += "get_obs/";
+            exampleOutputDir = XMLDomUtils.getNodeValue(configDoc, container, "outputDirectory");
+            // add examples to output dir
+            exampleOutputDir += "examples/";
         } catch (FileNotFoundException fnfex) {
             System.out.println(fnfex.getMessage());
         } finally {
@@ -206,6 +207,9 @@ public class SOSGetObsTest {
         }
         
         File file = new File(base);
+        file.mkdirs();
+        
+        file = new File(exampleOutputDir);
         file.mkdirs();
     }
     
