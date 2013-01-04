@@ -258,7 +258,7 @@ public class GetCapsOutputter implements SOSOutputFormatter {
             procedure.appendChild(allowedValues);
             // add network-all value
             Element na = getDocument().createElement("ows:Value");
-            na.setTextContent("urn:ioos:" + SOSBaseRequestHandler.getNamingAuthority() + ":network:all");
+            na.setTextContent("urn:ioos:network:" + SOSBaseRequestHandler.getNamingAuthority() + ":all");
             allowedValues.appendChild(na);
             for (String stationName : stationNames) {
                 Element elem = getDocument().createElement("ows:Value");
@@ -283,7 +283,7 @@ public class GetCapsOutputter implements SOSOutputFormatter {
         desc.setTextContent("All stations in the netCDF dataset.");
         obsOffering.appendChild(desc);
         Element name = document.createElement("gml:name");
-        name.setTextContent("urn:ioos:" + SOSBaseRequestHandler.getNamingAuthority() + ":network:all");
+        name.setTextContent("urn:ioos:network:" + SOSBaseRequestHandler.getNamingAuthority() + ":all");
         obsOffering.appendChild(name);
         Element srsName = getDocument().createElement("gml:srsName");
         srsName.setTextContent("EPSG:4326");

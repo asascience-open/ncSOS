@@ -308,7 +308,7 @@ public class DescribeNetworkFormatter implements SOSOutputFormatter {
         // add 'NetworkId'
         Element parent = addNewNodeToParentWithAttribute("sml:identifier", identList, "name", "NetworkId");
         parent = addNewNodeToParentWithAttribute("sml:Term", parent, "definition", "");
-        addNewNodeToParentWithTextValue("sml:value", parent, "urn:ioos:" + SOSBaseRequestHandler.getNamingAuthority() + ":network:all");
+        addNewNodeToParentWithTextValue("sml:value", parent, "urn:ioos:network:" + SOSBaseRequestHandler.getNamingAuthority() + ":all");
         
         parent = addNewNodeToParentWithAttribute("sml:identifier", identList, "name", "Short Name");
         parent = addNewNodeToParentWithAttribute("sml:Term", parent, "definition", "urn:ogc:identifier:OGC:shortName");

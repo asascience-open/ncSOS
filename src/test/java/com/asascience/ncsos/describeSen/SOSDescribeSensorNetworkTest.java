@@ -26,7 +26,7 @@ public class SOSDescribeSensorNetworkTest {
     private static String outputDir = null;
     private static String baseLocalDir = null;
     private static String exampleOutputDir = null;
-    private static String query = "request=DescribeSensor&service=sos&version=1.0.0&procedure=urn:ioos:sos:network:all&responseformat=";
+    private static String query = "request=DescribeSensor&service=sos&version=1.0.0&procedure=urn:ioos:network:sos:all&responseformat=";
     
     private static final String data_folder = "resources/datasets/";
     
