@@ -336,21 +336,28 @@ public abstract class SOSBaseRequestHandler {
      * @return the index of the station; -1 if no station with the name exists
      */
     protected int getStationIndex(String stationToLookFor) {
-        // look for the station in the hashmap and return its index
-        int retval = -1;
-        
-        if (stationNames != null && stationNames.containsValue(stationToLookFor)) {
-            int index = 0;
-            for (String stationName : stationNames.values()) {
-                if (stationToLookFor.equalsIgnoreCase(stationName)) {
-                    retval = index;
-                    break;
+        try {
+            if (stationToLookFor == null)
+                throw new Exception("Looking for null station");
+            // look for the station in the hashmap and return its index
+            int retval = -1;
+            if (stationNames != null && stationNames.containsValue(stationToLookFor)) {
+                int index = 0;
+                for (String stationName : stationNames.values()) {
+                    if (stationToLookFor.equalsIgnoreCase(stationName)) {
+                        retval = index;
+                        break;
+                    }
+                    index++;
                 }
-                index++;
             }
+
+            return retval;
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
         
-        return retval;
+        return -1;
     }
     
     /**

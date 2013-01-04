@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -374,10 +375,40 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         parent = addNewNodeToParentWithAttribute("gml:posList", parent, "srsDimension", "3");
         // add values for each pair of coords
         String coordsString = "\n";
+        
         for (int i=0; i<coords.length; i++) {
             if (coords[i].length == 3 && Math.abs(coords[i][0]) < 180 && Math.abs(coords[i][1]) < 180 && coords[i][2] > -999)
                 coordsString += coords[i][0] + " " + coords[i][1] + " " + coords[i][2] + "\n";
         }
+        parent.setTextContent(coordsString);
+    }
+    
+    public void setOrderedLocationNode3Dimension(String stationName, double[][] coords) {
+        setOrderedLocationNode3Dimension(stationName, coords, "http://www.opengis.net/def/crs/EPSG/0/4329");
+    }
+    
+    public void setOrderedLocationNode3Dimension(String stationName, double[][] coords, String srs) {
+        if (coords.length < 1)
+            return;
+        
+        Element parent = (Element) getParentNode().getElementsByTagName("sml:location").item(0);
+        
+        parent = addNewNodeToParentWithAttribute("gml:LineString", parent, "srsName", srs);
+        parent = addNewNodeToParentWithAttribute("gml:posList", parent, "srsDimension", "3");
+        String coordsString = "\n";
+        
+        TreeMap<Double,Double[]> depthOrdered = new TreeMap<Double,Double[]>();
+        for (int i=0; i<coords.length; i++) {
+            if (coords[i].length == 3 && !depthOrdered.containsKey(coords[i][2]) &&
+                coords[i][2] > -999 && Math.abs(coords[i][0]) < 180 && Math.abs(coords[i][1]) < 180)
+                depthOrdered.put(coords[i][2], new Double[] { coords[i][0], coords[i][1] });
+        }
+        
+        // go through now ordered tree and add the values
+        for (Double key : depthOrdered.keySet()) {
+            coordsString += depthOrdered.get(key)[0] + " " + depthOrdered.get(key)[1] + " " + key + "\n";
+        }
+        
         parent.setTextContent(coordsString);
     }
     

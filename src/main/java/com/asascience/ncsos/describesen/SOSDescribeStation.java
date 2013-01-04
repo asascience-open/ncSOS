@@ -10,7 +10,10 @@ import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.TreeMap;
 import org.w3c.dom.Element;
+import ucar.ma2.Array;
+import ucar.ma2.Index;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -35,7 +38,7 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
     protected Attribute platformType, historyAttribute;
     protected String stationName;
     protected String description;
-    protected double[] stationCoords;
+    protected double[][] stationCoords;
     protected ArrayList<Attribute> contributorAttributes;
     protected ArrayList<Variable> documentVariables;
     protected final String procedure;
@@ -91,7 +94,7 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
         // set our coords
         if (stationVariable != null) {
             stationCoords = getStationCoords(latVariable, lonVariable);
-            if (stationCoords == null || (stationCoords[0] == Double.NaN && stationCoords[1] == Double.NaN))
+            if (stationCoords == null || stationCoords.length < 1)
                 errorString = "Could not find station " + stationName + " in dataset";
         } else {
             errorString = "Could not find a variable containing station info.";
@@ -198,6 +201,7 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
     protected void formatSetStationComponentList(DescribeNetworkFormatter output) {
         // iterate through each station name, add a station to the component list and setup each station
         for (String stName : getStationNames().values()) {
+            System.out.println("Setting station: " + stName);
             int stIndex = getStationIndex(stName);
             // add a new station
             Element stNode = output.addNewStationWithId("station-"+stName);
@@ -206,8 +210,11 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
             // set identification for station
             formatSetStationIdentification(output, stNode, stName);
             // set location for station
-            double[][] coords = new double[][] { getStationCoords(stIndex) };
-            output.setStationLocationNode2Dimension(stNode, stationName, coords);
+            double[][] coords = getStationCoords(latVariable, lonVariable, stIndex);
+            if (coords.length > 1)
+                output.setOrderedStationLocationNode3Dimension(stNode, stationName, coords);
+            else
+                output.setStationLocationNode2Dimension(stNode, stationName, coords);
             // remove unwanted nodes for each station
             output.removeStationPosition(stNode);
             output.removeStationPositions(stNode);
@@ -394,6 +401,10 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
     }
     
     
+    protected double[][] getStationCoords(Variable lat, Variable lon) {
+        return getStationCoords(lat, lon, getStationIndex(stationName));
+    }
+    
     /**
      * finds the latitude and longitude of the station defined by fields
      * stationVariable and stationName
@@ -401,21 +412,81 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
      * @param lon longitude Variabe from the dataset
      * @return an array of the latitude and longitude pair
      */
-    protected final double[] getStationCoords(Variable lat, Variable lon) {
+    private double[][] getStationCoords(Variable lat, Variable lon, int stationIndex) {
         try {
-            // get the lat/lon of the station
-            // station id should be the last value in the procedure
-            int stationIndex = getStationIndex(stationName);
-            
-            if (stationIndex >= 0) {
-                double[] coords = new double[] { Double.NaN, Double.NaN };
+            if (stationIndex >= 0 && depthVariable == null || depthVariable.getRank() < 1) {
+                Double[] coords = new Double[] { Double.NaN, Double.NaN };
             
                 // find lat/lon values for the station
                 coords[0] = lat.read().getDouble(stationIndex);
                 coords[1] = lon.read().getDouble(stationIndex);
 
-                return coords;
+                return new double[][] { { coords[0], coords[1], 0 } };
+            } else if (stationIndex >= 0 && depthVariable.getRank() == 3) {
+                // rank 1 is time index, rank 2 is depth index
+                int depth = depthVariable.getShape(2) * depthVariable.getShape(1);
+                double[][] retval = new double[depth][3];
+                double dlat = lat.read().getDouble(stationIndex);
+                double dlon = lon.read().getDouble(stationIndex);
+                // initialize depths to NaN
+                for (int j=0; j<depth; j++) {
+                    retval[j][2] = Double.NaN;
+                }
+                Array depthArray = depthVariable.read().section(new int[] { stationIndex, 0, 0 }, new int[] { 1, depthVariable.getShape(1), depthVariable.getShape(2) });
+                depthArray.reduce();
+                // add each depth to the retval
+                int currentDepthIndex = 0;
+                for (int o=0; o<depthVariable.getShape(1); o++) {
+                    for (int i=0; i<depthVariable.getShape(2); i++) {
+                        retval[currentDepthIndex][0] = dlat;
+                        retval[currentDepthIndex][1] = dlon;
+                        retval[currentDepthIndex][2] = depthArray.getDouble(currentDepthIndex);
+                        currentDepthIndex++;
+                    }
+                }
+                return retval;
+            } else if (stationIndex >=0 && depthVariable.getRank() == 2) {
+                int depth = depthVariable.getShape(1);
+                double[][] retval = new double[depth][3];
+                double dlat = lat.read().getDouble(stationIndex);
+                double dlon = lon.read().getDouble(stationIndex);
+                // initialize depths to NaN
+                for (int j=0; j<depth; j++) {
+                    retval[j][2] = Double.NaN;
+                }
+                Array depthArray = depthVariable.read().section(new int[] { stationIndex, 0 }, new int[] { 1, depth });
+                depthArray.reduce();
+                // add each depth to the retval
+                for (int i=0; i<depth; i++) {
+                    retval[i][0] = dlat;
+                    retval[i][1] = dlon;
+                    retval[i][2] = depthArray.getDouble(i);
+                }
+                return retval;
+            } else if (stationIndex >= 0 && depthVariable.getRank() == 1) {
+                int depth = depthVariable.getShape(0);
+                double[][] retval = new double[depth][3];
+                double dlat = lat.read().getDouble(stationIndex);
+                double dlon = lon.read().getDouble(stationIndex);
+                // initialize depths to NaN
+                for (int j=0; j<depth; j++) {
+                    retval[j][2] = Double.NaN;
+                }
+                Array depthArray = depthVariable.read();
+                // add each depth to retval
+                for (int i=0; i<depth; i++) {
+                    retval[i][0] = dlat;
+                    retval[i][1] = dlon;
+                    retval[i][2] = depthArray.getDouble(i);
+                }
+                return retval;
             } else {
+                System.err.println("Cannot get station coords! index: " + stationIndex + "; depth variable's rank is " + depthVariable.getRank());
+                System.err.println("Depth var name: " + depthVariable.getFullName());
+                System.err.println("Depth shape: ");
+                for (int i=0; i<depthVariable.getShape().length;i++) {
+                    System.err.print(depthVariable.getShape(i) + " | ");
+                }
                 return null;
             }
         } catch (Exception e) {
@@ -451,10 +522,17 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
      */
     protected void formatSetLocationNode(DescribeSensorFormatter output) {
         if (stationCoords != null) {
-            if (getCRSSRSAuthorities() != null)
-                output.setLocationNode2Dimension(stationName, new double[][] { stationCoords }, getCRSSRSAuthorities()[0]);
-            else
-                output.setLocationNode2Dimension(stationName, new double[][] { stationCoords });
+            if (stationCoords.length > 1) {
+                if (getCRSSRSAuthorities() != null)
+                    output.setOrderedLocationNode3Dimension(stationName, stationCoords, getCRSSRSAuthorities()[0]);
+                else
+                    output.setOrderedLocationNode3Dimension(stationName, stationCoords);
+            } else {
+                if (getCRSSRSAuthorities() != null)
+                    output.setLocationNode2Dimension(stationName, stationCoords, getCRSSRSAuthorities()[0]);
+                else
+                    output.setLocationNode2Dimension(stationName, stationCoords);
+            }
         }
     }
     
