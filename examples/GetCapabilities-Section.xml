@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Capabilities version="1.0.0" xmlns="http://www.opengis.net/sos/1.0"
-    xmlns:gml="http://www.opengis.net/gml"
+<sos:Capabilities version="1.0.0" xmlns:gml="http://www.opengis.net/gml"
     xmlns:oost="http://www.oostethys.org/schemas/0.1.0/oostethys"
     xmlns:ows="http://www.opengis.net/ows/1.1"
+    xmlns:sos="http://www.opengis.net/sos/1.0"
     xmlns:swe="http://www.opengis.net/swe/1.0.1"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sos/1.0 http://schemas.opengis.net/sos/1.0.0/sosGetCapabilities.xsd">
@@ -74,10 +74,8 @@
             </ows:Parameter>
             <ows:Parameter name="observedProperty" use="required">
                 <ows:AllowedValues>
-                    <ows:value>time</ows:value>
                     <ows:value>temperature</ows:value>
                     <ows:value>salinity</ows:value>
-                    <ows:value>alt</ows:value>
                 </ows:AllowedValues>
             </ows:Parameter>
             <ows:Parameter name="eventTime" use="optional">
@@ -101,37 +99,25 @@
             </ows:DCP>
             <ows:Parameter name="procedure" use="required">
                 <ows:AllowedValues>
-                    <ows:Value>urn:tds:network:all</ows:Value>
-                    <ows:Value>urn:tds:station.sos:Trajectory0</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Trajectory0:time</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Trajectory0:temperature</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Trajectory0:salinity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Trajectory0:alt</ows:Value>
-                    <ows:Value>urn:tds:station.sos:Trajectory1</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Trajectory1:time</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Trajectory1:temperature</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Trajectory1:salinity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Trajectory1:alt</ows:Value>
-                    <ows:Value>urn:tds:station.sos:Trajectory2</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Trajectory2:time</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Trajectory2:temperature</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Trajectory2:salinity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Trajectory2:alt</ows:Value>
-                    <ows:Value>urn:tds:station.sos:Trajectory3</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Trajectory3:time</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Trajectory3:temperature</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Trajectory3:salinity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Trajectory3:alt</ows:Value>
-                    <ows:Value>urn:tds:station.sos:Trajectory4</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Trajectory4:time</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Trajectory4:temperature</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Trajectory4:salinity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Trajectory4:alt</ows:Value>
-                    <ows:Value>urn:tds:station.sos:Trajectory5</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Trajectory5:time</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Trajectory5:temperature</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Trajectory5:salinity</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Trajectory5:alt</ows:Value>
+                    <ows:Value>urn:ioos:sos:network:all</ows:Value>
+                    <ows:Value>urn:ioos:station:sos:Trajectory0</ows:Value>
+                    <ows:Value>urn:ioos:sensor:sos:Trajectory0:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:sos:Trajectory0:salinity</ows:Value>
+                    <ows:Value>urn:ioos:station:sos:Trajectory1</ows:Value>
+                    <ows:Value>urn:ioos:sensor:sos:Trajectory1:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:sos:Trajectory1:salinity</ows:Value>
+                    <ows:Value>urn:ioos:station:sos:Trajectory2</ows:Value>
+                    <ows:Value>urn:ioos:sensor:sos:Trajectory2:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:sos:Trajectory2:salinity</ows:Value>
+                    <ows:Value>urn:ioos:station:sos:Trajectory3</ows:Value>
+                    <ows:Value>urn:ioos:sensor:sos:Trajectory3:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:sos:Trajectory3:salinity</ows:Value>
+                    <ows:Value>urn:ioos:station:sos:Trajectory4</ows:Value>
+                    <ows:Value>urn:ioos:sensor:sos:Trajectory4:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:sos:Trajectory4:salinity</ows:Value>
+                    <ows:Value>urn:ioos:station:sos:Trajectory5</ows:Value>
+                    <ows:Value>urn:ioos:sensor:sos:Trajectory5:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:sos:Trajectory5:salinity</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
             <ows:Parameter name="responseformat" use="required">
@@ -151,11 +137,11 @@
             </ows:AllowedValues>
         </ows:Parameter>
     </ows:OperationsMetadata>
-    <Contents>
-        <ObservationOfferingList>
-            <ObservationOffering gml:id="network-all">
+    <sos:Contents>
+        <sos:ObservationOfferingList>
+            <sos:ObservationOffering gml:id="network-all">
                 <gml:description>All stations in the netCDF dataset.</gml:description>
-                <gml:name>urn:tds:network:all</gml:name>
+                <gml:name>urn:ioos:sos:network:all</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
@@ -163,28 +149,32 @@
                         <gml:upperCorner>44.54783248901367 -0.9158166646957397</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <time>
+                <sos:time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
                         <gml:endPosition>1990-01-01T07:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
-                </time>
-                <procedure xlink:href="urn:tds:station.sos:Trajectory0"/>
-                <procedure xlink:href="urn:tds:station.sos:Trajectory1"/>
-                <procedure xlink:href="urn:tds:station.sos:Trajectory2"/>
-                <procedure xlink:href="urn:tds:station.sos:Trajectory3"/>
-                <procedure xlink:href="urn:tds:station.sos:Trajectory4"/>
-                <procedure xlink:href="urn:tds:station.sos:Trajectory5"/>
-                <observedProperty xlink:href="time"/>
-                <observedProperty xlink:href="temperature"/>
-                <observedProperty xlink:href="salinity"/>
-                <observedProperty xlink:href="alt"/>
-                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel/>
-                <responseMode/>
-            </ObservationOffering>
-            <ObservationOffering gml:id="Trajectory0">
-                <gml:name>urn:tds:station.sos:Trajectory0</gml:name>
+                </sos:time>
+                <sos:procedure xlink:href="urn:ioos:station:sos:Trajectory0"/>
+                <sos:procedure xlink:href="urn:ioos:station:sos:Trajectory1"/>
+                <sos:procedure xlink:href="urn:ioos:station:sos:Trajectory2"/>
+                <sos:procedure xlink:href="urn:ioos:station:sos:Trajectory3"/>
+                <sos:procedure xlink:href="urn:ioos:station:sos:Trajectory4"/>
+                <sos:procedure xlink:href="urn:ioos:station:sos:Trajectory5"/>
+                <sos:observedProperty xlink:href="temperature"/>
+                <sos:observedProperty xlink:href="salinity"/>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:Trajectory0"/>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:Trajectory1"/>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:Trajectory2"/>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:Trajectory3"/>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:Trajectory4"/>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:Trajectory5"/>
+                <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
+                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:responseMode>inline</sos:responseMode>
+            </sos:ObservationOffering>
+            <sos:ObservationOffering gml:id="Trajectory0">
+                <gml:name>urn:ioos:station:sos:Trajectory0</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
@@ -192,27 +182,23 @@
                         <gml:upperCorner>35.42259216308594 -13.773795127868652</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <time>
+                <sos:time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
                         <gml:endPosition>1990-01-01T06:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
-                </time>
-                <featureOfInterest xlink:href="Trajectory0"/>
-                <observedProperty xlink:href="time"/>
-                <observedProperty xlink:href="temperature"/>
-                <observedProperty xlink:href="salinity"/>
-                <observedProperty xlink:href="alt"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Trajectory0:time"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Trajectory0:temperature"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Trajectory0:salinity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Trajectory0:alt"/>
-                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel>om:ObservationCollection</responseModel>
-                <responseMode>inline</responseMode>
-            </ObservationOffering>
-            <ObservationOffering gml:id="Trajectory1">
-                <gml:name>urn:tds:station.sos:Trajectory1</gml:name>
+                </sos:time>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:Trajectory0"/>
+                <sos:observedProperty xlink:href="temperature"/>
+                <sos:observedProperty xlink:href="salinity"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:sos:Trajectory0:temperature"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:sos:Trajectory0:salinity"/>
+                <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
+                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:responseMode>inline</sos:responseMode>
+            </sos:ObservationOffering>
+            <sos:ObservationOffering gml:id="Trajectory1">
+                <gml:name>urn:ioos:station:sos:Trajectory1</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
@@ -220,27 +206,23 @@
                         <gml:upperCorner>41.65167999267578 -4.581541061401367</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <time>
+                <sos:time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
                         <gml:endPosition>1990-01-01T05:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
-                </time>
-                <featureOfInterest xlink:href="Trajectory1"/>
-                <observedProperty xlink:href="time"/>
-                <observedProperty xlink:href="temperature"/>
-                <observedProperty xlink:href="salinity"/>
-                <observedProperty xlink:href="alt"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Trajectory1:time"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Trajectory1:temperature"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Trajectory1:salinity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Trajectory1:alt"/>
-                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel>om:ObservationCollection</responseModel>
-                <responseMode>inline</responseMode>
-            </ObservationOffering>
-            <ObservationOffering gml:id="Trajectory2">
-                <gml:name>urn:tds:station.sos:Trajectory2</gml:name>
+                </sos:time>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:Trajectory1"/>
+                <sos:observedProperty xlink:href="temperature"/>
+                <sos:observedProperty xlink:href="salinity"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:sos:Trajectory1:temperature"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:sos:Trajectory1:salinity"/>
+                <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
+                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:responseMode>inline</sos:responseMode>
+            </sos:ObservationOffering>
+            <sos:ObservationOffering gml:id="Trajectory2">
+                <gml:name>urn:ioos:station:sos:Trajectory2</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
@@ -248,27 +230,23 @@
                         <gml:upperCorner>42.09935760498047 -6.60825252532959</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <time>
+                <sos:time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
                         <gml:endPosition>1990-01-01T06:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
-                </time>
-                <featureOfInterest xlink:href="Trajectory2"/>
-                <observedProperty xlink:href="time"/>
-                <observedProperty xlink:href="temperature"/>
-                <observedProperty xlink:href="salinity"/>
-                <observedProperty xlink:href="alt"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Trajectory2:time"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Trajectory2:temperature"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Trajectory2:salinity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Trajectory2:alt"/>
-                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel>om:ObservationCollection</responseModel>
-                <responseMode>inline</responseMode>
-            </ObservationOffering>
-            <ObservationOffering gml:id="Trajectory3">
-                <gml:name>urn:tds:station.sos:Trajectory3</gml:name>
+                </sos:time>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:Trajectory2"/>
+                <sos:observedProperty xlink:href="temperature"/>
+                <sos:observedProperty xlink:href="salinity"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:sos:Trajectory2:temperature"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:sos:Trajectory2:salinity"/>
+                <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
+                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:responseMode>inline</sos:responseMode>
+            </sos:ObservationOffering>
+            <sos:ObservationOffering gml:id="Trajectory3">
+                <gml:name>urn:ioos:station:sos:Trajectory3</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
@@ -276,27 +254,23 @@
                         <gml:upperCorner>34.77362060546875 -0.9158166646957397</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <time>
+                <sos:time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
                         <gml:endPosition>1990-01-01T01:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
-                </time>
-                <featureOfInterest xlink:href="Trajectory3"/>
-                <observedProperty xlink:href="time"/>
-                <observedProperty xlink:href="temperature"/>
-                <observedProperty xlink:href="salinity"/>
-                <observedProperty xlink:href="alt"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Trajectory3:time"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Trajectory3:temperature"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Trajectory3:salinity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Trajectory3:alt"/>
-                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel>om:ObservationCollection</responseModel>
-                <responseMode>inline</responseMode>
-            </ObservationOffering>
-            <ObservationOffering gml:id="Trajectory4">
-                <gml:name>urn:tds:station.sos:Trajectory4</gml:name>
+                </sos:time>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:Trajectory3"/>
+                <sos:observedProperty xlink:href="temperature"/>
+                <sos:observedProperty xlink:href="salinity"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:sos:Trajectory3:temperature"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:sos:Trajectory3:salinity"/>
+                <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
+                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:responseMode>inline</sos:responseMode>
+            </sos:ObservationOffering>
+            <sos:ObservationOffering gml:id="Trajectory4">
+                <gml:name>urn:ioos:station:sos:Trajectory4</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
@@ -304,27 +278,23 @@
                         <gml:upperCorner>42.54350280761719 -4.636869430541992</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <time>
+                <sos:time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
                         <gml:endPosition>1990-01-01T07:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
-                </time>
-                <featureOfInterest xlink:href="Trajectory4"/>
-                <observedProperty xlink:href="time"/>
-                <observedProperty xlink:href="temperature"/>
-                <observedProperty xlink:href="salinity"/>
-                <observedProperty xlink:href="alt"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Trajectory4:time"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Trajectory4:temperature"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Trajectory4:salinity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Trajectory4:alt"/>
-                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel>om:ObservationCollection</responseModel>
-                <responseMode>inline</responseMode>
-            </ObservationOffering>
-            <ObservationOffering gml:id="Trajectory5">
-                <gml:name>urn:tds:station.sos:Trajectory5</gml:name>
+                </sos:time>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:Trajectory4"/>
+                <sos:observedProperty xlink:href="temperature"/>
+                <sos:observedProperty xlink:href="salinity"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:sos:Trajectory4:temperature"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:sos:Trajectory4:salinity"/>
+                <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
+                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:responseMode>inline</sos:responseMode>
+            </sos:ObservationOffering>
+            <sos:ObservationOffering gml:id="Trajectory5">
+                <gml:name>urn:ioos:station:sos:Trajectory5</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
@@ -332,25 +302,21 @@
                         <gml:upperCorner>44.54783248901367 -5.0322957038879395</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <time>
+                <sos:time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
                         <gml:endPosition>1990-01-01T04:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
-                </time>
-                <featureOfInterest xlink:href="Trajectory5"/>
-                <observedProperty xlink:href="time"/>
-                <observedProperty xlink:href="temperature"/>
-                <observedProperty xlink:href="salinity"/>
-                <observedProperty xlink:href="alt"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Trajectory5:time"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Trajectory5:temperature"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Trajectory5:salinity"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Trajectory5:alt"/>
-                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel>om:ObservationCollection</responseModel>
-                <responseMode>inline</responseMode>
-            </ObservationOffering>
-        </ObservationOfferingList>
-    </Contents>
-</Capabilities>
+                </sos:time>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:Trajectory5"/>
+                <sos:observedProperty xlink:href="temperature"/>
+                <sos:observedProperty xlink:href="salinity"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:sos:Trajectory5:temperature"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:sos:Trajectory5:salinity"/>
+                <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
+                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:responseMode>inline</sos:responseMode>
+            </sos:ObservationOffering>
+        </sos:ObservationOfferingList>
+    </sos:Contents>
+</sos:Capabilities>

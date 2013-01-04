@@ -1,19 +1,15 @@
 package com.asascience.ncsos.getcaps;
 
-import com.asascience.ncsos.getobs.SOSGetObservationRequestHandler;
 import com.asascience.ncsos.outputformatter.GetCapsOutputter;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
 import java.io.IOException;
 import java.util.BitSet;
-import java.util.Date;
 import java.util.HashMap;
-import sun.util.logging.resources.logging;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.ft.*;
 import ucar.nc2.time.CalendarDate;
 import ucar.nc2.time.CalendarDateRange;
-import ucar.unidata.geoloc.LatLonPoint;
 import ucar.unidata.geoloc.LatLonPointImpl;
 import ucar.unidata.geoloc.LatLonRect;
 

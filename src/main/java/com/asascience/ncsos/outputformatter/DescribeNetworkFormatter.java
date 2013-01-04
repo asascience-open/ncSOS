@@ -4,12 +4,12 @@
  */
 package com.asascience.ncsos.outputformatter;
 
+import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
 import java.util.HashMap;
-import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -18,7 +18,6 @@ import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSOutput;
 import org.w3c.dom.ls.LSSerializer;
-import ucar.nc2.VariableSimpleIF;
 import ucar.unidata.geoloc.LatLonRect;
 
 /**
@@ -308,7 +307,7 @@ public class DescribeNetworkFormatter implements SOSOutputFormatter {
         // add 'NetworkId'
         Element parent = addNewNodeToParentWithAttribute("sml:identifier", identList, "name", "NetworkId");
         parent = addNewNodeToParentWithAttribute("sml:Term", parent, "definition", "");
-        addNewNodeToParentWithTextValue("sml:value", parent, "urn:tds:network:all");
+        addNewNodeToParentWithTextValue("sml:value", parent, "urn:ioos:" + SOSBaseRequestHandler.getNamingAuthority() + ":network:all");
         
         parent = addNewNodeToParentWithAttribute("sml:identifier", identList, "name", "Short Name");
         parent = addNewNodeToParentWithAttribute("sml:Term", parent, "definition", "urn:ogc:identifier:OGC:shortName");

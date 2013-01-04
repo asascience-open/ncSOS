@@ -440,7 +440,7 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
             system.setAttribute("gml:id", "sensor-" + fName);
             // identification node
             Element ident = document.createElement("sml:identification");
-            ident.setAttribute("xlink:href", procedure + "::" + fName);
+            ident.setAttribute("xlink:href", procedure + ":" + fName);
             // documentation (url) node
             Element doc = document.createElement("sml:documentation");
             // need to construct url for sensor request
@@ -450,7 +450,7 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
             for (int j=0; j<reqParams.length; j++) {
                 if (reqParams[j].contains("procedure"))
                     // add sensor
-                    reqParams[j] += "::" + fName;
+                    reqParams[j] += ":" + fName;
             }
             // rejoin
             url += "?" + joinArray(reqParams, "&");

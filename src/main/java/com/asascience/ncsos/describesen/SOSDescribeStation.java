@@ -304,7 +304,7 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
         ArrayList<String> identNames = new ArrayList<String>();
         ArrayList<String> identDefinitions = new ArrayList<String>();
         ArrayList<String> identValues = new ArrayList<String>();
-        identNames.add("StationId"); identDefinitions.add("stationID"); identValues.add("urn:tds:station.sos:" + stationName);
+        identNames.add("StationId"); identDefinitions.add("stationID"); identValues.add(SOSBaseRequestHandler.getGMLName(stationName));
         for (Attribute attr : getStationAttributes()) {
             if (attr.getName().equalsIgnoreCase("cf_role") || attr.getName().toLowerCase().contains("hdf5"))
                 continue;
