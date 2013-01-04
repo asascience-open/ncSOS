@@ -1,25 +1,24 @@
 
 <?xml version="1.0" encoding="UTF-8"?>
-<sml:SensorML version="1.0.1"
-    xmlns="http://www.opengis.net/sensorML/1.0.1"
-    xmlns:gml="http://www.opengis.net/gml"
+<sml:SensorML version="1.0.1" xmlns:gml="http://www.opengis.net/gml"
     xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:sos="http://www.opengis.net/sensorML/1.0.1"
     xmlns:swe="http://www.opengis.net/swe/1.0.1"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
     <sml:member>
-        <sml:System gml:id="station-Station1">
+        <sml:System gml:id="station-WQBKN">
             <gml:description>no description</gml:description>
             <sml:identification>
                 <sml:IdentifierList>
                     <sml:identifier name="StationId">
                         <sml:Term definition="http://mmisw.org/ont/ioos/definition/stationID">
-                            <sml:value>urn:tds:station.sos:Station1</sml:value>
+                            <sml:value>urn:ioos:station:sos:WQBKN</sml:value>
                         </sml:Term>
                     </sml:identifier>
                     <sml:identifier name="long_name">
                         <sml:Term definition="http://mmisw.org/ont/ioos/definition/long_name">
-                            <sml:value>station name</sml:value>
+                            <sml:value>WQBKN</sml:value>
                         </sml:Term>
                     </sml:identifier>
                 </sml:IdentifierList>
@@ -27,17 +26,52 @@
             <sml:location>
                 <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
                     <gml:posList srsDimension="2">
-37.5 -76.5
+21.288721084594727 -157.86500549316406
 </gml:posList>
                 </gml:LineString>
             </sml:location>
             <sml:components>
                 <sml:ComponentList>
-                    <sml:component name="Sensor temperature">
-                        <sml:System gml:id="sensor-temperature">
-                            <sml:identification xlink:href="urn:tds:station.sos:Station1::temperature"/>
-                            <sml:documentation xlink:href="resources/datasets/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1.nc?request=DescribeSensor&amp;service=sos&amp;version=1.0.0&amp;responseformat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%22&amp;procedure=urn:tds:station.sos:Station1::temperature"/>
-                            <gml:description>Water Temperature</gml:description>
+                    <sml:component name="Sensor temp">
+                        <sml:System gml:id="sensor-temp">
+                            <sml:identification xlink:href="urn:ioos:station:sos:WQBKN:temp"/>
+                            <sml:documentation xlink:href="resources/datasets/sura/wqbkn_2012_08_01.nc?request=DescribeSensor&amp;service=sos&amp;version=1.0.0&amp;responseformat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%22&amp;procedure=urn:ioos:station:sos:WQBKN:temp"/>
+                            <gml:description>Temperature</gml:description>
+                        </sml:System>
+                    </sml:component>
+                    <sml:component name="Sensor cond">
+                        <sml:System gml:id="sensor-cond">
+                            <sml:identification xlink:href="urn:ioos:station:sos:WQBKN:cond"/>
+                            <sml:documentation xlink:href="resources/datasets/sura/wqbkn_2012_08_01.nc?request=DescribeSensor&amp;service=sos&amp;version=1.0.0&amp;responseformat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%22&amp;procedure=urn:ioos:station:sos:WQBKN:cond"/>
+                            <gml:description>Conductivity</gml:description>
+                        </sml:System>
+                    </sml:component>
+                    <sml:component name="Sensor salt">
+                        <sml:System gml:id="sensor-salt">
+                            <sml:identification xlink:href="urn:ioos:station:sos:WQBKN:salt"/>
+                            <sml:documentation xlink:href="resources/datasets/sura/wqbkn_2012_08_01.nc?request=DescribeSensor&amp;service=sos&amp;version=1.0.0&amp;responseformat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%22&amp;procedure=urn:ioos:station:sos:WQBKN:salt"/>
+                            <gml:description>Salinity</gml:description>
+                        </sml:System>
+                    </sml:component>
+                    <sml:component name="Sensor oxyg">
+                        <sml:System gml:id="sensor-oxyg">
+                            <sml:identification xlink:href="urn:ioos:station:sos:WQBKN:oxyg"/>
+                            <sml:documentation xlink:href="resources/datasets/sura/wqbkn_2012_08_01.nc?request=DescribeSensor&amp;service=sos&amp;version=1.0.0&amp;responseformat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%22&amp;procedure=urn:ioos:station:sos:WQBKN:oxyg"/>
+                            <gml:description>dissolved oxygen</gml:description>
+                        </sml:System>
+                    </sml:component>
+                    <sml:component name="Sensor flor">
+                        <sml:System gml:id="sensor-flor">
+                            <sml:identification xlink:href="urn:ioos:station:sos:WQBKN:flor"/>
+                            <sml:documentation xlink:href="resources/datasets/sura/wqbkn_2012_08_01.nc?request=DescribeSensor&amp;service=sos&amp;version=1.0.0&amp;responseformat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%22&amp;procedure=urn:ioos:station:sos:WQBKN:flor"/>
+                            <gml:description>Chlorophyll</gml:description>
+                        </sml:System>
+                    </sml:component>
+                    <sml:component name="Sensor turb">
+                        <sml:System gml:id="sensor-turb">
+                            <sml:identification xlink:href="urn:ioos:station:sos:WQBKN:turb"/>
+                            <sml:documentation xlink:href="resources/datasets/sura/wqbkn_2012_08_01.nc?request=DescribeSensor&amp;service=sos&amp;version=1.0.0&amp;responseformat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%22&amp;procedure=urn:ioos:station:sos:WQBKN:turb"/>
+                            <gml:description>Turbidity</gml:description>
                         </sml:System>
                     </sml:component>
                 </sml:ComponentList>

@@ -292,7 +292,7 @@ public class SOSDescribeProfile extends SOSDescribeStation implements SOSDescrib
                     locationCoords[s][1] = latLon[1];
                     locationCoords[s][2] = depthValues[s];
                 }
-                output.setLocationNode3Dimension(stationName, locationCoords);
+                output.setOrderedLocationNode3Dimension(stationName, locationCoords);
             } else if (profileIndices != null) {
                 // iterate through the depth values that correspond to each index
                 double[][] locationCoords = new double[profileIndices.length][3];
@@ -301,7 +301,7 @@ public class SOSDescribeProfile extends SOSDescribeStation implements SOSDescrib
                     locationCoords[s][1] = latLon[1];
                     locationCoords[s][2] = depthValues[profileIndices[s]];
                 }
-                output.setLocationNode3Dimension(stationName, locationCoords);
+                output.setOrderedLocationNode3Dimension(stationName, locationCoords);
             } else {
                 // iterate through depth values, use only the indices that fall into range
                 double[][] locationCoords = new double[profileEndIndex - profileStartIndex][3];
@@ -314,7 +314,7 @@ public class SOSDescribeProfile extends SOSDescribeStation implements SOSDescrib
                         locIndex++;
                     }
                 }
-                output.setLocationNode3Dimension(stationName, locationCoords);
+                output.setOrderedLocationNode3Dimension(stationName, locationCoords);
             }
         } catch (Exception ex) {
             System.out.println("formatSetLocationNode - exception " + ex.toString() + "\n" + ex.getStackTrace()[0].toString());

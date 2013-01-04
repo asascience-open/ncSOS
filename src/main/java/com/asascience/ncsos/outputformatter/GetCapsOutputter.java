@@ -35,6 +35,8 @@ public class GetCapsOutputter implements SOSOutputFormatter {
     private Element getCaps, getObs, descSen;
     
     private final static String TEMPLATE = "templates/sosGetCapabilities.xml";
+    private final static String capabilitiesElement = "sos:Capabilities";
+    private final static String observationOfferingElement = "sos:ObservationOfferingList";
 
     /**
      * Creates instance of a Get Capabilities outputter. Reads the sosGetCapabilities.xml
@@ -113,7 +115,7 @@ public class GetCapsOutputter implements SOSOutputFormatter {
     }
     
     public void removeServiceIdentification() {
-        Element capsNode = (Element) getDocument().getElementsByTagName("Capabilities").item(0);
+        Element capsNode = (Element) getDocument().getElementsByTagName(capabilitiesElement).item(0);
         Node node = capsNode.getElementsByTagName("ows:ServiceIdentification").item(0);
         
         capsNode.removeChild(node);
@@ -137,7 +139,7 @@ public class GetCapsOutputter implements SOSOutputFormatter {
     }
     
     public void removeServiceProvider() {
-        Element capsNode = (Element) getDocument().getElementsByTagName("Capabilities").item(0);
+        Element capsNode = (Element) getDocument().getElementsByTagName(capabilitiesElement).item(0);
         Node serviceProviderNode = capsNode.getElementsByTagName("ows:ServiceProvider").item(0);
         
         capsNode.removeChild(serviceProviderNode);
@@ -152,7 +154,7 @@ public class GetCapsOutputter implements SOSOutputFormatter {
     }
     
     public void removeOperations() {
-        Element capsNode = (Element) getDocument().getElementsByTagName("Capabilities").item(0);
+        Element capsNode = (Element) getDocument().getElementsByTagName(capabilitiesElement).item(0);
         Node operationsNode = capsNode.getElementsByTagName("ows:OperationsMetadata").item(0);
         capsNode.removeChild(operationsNode);
     }
@@ -256,7 +258,7 @@ public class GetCapsOutputter implements SOSOutputFormatter {
             procedure.appendChild(allowedValues);
             // add network-all value
             Element na = getDocument().createElement("ows:Value");
-            na.setTextContent("urn:tds:network:all");
+            na.setTextContent("urn:ioos:network:" + SOSBaseRequestHandler.getNamingAuthority() + ":all");
             allowedValues.appendChild(na);
             for (String stationName : stationNames) {
                 Element elem = getDocument().createElement("ows:Value");
@@ -273,15 +275,15 @@ public class GetCapsOutputter implements SOSOutputFormatter {
     
     public void setObservationOfferingNetwork(LatLonRect datasetRect, String[] stations, List<String> sensors, CalendarDateRange datasetTime) {
         // add the network-all observation offering
-        Element offeringList = (Element) document.getElementsByTagName("ObservationOfferingList").item(0);
-        Element obsOffering = document.createElement("ObservationOffering");
+        Element offeringList = (Element) document.getElementsByTagName(observationOfferingElement).item(0);
+        Element obsOffering = document.createElement("sos:ObservationOffering");
         obsOffering.setAttribute("gml:id", "network-all");
         // add description, name and srs
         Element desc = document.createElement("gml:description");
         desc.setTextContent("All stations in the netCDF dataset.");
         obsOffering.appendChild(desc);
         Element name = document.createElement("gml:name");
-        name.setTextContent("urn:tds:network:all");
+        name.setTextContent("urn:ioos:network:" + SOSBaseRequestHandler.getNamingAuthority() + ":all");
         obsOffering.appendChild(name);
         Element srsName = getDocument().createElement("gml:srsName");
         srsName.setTextContent("EPSG:4326");
@@ -293,32 +295,42 @@ public class GetCapsOutputter implements SOSOutputFormatter {
             obsOffering.appendChild(getStationPeriod(datasetTime));
         // procedures
         for (String str : stations) {
-            Element proc = getDocument().createElement("procedure");
+            Element proc = getDocument().createElement("sos:procedure");
             proc.setAttribute("xlink:href", SOSBaseRequestHandler.getGMLName(str));
             obsOffering.appendChild(proc);
         }
         // observed properties
         for (String str : sensors) {
-            Element value = getDocument().createElement("observedProperty");
+            Element value = getDocument().createElement("sos:observedProperty");
             value.setAttribute("xlink:href", str);
             obsOffering.appendChild(value);
         }
+        // feature of interests
+        for (String str: stations) {
+            Element foi = getDocument().createElement("sos:featureOfInterest");
+            foi.setAttribute("xlink:href", SOSBaseRequestHandler.getGMLName(str));
+            obsOffering.appendChild(foi);
+        }
         // response format
-        Element rf = getDocument().createElement("responseFormat");
+        Element rf = getDocument().createElement("sos:responseFormat");
         rf.setTextContent("text/xml; subtype=\"om/1.0.0\"");
         obsOffering.appendChild(rf);
         // response model/mode -- blank for now?
-        obsOffering.appendChild(getDocument().createElement("responseModel"));
-        obsOffering.appendChild(getDocument().createElement("responseMode"));
+        Element rm = getDocument().createElement("sos:responseModel");
+        rm.setTextContent("om:ObservationCollection");
+        obsOffering.appendChild(rm);
+        Element rm2 = getDocument().createElement("sos:responseMode");
+        rm2.setTextContent("inline");
+        obsOffering.appendChild(rm2);
 
         // add offering
         offeringList.appendChild(obsOffering);
     }
     
     public void setObservationOfferingList(String stationName, int stationIndex, LatLonRect rect, List<String> sensorNames, CalendarDateRange stationDates) {
-        Element offeringList = (Element) getDocument().getElementsByTagName("ObservationOfferingList").item(0);
+        Element offeringList = (Element) getDocument().getElementsByTagName(observationOfferingElement).item(0);
         // iterate through offerings (stations)
-        Element obsOffering = getDocument().createElement("ObservationOffering");
+        Element obsOffering = getDocument().createElement("sos:ObservationOffering");
         obsOffering.setAttribute("gml:id", stationName);
         // gml:name
         Element gmlName = getDocument().createElement("gml:name");
@@ -333,30 +345,30 @@ public class GetCapsOutputter implements SOSOutputFormatter {
         // add time envelope
         obsOffering.appendChild(getStationPeriod(stationDates));
         // feature of interest -- station name?
-        Element foi = getDocument().createElement("featureOfInterest");
-        foi.setAttribute("xlink:href", stationName);
+        Element foi = getDocument().createElement("sos:featureOfInterest");
+        foi.setAttribute("xlink:href", SOSBaseRequestHandler.getGMLName(stationName));
         obsOffering.appendChild(foi);
         // observed properties
         for (String str : sensorNames) {
-            Element value = getDocument().createElement("observedProperty");
+            Element value = getDocument().createElement("sos:observedProperty");
             value.setAttribute("xlink:href", str);
             obsOffering.appendChild(value);
         }
         // procedures
         for (String str : sensorNames) {
-            Element proc = getDocument().createElement("procedure");
+            Element proc = getDocument().createElement("sos:procedure");
             proc.setAttribute("xlink:href", SOSBaseRequestHandler.getSensorGMLName(stationName, str));
             obsOffering.appendChild(proc);
         }
         // response format
-        Element rf = getDocument().createElement("responseFormat");
+        Element rf = getDocument().createElement("sos:responseFormat");
         rf.setTextContent("text/xml; subtype=\"om/1.0.0\"");
         obsOffering.appendChild(rf);
         // response model/mode -- blank for now?
-        Element rm = getDocument().createElement("responseModel");
+        Element rm = getDocument().createElement("sos:responseModel");
         rm.setTextContent("om:ObservationCollection");
         obsOffering.appendChild(rm);
-        rm = getDocument().createElement("responseMode");
+        rm = getDocument().createElement("sos:responseMode");
         rm.setTextContent("inline");
         obsOffering.appendChild(rm);
 
@@ -365,8 +377,8 @@ public class GetCapsOutputter implements SOSOutputFormatter {
     }
     
     public void removeContents() {
-        Element capsNode = (Element) getDocument().getElementsByTagName("Capabilities").item(0);
-        Node contentNode = capsNode.getElementsByTagName("Contents").item(0);
+        Element capsNode = (Element) getDocument().getElementsByTagName(capabilitiesElement).item(0);
+        Node contentNode = capsNode.getElementsByTagName("sos:Contents").item(0);
         capsNode.removeChild(contentNode);
     }
     
@@ -432,7 +444,7 @@ public class GetCapsOutputter implements SOSOutputFormatter {
     }
     
     private Element getStationPeriod(CalendarDateRange stationDateRange) {
-        Element retval = getDocument().createElement("time");
+        Element retval = getDocument().createElement("sos:time");
         if (stationDateRange != null) {
             // time
             Element timePeriod = getDocument().createElement("gml:TimePeriod");

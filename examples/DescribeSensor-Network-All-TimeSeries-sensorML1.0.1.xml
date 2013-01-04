@@ -1,9 +1,8 @@
 
 <?xml version="1.0" encoding="UTF-8"?>
-<sml:SensorML version="1.0.1"
-    xmlns="http://www.opengis.net/sensorML/1.0.1"
-    xmlns:gml="http://www.opengis.net/gml"
+<sml:SensorML version="1.0.1" xmlns:gml="http://www.opengis.net/gml"
     xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:sos="http://www.opengis.net/sensorML/1.0.1"
     xmlns:swe="http://www.opengis.net/swe/1.0.1"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
@@ -14,7 +13,7 @@
                 <sml:IdentifierList>
                     <sml:identifier name="NetworkId">
                         <sml:Term definition="">
-                            <sml:value>urn:tds:network:all</sml:value>
+                            <sml:value>urn:ioos:sos:network:all</sml:value>
                         </sml:Term>
                     </sml:identifier>
                     <sml:identifier name="Short Name">
@@ -36,7 +35,7 @@
                             <sml:IdentifierList>
                                 <sml:identifier name="StationId">
                                     <sml:Term definition="stationID">
-                                    <sml:value>urn:tds:station.sos:Station-0</sml:value>
+                                    <sml:value>urn:ioos:station:sos:Station-0</sml:value>
                                     </sml:Term>
                                 </sml:identifier>
                                 <sml:identifier name="long_name">
@@ -59,7 +58,7 @@
                             <sml:IdentifierList>
                                 <sml:identifier name="StationId">
                                     <sml:Term definition="stationID">
-                                    <sml:value>urn:tds:station.sos:Station-1</sml:value>
+                                    <sml:value>urn:ioos:station:sos:Station-1</sml:value>
                                     </sml:Term>
                                 </sml:identifier>
                                 <sml:identifier name="long_name">
@@ -82,7 +81,7 @@
                             <sml:IdentifierList>
                                 <sml:identifier name="StationId">
                                     <sml:Term definition="stationID">
-                                    <sml:value>urn:tds:station.sos:Station-2</sml:value>
+                                    <sml:value>urn:ioos:station:sos:Station-2</sml:value>
                                     </sml:Term>
                                 </sml:identifier>
                                 <sml:identifier name="long_name">
@@ -105,7 +104,7 @@
                             <sml:IdentifierList>
                                 <sml:identifier name="StationId">
                                     <sml:Term definition="stationID">
-                                    <sml:value>urn:tds:station.sos:Station-3</sml:value>
+                                    <sml:value>urn:ioos:station:sos:Station-3</sml:value>
                                     </sml:Term>
                                 </sml:identifier>
                                 <sml:identifier name="long_name">
@@ -128,7 +127,7 @@
                             <sml:IdentifierList>
                                 <sml:identifier name="StationId">
                                     <sml:Term definition="stationID">
-                                    <sml:value>urn:tds:station.sos:Station-4</sml:value>
+                                    <sml:value>urn:ioos:station:sos:Station-4</sml:value>
                                     </sml:Term>
                                 </sml:identifier>
                                 <sml:identifier name="long_name">
@@ -151,7 +150,7 @@
                             <sml:IdentifierList>
                                 <sml:identifier name="StationId">
                                     <sml:Term definition="stationID">
-                                    <sml:value>urn:tds:station.sos:Station-5</sml:value>
+                                    <sml:value>urn:ioos:station:sos:Station-5</sml:value>
                                     </sml:Term>
                                 </sml:identifier>
                                 <sml:identifier name="long_name">
@@ -174,7 +173,7 @@
                             <sml:IdentifierList>
                                 <sml:identifier name="StationId">
                                     <sml:Term definition="stationID">
-                                    <sml:value>urn:tds:station.sos:Station-6</sml:value>
+                                    <sml:value>urn:ioos:station:sos:Station-6</sml:value>
                                     </sml:Term>
                                 </sml:identifier>
                                 <sml:identifier name="long_name">
@@ -197,7 +196,7 @@
                             <sml:IdentifierList>
                                 <sml:identifier name="StationId">
                                     <sml:Term definition="stationID">
-                                    <sml:value>urn:tds:station.sos:Station-7</sml:value>
+                                    <sml:value>urn:ioos:station:sos:Station-7</sml:value>
                                     </sml:Term>
                                 </sml:identifier>
                                 <sml:identifier name="long_name">
@@ -220,7 +219,7 @@
                             <sml:IdentifierList>
                                 <sml:identifier name="StationId">
                                     <sml:Term definition="stationID">
-                                    <sml:value>urn:tds:station.sos:Station-8</sml:value>
+                                    <sml:value>urn:ioos:station:sos:Station-8</sml:value>
                                     </sml:Term>
                                 </sml:identifier>
                                 <sml:identifier name="long_name">
@@ -243,7 +242,7 @@
                             <sml:IdentifierList>
                                 <sml:identifier name="StationId">
                                     <sml:Term definition="stationID">
-                                    <sml:value>urn:tds:station.sos:Station-9</sml:value>
+                                    <sml:value>urn:ioos:station:sos:Station-9</sml:value>
                                     </sml:Term>
                                 </sml:identifier>
                                 <sml:identifier name="long_name">

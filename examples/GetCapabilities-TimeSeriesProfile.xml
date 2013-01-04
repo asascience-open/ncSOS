@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Capabilities version="1.0.0" xmlns="http://www.opengis.net/sos/1.0"
-    xmlns:gml="http://www.opengis.net/gml"
+<sos:Capabilities version="1.0.0" xmlns:gml="http://www.opengis.net/gml"
     xmlns:oost="http://www.oostethys.org/schemas/0.1.0/oostethys"
     xmlns:ows="http://www.opengis.net/ows/1.1"
+    xmlns:sos="http://www.opengis.net/sos/1.0"
     xmlns:swe="http://www.opengis.net/swe/1.0.1"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sos/1.0 http://schemas.opengis.net/sos/1.0.0/sosGetCapabilities.xsd">
@@ -42,7 +42,7 @@
         <ows:Operation name="GetCapabilities">
             <ows:DCP>
                 <ows:HTTP>
-                    <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1.nc"/>
+                    <ows:Get xlink:href="resources/datasets/timeSeriesProfile-Ragged-MultipeStations-H.5.3/timeSeriesProfile-Ragged-MultipeStations-H.5.3.nc"/>
                 </ows:HTTP>
             </ows:DCP>
             <ows:Parameter name="Sections">
@@ -58,7 +58,7 @@
         <ows:Operation name="GetObservation">
             <ows:DCP>
                 <ows:HTTP>
-                    <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1.nc"/>
+                    <ows:Get xlink:href="resources/datasets/timeSeriesProfile-Ragged-MultipeStations-H.5.3/timeSeriesProfile-Ragged-MultipeStations-H.5.3.nc"/>
                 </ows:HTTP>
             </ows:DCP>
             <ows:Parameter name="offering" use="required">
@@ -70,14 +70,14 @@
             </ows:Parameter>
             <ows:Parameter name="observedProperty" use="required">
                 <ows:AllowedValues>
-                    <ows:value>station_info</ows:value>
+                    <ows:value>temperature</ows:value>
                 </ows:AllowedValues>
             </ows:Parameter>
             <ows:Parameter name="eventTime" use="optional">
                 <ows:AllowedValues>
                     <ows:Range/>
                     <ows:MinimumValue>1990-01-01T00:00:00.000Z</ows:MinimumValue>
-                    <ows:MaximumValue>1990-01-01T00:00:00.000Z</ows:MaximumValue>
+                    <ows:MaximumValue>1990-01-01T03:00:00.000Z</ows:MaximumValue>
                 </ows:AllowedValues>
             </ows:Parameter>
             <ows:Parameter name="responseFormat" use="required">
@@ -94,11 +94,11 @@
             </ows:DCP>
             <ows:Parameter name="procedure" use="required">
                 <ows:AllowedValues>
-                    <ows:Value>urn:tds:network:all</ows:Value>
-                    <ows:Value>urn:tds:station.sos:Station1</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station1:station_info</ows:Value>
-                    <ows:Value>urn:tds:station.sos:Station2</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:Station2:station_info</ows:Value>
+                    <ows:Value>urn:ioos:sos:network:all</ows:Value>
+                    <ows:Value>urn:ioos:station:sos:Station1</ows:Value>
+                    <ows:Value>urn:ioos:sensor:sos:Station1:temperature</ows:Value>
+                    <ows:Value>urn:ioos:station:sos:Station2</ows:Value>
+                    <ows:Value>urn:ioos:sensor:sos:Station2:temperature</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
             <ows:Parameter name="responseformat" use="required">
@@ -118,33 +118,35 @@
             </ows:AllowedValues>
         </ows:Parameter>
     </ows:OperationsMetadata>
-    <Contents>
-        <ObservationOfferingList>
-            <ObservationOffering gml:id="network-all">
+    <sos:Contents>
+        <sos:ObservationOfferingList>
+            <sos:ObservationOffering gml:id="network-all">
                 <gml:description>All stations in the netCDF dataset.</gml:description>
-                <gml:name>urn:tds:network:all</gml:name>
+                <gml:name>urn:ioos:sos:network:all</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
-                        <gml:lowerCorner>32.5 -78.30000305175781</gml:lowerCorner>
-                        <gml:upperCorner>37.501 -76.499</gml:upperCorner>
+                        <gml:lowerCorner>32.5 -78.3</gml:lowerCorner>
+                        <gml:upperCorner>37.501 -76.49900000000001</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <time>
+                <sos:time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
-                        <gml:endPosition>1990-01-01T00:00:00.000Z</gml:endPosition>
+                        <gml:endPosition>1990-01-01T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
-                </time>
-                <procedure xlink:href="urn:tds:station.sos:Station1"/>
-                <procedure xlink:href="urn:tds:station.sos:Station2"/>
-                <observedProperty xlink:href="station_info"/>
-                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel/>
-                <responseMode/>
-            </ObservationOffering>
-            <ObservationOffering gml:id="Station1">
-                <gml:name>urn:tds:station.sos:Station1</gml:name>
+                </sos:time>
+                <sos:procedure xlink:href="urn:ioos:station:sos:Station1"/>
+                <sos:procedure xlink:href="urn:ioos:station:sos:Station2"/>
+                <sos:observedProperty xlink:href="temperature"/>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:Station1"/>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:Station2"/>
+                <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
+                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:responseMode>inline</sos:responseMode>
+            </sos:ObservationOffering>
+            <sos:ObservationOffering gml:id="Station1">
+                <gml:name>urn:ioos:station:sos:Station1</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
@@ -152,41 +154,41 @@
                         <gml:upperCorner>37.501 -76.499</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <time>
+                <sos:time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
-                        <gml:endPosition>1990-01-01T00:00:00.000Z</gml:endPosition>
+                        <gml:endPosition>1990-01-01T02:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
-                </time>
-                <featureOfInterest xlink:href="Station1"/>
-                <observedProperty xlink:href="station_info"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Station1:station_info"/>
-                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel>om:ObservationCollection</responseModel>
-                <responseMode>inline</responseMode>
-            </ObservationOffering>
-            <ObservationOffering gml:id="Station2">
-                <gml:name>urn:tds:station.sos:Station2</gml:name>
+                </sos:time>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:Station1"/>
+                <sos:observedProperty xlink:href="temperature"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:sos:Station1:temperature"/>
+                <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
+                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:responseMode>inline</sos:responseMode>
+            </sos:ObservationOffering>
+            <sos:ObservationOffering gml:id="Station2">
+                <gml:name>urn:ioos:station:sos:Station2</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
-                        <gml:lowerCorner>32.5 -78.30000305175781</gml:lowerCorner>
-                        <gml:upperCorner>32.501 -78.29900305175781</gml:upperCorner>
+                        <gml:lowerCorner>32.5 -78.3</gml:lowerCorner>
+                        <gml:upperCorner>32.501 -78.29899999999999</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <time>
+                <sos:time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
-                        <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
-                        <gml:endPosition>1990-01-01T00:00:00.000Z</gml:endPosition>
+                        <gml:beginPosition>1990-01-01T01:00:00.000Z</gml:beginPosition>
+                        <gml:endPosition>1990-01-01T03:00:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
-                </time>
-                <featureOfInterest xlink:href="Station2"/>
-                <observedProperty xlink:href="station_info"/>
-                <procedure xlink:href="urn:tds:sensor.sos:Station2:station_info"/>
-                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel>om:ObservationCollection</responseModel>
-                <responseMode>inline</responseMode>
-            </ObservationOffering>
-        </ObservationOfferingList>
-    </Contents>
-</Capabilities>
+                </sos:time>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:Station2"/>
+                <sos:observedProperty xlink:href="temperature"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:sos:Station2:temperature"/>
+                <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
+                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:responseMode>inline</sos:responseMode>
+            </sos:ObservationOffering>
+        </sos:ObservationOfferingList>
+    </sos:Contents>
+</sos:Capabilities>

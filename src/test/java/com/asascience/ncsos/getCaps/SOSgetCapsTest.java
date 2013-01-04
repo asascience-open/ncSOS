@@ -175,15 +175,19 @@ public class SOSgetCapsTest {
     
     @Test
     public void testCanIdentifyTrajectoryCDM() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + TCRMTH43);
         SOSGetCapabilitiesRequestHandler sosget = new SOSGetCapabilitiesRequestHandler(dataset, "threddsURI", "All");
         assertEquals(FeatureType.TRAJECTORY, sosget.getDatasetFeatureType());
         //trajectory
 
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
     
     @Test
     public void testCanProcessTrajectory() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + TCRMTH43);
         String fileName = "trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.xml";
@@ -195,16 +199,17 @@ public class SOSgetCapsTest {
         write.close();
         fileWriter(base, fileName, write);
         assertFalse(write.toString().contains("Exception"));
-        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        assertTrue(write.toString().contains("<sos:ObservationOffering gml:id="));
         // write as an example
         fileWriter(exampleOutputDir, "GetCapabilities-Trajectory.xml", write);
         //traj
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
-    
-    
     
     @Test
     public void testTrajLatLongCorrect() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + TCRMTH43);
         SOSParser md = new SOSParser();
@@ -218,10 +223,13 @@ public class SOSgetCapsTest {
         assertTrue(write.toString().contains("<gml:lowerCorner>3.024412155151367 -68.12552642822266</gml:lowerCorner>"));
         assertTrue(write.toString().contains("<gml:upperCorner>43.00862503051758 -1.6318601369857788</gml:upperCorner>"));
         //traj
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
 
     @Test
     public void testTrajStartEndTimeCorrect() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + TCRMTH43);
         String fileName = "trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.xml";
@@ -235,6 +243,8 @@ public class SOSgetCapsTest {
         assertTrue(write.toString().contains("<gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>"));
         assertTrue(write.toString().contains("<gml:endPosition>1990-01-01T23:00:00.000Z</gml:endPosition>"));
         //traj
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
     
     // caching doesn't quite work just yet
@@ -314,6 +324,7 @@ public class SOSgetCapsTest {
     @Test
     public void testLargeDatasets() throws IOException {
 //        fail("removed - test is expensive");
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
         String fileName = "largeDataSetIKE.xml";
@@ -325,23 +336,24 @@ public class SOSgetCapsTest {
 
         writeOutput(md.enhance(dataset, baseRequest, imeds13),write);
 
-        long elapsedTimeMillis = System.currentTimeMillis() - start;
-        float elapsedTimeSec = elapsedTimeMillis / 1000F;
-
-        System.out.println("Time To Complete Mil: " + elapsedTimeMillis + ": SEC: " + elapsedTimeSec);
-
-
         write.flush();
         write.close();
         fileWriter(base, fileName, write);
         assertFalse(write.toString().contains("Exception"));
-        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        assertTrue(write.toString().contains("<sos:ObservationOffering gml:id="));
+
+        long elapsedTimeMillis = System.currentTimeMillis() - start;
+        float elapsedTimeSec = elapsedTimeMillis / 1000F;
+        System.out.println("\nTime To Complete Mil: " + elapsedTimeMillis + ": SEC: " + elapsedTimeSec);
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
 
 //**********************************
 //TIMESERIES TEST
     @Test
     public void testIncompleteMultiDimensionalMultipleStations() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
         String fileName = "tsIncompleteMultiDimensionalMultipleStations.xml";
@@ -353,12 +365,17 @@ public class SOSgetCapsTest {
         write.close();
         fileWriter(base, fileName, write);
         assertFalse(write.toString().contains("Exception"));
-        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        assertTrue(write.toString().contains("<sos:ObservationOffering gml:id="));
         //station
+        // write as an example
+        fileWriter(exampleOutputDir, "GetCapabilities-TimeSeries.xml", write);
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
 
     @Test
     public void testOrthogonalMultidimenstionalMultipleStations() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
         NetcdfDataset dataset = NetcdfDataset.openDataset(tsOrthogonalMultidimenstionalMultipleStations);
         String fileName = "tsOrthogonalMultidimenstionalMultipleStations.xml";
@@ -373,19 +390,20 @@ public class SOSgetCapsTest {
             System.out.println("have exception - testOrthogonalMultidimenstionalMultipleStations");
             assertFalse(write.toString().contains("Exception"));
         }
-        if(!write.toString().contains("<ObservationOffering gml:id=")) {
+        if(!write.toString().contains("<sos:ObservationOffering gml:id=")) {
             System.out.println("does not have expected tag - testOrthogonalMultidimenstionalMultipleStations");
-            assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+            assertTrue(write.toString().contains("<sos:ObservationOffering gml:id="));
         }
-        // write as an example
-        fileWriter(exampleOutputDir, "GetCapabilities-TimeSeries.xml", write);
         //station
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
 //**********************************
 //TIMESERIESPROFILE TEST
 
     @Test
     public void testenhanceSingleRaggedDataset() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
         NetcdfDataset dataset = NetcdfDataset.openDataset(RaggedSingleConventions);
         String fileName = "RaggedSingleConventions.xml";
@@ -397,12 +415,15 @@ public class SOSgetCapsTest {
         write.close();
         fileWriter(base, fileName, write);
         assertFalse(write.toString().contains("Exception"));
-        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        assertTrue(write.toString().contains("<sos:ObservationOffering gml:id="));
         //station_profile
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
 
     @Test
     public void testenhanceMultiRaggedDataset() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
         NetcdfDataset dataset = NetcdfDataset.openDataset(RaggedMultiConventions);
         String fileName = "RaggedMultiConventions.xml";
@@ -414,13 +435,18 @@ public class SOSgetCapsTest {
         write.close();
         fileWriter(base, fileName, write);
         assertFalse(write.toString().contains("Exception"));
-        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        assertTrue(write.toString().contains("<sos:ObservationOffering gml:id="));
         //station_Profile
+        // write as an example
+        fileWriter(exampleOutputDir, "GetCapabilities-TimeSeriesProfile.xml", write);
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
 
     @Test
     public void testOrthogonalMultidimensionalMultiStations() throws IOException {
 //        fail("removed - file does not parse correctly in netcdf : Table Structure(record) featureType POINT: lat/lon/time coord not found");
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + OrthogonalMultidimensionalMultiStations);
         String fileName = "OrthogonalMultidimensionalMultiStations.xml";
@@ -431,13 +457,14 @@ public class SOSgetCapsTest {
         write.close();
         fileWriter(base, fileName, write);
         assertFalse(write.toString().contains("Exception"));
-        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
-        // write as an example
-        fileWriter(exampleOutputDir, "GetCapabilities-TimeSeriesProfile.xml", write);
+        assertTrue(write.toString().contains("<sos:ObservationOffering gml:id="));
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
 
     @Test
     public void testMultiDimensionalSingleStations() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalSingleStations);
         String fileName = "MultiDimensionalSingleStations.xml";
@@ -449,11 +476,14 @@ public class SOSgetCapsTest {
         write.close();
         fileWriter(base, fileName, write);
         assertFalse(write.toString().contains("Exception"));
-        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        assertTrue(write.toString().contains("<sos:ObservationOffering gml:id="));
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
 
     @Test
     public void testMultiDimensionalMultiStations() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalMultiStations);
         String fileName = "MultiDimensionalMultiStations.xml";
@@ -465,11 +495,14 @@ public class SOSgetCapsTest {
         write.close();
         fileWriter(base, fileName, write);
         assertFalse(write.toString().contains("Exception"));
-        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        assertTrue(write.toString().contains("<sos:ObservationOffering gml:id="));
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
 
     @Test
     public void testMultiDimensionalMultiStationsLocal() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
         NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalMultiStations);
         String fileName = "MultiDimensionalMultiStations.xml";
@@ -481,17 +514,18 @@ public class SOSgetCapsTest {
         write.close();
         fileWriter(base, fileName, write);
         assertFalse(write.toString().contains("Exception"));
-        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        assertTrue(write.toString().contains("<sos:ObservationOffering gml:id="));
         //station_profile
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
 
 //**********************************
 //PROFILE TEST
     @Test
     public void testContiguousRaggedMultipleProfiles() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
-        spaceBetweenTests();
-        System.out.println("----ContiguousRaggedMultipleProfiles------");
         String fileName = "ContiguousRaggedMultipleProfiles.xml";
         NetcdfDataset dataset = NetcdfDataset.openDataset(ContiguousRaggedMultipleProfiles);
         SOSParser md = new SOSParser();
@@ -501,10 +535,11 @@ public class SOSgetCapsTest {
         write.close();
         fileWriter(base, fileName, write);
         assertFalse(write.toString().contains("Exception"));
-        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        assertTrue(write.toString().contains("<sos:ObservationOffering gml:id="));
         // write as an example
         fileWriter(exampleOutputDir, "GetCapabilities-Profile.xml", write);
-        System.out.println("----end------");
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
         //profile
     }
 
@@ -514,6 +549,7 @@ public class SOSgetCapsTest {
 
     @Test
     public void testIncompleteMultiDimensionalMultipleProfiles() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
         NetcdfDataset dataset = NetcdfDataset.openDataset(IncompleteMultiDimensionalMultipleProfiles);
         String fileName = "IncompleteMultiDimensionalMultipleProfiles.xml";
@@ -525,11 +561,14 @@ public class SOSgetCapsTest {
         write.close();
         fileWriter(base, fileName, write);
         assertFalse(write.toString().contains("Exception"));
-        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        assertTrue(write.toString().contains("<sos:ObservationOffering gml:id="));
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
 
     @Test
     public void testIndexedRaggedMultipleProfiles() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
         NetcdfDataset dataset = NetcdfDataset.openDataset(IndexedRaggedMultipleProfiles);
         String fileName = "IndexedRaggedMultipleProfiles.xml";
@@ -540,11 +579,14 @@ public class SOSgetCapsTest {
         write.close();
         fileWriter(base, fileName, write);
         assertFalse(write.toString().contains("Exception"));
-        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        assertTrue(write.toString().contains("<sos:ObservationOffering gml:id="));
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
 
     @Test
     public void testOrthogonalMultiDimensionalMultipleProfiles() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
         NetcdfDataset dataset = NetcdfDataset.openDataset(OrthogonalMultiDimensionalMultipleProfiles);
         String fileName = "OrthogonalMultiDimensionalMultipleProfiles.xml";
@@ -555,14 +597,15 @@ public class SOSgetCapsTest {
         write.close();
         fileWriter(base, fileName, write);
         assertFalse(write.toString().contains("Exception"));
-        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+        assertTrue(write.toString().contains("<sos:ObservationOffering gml:id="));
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
 
     @Test
     public void testOrthogonalSingleDimensionalSingleProfile() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
-        spaceBetweenTests();
-        System.out.println("----OrthogonalSingleDimensionalSingleProfile------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(OrthogonalSingleDimensionalSingleProfile);
         String fileName = "OrthogonalSingleDimensionalSingleProfile.xml";
         SOSParser md = new SOSParser();
@@ -572,13 +615,15 @@ public class SOSgetCapsTest {
         write.close();
         fileWriter(base, fileName, write);
         assertFalse(write.toString().contains("Exception"));
-        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
-        System.out.println("----end------");
+        assertTrue(write.toString().contains("<sos:ObservationOffering gml:id="));
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
 //**********************************
 
     @Test
     public void testMetaDataParserServiceIdentification() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
         //3.SOSgetcaps
         //2.sos metadata parser
@@ -587,10 +632,13 @@ public class SOSgetCapsTest {
 
         SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, "imeds", "All");
         handler.parseGetCapabilitiesDocument();
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
 
     @Test
     public void testMetaDataParserServiceDescription() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
         //3.SOSgetcaps
         //2.sos metadata parser
@@ -599,10 +647,13 @@ public class SOSgetCapsTest {
 
         SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, "imeds", "All");
         handler.parseGetCapabilitiesDocument();
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
 
     @Test
     public void testMetaDataParserOperationMetaData() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
         //3.SOSgetcaps
         //2.sos metadata parser
@@ -611,10 +662,13 @@ public class SOSgetCapsTest {
 
         SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, "imeds", "All");
         handler.parseGetCapabilitiesDocument();
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
 
     @Test
     public void testMetaDataParserObsList() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
         //3.SOSgetcaps
         //2.sos metadata parser
@@ -623,10 +677,13 @@ public class SOSgetCapsTest {
 
         SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, "imeds", "All");
         handler.parseGetCapabilitiesDocument();
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
 
     @Test
     public void testNOAANDBCMetaDataParserObsList() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
         //3.SOSgetcaps
         //2.sos metadata parser
@@ -637,10 +694,13 @@ public class SOSgetCapsTest {
         System.out.println(cdm_datatype);
         SOSGetCapabilitiesRequestHandler handler = new SOSGetCapabilitiesRequestHandler(dataset, "noaa", "All");
         handler.parseGetCapabilitiesDocument();
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
 
     @Test
     public void testImedsNetcdfFileDoeNotCauseNullObject() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds1);
         String cdm_datatype = dataset.findAttValueIgnoreCase(null, "cdm_data_type", null);
@@ -648,11 +708,14 @@ public class SOSgetCapsTest {
         FeatureDataset featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.STATION, dataset, null, new Formatter(System.err));
 
         assertTrue(featureDataset != null);
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
 
     @Ignore  // test is failing, need to look into it
     @Test
     public void testStationFileNotNull() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
 //        fail("Station file removed");
         NetcdfDataset dataset = NetcdfDataset.openDataset(null);
         String cdm_datatype = dataset.findAttValueIgnoreCase(null, "cdm_data_type", null);
@@ -660,10 +723,13 @@ public class SOSgetCapsTest {
         FeatureDataset featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.STATION, dataset, null, new Formatter(System.err));
 //        assertTrue(featureDataset != null);
         assertFalse(featureDataset != null);
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
 
     @Test
     public void testenhanceImedsDataset() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds1);
 
@@ -673,10 +739,13 @@ public class SOSgetCapsTest {
         write.flush();
         write.close();
         assertFalse(write.toString().contains("Exception"));
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
 
     @Test
     public void testenhanceNOAADataset() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds15);
 
@@ -688,14 +757,14 @@ public class SOSgetCapsTest {
         write.close();
         fileWriter(base, fileName, write);
         assertFalse(write.toString().contains("Exception"));
-        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
-        System.out.println("----end------");
-
-
+        assertTrue(write.toString().contains("<sos:ObservationOffering gml:id="));
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
 
     @Test
     public void testenhanceNOAADataset2() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds15);
         String fileName = "NOAA2.xml";
@@ -707,13 +776,14 @@ public class SOSgetCapsTest {
         write.close();
         fileWriter(base, fileName, write);
         assertFalse(write.toString().contains("Exception"));
-        assertTrue(write.toString().contains("<ObservationOffering gml:id="));
-        System.out.println("----end------");
-
+        assertTrue(write.toString().contains("<sos:ObservationOffering gml:id="));
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
 
     @Test
     public void testenhanceTCOONDatasetNew() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
         NetcdfDataset dataset = NetcdfDataset.openDataset(imeds5);
 
@@ -723,12 +793,14 @@ public class SOSgetCapsTest {
         write.flush();
         write.close();
         assertFalse(write.toString().contains("Exception"));
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
 
     @Test
     public void testenhancePoint() throws IOException {
         // currently unsupported, expect exception
-        System.out.println("------testEnhancePoint-------");
+        System.out.println("\n------" + getCurrentMethod() + "------");
         
         NetcdfDataset dataset = NetcdfDataset.openDataset(cfPoint);
         SOSParser md = new SOSParser();
@@ -738,7 +810,8 @@ public class SOSgetCapsTest {
         write.close();
         fileWriter(base, "testEnhancePoint.xml", write);
         assertTrue(write.toString().contains("Exception"));
-        System.out.println("------end------");
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
     }
     
     @Test
@@ -756,7 +829,7 @@ public class SOSgetCapsTest {
             fileWriter(base, fileName, write);
             // write as an example
             assertFalse(write.toString().contains("Exception"));
-            assertTrue(write.toString().contains("<ObservationOffering gml:id="));
+            assertTrue(write.toString().contains("<sos:ObservationOffering gml:id="));
             fileWriter(exampleOutputDir, "GetCapabilities-Section.xml", write);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
@@ -799,6 +872,9 @@ public class SOSgetCapsTest {
             String fileName = getCurrentMethod() + ".xml";
             fileWriter(base, fileName, write);
             assertFalse("Exception in output", write.toString().contains("Exception"));
+            
+            // write as an example
+            fileWriter(exampleOutputDir, "Nodc-GetCapabilities-PathfinderSST.xml", write);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -819,6 +895,9 @@ public class SOSgetCapsTest {
             String fileName = getCurrentMethod() + ".xml";
             fileWriter(base, fileName, write);
             assertFalse("Exception in output", write.toString().contains("Exception"));
+            
+            // write as an example
+            fileWriter(exampleOutputDir, "Nodc-GetCapabilities-AomlTsg.xml", write);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -840,6 +919,9 @@ public class SOSgetCapsTest {
             String fileName = getCurrentMethod() + ".xml";
             fileWriter(base, fileName, write);
             assertFalse("Exception in output", write.toString().contains("Exception"));
+            
+            // write as an example
+            fileWriter(exampleOutputDir, "Nodc-GetCapabilities-BodegaMarineLabBuoy.xml", write);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -884,6 +966,9 @@ public class SOSgetCapsTest {
             String fileName = getCurrentMethod() + ".xml";
             fileWriter(base, fileName, write);
             assertFalse("Exception in output", write.toString().contains("Exception"));
+            
+            // write as an example
+            fileWriter(exampleOutputDir, "Nodc-GetCapabilities-JasonSatelliteAltimeter.xml", write);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -949,6 +1034,9 @@ public class SOSgetCapsTest {
             String fileName = getCurrentMethod() + ".xml";
             fileWriter(base, fileName, write);
             assertFalse("Exception in output", write.toString().contains("Exception"));
+            
+            // write as an example
+            fileWriter(exampleOutputDir, "Nodc-GetCapabilities-USGSInternalWave.xml", write);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -970,6 +1058,9 @@ public class SOSgetCapsTest {
             String fileName = getCurrentMethod() + ".xml";
             fileWriter(base, fileName, write);
             assertFalse("Exception in output", write.toString().contains("Exception"));
+            
+            // write as an example
+            fileWriter(exampleOutputDir, "Nodc-GetCapabilities-WodObservedLevels.xml", write);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -991,6 +1082,9 @@ public class SOSgetCapsTest {
             String fileName = getCurrentMethod() + ".xml";
             fileWriter(base, fileName, write);
             assertFalse("Exception in output", write.toString().contains("Exception"));
+            
+            // write as an example
+            fileWriter(exampleOutputDir, "Nodc-GetCapabilities-WodStandardLevels.xml", write);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -1015,7 +1109,7 @@ public class SOSgetCapsTest {
             assertFalse("Exception in output", testOut.contains("Exception"));
             assertFalse("ServiceProvider in response", testOut.contains("ows:ServiceProvider"));
             assertFalse("OperationsMetadata in response", testOut.contains("ows:OperationsMetadata"));
-            assertFalse("Contents in response", testOut.contains("<Contents>"));
+            assertFalse("Contents in response", testOut.contains("<sos:Contents>"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -1040,7 +1134,7 @@ public class SOSgetCapsTest {
             assertFalse("Exception in output", testOut.contains("Exception"));
             assertFalse("ServiceIdnetification in response", testOut.contains("ows:ServiceIdentification"));
             assertFalse("OperationsMetadata in response", testOut.contains("ows:OperationsMetadata"));
-            assertFalse("Contents in response", testOut.contains("<Contents>"));
+            assertFalse("Contents in response", testOut.contains("<sos:Contents>"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -1065,7 +1159,7 @@ public class SOSgetCapsTest {
             assertFalse("Exception in output", testOut.contains("Exception"));
             assertFalse("ServiceIdnetification in response", testOut.contains("ows:ServiceIdentification"));
             assertFalse("ServiceProvider in response", testOut.contains("ows:ServiceProvider"));
-            assertFalse("Contents in response", testOut.contains("<Contents>"));
+            assertFalse("Contents in response", testOut.contains("<sos:Contents>"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {

@@ -11,7 +11,6 @@ import ucar.nc2.Variable;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.constants.AxisType;
 import ucar.nc2.constants.FeatureType;
-import ucar.nc2.dataset.CoordinateSystem;
 import ucar.nc2.dataset.CoordinateTransform;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dt.GridDataset;
@@ -26,8 +25,8 @@ import ucar.nc2.units.DateFormatter;
  */
 public abstract class SOSBaseRequestHandler {
 
-    private static final String STATION_GML_BASE = "urn:tds:station.sos:";
-    private static final String SENSOR_GML_BASE = "urn:tds:sensor.sos:";
+    private static final String STATION_GML_BASE = "urn:ioos:station:";
+    private static final String SENSOR_GML_BASE = "urn:ioos:sensor:";
     private final NetcdfDataset netCDFDataset;
     private FeatureDataset featureDataset;
     private final static NumberFormat FORMAT_DEGREE;
@@ -41,6 +40,8 @@ public abstract class SOSBaseRequestHandler {
     private String history;
     private String description;
     private String featureOfInterestBaseQueryURL;
+    
+    private static String namingAuthority;
     
     // Variables and other information commonly needed
     protected Variable latVariable, lonVariable, timeVariable, depthVariable;
@@ -154,8 +155,11 @@ public abstract class SOSBaseRequestHandler {
         title = netCDFDataset.findAttValueIgnoreCase(null, "title", "");
         history = netCDFDataset.findAttValueIgnoreCase(null, "history", "");
         description = netCDFDataset.findAttValueIgnoreCase(null, "description", "");
-        featureOfInterestBaseQueryURL = netCDFDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", "");
+        featureOfInterestBaseQueryURL = netCDFDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", null);
         StandardNameVocabulary = netCDFDataset.findAttValueIgnoreCase(null, "standard_name_vocabulary", "none");
+        namingAuthority = netCDFDataset.findAttValueIgnoreCase(null, "naming_authority", "sos");
+        if (namingAuthority.length() < 1)
+            namingAuthority = "sos";
     }
 
     private void findAndParseStationVariable() throws IOException {
@@ -209,7 +213,16 @@ public abstract class SOSBaseRequestHandler {
         getFeatureDataset().getDataVariables();
         for (Iterator<VariableSimpleIF> it = getFeatureDataset().getDataVariables().iterator(); it.hasNext();) {
             VariableSimpleIF var = it.next();
-            this.sensorNames.add(var.getShortName());
+            String name = var.getShortName();
+            if (name.equalsIgnoreCase("profile") || name.toLowerCase().contains("info") || name.toLowerCase().contains("time") ||
+                name.toLowerCase().contains("row") || name.equalsIgnoreCase("z") || name.equalsIgnoreCase("alt") ||
+                name.equalsIgnoreCase("height"))
+                name.toLowerCase(); // no-op
+            else
+                this.sensorNames.add(name);
+        }
+        if (this.sensorNames.size() < 1) {
+            System.err.println("Do not have any sensor names!");
         }
     }
 
@@ -323,21 +336,28 @@ public abstract class SOSBaseRequestHandler {
      * @return the index of the station; -1 if no station with the name exists
      */
     protected int getStationIndex(String stationToLookFor) {
-        // look for the station in the hashmap and return its index
-        int retval = -1;
-        
-        if (stationNames != null && stationNames.containsValue(stationToLookFor)) {
-            int index = 0;
-            for (String stationName : stationNames.values()) {
-                if (stationToLookFor.equalsIgnoreCase(stationName)) {
-                    retval = index;
-                    break;
+        try {
+            if (stationToLookFor == null)
+                throw new Exception("Looking for null station");
+            // look for the station in the hashmap and return its index
+            int retval = -1;
+            if (stationNames != null && stationNames.containsValue(stationToLookFor)) {
+                int index = 0;
+                for (String stationName : stationNames.values()) {
+                    if (stationToLookFor.equalsIgnoreCase(stationName)) {
+                        retval = index;
+                        break;
+                    }
+                    index++;
                 }
-                index++;
             }
+
+            return retval;
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
         
-        return retval;
+        return -1;
     }
     
     /**
@@ -509,7 +529,7 @@ public abstract class SOSBaseRequestHandler {
      * @return
      */
     public static String getGMLName(String stationName) {
-        return STATION_GML_BASE + stationName;
+        return STATION_GML_BASE + namingAuthority + ":" + stationName;
     }
     
     /**
@@ -520,6 +540,10 @@ public abstract class SOSBaseRequestHandler {
         return SENSOR_GML_BASE;
     }
     
+    public static String getNamingAuthority() {
+        return namingAuthority;
+    }
+    
     /**
      * Returns a composite string of the sensor urn
      * @param stationName name of the station holding the sensor
@@ -527,7 +551,7 @@ public abstract class SOSBaseRequestHandler {
      * @return urn of the station/sensor combo
      */
     public static String getSensorGMLName(String stationName, String sensorName) {
-        return SENSOR_GML_BASE + stationName + ":" + sensorName;
+        return SENSOR_GML_BASE + namingAuthority + ":" + stationName + ":" + sensorName;
     }
 
     /**
@@ -626,7 +650,7 @@ public abstract class SOSBaseRequestHandler {
      */
     public String getFeatureOfInterest(String stationName) {
         return featureOfInterestBaseQueryURL == null
-                ? stationName
+                ? getGMLName(stationName)
                 : featureOfInterestBaseQueryURL + stationName;
     }
     
