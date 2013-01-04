@@ -74,7 +74,7 @@ public class SOSGetObsTest {
     private static final String timeSeriesIncompleteMulti = baseRequest + "&observedProperty=temperature&offering=Station-9&eventtime=1990-01-01T00:00:00Z/1990-01-01T10:00:00Z";
     private static final String timeSeriesIncompleteMultiInvalid = baseRequest + "&observedProperty=temperature&offering=Station-9&eventtime=1990-02-01T00:00:00Z/1990-05-01T10:00:00Z";
     private static final String timeSeriesIncompleteMultiStation = baseRequest + "&observedProperty=temperature&offering=Station-9,Station-8&eventtime=1990-01-01T00:00:00Z/1990-01-01T8:00:00Z";
-    private static final String timeSeriesIncompleteMultiStationx3 = baseRequest + "&observedProperty=temperature&offering=urn:tds:station.sos:Station-9,urn:tds:station.sos:Station-8,urn:tds:station.sos:Station-7&eventtime=1990-01-01T00:00:00Z/1990-01-01T8:00:00Z";
+    private static final String timeSeriesIncompleteMultiStationx3 = baseRequest + "&observedProperty=temperature&offering=urn:ioos:station:sos:Station-9,urn:ioos:station:sos:Station-8,urn:ioos:station:sos:Station-7&eventtime=1990-01-01T00:00:00Z/1990-01-01T8:00:00Z";
     
     private static final String tsOrthogonalMultidimenstionalMultipleStations = "resources/datasets/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1.nc";
     private static final String timeSeriestOrth = baseRequest + "&observedProperty=alt&offering=Station-1&eventtime=1990-01-01T00:00:00Z";
@@ -1026,15 +1026,15 @@ public class SOSGetObsTest {
             write.close();
             String fileName = "ContiguousRaggedMultipleProfilesMultiTime3.xml";
             fileWriter(base, fileName, write);
-            // write as an example
-            fileWriter(exampleOutputDir, "GetObservation-Profile-om1.0.0.xml", write);
             //dataAvailableInOutputFile(write);
             //check depth was entered auto
             assertFalse(write.toString().contains("Exception"));
             assertTrue("depth not added", write.toString().contains("<swe:field name=\"z\">"));
-            assertTrue("data missing - feature of interest", write.toString().contains("<om:featureOfInterest xlink:href=\"Profile3\"/>"));
+            assertTrue("data missing - feature of interest", write.toString().contains("<om:featureOfInterest xlink:href=\"urn:ioos:station:sos:Profile3\"/>"));
             assertFalse("bad data included - time stamp", write.toString().contains("1990-01-01T01:00:00Z,"));
             assertFalse("bad data included - time stamp", write.toString().contains("1990-01-01T02:00:00Z,"));
+            // write as an example
+            fileWriter(exampleOutputDir, "GetObservation-Profile-om1.0.0.xml", write);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -1059,10 +1059,10 @@ public class SOSGetObsTest {
             dataAvailableInOutputFile(write);
             //check depth was entered auto
             assertTrue("depth not added", write.toString().contains("<swe:field name=\"z\">"));
-            assertFalse("invalid foi", write.toString().contains("<om:featureOfInterest xlink:href=\"PROFILE_0\"/>"));
-            assertFalse("invalid foi", write.toString().contains("<om:featureOfInterest xlink:href=\"PROFILE_3\"/>"));
-            assertTrue("foi missing", write.toString().contains("<om:featureOfInterest xlink:href=\"Profile1\"/>"));
-            assertTrue("foi missing", write.toString().contains("<om:featureOfInterest xlink:href=\"Profile2\"/>"));
+            assertFalse("invalid foi", write.toString().contains("<om:featureOfInterest xlink:href=\"urn:ioos:station:sos:PROFILE_0\"/>"));
+            assertFalse("invalid foi", write.toString().contains("<om:featureOfInterest xlink:href=\"urn:ioos:station:sos:PROFILE_3\"/>"));
+            assertTrue("foi missing", write.toString().contains("<om:featureOfInterest xlink:href=\"urn:ioos:station:sos:Profile1\"/>"));
+            assertTrue("foi missing", write.toString().contains("<om:featureOfInterest xlink:href=\"urn:ioos:station:sos:Profile2\"/>"));
             assertTrue("data missing", write.toString().contains("1990-01-01T01:00:00Z,"));
             assertTrue("data missing", write.toString().contains("1990-01-01T02:00:00Z,"));
         } catch (IOException ex) {

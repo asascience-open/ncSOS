@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Capabilities version="1.0.0" xmlns="http://www.opengis.net/sos/1.0"
-    xmlns:gml="http://www.opengis.net/gml"
+<sos:Capabilities version="1.0.0" xmlns:gml="http://www.opengis.net/gml"
     xmlns:oost="http://www.oostethys.org/schemas/0.1.0/oostethys"
     xmlns:ows="http://www.opengis.net/ows/1.1"
+    xmlns:sos="http://www.opengis.net/sos/1.0"
     xmlns:swe="http://www.opengis.net/swe/1.0.1"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sos/1.0 http://schemas.opengis.net/sos/1.0.0/sosGetCapabilities.xsd">
-    <!--~~~~~~~~~~~~~~~~~~~~~~~~-->
-    <!-- Service Identification -->
-    <!--~~~~~~~~~~~~~~~~~~~~~~~~-->
     <ows:ServiceIdentification>
         <ows:Title>Temperature and conductivity data collected from five Seacat sensors from a mooring as part of the Massachusetts Bay Internal Wave Experiment from 1998-08-05 to 1998-09-01</ows:Title>
         <ows:Abstract>U.S.Geological Survey, Woods Hole Coastal and Marine Science Center</ows:Abstract>
@@ -20,9 +17,6 @@
         <ows:Fees>NONE</ows:Fees>
         <ows:AccessConstraints/>
     </ows:ServiceIdentification>
-    <!--~~~~~~~~~~~~~~~~~~~~~~-->
-    <!-- Provider Description -->
-    <!--~~~~~~~~~~~~~~~~~~~~~~-->
     <ows:ServiceProvider>
         <ows:ProviderName>WHOI Upper Ocean Proc Grp</ows:ProviderName>
         <ows:ProviderSite>http://www.nodc.noaa.gov/</ows:ProviderSite>
@@ -44,9 +38,6 @@
             </ows:ContactInfo>
         </ows:ServiceContact>
     </ows:ServiceProvider>
-    <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-    <!-- operations Metadata Section -->
-    <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
     <ows:OperationsMetadata>
         <ows:Operation name="GetCapabilities">
             <ows:DCP>
@@ -106,13 +97,13 @@
             </ows:DCP>
             <ows:Parameter name="procedure" use="required">
                 <ows:AllowedValues>
-                    <ows:Value>urn:tds:network:all</ows:Value>
-                    <ows:Value>urn:tds:station.sos:-2147483647</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:-2147483647:instrument_2</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:-2147483647:T_20</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:-2147483647:C_51</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:-2147483647:S_40</ows:Value>
-                    <ows:Value>urn:tds:sensor.sos:-2147483647:STH_71</ows:Value>
+                    <ows:Value>urn:ioos:gov.noaa.nodc:network:all</ows:Value>
+                    <ows:Value>urn:ioos:station:gov.noaa.nodc:-2147483647</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.nodc:-2147483647:instrument_2</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.nodc:-2147483647:T_20</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.nodc:-2147483647:C_51</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.nodc:-2147483647:S_40</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.nodc:-2147483647:STH_71</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
             <ows:Parameter name="responseformat" use="required">
@@ -132,14 +123,11 @@
             </ows:AllowedValues>
         </ows:Parameter>
     </ows:OperationsMetadata>
-    <!--~~~~~~~~~~~~~~~~~~~~~~~-->
-    <!-- Observation Offerings -->
-    <!--~~~~~~~~~~~~~~~~~~~~~~~-->
-    <Contents>
-        <ObservationOfferingList>
-            <ObservationOffering gml:id="network-all">
+    <sos:Contents>
+        <sos:ObservationOfferingList>
+            <sos:ObservationOffering gml:id="network-all">
                 <gml:description>All stations in the netCDF dataset.</gml:description>
-                <gml:name>urn:tds:network:all</gml:name>
+                <gml:name>urn:ioos:gov.noaa.nodc:network:all</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
@@ -147,24 +135,25 @@
                         <gml:upperCorner>42.332499999999996 -70.3903</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <time>
+                <sos:time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1998-08-05T14:46:00.000Z</gml:beginPosition>
                         <gml:endPosition>1998-08-05T14:46:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
-                </time>
-                <procedure xlink:href="urn:tds:station.sos:-2147483647"/>
-                <observedProperty xlink:href="instrument_2"/>
-                <observedProperty xlink:href="T_20"/>
-                <observedProperty xlink:href="C_51"/>
-                <observedProperty xlink:href="S_40"/>
-                <observedProperty xlink:href="STH_71"/>
-                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel/>
-                <responseMode/>
-            </ObservationOffering>
-            <ObservationOffering gml:id="-2147483647">
-                <gml:name>urn:tds:station.sos:-2147483647</gml:name>
+                </sos:time>
+                <sos:procedure xlink:href="urn:ioos:station:gov.noaa.nodc:-2147483647"/>
+                <sos:observedProperty xlink:href="instrument_2"/>
+                <sos:observedProperty xlink:href="T_20"/>
+                <sos:observedProperty xlink:href="C_51"/>
+                <sos:observedProperty xlink:href="S_40"/>
+                <sos:observedProperty xlink:href="STH_71"/>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:gov.noaa.nodc:-2147483647"/>
+                <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
+                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:responseMode>inline</sos:responseMode>
+            </sos:ObservationOffering>
+            <sos:ObservationOffering gml:id="-2147483647">
+                <gml:name>urn:ioos:station:gov.noaa.nodc:-2147483647</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
@@ -172,27 +161,27 @@
                         <gml:upperCorner>42.332499999999996 -70.3903</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <time>
+                <sos:time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1998-08-05T14:46:00.000Z</gml:beginPosition>
                         <gml:endPosition>1998-08-05T14:46:00.000Z</gml:endPosition>
                     </gml:TimePeriod>
-                </time>
-                <featureOfInterest xlink:href="-2147483647"/>
-                <observedProperty xlink:href="instrument_2"/>
-                <observedProperty xlink:href="T_20"/>
-                <observedProperty xlink:href="C_51"/>
-                <observedProperty xlink:href="S_40"/>
-                <observedProperty xlink:href="STH_71"/>
-                <procedure xlink:href="urn:tds:sensor.sos:-2147483647:instrument_2"/>
-                <procedure xlink:href="urn:tds:sensor.sos:-2147483647:T_20"/>
-                <procedure xlink:href="urn:tds:sensor.sos:-2147483647:C_51"/>
-                <procedure xlink:href="urn:tds:sensor.sos:-2147483647:S_40"/>
-                <procedure xlink:href="urn:tds:sensor.sos:-2147483647:STH_71"/>
-                <responseFormat>text/xml; subtype="om/1.0.0"</responseFormat>
-                <responseModel>om:ObservationCollection</responseModel>
-                <responseMode>inline</responseMode>
-            </ObservationOffering>
-        </ObservationOfferingList>
-    </Contents>
-</Capabilities>
+                </sos:time>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:gov.noaa.nodc:-2147483647"/>
+                <sos:observedProperty xlink:href="instrument_2"/>
+                <sos:observedProperty xlink:href="T_20"/>
+                <sos:observedProperty xlink:href="C_51"/>
+                <sos:observedProperty xlink:href="S_40"/>
+                <sos:observedProperty xlink:href="STH_71"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.nodc:-2147483647:instrument_2"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.nodc:-2147483647:T_20"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.nodc:-2147483647:C_51"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.nodc:-2147483647:S_40"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.nodc:-2147483647:STH_71"/>
+                <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
+                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:responseMode>inline</sos:responseMode>
+            </sos:ObservationOffering>
+        </sos:ObservationOfferingList>
+    </sos:Contents>
+</sos:Capabilities>

@@ -30,11 +30,10 @@
                     <gml:endPosition>1990-01-01T03:00:00Z</gml:endPosition>
                 </gml:TimePeriod>
             </om:samplingTime>
-            <om:procedure xlink:href="urn:tds:station.sos:Profile3"/>
+            <om:procedure xlink:href="urn:ioos:station:sos:Profile3"/>
             <om:observedProperty xlink:href="temperature"/>
             <om:observedProperty xlink:href="humidity"/>
-            <om:observedProperty xlink:href="z"/>
-            <om:featureOfInterest xlink:href="Profile3"/>
+            <om:featureOfInterest xlink:href="urn:ioos:station:sos:Profile3"/>
             <om:result>
                 <swe:dataArray>
                     <swe:elementCount>

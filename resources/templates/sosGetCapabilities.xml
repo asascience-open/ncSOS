@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Capabilities     
-                  xmlns="http://www.opengis.net/sos/1.0"
+<sos:Capabilities     
+                  xmlns:sos="http://www.opengis.net/sos/1.0"
                   xmlns:oost="http://www.oostethys.org/schemas/0.1.0/oostethys"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xmlns:ows="http://www.opengis.net/ows/1.1"
@@ -98,9 +98,9 @@
 			</ows:AllowedValues>
 		</ows:Parameter>
 	</ows:OperationsMetadata>
-	<Contents>
-		<ObservationOfferingList>
+	<sos:Contents>
+		<sos:ObservationOfferingList>
 			
-		</ObservationOfferingList>
-	</Contents>
-</Capabilities>
+		</sos:ObservationOfferingList>
+	</sos:Contents>
+</sos:Capabilities>

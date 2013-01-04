@@ -61,7 +61,7 @@ public class SOSDescribeSensor extends SOSDescribeStation implements SOSDescribe
         
         stationCoords = getStationCoords(latVariable, lonVariable);
         
-        if (stationCoords == null || (stationCoords[0] == Double.NaN && stationCoords[1] == Double.NaN))
+        if (stationCoords == null || stationCoords.length < 1)
             errorString = "Unable to find station " + stationName + " in the dataset!";
     }
     

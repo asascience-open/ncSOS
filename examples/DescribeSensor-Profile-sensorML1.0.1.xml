@@ -1,9 +1,8 @@
 
 <?xml version="1.0" encoding="UTF-8"?>
-<sml:SensorML version="1.0.1"
-    xmlns="http://www.opengis.net/sensorML/1.0.1"
-    xmlns:gml="http://www.opengis.net/gml"
+<sml:SensorML version="1.0.1" xmlns:gml="http://www.opengis.net/gml"
     xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:sos="http://www.opengis.net/sensorML/1.0.1"
     xmlns:swe="http://www.opengis.net/swe/1.0.1"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
@@ -14,7 +13,7 @@
                 <sml:IdentifierList>
                     <sml:identifier name="StationId">
                         <sml:Term definition="http://mmisw.org/ont/ioos/definition/stationID">
-                            <sml:value>urn:tds:station.sos:Profile3</sml:value>
+                            <sml:value>urn:ioos:station:sos:Profile3</sml:value>
                         </sml:Term>
                     </sml:identifier>
                 </sml:IdentifierList>
@@ -78,15 +77,15 @@
                 <sml:ComponentList>
                     <sml:component name="Sensor temperature">
                         <sml:System gml:id="sensor-temperature">
-                            <sml:identification xlink:href="urn:tds:station.sos:Profile3::temperature"/>
-                            <sml:documentation xlink:href="resources/datasets/profile-Contiguous-Ragged-MultipleProfiles-H.3.4/profile-Contiguous-Ragged-MultipleProfiles-H.3.4.nc?request=DescribeSensor&amp;service=sos&amp;version=1.0.0&amp;responseformat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%22&amp;procedure=urn:tds:station.sos:Profile3::temperature"/>
+                            <sml:identification xlink:href="urn:ioos:station:sos:Profile3:temperature"/>
+                            <sml:documentation xlink:href="resources/datasets/profile-Contiguous-Ragged-MultipleProfiles-H.3.4/profile-Contiguous-Ragged-MultipleProfiles-H.3.4.nc?request=DescribeSensor&amp;service=sos&amp;version=1.0.0&amp;responseformat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%22&amp;procedure=urn:ioos:station:sos:Profile3:temperature"/>
                             <gml:description>Air Temperature</gml:description>
                         </sml:System>
                     </sml:component>
                     <sml:component name="Sensor humidity">
                         <sml:System gml:id="sensor-humidity">
-                            <sml:identification xlink:href="urn:tds:station.sos:Profile3::humidity"/>
-                            <sml:documentation xlink:href="resources/datasets/profile-Contiguous-Ragged-MultipleProfiles-H.3.4/profile-Contiguous-Ragged-MultipleProfiles-H.3.4.nc?request=DescribeSensor&amp;service=sos&amp;version=1.0.0&amp;responseformat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%22&amp;procedure=urn:tds:station.sos:Profile3::humidity"/>
+                            <sml:identification xlink:href="urn:ioos:station:sos:Profile3:humidity"/>
+                            <sml:documentation xlink:href="resources/datasets/profile-Contiguous-Ragged-MultipleProfiles-H.3.4/profile-Contiguous-Ragged-MultipleProfiles-H.3.4.nc?request=DescribeSensor&amp;service=sos&amp;version=1.0.0&amp;responseformat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%22&amp;procedure=urn:ioos:station:sos:Profile3:humidity"/>
                             <gml:description>Humidity</gml:description>
                         </sml:System>
                     </sml:component>

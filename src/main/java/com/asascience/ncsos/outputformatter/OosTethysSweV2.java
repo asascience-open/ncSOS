@@ -6,6 +6,7 @@ package com.asascience.ncsos.outputformatter;
 
 import com.asascience.ncsos.cdmclasses.baseCDMClass;
 import com.asascience.ncsos.getobs.SOSGetObservationRequestHandler;
+import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,7 +28,7 @@ public class OosTethysSweV2 implements SOSOutputFormatter {
     private static final String TEMPLATE = "templates/oostethysswe.xml";
     private static final String XLINK = "xlink:href";
     private static final String OM_OBSERVATION = "om:Observation";
-    private static final String STATION_GML_BASE = "urn:tds:station.sos:";
+    private static final String STATION_GML_BASE = "urn:ioos:station:" + SOSBaseRequestHandler.getNamingAuthority() + ":";
     private static final String MMI_CF = "http://mmisw.org/ont/cf/parameter/";
     private static final String BLOCK_SEPERATOR = " ";
     private static final String TOKEN_SEPERATOR = ",";
@@ -168,7 +169,10 @@ public class OosTethysSweV2 implements SOSOutputFormatter {
         parent.appendChild(createNodeWithAttribute("om:procedure", XLINK, STATION_GML_BASE + procName));
         // add each of the observed properties we are looking for
         for (String obs : obsHandler.getObservedProperties()) {
-            parent.appendChild(createNodeWithAttribute("om:observedProperty", XLINK, obs));
+            // don't add height/depth vars; lat & lon
+            if (!obs.equalsIgnoreCase("alt") && !obs.equalsIgnoreCase("height") && !obs.equalsIgnoreCase("z") &&
+                !obs.equalsIgnoreCase("lat") && !obs.equalsIgnoreCase("lon"))
+                parent.appendChild(createNodeWithAttribute("om:observedProperty", XLINK, obs));
         }
         // feature of interest
         parent.appendChild(createNodeWithAttribute("om:featureOfInterest", XLINK, obsHandler.getFeatureOfInterest(procName)));
