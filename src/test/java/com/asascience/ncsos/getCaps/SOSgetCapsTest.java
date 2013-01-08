@@ -272,6 +272,20 @@ public class SOSgetCapsTest {
         
         System.out.println("------END " + getCurrentMethod() + "------");
     }
+    
+    @Test
+    public void testReadInOperationsMeatadataFromCache() throws IOException {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
+        SOSParser md = new SOSParser();
+        Writer write = new CharArrayWriter();
+        writeOutput(md.enhanceGETRequest(dataset, baseRequest + "&useCache=true&sections=OperationsMetadata", tsIncompleteMultiDimensionalMultipleStations, baseTomcatDir + catalinaThredds),write);
+        fileWriter(base, getCurrentMethod() + ".xml", write);
+        assertFalse("Exception in output", write.toString().contains("Exception"));
+        
+        System.out.println("------END " + getCurrentMethod() + "------");
+    }
 
     @Test
     public void testCacheReturnsTrueFileDoesExist() throws IOException {
@@ -297,15 +311,6 @@ public class SOSgetCapsTest {
         assertTrue("Could not delete the cached file", file.delete());
         
         System.out.println("------END " + getCurrentMethod() + "------");
-    }
-
-    @Ignore
-    @Test
-    public void testCanGetCorrectDataSetFileName() throws IOException {
-        fail("removed - caching temporarily unavailable");
-        NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
-        SOSParser md = new SOSParser();
-//        assertEquals("/watlev_IKE.xml", md.getCacheXmlFileName(imeds13));
     }
 
     @Ignore

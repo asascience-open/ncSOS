@@ -15,7 +15,6 @@ import java.io.*;
 import java.net.URLDecoder;
 import java.util.*;
 import javax.xml.parsers.ParserConfigurationException;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -34,7 +33,10 @@ public class SOSParser {
     private final String defVersion = "1.0.0";
     private final String TRUE_STRING = "true";
 
-    
+    // millisecs per sec * secs per hour * hour per day * day limit (1 week)
+    private final long CACHE_AGE_LIMIT = 1000 * 3600 * 24 * 7;
+    // debug value
+//    private final long CACHE_AGE_LIMIT = 7;
     
     // enum for supported request types (used primarily for string comparison)
     private enum SupportedRequests {
@@ -128,7 +130,7 @@ public class SOSParser {
         try {
             switch (SupportedRequests.valueOf(queryParameters.get("request").toString())) {
                 case GetCapabilities:
-                    System.out.println("In GetCapabilities of switch");
+                    _log.debug("In GetCapabilities of switch");
                     SOSGetCapabilitiesRequestHandler capHandler = null;
                     // indicate that our response will be in xml
                     retval.put("responseContentType", "text/xml");
@@ -138,20 +140,16 @@ public class SOSParser {
                     // check to see if cache is enabled
                     if (queryParameters.containsKey("usecache") && queryParameters.get("usecache").toString().equals(TRUE_STRING) && savePath != null) {
                         //Check to see if get caps exists, if it does not actual parse the file
-                        System.out.println("Cache enabled for GetCapabilities");
+                        _log.debug("Cache enabled for GetCapabilities");
                         File f = new File(savePath + getCacheXmlFileName(threddsURI));
                         
                         if (f.exists()) {
-                            System.out.println("File exists...");
                             //if the file exists check the modified data against current data
                             long fileDateTime = f.lastModified();
-                            Date fileDate = new Date(fileDateTime);
-                            DateTime currentDateTime = new DateTime();
-                            DateTime SevenDaysEarlier = currentDateTime.minusSeconds(7);
-                            Date minusSevenFromNow = SevenDaysEarlier.toDate();
-                            //if the file is older than seven days reprocess the data
-                            if (fileDate.after(minusSevenFromNow)) {
-                                System.out.println("File is older than 7 secs");
+                            Calendar today = Calendar.getInstance();
+                            //if the file is older than seven days (age limit) reprocess the data
+                            if (today.getTimeInMillis() - fileDateTime > CACHE_AGE_LIMIT) {
+                                _log.debug("File is older than 7 secs");
                                 capHandler = createGetCapsCacheFile(dataset, threddsURI, savePath);
                                 capHandler.resetCapabilitiesSections(sections);
                             } else {
@@ -166,7 +164,7 @@ public class SOSParser {
                                 }
                             }
                         } else {
-                            System.out.println("File does NOT exist");
+                            _log.debug("File does NOT exist");
                             try {
                                 //create the file as it does not exist
                                 capHandler = createGetCapsCacheFile(dataset, threddsURI, savePath);
@@ -267,9 +265,9 @@ public class SOSParser {
                         }
                         retval.put("outputHandler",sensorHandler.getOutputHandler());
                     } catch (Exception ex) {
-                        System.out.println(ex.toString());
+                        _log.debug(ex.toString());
                         for (int e = 0; e < 10; e++) {
-                            System.out.println("\t" + ex.getStackTrace()[e]);
+                            _log.debug("\t" + ex.getStackTrace()[e]);
                         }
                         errHandler.setErrorExceptionOutput("Internal System Exception in setting up DescribeSensor handler - " + ex.toString());
                         retval.put("outputHandler", errHandler.getOutputHandler());
@@ -280,14 +278,14 @@ public class SOSParser {
                     // return a 'not supported' error
                     errHandler.setErrorExceptionOutput(queryParameters.get("request").toString() + " is not a supported request");
                     retval.put("outputHandler", errHandler.getOutputHandler());
-                    System.out.println(queryParameters.get("request").toString() + " is not a supported request");
+                    _log.debug(queryParameters.get("request").toString() + " is not a supported request");
                     _log.error("Invalid request parameter: " + queryParameters.get("request").toString() + " is not a supported request");
                     break;
             }
         } catch (IllegalArgumentException ex) {
             // create a get caps respons with exception
             _log.error("Exception with request: " + ex.getMessage());
-            System.out.println("Exception encountered " + ex.getMessage());
+            _log.debug("Exception encountered " + ex.getMessage());
             try {
                 errHandler.setErrorExceptionOutput("Unrecognized request " + queryParameters.get("request").toString());
                 retval.put("outputHandler", errHandler.getOutputHandler());
@@ -326,7 +324,7 @@ public class SOSParser {
                         String val = URLDecoder.decode(keyVal[1], "UTF-8");
                         queryParameters.put(keyVal[0].toLowerCase(),val);
                     } catch (Exception e) {
-                        System.out.println("Exception in decoding: " + keyVal[1] + " - " + e.getMessage());
+                        _log.debug("Exception in decoding: " + keyVal[1] + " - " + e.getMessage());
                         _log.error("Exception in decoding: " + keyVal[1] + " - " + e.getMessage());
                         queryParameters.put(keyVal[0],keyVal[1]);
                     }
@@ -354,7 +352,7 @@ public class SOSParser {
     }
         
     private String getCacheXmlFileName(String threddsURI) {
-        System.out.println("thredds uri: " + threddsURI);
+        _log.debug("thredds uri: " + threddsURI);
         String[] splitStr = threddsURI.split("/");
         String dName = splitStr[splitStr.length-1];
         splitStr = dName.split("\\.");
@@ -366,7 +364,7 @@ public class SOSParser {
     }
 
     private SOSGetCapabilitiesRequestHandler createGetCapsCacheFile(NetcdfDataset dataset, String threddsURI, String savePath) throws IOException {
-        System.out.println("Writing cache file for Get Capabilities request.");
+        _log.debug("Writing cache file for Get Capabilities request.");
         SOSGetCapabilitiesRequestHandler cacheHandle = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI, "all");
         parseGetCaps(cacheHandle);
         File file = new File(savePath + getCacheXmlFileName(threddsURI));
@@ -374,12 +372,12 @@ public class SOSParser {
         Writer writer = new BufferedWriter(new FileWriter(file, false));
         writer.flush();
         cacheHandle.output.writeOutput(writer);
-        System.out.println("Write cache to: " + file.getAbsolutePath());
+        _log.debug("Write cache to: " + file.getAbsolutePath());
         return cacheHandle;
     }
 
     private SOSOutputFormatter fileIsInDate(File f, String sections) throws ParserConfigurationException, SAXException, IOException {
-        System.out.println("Using cached get capabilities doc");
+        _log.debug("Using cached get capabilities doc");
         CachedFileFormatter retval = new CachedFileFormatter(f);
         retval.setSections(sections);
         return retval;
