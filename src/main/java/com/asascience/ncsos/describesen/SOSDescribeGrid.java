@@ -8,8 +8,6 @@ import com.asascience.ncsos.outputformatter.DescribeNetworkFormatter;
 import com.asascience.ncsos.outputformatter.DescribeSensorFormatter;
 import java.io.IOException;
 import org.w3c.dom.Element;
-import ucar.ma2.Array;
-import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.unidata.geoloc.LatLonRect;
 

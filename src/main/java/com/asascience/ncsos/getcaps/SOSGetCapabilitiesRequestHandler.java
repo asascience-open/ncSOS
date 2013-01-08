@@ -22,16 +22,14 @@ import ucar.unidata.geoloc.LatLonRect;
 public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
 
     private final String threddsURI;
-    private final String sections;
     
     private enum Sections {
         OPERATIONSMETADATA, SERVICEIDENTIFICATION, SERVICEPROVIDER, CONTENTS
     }
     
+    private String sections;
     private BitSet requestedSections;
     private static final int SECTION_COUNT = 4;
-    
-    private static final String OWS = "http://www.opengis.net/ows/1.1";
     
     private static CalendarDate setStartDate;
     private static CalendarDate setEndDate;
@@ -80,6 +78,12 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         output = new GetCapsOutputter();
     }
     
+    public void resetCapabilitiesSections(String sections) {
+        this.sections = sections.toLowerCase();
+        requestedSections = new BitSet(SECTION_COUNT);
+        SetSectionBits();
+    }
+    
     /**
      * Creates the output for the get capabilities response
      */
@@ -90,7 +94,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
             return;
         // service identification; parse if it is the section identified or 'all'
         if (this.requestedSections.get(Sections.SERVICEIDENTIFICATION.ordinal())) {
-            out.parseServiceIdentification(getTitle() ,Region, Access);
+            out.parseServiceIdentification(title ,Region, Access);
         } else {
             // remove identification from doc
             out.removeServiceIdentification();

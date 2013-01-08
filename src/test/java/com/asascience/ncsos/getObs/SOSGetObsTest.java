@@ -257,7 +257,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, imeds1Req, imeds1),write);
+            writeOutput(md.enhanceGETRequest(dataset, imeds1Req, imeds1),write);
             write.flush();
             write.close();String fileName = "imeds1.xml";
             fileWriter(base, fileName, write);
@@ -279,7 +279,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, imeds4Req, imeds4),write);
+            writeOutput(md.enhanceGETRequest(dataset, imeds4Req, imeds4),write);
             write.flush();
             write.close();
             String fileName = "imeds4.xml";
@@ -302,7 +302,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, imeds5Req, imeds5),write);
+            writeOutput(md.enhanceGETRequest(dataset, imeds5Req, imeds5),write);
             write.flush();
             write.close();
             String fileName = "imeds5.xml";
@@ -325,7 +325,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, imeds6Req, imeds6),write);
+            writeOutput(md.enhanceGETRequest(dataset, imeds6Req, imeds6),write);
             write.flush();
             write.close();
             String fileName = "imeds6.xml";
@@ -348,7 +348,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, imeds7Req, imeds7),write);
+            writeOutput(md.enhanceGETRequest(dataset, imeds7Req, imeds7),write);
             write.flush();
             write.close();
             String fileName = "imeds7.xml";
@@ -371,7 +371,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, imeds8Req, imeds8),write);
+            writeOutput(md.enhanceGETRequest(dataset, imeds8Req, imeds8),write);
             write.flush();
             write.close();
             String fileName = "imeds8.xml";
@@ -394,7 +394,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, imeds9Req, imeds9),write);
+            writeOutput(md.enhanceGETRequest(dataset, imeds9Req, imeds9),write);
             write.flush();
             write.close();
             String fileName = "imeds9.xml";
@@ -417,7 +417,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, imeds10Req, imeds10),write);
+            writeOutput(md.enhanceGETRequest(dataset, imeds10Req, imeds10),write);
             write.flush();
             write.close();
             String fileName = "imeds10.xml";
@@ -440,7 +440,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, imeds11Req, imeds11),write);
+            writeOutput(md.enhanceGETRequest(dataset, imeds11Req, imeds11),write);
             write.flush();
             write.close();
             String fileName = "imeds11.xml";
@@ -463,7 +463,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, imeds12Req, imeds12),write);
+            writeOutput(md.enhanceGETRequest(dataset, imeds12Req, imeds12),write);
             write.flush();
             write.close();
             String fileName = "imeds12.xml";
@@ -486,7 +486,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, imeds13Req, imeds13),write);
+            writeOutput(md.enhanceGETRequest(dataset, imeds13Req, imeds13),write);
             write.flush();
             write.close();
             String fileName = "imeds13.xml";
@@ -509,7 +509,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, imeds13Req, imeds14),write);
+            writeOutput(md.enhanceGETRequest(dataset, imeds13Req, imeds14),write);
             write.flush();
             write.close();
             String fileName = "imeds14.xml";
@@ -532,7 +532,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, imeds15Req, imeds15),write);
+            writeOutput(md.enhanceGETRequest(dataset, imeds15Req, imeds15),write);
             write.flush();
             write.close();
             String fileName = "imeds15.xml";
@@ -555,7 +555,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, timeSeriesIncompleteMultiStationx3, tsIncompleteMultiDimensionalMultipleStations),write);
+            writeOutput(md.enhanceGETRequest(dataset, timeSeriesIncompleteMultiStationx3, tsIncompleteMultiDimensionalMultipleStations),write);
             write.flush();
             write.close();
             String fileName = "tsDatax3.xml";
@@ -588,7 +588,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, timeSeriesIncompleteMultiStation, tsIncompleteMultiDimensionalMultipleStations),write);
+            writeOutput(md.enhanceGETRequest(dataset, timeSeriesIncompleteMultiStation, tsIncompleteMultiDimensionalMultipleStations),write);
             write.flush();
             write.close();
             String fileName = "tsData.xml";
@@ -621,7 +621,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, timeSeriesIncompleteMultiInvalid, tsIncompleteMultiDimensionalMultipleStations),write);
+            writeOutput(md.enhanceGETRequest(dataset, timeSeriesIncompleteMultiInvalid, tsIncompleteMultiDimensionalMultipleStations),write);
             write.flush();
             write.close();
             String fileName = "tsIncompleteMultiDimensionalMultipleStationsMultiTimeInvalid.xml";
@@ -649,7 +649,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, timeSeriesIncompleteMulti, tsIncompleteMultiDimensionalMultipleStations),write);
+            writeOutput(md.enhanceGETRequest(dataset, timeSeriesIncompleteMulti, tsIncompleteMultiDimensionalMultipleStations),write);
             write.flush();
             write.close();
             String fileName = "tsIncompleteMultiDimensionalMultipleStationsMultiTime.xml";
@@ -677,7 +677,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, timeSeriesIncomplete, tsIncompleteMultiDimensionalMultipleStations),write);
+            writeOutput(md.enhanceGETRequest(dataset, timeSeriesIncomplete, tsIncompleteMultiDimensionalMultipleStations),write);
             write.flush();
             write.close();
             String fileName = "tsIncompleteMultiDimensionalMultipleStations.xml";
@@ -700,7 +700,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, timeSeriesIncompleteWithTime, tsIncompleteMultiDimensionalMultipleStations),write);
+            writeOutput(md.enhanceGETRequest(dataset, timeSeriesIncompleteWithTime, tsIncompleteMultiDimensionalMultipleStations),write);
             write.flush();
             write.close();
             String fileName = "tsIncompleteMultiDimensionalMultipleStationsWithTime.xml";
@@ -723,7 +723,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, timeSeriestOrth, tsOrthogonalMultidimenstionalMultipleStations),write);
+            writeOutput(md.enhanceGETRequest(dataset, timeSeriestOrth, tsOrthogonalMultidimenstionalMultipleStations),write);
             write.flush();
             write.close();
             String fileName = "tsOrthogonalMultidimenstionalMultipleStations.xml";
@@ -746,7 +746,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, timeSeriesProfileRequestMulti, RaggedMultiConventions),write);
+            writeOutput(md.enhanceGETRequest(dataset, timeSeriesProfileRequestMulti, RaggedMultiConventions),write);
             write.flush();
             write.close();
             String fileName = "RaggedMultiConventionsMultiTime.xml";
@@ -780,7 +780,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, timeSeriesProfileRequestMultiInvalidDates, RaggedMultiConventions),write);
+            writeOutput(md.enhanceGETRequest(dataset, timeSeriesProfileRequestMultiInvalidDates, RaggedMultiConventions),write);
             write.flush();
             write.close();
             String fileName = "RaggedMultiConventionsMultiTimeInvalidDates.xml";
@@ -812,7 +812,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, timeSeriesProfileRequestSingle, RaggedMultiConventions),write);
+            writeOutput(md.enhanceGETRequest(dataset, timeSeriesProfileRequestSingle, RaggedMultiConventions),write);
             write.flush();
             write.close();
             String fileName = "RaggedMultiConventions.xml";
@@ -840,7 +840,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, timeSeriesProfileRequest2, MultiDimensionalSingleStations),write);
+            writeOutput(md.enhanceGETRequest(dataset, timeSeriesProfileRequest2, MultiDimensionalSingleStations),write);
             write.flush();
             write.close();
             String fileName = "MultiDimensionalSingleStations.xml";
@@ -865,7 +865,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, timeSeriesTimeRequestT2, RaggedMultiConventions),write);
+            writeOutput(md.enhanceGETRequest(dataset, timeSeriesTimeRequestT2, RaggedMultiConventions),write);
             write.flush();
             write.close();
             String fileName = "MultiDimensionalSingleStationsT2.xml";
@@ -897,7 +897,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, timeSeriesTimeRequestT1, RaggedMultiConventions),write);
+            writeOutput(md.enhanceGETRequest(dataset, timeSeriesTimeRequestT1, RaggedMultiConventions),write);
             write.flush();
             write.close();
             String fileName = "MultiDimensionalSingleStationsT1.xml";
@@ -929,7 +929,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, timeSeriesProfileRequest2, MultiDimensionalMultiStations),write);
+            writeOutput(md.enhanceGETRequest(dataset, timeSeriesProfileRequest2, MultiDimensionalMultiStations),write);
             write.flush();
             write.close();
             String fileName = "MultiDimensionalMultiStations.xml";
@@ -954,7 +954,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, timeSeriesProfileRequest3, MultiDimensionalMultiStations),write);
+            writeOutput(md.enhanceGETRequest(dataset, timeSeriesProfileRequest3, MultiDimensionalMultiStations),write);
             write.flush();
             write.close();
             String fileName = "MultiDimensionalMultiStations2.xml";
@@ -979,7 +979,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, timeSeriesProfileRequestMultiStation, MultiDimensionalMultiStations),write);
+            writeOutput(md.enhanceGETRequest(dataset, timeSeriesProfileRequestMultiStation, MultiDimensionalMultiStations),write);
             write.flush();
             write.close();
             String fileName = "MultiDimensionalMultiStationRequest.xml";
@@ -1021,7 +1021,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(ContiguousRaggedMultipleProfiles);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, profileRequestMultiTime3, ContiguousRaggedMultipleProfiles), write);
+            writeOutput(md.enhanceGETRequest(dataset, profileRequestMultiTime3, ContiguousRaggedMultipleProfiles), write);
             write.flush();
             write.close();
             String fileName = "ContiguousRaggedMultipleProfilesMultiTime3.xml";
@@ -1050,7 +1050,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(ContiguousRaggedMultipleProfiles);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, profileRequestMultiTime, ContiguousRaggedMultipleProfiles),write);
+            writeOutput(md.enhanceGETRequest(dataset, profileRequestMultiTime, ContiguousRaggedMultipleProfiles),write);
             write.flush();
             write.close();
             assertFalse(write.toString().contains("Exception"));
@@ -1080,7 +1080,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(ContiguousRaggedMultipleProfiles);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, profileRequestMultiTime2, ContiguousRaggedMultipleProfiles),write);
+            writeOutput(md.enhanceGETRequest(dataset, profileRequestMultiTime2, ContiguousRaggedMultipleProfiles),write);
             write.flush();
             write.close();
             String fileName = "ContiguousRaggedMultipleProfilesMultiTime2.xml";
@@ -1107,7 +1107,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(ContiguousRaggedMultipleProfiles);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, profileRequest, ContiguousRaggedMultipleProfiles),write);
+            writeOutput(md.enhanceGETRequest(dataset, profileRequest, ContiguousRaggedMultipleProfiles),write);
             write.flush();
             write.close();
             String fileName = "ContiguousRaggedMultipleProfiles.xml";
@@ -1132,7 +1132,7 @@ public class SOSGetObsTest {
 
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, profileRequest, IncompleteMultiDimensionalMultipleProfiles),write);
+            writeOutput(md.enhanceGETRequest(dataset, profileRequest, IncompleteMultiDimensionalMultipleProfiles),write);
             write.flush();
             write.close();
             String fileName = "IncompleteMultiDimensionalMultipleProfiles.xml";
@@ -1156,7 +1156,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(IndexedRaggedMultipleProfiles);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, profileRequestIndexed, IndexedRaggedMultipleProfiles),write);
+            writeOutput(md.enhanceGETRequest(dataset, profileRequestIndexed, IndexedRaggedMultipleProfiles),write);
             write.flush();
             write.close();
             String fileName = "IndexedRaggedMultipleProfiles.xml";
@@ -1179,7 +1179,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(OrthogonalMultiDimensionalMultipleProfiles);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, profileRequest, OrthogonalMultiDimensionalMultipleProfiles),write);
+            writeOutput(md.enhanceGETRequest(dataset, profileRequest, OrthogonalMultiDimensionalMultipleProfiles),write);
             write.flush();
             write.close();
             String fileName = "OrthogonalMultiDimensionalMultipleProfiles.xml";
@@ -1203,7 +1203,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(OrthogonalSingleDimensionalSingleProfile);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, profileRequest, OrthogonalSingleDimensionalSingleProfile),write);
+            writeOutput(md.enhanceGETRequest(dataset, profileRequest, OrthogonalSingleDimensionalSingleProfile),write);
             write.flush();
             write.close();
             String fileName = "OrthogonalSingleDimensionalSingleProfile.xml";
@@ -1227,7 +1227,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(trajectoryContiguousRaggedMultipleTrajectories);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, trajectoryContiguousRequest1, trajectoryContiguousRaggedMultipleTrajectories),write);
+            writeOutput(md.enhanceGETRequest(dataset, trajectoryContiguousRequest1, trajectoryContiguousRaggedMultipleTrajectories),write);
             write.flush();
             write.close();
             String fileName = "trajectoryContiguousRaggedMultipleTrajectories.xml";
@@ -1251,7 +1251,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(trajectoryIncompleteMultidimensionalMultipleTrajectories);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, trajectoryIncompleteRequest1, trajectoryIncompleteMultidimensionalMultipleTrajectories),write);
+            writeOutput(md.enhanceGETRequest(dataset, trajectoryIncompleteRequest1, trajectoryIncompleteMultidimensionalMultipleTrajectories),write);
             write.flush();
             write.close();
             String fileName = "trajectoryIncompleteMultidimensionalMultipleTrajectories_request1.xml";
@@ -1273,7 +1273,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(trajectoryProfileMultidimensionalMultipleTrajectories);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, sectionRequest1, trajectoryProfileMultidimensionalMultipleTrajectories),write);
+            writeOutput(md.enhanceGETRequest(dataset, sectionRequest1, trajectoryProfileMultidimensionalMultipleTrajectories),write);
             write.flush();
             write.close();
             String fileName = "trajectoryProfileMultidimensionalMultipleTrajectories_request1.xml";
@@ -1299,7 +1299,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(externalHawaiiStation);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, externalHawaiiRequest1, externalHawaiiStation),write);
+            writeOutput(md.enhanceGETRequest(dataset, externalHawaiiRequest1, externalHawaiiStation),write);
             write.flush();
             write.close();
             String fileName = "external_Hawaii_request1.xml";
@@ -1322,7 +1322,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeries1);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllTimeSeries1Request, networkAllTimeSeries1),write);
+            writeOutput(md.enhanceGETRequest(dataset, networkAllTimeSeries1Request, networkAllTimeSeries1),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
@@ -1345,7 +1345,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeries2);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllTimeSeries2Request, networkAllTimeSeries2),write);
+            writeOutput(md.enhanceGETRequest(dataset, networkAllTimeSeries2Request, networkAllTimeSeries2),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
@@ -1368,7 +1368,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory1);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllTrajectory1Request1, networkAllTrajectory1),write);
+            writeOutput(md.enhanceGETRequest(dataset, networkAllTrajectory1Request1, networkAllTrajectory1),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
@@ -1391,7 +1391,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory1);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllTrajectory1Request2, networkAllTrajectory1),write);
+            writeOutput(md.enhanceGETRequest(dataset, networkAllTrajectory1Request2, networkAllTrajectory1),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
@@ -1414,7 +1414,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory1);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllTrajectory1Request3, networkAllTrajectory1),write);
+            writeOutput(md.enhanceGETRequest(dataset, networkAllTrajectory1Request3, networkAllTrajectory1),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
@@ -1437,7 +1437,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory2);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllTrajectory2Request, networkAllTrajectory2),write);
+            writeOutput(md.enhanceGETRequest(dataset, networkAllTrajectory2Request, networkAllTrajectory2),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
@@ -1460,7 +1460,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory3);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllTrajectory3Request, networkAllTrajectory3),write);
+            writeOutput(md.enhanceGETRequest(dataset, networkAllTrajectory3Request, networkAllTrajectory3),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
@@ -1481,7 +1481,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory4);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllTrajectory4Request, networkAllTrajectory4),write);
+            writeOutput(md.enhanceGETRequest(dataset, networkAllTrajectory4Request, networkAllTrajectory4),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
@@ -1502,7 +1502,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeriesProfile1);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllTimeSeriesProfile1Request, networkAllTimeSeriesProfile1),write);
+            writeOutput(md.enhanceGETRequest(dataset, networkAllTimeSeriesProfile1Request, networkAllTimeSeriesProfile1),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
@@ -1524,7 +1524,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeriesProfile2);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllTimeSeriesProfile2Request, networkAllTimeSeriesProfile2),write);
+            writeOutput(md.enhanceGETRequest(dataset, networkAllTimeSeriesProfile2Request, networkAllTimeSeriesProfile2),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
@@ -1548,7 +1548,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeriesProfile3);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllTimeSeriesProfile3Request, networkAllTimeSeriesProfile3),write);
+            writeOutput(md.enhanceGETRequest(dataset, networkAllTimeSeriesProfile3Request, networkAllTimeSeriesProfile3),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
@@ -1570,7 +1570,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeriesProfile4);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllTimeSeriesProfile4Request, networkAllTimeSeriesProfile4),write);
+            writeOutput(md.enhanceGETRequest(dataset, networkAllTimeSeriesProfile4Request, networkAllTimeSeriesProfile4),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
@@ -1592,7 +1592,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeriesProfile5);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllTimeSeriesProfile5Request, networkAllTimeSeriesProfile5),write);
+            writeOutput(md.enhanceGETRequest(dataset, networkAllTimeSeriesProfile5Request, networkAllTimeSeriesProfile5),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
@@ -1614,7 +1614,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllProfile1);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllProfile1Request, networkAllProfile1),write);
+            writeOutput(md.enhanceGETRequest(dataset, networkAllProfile1Request, networkAllProfile1),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
@@ -1637,7 +1637,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllProfile2);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllProfile2Request, networkAllProfile2),write);
+            writeOutput(md.enhanceGETRequest(dataset, networkAllProfile2Request, networkAllProfile2),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
@@ -1660,7 +1660,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllProfile3);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllProfile3Request, networkAllProfile3),write);
+            writeOutput(md.enhanceGETRequest(dataset, networkAllProfile3Request, networkAllProfile3),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
@@ -1685,7 +1685,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllProfile4);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllProfile4Request, networkAllProfile4),write);
+            writeOutput(md.enhanceGETRequest(dataset, networkAllProfile4Request, networkAllProfile4),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
@@ -1708,7 +1708,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllProfile5);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllProfile5Request, networkAllProfile5),write);
+            writeOutput(md.enhanceGETRequest(dataset, networkAllProfile5Request, networkAllProfile5),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
@@ -1731,7 +1731,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectoryProfile1);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllTrajectoryProfile1Request, networkAllTrajectoryProfile1),write);
+            writeOutput(md.enhanceGETRequest(dataset, networkAllTrajectoryProfile1Request, networkAllTrajectoryProfile1),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
@@ -1754,7 +1754,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectoryProfile2);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllTrajectoryProfile2Request, networkAllTrajectoryProfile2),write);
+            writeOutput(md.enhanceGETRequest(dataset, networkAllTrajectoryProfile2Request, networkAllTrajectoryProfile2),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
@@ -1777,7 +1777,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectoryProfile3);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, networkAllTrajectoryProfile3Request, networkAllTrajectoryProfile3),write);
+            writeOutput(md.enhanceGETRequest(dataset, networkAllTrajectoryProfile3Request, networkAllTrajectoryProfile3),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";
@@ -1800,7 +1800,7 @@ public class SOSGetObsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(watlevNOAANavdPre);
             SOSParser md = new SOSParser();
             Writer write = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, watlevNOAANavdRequest, watlevNOAANavdPre),write);
+            writeOutput(md.enhanceGETRequest(dataset, watlevNOAANavdRequest, watlevNOAANavdPre),write);
             write.flush();
             write.close();
             String fileName = getCurrentMethod() + ".xml";

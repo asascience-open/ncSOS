@@ -15,7 +15,6 @@ import ucar.nc2.dataset.CoordinateTransform;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dt.GridDataset;
 import ucar.nc2.ft.*;
-import ucar.nc2.units.DateFormatter;
 
 /**
  * Provides access to the netcdf dataset wrappers that allow for easier access
@@ -27,20 +26,15 @@ public abstract class SOSBaseRequestHandler {
 
     private static final String STATION_GML_BASE = "urn:ioos:station:";
     private static final String SENSOR_GML_BASE = "urn:ioos:sensor:";
+    private static final NumberFormat FORMAT_DEGREE;
     private final NetcdfDataset netCDFDataset;
     private FeatureDataset featureDataset;
-    private final static NumberFormat FORMAT_DEGREE;
     private FeatureCollection CDMPointFeatureCollection;
     private GridDataset gridDataSet = null;
     
     // Global Attributes
     protected String Access, DataContactEmail, DataContactName, DataContactPhone, DataPage, InventoryContactEmail, InventoryContactName, InventoryContactPhone;
-    protected String PrimaryOwnership, Region, StandardNameVocabulary;
-    private String title;
-    private String history;
-    private String description;
-    private String featureOfInterestBaseQueryURL;
-    
+    protected String PrimaryOwnership, Region, StandardNameVocabulary, title, history, description, featureOfInterestBaseQueryURL;
     private static String namingAuthority;
     
     // Variables and other information commonly needed
@@ -65,15 +59,46 @@ public abstract class SOSBaseRequestHandler {
      * @throws IOException
      */
     public SOSBaseRequestHandler(NetcdfDataset netCDFDataset) throws IOException {
+        // check for non-null dataset
         if(netCDFDataset == null) {
             _log.error("received null dataset -- probably exception output");
             this.netCDFDataset = null;
             return;
         }
         this.netCDFDataset = netCDFDataset;
-        
-        if (FeatureDatasetFactoryManager.findFeatureType(netCDFDataset) != null) {
-            switch (FeatureDatasetFactoryManager.findFeatureType(netCDFDataset)) {
+        // get the feature dataset (wraps the dataset in variety of accessor methods)
+        findFeatureDataset(FeatureDatasetFactoryManager.findFeatureType(netCDFDataset));
+        // verify we could get a dataset (make sure the dataset is CF 1.6 compliant or whatever)
+        if (gridDataSet == null && featureDataset == null) {
+            _log.error("Unknown feature type! " + FeatureDatasetFactoryManager.findFeatureType(netCDFDataset));
+            return;
+        }
+        // if dataFeatureType is none/null (not GRID) get the point feature collection
+        if (dataFeatureType == null || dataFeatureType == FeatureType.NONE) {
+            CDMPointFeatureCollection = DiscreteSamplingGeometryUtil.extractFeatureDatasetCollection(featureDataset);
+            dataFeatureType = CDMPointFeatureCollection.getCollectionFeatureType();
+        }
+        // find the global attributes
+        parseGlobalAttributes();
+        // get the station variable and several other bits needed
+        findAndParseStationVariable();
+        // get sensor Variable names
+        parseSensorNames();
+        // get Axis vars (location, time, depth)
+        latVariable = netCDFDataset.findCoordinateAxis(AxisType.Lat);
+        lonVariable = netCDFDataset.findCoordinateAxis(AxisType.Lon);
+        timeVariable = netCDFDataset.findCoordinateAxis(AxisType.Time);
+        depthVariable = netCDFDataset.findCoordinateAxis(AxisType.Height);
+    }
+    
+    /**
+     * Attempts to set the feature dataset based on the dataset's FeatureType
+     * @param datasetFT The FeatureType of the netcdf dataset, found with the factory manager
+     * @throws IOException 
+     */
+    private void findFeatureDataset(FeatureType datasetFT) throws IOException {
+        if (datasetFT != null) {
+            switch (datasetFT) {
                 case STATION_PROFILE:
                     featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.STATION_PROFILE, netCDFDataset, null, new Formatter(System.err));
                     break;
@@ -101,7 +126,7 @@ public abstract class SOSBaseRequestHandler {
                     featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.ANY_POINT, netCDFDataset, null, new Formatter(System.err));
                     break;
             }
-        } 
+        }
         
         if (featureDataset == null) {
             // attempt to get the dataset from an any_point
@@ -114,31 +139,11 @@ public abstract class SOSBaseRequestHandler {
                 dataFeatureType = FeatureType.GRID;
             }
         }
-        
-        if (gridDataSet == null && featureDataset == null) {
-            _log.error("Unknown feature type! " + FeatureDatasetFactoryManager.findFeatureType(netCDFDataset));
-            return;
-        }
-        
-        if (dataFeatureType == null || dataFeatureType == FeatureType.NONE) {
-            CDMPointFeatureCollection = DiscreteSamplingGeometryUtil.extractFeatureDatasetCollection(featureDataset);
-            dataFeatureType = CDMPointFeatureCollection.getCollectionFeatureType();
-        }
-        
-        parseGlobalAttributes();
-        
-        findAndParseStationVariable();
-        
-        // get sensor Variable names
-        parseSensorNames();
-        
-        // get other needed vars
-        latVariable = netCDFDataset.findCoordinateAxis(AxisType.Lat);
-        lonVariable = netCDFDataset.findCoordinateAxis(AxisType.Lon);
-        timeVariable = netCDFDataset.findCoordinateAxis(AxisType.Time);
-        depthVariable = netCDFDataset.findCoordinateAxis(AxisType.Height);
     }
-
+    
+    /**
+     * Finds commonly used global attributes in the netcdf file.
+     */
     private void parseGlobalAttributes() {
         
         Access = netCDFDataset.findAttValueIgnoreCase(null, "license", "NONE");
@@ -162,6 +167,15 @@ public abstract class SOSBaseRequestHandler {
             namingAuthority = "sos";
     }
 
+    /**
+     * Finds the station variable with several approaches
+     * 1) Attempts to find a variable with the attribute "cf_role"; only the
+     * station defining variable should have this attribute
+     * 2) Looks for a variable with 'grid' and 'name' in its name; GRID datasets
+     * do not have a "cf_role" attribute
+     * 3) Failing above, will 
+     * @throws IOException 
+     */
     private void findAndParseStationVariable() throws IOException {
         // get station var
         // check for station, trajectory, profile and grid station info
@@ -196,7 +210,6 @@ public abstract class SOSBaseRequestHandler {
         
         if (this.stationVariable == null && getGridDataset() == null) {
             // there is no station variable ... add a single station with index 0?
-//            parseDefaultStationName();
             parseStationNames();
         } else if (this.stationVariable == null) {
             parseGridIdsToName();
@@ -226,6 +239,13 @@ public abstract class SOSBaseRequestHandler {
         }
     }
 
+    /**
+     * Add station names to hashmap, indexed.
+     * @param npfc The nested point feature collection we're iterating through
+     * @param stationIndex Current index of the station
+     * @return Next station index
+     * @throws IOException 
+     */
     private int parseNestedCollection(NestedPointFeatureCollection npfc, int stationIndex) throws IOException { 
         if (npfc.isMultipleNested()) {
             NestedPointFeatureCollectionIterator npfci = npfc.getNestedPointFeatureCollectionIterator(-1);
@@ -245,12 +265,23 @@ public abstract class SOSBaseRequestHandler {
         return stationIndex;
     }
     
+    /**
+     * Reads a point feature collection and adds the station name, indexed
+     * @param pfc feature collection to read
+     * @param stationIndex current station index
+     * @return next station index
+     * @throws IOException 
+     */
     private int parsePointFeatureCollectionNames(PointFeatureCollection pfc, int stationIndex) throws IOException {
         String name = pfc.getName().replaceAll("[\\s]+", "");
         stationNames.put(stationIndex, name);
         return stationIndex+1;
     }
     
+    /**
+     * Go through the point feature collection to get the station names.
+     * @throws IOException 
+     */
     private void parseStationNames() throws IOException {
         this.stationNames = new HashMap<Integer, String>();
         int stationIndex = 0;
@@ -263,6 +294,11 @@ public abstract class SOSBaseRequestHandler {
         }
     }
     
+    /**
+     * Gets the numbers from the station var (which has type of INT).
+     * Uses "Trajectory" and the station number for naming.
+     * @throws IOException 
+     */
     private void parseTrajectoryIdsToNames() throws IOException {
         this.stationNames = new HashMap<Integer, String>();
         int stationindex = 0;
@@ -287,6 +323,11 @@ public abstract class SOSBaseRequestHandler {
         }
     }
     
+    /**
+     * Gets the numbers from the station var (which has type of INT).
+     * Uses "Profile" and the station number for naming.
+     * @throws IOException 
+     */
     private void parseProfileIdsToNames() throws IOException {
         this.stationNames = new HashMap<Integer, String>();
         int stationindex = 0;
@@ -303,7 +344,7 @@ public abstract class SOSBaseRequestHandler {
             // nested feature collection
             NestedPointFeatureCollection npfc = (NestedPointFeatureCollection) CDMPointFeatureCollection;
             if (npfc.isMultipleNested()) {
-                // iterate
+                // iterate through collection of nested point feature collections (usually Section data type)
                 NestedPointFeatureCollectionIterator npfci = npfc.getNestedPointFeatureCollectionIterator(-1);
                 for (;npfci.hasNext();) {
                     NestedPointFeatureCollection n = npfci.next();
@@ -311,7 +352,7 @@ public abstract class SOSBaseRequestHandler {
                     stationindex++;
                 }
             } else {
-                // iterate
+                // iterate through collection of point feature collections
                 PointFeatureCollectionIterator pfci = npfc.getPointFeatureCollectionIterator(-1);
                 for (;pfci.hasNext();) {
                     PointFeatureCollection n = pfci.next();
@@ -323,11 +364,42 @@ public abstract class SOSBaseRequestHandler {
         
     }
     
+    /**
+     * Gets a number of stations based on the size of the grid sets.
+     */
     private void parseGridIdsToName() {
         this.stationNames = new HashMap<Integer, String>();
         for (int i=0; i<getGridDataset().getGridsets().size(); i++) {
             this.stationNames.put(i, "Grid"+i);
         }
+    }
+    
+    /**
+     * Attempts to find the coordinate reference authority
+     * @param varName var name to check for crs authority
+     * @return the authority name, if there is one
+     */
+    private String getAuthorityFromVariable(String varName) {
+        String retval = null;
+
+        Variable crsVar = null;
+        for (Variable var : netCDFDataset.getVariables()) {
+            if (var.getFullName().equalsIgnoreCase(varName)) {
+                crsVar = var;
+                break;
+            }
+        }
+        
+        if (crsVar != null) {
+            for (Attribute attr : crsVar.getAttributes()) {
+                if (attr.getName().toLowerCase().contains("code")) {
+                    retval = attr.getValue(0).toString();
+                    break;
+                }
+            }
+        }
+        
+        return retval;
     }
     
     /**
@@ -492,30 +564,6 @@ public abstract class SOSBaseRequestHandler {
     }
 
     /**
-     * Returns the value of the title attribute of the dataset
-     * @return @String 
-     */
-    public String getTitle() {
-        return title;
-    }
-
-    /**
-     * Returns the value of the history attribute of the dataset
-     * @return @String
-     */
-    public String getHistory() {
-        return history;
-    }
-
-    /**
-     * Returns the value of the description attribute of the dataset
-     * @return
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
      * Returns base urn of a station procedure
      * @return
      */
@@ -596,29 +644,6 @@ public abstract class SOSBaseRequestHandler {
             return null;
     }
     
-    private String getAuthorityFromVariable(String varName) {
-        String retval = null;
-
-        Variable crsVar = null;
-        for (Variable var : netCDFDataset.getVariables()) {
-            if (var.getFullName().equalsIgnoreCase(varName)) {
-                crsVar = var;
-                break;
-            }
-        }
-        
-        if (crsVar != null) {
-            for (Attribute attr : crsVar.getAttributes()) {
-                if (attr.getName().toLowerCase().contains("code")) {
-                    retval = attr.getValue(0).toString();
-                    break;
-                }
-            }
-        }
-        
-        return retval;
-    }
-    
     /**
      * 
      * @return 
@@ -670,10 +695,13 @@ public abstract class SOSBaseRequestHandler {
     public static String formatDegree(double degree) {
         return FORMAT_DEGREE.format(degree);
     }
-
-    private static String formatDateTimeISO(Date date) {
-        // assuming not thread safe...  true?
-        return (new DateFormatter()).toDateTimeStringISO(date);
+    
+    public String getTitle() {
+        return title;
+    }
+    
+    public String getDescription() {
+        return description;
     }
 
 }

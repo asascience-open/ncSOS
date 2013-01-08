@@ -10,10 +10,8 @@ import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.TreeMap;
 import org.w3c.dom.Element;
 import ucar.ma2.Array;
-import ucar.ma2.Index;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -40,7 +38,6 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
     protected String description;
     protected double[][] stationCoords;
     protected ArrayList<Attribute> contributorAttributes;
-    protected ArrayList<Variable> documentVariables;
     protected final String procedure;
     protected String errorString;
     
@@ -54,26 +51,9 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
      */
     public SOSDescribeStation( NetcdfDataset dataset, String procedure ) throws IOException {
         super(dataset);
-        // get desired variables
-        for (Variable var : dataset.getVariables()) {
-            
-//            if (var.getFullName().toLowerCase().contains("lat")) {
-//                lat = var;
-//            }
-//            else if (var.getFullName().toLowerCase().contains("lon")) {
-//                lon = var;
-//            }
-            if (var.getFullName().toLowerCase().contains("doc")) {
-                if (documentVariables == null)
-                    documentVariables = new ArrayList<Variable>();
-                documentVariables.add(var);
-            }
-        }
-        
+        // initialize
         errorString = null;
-        
         this.procedure = procedure;
-        
         String[] procSplit = procedure.split(":");
         stationName = procSplit[procSplit.length - 1];
         
@@ -81,6 +61,7 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
         platformType = dataset.findGlobalAttributeIgnoreCase("platformtype");
         // history attribute
         historyAttribute = dataset.findGlobalAttributeIgnoreCase("history");
+        
         // creator contact info
         for (Attribute attr : dataset.getGlobalAttributes()) {
             String attrName = attr.getName().toLowerCase();
@@ -112,18 +93,8 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
      */
     public SOSDescribeStation( NetcdfDataset dataset ) throws IOException {
         super(dataset);
-        
+        // intialize
         this.procedure = "";
-        
-        // get desired variables
-        for (Variable var : dataset.getVariables()) {
-            if (var.getFullName().toLowerCase().contains("doc")) {
-                if (documentVariables == null)
-                    documentVariables = new ArrayList<Variable>();
-                documentVariables.add(var);
-            }
-        }
-        
         errorString = null;
         
         // get our platform type

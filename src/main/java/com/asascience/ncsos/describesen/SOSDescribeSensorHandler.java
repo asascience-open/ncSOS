@@ -100,6 +100,11 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
         output = new DescribeSensorFormatter();
     }
     
+    /**
+     * Procedure was a 'network' urn
+     * @param dataset dataset we are doing the request against
+     * @throws IOException 
+     */
     private void setNeededInfoForStation( NetcdfDataset dataset ) throws IOException {
         // get our information based on feature type
         switch (getFeatureDataset().getFeatureType()) {
@@ -109,21 +114,7 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
                 ((DescribeSensorFormatter)output).setComponentsNode(DiscreteSamplingGeometryUtil.getDataVariables(getFeatureDataset()), procedure);
                 break;
             case TRAJECTORY:
-                // need our starting date for the observations from our FeatureTypeDataSet wrapper
-                TrajectoryFeatureCollection feature = (TrajectoryFeatureCollection) getFeatureTypeDataSet();
-                CalendarDate colStart = null;
-                for (feature.resetIteration();feature.hasNext();) {
-                    TrajectoryFeature traj = feature.next();
-                    DatasetHandlerAdapter.calcBounds(traj);
-                    for (traj.resetIteration();traj.hasNext();) {
-                        PointFeature pf = traj.next();
-                        if (colStart == null)
-                            colStart = pf.getObservationTimeAsCalendarDate();
-                        else if (pf.getObservationTimeAsCalendarDate().compareTo(colStart) < 0)
-                            colStart = pf.getObservationTimeAsCalendarDate();
-                    }
-                }
-                describer = new SOSDescribeTrajectory(dataset, procedure, colStart);
+                describer = new SOSDescribeTrajectory(dataset, procedure);
                 ((DescribeSensorFormatter)output).setComponentsNode(DiscreteSamplingGeometryUtil.getDataVariables(getFeatureDataset()), procedure);
                 break;
             case PROFILE:
@@ -217,21 +208,7 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
                 describer = new SOSDescribeStation(dataset);
                 break;
             case TRAJECTORY:
-                // need our starting date for the observations from our FeatureTypeDataSet wrapper
-                TrajectoryFeatureCollection feature = (TrajectoryFeatureCollection) getFeatureTypeDataSet();
-                CalendarDate colStart = null;
-                for (feature.resetIteration();feature.hasNext();) {
-                    TrajectoryFeature traj = feature.next();
-                    DatasetHandlerAdapter.calcBounds(traj);
-                    for (traj.resetIteration();traj.hasNext();) {
-                        PointFeature pf = traj.next();
-                        if (colStart == null)
-                            colStart = pf.getObservationTimeAsCalendarDate();
-                        else if (pf.getObservationTimeAsCalendarDate().compareTo(colStart) < 0)
-                            colStart = pf.getObservationTimeAsCalendarDate();
-                    }
-                }
-                describer = new SOSDescribeTrajectory(dataset, colStart);
+                describer = new SOSDescribeTrajectory(dataset);
                 break;
             case GRID:
                 DatasetHandlerAdapter.calcBounds(getFeatureDataset());

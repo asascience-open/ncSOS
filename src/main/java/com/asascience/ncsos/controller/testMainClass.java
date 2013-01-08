@@ -14,7 +14,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  * @author Abird
  * @version 
  *
- * Test Main Class for assessing speed of enhance
+ * Test Main Class for assessing speed of enhanceGETRequest
  *
  */
 public class testMainClass {
@@ -35,7 +35,7 @@ public class testMainClass {
                 dataset = NetcdfDataset.openDataset(imeds13);
                 write = new CharArrayWriter();
                 md = new SOSParser();
-                md.enhance(dataset, "request=GetCapabilities&version=1&service=sos", imeds13);
+                md.enhanceGETRequest(dataset, "request=GetCapabilities&version=1&service=sos", imeds13);
                 write.flush();
                 write.close();
 

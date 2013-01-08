@@ -6,8 +6,10 @@ package com.asascience.ncsos.describesen;
 
 import com.asascience.ncsos.outputformatter.DescribeNetworkFormatter;
 import com.asascience.ncsos.outputformatter.DescribeSensorFormatter;
+import com.asascience.ncsos.util.DatasetHandlerAdapter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import org.w3c.dom.Element;
@@ -15,6 +17,9 @@ import ucar.ma2.Array;
 import ucar.ma2.Index;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
+import ucar.nc2.ft.PointFeature;
+import ucar.nc2.ft.TrajectoryFeature;
+import ucar.nc2.ft.TrajectoryFeatureCollection;
 import ucar.nc2.time.CalendarDate;
 import ucar.nc2.time.CalendarPeriod;
 import ucar.nc2.units.DateFormatter;
@@ -48,10 +53,11 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
      * @param procedure request procedure (station urn)
      * @param startDate start date of the dataset (elapsed time is 0)
      */
-    public SOSDescribeTrajectory( NetcdfDataset dataset, String procedure, CalendarDate startDate ) throws IOException {
+    public SOSDescribeTrajectory( NetcdfDataset dataset, String procedure ) throws IOException {
         super(dataset, procedure);
         // ignore errors from parent constructor
         errorString = null;
+        
         
         for (Variable var : dataset.getVariables()) {
             String varName = var.getFullName().toLowerCase();
@@ -61,7 +67,7 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
             }
         }
         
-        this.startDate = startDate;
+        this.startDate = getStartDate();
         
         if (getStationIndex(stationName) < 0) {
             errorString = "Station not part of dataset: " + stationName;
@@ -71,7 +77,7 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
         setCurrentTrajectoryInfo(getStationIndex(stationName));
     }
     
-    public SOSDescribeTrajectory( NetcdfDataset dataset, CalendarDate calStart ) throws IOException {
+    public SOSDescribeTrajectory( NetcdfDataset dataset ) throws IOException {
         super(dataset);
         // ignore errors from parent constructor
         errorString = null;
@@ -84,7 +90,7 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
             }
         }
         
-        this.startDate = calStart;
+        this.startDate = getStartDate();
     }
 
     /*********************/
@@ -157,6 +163,29 @@ public class SOSDescribeTrajectory extends SOSDescribeStation implements SOSDesc
     /*******************
      * Private Methods *
      *******************/
+    
+    private CalendarDate getStartDate() {
+        try {
+            // need our starting date for the observations from our FeatureTypeDataSet wrapper
+            TrajectoryFeatureCollection feature = (TrajectoryFeatureCollection) getFeatureTypeDataSet();
+            CalendarDate retval = null;
+            for (feature.resetIteration();feature.hasNext();) {
+                TrajectoryFeature traj = feature.next();
+                DatasetHandlerAdapter.calcBounds(traj);
+                for (traj.resetIteration();traj.hasNext();) {
+                    PointFeature pf = traj.next();
+                    if (retval == null)
+                        retval = pf.getObservationTimeAsCalendarDate();
+                    else if (pf.getObservationTimeAsCalendarDate().compareTo(retval) < 0)
+                        retval = pf.getObservationTimeAsCalendarDate();
+                }
+            }
+            return retval;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
     
     private void setCurrentTrajectoryInfo(int trajNumber) {
         trajectoryIndex = trajNumber;
