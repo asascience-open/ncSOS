@@ -4,8 +4,10 @@
  */
 package com.asascience.ncsos.describesen;
 
+import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
 import com.asascience.ncsos.outputformatter.DescribeNetworkFormatter;
 import com.asascience.ncsos.outputformatter.DescribeSensorFormatter;
+import com.asascience.ncsos.outputformatter.DescribeSensorPlatformMilestone1_0;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
 import com.asascience.ncsos.util.DiscreteSamplingGeometryUtil;
@@ -26,8 +28,8 @@ import ucar.nc2.time.CalendarDate;
 public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
     
     private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(SOSDescribeSensorHandler.class);
-    private String procedure;
-    private SOSDescribeIF describer;
+    private final String procedure;
+    private ISOSDescribeSensor describer;
     
     private final String ACCEPTABLE_RESPONSE_FORMAT = "text/xml;subtype=\"sensorML/1.0.1\"";
     
@@ -45,11 +47,19 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
     public SOSDescribeSensorHandler(NetcdfDataset dataset, String responseFormat, String procedure, String uri, String query) throws IOException {
         super(dataset);
         
-        output = new DescribeSensorFormatter(uri, query);
+        this.procedure = procedure;
+        
+        // test that the dataset can be handled properly
+        if (getFeatureDataset() == null && getGridDataset() == null) {
+            output = new BaseOutputFormatter();
+            output.setupExceptionOutput("Unable to handle requested dataset. Make sure that it has a properly defined feature type.");
+            return;
+        }
         
         // make sure that the responseFormat we recieved is acceptable
         if (!responseFormat.equalsIgnoreCase(ACCEPTABLE_RESPONSE_FORMAT)) {
             // return exception
+            output = new BaseOutputFormatter();
             _log.error("got unhandled response format " + responseFormat + "; printing exception...");
             output.setupExceptionOutput("Unhandled response format " + responseFormat);
             return;
@@ -58,33 +68,28 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
         // check our procedure
         if (!checkDatasetForProcedure(procedure)) {
             // the procedure does not match any known procedure
+            output = new BaseOutputFormatter();
             _log.error("Could not match procedure " + procedure);
             output.setupExceptionOutput("Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.");
             return;
         }
         
-        this.procedure = procedure;
-        
-        // test that the dataset can be handled properly
-        if (getFeatureDataset() == null && getGridDataset() == null)
-        {
-            output.setupExceptionOutput("Unable to handle requested dataset. Make sure that it has a properly defined feature type.");
-            return;
-        }
-        
         // find out needed info based on whether this is a station or sensor look up
         if (this.procedure.contains("station")) {
-            setNeededInfoForStation(dataset);
-            describer.setupOutputDocument((DescribeSensorFormatter)output);
+            setNeededInfoForStation(dataset, uri, query);
+            describer.setupOutputDocument(output);
         } else if (this.procedure.contains("sensor")) {
+            output = new DescribeSensorFormatter(uri, query);
             setNeededInfoForSensor(dataset);
             describer.setupOutputDocument((DescribeSensorFormatter)output);
         } else if (this.procedure.contains("network")) {
-            setNeededInfoForNetwork(dataset);
             output = new DescribeNetworkFormatter(uri, query);
+            setNeededInfoForNetwork(dataset);
             describer.setupOutputDocument((DescribeNetworkFormatter)output);
         } else {
+            output = new BaseOutputFormatter();
             output.setupExceptionOutput("Unknown procedure (not a station, sensor or 'network'): " + this.procedure);
+            return;
         }
     }
 
@@ -98,6 +103,7 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
         super(dataset);
         
         output = new DescribeSensorFormatter();
+        this.procedure = null;
     }
     
     /**
@@ -105,32 +111,28 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
      * @param dataset dataset we are doing the request against
      * @throws IOException 
      */
-    private void setNeededInfoForStation( NetcdfDataset dataset ) throws IOException {
+    private void setNeededInfoForStation( NetcdfDataset dataset, String uri, String query ) throws IOException {
         // get our information based on feature type
         switch (getFeatureDataset().getFeatureType()) {
             case STATION:
             case STATION_PROFILE:
-                describer = new SOSDescribeStation(dataset, procedure);
-                ((DescribeSensorFormatter)output).setComponentsNode(DiscreteSamplingGeometryUtil.getDataVariables(getFeatureDataset()), procedure);
-                break;
             case TRAJECTORY:
-                describer = new SOSDescribeTrajectory(dataset, procedure);
-                ((DescribeSensorFormatter)output).setComponentsNode(DiscreteSamplingGeometryUtil.getDataVariables(getFeatureDataset()), procedure);
-                break;
             case PROFILE:
-                describer = new SOSDescribeProfile(dataset, procedure);
-                ((DescribeSensorFormatter)output).setComponentsNode(DiscreteSamplingGeometryUtil.getDataVariables(getFeatureDataset()), procedure);
+                output = new DescribeSensorPlatformMilestone1_0();
+                describer = new SOSDescribePlatformM1_0(dataset, procedure, uri);
                 break;
             case GRID:
+                output = new DescribeSensorFormatter(uri, query);
                 DatasetHandlerAdapter.calcBounds(getFeatureDataset());
                 describer = new SOSDescribeGrid(dataset, procedure, getFeatureDataset().getBoundingBox());
                 ((DescribeSensorFormatter)output).setComponentsNode(getGridDataset().getDataVariables(),procedure);
                 break;
             case SECTION:
+                output = new DescribeSensorFormatter(uri, query);
                 // trajectory profile; need the trajectory number to get the right info
                 String[] tStr = procedure.split(":");
                 String nStr = tStr[tStr.length-1].toLowerCase();
-                nStr = nStr.replaceAll("(profile)", "").replaceAll("(trajectory)", "");
+                nStr = nStr.replaceAll("[Pp]rofile|[Tt]rajectory", "");
                 int tNumber = Integer.parseInt(nStr);
                 
                 DatasetHandlerAdapter.calcBounds(getFeatureDataset());

@@ -240,8 +240,8 @@ public class SOSgetCapsTest {
         write.close();
         fileWriter(base, fileName, write);
         assertFalse(write.toString().contains("Exception"));
-        assertTrue(write.toString().contains("<gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>"));
-        assertTrue(write.toString().contains("<gml:endPosition>1990-01-01T23:00:00.000Z</gml:endPosition>"));
+        assertTrue(write.toString().contains("<gml:beginPosition>1990-01-01T00:00:00Z</gml:beginPosition>"));
+        assertTrue(write.toString().contains("<gml:endPosition>1990-01-01T23:00:00Z</gml:endPosition>"));
         //traj
         
         System.out.println("------END " + getCurrentMethod() + "------");

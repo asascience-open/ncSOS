@@ -361,9 +361,9 @@ public class DescribeNetworkFormatter implements SOSOutputFormatter {
      * @param organizationName the name of the orginization or individual
      * @param contactInfo info for contacting the...um...contact
      */
-    public void addContactNode(String role, String organizationName, HashMap<String, HashMap<String, String>> contactInfo) {
+    public void addContactNode(String role, String organizationName, HashMap<String, HashMap<String, String>> contactInfo, String onlineResource) {
         // setup and and insert a contact node (after history)
-        document = XMLDomUtils.addNodeBeforeNode(document, "sml:System", "sml:contact", "sml:history");
+        document = XMLDomUtils.addNode(document, "sml:System", "sml:contact", "sml:history");
         NodeList contacts = getParentNode().getElementsByTagName("sml:contact");
         Element contact = null;
         for (int i=0; i<contacts.getLength(); i++) {
@@ -390,6 +390,14 @@ public class DescribeNetworkFormatter implements SOSOutputFormatter {
                 }
             }
         }
+        // add online Resource if it exists
+        if (onlineResource != null) {
+            addNewNodeToParentWithAttribute("sml:onlineResource", parent, "xlink:href", onlineResource);
+        }
+    }
+    
+    public void addContactNode(String role, String oranizationName, HashMap<String, HashMap<String, String>> contactInfo) {
+        addContactNode(role, oranizationName, contactInfo, null);
     }
     
     /**

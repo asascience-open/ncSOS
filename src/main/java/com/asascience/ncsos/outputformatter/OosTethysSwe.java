@@ -216,20 +216,20 @@ public class OosTethysSwe implements SOSOutputFormatter {
     private void addDatasetResults(int stationNumber) {
         String varNameLen = Integer.toString(variableNames.length+1);
         //add Data Block Definition
-        document = XMLDomUtils.addNodeAllOptions(document, "om:result", "swe:DataArray", stationNumber);
+        document = XMLDomUtils.addNode(document, "om:result", "swe:DataArray", stationNumber);
         //element count
-        document = XMLDomUtils.addNodeAllOptions(document, "swe:DataArray", "swe:elementCount", stationNumber);
-        document = XMLDomUtils.addNodeAllOptions(document, "swe:elementCount", "swe:Count", stationNumber);
-        document = XMLDomUtils.addNodeAllOptions(document, "swe:Count", "swe:value", varNameLen, stationNumber);
+        document = XMLDomUtils.addNode(document, "swe:DataArray", "swe:elementCount", stationNumber);
+        document = XMLDomUtils.addNode(document, "swe:elementCount", "swe:Count", stationNumber);
+        document = XMLDomUtils.addNode(document, "swe:Count", "swe:value", varNameLen, stationNumber);
         //element Type
         document = XMLDomUtils.addNodeAndAttribute(document, "swe:DataArray", "swe:elementType", "name", "SimpleDataArray", stationNumber);
         //add data record
-        document = XMLDomUtils.addNodeAllOptions(document, "swe:elementType", "swe:DataRecord", stationNumber);
+        document = XMLDomUtils.addNode(document, "swe:elementType", "swe:DataRecord", stationNumber);
         
         setDataValues(stationNumber);
         
         //add encoding value
-        document = XMLDomUtils.addNodeAllOptions(document, "swe:DataArray", "swe:encoding", stationNumber);
+        document = XMLDomUtils.addNode(document, "swe:DataArray", "swe:encoding", stationNumber);
         // text block
         document = XMLDomUtils.addNodeAndAttribute(document, "swe:encoding", "swe:TextBlock", "blockSeparator", BLOCK_SEPERATOR, stationNumber);
         XMLDomUtils.setAttributeFromNode(document, "swe:encoding", "swe:TextBlock", "decimalSeparator", DECIMAL_SEPERATOR);
@@ -237,7 +237,7 @@ public class OosTethysSwe implements SOSOutputFormatter {
 
         try {
             //set the data
-            document = XMLDomUtils.addNodeAllOptions(document, "swe:DataArray", "swe:values", createObservationString(stationNumber), stationNumber);
+            document = XMLDomUtils.addNode(document, "swe:DataArray", "swe:values", createObservationString(stationNumber), stationNumber);
         } catch (Exception ex) {
             setupExceptionOutput(ex.getMessage());
             Logger.getLogger(SOSGetObservationRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -303,29 +303,29 @@ public class OosTethysSwe implements SOSOutputFormatter {
                 document = XMLDomUtils.addObservationElement(document);
                 //add description
                 //if (CDMDataSet != null) {
-                //document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:description", CDMDataSet.getDescription(stNum), stNum);
+                //document = XMLDomUtils.addNode(document, OM_OBSERVATION, "gml:description", CDMDataSet.getDescription(stNum), stNum);
                 //} else {
-                document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:description", description, stNum);
+                document = XMLDomUtils.addNode(document, OM_OBSERVATION, "gml:description", description, stNum);
                 //}
                 //add name
-                document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:name", title, stNum);
+                document = XMLDomUtils.addNode(document, OM_OBSERVATION, "gml:name", title, stNum);
                 //add bounded by
-                document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:boundedBy", stNum);
+                document = XMLDomUtils.addNode(document, OM_OBSERVATION, "gml:boundedBy", stNum);
                 //add envelope and attribute
-                document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:boundedBy", "gml:Envelope", "srsName", STATION_GML_BASE + CDMDataSet.getStationName(stNum), stNum);
+                document = XMLDomUtils.addNode(document, OM_OBSERVATION, "gml:boundedBy", "gml:Envelope", "srsName", STATION_GML_BASE + CDMDataSet.getStationName(stNum), stNum);
 
                 //add lat lon string
-                document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:Envelope", "gml:lowerCorner", getStationLowerLatLonStr(stNum), stNum);
+                document = XMLDomUtils.addNode(document, OM_OBSERVATION, "gml:Envelope", "gml:lowerCorner", getStationLowerLatLonStr(stNum), stNum);
                 //add Upper GPS coors
-                document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:Envelope", "gml:upperCorner", getStationUpperLatLonStr(stNum), stNum);
+                document = XMLDomUtils.addNode(document, OM_OBSERVATION, "gml:Envelope", "gml:upperCorner", getStationUpperLatLonStr(stNum), stNum);
                 //add sampling time
-                document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "om:samplingTime", stNum);
+                document = XMLDomUtils.addNode(document, OM_OBSERVATION, "om:samplingTime", stNum);
                 //add time instant
-                document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "om:samplingTime", "gml:TimePeriod", "gml:id", "DATA_TIME", stNum);
+                document = XMLDomUtils.addNode(document, OM_OBSERVATION, "om:samplingTime", "gml:TimePeriod", "gml:id", "DATA_TIME", stNum);
                 //add time positions (being and end)
                 if (CDMDataSet != null) {
-                    document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:TimePeriod", "gml:beginPosition", CDMDataSet.getTimeBegin(stNum), stNum);
-                    document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:TimePeriod", "gml:endPosition", CDMDataSet.getTimeEnd(stNum), stNum);
+                    document = XMLDomUtils.addNode(document, OM_OBSERVATION, "gml:TimePeriod", "gml:beginPosition", CDMDataSet.getTimeBegin(stNum), stNum);
+                    document = XMLDomUtils.addNode(document, OM_OBSERVATION, "gml:TimePeriod", "gml:endPosition", CDMDataSet.getTimeEnd(stNum), stNum);
                 }
                 //add procedure
                 document = XMLDomUtils.addNodeAndAttribute(document, OM_OBSERVATION, "om:procedure", "xlink:href", location, stNum);
@@ -347,7 +347,7 @@ public class OosTethysSwe implements SOSOutputFormatter {
                     document = XMLDomUtils.addNodeAndAttribute(document, OM_OBSERVATION, "om:featureOfInterest", "xlink:href", CDMDataSet.getStationName(stNum), stNum);
                 }
                 //add results Node
-                document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "om:result", stNum);
+                document = XMLDomUtils.addNode(document, OM_OBSERVATION, "om:result", stNum);
 
                 addDatasetResults(stNum);
                 

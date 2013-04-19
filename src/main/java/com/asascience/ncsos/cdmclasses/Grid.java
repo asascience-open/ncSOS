@@ -600,5 +600,9 @@ public class Grid extends baseCDMClass implements iStationData {
         return retIndex;
     }
 
+    public List<String> getLocationsString(int stNum) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     
 }

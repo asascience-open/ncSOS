@@ -486,5 +486,9 @@ public class Section extends baseCDMClass implements iStationData {
         } finally {
             return retval;
         }
-    }    
+    }
+
+    public List<String> getLocationsString(int stNum) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

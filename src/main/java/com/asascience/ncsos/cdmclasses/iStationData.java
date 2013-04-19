@@ -193,6 +193,13 @@ public interface iStationData {
      * @return description of station
      */
     public String getDescription(int stNum);
+    
+    /**
+     * Retrieves all of the lat-lon coordinates for the station.
+     * @param stNum station number
+     * @return a List of Strings that follow "lat lon"
+     */
+    public List<String> getLocationsString(int stNum);
        
     
 }

@@ -11,13 +11,17 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
-import org.w3c.dom.ls.LSOutput;
-import org.w3c.dom.ls.LSSerializer;
 import ucar.nc2.VariableSimpleIF;
 import ucar.unidata.geoloc.LatLonRect;
 
@@ -37,6 +41,8 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     private final String query;
     
     private DOMImplementationLS impl;
+    
+    private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(DescribeSensorFormatter.class);
     
     /**
      * Creates a new formatter instance that uses the sosDescribeSensor.xml as a
@@ -109,11 +115,17 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
 
     public void writeOutput(Writer writer) {
         // output our document to the writer
-        LSSerializer xmlSerializer = impl.createLSSerializer();
-        LSOutput xmlOut = impl.createLSOutput();
-        xmlSerializer.getDomConfig().setParameter("format-pretty-print", Boolean.TRUE);
-        xmlOut.setCharacterStream(writer);
-        xmlSerializer.write(document, xmlOut);
+        try {
+            Source xmlout = new DOMSource(this.document);
+            StreamResult res = new StreamResult(writer);
+            TransformerFactory tf = TransformerFactory.newInstance();
+            Transformer t = tf.newTransformer();
+            t.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+            t.setOutputProperty(OutputKeys.INDENT, "yes");
+            t.transform(xmlout, res);
+        } catch (Exception ex) {
+            _log.error(ex.toString());
+        }
     }
     
     /**************************************************************************/
@@ -210,6 +222,14 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     }
     
     /**
+     * Sets the text content of the gml:name node
+     * @param name name (urn) of the station
+     */
+    public void setName(String name) {
+        document.getElementsByTagName("gml:name").item(0).setTextContent(name);
+    }
+    
+    /**
      * Removes the gml:description node from the xml document
      */
     public void deleteDescriptionNode() {
@@ -240,6 +260,27 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     }
     
     /**
+     * adds nodes to the sml:IdentifierList element
+     * @param name name of the identifier
+     * @param definition definition of the identifier
+     * @param value  value of the sml:value node in the identifier
+     */
+    public void addSmlIdentifier(String name, String definition, String value) {
+        /* Adds the following to the sml:IdentifierList
+         * <sml:identifier name='name'>
+         *   <sml:Term definition='definition'>
+         *     <sml:value>value</sml:value>
+         *   </sml:Term>
+         * </sml:identifier>
+         */
+        Element parent = (Element) document.getElementsByTagName("sml:IdentifierList").item(0);
+        
+        Element ident = addNewNodeToParentWithAttribute("sml:identifier", parent, "name", name);
+        ident = addNewNodeToParentWithAttribute("sml:Term", ident, "definition", definition);
+        addNewNodeToParentWithTextValue("sml:value", ident, value);
+    }
+    
+    /**
      * Removes the sml:identification node from the xml document
      */
     public void deleteIdentificationNode() {
@@ -258,6 +299,29 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         parent = addNewNodeToParentWithAttribute("sml:Term", parent, "definition", definition);
         addNewNodeToParentWithTextValue("sml:value", parent, classifierValue);
     }
+
+    /**
+     * Adds a sml:classifier to sml:ClassifierList
+     * @param name name of the classifier
+     * @param definition definition of the term
+     * @param codeSpace codeSpace of the classifier
+     * @param value value of the classifier
+     */
+    public void addSmlClassifier(String name, String definition, String codeSpace, String value) {
+        /*
+         * <sml:classifier name='name'>
+         *   <sml:Term definition='definition'>
+         *     <sml:codeSpace xlink:href="http://mmisw.org/ont/ioos/" + 'codeSpace'>
+         *     <sml:value>'value'</sml:value>
+         *   </sml:Term>
+         * </sml:classifier>
+         */
+        Element parent = (Element) document.getElementsByTagName("sml:ClassifierList").item(0);
+        parent = addNewNodeToParentWithAttribute("sml:classifier", parent, "name", name);
+        parent = addNewNodeToParentWithAttribute("sml:Term", parent, "definition", definition);
+        addNewNodeToParentWithAttribute("sml:codeSpace", parent, "xlink:href", "http://mmisw.org/ont/ioos/" + codeSpace);
+        addNewNodeToParentWithTextValue("sml:value", parent, value);
+    }
     
     /**
      * Removes the sml:classification node from the xml document
@@ -267,15 +331,54 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     }
     
     /**
+     * Set the sml:validTime node
+     * @param timeBegin the beginPosition value
+     * @param timeEnd the endPosition value
+     */
+    public void setValidTime(String timeBegin, String timeEnd) {
+        /*
+         * <gml:TimePeriod>
+         *   <gml:beginPosition>'timeBegin'</gml:beginPosition>
+         *   <gml:endPosition>'timeEnd'</gml:endPosition>
+         * </gml:TimePeriod>
+         */
+        Element parent = (Element) document.getElementsByTagName("sml:validTime").item(0);
+        parent = addNewNodeToParent("gml:TimePeriod", parent);
+       addNewNodeToParentWithTextValue("gml:beginPosition", parent, timeBegin);
+       addNewNodeToParentWithTextValue("gml:endPosition", parent, timeEnd);
+    }
+    
+    /**
+     * Adds a sml:capabilities node that defines a metadata property for the sensor
+     * @param name name of the capability
+     * @param title name of the metadata
+     * @param href reference to the metadata
+     */
+    public void addSmlCapabilitiesGmlMetadata(String name, String title, String href) {
+        /*
+         * <sml:capabilities name='name'>
+         *   <swe:SimpleDataRecord>
+         *     <gml:metaDataProperty xlink:title='title' xlink:href='href' />
+         *   </swe:SimpleDataRecord>
+         * </sml:capabilities>
+         */
+        Element parent = getParentNode();
+        parent = addNewNodeToParentWithAttribute("sml:capabilities", parent, "name", name);
+        parent = addNewNodeToParent("swe:SimpleDataRecord", parent);
+        parent = addNewNodeToParentWithAttribute("gml:metaDataProperty", parent, "xlink:title", title);
+        parent.setAttribute("xlink:href", href);
+    }
+    
+    /**
      * Accessor method to add a contact node to the sml:System node structure. Most
      * information is gathered from global Attributes of the dataset
      * @param role the role of the contact (eg publisher)
      * @param organizationName the name of the orginization or individual
      * @param contactInfo info for contacting the...um...contact
      */
-    public void addContactNode(String role, String organizationName, HashMap<String, HashMap<String, String>> contactInfo) {
+    public void addContactNode(String role, String organizationName, HashMap<String, HashMap<String, String>> contactInfo, String onlineResource) {
         // setup and and insert a contact node (after history)
-        document = XMLDomUtils.addNodeBeforeNode(document, "sml:System", "sml:contact", "sml:history");
+        document = XMLDomUtils.addNode(document, "sml:System", "sml:contact", "sml:history");
         NodeList contacts = getParentNode().getElementsByTagName("sml:contact");
         Element contact = null;
         for (int i=0; i<contacts.getLength(); i++) {
@@ -298,10 +401,19 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
                 Element sparent = addNewNodeToParent(key, parent);
                 HashMap<String, String> vals = (HashMap<String, String>)contactInfo.get(key);
                 for (String vKey : vals.keySet()) {
-                    addNewNodeToParentWithTextValue(vKey, sparent, vals.get(vKey).toString());
+                    if (vals.get(vKey) != null)
+                        addNewNodeToParentWithTextValue(vKey, sparent, vals.get(vKey).toString());
                 }
             }
         }
+        // add online resource if it exists
+        if (onlineResource != null) {
+            addNewNodeToParentWithAttribute("sml:onlineResource", parent, "xlink:href", onlineResource);
+        }
+    }
+    
+    public void addContactNode(String role, String orgName, HashMap<String,HashMap<String,String>> contactInfo) {
+        addContactNode(role, orgName, contactInfo, null);
     }
     
     /**
@@ -325,6 +437,19 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
      */
     public void deleteHistoryNode() {
         getParentNode().removeChild(getParentNode().getElementsByTagName("sml:history").item(0));
+    }
+    
+    public void setSmlLocation(String srsName, String pos) {
+        /*
+         * <sml:location>
+         *   <gml:Point srsName='srsName'>
+         *     <gml:pos>'pos'</gml:pos>
+         *   </gml:Point>
+         * </sml:location
+         */
+        Element parent = (Element) this.document.getElementsByTagName("sml:location").item(0);
+        parent = addNewNodeToParentWithAttribute("gml:Point", parent, "srsName", srsName);
+        addNewNodeToParentWithTextValue("gml:pos", parent, pos);
     }
     
     public void setLocationNode2Dimension(String stationName, double[][] coords) {
@@ -471,7 +596,7 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
             system.setAttribute("gml:id", "sensor-" + fName);
             // identification node
             Element ident = document.createElement("sml:identification");
-            ident.setAttribute("xlink:href", procedure + ":" + fName);
+            ident.setAttribute("xlink:href", procedure.replaceAll(":station:", ":sensor:") + ":" + fName);
             // documentation (url) node
             Element doc = document.createElement("sml:documentation");
             // need to construct url for sensor request
@@ -498,11 +623,75 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
         }
     }
     
+    public void addSmlComponent(String compName, String compId, String description, String urn, String dsUrl) {
+        /*
+         * <sml:component name='compName'>
+         *   <sml:System gml:id='compId'>
+         *     <gml:description>'description'</gml:description>
+         *     <sml:identification xlink:href='urn' />
+         *     <sml:documentation xlink:href='dsUrl' />
+         *     <sml:outputs>
+         *       <sml:OutputList />
+         *     </sml:outputs>
+         *   </sml:System>
+         * </sml:component>
+         */
+        // add to the <sml:ComponentList> node
+        Element parent = (Element) this.document.getElementsByTagName("sml:ComponentList").item(0);
+        parent = addNewNodeToParentWithAttribute("sml:component", parent, "name", compName);
+        parent = addNewNodeToParentWithAttribute("sml:System", parent, "gml:id", compId);
+        addNewNodeToParentWithTextValue("gml:description", parent, description);
+        addNewNodeToParentWithAttribute("sml:identification", parent, "xlink:href", urn);
+        addNewNodeToParentWithAttribute("sml:documentation", parent, "xlink:href", dsUrl);
+        parent = addNewNodeToParent("sml:outputs", parent);
+        addNewNodeToParent("sml:OutputList", parent);
+    }
+    
+    public void addSmlOuptutToComponent(String compName, String outName, String definition, String uom) {
+        /*
+         * <sml:output name='outName'>
+         *   <swe:Quantity definition='definition'>
+         *     <swe:uom code='degC' />
+         *   </swe:Quantity>
+         * </sml:output>
+         */
+        // find a component that has the attribute 'name' with its value same as 'compName'
+        NodeList ns = this.document.getElementsByTagName("sml:component");
+        Element parent = null;
+        for (int n=0; n<ns.getLength(); n++) {
+            if (((Element)ns.item(n)).getAttribute("name").equalsIgnoreCase(compName)) {
+                parent = (Element) ns.item(n);
+                parent = (Element) parent.getElementsByTagName("sml:OutputList").item(0);
+                parent = addNewNodeToParentWithAttribute("sml:output", parent, "name", outName);
+                parent = addNewNodeToParentWithAttribute("swe:Quantity", parent, "definition", definition);
+                addNewNodeToParentWithAttribute("swe:uom", parent, "code", uom);
+            }
+        }
+    }
+    
     /**
      * Removes the components node from the xml document
      */
     public void deleteComponentsNode() {
         getParentNode().removeChild(getParentNode().getElementsByTagName("sml:components").item(0));
+    }
+
+    public void addIoosServiceMetadata1_0() {
+        /*
+         * <sml:capabilities name="ioosServiceMetadata">
+         *   <swe:SimpleDataRecord>
+         *     <gml:metaDataProperty xlink:title="ioosTemplateVersion" xlink:href="http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0">
+         *       <gml:version>1.0</gml:version>
+         *     </gml:metaDataProperty>
+         *   </swe:SimpleDataRecord>
+         * </sml:capabilities>
+         */
+        Element parent = getParentNode();
+        parent = addNewNodeToParentWithAttribute("sml:capabilities", parent, "name", "ioosServiceMetadata");
+        parent = addNewNodeToParent("swe:SimpleDataRecord", parent);
+        parent = addNewNodeToParentWithAttribute("gml:metaDataProperty", parent, "xlink:title", "ioosTemplateVersion");
+        parent.setAttribute("xlink:href", "http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0");
+        addNewNodeToParentWithTextValue("gml:version", parent, "1.0");
     }
     
     /**

@@ -5,6 +5,7 @@
 package com.asascience.ncsos.describesen;
 
 import com.asascience.ncsos.outputformatter.DescribeSensorFormatter;
+import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import java.io.IOException;
 import java.util.ArrayList;
 import ucar.nc2.Attribute;
@@ -24,7 +25,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  * @author SCowan
  * @version 1.0.0
  */
-public class SOSDescribeSensor extends SOSDescribeStation implements SOSDescribeIF {
+public class SOSDescribeSensor extends SOSDescribeStation implements ISOSDescribeSensor {
     
     private String sensorId;
     private Variable sensorVariable;
@@ -71,19 +72,24 @@ public class SOSDescribeSensor extends SOSDescribeStation implements SOSDescribe
     
     @Override
     public void setupOutputDocument(DescribeSensorFormatter output) {
+    }
+
+    @Override
+    public void setupOutputDocument(SOSOutputFormatter output) {
+        DescribeSensorFormatter dsf = (DescribeSensorFormatter) output;
         if (errorString == null) {
             // system node
-            output.setSystemId("sensor-" + stationName + "-" + sensorId);
+            dsf.setSystemId("sensor-" + stationName + "-" + sensorId);
             // set description
-            formatSetDescription(output);
+            formatSetDescription(dsf);
             // identification node
-            formatSetIdentification(output);
+            formatSetIdentification(dsf);
             // contact node
-            formatSetContactNodes(output);
+            formatSetContactNodes(dsf);
             // location node
-            formatSetLocationNode(output);
+            formatSetLocationNode(dsf);
             // remove unwanted nodes
-            removeUnusedNodes(output);
+            removeUnusedNodes(dsf);
         } else {
             output.setupExceptionOutput(errorString);
         }

@@ -6,6 +6,7 @@ package com.asascience.ncsos.describesen;
 
 import com.asascience.ncsos.outputformatter.DescribeNetworkFormatter;
 import com.asascience.ncsos.outputformatter.DescribeSensorFormatter;
+import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ import ucar.nc2.units.DateFormatter;
  * @author SCowan
  * @version 1.0.0
  */
-public class SOSDescribeSection extends SOSDescribeStation implements SOSDescribeIF {
+public class SOSDescribeSection extends SOSDescribeStation implements ISOSDescribeSensor {
     
     private int trajectoryNumber;
 //    private Integer[] profileIndices;
@@ -154,26 +155,31 @@ public class SOSDescribeSection extends SOSDescribeStation implements SOSDescrib
     }
     
     /*************************
-     * SOSDescribeIF Methods *
+     * ISOSDescribeSensor Methods *
      **************************************************************************/
     
     @Override
     public void setupOutputDocument(DescribeSensorFormatter output) {
+    }
+
+    @Override
+    public void setupOutputDocument(SOSOutputFormatter output) {
+        DescribeSensorFormatter dsf = (DescribeSensorFormatter) output;
         if (errorString == null) {
             // system node
-            output.setSystemId("station-" + stationName);
+            dsf.setSystemId("station-" + stationName);
             // set description
-            formatSetDescription(output);
+            formatSetDescription(dsf);
             // identification node
-            formatSetIdentification(output);
+            formatSetIdentification(dsf);
             // classification node
-            formatSetClassification(output);
+            formatSetClassification(dsf);
             // contact node
-            formatSetContactNodes(output);
+            formatSetContactNodes(dsf);
             // history node
-            formatSetHistoryNodes(output);
+            formatSetHistoryNodes(dsf);
             // position node
-            formatSetLocationNode(output);
+            formatSetLocationNode(dsf);
             // remove unwanted nodes
 //            removeUnusedNodes(output);
         } else {

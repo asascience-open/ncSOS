@@ -8,7 +8,7 @@
  version="1.0.1">
   <sml:member>
     <sml:System>
-      <gml:description></gml:description>
+      <gml:description />
       <gml:name />
       <sml:identification>
         <sml:IdentifierList></sml:IdentifierList>
@@ -18,17 +18,8 @@
       </sml:classification>
       <sml:validTime />
       <!-- <sml:contact /> placeholder -->
-      <sml:history></sml:history>
-      <sml:location></sml:location>
-      <sml:position>
-        <sml:dataDefinition></sml:dataDefinition>
-      </sml:position>
-      <sml:positions>
-        <sml:PositionList></sml:PositionList>
-      </sml:positions>
-      <sml:timePosition>
-        <sml:Time></sml:Time>
-      </sml:timePosition>
+      <sml:history />
+      <sml:location />
       <sml:components>
         <sml:ComponentList></sml:ComponentList>
       </sml:components>

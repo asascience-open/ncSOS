@@ -102,7 +102,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         
         // service provider; parse if it is the section identified or 'all'
         if (this.requestedSections.get(Sections.SERVICEPROVIDER.ordinal())) {
-            out.parseServiceDescription(DataPage, PrimaryOwnership);
+            out.parseServiceDescription(PublisherURL, PrimaryOwnership);
         } else {
             // remove service provider from doc
             out.removeServiceProvider();

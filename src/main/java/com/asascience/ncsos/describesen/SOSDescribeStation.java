@@ -6,6 +6,7 @@ package com.asascience.ncsos.describesen;
 
 import com.asascience.ncsos.outputformatter.DescribeNetworkFormatter;
 import com.asascience.ncsos.outputformatter.DescribeSensorFormatter;
+import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  * @author SCowan
  * @version 1.0.0
  */
-public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDescribeIF {
+public class SOSDescribeStation extends SOSBaseRequestHandler implements ISOSDescribeSensor {
     
     protected Attribute platformType, historyAttribute;
     protected String stationName;
@@ -120,26 +121,6 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
     /**************************************************************************/
     
     public void setupOutputDocument(DescribeSensorFormatter output) {
-        if (errorString == null) {
-            // system node
-            output.setSystemId("station-" + stationName);
-            // set description
-            formatSetDescription(output);
-            // identification node
-            formatSetIdentification(output);
-            // classification node
-            formatSetClassification(output);
-            // contact node
-            formatSetContactNodes(output);
-            // history node
-            formatSetHistoryNodes(output);
-            // location node
-            formatSetLocationNode(output);
-            // remove unwanted nodes
-            removeUnusedNodes(output);
-        } else {
-            output.setupExceptionOutput(errorString);
-        }
     }
     
     public void setupOutputDocument(DescribeNetworkFormatter output) {
@@ -154,6 +135,30 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
             formatSetHistoryNodes(output);
             // set components
             formatSetStationComponentList(output);
+        } else {
+            output.setupExceptionOutput(errorString);
+        }
+    }
+
+    public void setupOutputDocument(SOSOutputFormatter output) {
+        DescribeSensorFormatter dsf = (DescribeSensorFormatter) output;
+        if (errorString == null) {
+            // system node
+            dsf.setSystemId("station-" + stationName);
+            // set description
+            formatSetDescription(dsf);
+            // identification node
+            formatSetIdentification(dsf);
+            // classification node
+            formatSetClassification(dsf);
+            // contact node
+            formatSetContactNodes(dsf);
+            // history node
+            formatSetHistoryNodes(dsf);
+            // location node
+            formatSetLocationNode(dsf);
+            // remove unwanted nodes
+            removeUnusedNodes(dsf);
         } else {
             output.setupExceptionOutput(errorString);
         }
@@ -218,27 +223,27 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
      * @param output 
      */
     protected void formatSetContactNodes(DescribeNetworkFormatter output) {
-        if (!InventoryContactName.equalsIgnoreCase("") || !InventoryContactEmail.equalsIgnoreCase("") || !InventoryContactPhone.equalsIgnoreCase("")) {
+        if (!CreatorName.equalsIgnoreCase("") || !CreatorEmail.equalsIgnoreCase("") || !CreatorPhone.equalsIgnoreCase("")) {
             String role = "http://mmisw.org/ont/ioos/definition/operator";
             HashMap<String, HashMap<String, String>> domainContactInfo = new HashMap<String, HashMap<String, String>>();
             HashMap<String, String> address = new HashMap<String, String>();
-            address.put("sml:electronicMailAddress", InventoryContactEmail);
+            address.put("sml:electronicMailAddress", CreatorEmail);
             domainContactInfo.put("sml:address", address);
             HashMap<String, String> phone = new HashMap<String, String>();
-            phone.put("sml:voice", InventoryContactPhone);
+            phone.put("sml:voice", CreatorPhone);
             domainContactInfo.put("sml:phone", phone);
-            output.addContactNode(role, InventoryContactName, domainContactInfo);
+            output.addContactNode(role, CreatorName, domainContactInfo);
         }
-        if (!DataContactName.equalsIgnoreCase("") || !DataContactEmail.equalsIgnoreCase("") || !DataContactPhone.equalsIgnoreCase("")) {
+        if (!PublisherName.equalsIgnoreCase("") || !PublisherEmail.equalsIgnoreCase("") || !PublisherPhone.equalsIgnoreCase("")) {
             String role = "http://mmisw.org/ont/ioos/definition/publisher";
             HashMap<String, HashMap<String, String>> domainContactInfo = new HashMap<String, HashMap<String, String>>();
             HashMap<String, String> address = new HashMap<String, String>();
-            address.put("sml:electronicMailAddress", DataContactEmail);
+            address.put("sml:electronicMailAddress", PublisherEmail);
             domainContactInfo.put("sml:address", address);
             HashMap<String, String> phone = new HashMap<String, String>();
-            phone.put("sml:voice", DataContactPhone);
+            phone.put("sml:voice", PublisherPhone);
             domainContactInfo.put("sml:phone", phone);
-            output.addContactNode(role, InventoryContactName, domainContactInfo);
+            output.addContactNode(role, CreatorName, domainContactInfo);
         }
         if (contributorAttributes != null) {
             String role = "", name = "";
@@ -316,27 +321,27 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements SOSDesc
      * @param output a DescribeSensorFormatter instance (held by the handler)
      */
     protected void formatSetContactNodes(DescribeSensorFormatter output) {
-        if (!InventoryContactName.equalsIgnoreCase("") || !InventoryContactEmail.equalsIgnoreCase("") || !InventoryContactPhone.equalsIgnoreCase("")) {
+        if (!CreatorName.equalsIgnoreCase("") || !CreatorEmail.equalsIgnoreCase("") || !CreatorPhone.equalsIgnoreCase("")) {
             String role = "http://mmisw.org/ont/ioos/definition/operator";
             HashMap<String, HashMap<String, String>> domainContactInfo = new HashMap<String, HashMap<String, String>>();
             HashMap<String, String> address = new HashMap<String, String>();
-            address.put("sml:electronicMailAddress", InventoryContactEmail);
+            address.put("sml:electronicMailAddress", CreatorEmail);
             domainContactInfo.put("sml:address", address);
             HashMap<String, String> phone = new HashMap<String, String>();
-            phone.put("sml:voice", InventoryContactPhone);
+            phone.put("sml:voice", CreatorPhone);
             domainContactInfo.put("sml:phone", phone);
-            output.addContactNode(role, InventoryContactName, domainContactInfo);
+            output.addContactNode(role, CreatorName, domainContactInfo);
         }
-        if (!DataContactName.equalsIgnoreCase("") || !DataContactEmail.equalsIgnoreCase("") || !DataContactPhone.equalsIgnoreCase("")) {
+        if (!PublisherName.equalsIgnoreCase("") || !PublisherEmail.equalsIgnoreCase("") || !PublisherPhone.equalsIgnoreCase("")) {
             String role = "http://mmisw.org/ont/ioos/definition/publisher";
             HashMap<String, HashMap<String, String>> domainContactInfo = new HashMap<String, HashMap<String, String>>();
             HashMap<String, String> address = new HashMap<String, String>();
-            address.put("sml:electronicMailAddress", DataContactEmail);
+            address.put("sml:electronicMailAddress", PublisherEmail);
             domainContactInfo.put("sml:address", address);
             HashMap<String, String> phone = new HashMap<String, String>();
-            phone.put("sml:voice", DataContactPhone);
+            phone.put("sml:voice", PublisherPhone);
             domainContactInfo.put("sml:phone", phone);
-            output.addContactNode(role, InventoryContactName, domainContactInfo);
+            output.addContactNode(role, CreatorName, domainContactInfo);
         }
         if (contributorAttributes != null) {
             String role = "", name = "";

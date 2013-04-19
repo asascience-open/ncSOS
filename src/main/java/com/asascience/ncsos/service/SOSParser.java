@@ -142,7 +142,6 @@ public class SOSParser {
                         //Check to see if get caps exists, if it does not actual parse the file
                         _log.debug("Cache enabled for GetCapabilities");
                         File f = new File(savePath + getCacheXmlFileName(threddsURI));
-                        
                         if (f.exists()) {
                             //if the file exists check the modified data against current data
                             long fileDateTime = f.lastModified();
@@ -203,7 +202,7 @@ public class SOSParser {
                             errHandler.setErrorExceptionOutput("Observation requests must have offering, observedProperty, responseFormat as query parameters");
                             retval.put("outputHandler", errHandler.getOutputHandler());
                             retval.put("responseContentType", "text/xml");
-                        } catch (Exception e) { }
+                        } catch (Exception e) { _log.error(e.toString()); }
                         break;
                     }
                     // setup our coordsHash
@@ -265,13 +264,10 @@ public class SOSParser {
                         }
                         retval.put("outputHandler",sensorHandler.getOutputHandler());
                     } catch (Exception ex) {
-                        _log.debug(ex.toString());
-                        for (int e = 0; e < 10; e++) {
-                            _log.debug("\t" + ex.getStackTrace()[e]);
-                        }
+                        _log.error(ex.toString());
+                        ex.printStackTrace();
                         errHandler.setErrorExceptionOutput("Internal System Exception in setting up DescribeSensor handler - " + ex.toString());
                         retval.put("outputHandler", errHandler.getOutputHandler());
-                        _log.error("Internal System Exception in setting up DescribeSensor handler - " + ex.toString());
                     }
                     break;
                 default:
