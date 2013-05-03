@@ -12,14 +12,10 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.springframework.util.StringUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.ls.DOMImplementationLS;
-import org.w3c.dom.ls.LSOutput;
-import org.w3c.dom.ls.LSSerializer;
 import ucar.nc2.Attribute;
 import ucar.nc2.constants.FeatureType;
 
@@ -27,11 +23,9 @@ import ucar.nc2.constants.FeatureType;
  *
  * @author SCowan
  */
-public class IoosSos10 implements SOSOutputFormatter {
+public class IoosSos10 extends BaseOutputFormatter {
     
     // private fields
-    private Document docRoot;
-    private DOMImplementationLS impl;
     private List<String> procedures;
     
     // private final fields
@@ -44,6 +38,7 @@ public class IoosSos10 implements SOSOutputFormatter {
     private static final String TEMPLATE = "templates/ioossos_1_0.xml";
     private static final String RESPONSE_FORMAT = "text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0\"";
     private static final String SWE2_SCHEMALOCATION = "http://www.opengis.net/swe/2.0 http://schemas.opengis.net/sweCommon/2.0/swe.xsd";
+    private static final String ioosTemplateURL = "http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0";
     private static final FeatureType[] supportedTypes = { FeatureType.POINT, FeatureType.STATION };
     private static final String BLOCK_SEPERATOR = "\n";
     private static final String TOKEN_SEPERATOR = ",";
@@ -65,39 +60,12 @@ public class IoosSos10 implements SOSOutputFormatter {
             this.hasError = false;
             this.parent = parent;
         }
-        
-        try {
-            DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
-            this.impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
-        } catch (Exception ex) {
-            _log.error(ex.getMessage());
-            this.impl = null;
-        }
     }
     
     //============== Private Methods ========================================//
     
     private void UnsupportedFeatureType(FeatureType ft) {
         this.setupExceptionOutput("Unsupported feature type for the " + RESPONSE_FORMAT + " response format! FeatureType: " + ft.toString());
-    }
-    
-    private void parseTemplateXML() {
-        InputStream templateInputStream = null;
-        try {
-            templateInputStream = getClass().getClassLoader().getResourceAsStream(TEMPLATE);
-            this.docRoot = XMLDomUtils.getTemplateDom(templateInputStream);
-        } catch (Exception ex) {
-            _log.error(ex.toString());
-        } finally {
-            if (templateInputStream != null) {
-                try {
-                    templateInputStream.close();
-                } catch (IOException e) {
-                    // ignore, closing..
-                    _log.error(e.toString());
-                }
-            }
-        }
     }
     
     /**
@@ -107,22 +75,75 @@ public class IoosSos10 implements SOSOutputFormatter {
     private void createIoosSosResponse() {
         try {
             // create the document from template
-            parseTemplateXML();
+            loadTemplateXML(TEMPLATE);
+            // set description
+            Element description = (Element) this.document.getElementsByTagName("gml:description").item(0);
+            description.setTextContent(this.parent.getGlobalAttribute("description", "none"));
+            // fill out metadata properties
+            this.constructMetadataProperties();
             // fill out <om:samplingTime>
-            this.docRoot = XMLDomUtils.addNode(this.docRoot, "om:samplingTime", this.createSamplingTimeTree());
+            this.document = XMLDomUtils.addNode(this.document, "om:samplingTime", this.createSamplingTimeTree());
             // fill out <om:procedure>
-            this.docRoot = XMLDomUtils.addNode(this.docRoot, "om:procedure", this.createProcedureTree());
+            this.document = XMLDomUtils.addNode(this.document, "om:procedure", this.createProcedureTree());
             // fill out <om:observedProperty>
-            this.docRoot = XMLDomUtils.addNode(this.docRoot, "om:observedProperty", this.createObservedPropertyTree());
+            this.document = XMLDomUtils.addNode(this.document, "om:observedProperty", this.createObservedPropertyTree());
             // fill out <om:featureOfInterest>
-            this.docRoot = XMLDomUtils.addNode(this.docRoot, "om:featureOfInterest", this.createFeatureOfInterestTree());
+            this.document = XMLDomUtils.addNode(this.document, "om:featureOfInterest", this.createFeatureOfInterestTree());
             // fill out <om:result>
-            this.docRoot = XMLDomUtils.addNode(this.docRoot, "om:result", this.createResultTree());
+            this.document = XMLDomUtils.addNode(this.document, "om:result", this.createResultTree());
         } catch (Exception ex) {
             _log.error(ex.toString());
             ex.printStackTrace();
             this.setupExceptionOutput("Unable to correctly create response for request.");
         }
+    }
+
+    private void constructMetadataProperties() {
+        /*
+         * Add an element for each global metadata property
+         */
+        // disclaimer
+        List<SubElement> metaData = new ArrayList<SubElement>();
+        HashMap<String,String> attrs = new HashMap<String, String>();
+        SubElement subElm = new SubElement("gml:GenericMetaData");
+        String disclaimer = this.parent.getGlobalAttribute("disclaimer", null);
+        if (disclaimer != null) {
+            metaData.add(subElm);
+            subElm = new SubElement("gml:description");
+            subElm.textContent = disclaimer;
+            metaData.add(subElm);
+            attrs.put("xlink:title", "disclaimer");
+            this.createMetadataProperty(attrs, metaData);
+        }
+        
+        // ioosTemplateVersion
+        metaData = new ArrayList<SubElement>();
+        attrs = new HashMap<String, String>();
+        subElm = new SubElement("gml:version");
+        subElm.textContent = "1.0";
+        metaData.add(subElm);
+        attrs.put("xlink:title", "ioosTemplateVersion");
+        attrs.put("xlink:href", ioosTemplateURL);
+        this.createMetadataProperty(attrs, metaData);
+    }
+    
+    private org.w3c.dom.Node createMetadataProperty(HashMap<String,String> attributes, List<SubElement> elements) {
+        /*
+         * <gml:metaDataProperty xlink:title='title'>
+         *   'Add sub elements for each in list'
+         * </gml:metaDataProperty>
+         */
+        Element parent = (Element) this.document.getElementsByTagName("om:ObservationCollection").item(0);
+        parent = this.addNewNode(parent, "gml:metaDataProperty");
+        for (Map.Entry<String,String> entry : attributes.entrySet()) {
+            parent.setAttribute(entry.getKey(), entry.getValue());
+        }
+        
+        for (SubElement elm : elements) {
+            parent.appendChild(this.createSubElement(elm));
+        }
+        
+        return parent;
     }
     
     //<editor-fold defaultstate="collapsed" desc="om:Observation children">
@@ -134,9 +155,9 @@ public class IoosSos10 implements SOSOutputFormatter {
          *   <gml:endPosition>end_time</gml:endPosition>
          * </gml:TimePeriod>
          */
-        Element parent = this.docRoot.createElement("gml:TimePeriod");
+        Element parent = this.document.createElement("gml:TimePeriod");
         // add a begin and end position
-        Element begin = this.docRoot.createElement("gml:beginPosition");
+        Element begin = this.document.createElement("gml:beginPosition");
         String startT, endT;
         if (this.parent.getRequestedEventTimes().size() > 0) {
             startT = this.parent.getRequestedEventTimes().get(0);
@@ -148,7 +169,7 @@ public class IoosSos10 implements SOSOutputFormatter {
         begin.setTextContent(startT);
         parent.appendChild(begin);
         
-        Element end = this.docRoot.createElement("gml:endPosition");
+        Element end = this.document.createElement("gml:endPosition");
         end.setTextContent(endT);
         parent.appendChild(end);
         return parent;
@@ -161,11 +182,11 @@ public class IoosSos10 implements SOSOutputFormatter {
          *   <gml:member xlink:href="station-urn" />
          * </om:Process>
          */
-        Element parent = this.docRoot.createElement("om:Process");
+        Element parent = this.document.createElement("om:Process");
         // add each station to the parent
         for (int i=0; i<this.parent.getProcedures().length; i++) {
             String stName = this.parent.getCDMDataset().getStationName(i);
-            Element member = this.docRoot.createElement("gml:member");
+            Element member = this.document.createElement("gml:member");
             member.setAttribute("xlink:href", SOSBaseRequestHandler.getGMLName(stName));
             parent.appendChild(member);
         }
@@ -181,16 +202,16 @@ public class IoosSos10 implements SOSOutputFormatter {
          * </swe:CompositePhenomenon>
          */
         List<String> obsProps = new ArrayList<String>(this.parent.getRequestedObservedProperties());
-        Element parent = this.docRoot.createElement("swe:CompositePhenomenon");
+        Element parent = this.document.createElement("swe:CompositePhenomenon");
         parent.setAttribute("dimenion", obsProps.size() + "");
         parent.setAttribute("gml:id", "observedProperties");
         
-        Element name = this.docRoot.createElement("gml:name");
+        Element name = this.document.createElement("gml:name");
         name.setTextContent("Response Observed Properties");
         parent.appendChild(name);
         // add a swe:component for each observed property
         for (String op : obsProps) {
-            Element component = this.docRoot.createElement("swe:component");
+            Element component = this.document.createElement("swe:component");
             String stdName = this.parent.getVariableStandardName(op);
             component.setAttribute("xlink:href", VocabDefinitions.GetDefinitionForParameter(stdName));
             parent.appendChild(component);
@@ -228,23 +249,23 @@ public class IoosSos10 implements SOSOutputFormatter {
          *   </gml:location
          * </gml:FeatureCollection>
          */
-        Element parent = this.docRoot.createElement("gml:FeatureCollection");
+        Element parent = this.document.createElement("gml:FeatureCollection");
         // metadata property with feature type
-        Element metadata = this.docRoot.createElement("gml:metaDataProperty");
-        Element name = this.docRoot.createElement("gml:name");
+        Element metadata = this.document.createElement("gml:metaDataProperty");
+        Element name = this.document.createElement("gml:name");
         name.setAttribute("codeSpace", "http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#discrete-sampling-geometries");
         name.setTextContent(this.parent.getFeatureType());
         metadata.appendChild(name);
         parent.appendChild(metadata);
         
         // lat-lon bounding box
-        Element bbox = this.docRoot.createElement("gml:boundedBy");
-        Element env = this.docRoot.createElement("gml:Envelope");
+        Element bbox = this.document.createElement("gml:boundedBy");
+        Element env = this.document.createElement("gml:Envelope");
         env.setAttribute("srsName", "http://www.opengis.net/def/crs/EPSG/0/4326");
-        Element corner = this.docRoot.createElement("gml:lowerCorner");
+        Element corner = this.document.createElement("gml:lowerCorner");
         corner.setTextContent(this.parent.getBoundedLowerCorner());
         env.appendChild(corner);
-        corner = this.docRoot.createElement("gml:upperCorner");
+        corner = this.document.createElement("gml:upperCorner");
         corner.setTextContent(this.parent.getBoundedUpperCorner());
         env.appendChild(corner);
         bbox.appendChild(env);
@@ -252,17 +273,17 @@ public class IoosSos10 implements SOSOutputFormatter {
         parent.appendChild(bbox);
         
         // location for each station
-        Element loc = this.docRoot.createElement("gml:location");
-        Element mPoint = this.docRoot.createElement("gml:MultiPoint");
+        Element loc = this.document.createElement("gml:location");
+        Element mPoint = this.document.createElement("gml:MultiPoint");
         mPoint.setAttribute("srsName", "http://www.opengis.net/def/crs/EPSG/0/4326");
-        Element pMmbrs = this.docRoot.createElement("gml:pointMembers");
+        Element pMmbrs = this.document.createElement("gml:pointMembers");
         for (int i=0; i<this.parent.getProcedures().length; i++) {
             String stName = SOSBaseRequestHandler.getGMLName(this.parent.getCDMDataset().getStationName(i));
-            Element point = this.docRoot.createElement("gml:Point");
-            Element pname = this.docRoot.createElement("gml:name");
+            Element point = this.document.createElement("gml:Point");
+            Element pname = this.document.createElement("gml:name");
             pname.setTextContent(stName);
             point.appendChild(pname);
-            Element ppos = this.docRoot.createElement("gml:pos");
+            Element ppos = this.document.createElement("gml:pos");
             ppos.setTextContent(this.parent.getStationLowerCorner(i));
             point.appendChild(ppos);
             
@@ -308,7 +329,7 @@ public class IoosSos10 implements SOSOutputFormatter {
         // create DataRecord Element
         org.w3c.dom.Element parent = createSwe2Element("DataRecord", "xsi:schemaLocation", SWE2_SCHEMALOCATION);
         // create 1st field, the static data field
-        org.w3c.dom.Element static_data = this.docRoot.createElement("swe2:field");
+        org.w3c.dom.Element static_data = this.document.createElement("swe2:field");
         // set name to 'stations'
         static_data.setAttribute("name", "stations");
         // add static data to data record
@@ -323,7 +344,7 @@ public class IoosSos10 implements SOSOutputFormatter {
         // add record element to static data field element
         static_data.appendChild(static_record);
         // create 2nd field, dynamic data (observation data)
-        org.w3c.dom.Element dynamic_data = this.docRoot.createElement("swe2:field");
+        org.w3c.dom.Element dynamic_data = this.document.createElement("swe2:field");
         dynamic_data.setAttribute("name", "observationData");
         
         // create the dynamic data (obwervationData)
@@ -549,7 +570,7 @@ public class IoosSos10 implements SOSOutputFormatter {
          *   <swe2:DataRecord>
          * </swe2:field>
          */
-        Element stStation = this.docRoot.createElement("swe2:field");
+        Element stStation = this.document.createElement("swe2:field");
         // change 'procedure' into the readable format described in the template
         String name = stationToFieldName(stName);
         stStation.setAttribute("name", name);
@@ -706,7 +727,7 @@ public class IoosSos10 implements SOSOutputFormatter {
     
     private Element createSwe2Element(String name, HashMap<String,String> attributes) {
         // create a "swe2:DataRecord" element, add all of the attributes in the hashmap, return
-        Element dataRecord = this.docRoot.createElement("swe2:" + name);
+        Element dataRecord = this.document.createElement("swe2:" + name);
         for (String attrName : attributes.keySet()) {
             dataRecord.setAttribute(attrName, attributes.get(attrName));
         }
@@ -734,31 +755,18 @@ public class IoosSos10 implements SOSOutputFormatter {
     }
 
     //============== Output Formatter Interface =============================//
-    //<editor-fold defaultstate="collapsed" desc="Interface Methods">
-    public void addDataFormattedStringToInfoList(String dataFormattedString) {
-//        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void emtpyInfoList() {}
-
+    @Override
     public void setupExceptionOutput(String message) {
         _log.debug(message);
         this.hasError = true;
-        this.docRoot = XMLDomUtils.getExceptionDom(message);
+        this.document = XMLDomUtils.getExceptionDom(message);
     }
-
+    
+    @Override
     public void writeOutput(Writer writer) {
-        // create output if we don't already have an exception
-        if (!this.hasError) {
+        if (!hasError)
             this.createIoosSosResponse();
-        }
-        
-        // output our document to the writer
-        LSSerializer xmlSerializer = impl.createLSSerializer();
-        LSOutput xmlOut = impl.createLSOutput();
-        xmlSerializer.getDomConfig().setParameter("format-pretty-print", Boolean.TRUE);
-        xmlOut.setCharacterStream(writer);
-        xmlSerializer.write(this.docRoot, xmlOut);
+        super.writeOutput(writer);
     }
     //</editor-fold>
     //=======================================================================//

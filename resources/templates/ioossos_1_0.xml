@@ -9,6 +9,7 @@
  gml:id="SPOT5_DATA">
     <om:member>
       <om:Observation>
+        <gml:description />
         <om:samplingTime></om:samplingTime>
         <om:procedure></om:procedure>
         <om:observedProperty></om:observedProperty>

@@ -5,10 +5,11 @@
 package com.asascience.ncsos.outputformatter;
 
 import com.asascience.ncsos.util.XMLDomUtils;
-import com.sun.org.apache.xerces.internal.dom.DOMOutputImpl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -27,6 +28,17 @@ import org.w3c.dom.ls.LSSerializer;
  * @author SCowan
  */
 public class BaseOutputFormatter implements SOSOutputFormatter {
+    protected class SubElement {
+        public HashMap<String,String> attributes;
+        public String tag;
+        public String textContent;
+        
+        public SubElement(String tag) {
+            this.attributes = new HashMap<String, String>();
+            this.textContent = null;
+            this.tag = tag;
+        }
+    }
     
     protected String DEFAULT_VALUE = "UNKNOWN";
     protected Document document;
@@ -36,13 +48,9 @@ public class BaseOutputFormatter implements SOSOutputFormatter {
     /** Public Methods **/
 
     //<editor-fold defaultstate="collapsed" desc="interface methods">
-    public void addDataFormattedStringToInfoList(String dataFormattedString) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    public void addDataFormattedStringToInfoList(String dataFormattedString) {}
 
-    public void emtpyInfoList() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    public void emtpyInfoList() {}
 
     public void setupExceptionOutput(String message) {
         this.document = XMLDomUtils.getExceptionDom(message);
@@ -63,7 +71,7 @@ public class BaseOutputFormatter implements SOSOutputFormatter {
                 DOMImplementationLS impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
                 // output our document to the writer
                 LSSerializer xmlSerializer = impl.createLSSerializer();
-                LSOutput xmlOut = new DOMOutputImpl();
+                LSOutput xmlOut = impl.createLSOutput();
                 xmlSerializer.getDomConfig().setParameter("format-pretty-print", Boolean.TRUE);
                 xmlOut.setCharacterStream(writer);
                 xmlSerializer.write(this.document, xmlOut);
@@ -92,6 +100,17 @@ public class BaseOutputFormatter implements SOSOutputFormatter {
                 }
             }
         }
+    }
+    
+    protected Element createSubElement(SubElement element) {
+        Element retval = this.document.createElement(element.tag);
+        if (element.textContent != null) {
+            retval.setTextContent(element.textContent);
+        }
+        for (Map.Entry<String,String> entry : element.attributes.entrySet()) {
+            retval.setAttribute(entry.getKey(), entry.getValue());
+        }
+        return retval;
     }
     
     protected Element getParentNode() {
