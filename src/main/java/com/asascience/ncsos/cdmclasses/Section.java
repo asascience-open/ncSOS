@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.*;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
+import sun.util.logging.resources.logging;
 import ucar.nc2.ft.*;
 import ucar.nc2.time.CalendarDate;
 import ucar.nc2.time.CalendarDateRange;
@@ -489,6 +490,24 @@ public class Section extends baseCDMClass implements iStationData {
     }
 
     public List<String> getLocationsString(int stNum) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        try {
+            PointFeatureCollectionIterator iter = this.sectionList.get(stNum).getPointFeatureCollectionIterator(-1);
+            List<String> retval = new ArrayList<String>();
+            while (iter.hasNext()) {
+                PointFeatureCollection pfc = iter.next();
+                PointFeatureIterator pfiter = pfc.getPointFeatureIterator(-1);
+                while (pfiter.hasNext()) {
+                    PointFeature pf = pfiter.next();
+                    String location = pf.getLocation().getLatitude() + " " + pf.getLocation().getLongitude();
+                    if (!retval.contains(location)) {
+                        retval.add(location);
+                    }
+                }
+            }
+            return retval;
+        } catch (Exception ex) {
+            _log.error(ex.toString());
+        }
+        return new ArrayList<String>();
     }
 }

@@ -12,6 +12,7 @@ import com.asascience.ncsos.util.ListComprehension;
 import com.asascience.ncsos.util.LogReporter;
 import com.asascience.ncsos.util.VocabDefinitions;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,8 +56,10 @@ public class SOSDescribeNetworkM1_0 extends BaseDescribeSensor implements ISOSDe
         } else {
             try {
                 this.network = (DescribeSensorNetworkMilestone1_0) output;
+                describeNetwork();
             } catch (Exception ex) {
                 logger.error(ex.toString());
+                ex.printStackTrace();
             }
         }
     }
@@ -149,7 +152,10 @@ public class SOSDescribeNetworkM1_0 extends BaseDescribeSensor implements ISOSDe
     }
     
     private void setStationData() throws IOException {
-        List<String> stationNames = (List<String>) this.getStationNames().values();
+        List<String> stationNames = new ArrayList<String>(this.getStationNames().size());
+        for (String str : this.getStationNames().values()) {
+            stationNames.add(str);
+        }
         switch(this.getDatasetFeatureType()) {
             case STATION:
                 this.stationData = new TimeSeries(stationNames.toArray(new String[stationNames.size()]), null, null);
@@ -205,7 +211,7 @@ public class SOSDescribeNetworkM1_0 extends BaseDescribeSensor implements ISOSDe
             // identifiers for station
             String stationNameFixed = station.getValue().replaceAll("[Pp]rofile|[Tt]rajectory", "");
             // stationID
-            network.addIdentifierToComponent(station.getValue(), "stationID", VocabDefinitions.GetIoosDefinition("stationID"), this.procedure);
+            network.addIdentifierToComponent(station.getValue(), "stationID", VocabDefinitions.GetIoosDefinition("stationID"), this.procedure.substring(0,this.procedure.lastIndexOf(":")) + station.getValue());
             // shortName
             VariableSimpleIF pVar = this.checkForRequiredVariable("platform_short_name");
             network.addIdentifierToComponent(station.getValue(), "shortName", VocabDefinitions.GetIoosDefinition("shortName"), this.checkForRequiredValue(pVar, stationNameFixed));
@@ -233,7 +239,7 @@ public class SOSDescribeNetworkM1_0 extends BaseDescribeSensor implements ISOSDe
             // outputs
             for (VariableSimpleIF var : this.getDataVariables()) {
                 String name = var.getShortName();
-                String title = this.procedure.substring(0,this.procedure.lastIndexOf(":")) + station.getValue() + ":" + name.replaceAll("\\s+", "_");
+                String title = this.procedure.substring(0,this.procedure.lastIndexOf(":")+1) + station.getValue() + ":" + name.replaceAll("\\s+", "_");
                 String def = VocabDefinitions.GetDefinitionForParameter(this.checkForRequiredValue(var, "standard_name"));
                 String units = this.checkForRequiredValue(var, "units");
                 network.addComponentOutput(station.getValue(), name, title, def, this.featureType, units);
@@ -276,7 +282,7 @@ public class SOSDescribeNetworkM1_0 extends BaseDescribeSensor implements ISOSDe
             // outputs
             for (VariableSimpleIF var : this.getDataVariables()) {
                 String name = var.getShortName();
-                String title = this.procedure.substring(0,this.procedure.lastIndexOf(":")) + station.getValue() + ":" + name.replaceAll("\\s+", "_");
+                String title = this.procedure.substring(0,this.procedure.lastIndexOf(":")+1) + station.getValue() + ":" + name.replaceAll("\\s+", "_");
                 String def = VocabDefinitions.GetDefinitionForParameter(this.checkForRequiredValue(var, "standard_name"));
                 String units = this.checkForRequiredValue(var, "units");
                 network.addComponentOutput(station.getValue(), name, title, def, this.featureType, units);

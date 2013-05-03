@@ -416,6 +416,8 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
     }
 
     public List<String> getLocationsString(int stNum) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        List<String> retval = new ArrayList<String>();
+        retval.add(this.getLowerLat(stNum) + " " + this.getLowerLon(stNum));
+        return retval;
     }
 }

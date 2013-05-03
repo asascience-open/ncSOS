@@ -4,10 +4,7 @@
  */
 package com.asascience.ncsos.describesen;
 
-import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
-import com.asascience.ncsos.outputformatter.DescribeNetworkFormatter;
-import com.asascience.ncsos.outputformatter.DescribeSensorFormatter;
-import com.asascience.ncsos.outputformatter.DescribeSensorPlatformMilestone1_0;
+import com.asascience.ncsos.outputformatter.*;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
 import com.asascience.ncsos.util.DiscreteSamplingGeometryUtil;
@@ -83,9 +80,12 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
             setNeededInfoForSensor(dataset);
             describer.setupOutputDocument((DescribeSensorFormatter)output);
         } else if (this.procedure.contains("network")) {
-            output = new DescribeNetworkFormatter(uri, query);
-            setNeededInfoForNetwork(dataset);
-            describer.setupOutputDocument((DescribeNetworkFormatter)output);
+            output = new DescribeSensorNetworkMilestone1_0();
+            describer = new SOSDescribeNetworkM1_0(dataset, procedure, query);
+            describer.setupOutputDocument(output);
+//            output = new DescribeNetworkFormatter(uri, query);
+//            setNeededInfoForNetwork(dataset);
+//            describer.setupOutputDocument((DescribeNetworkFormatter)output);
         } else {
             output = new BaseOutputFormatter();
             output.setupExceptionOutput("Unknown procedure (not a station, sensor or 'network'): " + this.procedure);

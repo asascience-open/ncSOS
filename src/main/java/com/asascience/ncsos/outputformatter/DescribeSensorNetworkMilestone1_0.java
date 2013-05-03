@@ -6,7 +6,6 @@ package com.asascience.ncsos.outputformatter;
 
 import java.util.List;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
@@ -15,7 +14,7 @@ import org.w3c.dom.NodeList;
  */
 public class DescribeSensorNetworkMilestone1_0 extends DescribeSensorPlatformMilestone1_0 {
     
-    public static final String NETWORK_TEMPLATE = "templates/describeNetworkM1.0.xml";
+    public static final String NETWORK_TEMPLATE = "templates/describeNewtorkM1.0.xml";
     public static final String CF_CONVENTIONS = "http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#discrete-sampling-geometries";
     
     public DescribeSensorNetworkMilestone1_0() {
@@ -78,7 +77,7 @@ public class DescribeSensorNetworkMilestone1_0 extends DescribeSensorPlatformMil
             return;
         }
         // create an identifier in the component
-        parent = (Element) parent.getElementsByTagName("IdentifierList").item(0);
+        parent = (Element) parent.getElementsByTagName("sml:IdentifierList").item(0);
         parent = addNewNode(parent, "sml:identifier", "name", identName);
         parent = addNewNode(parent, "sml:Term", "definition", identDef);
         addNewNode(parent, "sml:value", identVal);
