@@ -15,11 +15,11 @@ public class LogReporter implements IFReportMechanism {
     private final static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SOSDescribePlatformM1_0.class);
     
     public void ReportInvalid(String valueName, String invalidValue) {
-        logger.error("Recieved and invalid value for " + valueName + ": " + invalidValue);
+        logger.warn("Recieved and invalid value for " + valueName + ": " + invalidValue);
     }
 
     public void ReportMissing(String valueName) {
-        logger.error("Missing required value: " + valueName);
+        logger.warn("Missing required value: " + valueName);
     }
     
 }

@@ -4,7 +4,6 @@
  */
 package com.asascience.ncsos.outputformatter;
 
-import com.asascience.ncsos.util.XMLDomUtils;
 import java.util.HashMap;
 import java.util.List;
 import org.w3c.dom.Element;
@@ -17,7 +16,8 @@ import org.w3c.dom.NodeList;
 public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
     
     private static final String TEMPLATE_LOCATION = "templates/describePlatformM1.0.xml";
-    
+    private final static String IOOSURL = "http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0";
+
     public DescribeSensorPlatformMilestone1_0() {
         super();
         loadTemplateXML(TEMPLATE_LOCATION);
@@ -117,7 +117,7 @@ public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
      * @param title name of the metadata
      * @param href reference to the metadata
      */
-    public void addSmlCapabilitiesGmlMetadata(String name, String title, String href) {
+    public void addSmlCapabilitiesGmlMetadata(String parentName, String name, String title, String href) {
         /*
          * <sml:capabilities name='name'>
          *   <swe:SimpleDataRecord>
@@ -125,7 +125,7 @@ public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
          *   </swe:SimpleDataRecord>
          * </sml:capabilities>
          */
-        Element parent = getParentNode();
+        Element parent = (Element) ((parentName != null) ? this.document.getElementsByTagName(parentName).item(0) : this.getParentNode());
         parent = addNewNode(parent, "sml:capabilities", "name", name);
         parent = addNewNode(parent, "swe:SimpleDataRecord");
         parent = addNewNode(parent, "gml:metaDataProperty", "xlink:title", title);
@@ -140,15 +140,10 @@ public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
      * @param contactInfo info for contacting the...um...contact
      */
     public void addContactNode(String role, String organizationName, HashMap<String, HashMap<String, String>> contactInfo, String onlineResource) {
-        // setup and and insert a contact node (after history)
-        document = XMLDomUtils.addNode(document, "sml:System", "sml:contact", "sml:history");
-        NodeList contacts = getParentNode().getElementsByTagName("sml:contact");
-        Element contact = null;
-        for (int i=0; i<contacts.getLength(); i++) {
-            if (!contacts.item(i).hasAttributes()) {
-                contact = (Element) contacts.item(i);
-            }
-        }
+        // add sml:member as the head node, in the ContactList
+//        document = XMLDomUtils.addNode(document, "sml:System", "sml:contact", "sml:history");
+        Element contact = (Element) getParentNode().getElementsByTagName("sml:ContactList").item(0);
+        contact = this.addNewNode(contact, "sml:member");
         contact.setAttribute("xlink:role", role);
         /* *** */
         Element parent = addNewNode(contact, "sml:ResponseibleParty");
@@ -192,7 +187,7 @@ public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
         parent = addNewNode(parent, "sml:capabilities", "name", "ioosServiceMetadata");
         parent = addNewNode(parent, "swe:SimpleDataRecord");
         parent = addNewNode(parent, "gml:metaDataProperty", "xlink:title", "ioosTemplateVersion");
-        parent.setAttribute("xlink:href", "http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0");
+        parent.setAttribute("xlink:href", IOOSURL);
         addNewNode(parent, "gml:version", "1.0");
     }
     

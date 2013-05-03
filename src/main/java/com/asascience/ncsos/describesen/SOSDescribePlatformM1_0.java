@@ -34,11 +34,9 @@ public class SOSDescribePlatformM1_0 extends BaseDescribeSensor implements ISOSD
     private final static String QUERY = "?service=SOS&request=DescribeSensor&version=1.0.0&outputFormat=text/xml;subtype=\"sensorML/1.0.1\"&procedure=";
     
     private DescribeSensorPlatformMilestone1_0 platform;
-    private DescribeNetworkFormatter network;
     
     public SOSDescribePlatformM1_0(NetcdfDataset dataset, String procedure, String serverURL) throws IOException {
         super(dataset, new LogReporter());
-        logger.debug("procedure: " + procedure);
         this.procedure = procedure;
         this.stationName = procedure.substring(procedure.lastIndexOf(":")+1);
         this.urlBase = serverURL;
@@ -53,18 +51,13 @@ public class SOSDescribePlatformM1_0 extends BaseDescribeSensor implements ISOSD
             try {
                 this.platform = (DescribeSensorPlatformMilestone1_0) output;
                 describePlatform();
-            } catch (ClassCastException ce) {
-                logger.debug(ce.toString());
-                try {
-                    this.network = (DescribeNetworkFormatter) output;
-                    describeNetwork();
-                } catch (Exception ex) {
-                    logger.error(ex.toString());
-                }
+            } catch (ClassCastException ex) {
+                logger.error(ex.toString());
             }
         }
     }
     
+    @Deprecated
     public void setupOutputDocument(DescribeNetworkFormatter output) {
     }
     
@@ -79,6 +72,7 @@ public class SOSDescribePlatformM1_0 extends BaseDescribeSensor implements ISOSD
         formatSmlNetworkProcedures();
         formatSmlContacts();
 //        formatSmlHistory();
+//        formatSmlDocumentation();
         if (locationLineFlag) {
             formatSmlLocationLine();
         } else {
@@ -158,16 +152,12 @@ public class SOSDescribePlatformM1_0 extends BaseDescribeSensor implements ISOSD
         platform.addSmlClassifier("platformType", VocabDefinitions.GetIoosDefinition("platformType"), "platform", this.checkForRequiredValue("platform_type"));
         platform.addSmlClassifier("operatorSector", VocabDefinitions.GetIoosDefinition("operatorSector"), "sector", this.checkForRequiredValue("operator_sector"));
         platform.addSmlClassifier("publisher", VocabDefinitions.GetIoosDefinition("publisher"), "organization", this.checkForRequiredValue("publisher"));
+        platform.addSmlClassifier("parentNetwork", "http://mmisw.org/ont/ioos/definition/parentNetwork", "organization", this.getGlobalAttribute("parent_network", ""));
         
         // sponsor is optional
         String value = this.getGlobalAttribute("sponsor", null);
         if (value != null) {
             platform.addSmlClassifier("sponsor", VocabDefinitions.GetIoosDefinition("sponsor"), "organization", value);
-        }
-        // as is parentNetwork
-        value = this.getGlobalAttribute("parent_network", null);
-        if (value != null) {
-            platform.addSmlClassifier("parentNetwork", VocabDefinitions.GetIoosDefinition("parentNetwork"), "organization", value);
         }
     }
     
@@ -186,7 +176,8 @@ public class SOSDescribePlatformM1_0 extends BaseDescribeSensor implements ISOSD
         String networkUrn = this.procedure.substring(0, this.procedure.lastIndexOf(":"));
         networkUrn = networkUrn.replaceAll(":station:|:sensor:", ":network:");
         networkUrn += ":all";
-        platform.addSmlCapabilitiesGmlMetadata("networkProcedures", "network-all", networkUrn);
+        
+        platform.addSmlCapabilitiesGmlMetadata("sml:System", "networkProcedures", "network-all", networkUrn);
     }
     
     private void formatSmlContacts() {
@@ -232,6 +223,11 @@ public class SOSDescribePlatformM1_0 extends BaseDescribeSensor implements ISOSD
     
     private void formatSmlHistory() {
         // not entirely sure how this should be implemented from dataset info
+        // suppose to show deoployment dates...
+    }
+
+    private void formatSmlDocumentation() {
+        // need to get documentation from the dataset
     }
     
     private void formatSmlLocationPoint() {
@@ -265,10 +261,6 @@ public class SOSDescribePlatformM1_0 extends BaseDescribeSensor implements ISOSD
         }
     }
     //</editor-fold>
-
-    private void describeNetwork() {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
     
     private void setStationData() throws IOException {
         switch(this.getDatasetFeatureType()) {

@@ -114,7 +114,7 @@ public class BaseOutputFormatter implements SOSOutputFormatter {
     }
     
     protected Element getParentNode() {
-        return (Element) document.getElementsByTagName("sml:System").item(0);
+        return (Element) document.getFirstChild();
     }
     
     protected Element addNewNode(String parentName, String nodeName) {
