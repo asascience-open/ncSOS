@@ -20,5 +20,5 @@ nb-configuration.xml
 *.jpeg
 *.war
 *.log
-*out*
+*.out*
 *.diff
