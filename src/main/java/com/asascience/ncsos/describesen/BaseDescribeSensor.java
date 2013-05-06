@@ -21,6 +21,7 @@ public class BaseDescribeSensor extends SOSBaseRequestHandler {
     
     protected final IFReportMechanism reporter;
     protected final static String DEFAULT_STRING = "UNKNOWN";
+    protected final static String URN_BASE = "urn:ioos:";
     
     public BaseDescribeSensor(NetcdfDataset dataset) throws IOException {
         super(dataset);
@@ -30,6 +31,34 @@ public class BaseDescribeSensor extends SOSBaseRequestHandler {
     public BaseDescribeSensor(NetcdfDataset dataset, IFReportMechanism report) throws IOException {
         super(dataset);
         reporter = report;
+    }
+    
+    protected boolean checkForProcedure(String procedure) {
+        String validProcedure;
+        if (procedure.contains("station") || procedure.contains("sensor")) {
+            for (String stname : this.getStationNames().values()) {
+                if (procedure.contains("sensor")) {
+                    for (String senname : this.getSensorNames()) {
+                        validProcedure = SOSBaseRequestHandler.getSensorGMLName(stname, senname);
+                        logger.debug("Comparing " + procedure + " to " + validProcedure);
+                        if (procedure.equalsIgnoreCase(validProcedure))
+                            return true;
+                    }
+                } else {
+                    validProcedure = SOSBaseRequestHandler.getGMLName(stname);
+                    logger.debug("Comparing " + procedure + " to " + validProcedure);
+                    if (procedure.equalsIgnoreCase(validProcedure))
+                        return true;
+                }
+            }
+        } else if (procedure.contains("network")) {
+            validProcedure = URN_BASE + "network:" + SOSBaseRequestHandler.namingAuthority + ":all";
+            logger.debug("Comparing " + procedure + " to " + validProcedure);
+            if (procedure.equalsIgnoreCase(validProcedure))
+                return true;
+        }
+            
+        return false;
     }
     
     protected String checkForRequiredValue(String globalName) {

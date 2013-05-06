@@ -38,7 +38,7 @@ public abstract class SOSBaseRequestHandler {
     // Global Attributes
     protected String Access, PublisherEmail, PublisherName, PublisherPhone, PublisherURL, CreatorEmail, CreatorName, CreatorPhone;
     protected String PrimaryOwnership, Region, StandardNameVocabulary, title, history, description, featureOfInterestBaseQueryURL, featureType;
-    private static String namingAuthority;
+    protected static String namingAuthority;
     
     // Variables and other information commonly needed
     protected final NetcdfDataset netCDFDataset;

@@ -51,7 +51,9 @@ public class SOSDescribeNetworkM1_0 extends BaseDescribeSensor implements ISOSDe
     }
 
     public void setupOutputDocument(SOSOutputFormatter output) {
-        if (errorString != null) {
+        if (!checkForProcedure(this.procedure)) {
+          output.setupExceptionOutput("Invalid procedure: " + this.procedure);  
+        } else if (errorString != null) {
             output.setupExceptionOutput(errorString);
         } else {
             try {
@@ -166,6 +168,7 @@ public class SOSDescribeNetworkM1_0 extends BaseDescribeSensor implements ISOSDe
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 break;
             case PROFILE:
+                // remove 'Profile' from the station names, since they are arbitrary
                 stationNames = ListComprehension.map(stationNames, new ListComprehension.Func<String, String>() {
                     public String apply(String in) {
                         return in.replaceAll("[A-Za-z]+", "");
@@ -175,6 +178,7 @@ public class SOSDescribeNetworkM1_0 extends BaseDescribeSensor implements ISOSDe
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 break;
             case TRAJECTORY:
+                // remove 'Trajectory' from the station names, since they are arbitrary
                 stationNames = ListComprehension.map(stationNames, new ListComprehension.Func<String, String>() {
                     public String apply(String in) {
                         return in.replaceAll("[A-Za-z]+", "");
@@ -183,8 +187,35 @@ public class SOSDescribeNetworkM1_0 extends BaseDescribeSensor implements ISOSDe
                 this.stationData = new Trajectory(stationNames.toArray(new String[stationNames.size()]),null,null);
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 break;
+            case SECTION:
+                // remove 'Trajectory' from the station names, since they are arbitrary
+                stationNames = ListComprehension.map(stationNames, new ListComprehension.Func<String, String>() {
+                    public String apply(String in) {
+                        return in.replaceAll("[A-Za-z]+", "");
+                    }
+                });
+                this.stationData = new Section(stationNames.toArray(new String[stationNames.size()]), null, null);
+                this.stationData.setData(this.getFeatureTypeDataSet());
+                break;
+            case GRID:
+                // remove 'Grid' from the station names, since they are arbitrary
+//                stationNames = ListComprehension.map(stationNames, new ListComprehension.Func<String, String>() {
+//                    public String apply(String in) {
+//                        return in.replaceAll("[A-Za-z]+", "");
+//                    }
+//                });
+                List<String> dataVars = new ArrayList<String>();
+                for (VariableSimpleIF var : this.getDataVariables()) {
+                    dataVars.add(var.getShortName());
+                }
+                HashMap<String,String> latLon = new HashMap<String, String>();
+                latLon.put("lat", this.getGridDataset().getBoundingBox().getLatMin() + "_" + this.getGridDataset().getBoundingBox().getLatMax());
+                latLon.put("lon", this.getGridDataset().getBoundingBox().getLonMin() + "_" + this.getGridDataset().getBoundingBox().getLonMax());
+                this.stationData = new Grid(stationNames.toArray(new String[stationNames.size()]), null, dataVars.toArray(new String[dataVars.size()]), latLon);
+                this.stationData.setData(this.getGridDataset());
+                break;
             default:
-                logger.error("Unsupported feature type in Describe Platform M1_0: " + this.getDatasetFeatureType().toString());
+                logger.error("Unsupported feature type in Describe Network M1_0: " + this.getDatasetFeatureType().toString());
                 this.errorString = "Unsupported feature type for DS response";
         }
     }
@@ -228,13 +259,20 @@ public class SOSDescribeNetworkM1_0 extends BaseDescribeSensor implements ISOSDe
             // valid time
             network.setComponentValidTime(station.getValue(), this.stationData.getTimeBegin(station.getKey()), this.stationData.getTimeEnd(station.getKey()));
             // location
-            List<String> locations = this.stationData.getLocationsString(station.getKey());
-            if (locations.size() > 1) {
-                network.setComponentLocation(station.getValue(), "http://www.opengis.net/def/crs/EPSG/0/4326", locations);
-            } else if (locations.size() > 0) {
-                network.setComponentLocation(station.getValue(), "http://www.opengis.net/def/crs/EPSG/0/4326", locations.get(0));
+            if (this.getGridDataset() == null) {
+                List<String> locations = this.stationData.getLocationsString(station.getKey());
+                if (locations.size() > 1) {
+                    network.setComponentLocation(station.getValue(), "http://www.opengis.net/def/crs/EPSG/0/4326", locations);
+                } else if (locations.size() > 0) {
+                    network.setComponentLocation(station.getValue(), "http://www.opengis.net/def/crs/EPSG/0/4326", locations.get(0));
+                } else {
+                    logger.error("Did not get locations for station data");
+                }
             } else {
-                logger.error("Did not get locations for station data");
+                // GRID dataset
+                String lowerCorner = this.stationData.getLowerLat(station.getKey()) + " " + this.stationData.getLowerLon(station.getKey());
+                String upperCorner = this.stationData.getUpperLat(station.getKey()) + " " + this.stationData.getUpperLon(station.getKey());
+                network.setComponentLocation(station.getValue(), "http://www.opengis.net/def/crs/EPSG/0/4326", lowerCorner, upperCorner);
             }
             // outputs
             for (VariableSimpleIF var : this.getDataVariables()) {
@@ -271,13 +309,20 @@ public class SOSDescribeNetworkM1_0 extends BaseDescribeSensor implements ISOSDe
             // valid time
             network.setComponentValidTime(station.getValue(), this.stationData.getTimeBegin(station.getKey()), this.stationData.getTimeEnd(station.getKey()));
             // location
-            List<String> locations = this.stationData.getLocationsString(station.getKey());
-            if (locations.size() > 1) {
-                network.setComponentLocation(station.getValue(), "http://www.opengis.net/def/crs/EPSG/0/4326", locations);
-            } else if (locations.size() > 0) {
-                network.setComponentLocation(station.getValue(), "http://www.opengis.net/def/crs/EPSG/0/4326", locations.get(0));
+            if (this.getGridDataset() == null) {
+                List<String> locations = this.stationData.getLocationsString(station.getKey());
+                if (locations.size() > 1) {
+                    network.setComponentLocation(station.getValue(), "http://www.opengis.net/def/crs/EPSG/0/4326", locations);
+                } else if (locations.size() > 0) {
+                    network.setComponentLocation(station.getValue(), "http://www.opengis.net/def/crs/EPSG/0/4326", locations.get(0));
+                } else {
+                    logger.error("Did not get locations for station data");
+                }
             } else {
-                logger.error("Did not get locations for station data");
+                // GRID data
+                String lowerCorner = this.stationData.getLowerLat(station.getKey()) + " " + this.stationData.getLowerLon(station.getKey());
+                String upperCorner = this.stationData.getUpperLat(station.getKey()) + " " + this.stationData.getUpperLon(station.getKey());
+                network.setComponentLocation(station.getValue(), "http://www.opengis.net/def/crs/EPSG/0/4326", lowerCorner, upperCorner);
             }
             // outputs
             for (VariableSimpleIF var : this.getDataVariables()) {

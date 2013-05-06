@@ -140,6 +140,25 @@ public class DescribeSensorNetworkMilestone1_0 extends DescribeSensorPlatformMil
         }
     }
     
+    public void setComponentLocation(String componentName, String srs, String lowerCorner, String upperCorner) {
+        /*
+         * <gml:boundedBy srsName='srs'>
+         *   <gml:lowerCorner>'lowerCorner'</gml:lowerCorner>
+         *   <gml:upperCorner>'upperCorner'</gml:upperCorner>
+         * </gml:boundedBy>
+         */
+        // find the component
+        Element parent = getComponent(componentName);
+        if (parent == null)
+            return;
+        
+        // set location
+        parent = (Element) parent.getElementsByTagName("sml:location").item(0);
+        parent = addNewNode(parent, "gml:boundedBy", "srsName", srs);
+        addNewNode(parent, "gml:lowerCorner", lowerCorner);
+        addNewNode(parent, "gml:upperCorner", upperCorner);
+    }
+    
     public void addComponentOutput(String componentName, String outName, String outURN, String outDef, String featureType, String units) {
         /*
          * <sml:output name='outName' xlink:title='outURN'>

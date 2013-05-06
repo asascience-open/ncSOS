@@ -4,15 +4,13 @@
  */
 package com.asascience.ncsos.util;
 
-import com.asascience.ncsos.describesen.SOSDescribePlatformM1_0;
-
 /**
  *
  * @author SCowan
  */
 public class LogReporter implements IFReportMechanism {
 
-    private final static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SOSDescribePlatformM1_0.class);
+    private final static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(LogReporter.class);
     
     public void ReportInvalid(String valueName, String invalidValue) {
         logger.warn("Recieved and invalid value for " + valueName + ": " + invalidValue);
