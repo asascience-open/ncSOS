@@ -30,7 +30,7 @@ public abstract class SOSBaseRequestHandler {
     private static final String DEF_NAMING_AUTHORITY = "authority";  // TODO: default for naming_authority
     private static final NumberFormat FORMAT_DEGREE;
     // list of keywords to filter variables on to remove non-data variables from the list
-    private static final String[] NON_DATAVAR_NAMES = { "row_size", "profile", "info", "time", "z", "alt", "height", "station_info" };
+    private static final String[] NON_DATAVAR_NAMES = { "rowsize", "row_size", "profile", "info", "time", "z", "alt", "height", "station_info" };
     private FeatureDataset featureDataset;
     private FeatureCollection CDMPointFeatureCollection;
     private GridDataset gridDataSet = null;

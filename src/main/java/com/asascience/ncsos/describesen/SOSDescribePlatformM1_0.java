@@ -11,7 +11,10 @@ import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import com.asascience.ncsos.util.LogReporter;
 import com.asascience.ncsos.util.VocabDefinitions;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
 import ucar.nc2.VariableSimpleIF;
@@ -73,7 +76,9 @@ public class SOSDescribePlatformM1_0 extends BaseDescribeSensor implements ISOSD
         formatSmlContacts();
 //        formatSmlHistory();
 //        formatSmlDocumentation();
-        if (locationLineFlag) {
+        if (this.getGridDataset() != null) {
+            formatSmlLocationBbox();
+        } else if (locationLineFlag) {
             formatSmlLocationLine();
         } else {
             formatSmlLocationPoint();
@@ -241,6 +246,16 @@ public class SOSDescribePlatformM1_0 extends BaseDescribeSensor implements ISOSD
         // get the lat/lon pairs for the station
         platform.setSmlPosLocationLine("http://www.opengis.net/def/crs/EPSG/0/4326", this.stationData.getLocationsString(0));
     }
+
+    private void formatSmlLocationBbox() {
+        for (Map.Entry<Integer,String> station : this.getStationNames().entrySet()) {
+            if (station.getValue().equalsIgnoreCase(this.stationName)) {
+                String lc = this.stationData.getLowerLat(station.getKey()) + " " + this.stationData.getLowerLon(station.getKey());
+                String uc = this.stationData.getUpperLat(station.getKey()) + " " + this.stationData.getUpperLon(station.getKey());
+                platform.setSmlPosLocationBbox("http://www.opengis.net/def/crs/EPSG/0/4326", lc, uc);
+            }
+        }
+    }
     
     private void formatSmlComponents() {
         // create a component for each data variable
@@ -278,6 +293,22 @@ public class SOSDescribePlatformM1_0 extends BaseDescribeSensor implements ISOSD
                 break;
             case TRAJECTORY:
                 this.stationData = new Trajectory(new String[] { this.stationName.replaceAll("[A-Za-z]+", "") },null,null);
+                this.stationData.setData(this.getFeatureTypeDataSet());
+                this.locationLineFlag = true;
+                break;
+            case GRID:
+                HashMap<String,String> latLon = new HashMap<String, String>();
+                latLon.put("lat", this.getGridDataset().getBoundingBox().getLatMin() + "_" + this.getGridDataset().getBoundingBox().getLatMax());
+                latLon.put("lon", this.getGridDataset().getBoundingBox().getLonMin() + "_" + this.getGridDataset().getBoundingBox().getLonMax());
+                List<String> dataVars = new ArrayList<String>();
+                for (VariableSimpleIF var : this.getDataVariables()) {
+                    dataVars.add(var.getShortName());
+                }
+                this.stationData = new Grid(new String[] { this.stationName.replaceAll("[A-Za-z]+", "") }, null, dataVars.toArray(new String[dataVars.size()]), latLon);
+                this.stationData.setData(this.getGridDataset());
+                break;
+            case SECTION:
+                this.stationData = new Section(new String[] { this.stationName.replaceAll("[A-Za-z]+", "") }, null, null);
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 this.locationLineFlag = true;
                 break;

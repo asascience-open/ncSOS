@@ -284,6 +284,20 @@ public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
         }
     }
     
+    public void setSmlPosLocationBbox(String srsName, String lowerCorner, String upperCorner) {
+        /*
+         * <sml:location>
+         *   <gml:boundedBy srsName='srsName'>
+         *     <gml:lowerCorner>'lowerCorenr'</gml:lowerCorner>
+         *     <gml:upperCorner>'upperCorner'</gml:upperCorner>
+         *   </gml:boundedBy>
+         * </sml:location
+         */
+        Element parent = addNewNode("sml:location", "gml:boundedBy", "srsName", srsName);
+        addNewNode(parent, "gml:lowerCorner", lowerCorner);
+        addNewNode(parent, "gml:upperCorner", upperCorner);
+    }
+    
     //</editor-fold>
     
 }

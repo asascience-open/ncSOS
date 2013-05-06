@@ -113,58 +113,8 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
      */
     private void setNeededInfoForStation( NetcdfDataset dataset, String uri, String query ) throws IOException {
         // get our information based on feature type
-        switch (getFeatureDataset().getFeatureType()) {
-            case STATION:
-            case STATION_PROFILE:
-            case TRAJECTORY:
-            case PROFILE:
-                output = new DescribeSensorPlatformMilestone1_0();
-                describer = new SOSDescribePlatformM1_0(dataset, procedure, uri);
-                break;
-            case GRID:
-                output = new DescribeSensorFormatter(uri, query);
-                DatasetHandlerAdapter.calcBounds(getFeatureDataset());
-                describer = new SOSDescribeGrid(dataset, procedure, getFeatureDataset().getBoundingBox());
-                ((DescribeSensorFormatter)output).setComponentsNode(getGridDataset().getDataVariables(),procedure);
-                break;
-            case SECTION:
-                output = new DescribeSensorFormatter(uri, query);
-                // trajectory profile; need the trajectory number to get the right info
-                String[] tStr = procedure.split(":");
-                String nStr = tStr[tStr.length-1].toLowerCase();
-                nStr = nStr.replaceAll("[Pp]rofile|[Tt]rajectory", "");
-                int tNumber = Integer.parseInt(nStr);
-                
-                DatasetHandlerAdapter.calcBounds(getFeatureDataset());
-                SectionFeatureCollection sectionCollection = (SectionFeatureCollection) getFeatureTypeDataSet();
-                ArrayList<CalendarDate> secColStart = new ArrayList<CalendarDate>();
-                int i=-1;
-                for (sectionCollection.resetIteration();sectionCollection.hasNext();) {
-                    SectionFeature section = sectionCollection.next();
-                    if (++i == (tNumber-1)) {
-                        i=0;
-                        for (section.resetIteration();section.hasNext();) {
-                            ProfileFeature pfeature = section.next();
-                            DatasetHandlerAdapter.calcBounds(pfeature);
-                            for (pfeature.resetIteration();pfeature.hasNext();) {
-                                // iterate through data to make sure various items (ie start date) isn't null
-                                PointFeature pointf = pfeature.next();
-                            }
-                            if (pfeature.getCalendarDateRange() != null && pfeature.getCalendarDateRange().getStart() != null)
-                                secColStart.add(pfeature.getCalendarDateRange().getStart());
-                        }
-                        break;
-                    }
-                }
-                
-                describer = new SOSDescribeSection(dataset, procedure, secColStart.toArray(new CalendarDate[secColStart.size()]));
-                ((DescribeSensorFormatter)output).setComponentsNode(DiscreteSamplingGeometryUtil.getDataVariables(getFeatureDataset()), procedure);
-                break;
-            default:
-                _log.error("Unhandled feature type: " + getFeatureDataset().getFeatureType().toString());
-                break;
-        }
-        
+        output = new DescribeSensorPlatformMilestone1_0();
+        describer = new SOSDescribePlatformM1_0(dataset, procedure, uri);
     }
     
     private void setNeededInfoForSensor( NetcdfDataset dataset ) throws IOException {
