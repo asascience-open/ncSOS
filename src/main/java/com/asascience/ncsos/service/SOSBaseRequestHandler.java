@@ -65,7 +65,7 @@ public abstract class SOSBaseRequestHandler {
     public SOSBaseRequestHandler(NetcdfDataset netCDFDataset) throws IOException {
         // check for non-null dataset
         if(netCDFDataset == null) {
-            _log.error("received null dataset -- probably exception output");
+//            _log.error("received null dataset -- probably exception output");
             this.netCDFDataset = null;
             return;
         }

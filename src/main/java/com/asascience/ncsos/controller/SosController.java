@@ -83,17 +83,12 @@ public class SosController implements ISosContoller {
             output.writeOutput(writer);
             
             // log and flush writer
-            _log.info(req.getRequestURL().toString()+"?"+req.getQueryString().toString());
+//            _log.info(req.getRequestURL().toString()+"?"+req.getQueryString().toString());
             writer.flush();
             writer.close();
 
         } catch (Exception e) {
             _log.error(e.getMessage());
-            // print stack trace
-            for (StackTraceElement elmn : e.getStackTrace()) {
-                _log.error("\t" + elmn.toString());
-            }
-
             //close the dataset remove memory hang
         } finally {
             DatasetHandlerAdapter.closeDataset(dataset);

@@ -18,6 +18,7 @@ import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSOutput;
 import org.w3c.dom.ls.LSSerializer;
+import ucar.nc2.constants.FeatureType;
 import ucar.nc2.time.CalendarDate;
 import ucar.nc2.time.CalendarDateRange;
 import ucar.unidata.geoloc.LatLonRect;
@@ -169,7 +170,7 @@ public class GetCapsOutputter implements SOSOutputFormatter {
      * @param gridDataset
      * @param gridBbox 
      */
-    public void setOperationGetObs(String threddsURI, CalendarDate startDate, CalendarDate endDate, List<String> dataVarShortNames, String[] stationNames, boolean gridDataset, LatLonRect gridBbox) {
+    public void setOperationGetObs(String threddsURI, CalendarDate startDate, CalendarDate endDate, List<String> dataVarShortNames, String[] stationNames, boolean gridDataset, LatLonRect gridBbox, FeatureType ftype) {
         // set url info
         setOperationMethods((Element)getObs.getElementsByTagName("ows:HTTP").item(0), threddsURI);
         // set info for get observation operation
@@ -230,6 +231,22 @@ public class GetCapsOutputter implements SOSOutputFormatter {
                 aV.appendChild(value);
             }
         }
+        // set additional response formats, supported
+        switch(ftype) {
+            case STATION:
+                // add new ioos response format for TimeSeries data
+                NodeList nlist = getObs.getElementsByTagName("ows:Parameter");
+                for (int n = 0; n<nlist.getLength(); n++) {
+                    Element elm = (Element) nlist.item(n);
+                    if ("responseFormat".equals(elm.getAttribute("name"))) {
+                        Element av = (Element) elm.getElementsByTagName("ows:AllowedValues").item(0);
+                        Element rf = document.createElement("ows:Value");
+                        rf.setTextContent("text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0\"");
+                        av.appendChild(rf);
+                    }
+                }
+                break;
+        }
         // add lat and lon as parameters if we are a grid dataset
         if (gridDataset)
             addLatLonParameters(getObs, gridBbox);
@@ -242,6 +259,8 @@ public class GetCapsOutputter implements SOSOutputFormatter {
      * @param sensorNames 
      */
     public void setOperationDescSen(String threddsURI, String[] stationNames, List<String> sensorNames) {
+        // set url info
+        setOperationMethods((Element)descSen.getElementsByTagName("ows:HTTP").item(0), threddsURI);
         // set procedure allowed values of each station and sensor for the dataset
         Element procedure = null;
         NodeList nodes = descSen.getElementsByTagName("ows:Parameter");
@@ -273,7 +292,7 @@ public class GetCapsOutputter implements SOSOutputFormatter {
         }
     }
     
-    public void setObservationOfferingNetwork(LatLonRect datasetRect, String[] stations, List<String> sensors, CalendarDateRange datasetTime) {
+    public void setObservationOfferingNetwork(LatLonRect datasetRect, String[] stations, List<String> sensors, CalendarDateRange datasetTime, FeatureType ftype) {
         // add the network-all observation offering
         Element offeringList = (Element) document.getElementsByTagName(observationOfferingElement).item(0);
         Element obsOffering = document.createElement("sos:ObservationOffering");
@@ -315,6 +334,16 @@ public class GetCapsOutputter implements SOSOutputFormatter {
         Element rf = getDocument().createElement("sos:responseFormat");
         rf.setTextContent("text/xml; subtype=\"om/1.0.0\"");
         obsOffering.appendChild(rf);
+        // if supported by feature type, add new repsonse format
+        switch(ftype) {
+            case STATION:
+                rf = getDocument().createElement("sos:responseFormat");
+                rf.setTextContent("text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0");
+                obsOffering.appendChild(rf);
+                break;
+            default:
+                break;
+        }
         // response model/mode -- blank for now?
         Element rm = getDocument().createElement("sos:responseModel");
         rm.setTextContent("om:ObservationCollection");
@@ -327,7 +356,7 @@ public class GetCapsOutputter implements SOSOutputFormatter {
         offeringList.appendChild(obsOffering);
     }
     
-    public void setObservationOfferingList(String stationName, int stationIndex, LatLonRect rect, List<String> sensorNames, CalendarDateRange stationDates) {
+    public void setObservationOfferingList(String stationName, int stationIndex, LatLonRect rect, List<String> sensorNames, CalendarDateRange stationDates, FeatureType ftype) {
         Element offeringList = (Element) getDocument().getElementsByTagName(observationOfferingElement).item(0);
         // iterate through offerings (stations)
         Element obsOffering = getDocument().createElement("sos:ObservationOffering");
@@ -362,8 +391,18 @@ public class GetCapsOutputter implements SOSOutputFormatter {
         }
         // response format
         Element rf = getDocument().createElement("sos:responseFormat");
-        rf.setTextContent("text/xml; subtype=\"om/1.0.0\"");
+        rf.setTextContent("text/xml;subtype=\"om/1.0.0\"");
         obsOffering.appendChild(rf);
+        // if supported by feature type, add new repsonse format
+        switch(ftype) {
+            case STATION:
+                rf = getDocument().createElement("sos:responseFormat");
+                rf.setTextContent("text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0");
+                obsOffering.appendChild(rf);
+                break;
+            default:
+                break;
+        }
         // response model/mode -- blank for now?
         Element rm = getDocument().createElement("sos:responseModel");
         rm.setTextContent("om:ObservationCollection");

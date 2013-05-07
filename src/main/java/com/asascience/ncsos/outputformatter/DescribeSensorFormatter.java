@@ -11,17 +11,13 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSOutput;
+import org.w3c.dom.ls.LSSerializer;
 import ucar.nc2.VariableSimpleIF;
 import ucar.unidata.geoloc.LatLonRect;
 
@@ -116,15 +112,16 @@ public class DescribeSensorFormatter implements SOSOutputFormatter {
     public void writeOutput(Writer writer) {
         // output our document to the writer
         try {
-            Source xmlout = new DOMSource(this.document);
-            StreamResult res = new StreamResult(writer);
-            TransformerFactory tf = TransformerFactory.newInstance();
-            Transformer t = tf.newTransformer();
-            t.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-            t.setOutputProperty(OutputKeys.INDENT, "yes");
-            t.transform(xmlout, res);
-        } catch (Exception ex) {
-            _log.error(ex.toString());
+            DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
+            DOMImplementationLS impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
+            // output our document to the writer
+            LSSerializer xmlSerializer = impl.createLSSerializer();
+            LSOutput xmlOut = impl.createLSOutput();
+            xmlSerializer.getDomConfig().setParameter("format-pretty-print", Boolean.TRUE);
+            xmlOut.setCharacterStream(writer);
+            xmlSerializer.write(this.document, xmlOut);
+        } catch (Exception ex2) {
+            _log.error(ex2.getMessage());
         }
     }
     

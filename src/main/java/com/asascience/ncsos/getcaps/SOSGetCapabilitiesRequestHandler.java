@@ -114,9 +114,9 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
             out.setOperationGetCaps(threddsURI);
             // set get observation output
             if (getGridDataset() != null)
-                out.setOperationGetObs(threddsURI, setStartDate, setEndDate, getSensorNames(), getStationNames().values().toArray(new String[getStationNames().values().size()]), true, getGridDataset().getBoundingBox());
+                out.setOperationGetObs(threddsURI, setStartDate, setEndDate, getSensorNames(), getStationNames().values().toArray(new String[getStationNames().values().size()]), true, getGridDataset().getBoundingBox(), this.getDatasetFeatureType());
             else
-                out.setOperationGetObs(threddsURI, setStartDate, setEndDate, getSensorNames(), getStationNames().values().toArray(new String[getStationNames().values().size()]), false, null);
+                out.setOperationGetObs(threddsURI, setStartDate, setEndDate, getSensorNames(), getStationNames().values().toArray(new String[getStationNames().values().size()]), false, null, this.getDatasetFeatureType());
             // set describe sensor output
             out.setOperationDescSen(threddsURI, getStationNames().values().toArray(new String[getStationNames().values().size()]), getSensorNames());
         } else {
@@ -140,10 +140,10 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
             CalendarDateRange setTime = null;
             if (setStartDate != null && setEndDate != null)
                 setTime = CalendarDateRange.of(setStartDate,setEndDate);
-            out.setObservationOfferingNetwork(setRange, getStationNames().values().toArray(new String[getStationNames().values().size()]), getSensorNames(), setTime);
+            out.setObservationOfferingNetwork(setRange, getStationNames().values().toArray(new String[getStationNames().values().size()]), getSensorNames(), setTime, this.getFeatureDataset().getFeatureType());
             // iterate through our stations and add them
             for (Integer index : getStationNames().keySet()) {
-                ((GetCapsOutputter)output).setObservationOfferingList(getStationNames().get(index), index.intValue(), stationBBox.get(index), getSensorNames(), stationDateRange.get(index));
+                ((GetCapsOutputter)output).setObservationOfferingList(getStationNames().get(index), index.intValue(), stationBBox.get(index), getSensorNames(), stationDateRange.get(index), this.getFeatureDataset().getFeatureType());
             }
         } else {
             // remove Contents node

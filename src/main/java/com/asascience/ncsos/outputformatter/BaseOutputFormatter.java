@@ -57,15 +57,15 @@ public class BaseOutputFormatter implements SOSOutputFormatter {
     }
 
     public void writeOutput(Writer writer) {
-        try {
-            Transformer tf = TransformerFactory.newInstance().newTransformer();
-            tf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-            tf.setOutputProperty(OutputKeys.INDENT, "yes");
-            tf.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-            tf.transform(new DOMSource(this.document), new StreamResult(writer));
-        } catch (Exception ex) {
-            logger.error(ex.toString());
-            logger.error("Using DOMImplementation for transformer");
+//        try {
+//            Transformer tf = TransformerFactory.newInstance().newTransformer();
+//            tf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+//            tf.setOutputProperty(OutputKeys.INDENT, "yes");
+//            tf.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+//            tf.transform(new DOMSource(this.document), new StreamResult(writer));
+//        } catch (Exception ex) {
+//            logger.error(ex.toString());
+//            logger.error("Using DOMImplementation for transformer");
             try {
                 DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
                 DOMImplementationLS impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
@@ -78,7 +78,7 @@ public class BaseOutputFormatter implements SOSOutputFormatter {
             } catch (Exception ex2) {
                 logger.error(ex2.getMessage());
             }
-        }
+//        }
     }
     //</editor-fold>
     

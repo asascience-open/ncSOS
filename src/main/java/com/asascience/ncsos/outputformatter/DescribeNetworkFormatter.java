@@ -35,6 +35,8 @@ public class DescribeNetworkFormatter implements SOSOutputFormatter {
     
     private DOMImplementationLS impl;
     
+    private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(DescribeNetworkFormatter.class);
+    
     /**
      * Creates a new formatter instance that uses the sosDescribeSensor.xml as a
      * template (found in the resources templates folder)
@@ -46,13 +48,13 @@ public class DescribeNetworkFormatter implements SOSOutputFormatter {
             DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
             impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
         } catch (ClassNotFoundException ex) {
-            System.out.println(ex.getMessage());
+            _log.error(ex.getMessage());
         } catch (InstantiationException ex) {
-            System.out.println(ex.getMessage());
+            _log.error(ex.getMessage());
         } catch (IllegalAccessException ex) {
-            System.out.println(ex.getMessage());
+            _log.error(ex.getMessage());
         } catch (ClassCastException ex) {
-            System.out.println(ex.getMessage());
+            _log.error(ex.getMessage());
         }
     }
 
@@ -70,13 +72,13 @@ public class DescribeNetworkFormatter implements SOSOutputFormatter {
             DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
             impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
         } catch (ClassNotFoundException ex) {
-            System.out.println(ex.getMessage());
+            _log.error(ex.getMessage());
         } catch (InstantiationException ex) {
-            System.out.println(ex.getMessage());
+            _log.error(ex.getMessage());
         } catch (IllegalAccessException ex) {
-            System.out.println(ex.getMessage());
+            _log.error(ex.getMessage());
         } catch (ClassCastException ex) {
-            System.out.println(ex.getMessage());
+            _log.error(ex.getMessage());
         }
     }
     
