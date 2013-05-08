@@ -2,80 +2,215 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1" xmlns:gml="http://www.opengis.net/gml"
     xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
-    xmlns:sos="http://www.opengis.net/sensorML/1.0.1"
     xmlns:swe="http://www.opengis.net/swe/1.0.1"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
     <sml:member>
-        <sml:System gml:id="station-WQBKN">
+        <sml:System>
             <gml:description>no description</gml:description>
+            <gml:name>urn:ioos:station:authority:WQBKN</gml:name>
             <sml:identification>
                 <sml:IdentifierList>
-                    <sml:identifier name="StationId">
+                    <sml:identifier name="stationID">
                         <sml:Term definition="http://mmisw.org/ont/ioos/definition/stationID">
-                            <sml:value>urn:ioos:station:sos:WQBKN</sml:value>
+                            <sml:value>urn:ioos:station:authority:WQBKN</sml:value>
                         </sml:Term>
                     </sml:identifier>
-                    <sml:identifier name="long_name">
-                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/long_name">
+                    <sml:identifier name="shortName">
+                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/shortName">
+                            <sml:value>UNKNOWN</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="longName">
+                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/longName">
                             <sml:value>WQBKN</sml:value>
                         </sml:Term>
                     </sml:identifier>
                 </sml:IdentifierList>
             </sml:identification>
+            <sml:classification>
+                <sml:ClassifierList>
+                    <sml:classifier name="platformType">
+                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/platformType">
+                            <sml:codeSpace xlink:href="http://mmisw.org/ont/ioos/platform"/>
+                            <sml:value>UNKNOWN</sml:value>
+                        </sml:Term>
+                    </sml:classifier>
+                    <sml:classifier name="operatorSector">
+                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/operatorSector">
+                            <sml:codeSpace xlink:href="http://mmisw.org/ont/ioos/sector"/>
+                            <sml:value>UNKNOWN</sml:value>
+                        </sml:Term>
+                    </sml:classifier>
+                    <sml:classifier name="publisher">
+                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/publisher">
+                            <sml:codeSpace xlink:href="http://mmisw.org/ont/ioos/organization"/>
+                            <sml:value>UNKNOWN</sml:value>
+                        </sml:Term>
+                    </sml:classifier>
+                    <sml:classifier name="parentNetwork">
+                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/parentNetwork">
+                            <sml:codeSpace xlink:href="http://mmisw.org/ont/ioos/organization"/>
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:classifier>
+                </sml:ClassifierList>
+            </sml:classification>
+            <sml:validTime>
+                <gml:TimePeriod>
+                    <gml:beginPosition>2012-08-01T10:00:00Z</gml:beginPosition>
+                    <gml:endPosition>2012-08-02T09:40:00Z</gml:endPosition>
+                </gml:TimePeriod>
+            </sml:validTime>
+            <sml:contact>
+                <sml:ContactList>
+                    <sml:member xlink:role="http://mmisw.org/ont/ioos/definition/operator">
+                        <sml:ResponseibleParty>
+                            <sml:organizationName>UNKNOWN</sml:organizationName>
+                            <sml:contactInfo>
+                                <sml:phone/>
+                                <sml:address>
+                                    <sml:country>UNKNOWN</sml:country>
+                                    <sml:electronicMailAddress>UNKNOWN</sml:electronicMailAddress>
+                                </sml:address>
+                            </sml:contactInfo>
+                        </sml:ResponseibleParty>
+                    </sml:member>
+                    <sml:member xlink:role="http://mmisw.org/on/ioos/definition/publisher">
+                        <sml:ResponseibleParty>
+                            <sml:organizationName>UNKNOWN</sml:organizationName>
+                            <sml:contactInfo>
+                                <sml:phone/>
+                                <sml:address>
+                                    <sml:country>UNKNOWN</sml:country>
+                                    <sml:electronicMailAddress>UNKNOWN</sml:electronicMailAddress>
+                                </sml:address>
+                            </sml:contactInfo>
+                        </sml:ResponseibleParty>
+                    </sml:member>
+                </sml:ContactList>
+            </sml:contact>
+            <sml:history/>
+            <sml:documentation/>
             <sml:location>
-                <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
-                    <gml:posList srsDimension="2">
-21.288721084594727 -157.86500549316406
-</gml:posList>
-                </gml:LineString>
+                <gml:Point srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                    <gml:pos>21.288721084594727 -157.86500549316406</gml:pos>
+                </gml:Point>
             </sml:location>
             <sml:components>
                 <sml:ComponentList>
                     <sml:component name="Sensor temp">
                         <sml:System gml:id="sensor-temp">
-                            <sml:identification xlink:href="urn:ioos:station:sos:WQBKN:temp"/>
-                            <sml:documentation xlink:href="resources/datasets/sura/wqbkn_2012_08_01.nc?request=DescribeSensor&amp;service=sos&amp;version=1.0.0&amp;responseformat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%22&amp;procedure=urn:ioos:station:sos:WQBKN:temp"/>
                             <gml:description>Temperature</gml:description>
+                            <sml:identification xlink:href="urn:ioos:sensor:authority:WQBKN:temp"/>
+                            <sml:documentation xlink:href="resources/datasets/sura/wqbkn_2012_08_01.nc?service=SOS&amp;request=DescribeSensor&amp;version=1.0.0&amp;outputFormat=text/xml;subtype=&quot;sensorML/1.0.1&quot;&amp;procedure=urn:ioos:sensor:authority:WQBKN:temp"/>
+                            <sml:outputs>
+                                <sml:OutputList>
+                                    <sml:output name="Temperature">
+                                    <swe:Quantity definition="http://mmisw.org/ont/cf/parameter/sea_water_temperature">
+                                    <swe:uom code="Celsius"/>
+                                    </swe:Quantity>
+                                    </sml:output>
+                                </sml:OutputList>
+                            </sml:outputs>
                         </sml:System>
                     </sml:component>
                     <sml:component name="Sensor cond">
                         <sml:System gml:id="sensor-cond">
-                            <sml:identification xlink:href="urn:ioos:station:sos:WQBKN:cond"/>
-                            <sml:documentation xlink:href="resources/datasets/sura/wqbkn_2012_08_01.nc?request=DescribeSensor&amp;service=sos&amp;version=1.0.0&amp;responseformat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%22&amp;procedure=urn:ioos:station:sos:WQBKN:cond"/>
                             <gml:description>Conductivity</gml:description>
+                            <sml:identification xlink:href="urn:ioos:sensor:authority:WQBKN:cond"/>
+                            <sml:documentation xlink:href="resources/datasets/sura/wqbkn_2012_08_01.nc?service=SOS&amp;request=DescribeSensor&amp;version=1.0.0&amp;outputFormat=text/xml;subtype=&quot;sensorML/1.0.1&quot;&amp;procedure=urn:ioos:sensor:authority:WQBKN:cond"/>
+                            <sml:outputs>
+                                <sml:OutputList>
+                                    <sml:output name="Conductivity">
+                                    <swe:Quantity definition="http://mmisw.org/ont/cf/parameter/sea_water_electrical_conductivity">
+                                    <swe:uom code="S m-1"/>
+                                    </swe:Quantity>
+                                    </sml:output>
+                                </sml:OutputList>
+                            </sml:outputs>
                         </sml:System>
                     </sml:component>
                     <sml:component name="Sensor salt">
                         <sml:System gml:id="sensor-salt">
-                            <sml:identification xlink:href="urn:ioos:station:sos:WQBKN:salt"/>
-                            <sml:documentation xlink:href="resources/datasets/sura/wqbkn_2012_08_01.nc?request=DescribeSensor&amp;service=sos&amp;version=1.0.0&amp;responseformat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%22&amp;procedure=urn:ioos:station:sos:WQBKN:salt"/>
                             <gml:description>Salinity</gml:description>
+                            <sml:identification xlink:href="urn:ioos:sensor:authority:WQBKN:salt"/>
+                            <sml:documentation xlink:href="resources/datasets/sura/wqbkn_2012_08_01.nc?service=SOS&amp;request=DescribeSensor&amp;version=1.0.0&amp;outputFormat=text/xml;subtype=&quot;sensorML/1.0.1&quot;&amp;procedure=urn:ioos:sensor:authority:WQBKN:salt"/>
+                            <sml:outputs>
+                                <sml:OutputList>
+                                    <sml:output name="Salinity">
+                                    <swe:Quantity definition="http://mmisw.org/ont/cf/parameter/sea_water_salinity">
+                                    <swe:uom code="1e-3"/>
+                                    </swe:Quantity>
+                                    </sml:output>
+                                </sml:OutputList>
+                            </sml:outputs>
                         </sml:System>
                     </sml:component>
                     <sml:component name="Sensor oxyg">
                         <sml:System gml:id="sensor-oxyg">
-                            <sml:identification xlink:href="urn:ioos:station:sos:WQBKN:oxyg"/>
-                            <sml:documentation xlink:href="resources/datasets/sura/wqbkn_2012_08_01.nc?request=DescribeSensor&amp;service=sos&amp;version=1.0.0&amp;responseformat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%22&amp;procedure=urn:ioos:station:sos:WQBKN:oxyg"/>
                             <gml:description>dissolved oxygen</gml:description>
+                            <sml:identification xlink:href="urn:ioos:sensor:authority:WQBKN:oxyg"/>
+                            <sml:documentation xlink:href="resources/datasets/sura/wqbkn_2012_08_01.nc?service=SOS&amp;request=DescribeSensor&amp;version=1.0.0&amp;outputFormat=text/xml;subtype=&quot;sensorML/1.0.1&quot;&amp;procedure=urn:ioos:sensor:authority:WQBKN:oxyg"/>
+                            <sml:outputs>
+                                <sml:OutputList>
+                                    <sml:output name="dissolved oxygen">
+                                    <swe:Quantity definition="http://mmisw.org/ont/cf/parameter/mass_concentration_of_oxygen_in_sea_water">
+                                    <swe:uom code="kg m-3"/>
+                                    </swe:Quantity>
+                                    </sml:output>
+                                </sml:OutputList>
+                            </sml:outputs>
                         </sml:System>
                     </sml:component>
                     <sml:component name="Sensor flor">
                         <sml:System gml:id="sensor-flor">
-                            <sml:identification xlink:href="urn:ioos:station:sos:WQBKN:flor"/>
-                            <sml:documentation xlink:href="resources/datasets/sura/wqbkn_2012_08_01.nc?request=DescribeSensor&amp;service=sos&amp;version=1.0.0&amp;responseformat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%22&amp;procedure=urn:ioos:station:sos:WQBKN:flor"/>
                             <gml:description>Chlorophyll</gml:description>
+                            <sml:identification xlink:href="urn:ioos:sensor:authority:WQBKN:flor"/>
+                            <sml:documentation xlink:href="resources/datasets/sura/wqbkn_2012_08_01.nc?service=SOS&amp;request=DescribeSensor&amp;version=1.0.0&amp;outputFormat=text/xml;subtype=&quot;sensorML/1.0.1&quot;&amp;procedure=urn:ioos:sensor:authority:WQBKN:flor"/>
+                            <sml:outputs>
+                                <sml:OutputList>
+                                    <sml:output name="Chlorophyll">
+                                    <swe:Quantity definition="http://mmisw.org/ont/ioos/parameter/chlorophyll_concentration_in_sea_water">
+                                    <swe:uom code="kg m-3"/>
+                                    </swe:Quantity>
+                                    </sml:output>
+                                </sml:OutputList>
+                            </sml:outputs>
                         </sml:System>
                     </sml:component>
                     <sml:component name="Sensor turb">
                         <sml:System gml:id="sensor-turb">
-                            <sml:identification xlink:href="urn:ioos:station:sos:WQBKN:turb"/>
-                            <sml:documentation xlink:href="resources/datasets/sura/wqbkn_2012_08_01.nc?request=DescribeSensor&amp;service=sos&amp;version=1.0.0&amp;responseformat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%22&amp;procedure=urn:ioos:station:sos:WQBKN:turb"/>
                             <gml:description>Turbidity</gml:description>
+                            <sml:identification xlink:href="urn:ioos:sensor:authority:WQBKN:turb"/>
+                            <sml:documentation xlink:href="resources/datasets/sura/wqbkn_2012_08_01.nc?service=SOS&amp;request=DescribeSensor&amp;version=1.0.0&amp;outputFormat=text/xml;subtype=&quot;sensorML/1.0.1&quot;&amp;procedure=urn:ioos:sensor:authority:WQBKN:turb"/>
+                            <sml:outputs>
+                                <sml:OutputList>
+                                    <sml:output name="Turbidity">
+                                    <swe:Quantity definition="http://mmisw.org/ont/ioos/parameter/turbidity_of_sea_water">
+                                    <swe:uom code="ntus"/>
+                                    </swe:Quantity>
+                                    </sml:output>
+                                </sml:OutputList>
+                            </sml:outputs>
                         </sml:System>
                     </sml:component>
                 </sml:ComponentList>
             </sml:components>
+            <sml:capabilities name="networkProcedures">
+                <swe:SimpleDataRecord>
+                    <gml:metaDataProperty
+                        xlink:href="urn:ioos:network:authority:all" xlink:title="network-all"/>
+                </swe:SimpleDataRecord>
+            </sml:capabilities>
         </sml:System>
     </sml:member>
+    <sml:capabilities name="ioosServiceMetadata">
+        <swe:SimpleDataRecord>
+            <gml:metaDataProperty
+                xlink:href="http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0" xlink:title="ioosTemplateVersion">
+                <gml:version>1.0</gml:version>
+            </gml:metaDataProperty>
+        </swe:SimpleDataRecord>
+    </sml:capabilities>
 </sml:SensorML>

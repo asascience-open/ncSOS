@@ -9,9 +9,7 @@ import ucar.nc2.constants.CF;
 import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.dt.GridDataset;
 import ucar.nc2.ft.*;
-import ucar.nc2.ft.grid.Grid;
 import ucar.nc2.ft.point.StationPointFeature;
-import ucar.nc2.ft.point.StationTimeSeriesCollectionFlattened;
 
 /**
  *
@@ -45,7 +43,7 @@ public class DiscreteSamplingGeometryUtil {
                         //System.out.println("profile feature");
                     } else if (featureCollection instanceof ProfileFeatureCollection) {
                         //System.out.println("profile feature collection");
-                    } else if (featureCollection instanceof Grid) {
+//                    } else if (featureCollection instanceof Grid) {
                         //System.out.println("profile feature collection");
                     } else if (featureCollection instanceof TrajectoryFeature) {
                         //System.out.println("profile feature collection");
@@ -266,7 +264,7 @@ public class DiscreteSamplingGeometryUtil {
                         
                     }
                     else {
-                        System.out.println("Unable to find the feature dataset collection of " + featureCollection.getName());
+                        System.err.println("Unable to find the feature dataset collection of " + featureCollection.getName());
                     }
                     //********** 
 

@@ -64,7 +64,7 @@
             <ows:Parameter name="offering" use="required">
                 <ows:AllowedValues>
                     <ows:Value>network-all</ows:Value>
-                    <ows:Value>CordellBankBuoy</ows:Value>
+                    <ows:Value>Cordell Bank Buoy</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
             <ows:Parameter name="observedProperty" use="required">
@@ -82,34 +82,35 @@
             <ows:Parameter name="eventTime" use="optional">
                 <ows:AllowedValues>
                     <ows:Range/>
-                    <ows:MinimumValue>140835-01-26T00:00:00.000Z</ows:MinimumValue>
-                    <ows:MaximumValue>141267-12-09T12:00:00.000Z</ows:MaximumValue>
+                    <ows:MinimumValue>140835-01-26T00:00:00Z</ows:MinimumValue>
+                    <ows:MaximumValue>141267-12-09T12:00:00Z</ows:MaximumValue>
                 </ows:AllowedValues>
             </ows:Parameter>
             <ows:Parameter name="responseFormat" use="required">
                 <ows:AllowedValues>
                     <ows:Value>text/xml;subtype="om/1.0.0"</ows:Value>
+                    <ows:Value>text/xml;subtype="om/1.0.0/profiles/ioos_sos/1.0"</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
         </ows:Operation>
         <ows:Operation name="DescribeSensor">
             <ows:DCP>
                 <ows:HTTP>
-                    <ows:Get/>
+                    <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/nodc/BodegaMarineLabBuoy.nc"/>
                 </ows:HTTP>
             </ows:DCP>
             <ows:Parameter name="procedure" use="required">
                 <ows:AllowedValues>
-                    <ows:Value>urn:ioos:sos:network:all</ows:Value>
-                    <ows:Value>urn:ioos:station:sos:CordellBankBuoy</ows:Value>
-                    <ows:Value>urn:ioos:sensor:sos:CordellBankBuoy:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:sos:CordellBankBuoy:salinity</ows:Value>
-                    <ows:Value>urn:ioos:sensor:sos:CordellBankBuoy:density</ows:Value>
-                    <ows:Value>urn:ioos:sensor:sos:CordellBankBuoy:conductivity</ows:Value>
-                    <ows:Value>urn:ioos:sensor:sos:CordellBankBuoy:temperature_qc</ows:Value>
-                    <ows:Value>urn:ioos:sensor:sos:CordellBankBuoy:salinity_qc</ows:Value>
-                    <ows:Value>urn:ioos:sensor:sos:CordellBankBuoy:density_qc</ows:Value>
-                    <ows:Value>urn:ioos:sensor:sos:CordellBankBuoy:conductivity_qc</ows:Value>
+                    <ows:Value>urn:ioos:network:authority:all</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:Cordell Bank Buoy</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Cordell Bank Buoy:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Cordell Bank Buoy:salinity</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Cordell Bank Buoy:density</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Cordell Bank Buoy:conductivity</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Cordell Bank Buoy:temperature_qc</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Cordell Bank Buoy:salinity_qc</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Cordell Bank Buoy:density_qc</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Cordell Bank Buoy:conductivity_qc</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
             <ows:Parameter name="responseformat" use="required">
@@ -133,7 +134,7 @@
         <sos:ObservationOfferingList>
             <sos:ObservationOffering gml:id="network-all">
                 <gml:description>All stations in the netCDF dataset.</gml:description>
-                <gml:name>urn:ioos:sos:network:all</gml:name>
+                <gml:name>urn:ioos:network:authority:all</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
@@ -143,11 +144,11 @@
                 </gml:boundedBy>
                 <sos:time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
-                        <gml:beginPosition>140835-01-26T00:00:00.000Z</gml:beginPosition>
-                        <gml:endPosition>141267-12-09T12:00:00.000Z</gml:endPosition>
+                        <gml:beginPosition>140835-01-26T00:00:00Z</gml:beginPosition>
+                        <gml:endPosition>141267-12-09T12:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
                 </sos:time>
-                <sos:procedure xlink:href="urn:ioos:station:sos:CordellBankBuoy"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:Cordell Bank Buoy"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="salinity"/>
                 <sos:observedProperty xlink:href="density"/>
@@ -156,13 +157,14 @@
                 <sos:observedProperty xlink:href="salinity_qc"/>
                 <sos:observedProperty xlink:href="density_qc"/>
                 <sos:observedProperty xlink:href="conductivity_qc"/>
-                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:CordellBankBuoy"/>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Cordell Bank Buoy"/>
                 <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
+                <sos:responseFormat>text/xml;subtype="om/1.0.0/profiles/ioos_sos/1.0</sos:responseFormat>
                 <sos:responseModel>om:ObservationCollection</sos:responseModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
-            <sos:ObservationOffering gml:id="CordellBankBuoy">
-                <gml:name>urn:ioos:station:sos:CordellBankBuoy</gml:name>
+            <sos:ObservationOffering gml:id="Cordell Bank Buoy">
+                <gml:name>urn:ioos:station:authority:Cordell Bank Buoy</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
@@ -172,11 +174,11 @@
                 </gml:boundedBy>
                 <sos:time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
-                        <gml:beginPosition>140835-01-26T00:00:00.000Z</gml:beginPosition>
-                        <gml:endPosition>141267-12-09T12:00:00.000Z</gml:endPosition>
+                        <gml:beginPosition>140835-01-26T00:00:00Z</gml:beginPosition>
+                        <gml:endPosition>141267-12-09T12:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
                 </sos:time>
-                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:CordellBankBuoy"/>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Cordell Bank Buoy"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="salinity"/>
                 <sos:observedProperty xlink:href="density"/>
@@ -185,15 +187,16 @@
                 <sos:observedProperty xlink:href="salinity_qc"/>
                 <sos:observedProperty xlink:href="density_qc"/>
                 <sos:observedProperty xlink:href="conductivity_qc"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:sos:CordellBankBuoy:temperature"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:sos:CordellBankBuoy:salinity"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:sos:CordellBankBuoy:density"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:sos:CordellBankBuoy:conductivity"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:sos:CordellBankBuoy:temperature_qc"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:sos:CordellBankBuoy:salinity_qc"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:sos:CordellBankBuoy:density_qc"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:sos:CordellBankBuoy:conductivity_qc"/>
-                <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
+                <sos:procedure xlink:href="urn:ioos:sensor:authority:Cordell Bank Buoy:temperature"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:authority:Cordell Bank Buoy:salinity"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:authority:Cordell Bank Buoy:density"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:authority:Cordell Bank Buoy:conductivity"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:authority:Cordell Bank Buoy:temperature_qc"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:authority:Cordell Bank Buoy:salinity_qc"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:authority:Cordell Bank Buoy:density_qc"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:authority:Cordell Bank Buoy:conductivity_qc"/>
+                <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
+                <sos:responseFormat>text/xml;subtype="om/1.0.0/profiles/ioos_sos/1.0</sos:responseFormat>
                 <sos:responseModel>om:ObservationCollection</sos:responseModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>

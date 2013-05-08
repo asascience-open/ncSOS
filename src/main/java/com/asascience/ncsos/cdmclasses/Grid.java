@@ -600,5 +600,11 @@ public class Grid extends baseCDMClass implements iStationData {
         return retIndex;
     }
 
+    public List<String> getLocationsString(int stNum) {
+        List<String> retval = new ArrayList<String>();
+        retval.add(this.getLowerLat(stNum) + " " + this.getLowerLon(stNum));
+        return retval;
+    }
+
     
 }

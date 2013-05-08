@@ -4,7 +4,6 @@
  */
 package com.asascience.ncsos.cdmclasses;
 
-import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import java.util.List;
 import org.joda.time.Chronology;
 import org.joda.time.chrono.ISOChronology;

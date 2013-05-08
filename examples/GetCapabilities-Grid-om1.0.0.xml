@@ -75,8 +75,8 @@
             <ows:Parameter name="eventTime" use="optional">
                 <ows:AllowedValues>
                     <ows:Range/>
-                    <ows:MinimumValue>2012-06-26T00:00:00.000Z</ows:MinimumValue>
-                    <ows:MaximumValue>2012-06-26T00:00:00.000Z</ows:MaximumValue>
+                    <ows:MinimumValue>2012-06-26T00:00:00Z</ows:MinimumValue>
+                    <ows:MaximumValue>2012-06-26T00:00:00Z</ows:MaximumValue>
                 </ows:AllowedValues>
             </ows:Parameter>
             <ows:Parameter name="responseFormat" use="required">
@@ -100,14 +100,14 @@
         <ows:Operation name="DescribeSensor">
             <ows:DCP>
                 <ows:HTTP>
-                    <ows:Get/>
+                    <ows:Get xlink:href="resources/datasets/satellite-sst/SST_Global_2x2deg_20120626_0000.nc"/>
                 </ows:HTTP>
             </ows:DCP>
             <ows:Parameter name="procedure" use="required">
                 <ows:AllowedValues>
-                    <ows:Value>urn:ioos:sos:network:all</ows:Value>
-                    <ows:Value>urn:ioos:station:sos:Grid0</ows:Value>
-                    <ows:Value>urn:ioos:sensor:sos:Grid0:SST</ows:Value>
+                    <ows:Value>urn:ioos:network:authority:all</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:Grid0</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Grid0:SST</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
             <ows:Parameter name="responseformat" use="required">
@@ -131,7 +131,7 @@
         <sos:ObservationOfferingList>
             <sos:ObservationOffering gml:id="network-all">
                 <gml:description>All stations in the netCDF dataset.</gml:description>
-                <gml:name>urn:ioos:sos:network:all</gml:name>
+                <gml:name>urn:ioos:network:authority:all</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
@@ -141,31 +141,31 @@
                 </gml:boundedBy>
                 <sos:time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
-                        <gml:beginPosition>2012-06-26T00:00:00.000Z</gml:beginPosition>
-                        <gml:endPosition>2012-06-26T00:00:00.000Z</gml:endPosition>
+                        <gml:beginPosition>2012-06-26T00:00:00Z</gml:beginPosition>
+                        <gml:endPosition>2012-06-26T00:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
                 </sos:time>
-                <sos:procedure xlink:href="urn:ioos:station:sos:Grid0"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:Grid0"/>
                 <sos:observedProperty xlink:href="SST"/>
-                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:Grid0"/>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Grid0"/>
                 <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
                 <sos:responseModel>om:ObservationCollection</sos:responseModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="Grid0">
-                <gml:name>urn:ioos:station:sos:Grid0</gml:name>
+                <gml:name>urn:ioos:station:authority:Grid0</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy/>
                 <sos:time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
-                        <gml:beginPosition>2012-06-26T00:00:00.000Z</gml:beginPosition>
-                        <gml:endPosition>2012-06-26T00:00:00.000Z</gml:endPosition>
+                        <gml:beginPosition>2012-06-26T00:00:00Z</gml:beginPosition>
+                        <gml:endPosition>2012-06-26T00:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
                 </sos:time>
-                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:Grid0"/>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Grid0"/>
                 <sos:observedProperty xlink:href="SST"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:sos:Grid0:SST"/>
-                <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
+                <sos:procedure xlink:href="urn:ioos:sensor:authority:Grid0:SST"/>
+                <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
                 <sos:responseModel>om:ObservationCollection</sos:responseModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>

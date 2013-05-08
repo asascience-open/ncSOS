@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.w3c.dom.Document;
 import ucar.nc2.ft.*;
 import ucar.nc2.units.DateFormatter;
@@ -435,5 +434,25 @@ public class Trajectory extends baseCDMClass implements iStationData {
         else {
             addAllTrajectoryData(trajFeatureIterator, valueList, dateFormatter, builder);
         }
+    }
+
+    public List<String> getLocationsString(int stNum) {
+        try {
+            if (trajList != null) {
+                _log.debug("in getLocationsString - trajList count: " + trajList.size());
+                List<String> retval = new ArrayList<String>();
+                PointFeatureIterator iter = trajList.get(stNum).getPointFeatureIterator(-1);
+                while(iter.hasNext()) {
+                    PointFeature pf = iter.next();
+                    _log.debug(pf.getLocation().getLatitude() + " " + pf.getLocation().getLongitude());
+                    retval.add(pf.getLocation().getLatitude() + " " + pf.getLocation().getLongitude());
+                }
+                iter.finish();
+                return retval;
+            } 
+        } catch (Exception ex) {
+            _log.error(ex.toString());
+        }
+        return new ArrayList();
     }
 }

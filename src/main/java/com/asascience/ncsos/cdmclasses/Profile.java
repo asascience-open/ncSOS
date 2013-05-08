@@ -161,7 +161,7 @@ public class Profile extends baseCDMClass implements iStationData {
             
             DateTime eventStart = (eventTimes.size() >= 1) ? new DateTime(df.getISODate(eventTimes.get(0)), chrono) : null;
             DateTime eventEnd = (eventTimes.size() > 1) ? new DateTime(df.getISODate(eventTimes.get(1)), chrono) : null;
-
+            
             //scan through the stationname for a match of id
             if (profileID != null && reqStationNames.contains(profileID)) {
                 // check to make sure the profile falls into the event time
@@ -425,6 +425,12 @@ public class Profile extends baseCDMClass implements iStationData {
             return builder.toString();
         }
         return "";
+    }
+
+    public List<String> getLocationsString(int stNum) {
+        List<String> retval = new ArrayList<String>();
+        retval.add(this.getLowerLat(stNum) + " " + this.getLowerLon(stNum));
+        return retval;
     }
 
 }

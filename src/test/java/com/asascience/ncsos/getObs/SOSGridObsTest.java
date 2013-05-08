@@ -113,7 +113,7 @@ public class SOSGridObsTest {
             } catch (Exception e) {
                 System.out.println("couldn't encode for sst1 - " + e.getMessage());
             }
-            HashMap<String, Object> outMap = parser.enhance(dataset, sst_1_reqs, baseLocalDir + sst_1);
+            HashMap<String, Object> outMap = parser.enhanceGETRequest(dataset, sst_1_reqs, baseLocalDir + sst_1);
             SOSOutputFormatter output = (SOSOutputFormatter)outMap.get("outputHandler");
             assertNotNull("output is null", output);
             output.writeOutput(writer);
@@ -143,7 +143,7 @@ public class SOSGridObsTest {
             } catch (Exception e) {
                 System.out.println("couldn't encode for sst1 - " + e.getMessage());
             }
-            HashMap<String, Object> outMap = parser.enhance(dataset, sst_2_reqs, baseLocalDir + sst_2);
+            HashMap<String, Object> outMap = parser.enhanceGETRequest(dataset, sst_2_reqs, baseLocalDir + sst_2);
             SOSOutputFormatter output = (SOSOutputFormatter)outMap.get("outputHandler");
             assertNotNull("output is null", output);
             output.writeOutput(writer);
@@ -171,7 +171,7 @@ public class SOSGridObsTest {
             } catch (Exception e) {
                 System.out.println("couldn't encode for sst1 - " + e.getMessage());
             }
-            HashMap<String, Object> outMap = parser.enhance(dataset, sst_2_network_all, baseLocalDir + sst_2);
+            HashMap<String, Object> outMap = parser.enhanceGETRequest(dataset, sst_2_network_all, baseLocalDir + sst_2);
             SOSOutputFormatter output = (SOSOutputFormatter)outMap.get("outputHandler");
             assertNotNull("output is null", output);
             output.writeOutput(writer);
@@ -199,7 +199,7 @@ public class SOSGridObsTest {
             } catch (Exception e) {
                 System.out.println("couldn't encode for sst1 - " + e.getMessage());
             }
-            HashMap<String, Object> outMap = parser.enhance(dataset, sst_pathfinder_grid0, baseLocalDir + sst_pathfinder);
+            HashMap<String, Object> outMap = parser.enhanceGETRequest(dataset, sst_pathfinder_grid0, baseLocalDir + sst_pathfinder);
             SOSOutputFormatter output = (SOSOutputFormatter)outMap.get("outputHandler");
             assertNotNull("output is null", output);
             output.writeOutput(writer);
@@ -227,7 +227,7 @@ public class SOSGridObsTest {
             } catch (Exception e) {
                 System.out.println("couldn't encode for sst1 - " + e.getMessage());
             }
-            HashMap<String, Object> outMap = parser.enhance(dataset, sst_pathfinder_network_all, baseLocalDir + sst_pathfinder);
+            HashMap<String, Object> outMap = parser.enhanceGETRequest(dataset, sst_pathfinder_network_all, baseLocalDir + sst_pathfinder);
             SOSOutputFormatter output = (SOSOutputFormatter)outMap.get("outputHandler");
             assertNotNull("output is null", output);
             output.writeOutput(writer);

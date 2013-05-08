@@ -229,7 +229,6 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         try {
             this.tsData = (StationTimeSeriesFeatureCollection) featureCollection;
             tsStationList = tsData.getStations(reqStationNames);
-            
             setNumberOfStations(tsStationList.size());
 
             if (tsStationList.size() > 0) {
@@ -264,11 +263,9 @@ public class TimeSeries extends baseCDMClass implements iStationData {
                 setStartDate(df.toDateTimeStringISO(dtStart.toDate()));
                 setEndDate(df.toDateTimeStringISO(dtEnd.toDate()));
             }
+            
         } catch (Exception ex) {
-            System.out.println("TimeSeries - setData; exception:\n" + ex.toString());
-            for(StackTraceElement e : ex.getStackTrace()) {
-                System.out.println(e.toString());
-            }
+            _log.error("TimeSeries - setData; exception:\n" + ex.toString());
             throw new IOException(ex.toString());
         }
     }
@@ -288,7 +285,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
 
     @Override
     public String getStationName(int idNum) {
-        if (tsData != null) {
+        if (tsData != null && getNumberOfStations() > idNum) {
             return (tsStationList.get(idNum).getName());
         } else {
             return Invalid_Station;
@@ -388,5 +385,11 @@ public class TimeSeries extends baseCDMClass implements iStationData {
     @Override
     public String getDescription(int stNum) {
        return "descrip";
+    }
+
+    public List<String> getLocationsString(int stNum) {
+        List<String> retval = new ArrayList<String>();
+        retval.add(this.getLowerLat(stNum) + " " + this.getLowerLon(stNum));
+        return retval;
     }
 }

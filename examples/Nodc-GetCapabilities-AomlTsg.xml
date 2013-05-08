@@ -96,8 +96,8 @@
             <ows:Parameter name="eventTime" use="optional">
                 <ows:AllowedValues>
                     <ows:Range/>
-                    <ows:MinimumValue>2008-06-15T00:00:19.000Z</ows:MinimumValue>
-                    <ows:MaximumValue>2008-06-15T23:59:49.000Z</ows:MaximumValue>
+                    <ows:MinimumValue>2008-06-15T00:00:19Z</ows:MinimumValue>
+                    <ows:MaximumValue>2008-06-15T23:59:49Z</ows:MaximumValue>
                 </ows:AllowedValues>
             </ows:Parameter>
             <ows:Parameter name="responseFormat" use="required">
@@ -109,12 +109,12 @@
         <ows:Operation name="DescribeSensor">
             <ows:DCP>
                 <ows:HTTP>
-                    <ows:Get/>
+                    <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/nodc/aoml_tsg.nc"/>
                 </ows:HTTP>
             </ows:DCP>
             <ows:Parameter name="procedure" use="required">
                 <ows:AllowedValues>
-                    <ows:Value>urn:ioos:gov.noaa.aoml.phod:network:all</ows:Value>
+                    <ows:Value>urn:ioos:network:gov.noaa.aoml.phod:all</ows:Value>
                     <ows:Value>urn:ioos:station:gov.noaa.aoml.phod:Trajectory20080615</ows:Value>
                     <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:plt</ows:Value>
                     <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:tsg</ows:Value>
@@ -161,7 +161,7 @@
         <sos:ObservationOfferingList>
             <sos:ObservationOffering gml:id="network-all">
                 <gml:description>All stations in the netCDF dataset.</gml:description>
-                <gml:name>urn:ioos:gov.noaa.aoml.phod:network:all</gml:name>
+                <gml:name>urn:ioos:network:gov.noaa.aoml.phod:all</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
@@ -171,8 +171,8 @@
                 </gml:boundedBy>
                 <sos:time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
-                        <gml:beginPosition>2008-06-15T00:00:19.000Z</gml:beginPosition>
-                        <gml:endPosition>2008-06-15T23:59:49.000Z</gml:endPosition>
+                        <gml:beginPosition>2008-06-15T00:00:19Z</gml:beginPosition>
+                        <gml:endPosition>2008-06-15T23:59:49Z</gml:endPosition>
                     </gml:TimePeriod>
                 </sos:time>
                 <sos:procedure xlink:href="urn:ioos:station:gov.noaa.aoml.phod:Trajectory20080615"/>
@@ -214,8 +214,8 @@
                 </gml:boundedBy>
                 <sos:time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
-                        <gml:beginPosition>2008-06-15T00:00:19.000Z</gml:beginPosition>
-                        <gml:endPosition>2008-06-15T23:59:49.000Z</gml:endPosition>
+                        <gml:beginPosition>2008-06-15T00:00:19Z</gml:beginPosition>
+                        <gml:endPosition>2008-06-15T23:59:49Z</gml:endPosition>
                     </gml:TimePeriod>
                 </sos:time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:gov.noaa.aoml.phod:Trajectory20080615"/>
@@ -263,7 +263,7 @@
                 <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_j"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_k"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_l"/>
-                <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
+                <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
                 <sos:responseModel>om:ObservationCollection</sos:responseModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>

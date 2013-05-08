@@ -22,16 +22,14 @@ import ucar.unidata.geoloc.LatLonRect;
 public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
 
     private final String threddsURI;
-    private final String sections;
     
     private enum Sections {
         OPERATIONSMETADATA, SERVICEIDENTIFICATION, SERVICEPROVIDER, CONTENTS
     }
     
+    private String sections;
     private BitSet requestedSections;
     private static final int SECTION_COUNT = 4;
-    
-    private static final String OWS = "http://www.opengis.net/ows/1.1";
     
     private static CalendarDate setStartDate;
     private static CalendarDate setEndDate;
@@ -80,6 +78,12 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         output = new GetCapsOutputter();
     }
     
+    public void resetCapabilitiesSections(String sections) {
+        this.sections = sections.toLowerCase();
+        requestedSections = new BitSet(SECTION_COUNT);
+        SetSectionBits();
+    }
+    
     /**
      * Creates the output for the get capabilities response
      */
@@ -90,7 +94,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
             return;
         // service identification; parse if it is the section identified or 'all'
         if (this.requestedSections.get(Sections.SERVICEIDENTIFICATION.ordinal())) {
-            out.parseServiceIdentification(getTitle() ,Region, Access);
+            out.parseServiceIdentification(title ,Region, Access);
         } else {
             // remove identification from doc
             out.removeServiceIdentification();
@@ -98,7 +102,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         
         // service provider; parse if it is the section identified or 'all'
         if (this.requestedSections.get(Sections.SERVICEPROVIDER.ordinal())) {
-            out.parseServiceDescription(DataPage, PrimaryOwnership);
+            out.parseServiceDescription(PublisherURL, PrimaryOwnership);
         } else {
             // remove service provider from doc
             out.removeServiceProvider();
@@ -110,9 +114,9 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
             out.setOperationGetCaps(threddsURI);
             // set get observation output
             if (getGridDataset() != null)
-                out.setOperationGetObs(threddsURI, setStartDate, setEndDate, getSensorNames(), getStationNames().values().toArray(new String[getStationNames().values().size()]), true, getGridDataset().getBoundingBox());
+                out.setOperationGetObs(threddsURI, setStartDate, setEndDate, getSensorNames(), getStationNames().values().toArray(new String[getStationNames().values().size()]), true, getGridDataset().getBoundingBox(), this.getDatasetFeatureType());
             else
-                out.setOperationGetObs(threddsURI, setStartDate, setEndDate, getSensorNames(), getStationNames().values().toArray(new String[getStationNames().values().size()]), false, null);
+                out.setOperationGetObs(threddsURI, setStartDate, setEndDate, getSensorNames(), getStationNames().values().toArray(new String[getStationNames().values().size()]), false, null, this.getDatasetFeatureType());
             // set describe sensor output
             out.setOperationDescSen(threddsURI, getStationNames().values().toArray(new String[getStationNames().values().size()]), getSensorNames());
         } else {
@@ -136,10 +140,10 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
             CalendarDateRange setTime = null;
             if (setStartDate != null && setEndDate != null)
                 setTime = CalendarDateRange.of(setStartDate,setEndDate);
-            out.setObservationOfferingNetwork(setRange, getStationNames().values().toArray(new String[getStationNames().values().size()]), getSensorNames(), setTime);
+            out.setObservationOfferingNetwork(setRange, getStationNames().values().toArray(new String[getStationNames().values().size()]), getSensorNames(), setTime, this.getFeatureDataset().getFeatureType());
             // iterate through our stations and add them
             for (Integer index : getStationNames().keySet()) {
-                ((GetCapsOutputter)output).setObservationOfferingList(getStationNames().get(index), index.intValue(), stationBBox.get(index), getSensorNames(), stationDateRange.get(index));
+                ((GetCapsOutputter)output).setObservationOfferingList(getStationNames().get(index), index.intValue(), stationBBox.get(index), getSensorNames(), stationDateRange.get(index), this.getFeatureDataset().getFeatureType());
             }
         } else {
             // remove Contents node
