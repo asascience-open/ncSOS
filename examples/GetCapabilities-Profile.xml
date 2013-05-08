@@ -79,8 +79,8 @@
             <ows:Parameter name="eventTime" use="optional">
                 <ows:AllowedValues>
                     <ows:Range/>
-                    <ows:MinimumValue>1990-01-01T00:00:00.000Z</ows:MinimumValue>
-                    <ows:MaximumValue>1990-01-01T03:00:00.000Z</ows:MaximumValue>
+                    <ows:MinimumValue>1990-01-01T00:00:00Z</ows:MinimumValue>
+                    <ows:MaximumValue>1990-01-01T03:00:00Z</ows:MaximumValue>
                 </ows:AllowedValues>
             </ows:Parameter>
             <ows:Parameter name="responseFormat" use="required">
@@ -92,24 +92,24 @@
         <ows:Operation name="DescribeSensor">
             <ows:DCP>
                 <ows:HTTP>
-                    <ows:Get/>
+                    <ows:Get xlink:href="resources/datasets/profile-Contiguous-Ragged-MultipleProfiles-H.3.4/profile-Contiguous-Ragged-MultipleProfiles-H.3.4.nc"/>
                 </ows:HTTP>
             </ows:DCP>
             <ows:Parameter name="procedure" use="required">
                 <ows:AllowedValues>
-                    <ows:Value>urn:ioos:sos:network:all</ows:Value>
-                    <ows:Value>urn:ioos:station:sos:Profile0</ows:Value>
-                    <ows:Value>urn:ioos:sensor:sos:Profile0:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:sos:Profile0:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:sos:Profile1</ows:Value>
-                    <ows:Value>urn:ioos:sensor:sos:Profile1:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:sos:Profile1:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:sos:Profile2</ows:Value>
-                    <ows:Value>urn:ioos:sensor:sos:Profile2:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:sos:Profile2:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:sos:Profile3</ows:Value>
-                    <ows:Value>urn:ioos:sensor:sos:Profile3:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:sos:Profile3:humidity</ows:Value>
+                    <ows:Value>urn:ioos:network:authority:all</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:Profile0</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Profile0:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Profile0:humidity</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:Profile1</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Profile1:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Profile1:humidity</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:Profile2</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Profile2:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Profile2:humidity</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:Profile3</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Profile3:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Profile3:humidity</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
             <ows:Parameter name="responseformat" use="required">
@@ -133,7 +133,7 @@
         <sos:ObservationOfferingList>
             <sos:ObservationOffering gml:id="network-all">
                 <gml:description>All stations in the netCDF dataset.</gml:description>
-                <gml:name>urn:ioos:sos:network:all</gml:name>
+                <gml:name>urn:ioos:network:authority:all</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
@@ -143,26 +143,26 @@
                 </gml:boundedBy>
                 <sos:time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
-                        <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
-                        <gml:endPosition>1990-01-01T03:00:00.000Z</gml:endPosition>
+                        <gml:beginPosition>1990-01-01T00:00:00Z</gml:beginPosition>
+                        <gml:endPosition>1990-01-01T03:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
                 </sos:time>
-                <sos:procedure xlink:href="urn:ioos:station:sos:Profile0"/>
-                <sos:procedure xlink:href="urn:ioos:station:sos:Profile1"/>
-                <sos:procedure xlink:href="urn:ioos:station:sos:Profile2"/>
-                <sos:procedure xlink:href="urn:ioos:station:sos:Profile3"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:Profile0"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:Profile1"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:Profile2"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:Profile3"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
-                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:Profile0"/>
-                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:Profile1"/>
-                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:Profile2"/>
-                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:Profile3"/>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Profile0"/>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Profile1"/>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Profile2"/>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Profile3"/>
                 <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
                 <sos:responseModel>om:ObservationCollection</sos:responseModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="Profile0">
-                <gml:name>urn:ioos:station:sos:Profile0</gml:name>
+                <gml:name>urn:ioos:station:authority:Profile0</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
@@ -172,21 +172,21 @@
                 </gml:boundedBy>
                 <sos:time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
-                        <gml:beginPosition>1990-01-01T00:00:00.000Z</gml:beginPosition>
-                        <gml:endPosition>1990-01-01T00:00:00.000Z</gml:endPosition>
+                        <gml:beginPosition>1990-01-01T00:00:00Z</gml:beginPosition>
+                        <gml:endPosition>1990-01-01T00:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
                 </sos:time>
-                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:Profile0"/>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Profile0"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:sos:Profile0:temperature"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:sos:Profile0:humidity"/>
-                <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
+                <sos:procedure xlink:href="urn:ioos:sensor:authority:Profile0:temperature"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:authority:Profile0:humidity"/>
+                <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
                 <sos:responseModel>om:ObservationCollection</sos:responseModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="Profile1">
-                <gml:name>urn:ioos:station:sos:Profile1</gml:name>
+                <gml:name>urn:ioos:station:authority:Profile1</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
@@ -196,21 +196,21 @@
                 </gml:boundedBy>
                 <sos:time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
-                        <gml:beginPosition>1990-01-01T01:00:00.000Z</gml:beginPosition>
-                        <gml:endPosition>1990-01-01T01:00:00.000Z</gml:endPosition>
+                        <gml:beginPosition>1990-01-01T01:00:00Z</gml:beginPosition>
+                        <gml:endPosition>1990-01-01T01:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
                 </sos:time>
-                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:Profile1"/>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Profile1"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:sos:Profile1:temperature"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:sos:Profile1:humidity"/>
-                <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
+                <sos:procedure xlink:href="urn:ioos:sensor:authority:Profile1:temperature"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:authority:Profile1:humidity"/>
+                <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
                 <sos:responseModel>om:ObservationCollection</sos:responseModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="Profile2">
-                <gml:name>urn:ioos:station:sos:Profile2</gml:name>
+                <gml:name>urn:ioos:station:authority:Profile2</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
@@ -220,21 +220,21 @@
                 </gml:boundedBy>
                 <sos:time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
-                        <gml:beginPosition>1990-01-01T02:00:00.000Z</gml:beginPosition>
-                        <gml:endPosition>1990-01-01T02:00:00.000Z</gml:endPosition>
+                        <gml:beginPosition>1990-01-01T02:00:00Z</gml:beginPosition>
+                        <gml:endPosition>1990-01-01T02:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
                 </sos:time>
-                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:Profile2"/>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Profile2"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:sos:Profile2:temperature"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:sos:Profile2:humidity"/>
-                <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
+                <sos:procedure xlink:href="urn:ioos:sensor:authority:Profile2:temperature"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:authority:Profile2:humidity"/>
+                <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
                 <sos:responseModel>om:ObservationCollection</sos:responseModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="Profile3">
-                <gml:name>urn:ioos:station:sos:Profile3</gml:name>
+                <gml:name>urn:ioos:station:authority:Profile3</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
@@ -244,16 +244,16 @@
                 </gml:boundedBy>
                 <sos:time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
-                        <gml:beginPosition>1990-01-01T03:00:00.000Z</gml:beginPosition>
-                        <gml:endPosition>1990-01-01T03:00:00.000Z</gml:endPosition>
+                        <gml:beginPosition>1990-01-01T03:00:00Z</gml:beginPosition>
+                        <gml:endPosition>1990-01-01T03:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
                 </sos:time>
-                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:Profile3"/>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Profile3"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:sos:Profile3:temperature"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:sos:Profile3:humidity"/>
-                <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
+                <sos:procedure xlink:href="urn:ioos:sensor:authority:Profile3:temperature"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:authority:Profile3:humidity"/>
+                <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
                 <sos:responseModel>om:ObservationCollection</sos:responseModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
