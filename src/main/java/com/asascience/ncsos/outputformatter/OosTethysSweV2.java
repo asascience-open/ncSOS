@@ -4,7 +4,6 @@
  */
 package com.asascience.ncsos.outputformatter;
 
-import com.asascience.ncsos.cdmclasses.baseCDMClass;
 import com.asascience.ncsos.getobs.SOSGetObservationRequestHandler;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import com.asascience.ncsos.util.XMLDomUtils;

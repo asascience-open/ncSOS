@@ -4,14 +4,12 @@
  */
 package com.asascience.ncsos.describesen;
 
-import com.asascience.ncsos.outputformatter.DescribeNetworkFormatter;
 import com.asascience.ncsos.outputformatter.DescribeSensorFormatter;
 import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import org.w3c.dom.Element;
 import ucar.ma2.Array;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
@@ -31,6 +29,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  * *Component(s)
  * @author SCowan
  * @version 1.0.0
+ * @deprecated use SOSDescribePlatformM1_0 instead
  */
 public class SOSDescribeStation extends SOSBaseRequestHandler implements ISOSDescribeSensor {
     
@@ -119,26 +118,6 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements ISOSDes
     /*********************/
     /* Interface Methods */
     /**************************************************************************/
-    
-    public void setupOutputDocument(DescribeSensorFormatter output) {
-    }
-    
-    public void setupOutputDocument(DescribeNetworkFormatter output) {
-        if (errorString == null) {
-            // system node
-            output.setNetworkSystemId("network-all");
-            // network identification
-            formatSetNetworkIdentification(output);
-            // classification
-            formatSetClassification(output);
-            // set history
-            formatSetHistoryNodes(output);
-            // set components
-            formatSetStationComponentList(output);
-        } else {
-            output.setupExceptionOutput(errorString);
-        }
-    }
 
     public void setupOutputDocument(SOSOutputFormatter output) {
         DescribeSensorFormatter dsf = (DescribeSensorFormatter) output;
@@ -169,134 +148,6 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements ISOSDes
     /*****************************
      * Private/Protected Methods *
      *****************************/
-    
-    /*****************************
-     * Network-All Formatters    *
-     *****************************/
-    
-    protected void formatSetStationComponentList(DescribeNetworkFormatter output) {
-        // iterate through each station name, add a station to the component list and setup each station
-        for (String stName : getStationNames().values()) {
-            System.out.println("Setting station: " + stName);
-            int stIndex = getStationIndex(stName);
-            // add a new station
-            Element stNode = output.addNewStationWithId("station-"+stName);
-            // set a description for each station - TODO
-            output.removeStationDescriptionNode(stNode);
-            // set identification for station
-            formatSetStationIdentification(output, stNode, stName);
-            // set location for station
-            double[][] coords = getStationCoords(latVariable, lonVariable, stIndex);
-            if (coords.length > 1)
-                output.setOrderedStationLocationNode3Dimension(stNode, stationName, coords);
-            else
-                output.setStationLocationNode2Dimension(stNode, stationName, coords);
-            // remove unwanted nodes for each station
-            output.removeStationPosition(stNode);
-            output.removeStationPositions(stNode);
-            output.removeStationTimePosition(stNode);
-        }
-    }
-    
-    /**
-     * 
-     * @param output 
-     */
-    protected void formatSetClassification(DescribeNetworkFormatter output) {
-        if (platformType != null) {
-            output.addToNetworkClassificationNode(platformType.getName(), "", platformType.getStringValue());
-        } else {
-            output.removeNetworkClassificationNode();
-        }
-    }
-    
-    /**
-     * 
-     * @param output 
-     */
-    protected void formatSetDescription(DescribeNetworkFormatter output) {
-        output.setNetworkDescriptionNode(description);
-    }
-    
-    /**
-     * 
-     * @param output 
-     */
-    protected void formatSetContactNodes(DescribeNetworkFormatter output) {
-        if (!CreatorName.equalsIgnoreCase("") || !CreatorEmail.equalsIgnoreCase("") || !CreatorPhone.equalsIgnoreCase("")) {
-            String role = "http://mmisw.org/ont/ioos/definition/operator";
-            HashMap<String, HashMap<String, String>> domainContactInfo = new HashMap<String, HashMap<String, String>>();
-            HashMap<String, String> address = new HashMap<String, String>();
-            address.put("sml:electronicMailAddress", CreatorEmail);
-            domainContactInfo.put("sml:address", address);
-            HashMap<String, String> phone = new HashMap<String, String>();
-            phone.put("sml:voice", CreatorPhone);
-            domainContactInfo.put("sml:phone", phone);
-            output.addContactNode(role, CreatorName, domainContactInfo);
-        }
-        if (!PublisherName.equalsIgnoreCase("") || !PublisherEmail.equalsIgnoreCase("") || !PublisherPhone.equalsIgnoreCase("")) {
-            String role = "http://mmisw.org/ont/ioos/definition/publisher";
-            HashMap<String, HashMap<String, String>> domainContactInfo = new HashMap<String, HashMap<String, String>>();
-            HashMap<String, String> address = new HashMap<String, String>();
-            address.put("sml:electronicMailAddress", PublisherEmail);
-            domainContactInfo.put("sml:address", address);
-            HashMap<String, String> phone = new HashMap<String, String>();
-            phone.put("sml:voice", PublisherPhone);
-            domainContactInfo.put("sml:phone", phone);
-            output.addContactNode(role, CreatorName, domainContactInfo);
-        }
-        if (contributorAttributes != null) {
-            String role = "", name = "";
-            for (Attribute attr : contributorAttributes) {
-                if (attr.getName().toLowerCase().contains("role")) {
-                    role = attr.getStringValue();
-                }
-                else if (attr.getName().toLowerCase().contains("name")) {
-                    name = attr.getStringValue();
-                }
-            }
-            output.addContactNode(role, name, null);
-        }
-    }
-    
-    /**
-     * 
-     * @param formatter 
-     */
-    protected void formatSetNetworkIdentification(DescribeNetworkFormatter formatter) {
-        formatter.setNetworkIdentificationNode();
-    }
-    
-    /**
-     * 
-     * @param output 
-     */
-    protected void formatSetHistoryNodes(DescribeNetworkFormatter output) {
-        if (historyAttribute != null) {
-            output.setHistoryEvents(historyAttribute.getStringValue());
-        } else {
-            output.deleteHistoryNode();
-        }
-    }
-    
-    /**
-     * 
-     * @param formatter 
-     */
-    protected void formatSetStationIdentification(DescribeNetworkFormatter formatter, Element stationNode, String stationName) {
-        ArrayList<String> identNames = new ArrayList<String>();
-        ArrayList<String> identDefinitions = new ArrayList<String>();
-        ArrayList<String> identValues = new ArrayList<String>();
-        identNames.add("StationId"); identDefinitions.add("stationID"); identValues.add(SOSBaseRequestHandler.getGMLName(stationName));
-        for (Attribute attr : getStationAttributes()) {
-            if (attr.getName().equalsIgnoreCase("cf_role") || attr.getName().toLowerCase().contains("hdf5"))
-                continue;
-            identNames.add(attr.getName()); identDefinitions.add(""); identValues.add(attr.getStringValue());
-        }
-        formatter.setStationIdentificationNode(stationNode, identNames.toArray(new String[identNames.size()]),
-                identDefinitions.toArray(new String[identDefinitions.size()]),
-                identValues.toArray(new String[identValues.size()]));
-    }
     
     /*****************************
      * Single Station Formatters *

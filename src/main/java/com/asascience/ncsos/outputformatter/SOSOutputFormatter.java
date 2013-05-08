@@ -74,10 +74,6 @@ public interface SOSOutputFormatter {
      */
     public void addDataFormattedStringToInfoList(String dataFormattedString);
     /**
-     * Empties the container defined in the individual formatters. Usually something like: infoList = null;
-     */
-    public void emtpyInfoList();
-    /**
      * Sets up the outputter to write an exception when writeOutput is invoked.
      * @param message - message to display to the user
      */

@@ -69,10 +69,6 @@ public class SOSDescribeSensor extends SOSDescribeStation implements ISOSDescrib
     /*********************
      * Interface Methods *
      **************************************************************************/
-    
-    @Override
-    public void setupOutputDocument(DescribeSensorFormatter output) {
-    }
 
     @Override
     public void setupOutputDocument(SOSOutputFormatter output) {

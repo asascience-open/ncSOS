@@ -151,28 +151,4 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
         
         return false;
     }
-
-    private void setNeededInfoForNetwork(NetcdfDataset dataset) throws IOException {
-        // get our information based on feature type
-        switch (getFeatureDataset().getFeatureType()) {
-            case STATION:
-            case STATION_PROFILE:
-                describer = new SOSDescribeStation(dataset);
-                break;
-            case TRAJECTORY:
-                describer = new SOSDescribeTrajectory(dataset);
-                break;
-            case GRID:
-                DatasetHandlerAdapter.calcBounds(getFeatureDataset());
-                describer = new SOSDescribeGrid(dataset, getFeatureDataset().getBoundingBox());
-                break;
-            case PROFILE:
-                describer = new SOSDescribeProfile(dataset);
-                break;
-            case SECTION:
-                DatasetHandlerAdapter.calcBounds(getFeatureDataset());
-                describer = new SOSDescribeSection(dataset, (SectionFeatureCollection) getFeatureTypeDataSet());
-                break;
-        }
-    }
 }

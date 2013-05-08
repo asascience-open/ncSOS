@@ -43,7 +43,7 @@ public class BaseOutputFormatter implements SOSOutputFormatter {
     protected String DEFAULT_VALUE = "UNKNOWN";
     protected Document document;
     
-    private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DescribeSensorFormatter.class);
+    private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BaseOutputFormatter.class);
     
     /** Public Methods **/
 

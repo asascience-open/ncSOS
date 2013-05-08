@@ -5,7 +5,6 @@
 package com.asascience.ncsos.describesen;
 
 import com.asascience.ncsos.cdmclasses.*;
-import com.asascience.ncsos.outputformatter.DescribeNetworkFormatter;
 import com.asascience.ncsos.outputformatter.DescribeSensorPlatformMilestone1_0;
 import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import com.asascience.ncsos.util.LogReporter;
@@ -58,10 +57,6 @@ public class SOSDescribePlatformM1_0 extends BaseDescribeSensor implements ISOSD
                 logger.error(ex.toString());
             }
         }
-    }
-    
-    @Deprecated
-    public void setupOutputDocument(DescribeNetworkFormatter output) {
     }
     
     //<editor-fold defaultstate="collapsed" desc="Describe Platform">

@@ -4,7 +4,6 @@
  */
 package com.asascience.ncsos.describesen;
 
-import com.asascience.ncsos.outputformatter.DescribeNetworkFormatter;
 import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 
 /**
@@ -20,12 +19,4 @@ public interface ISOSDescribeSensor {
      * @param output the formatter to be used for the response
      */
     public void setupOutputDocument(SOSOutputFormatter output);
-    
-    /**
-     * Tells the output handler to set up the response to a Describe Network-All request
-     * so that when writeOutput is called by the controller, all data for the response
-     * assembly is available.
-     * @param output the formatter to be used for the response
-     */
-    public void setupOutputDocument(DescribeNetworkFormatter output);
 }
