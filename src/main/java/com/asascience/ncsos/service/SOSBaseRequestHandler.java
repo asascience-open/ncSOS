@@ -2,6 +2,7 @@ package com.asascience.ncsos.service;
 
 import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import com.asascience.ncsos.util.DiscreteSamplingGeometryUtil;
+import com.asascience.ncsos.util.ListComprehension;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.*;
@@ -15,7 +16,6 @@ import ucar.nc2.dataset.CoordinateTransform;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dt.GridDataset;
 import ucar.nc2.ft.*;
-import ucar.nc2.units.DateFormatter;
 
 /**
  * Provides access to the netcdf dataset wrappers that allow for easier access
@@ -27,23 +27,21 @@ public abstract class SOSBaseRequestHandler {
 
     private static final String STATION_GML_BASE = "urn:ioos:station:";
     private static final String SENSOR_GML_BASE = "urn:ioos:sensor:";
-    private final NetcdfDataset netCDFDataset;
+    private static final String DEF_NAMING_AUTHORITY = "authority";  // TODO: default for naming_authority
+    private static final NumberFormat FORMAT_DEGREE;
+    // list of keywords to filter variables on to remove non-data variables from the list
+    private static final String[] NON_DATAVAR_NAMES = { "rowsize", "row_size", "profile", "info", "time", "z", "alt", "height", "station_info" };
     private FeatureDataset featureDataset;
-    private final static NumberFormat FORMAT_DEGREE;
     private FeatureCollection CDMPointFeatureCollection;
     private GridDataset gridDataSet = null;
     
     // Global Attributes
-    protected String Access, DataContactEmail, DataContactName, DataContactPhone, DataPage, InventoryContactEmail, InventoryContactName, InventoryContactPhone;
-    protected String PrimaryOwnership, Region, StandardNameVocabulary;
-    private String title;
-    private String history;
-    private String description;
-    private String featureOfInterestBaseQueryURL;
-    
-    private static String namingAuthority;
+    protected String Access, PublisherEmail, PublisherName, PublisherPhone, PublisherURL, CreatorEmail, CreatorName, CreatorPhone;
+    protected String PrimaryOwnership, Region, StandardNameVocabulary, title, history, description, featureOfInterestBaseQueryURL, featureType;
+    protected static String namingAuthority;
     
     // Variables and other information commonly needed
+    protected final NetcdfDataset netCDFDataset;
     protected Variable latVariable, lonVariable, timeVariable, depthVariable;
     protected Variable stationVariable;
     private HashMap<Integer, String> stationNames;
@@ -65,15 +63,46 @@ public abstract class SOSBaseRequestHandler {
      * @throws IOException
      */
     public SOSBaseRequestHandler(NetcdfDataset netCDFDataset) throws IOException {
+        // check for non-null dataset
         if(netCDFDataset == null) {
-            _log.error("received null dataset -- probably exception output");
+//            _log.error("received null dataset -- probably exception output");
             this.netCDFDataset = null;
             return;
         }
         this.netCDFDataset = netCDFDataset;
-        
-        if (FeatureDatasetFactoryManager.findFeatureType(netCDFDataset) != null) {
-            switch (FeatureDatasetFactoryManager.findFeatureType(netCDFDataset)) {
+        // get the feature dataset (wraps the dataset in variety of accessor methods)
+        findFeatureDataset(FeatureDatasetFactoryManager.findFeatureType(netCDFDataset));
+        // verify we could get a dataset (make sure the dataset is CF 1.6 compliant or whatever)
+        if (gridDataSet == null && featureDataset == null) {
+            _log.error("Unknown feature type! " + FeatureDatasetFactoryManager.findFeatureType(netCDFDataset));
+            return;
+        }
+        // if dataFeatureType is none/null (not GRID) get the point feature collection
+        if (dataFeatureType == null || dataFeatureType == FeatureType.NONE) {
+            CDMPointFeatureCollection = DiscreteSamplingGeometryUtil.extractFeatureDatasetCollection(featureDataset);
+            dataFeatureType = CDMPointFeatureCollection.getCollectionFeatureType();
+        }
+        // find the global attributes
+        parseGlobalAttributes();
+        // get the station variable and several other bits needed
+        findAndParseStationVariable();
+        // get sensor Variable names
+        parseSensorNames();
+        // get Axis vars (location, time, depth)
+        latVariable = netCDFDataset.findCoordinateAxis(AxisType.Lat);
+        lonVariable = netCDFDataset.findCoordinateAxis(AxisType.Lon);
+        timeVariable = netCDFDataset.findCoordinateAxis(AxisType.Time);
+        depthVariable = netCDFDataset.findCoordinateAxis(AxisType.Height);
+    }
+    
+    /**
+     * Attempts to set the feature dataset based on the dataset's FeatureType
+     * @param datasetFT The FeatureType of the netcdf dataset, found with the factory manager
+     * @throws IOException 
+     */
+    private void findFeatureDataset(FeatureType datasetFT) throws IOException {
+        if (datasetFT != null) {
+            switch (datasetFT) {
                 case STATION_PROFILE:
                     featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.STATION_PROFILE, netCDFDataset, null, new Formatter(System.err));
                     break;
@@ -101,7 +130,7 @@ public abstract class SOSBaseRequestHandler {
                     featureDataset = FeatureDatasetFactoryManager.wrap(FeatureType.ANY_POINT, netCDFDataset, null, new Formatter(System.err));
                     break;
             }
-        } 
+        }
         
         if (featureDataset == null) {
             // attempt to get the dataset from an any_point
@@ -114,41 +143,21 @@ public abstract class SOSBaseRequestHandler {
                 dataFeatureType = FeatureType.GRID;
             }
         }
-        
-        if (gridDataSet == null && featureDataset == null) {
-            _log.error("Unknown feature type! " + FeatureDatasetFactoryManager.findFeatureType(netCDFDataset));
-            return;
-        }
-        
-        if (dataFeatureType == null || dataFeatureType == FeatureType.NONE) {
-            CDMPointFeatureCollection = DiscreteSamplingGeometryUtil.extractFeatureDatasetCollection(featureDataset);
-            dataFeatureType = CDMPointFeatureCollection.getCollectionFeatureType();
-        }
-        
-        parseGlobalAttributes();
-        
-        findAndParseStationVariable();
-        
-        // get sensor Variable names
-        parseSensorNames();
-        
-        // get other needed vars
-        latVariable = netCDFDataset.findCoordinateAxis(AxisType.Lat);
-        lonVariable = netCDFDataset.findCoordinateAxis(AxisType.Lon);
-        timeVariable = netCDFDataset.findCoordinateAxis(AxisType.Time);
-        depthVariable = netCDFDataset.findCoordinateAxis(AxisType.Height);
     }
-
+    
+    /**
+     * Finds commonly used global attributes in the netcdf file.
+     */
     private void parseGlobalAttributes() {
         
         Access = netCDFDataset.findAttValueIgnoreCase(null, "license", "NONE");
-        DataContactEmail = netCDFDataset.findAttValueIgnoreCase(null, "publisher_email", "");
-        DataContactName = netCDFDataset.findAttValueIgnoreCase(null, "publisher_name", "");
-        DataContactPhone = netCDFDataset.findAttValueIgnoreCase(null, "publisher_phone", "");
-        DataPage = netCDFDataset.findAttValueIgnoreCase(null, "publisher_url", "");
-        InventoryContactEmail = netCDFDataset.findAttValueIgnoreCase(null, "creator_email","");
-        InventoryContactName = netCDFDataset.findAttValueIgnoreCase(null,"creator_name","");
-        InventoryContactPhone = netCDFDataset.findAttValueIgnoreCase(null,"creator_phone","");
+        PublisherEmail = netCDFDataset.findAttValueIgnoreCase(null, "publisher_email", "");
+        PublisherName = netCDFDataset.findAttValueIgnoreCase(null, "publisher_name", "");
+        PublisherPhone = netCDFDataset.findAttValueIgnoreCase(null, "publisher_phone", "");
+        PublisherURL = netCDFDataset.findAttValueIgnoreCase(null, "publisher_url", "");
+        CreatorEmail = netCDFDataset.findAttValueIgnoreCase(null, "creator_email","");
+        CreatorName = netCDFDataset.findAttValueIgnoreCase(null,"creator_name","");
+        CreatorPhone = netCDFDataset.findAttValueIgnoreCase(null,"creator_phone","");
         PrimaryOwnership = netCDFDataset.findAttValueIgnoreCase(null, "source", "");
         Region = netCDFDataset.findAttValueIgnoreCase(null, "institution", "");
         // old attributes, still looking up for now
@@ -157,11 +166,21 @@ public abstract class SOSBaseRequestHandler {
         description = netCDFDataset.findAttValueIgnoreCase(null, "description", "");
         featureOfInterestBaseQueryURL = netCDFDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", null);
         StandardNameVocabulary = netCDFDataset.findAttValueIgnoreCase(null, "standard_name_vocabulary", "none");
-        namingAuthority = netCDFDataset.findAttValueIgnoreCase(null, "naming_authority", "sos");
+        featureType = netCDFDataset.findAttValueIgnoreCase(null, "featureType", "unknown");
+        namingAuthority = netCDFDataset.findAttValueIgnoreCase(null, "naming_authority", DEF_NAMING_AUTHORITY);
         if (namingAuthority.length() < 1)
-            namingAuthority = "sos";
+            namingAuthority = DEF_NAMING_AUTHORITY;
     }
 
+    /**
+     * Finds the station variable with several approaches
+     * 1) Attempts to find a variable with the attribute "cf_role"; only the
+     * station defining variable should have this attribute
+     * 2) Looks for a variable with 'grid' and 'name' in its name; GRID datasets
+     * do not have a "cf_role" attribute
+     * 3) Failing above, will 
+     * @throws IOException 
+     */
     private void findAndParseStationVariable() throws IOException {
         // get station var
         // check for station, trajectory, profile and grid station info
@@ -169,7 +188,7 @@ public abstract class SOSBaseRequestHandler {
             // look for cf_role attr
             if (this.stationVariable == null) {
                 for (Attribute attr : var.getAttributes()) {
-                    if(attr.getName().equalsIgnoreCase("cf_role")) {
+                    if(attr.getFullName().equalsIgnoreCase("cf_role")) {
                         this.stationVariable = var;
                         String attrValue = attr.getStringValue().toLowerCase();
                         // parse name based on role
@@ -196,7 +215,6 @@ public abstract class SOSBaseRequestHandler {
         
         if (this.stationVariable == null && getGridDataset() == null) {
             // there is no station variable ... add a single station with index 0?
-//            parseDefaultStationName();
             parseStationNames();
         } else if (this.stationVariable == null) {
             parseGridIdsToName();
@@ -210,7 +228,7 @@ public abstract class SOSBaseRequestHandler {
     private void parseSensorNames() {
         // find all variables who's not a coordinate axis and does not have 'station' in the name
         this.sensorNames = new ArrayList<String>();
-        getFeatureDataset().getDataVariables();
+//        getFeatureDataset().getDataVariables();
         for (Iterator<VariableSimpleIF> it = getFeatureDataset().getDataVariables().iterator(); it.hasNext();) {
             VariableSimpleIF var = it.next();
             String name = var.getShortName();
@@ -226,12 +244,20 @@ public abstract class SOSBaseRequestHandler {
         }
     }
 
+    /**
+     * Add station names to hashmap, indexed.
+     * @param npfc The nested point feature collection we're iterating through
+     * @param stationIndex Current index of the station
+     * @return Next station index
+     * @throws IOException 
+     */
     private int parseNestedCollection(NestedPointFeatureCollection npfc, int stationIndex) throws IOException { 
         if (npfc.isMultipleNested()) {
             NestedPointFeatureCollectionIterator npfci = npfc.getNestedPointFeatureCollectionIterator(-1);
             while (npfci.hasNext()) {
                 NestedPointFeatureCollection nnpfc = npfci.next();
-                String name = nnpfc.getName().replaceAll("[\\s]+", "");
+//                String name = nnpfc.getName().replaceAll("[\\s]+", "");
+                String name = nnpfc.getName();
                 stationNames.put(stationIndex, name);
                 stationIndex += 1;
             }
@@ -245,12 +271,24 @@ public abstract class SOSBaseRequestHandler {
         return stationIndex;
     }
     
+    /**
+     * Reads a point feature collection and adds the station name, indexed
+     * @param pfc feature collection to read
+     * @param stationIndex current station index
+     * @return next station index
+     * @throws IOException 
+     */
     private int parsePointFeatureCollectionNames(PointFeatureCollection pfc, int stationIndex) throws IOException {
-        String name = pfc.getName().replaceAll("[\\s]+", "");
+//        String name = pfc.getName().replaceAll("[\\s]+", "");
+        String name = pfc.getName();
         stationNames.put(stationIndex, name);
         return stationIndex+1;
     }
     
+    /**
+     * Go through the point feature collection to get the station names.
+     * @throws IOException 
+     */
     private void parseStationNames() throws IOException {
         this.stationNames = new HashMap<Integer, String>();
         int stationIndex = 0;
@@ -263,6 +301,11 @@ public abstract class SOSBaseRequestHandler {
         }
     }
     
+    /**
+     * Gets the numbers from the station var (which has type of INT).
+     * Uses "Trajectory" and the station number for naming.
+     * @throws IOException 
+     */
     private void parseTrajectoryIdsToNames() throws IOException {
         this.stationNames = new HashMap<Integer, String>();
         int stationindex = 0;
@@ -273,7 +316,8 @@ public abstract class SOSBaseRequestHandler {
             NestedPointFeatureCollectionIterator npfci = npfc.getNestedPointFeatureCollectionIterator(-1);
             for (;npfci.hasNext();) {
                 NestedPointFeatureCollection n = npfci.next();
-                String name = n.getName().replaceAll("[\\s]+", "");
+//                String name = n.getName().replaceAll("[\\s]+", "");
+                String name = n.getName();
                 this.stationNames.put(stationindex++, "Trajectory"+name);
             }
         } else {
@@ -281,12 +325,18 @@ public abstract class SOSBaseRequestHandler {
             PointFeatureCollectionIterator pfci = npfc.getPointFeatureCollectionIterator(-1);
             for (;pfci.hasNext();) {
                 PointFeatureCollection n = pfci.next();
-                String name = n.getName().replaceAll("[\\s]+", "");
+//                String name = n.getName().replaceAll("[\\s]+", "");
+                String name = n.getName();
                 this.stationNames.put(stationindex++, "Trajectory"+name);
             }
         }
     }
     
+    /**
+     * Gets the numbers from the station var (which has type of INT).
+     * Uses "Profile" and the station number for naming.
+     * @throws IOException 
+     */
     private void parseProfileIdsToNames() throws IOException {
         this.stationNames = new HashMap<Integer, String>();
         int stationindex = 0;
@@ -303,7 +353,7 @@ public abstract class SOSBaseRequestHandler {
             // nested feature collection
             NestedPointFeatureCollection npfc = (NestedPointFeatureCollection) CDMPointFeatureCollection;
             if (npfc.isMultipleNested()) {
-                // iterate
+                // iterate through collection of nested point feature collections (usually Section data type)
                 NestedPointFeatureCollectionIterator npfci = npfc.getNestedPointFeatureCollectionIterator(-1);
                 for (;npfci.hasNext();) {
                     NestedPointFeatureCollection n = npfci.next();
@@ -311,7 +361,7 @@ public abstract class SOSBaseRequestHandler {
                     stationindex++;
                 }
             } else {
-                // iterate
+                // iterate through collection of point feature collections
                 PointFeatureCollectionIterator pfci = npfc.getPointFeatureCollectionIterator(-1);
                 for (;pfci.hasNext();) {
                     PointFeatureCollection n = pfci.next();
@@ -323,11 +373,42 @@ public abstract class SOSBaseRequestHandler {
         
     }
     
+    /**
+     * Gets a number of stations based on the size of the grid sets.
+     */
     private void parseGridIdsToName() {
         this.stationNames = new HashMap<Integer, String>();
         for (int i=0; i<getGridDataset().getGridsets().size(); i++) {
             this.stationNames.put(i, "Grid"+i);
         }
+    }
+    
+    /**
+     * Attempts to find the coordinate reference authority
+     * @param varName var name to check for crs authority
+     * @return the authority name, if there is one
+     */
+    private String getAuthorityFromVariable(String varName) {
+        String retval = null;
+
+        Variable crsVar = null;
+        for (Variable var : netCDFDataset.getVariables()) {
+            if (var.getFullName().equalsIgnoreCase(varName)) {
+                crsVar = var;
+                break;
+            }
+        }
+        
+        if (crsVar != null) {
+            for (Attribute attr : crsVar.getAttributes()) {
+                if (attr.getName().toLowerCase().contains("code")) {
+                    retval = attr.getValue(0).toString();
+                    break;
+                }
+            }
+        }
+        
+        return retval;
     }
     
     /**
@@ -431,6 +512,25 @@ public abstract class SOSBaseRequestHandler {
         }
         return null;
     }
+    
+    /**
+     * Attempts to find a global attribute in the dataset.
+     * @param attName name of the attribute
+     * @param defVal value to return if attribute is not found
+     * @return the value of the attribute or defVal
+     */
+    public String getGlobalAttribute(String attName, String defVal){
+        return this.netCDFDataset.findAttValueIgnoreCase(null, attName, defVal);
+    }
+    
+    /**
+     * Attempts to find a variable in the dataset.
+     * @param variableName name of the variable
+     * @return either the variable if found or null
+     */
+    public Variable getVariableByName(String variableName) {
+        return this.netCDFDataset.findVariable(variableName);
+    }
 
     /**
      * Returns the dataset, wrapped according to its feature type
@@ -489,30 +589,6 @@ public abstract class SOSBaseRequestHandler {
             return stationVariable.getAttributes();
         else
             return new ArrayList<Attribute>();
-    }
-
-    /**
-     * Returns the value of the title attribute of the dataset
-     * @return @String 
-     */
-    public String getTitle() {
-        return title;
-    }
-
-    /**
-     * Returns the value of the history attribute of the dataset
-     * @return @String
-     */
-    public String getHistory() {
-        return history;
-    }
-
-    /**
-     * Returns the value of the description attribute of the dataset
-     * @return
-     */
-    public String getDescription() {
-        return description;
     }
 
     /**
@@ -596,29 +672,6 @@ public abstract class SOSBaseRequestHandler {
             return null;
     }
     
-    private String getAuthorityFromVariable(String varName) {
-        String retval = null;
-
-        Variable crsVar = null;
-        for (Variable var : netCDFDataset.getVariables()) {
-            if (var.getFullName().equalsIgnoreCase(varName)) {
-                crsVar = var;
-                break;
-            }
-        }
-        
-        if (crsVar != null) {
-            for (Attribute attr : crsVar.getAttributes()) {
-                if (attr.getName().toLowerCase().contains("code")) {
-                    retval = attr.getValue(0).toString();
-                    break;
-                }
-            }
-        }
-        
-        return retval;
-    }
-    
     /**
      * 
      * @return 
@@ -626,7 +679,6 @@ public abstract class SOSBaseRequestHandler {
     public ArrayList<String> getCoordinateNames() {
         ArrayList<String> retval = new ArrayList<String>();
         for (CoordinateTransform ct : netCDFDataset.getCoordinateTransforms()) {
-            System.out.println(ct.getName());
             retval.add(ct.getName());
         }
         return retval;
@@ -670,10 +722,82 @@ public abstract class SOSBaseRequestHandler {
     public static String formatDegree(double degree) {
         return FORMAT_DEGREE.format(degree);
     }
-
-    private static String formatDateTimeISO(Date date) {
-        // assuming not thread safe...  true?
-        return (new DateFormatter()).toDateTimeStringISO(date);
+    
+    public String getTitle() {
+        return title;
+    }
+    
+    public String getDescription() {
+        return description;
+    }
+    
+    public String getFeatureType() {
+        return featureType;
+    }
+    
+    /**
+     * Attempts to find an attribute from a given variable
+     * @param variable variable to look in for the attribute
+     * @param attributeName attribute with value desired
+     * @param defaultValue default value if attribute does not exist
+     * @return the string value of the attribute if exists otherwise defaultValue
+     */
+    public static String getValueFromVariableAttribute(VariableSimpleIF variable, String attributeName, String defaultValue) {
+        Attribute attr = variable.findAttributeIgnoreCase(attributeName);
+        if (attr != null) {
+            return attr.getStringValue();
+        }
+        return defaultValue;
+    }
+    
+    /**
+     * Get all of the data variables from the dataset. Removes any axis variables or
+     * variables that are not strictly measurements.
+     * @return list of variable interfaces
+     */
+    public List<VariableSimpleIF> getDataVariables() {
+        List<VariableSimpleIF> retval = ListComprehension.map(this.featureDataset.getDataVariables(), new ListComprehension.Func<VariableSimpleIF, VariableSimpleIF>() {
+            public VariableSimpleIF apply(VariableSimpleIF in) {
+                // check for direct name comparisons
+                for (String name : NON_DATAVAR_NAMES) {
+                    String sname = in.getShortName().toLowerCase();
+                    if (sname.equalsIgnoreCase(name))
+                        return null;
+                }
+                return in;
+            }
+        });
+        retval = ListComprehension.filterOut(retval, null);
+        // get any ancillary variables from the current data variables
+        List<String> ancillaryVariables = ListComprehension.map(retval, new ListComprehension.Func<VariableSimpleIF, String>() {
+           public String apply(VariableSimpleIF in) {
+               Attribute av = in.findAttributeIgnoreCase("ancillary_variables");
+               if (av != null)
+                   return av.getStringValue();
+               return null;
+           } 
+        });
+        final List<String> ancillaryVariablesF = ListComprehension.filterOut(ancillaryVariables, null);
+        // remove any ancillary variables from the current retval list
+        retval = ListComprehension.map(retval, new ListComprehension.Func<VariableSimpleIF, VariableSimpleIF>() {
+           public VariableSimpleIF apply(VariableSimpleIF in) {
+                List<Boolean> add = ListComprehension.map(ancillaryVariablesF, in, new ListComprehension.Func2P<String, VariableSimpleIF, Boolean>() {
+                  public Boolean apply(String sin, VariableSimpleIF vin) {
+                      if (sin.equals(vin.getShortName()))
+                          return false;
+                      return true;
+                  }
+               });
+                // filter out all of the 'trues' in the list, if there are any 'falses' left, then the
+                // variable should not be in the final list
+               add = ListComprehension.filterOut(add, true);
+               if (add.size() > 0)
+                   return null;
+               
+               return in;
+           } 
+        });
+        return ListComprehension.filterOut(retval, null);
     }
 
 }

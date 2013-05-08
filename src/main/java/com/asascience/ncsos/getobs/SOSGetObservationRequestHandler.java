@@ -2,15 +2,15 @@ package com.asascience.ncsos.getobs;
 
 import com.asascience.ncsos.cdmclasses.*;
 import com.asascience.ncsos.outputformatter.GetCapsOutputter;
-import com.asascience.ncsos.outputformatter.OosTethysSwe;
+import com.asascience.ncsos.outputformatter.IoosSos10;
 import com.asascience.ncsos.outputformatter.OosTethysSweV2;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
+import com.asascience.ncsos.util.ListComprehension;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import ucar.ma2.DataType;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
 import ucar.nc2.constants.AxisType;
@@ -33,6 +33,10 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     private String contentType;
     
     private static final String FILL_VALUE_NAME = "_FillValue";
+    private static final String IOOSOM1_0_0 = "text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0\"";
+    private static final String OM1_0_0 = "text/xml;subtype=\"om/1.0.0\"";
+    
+    private final List<String> eventTimes;
 
     /**
      * SOS get obs request handler
@@ -52,11 +56,19 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             Map<String, String> latLonRequest) throws IOException {
         super(netCDFDataset);
         
+        if (eventTime != null && eventTime.length > 0)
+            eventTimes = Arrays.asList(eventTime);
+        else
+            eventTimes = new ArrayList<String>();
+        
         // set up our formatter
-        if(outputFormat.equalsIgnoreCase("text/xml;subtype=\"om/1.0.0\"")) {
+        if(outputFormat.equalsIgnoreCase(OM1_0_0)) {
             contentType = "text/xml";
 //            output = new OosTethysSwe(this.obsProperties, getFeatureDataset(), CDMDataSet, netCDFDataset);
             output = new OosTethysSweV2(this);
+        } else if (outputFormat.equalsIgnoreCase(IOOSOM1_0_0)) {
+            contentType = "text/xml";
+            output = new IoosSos10(this);
         } else {
             _log.error("Uknown/Unhandled responseFormat: " + outputFormat);
             output = new GetCapsOutputter();
@@ -89,8 +101,13 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         this.obsProperties = checkNetcdfFileForAxis(heightAxis, variableNames);
         
         // get all station names if 'network-all'
-        if (requestedStationNames.length == 1 && requestedStationNames[0].equalsIgnoreCase("network-all")) {
-            requestedStationNames = getStationNames().values().toArray(new String[getStationNames().values().size()]);
+        try {
+            if (requestedStationNames.length == 1 && requestedStationNames[0].equalsIgnoreCase("network-all")) {
+                requestedStationNames = getStationNames().values().toArray(new String[getStationNames().values().size()]);
+            }
+        } catch (Exception ex) {
+            _log.error(ex.toString());
+            requestedStationNames = null;
         }
         
         this.procedures = requestedStationNames;
@@ -210,6 +227,29 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     }
     
     /**
+     * Returns the 'standard_name' attribute of a variable, if it exists
+     * @param varName the name of the variable
+     * @return the 'standard_name' if it exists, otherwise ""
+     */
+    public String getVariableStandardName(String varName) {
+        String retval = "unknown";
+        
+        for (Variable var : netCDFDataset.getVariables()) {
+            if (varName.equalsIgnoreCase(var.getFullName())) {
+                Attribute attr = var.findAttribute("standard_name");
+                if (attr != null)
+                    retval = attr.getStringValue();
+            }
+        }
+        
+        return retval;
+    }
+    
+    public List<String> getRequestedEventTimes() {
+        return this.eventTimes;
+    }
+    
+    /**
      * Gets the dataset wrapped by the cdm feature type giving multiple easy to 
      * access functions
      * @return dataset wrapped by iStationData
@@ -258,6 +298,17 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     
     public String getEndTime(int relIndex) {
         return CDMDataSet.getTimeEnd(relIndex);
+    }
+    
+    public List<String> getRequestedObservedProperties() {
+        CoordinateAxis heightAxis = netCDFDataset.findCoordinateAxis(AxisType.Height);
+        
+        List<String> retval = Arrays.asList(obsProperties);
+        
+        if (heightAxis != null)
+            retval = ListComprehension.filterOut(retval, heightAxis.getShortName());
+        
+        return retval;
     }
     
     public String[] getObservedProperties() {

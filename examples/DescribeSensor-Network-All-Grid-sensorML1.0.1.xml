@@ -2,59 +2,151 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1" xmlns:gml="http://www.opengis.net/gml"
     xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
-    xmlns:sos="http://www.opengis.net/sensorML/1.0.1"
     xmlns:swe="http://www.opengis.net/swe/1.0.1"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
     <sml:member>
-        <sml:System gml:id="network-all">
-            <gml:description/>
+        <sml:System>
+            <gml:description>no description</gml:description>
+            <gml:name>urn:ioos:network:authority:all</gml:name>
+            <gml:boundedBy>
+                <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                    <gml:lowerCorner>-90.0 -180.0</gml:lowerCorner>
+                    <gml:upperCorner>90.0 180.0</gml:upperCorner>
+                </gml:Envelope>
+            </gml:boundedBy>
             <sml:identification>
                 <sml:IdentifierList>
-                    <sml:identifier name="NetworkId">
-                        <sml:Term definition="">
-                            <sml:value>urn:ioos:sos:network:all</sml:value>
+                    <sml:identifier name="networkID">
+                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/networkID">
+                            <sml:value>urn:ioos:network:authority:all</sml:value>
                         </sml:Term>
                     </sml:identifier>
-                    <sml:identifier name="Short Name">
-                        <sml:Term definition="urn:ogc:identifier:OGC:shortName">
-                            <sml:value>all</sml:value>
+                    <sml:identifier name="shortName">
+                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/shortName">
+                            <sml:value>SOS station assets collection of the dataset</sml:value>
                         </sml:Term>
                     </sml:identifier>
-                    <sml:identifier name="Long Name">
-                        <sml:Term definition="urn:ogc:def:identifier:OGC:longName">
-                            <sml:value>All stations in the dataset</sml:value>
+                    <sml:identifier name="longName">
+                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/longName">
+                            <sml:value>urn:ioos:network:authority:all Collaction of all station assets available in dataset</sml:value>
                         </sml:Term>
                     </sml:identifier>
                 </sml:IdentifierList>
             </sml:identification>
-            <sml:history>2003-04-07 12:12:50 - created by gribtocdl</sml:history>
+            <sml:classification>
+                <sml:ClassifierList>
+                    <sml:classifier name="platformType">
+                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/platformType">
+                            <sml:codeSpace xlink:href="http://mmisw.org/ont/ioos/platform"/>
+                            <sml:value>UNKNOWN</sml:value>
+                        </sml:Term>
+                    </sml:classifier>
+                    <sml:classifier name="operatorSector">
+                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/operatorSector">
+                            <sml:codeSpace xlink:href="http://mmisw.org/ont/ioos/sector"/>
+                            <sml:value>UNKNOWN</sml:value>
+                        </sml:Term>
+                    </sml:classifier>
+                    <sml:classifier name="publisher">
+                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/publisher">
+                            <sml:codeSpace xlink:href="http://mmisw.org/ont/ioos/organization"/>
+                            <sml:value>UNKNOWN</sml:value>
+                        </sml:Term>
+                    </sml:classifier>
+                    <sml:classifier name="parentNetwork">
+                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/parentNetwork">
+                            <sml:codeSpace xlink:href="http://mmisw.org/ont/ioos/organization"/>
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:classifier>
+                </sml:ClassifierList>
+            </sml:classification>
+            <sml:validTime>
+                <gml:TimePeriod>
+                    <gml:beginPosition>2012-06-27T00:00:00Z</gml:beginPosition>
+                    <gml:endPosition>2012-06-27T00:00:00Z</gml:endPosition>
+                </gml:TimePeriod>
+            </sml:validTime>
+            <sml:contact>
+                <sml:ContactList>
+                    <sml:member xlink:role="http://mmisw.org/ont/ioos/definition/operator">
+                        <sml:ResponseibleParty>
+                            <sml:organizationName>UNKNOWN</sml:organizationName>
+                            <sml:contactInfo>
+                                <sml:phone/>
+                                <sml:address>
+                                    <sml:country>UNKNOWN</sml:country>
+                                    <sml:electronicMailAddress>UNKNOWN</sml:electronicMailAddress>
+                                </sml:address>
+                            </sml:contactInfo>
+                        </sml:ResponseibleParty>
+                    </sml:member>
+                    <sml:member xlink:role="http://mmisw.org/on/ioos/definition/publisher">
+                        <sml:ResponseibleParty>
+                            <sml:organizationName>UNKNOWN</sml:organizationName>
+                            <sml:contactInfo>
+                                <sml:phone/>
+                                <sml:address>
+                                    <sml:country>UNKNOWN</sml:country>
+                                    <sml:electronicMailAddress>UNKNOWN</sml:electronicMailAddress>
+                                </sml:address>
+                            </sml:contactInfo>
+                        </sml:ResponseibleParty>
+                    </sml:member>
+                </sml:ContactList>
+            </sml:contact>
+            <sml:history/>
+            <sml:documentation/>
             <sml:components>
                 <sml:ComponentList>
-                    <sml:System gml:id="station-Grid0">
-                        <sml:identification>
-                            <sml:IdentifierList>
-                                <sml:identifier name="StationId">
-                                    <sml:Term definition="stationID">
-                                    <sml:value>urn:ioos:station:sos:Grid0</sml:value>
+                    <sml:component name="Grid0">
+                        <sml:System>
+                            <sml:identification>
+                                <sml:IdentifierList>
+                                    <sml:identifier name="stationID">
+                                    <sml:Term definition="http://mmisw.org/ont/ioos/definition/stationID">
+                                    <sml:value>urn:ioos:network:authorityGrid0</sml:value>
                                     </sml:Term>
-                                </sml:identifier>
-                                <sml:identifier name="long_name">
-                                    <sml:Term definition="">
-                                    <sml:value>grid name</sml:value>
+                                    </sml:identifier>
+                                    <sml:identifier name="shortName">
+                                    <sml:Term definition="http://mmisw.org/ont/ioos/definition/shortName">
+                                    <sml:value>UNKNOWN</sml:value>
                                     </sml:Term>
-                                </sml:identifier>
-                            </sml:IdentifierList>
-                        </sml:identification>
-                        <sml:location>
-                            <gml:boundedBy>
-                                <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                    </sml:identifier>
+                                    <sml:identifier name="longName">
+                                    <sml:Term definition="http://mmisw.org/ont/ioos/definition/longName">
+                                    <sml:value>UNKNOWN</sml:value>
+                                    </sml:Term>
+                                    </sml:identifier>
+                                </sml:IdentifierList>
+                            </sml:identification>
+                            <sml:validTime>
+                                <gml:TimePeriod>
+                                    <gml:beginPosition>2012-06-27T00:00:00Z</gml:beginPosition>
+                                    <gml:endPosition>2012-06-27T00:00:00Z</gml:endPosition>
+                                </gml:TimePeriod>
+                            </sml:validTime>
+                            <sml:location>
+                                <gml:boundedBy srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
                                     <gml:lowerCorner>-90.0 -180.0</gml:lowerCorner>
                                     <gml:upperCorner>90.0 180.0</gml:upperCorner>
-                                </gml:Envelope>
-                            </gml:boundedBy>
-                        </sml:location>
-                    </sml:System>
+                                </gml:boundedBy>
+                            </sml:location>
+                            <sml:outputs>
+                                <sml:OutputList>
+                                    <sml:output name="SST" xlink:title="urn:ioos:network:authority:Grid0:SST">
+                                    <swe:Quantity definition="http://mmisw.org/ont/cf/parameter/sea_water_temperature">
+                                    <gml:metaDataProperty>
+                                    <gml:name codeSpace="http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#discrete-sampling-geometries"/>
+                                    </gml:metaDataProperty>
+                                    <swe:uom code="degK"/>
+                                    </swe:Quantity>
+                                    </sml:output>
+                                </sml:OutputList>
+                            </sml:outputs>
+                        </sml:System>
+                    </sml:component>
                 </sml:ComponentList>
             </sml:components>
         </sml:System>

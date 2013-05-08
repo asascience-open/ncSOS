@@ -1,12 +1,20 @@
-#NcSOS - RC2
+#NcSOS - 4.3.16
 
 NcSOS adds an OGC SOS service to your existing THREDDS server.
 
-You will need a working THREDDS installation of at least 4.3 to run NcSOS.
+You will need a working THREDDS installation of at least 4.3.16 to run NcSOS.
 
 Visit http://github.com/asascience-open/ncSOS/wiki for installation and usage instructions.
 
 ##ChangeLog
+
+###4.3.16
+* Version number aligns with THREDDS versioning
+* Updated DescribeSensor formatting to match new IOOS DescribeSensorPlatform and DescribeSensorNetwork
+* Added new response format for time series datasets
+* New IOOS reponse format for GetObservation requests
+* Templates for new IOOS formats found here: https://code.google.com/p/ioostech/source/browse/trunk/templates/Milestone1.0
+* New system for logging missing variables and attributes in datasets 
 
 ###RC2:
 * Expanded metadata reporting from files.

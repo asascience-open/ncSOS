@@ -10,7 +10,7 @@
 
   <groupId>com.asascience</groupId>
   <artifactId>ncsos</artifactId>
-  <version>RC2-SNAPSHOT</version>
+  <version>4.3.16</version>
   <packaging>jar</packaging>
 
   <name>ncsos</name>
@@ -71,6 +71,7 @@
 	<dependency>
 	  <groupId>edu.ucar</groupId>
 	  <artifactId>netcdf</artifactId>
+	  <version>4.3.16</version>
 	</dependency>
 	<dependency>
 	  <groupId>javax.servlet</groupId>
@@ -99,6 +100,13 @@
   
   <build>
 	<resources>
+    <resource>
+      <targetPath>resources/</targetPath>
+      <directory>${basedir}/resources</directory>
+      <includes>
+        <include>cf_parameters.txt</include>
+      </includes>
+    </resource>
     <resource>
       <targetPath>templates/</targetPath>
       <directory>${basedir}/resources/templates</directory>

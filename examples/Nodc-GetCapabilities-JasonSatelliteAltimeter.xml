@@ -84,8 +84,8 @@
             <ows:Parameter name="eventTime" use="optional">
                 <ows:AllowedValues>
                     <ows:Range/>
-                    <ows:MinimumValue>2011-01-20T05:03:00.463Z</ows:MinimumValue>
-                    <ows:MaximumValue>2011-01-20T05:03:02.503Z</ows:MaximumValue>
+                    <ows:MinimumValue>2011-01-20T05:03:00Z</ows:MinimumValue>
+                    <ows:MaximumValue>2011-01-20T05:03:02Z</ows:MaximumValue>
                 </ows:AllowedValues>
             </ows:Parameter>
             <ows:Parameter name="responseFormat" use="required">
@@ -97,23 +97,23 @@
         <ows:Operation name="DescribeSensor">
             <ows:DCP>
                 <ows:HTTP>
-                    <ows:Get/>
+                    <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/nodc/jason2_satelliteAltimeter.nc"/>
                 </ows:HTTP>
             </ows:DCP>
             <ows:Parameter name="procedure" use="required">
                 <ows:AllowedValues>
-                    <ows:Value>urn:ioos:sos:network:all</ows:Value>
-                    <ows:Value>urn:ioos:station:sos:unknown</ows:Value>
-                    <ows:Value>urn:ioos:sensor:sos:unknown:surface_type</ows:Value>
-                    <ows:Value>urn:ioos:sensor:sos:unknown:orb_state_flag_rest</ows:Value>
-                    <ows:Value>urn:ioos:sensor:sos:unknown:ecmwf_meteo_map_avail</ows:Value>
-                    <ows:Value>urn:ioos:sensor:sos:unknown:interp_flag_meteo</ows:Value>
-                    <ows:Value>urn:ioos:sensor:sos:unknown:range_numval_ku</ows:Value>
-                    <ows:Value>urn:ioos:sensor:sos:unknown:model_wet_tropo_corr</ows:Value>
-                    <ows:Value>urn:ioos:sensor:sos:unknown:atmos_corr_sig0_ku</ows:Value>
-                    <ows:Value>urn:ioos:sensor:sos:unknown:tb_187</ows:Value>
-                    <ows:Value>urn:ioos:sensor:sos:unknown:rad_water_vapor</ows:Value>
-                    <ows:Value>urn:ioos:sensor:sos:unknown:ssha</ows:Value>
+                    <ows:Value>urn:ioos:network:authority:all</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:unknown</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:unknown:surface_type</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:unknown:orb_state_flag_rest</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:unknown:ecmwf_meteo_map_avail</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:unknown:interp_flag_meteo</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:unknown:range_numval_ku</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:unknown:model_wet_tropo_corr</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:unknown:atmos_corr_sig0_ku</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:unknown:tb_187</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:unknown:rad_water_vapor</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:unknown:ssha</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
             <ows:Parameter name="responseformat" use="required">
@@ -137,7 +137,7 @@
         <sos:ObservationOfferingList>
             <sos:ObservationOffering gml:id="network-all">
                 <gml:description>All stations in the netCDF dataset.</gml:description>
-                <gml:name>urn:ioos:sos:network:all</gml:name>
+                <gml:name>urn:ioos:network:authority:all</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
@@ -147,11 +147,11 @@
                 </gml:boundedBy>
                 <sos:time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
-                        <gml:beginPosition>2011-01-20T05:03:00.463Z</gml:beginPosition>
-                        <gml:endPosition>2011-01-20T05:03:02.503Z</gml:endPosition>
+                        <gml:beginPosition>2011-01-20T05:03:00Z</gml:beginPosition>
+                        <gml:endPosition>2011-01-20T05:03:02Z</gml:endPosition>
                     </gml:TimePeriod>
                 </sos:time>
-                <sos:procedure xlink:href="urn:ioos:station:sos:unknown"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:unknown"/>
                 <sos:observedProperty xlink:href="surface_type"/>
                 <sos:observedProperty xlink:href="orb_state_flag_rest"/>
                 <sos:observedProperty xlink:href="ecmwf_meteo_map_avail"/>
@@ -162,13 +162,13 @@
                 <sos:observedProperty xlink:href="tb_187"/>
                 <sos:observedProperty xlink:href="rad_water_vapor"/>
                 <sos:observedProperty xlink:href="ssha"/>
-                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:unknown"/>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:authority:unknown"/>
                 <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
                 <sos:responseModel>om:ObservationCollection</sos:responseModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="unknown">
-                <gml:name>urn:ioos:station:sos:unknown</gml:name>
+                <gml:name>urn:ioos:station:authority:unknown</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
@@ -178,11 +178,11 @@
                 </gml:boundedBy>
                 <sos:time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
-                        <gml:beginPosition>2011-01-20T05:03:00.463Z</gml:beginPosition>
-                        <gml:endPosition>2011-01-20T05:03:02.503Z</gml:endPosition>
+                        <gml:beginPosition>2011-01-20T05:03:00Z</gml:beginPosition>
+                        <gml:endPosition>2011-01-20T05:03:02Z</gml:endPosition>
                     </gml:TimePeriod>
                 </sos:time>
-                <sos:featureOfInterest xlink:href="urn:ioos:station:sos:unknown"/>
+                <sos:featureOfInterest xlink:href="urn:ioos:station:authority:unknown"/>
                 <sos:observedProperty xlink:href="surface_type"/>
                 <sos:observedProperty xlink:href="orb_state_flag_rest"/>
                 <sos:observedProperty xlink:href="ecmwf_meteo_map_avail"/>
@@ -193,17 +193,17 @@
                 <sos:observedProperty xlink:href="tb_187"/>
                 <sos:observedProperty xlink:href="rad_water_vapor"/>
                 <sos:observedProperty xlink:href="ssha"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:sos:unknown:surface_type"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:sos:unknown:orb_state_flag_rest"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:sos:unknown:ecmwf_meteo_map_avail"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:sos:unknown:interp_flag_meteo"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:sos:unknown:range_numval_ku"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:sos:unknown:model_wet_tropo_corr"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:sos:unknown:atmos_corr_sig0_ku"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:sos:unknown:tb_187"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:sos:unknown:rad_water_vapor"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:sos:unknown:ssha"/>
-                <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
+                <sos:procedure xlink:href="urn:ioos:sensor:authority:unknown:surface_type"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:authority:unknown:orb_state_flag_rest"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:authority:unknown:ecmwf_meteo_map_avail"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:authority:unknown:interp_flag_meteo"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:authority:unknown:range_numval_ku"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:authority:unknown:model_wet_tropo_corr"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:authority:unknown:atmos_corr_sig0_ku"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:authority:unknown:tb_187"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:authority:unknown:rad_water_vapor"/>
+                <sos:procedure xlink:href="urn:ioos:sensor:authority:unknown:ssha"/>
+                <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
                 <sos:responseModel>om:ObservationCollection</sos:responseModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>

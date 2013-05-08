@@ -75,7 +75,7 @@ public class SosController implements ISosContoller {
             Writer writer = res.getWriter();
             //TODO create new service???
             SOSParser md = new SOSParser();
-            respMap = md.enhance(dataset, req.getQueryString(), req.getRequestURL().toString(),tempdir);
+            respMap = md.enhanceGETRequest(dataset, req.getQueryString(), req.getRequestURL().toString(),tempdir);
             res.setContentType(respMap.get("responseContentType").toString());
             
             // tell our handler to write out the response
@@ -83,13 +83,12 @@ public class SosController implements ISosContoller {
             output.writeOutput(writer);
             
             // log and flush writer
-            _log.info(req.getRequestURL().toString()+"?"+req.getQueryString().toString());
+//            _log.info(req.getRequestURL().toString()+"?"+req.getQueryString().toString());
             writer.flush();
             writer.close();
 
         } catch (Exception e) {
             _log.error(e.getMessage());
-
             //close the dataset remove memory hang
         } finally {
             DatasetHandlerAdapter.closeDataset(dataset);

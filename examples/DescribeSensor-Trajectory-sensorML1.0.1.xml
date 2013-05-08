@@ -2,102 +2,165 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sml:SensorML version="1.0.1" xmlns:gml="http://www.opengis.net/gml"
     xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
-    xmlns:sos="http://www.opengis.net/sensorML/1.0.1"
     xmlns:swe="http://www.opengis.net/swe/1.0.1"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd">
     <sml:member>
-        <sml:System gml:id="station-Trajectory3">
+        <sml:System>
             <gml:description>no description</gml:description>
+            <gml:name>urn:ioos:station:authority:Trajectory3</gml:name>
             <sml:identification>
                 <sml:IdentifierList>
-                    <sml:identifier name="StationId">
+                    <sml:identifier name="stationID">
                         <sml:Term definition="http://mmisw.org/ont/ioos/definition/stationID">
-                            <sml:value>urn:ioos:station:sos:Trajectory3</sml:value>
+                            <sml:value>urn:ioos:station:authority:Trajectory3</sml:value>
                         </sml:Term>
                     </sml:identifier>
-                    <sml:identifier name="long_name">
-                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/long_name">
-                            <sml:value>trajectory name</sml:value>
+                    <sml:identifier name="shortName">
+                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/shortName">
+                            <sml:value>UNKNOWN</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="longName">
+                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/longName">
+                            <sml:value>UNKNOWN</sml:value>
                         </sml:Term>
                     </sml:identifier>
                 </sml:IdentifierList>
             </sml:identification>
+            <sml:classification>
+                <sml:ClassifierList>
+                    <sml:classifier name="platformType">
+                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/platformType">
+                            <sml:codeSpace xlink:href="http://mmisw.org/ont/ioos/platform"/>
+                            <sml:value>UNKNOWN</sml:value>
+                        </sml:Term>
+                    </sml:classifier>
+                    <sml:classifier name="operatorSector">
+                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/operatorSector">
+                            <sml:codeSpace xlink:href="http://mmisw.org/ont/ioos/sector"/>
+                            <sml:value>UNKNOWN</sml:value>
+                        </sml:Term>
+                    </sml:classifier>
+                    <sml:classifier name="publisher">
+                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/publisher">
+                            <sml:codeSpace xlink:href="http://mmisw.org/ont/ioos/organization"/>
+                            <sml:value>UNKNOWN</sml:value>
+                        </sml:Term>
+                    </sml:classifier>
+                    <sml:classifier name="parentNetwork">
+                        <sml:Term definition="http://mmisw.org/ont/ioos/definition/parentNetwork">
+                            <sml:codeSpace xlink:href="http://mmisw.org/ont/ioos/organization"/>
+                            <sml:value/>
+                        </sml:Term>
+                    </sml:classifier>
+                </sml:ClassifierList>
+            </sml:classification>
+            <sml:validTime>
+                <gml:TimePeriod>
+                    <gml:beginPosition/>
+                    <gml:endPosition/>
+                </gml:TimePeriod>
+            </sml:validTime>
+            <sml:contact>
+                <sml:ContactList>
+                    <sml:member xlink:role="http://mmisw.org/ont/ioos/definition/operator">
+                        <sml:ResponseibleParty>
+                            <sml:organizationName>UNKNOWN</sml:organizationName>
+                            <sml:contactInfo>
+                                <sml:phone/>
+                                <sml:address>
+                                    <sml:country>UNKNOWN</sml:country>
+                                    <sml:electronicMailAddress>UNKNOWN</sml:electronicMailAddress>
+                                </sml:address>
+                            </sml:contactInfo>
+                        </sml:ResponseibleParty>
+                    </sml:member>
+                    <sml:member xlink:role="http://mmisw.org/on/ioos/definition/publisher">
+                        <sml:ResponseibleParty>
+                            <sml:organizationName>UNKNOWN</sml:organizationName>
+                            <sml:contactInfo>
+                                <sml:phone/>
+                                <sml:address>
+                                    <sml:country>UNKNOWN</sml:country>
+                                    <sml:electronicMailAddress>UNKNOWN</sml:electronicMailAddress>
+                                </sml:address>
+                            </sml:contactInfo>
+                        </sml:ResponseibleParty>
+                    </sml:member>
+                </sml:ContactList>
+            </sml:contact>
+            <sml:history/>
+            <sml:documentation/>
             <sml:location>
-                <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
-                    <gml:posList srsDimension="2">
-5.429996490478516 -35.31080627441406
-20.97307586669922 -3.3191161155700684
-16.214902877807617 -23.528024673461914
-17.99095916748047 -2.251742362976074
-24.848644256591797 -24.818201065063477
-37.54940414428711 -22.5494441986084
-7.647387981414795 -52.325775146484375
-23.969743728637695 -73.61405944824219
-43.733821868896484 -54.53622817993164
-43.848636627197266 -23.0891056060791
-43.52723693847656 -66.7712631225586
-37.94393539428711 -37.70144271850586
-29.468849182128906 -51.30703353881836
-33.96772384643555 -54.1752815246582
-14.49646282196045 -47.46202087402344
-6.266347408294678 -27.29397964477539
-24.81795310974121 -20.56072235107422
-40.85786437988281 -34.165096282958984
-11.11335563659668 -51.93360900878906
-38.4896125793457 -43.92966079711914
-4.20206880569458 -26.346349716186523
-15.37482738494873 -30.54296112060547
-33.324378967285156 -44.77650833129883
-21.216032028198242 -61.54010009765625
-21.848451614379883 -36.71026611328125
-5.561836242675781 -67.78382873535156
-22.71580696105957 -70.10535430908203
-14.031022071838379 -55.781227111816406
-25.98822593688965 -28.10633087158203
-29.4498233795166 -57.12901306152344
-38.05986022949219 -6.525465488433838
-19.847801208496094 -50.096900939941406
-25.333877563476562 -23.54252052307129
-32.562232971191406 -32.43115997314453
-36.20415115356445 -38.580936431884766
-6.930793285369873 -40.376441955566406
-6.302959442138672 -23.886600494384766
-1.0819567441940308 -57.76057052612305
-17.766456604003906 -42.80635452270508
-23.058305740356445 -4.686180114746094
-24.051496505737305 -74.40155792236328
-8.259764671325684 -66.04822540283203
-</gml:posList>
-                </gml:LineString>
+                <gml:LineString srsName="http://www.opengis.net/def/crs/EPSG/0/4326"/>
             </sml:location>
-            <sml:position>
-                <sml:dataDefinition/>
-            </sml:position>
-            <sml:positions>
-                <sml:PositionList/>
-            </sml:positions>
-            <sml:timePosition>
-                <sml:Time/>
-            </sml:timePosition>
             <sml:components>
                 <sml:ComponentList>
+                    <sml:component name="Sensor trajectory_info">
+                        <sml:System gml:id="sensor-trajectory_info">
+                            <gml:description>trajectory info</gml:description>
+                            <sml:identification xlink:href="urn:ioos:sensor:authority:Trajectory3:trajectory_info"/>
+                            <sml:documentation xlink:href="resources/datasets/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc?service=SOS&amp;request=DescribeSensor&amp;version=1.0.0&amp;outputFormat=text/xml;subtype=&quot;sensorML/1.0.1&quot;&amp;procedure=urn:ioos:sensor:authority:Trajectory3:trajectory_info"/>
+                            <sml:outputs>
+                                <sml:OutputList>
+                                    <sml:output name="trajectory info">
+                                    <swe:Quantity definition="http://mmisw.org/ont/ioos/parameter/UNKNOWN">
+                                    <swe:uom code="UNKNOWN"/>
+                                    </swe:Quantity>
+                                    </sml:output>
+                                </sml:OutputList>
+                            </sml:outputs>
+                        </sml:System>
+                    </sml:component>
                     <sml:component name="Sensor temperature">
                         <sml:System gml:id="sensor-temperature">
-                            <sml:identification xlink:href="urn:ioos:station:sos:Trajectory3:temperature"/>
-                            <sml:documentation xlink:href="resources/datasets/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc?request=DescribeSensor&amp;service=sos&amp;version=1.0.0&amp;responseformat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%22&amp;procedure=urn:ioos:station:sos:Trajectory3:temperature"/>
                             <gml:description>Air Temperature</gml:description>
+                            <sml:identification xlink:href="urn:ioos:sensor:authority:Trajectory3:temperature"/>
+                            <sml:documentation xlink:href="resources/datasets/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc?service=SOS&amp;request=DescribeSensor&amp;version=1.0.0&amp;outputFormat=text/xml;subtype=&quot;sensorML/1.0.1&quot;&amp;procedure=urn:ioos:sensor:authority:Trajectory3:temperature"/>
+                            <sml:outputs>
+                                <sml:OutputList>
+                                    <sml:output name="Air Temperature">
+                                    <swe:Quantity definition="http://mmisw.org/ont/cf/parameter/air_temperature">
+                                    <swe:uom code="Celsius"/>
+                                    </swe:Quantity>
+                                    </sml:output>
+                                </sml:OutputList>
+                            </sml:outputs>
                         </sml:System>
                     </sml:component>
                     <sml:component name="Sensor humidity">
                         <sml:System gml:id="sensor-humidity">
-                            <sml:identification xlink:href="urn:ioos:station:sos:Trajectory3:humidity"/>
-                            <sml:documentation xlink:href="resources/datasets/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc?request=DescribeSensor&amp;service=sos&amp;version=1.0.0&amp;responseformat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%22&amp;procedure=urn:ioos:station:sos:Trajectory3:humidity"/>
                             <gml:description>Humidity</gml:description>
+                            <sml:identification xlink:href="urn:ioos:sensor:authority:Trajectory3:humidity"/>
+                            <sml:documentation xlink:href="resources/datasets/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc?service=SOS&amp;request=DescribeSensor&amp;version=1.0.0&amp;outputFormat=text/xml;subtype=&quot;sensorML/1.0.1&quot;&amp;procedure=urn:ioos:sensor:authority:Trajectory3:humidity"/>
+                            <sml:outputs>
+                                <sml:OutputList>
+                                    <sml:output name="Humidity">
+                                    <swe:Quantity definition="http://mmisw.org/ont/cf/parameter/specific_humidity">
+                                    <swe:uom code="Percent"/>
+                                    </swe:Quantity>
+                                    </sml:output>
+                                </sml:OutputList>
+                            </sml:outputs>
                         </sml:System>
                     </sml:component>
                 </sml:ComponentList>
             </sml:components>
+            <sml:capabilities name="networkProcedures">
+                <swe:SimpleDataRecord>
+                    <gml:metaDataProperty
+                        xlink:href="urn:ioos:network:authority:all" xlink:title="network-all"/>
+                </swe:SimpleDataRecord>
+            </sml:capabilities>
         </sml:System>
     </sml:member>
+    <sml:capabilities name="ioosServiceMetadata">
+        <swe:SimpleDataRecord>
+            <gml:metaDataProperty
+                xlink:href="http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0" xlink:title="ioosTemplateVersion">
+                <gml:version>1.0</gml:version>
+            </gml:metaDataProperty>
+        </swe:SimpleDataRecord>
+    </sml:capabilities>
 </sml:SensorML>
