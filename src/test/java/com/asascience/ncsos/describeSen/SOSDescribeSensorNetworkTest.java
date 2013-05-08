@@ -26,7 +26,7 @@ public class SOSDescribeSensorNetworkTest {
     private static String outputDir = null;
     private static String baseLocalDir = null;
     private static String exampleOutputDir = null;
-    private static String query = "request=DescribeSensor&service=sos&version=1.0.0&procedure=urn:ioos:network:sos:all&responseformat=";
+    private static String query = "request=DescribeSensor&service=sos&version=1.0.0&procedure=urn:ioos:network:authority:all&responseformat=";
     
     private static final String data_folder = "resources/datasets/";
     
@@ -146,7 +146,7 @@ public class SOSDescribeSensorNetworkTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + ts_test_set1);
             SOSParser parser = new SOSParser();
             Writer writer = new CharArrayWriter();
-            writeOutput(parser.enhance(dataset, query, ts_test_set1), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, query, ts_test_set1), writer);
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
             // assert(s)
             assertFalse("exception in output", writer.toString().contains("Exception"));
@@ -168,7 +168,7 @@ public class SOSDescribeSensorNetworkTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + ts_test_set2);
             SOSParser parser = new SOSParser();
             Writer writer = new CharArrayWriter();
-            writeOutput(parser.enhance(dataset, query, ts_test_set2), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, query, ts_test_set2), writer);
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
             // assert(s)
             assertFalse("exception in output", writer.toString().contains("Exception"));
@@ -188,7 +188,7 @@ public class SOSDescribeSensorNetworkTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + tsp_test_set1);
             SOSParser parser = new SOSParser();
             Writer writer = new CharArrayWriter();
-            writeOutput(parser.enhance(dataset, query, tsp_test_set1), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, query, tsp_test_set1), writer);
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
             // assert(s)
             assertFalse("exception in output", writer.toString().contains("Exception"));
@@ -210,7 +210,7 @@ public class SOSDescribeSensorNetworkTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + tsp_test_set2);
             SOSParser parser = new SOSParser();
             Writer writer = new CharArrayWriter();
-            writeOutput(parser.enhance(dataset, query, tsp_test_set2), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, query, tsp_test_set2), writer);
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
             // assert(s)
             assertFalse("exception in output", writer.toString().contains("Exception"));
@@ -230,7 +230,7 @@ public class SOSDescribeSensorNetworkTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + tsp_test_set3);
             SOSParser parser = new SOSParser();
             Writer writer = new CharArrayWriter();
-            writeOutput(parser.enhance(dataset, query, tsp_test_set3), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, query, tsp_test_set3), writer);
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
             // assert(s)
             assertFalse("exception in output", writer.toString().contains("Exception"));
@@ -250,7 +250,7 @@ public class SOSDescribeSensorNetworkTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + tsp_test_set4);
             SOSParser parser = new SOSParser();
             Writer writer = new CharArrayWriter();
-            writeOutput(parser.enhance(dataset, query, tsp_test_set4), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, query, tsp_test_set4), writer);
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
             // assert(s)
             assertFalse("exception in output", writer.toString().contains("Exception"));
@@ -270,7 +270,7 @@ public class SOSDescribeSensorNetworkTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + tsp_test_set5);
             SOSParser parser = new SOSParser();
             Writer writer = new CharArrayWriter();
-            writeOutput(parser.enhance(dataset, query, tsp_test_set5), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, query, tsp_test_set5), writer);
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
             // assert(s)
             assertFalse("exception in output", writer.toString().contains("Exception"));
@@ -290,7 +290,7 @@ public class SOSDescribeSensorNetworkTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + t_test_set1);
             SOSParser parser = new SOSParser();
             Writer writer = new CharArrayWriter();
-            writeOutput(parser.enhance(dataset, query, t_test_set1), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, query, t_test_set1), writer);
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
             // assert(s)
             assertFalse("exception in output", writer.toString().contains("Exception"));
@@ -312,7 +312,7 @@ public class SOSDescribeSensorNetworkTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + t_test_set2);
             SOSParser parser = new SOSParser();
             Writer writer = new CharArrayWriter();
-            writeOutput(parser.enhance(dataset, query, t_test_set2), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, query, t_test_set2), writer);
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
             // assert(s)
             assertFalse("exception in output", writer.toString().contains("Exception"));
@@ -332,7 +332,7 @@ public class SOSDescribeSensorNetworkTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + t_test_set3);
             SOSParser parser = new SOSParser();
             Writer writer = new CharArrayWriter();
-            writeOutput(parser.enhance(dataset, query, t_test_set3), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, query, t_test_set3), writer);
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
             // assert(s)
             assertFalse("exception in output", writer.toString().contains("Exception"));
@@ -352,7 +352,7 @@ public class SOSDescribeSensorNetworkTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + t_test_set4);
             SOSParser parser = new SOSParser();
             Writer writer = new CharArrayWriter();
-            writeOutput(parser.enhance(dataset, query, t_test_set4), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, query, t_test_set4), writer);
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
             // assert(s)
             assertFalse("exception in output", writer.toString().contains("Exception"));
@@ -372,7 +372,7 @@ public class SOSDescribeSensorNetworkTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + g_test_set1);
             SOSParser parser = new SOSParser();
             Writer writer = new CharArrayWriter();
-            writeOutput(parser.enhance(dataset, query, g_test_set1), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, query, g_test_set1), writer);
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
             // assert(s)
             assertFalse("exception in output", writer.toString().contains("Exception"));
@@ -392,7 +392,7 @@ public class SOSDescribeSensorNetworkTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + g_test_set2);
             SOSParser parser = new SOSParser();
             Writer writer = new CharArrayWriter();
-            writeOutput(parser.enhance(dataset, query, g_test_set2), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, query, g_test_set2), writer);
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
             // assert(s)
             assertFalse("exception in output", writer.toString().contains("Exception"));
@@ -414,7 +414,7 @@ public class SOSDescribeSensorNetworkTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + p_test_set1);
             SOSParser parser = new SOSParser();
             Writer writer = new CharArrayWriter();
-            writeOutput(parser.enhance(dataset, query, p_test_set1), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, query, p_test_set1), writer);
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
             // assert(s)
             assertFalse("exception in output", writer.toString().contains("Exception"));
@@ -436,7 +436,7 @@ public class SOSDescribeSensorNetworkTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + p_test_set2);
             SOSParser parser = new SOSParser();
             Writer writer = new CharArrayWriter();
-            writeOutput(parser.enhance(dataset, query, p_test_set2), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, query, p_test_set2), writer);
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
             // assert(s)
             assertFalse("exception in output", writer.toString().contains("Exception"));
@@ -456,7 +456,7 @@ public class SOSDescribeSensorNetworkTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + p_test_set3);
             SOSParser parser = new SOSParser();
             Writer writer = new CharArrayWriter();
-            writeOutput(parser.enhance(dataset, query, p_test_set3), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, query, p_test_set3), writer);
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
             // assert(s)
             assertFalse("exception in output", writer.toString().contains("Exception"));
@@ -476,7 +476,7 @@ public class SOSDescribeSensorNetworkTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + p_test_set4);
             SOSParser parser = new SOSParser();
             Writer writer = new CharArrayWriter();
-            writeOutput(parser.enhance(dataset, query, p_test_set4), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, query, p_test_set4), writer);
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
             // assert(s)
             assertFalse("exception in output", writer.toString().contains("Exception"));
@@ -496,7 +496,7 @@ public class SOSDescribeSensorNetworkTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + p_test_set5);
             SOSParser parser = new SOSParser();
             Writer writer = new CharArrayWriter();
-            writeOutput(parser.enhance(dataset, query, p_test_set5), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, query, p_test_set5), writer);
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
             // assert(s)
             assertFalse("exception in output", writer.toString().contains("Exception"));
@@ -516,7 +516,7 @@ public class SOSDescribeSensorNetworkTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + tp_test_set1);
             SOSParser parser = new SOSParser();
             Writer writer = new CharArrayWriter();
-            writeOutput(parser.enhance(dataset, query, tp_test_set1), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, query, tp_test_set1), writer);
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
             // assert(s)
             assertFalse("exception in output", writer.toString().contains("Exception"));
@@ -538,7 +538,7 @@ public class SOSDescribeSensorNetworkTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + tp_test_set2);
             SOSParser parser = new SOSParser();
             Writer writer = new CharArrayWriter();
-            writeOutput(parser.enhance(dataset, query, tp_test_set2), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, query, tp_test_set2), writer);
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
             // assert(s)
             assertFalse("exception in output", writer.toString().contains("Exception"));
@@ -558,7 +558,7 @@ public class SOSDescribeSensorNetworkTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + tp_test_set3);
             SOSParser parser = new SOSParser();
             Writer writer = new CharArrayWriter();
-            writeOutput(parser.enhance(dataset, query, tp_test_set3), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, query, tp_test_set3), writer);
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer);
             // assert(s)
             assertFalse("exception in output", writer.toString().contains("Exception"));

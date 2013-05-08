@@ -419,7 +419,6 @@ package com.asascience.ncsos.service;
 //        }
 //           
 //        //builder.append(tokenJoiner.join(valueList));
-//        // TODO:  conditional inside loop...
 //        if (tsData.getStationFeature(tsStationList.get(stNum)).size() > 1) {
 //            builder.append(" ");
 //            builder.append("\n");
@@ -529,7 +528,6 @@ package com.asascience.ncsos.service;
 //            
 //            
 //            //builder.append(tokenJoiner.join(valueList));
-//            // TODO:  conditional inside loop...
 //            if (tsProfileData.getStationProfileFeature(tsStationList.get(stNum)).size() > 1) {
 //                builder.append(" ");
 //                builder.append("\n");

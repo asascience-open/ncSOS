@@ -30,9 +30,9 @@
                     <gml:endPosition>2012-06-26T00:00:00Z</gml:endPosition>
                 </gml:TimePeriod>
             </om:samplingTime>
-            <om:procedure xlink:href="urn:ioos:station:sos:sst"/>
+            <om:procedure xlink:href="urn:ioos:station:authority:sst"/>
             <om:observedProperty xlink:href="sst"/>
-            <om:featureOfInterest xlink:href="urn:ioos:station:sos:sst"/>
+            <om:featureOfInterest xlink:href="urn:ioos:station:authority:sst"/>
             <om:result>
                 <swe:dataArray>
                     <swe:elementCount>

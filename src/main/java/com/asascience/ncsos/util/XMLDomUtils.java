@@ -23,7 +23,6 @@ import javax.xml.transform.stream.StreamResult;
  * @author abird
  */
 public class XMLDomUtils {
-//TODO add in refactored code for utils here!
 
     public static Document getTemplateDom(InputStream templateFileLocation) {
         Document doc = null;
@@ -172,11 +171,18 @@ public class XMLDomUtils {
     }
 
     //METHOD OVERRIDE-------------------------------------------------------------
-    public static Document addNodeAllOptions() {
+    public static Document addNode() {
         return null;
     }
     
-    public static Document addNodeAllOptions(Document doc, String Obs, String nodeName, String value, int stationNumber) {
+    public static Document addNode(Document doc, String parentName, Node childNode) {
+        NodeList parentList = doc.getElementsByTagName(parentName);
+        Node parent = parentList.item(0);
+        parent.appendChild(childNode);
+        return doc;
+    }
+    
+    public static Document addNode(Document doc, String Obs, String nodeName, String value, int stationNumber) {
         NodeList obsOfferingList = doc.getElementsByTagName(Obs);
         Element obsOfferEl = (Element) obsOfferingList.item(stationNumber);
 
@@ -186,7 +192,7 @@ public class XMLDomUtils {
         return doc;
     }
 
-    public static Document addNodeAllOptions(Document doc, String obs, String nodeName, int stationNumber) {
+    public static Document addNode(Document doc, String obs, String nodeName, int stationNumber) {
         NodeList obsOfferingList = doc.getElementsByTagName(obs);
         Element obsOfferEl = (Element) obsOfferingList.item(stationNumber);
         Element obsOfferingNode = doc.createElement(nodeName);
@@ -194,7 +200,7 @@ public class XMLDomUtils {
         return doc;
     }
 
-    public static Document addNodeAllOptions(Document doc, String obs, String nodeaddingto, String newNode, String atrributeName, String value, int stationNumber) {
+    public static Document addNode(Document doc, String obs, String nodeaddingto, String newNode, String atrributeName, String value, int stationNumber) {
         NodeList obsOfferingList = doc.getElementsByTagName(obs);
         Element obsOfferEl = (Element) obsOfferingList.item(stationNumber);
         NodeList nodes = obsOfferEl.getChildNodes();
@@ -211,7 +217,7 @@ public class XMLDomUtils {
         return doc;
     }
 
-    public static Document addNodeAllOptions(Document doc, String obsLocation, String obs, String nodeName, String value, int stationNumber) {
+    public static Document addNode(Document doc, String obsLocation, String obs, String nodeName, String value, int stationNumber) {
         NodeList obsOfferingList1 = doc.getElementsByTagName(obsLocation);
         Element obsOfferEl111 = (Element) obsOfferingList1.item(stationNumber);
         NodeList obsOfferingList = obsOfferEl111.getElementsByTagName(obs);
@@ -222,7 +228,7 @@ public class XMLDomUtils {
         return doc;
     }
     
-    public static Document addNodeBeforeNode(Document doc, String parentNodeName, String nodeNameToInsert, String nodeNameToInsertBefore) {
+    public static Document addNode(Document doc, String parentNodeName, String nodeNameToInsert, String nodeNameToInsertBefore) {
         NodeList nodeList = doc.getElementsByTagName(parentNodeName);
         Element parentEl = (Element)nodeList.item(0);
         nodeList = parentEl.getElementsByTagName(nodeNameToInsertBefore);
@@ -232,7 +238,7 @@ public class XMLDomUtils {
         return doc;
     }
     
-    public static Document setAttributeToValue(Document doc, String nodeName, String attributeName, String attributeValue) {
+    public static Document setNodeAttribute(Document doc, String nodeName, String attributeName, String attributeValue) {
         NodeList nodeList = doc.getElementsByTagName(nodeName);
         Element el = (Element)nodeList.item(0);
         el.setAttribute(attributeName, attributeValue);
@@ -240,27 +246,6 @@ public class XMLDomUtils {
     }
 
     //METHOD OVERRIDE-------------------------------------------------------------
-    @Deprecated
-    public static Document addNodeAndValue(Document doc, String Obs, String nodeName, String value, int stationNumber) {
-        NodeList obsOfferingList = doc.getElementsByTagName(Obs);
-        Element obsOfferEl = (Element) obsOfferingList.item(stationNumber);
-
-        Element obsOfferingNode = doc.createElement(nodeName);
-        obsOfferingNode.appendChild(doc.createTextNode(value));
-        obsOfferEl.appendChild(obsOfferingNode);
-        return doc;
-    }
-
-    //adds a node with no value ie a container
-    @Deprecated
-    public static Document addNode(Document doc, String obs, String nodeName, int stationNumber) {
-        NodeList obsOfferingList = doc.getElementsByTagName(obs);
-        Element obsOfferEl = (Element) obsOfferingList.item(stationNumber);
-        Element obsOfferingNode = doc.createElement(nodeName);
-        obsOfferEl.appendChild(obsOfferingNode);
-        return doc;
-    }
-
     public static Document addNodeAndAttribute(Document doc, String obs, String nodeName, String attribute, String value, int stationNumber) {
         NodeList obsOfferingList = doc.getElementsByTagName(obs);
         Element obsOfferEl = (Element) obsOfferingList.item(stationNumber);
@@ -268,42 +253,6 @@ public class XMLDomUtils {
         Element obsOfferingNode = doc.createElement(nodeName);
         obsOfferingNode.setAttribute(attribute, value);
         obsOfferEl.appendChild(obsOfferingNode);
-        return doc;
-    }
-
-    @Deprecated
-    public static Document addNodeToNodeAndValue(Document doc, String obs, String nodeName, String value, int stationNumber) {
-        NodeList obsOfferingList1 = doc.getElementsByTagName("om:Observation");
-        Element obsOfferEl111 = (Element) obsOfferingList1.item(stationNumber);
-
-        NodeList obsOfferingList = obsOfferEl111.getElementsByTagName(obs);
-        Element obsOfferEl = (Element) obsOfferingList.item(0);
-
-        Element obsOfferingNode = doc.createElement(nodeName);
-        obsOfferingNode.appendChild(doc.createTextNode(value));
-
-        obsOfferEl.appendChild(obsOfferingNode);
-
-        return doc;
-    }
-
-    @Deprecated
-    public static Document addNodeToNodeAndAttribute(Document doc, String obs, String nodeaddingto, String newNode, String atrributeName, String value, int stationNumber) {
-        NodeList obsOfferingList = doc.getElementsByTagName(obs);
-        Element obsOfferEl = (Element) obsOfferingList.item(stationNumber);
-
-        NodeList nodes = obsOfferEl.getChildNodes();
-
-        for (int i = 0; i < nodes.getLength(); i++) {
-            Node nodeListNode = nodes.item(i);
-            if (nodeListNode.getNodeName().equalsIgnoreCase(nodeaddingto)) {
-
-                Element obsOfferEl1 = (Element) nodes.item(i);
-                Element obsOfferingNode = doc.createElement(newNode);
-                obsOfferingNode.setAttribute(atrributeName, value);
-                obsOfferEl1.appendChild(obsOfferingNode);
-            }
-        }
         return doc;
     }
 

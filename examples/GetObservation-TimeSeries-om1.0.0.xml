@@ -30,9 +30,9 @@
                     <gml:endPosition>2005-10-01T23:00:00Z</gml:endPosition>
                 </gml:TimePeriod>
             </om:samplingTime>
-            <om:procedure xlink:href="urn:ioos:station:sos:NOAA_8767961"/>
+            <om:procedure xlink:href="urn:ioos:station:authority:NOAA_8767961"/>
             <om:observedProperty xlink:href="watlev"/>
-            <om:featureOfInterest xlink:href="urn:ioos:station:sos:NOAA_8767961"/>
+            <om:featureOfInterest xlink:href="urn:ioos:station:authority:NOAA_8767961"/>
             <om:result>
                 <swe:dataArray>
                     <swe:elementCount>

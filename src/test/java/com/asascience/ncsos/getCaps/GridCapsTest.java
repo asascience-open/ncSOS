@@ -106,7 +106,7 @@ public class GridCapsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(testGetCapsSST1);
             SOSParser md = new SOSParser();
             Writer writer = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, baseRequest, testGetCapsSST1),writer);
+            writeOutput(md.enhanceGETRequest(dataset, baseRequest, testGetCapsSST1),writer);
             writer.flush();
             writer.close();
             String fileName = "getCapsSST1.xml";
@@ -129,7 +129,7 @@ public class GridCapsTest {
             NetcdfDataset dataset = NetcdfDataset.openDataset(testGetCapsSST2);
             SOSParser md = new SOSParser();
             Writer writer = new CharArrayWriter();
-            writeOutput(md.enhance(dataset, baseRequest, testGetCapsSST2),writer);
+            writeOutput(md.enhanceGETRequest(dataset, baseRequest, testGetCapsSST2),writer);
             writer.flush();
             writer.close();
             String fileName = "getCapsSST2.xml";

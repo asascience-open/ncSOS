@@ -120,8 +120,8 @@ public class TestXMLOutputter implements SOSOutputFormatter {
         for (int i=0; i<CDMDataset.getNumberOfStations(); i++) {
             document = XMLDomUtils.addObservationElement(document);
             // add description, name and bounded by
-            document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:description", description, i);
-            document = XMLDomUtils.addNodeAllOptions(document, OM_OBSERVATION, "gml:name", title, i);
+            document = XMLDomUtils.addNode(document, OM_OBSERVATION, "gml:description", description, i);
+            document = XMLDomUtils.addNode(document, OM_OBSERVATION, "gml:name", title, i);
         }
     }
 
@@ -131,10 +131,10 @@ public class TestXMLOutputter implements SOSOutputFormatter {
 //        setSystemGMLID();
         
         // set metadata from generic metadata, um for now just use some place holder
-        document = XMLDomUtils.addNodeBeforeNode(document, OM_OBSERVATION_COLLECTION, "gml:metaDataProperty", "om:member");
-        document =XMLDomUtils.setAttributeToValue(document, "gml:metaDataProperty", "xlink:title", "disclaimer");
-        document = XMLDomUtils.addNodeAllOptions(document, "gml:metaDataProperty", "gml:GenericMetaData", 0);
-        document = XMLDomUtils.addNodeAllOptions(document, "gml:GenericMetaData", "gml:description", "DISCLAIMER", 0);
+        document = XMLDomUtils.addNode(document, OM_OBSERVATION_COLLECTION, "gml:metaDataProperty", "om:member");
+        document =XMLDomUtils.setNodeAttribute(document, "gml:metaDataProperty", "xlink:title", "disclaimer");
+        document = XMLDomUtils.addNode(document, "gml:metaDataProperty", "gml:GenericMetaData", 0);
+        document = XMLDomUtils.addNode(document, "gml:GenericMetaData", "gml:description", "DISCLAIMER", 0);
     }
     
     private void setSystemGMLID() {

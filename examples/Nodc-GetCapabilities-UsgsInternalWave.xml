@@ -79,8 +79,8 @@
             <ows:Parameter name="eventTime" use="optional">
                 <ows:AllowedValues>
                     <ows:Range/>
-                    <ows:MinimumValue>1998-08-05T14:46:00.000Z</ows:MinimumValue>
-                    <ows:MaximumValue>1998-08-05T14:46:00.000Z</ows:MaximumValue>
+                    <ows:MinimumValue>1998-08-05T14:46:00Z</ows:MinimumValue>
+                    <ows:MaximumValue>1998-08-05T14:46:00Z</ows:MaximumValue>
                 </ows:AllowedValues>
             </ows:Parameter>
             <ows:Parameter name="responseFormat" use="required">
@@ -92,12 +92,12 @@
         <ows:Operation name="DescribeSensor">
             <ows:DCP>
                 <ows:HTTP>
-                    <ows:Get/>
+                    <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/nodc/usgs_internal_wave_timeSeries.nc"/>
                 </ows:HTTP>
             </ows:DCP>
             <ows:Parameter name="procedure" use="required">
                 <ows:AllowedValues>
-                    <ows:Value>urn:ioos:gov.noaa.nodc:network:all</ows:Value>
+                    <ows:Value>urn:ioos:network:gov.noaa.nodc:all</ows:Value>
                     <ows:Value>urn:ioos:station:gov.noaa.nodc:-2147483647</ows:Value>
                     <ows:Value>urn:ioos:sensor:gov.noaa.nodc:-2147483647:instrument_2</ows:Value>
                     <ows:Value>urn:ioos:sensor:gov.noaa.nodc:-2147483647:T_20</ows:Value>
@@ -127,7 +127,7 @@
         <sos:ObservationOfferingList>
             <sos:ObservationOffering gml:id="network-all">
                 <gml:description>All stations in the netCDF dataset.</gml:description>
-                <gml:name>urn:ioos:gov.noaa.nodc:network:all</gml:name>
+                <gml:name>urn:ioos:network:gov.noaa.nodc:all</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy>
                     <gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
@@ -137,8 +137,8 @@
                 </gml:boundedBy>
                 <sos:time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
-                        <gml:beginPosition>1998-08-05T14:46:00.000Z</gml:beginPosition>
-                        <gml:endPosition>1998-08-05T14:46:00.000Z</gml:endPosition>
+                        <gml:beginPosition>1998-08-05T14:46:00Z</gml:beginPosition>
+                        <gml:endPosition>1998-08-05T14:46:00Z</gml:endPosition>
                     </gml:TimePeriod>
                 </sos:time>
                 <sos:procedure xlink:href="urn:ioos:station:gov.noaa.nodc:-2147483647"/>
@@ -163,8 +163,8 @@
                 </gml:boundedBy>
                 <sos:time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
-                        <gml:beginPosition>1998-08-05T14:46:00.000Z</gml:beginPosition>
-                        <gml:endPosition>1998-08-05T14:46:00.000Z</gml:endPosition>
+                        <gml:beginPosition>1998-08-05T14:46:00Z</gml:beginPosition>
+                        <gml:endPosition>1998-08-05T14:46:00Z</gml:endPosition>
                     </gml:TimePeriod>
                 </sos:time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:gov.noaa.nodc:-2147483647"/>
@@ -178,7 +178,7 @@
                 <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.nodc:-2147483647:C_51"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.nodc:-2147483647:S_40"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.nodc:-2147483647:STH_71"/>
-                <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
+                <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
                 <sos:responseModel>om:ObservationCollection</sos:responseModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
