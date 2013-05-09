@@ -279,7 +279,7 @@ public class SOSdescribeSensorTest {
             // test to make sure we got an exception
             testOut = writer.toString();
             assertTrue("no exception in output - bad_request_version_query", testOut.contains("Exception"));
-            assertTrue("unexpected exception - bad_request_version_query", testOut.contains("'version'"));
+            assertTrue("unexpected exception - bad_request_version_query", testOut.contains("version"));
             // 7th test - bad_request_version_misspelled_query - checks to see what is returned when version is misspelled
             writer.close();
             writer = new CharArrayWriter();
