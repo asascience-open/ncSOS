@@ -69,8 +69,8 @@ public class SOSDescribePlatformM1_0 extends BaseDescribeSensor implements ISOSD
         formatSmlServiceMetadata();
         formatSmlNetworkProcedures();
         formatSmlContacts();
-//        formatSmlHistory();
-//        formatSmlDocumentation();
+        formatSmlHistory();
+        formatSmlDocumentation();
         if (this.getGridDataset() != null) {
             formatSmlLocationBbox();
         } else if (locationLineFlag) {
@@ -152,7 +152,7 @@ public class SOSDescribePlatformM1_0 extends BaseDescribeSensor implements ISOSD
         platform.addSmlClassifier("platformType", VocabDefinitions.GetIoosDefinition("platformType"), "platform", this.checkForRequiredValue("platform_type"));
         platform.addSmlClassifier("operatorSector", VocabDefinitions.GetIoosDefinition("operatorSector"), "sector", this.checkForRequiredValue("operator_sector"));
         platform.addSmlClassifier("publisher", VocabDefinitions.GetIoosDefinition("publisher"), "organization", this.checkForRequiredValue("publisher"));
-        platform.addSmlClassifier("parentNetwork", "http://mmisw.org/ont/ioos/definition/parentNetwork", "organization", this.getGlobalAttribute("parent_network", ""));
+        platform.addSmlClassifier("parentNetwork", "http://mmisw.org/ont/ioos/definition/parentNetwork", "organization", this.getGlobalAttribute("institution", ""));
         
         // sponsor is optional
         String value = this.getGlobalAttribute("sponsor", null);
@@ -175,7 +175,7 @@ public class SOSDescribePlatformM1_0 extends BaseDescribeSensor implements ISOSD
         // create the network urn
         String networkUrn = this.procedure.substring(0, this.procedure.lastIndexOf(":"));
         networkUrn = networkUrn.replaceAll(":station:|:sensor:", ":network:");
-        networkUrn += ":all";
+        networkUrn += "all";
         
         platform.addSmlCapabilitiesGmlMetadata("sml:System", "networkProcedures", "network-all", networkUrn);
     }

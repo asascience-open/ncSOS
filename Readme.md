@@ -27,3 +27,6 @@ Visit http://github.com/asascience-open/ncSOS/wiki for installation and usage in
 * Added support for GetCapabilities, DescribeSensor and GetObservation requests.
 * Added caching for GetCapabilities requests
 * Supports CF 1.6 convention files including: TimeSeries, TimeSeriesProfile, Trajectory, Profile, TrajectoryProfile (Section) and Grid datasets.
+
+##Known Issues
+* Aggregate NCML files stored in cache are not able to be read subsequently. This is an issue on Unidata's side, temp fix is to disable the NetCDFFileCache: http://www.unidata.ucar.edu/projects/THREDDS/tech/reference/ThreddsConfigXMLFile.html.
