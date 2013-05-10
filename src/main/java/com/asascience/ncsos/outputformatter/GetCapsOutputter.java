@@ -312,6 +312,10 @@ public class GetCapsOutputter implements SOSOutputFormatter {
         // time
         if (datasetTime != null)
             obsOffering.appendChild(getStationPeriod(datasetTime));
+        // add network all to procedure list
+        Element naProcedure = getDocument().createElement("sos:procedure");
+        naProcedure.setAttribute("xlink:href", SOSBaseRequestHandler.getGMLNetworkAll());
+        obsOffering.appendChild(naProcedure);
         // procedures
         for (String str : stations) {
             Element proc = getDocument().createElement("sos:procedure");
@@ -383,6 +387,10 @@ public class GetCapsOutputter implements SOSOutputFormatter {
             value.setAttribute("xlink:href", str);
             obsOffering.appendChild(value);
         }
+        // procedure for this station
+        Element selfProcedure = getDocument().createElement("sos:procedure");
+        selfProcedure.setAttribute("xlink:href", SOSBaseRequestHandler.getGMLName(stationName));
+        obsOffering.appendChild(selfProcedure);
         // procedures
         for (String str : sensorNames) {
             Element proc = getDocument().createElement("sos:procedure");

@@ -76,8 +76,6 @@ public class SOSParser {
         queryParameters = new HashMap<String, Object>();
         coordsHash = new HashMap<String, String>();
         
-        HashMap<String, Object> retval = new HashMap<String, Object>();
-        
         // error handler
         SOSErrorResponseHandler errHandler = new SOSErrorResponseHandler(null);
         
@@ -92,36 +90,10 @@ public class SOSParser {
             queryParameters.put("version", defVersion);
         }
         
-        // make sure we do not have any errors in our query
-        if (queryParameters.containsKey("error")) {
-            // issue in parsing, return an error
-            errHandler.setErrorExceptionOutput("Error with request - " + queryParameters.get("error").toString());
-            retval.put("outputHandler", errHandler.getOutputHandler());
-            retval.put("responseContentType", "text/xml");
-            return retval;
-        }
-        
-        // check to make sure needed params are in the query
-        if (!queryParameters.containsKey("request")) {
-            errHandler.setErrorExceptionOutput("Missing required parameter 'request'.");
-            retval.put("outputHandler", errHandler.getOutputHandler());
-            retval.put("responseContentType", "text/xml");
-            return retval;
-        }
-        
-        // check version number
-        if (!queryParameters.containsKey("version") ||
-            !queryParameters.get("version").toString().equalsIgnoreCase("1.0.0")) {
-            errHandler.setErrorExceptionOutput("'version' is a required parameter for all requests. Currently 1.0.0 is the only accepted value.");
-            retval.put("outputHandler", errHandler.getOutputHandler());
-            retval.put("responseContentType", "text/xml");
-            return retval;
-        }
-        
-        // check service param
-        if (!queryParameters.containsKey("service") ||
-            !queryParameters.get("service").toString().equalsIgnoreCase("sos")) {
-            errHandler.setErrorExceptionOutput("Expected service parameter with a value of 'SOS'.");
+        // check the query parameters to make sure all required parameters are passed in
+        HashMap<String,Object> retval = checkQueryParameters();
+        if (retval.containsKey("error")) {
+            errHandler.setErrorExceptionOutput(retval.get("error").toString());
             retval.put("outputHandler", errHandler.getOutputHandler());
             retval.put("responseContentType", "text/xml");
             return retval;
@@ -156,7 +128,6 @@ public class SOSParser {
                                     // add the cached file to the response
                                     retval.put("outputHandler", fileIsInDate(f, sections));
                                 } catch (Exception ex) {
-                                    ex.printStackTrace();
                                     _log.error(ex.getLocalizedMessage());
                                     errHandler.setErrorExceptionOutput("Unable to retrieve cached get capabilities document");
                                     retval.put("outputHandler", errHandler.getOutputHandler());
@@ -169,7 +140,6 @@ public class SOSParser {
                                 capHandler = createGetCapsCacheFile(dataset, threddsURI, savePath);
                                 capHandler.resetCapabilitiesSections(sections);
                             } catch (IOException ex) {
-                                ex.printStackTrace();
                                 _log.error(ex.getMessage());
                                 capHandler = null;
                             }
@@ -193,18 +163,6 @@ public class SOSParser {
                     break;
                 case GetObservation:
                     SOSGetObservationRequestHandler obsHandler = null;
-                    // assert that we have our needed parameters
-                    if (!queryParameters.containsKey("offering") ||
-                            !queryParameters.containsKey("observedproperty") ||
-                            !queryParameters.containsKey("responseformat")) {
-                        // print out xml error using get caps error?
-                        try {
-                            errHandler.setErrorExceptionOutput("Observation requests must have offering, observedProperty, responseFormat as query parameters");
-                            retval.put("outputHandler", errHandler.getOutputHandler());
-                            retval.put("responseContentType", "text/xml");
-                        } catch (Exception e) { _log.error(e.toString()); }
-                        break;
-                    }
                     // setup our coordsHash
                     if (queryParameters.containsKey("lat") && queryParameters.containsKey("lon")) {
                         coordsHash.put("lat", queryParameters.get("lat").toString());
@@ -248,24 +206,15 @@ public class SOSParser {
                         // resposne will always be text/xml
                         retval.put("responseContentType", "text/xml");
                         SOSDescribeSensorHandler sensorHandler;
-                        if (!queryParameters.containsKey("responseformat")) {
-                            sensorHandler = new SOSDescribeSensorHandler(dataset);
-                            sensorHandler.getOutputHandler().setupExceptionOutput("responseFormat must be supplied for " + queryParameters.get("request").toString() + " requests to the " + queryParameters.get("service").toString() + " version " + queryParameters.get("version").toString() + " service");
-                        } else if (!queryParameters.containsKey("procedure")) {
-                            sensorHandler = new SOSDescribeSensorHandler(dataset);
-                            sensorHandler.getOutputHandler().setupExceptionOutput("procedure must be supplied for " + queryParameters.get("request").toString() + " requests to the " + queryParameters.get("service").toString() + " version " + queryParameters.get("version").toString() + " service");
-                        }else {
-                            // create a describe sensor handler
-                            sensorHandler = new SOSDescribeSensorHandler(dataset,
-                                    queryParameters.get("responseformat").toString(),
-                                    queryParameters.get("procedure").toString(),
-                                    threddsURI,
-                                    query);
-                        }
+                        // create a describe sensor handler
+                        sensorHandler = new SOSDescribeSensorHandler(dataset,
+                                queryParameters.get("responseformat").toString(),
+                                queryParameters.get("procedure").toString(),
+                                threddsURI,
+                                query);
                         retval.put("outputHandler",sensorHandler.getOutputHandler());
                     } catch (Exception ex) {
                         _log.error(ex.toString());
-                        ex.printStackTrace();
                         errHandler.setErrorExceptionOutput("Internal System Exception in setting up DescribeSensor handler - " + ex.toString());
                         retval.put("outputHandler", errHandler.getOutputHandler());
                     }
@@ -308,10 +257,7 @@ public class SOSParser {
                     List<String> stList = new ArrayList<String>();
 
                     for (int j = 0; j < howManyStation.length; j++) {
-                        //split on :
-                        String[] splitStr = howManyStation[j].split(":");
-                        String stationName = splitStr[splitStr.length - 1];
-                        stList.add(stationName);
+                        stList.add(howManyStation[j].substring(howManyStation[j].lastIndexOf(":") + 1));
                     }
                     
                     queryParameters.put(keyVal[0].toLowerCase(), (String[]) stList.toArray(new String[stList.size()]) );
@@ -378,8 +324,60 @@ public class SOSParser {
         retval.setSections(sections);
         return retval;
     }
-
-    private void normalSOSRequestNoCacheParam(NetcdfDataset dataset, String threddsURI) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    
+    private HashMap<String, Object> checkQueryParameters() {
+        try {
+            HashMap<String,Object> retval = new HashMap<String, Object>();
+            String[] requiredGlobalParameters = { "request", "service", "version" };
+            String[] requiredDSParameters = { "procedure", "responseformat" };
+            String[] requiredGOParameters = { "offering", "observedproperty", "responseformat" };
+            // general parameters expected
+            if (queryParameters.containsKey("error")) {
+                retval.put("error", "Error with request - " + queryParameters.get("error").toString());
+                return retval;
+            } else {
+                for (String req : requiredGlobalParameters) {
+                    if (!queryParameters.containsKey(req)) {
+                        retval.put("error", "Required parameter '" + req + "' not found. Check GetCapabilities document for required parameters.");
+                        return retval;
+                    }
+                }
+                // check requirements for version and service
+                if (!queryParameters.get("version").toString().equalsIgnoreCase("1.0.0")) {
+                    retval.put("error", "Currently only version 1.0.0 is supported.");
+                    return retval;
+                } else if (!queryParameters.get("service").toString().equalsIgnoreCase("sos")) {
+                    retval.put("error", "Currently the only supported service is SOS.");
+                    return retval;
+                }
+            }
+            // specific parameters expected
+            switch (SupportedRequests.valueOf(queryParameters.get("request").toString())) {
+                case DescribeSensor:
+                    for (String req : requiredDSParameters) {
+                        if (!queryParameters.containsKey(req)) {
+                            retval.put("error", "Required parameter '" + req + "' not found. Check GetCapabilities document for required parameters of DescribeSensor requests.");
+                            return retval;
+                        }
+                    }
+                    break;
+                case GetObservation:
+                    for (String req : requiredGOParameters) {
+                        if (!queryParameters.containsKey(req)) {
+                            retval.put("error", "Required parameter '" + req + "' not found. Check GetCapabilities document for required parameters of GetObservation requests.");
+                            return retval;
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+            return retval;
+        } catch (Exception ex) {
+            _log.error(ex.toString());
+            HashMap<String,Object> retval = new HashMap<String, Object>();
+            retval.put("error", "Error in request. Check required parameters from GetCapabilities document and try again.");
+            return retval;
+        }
     }
 }

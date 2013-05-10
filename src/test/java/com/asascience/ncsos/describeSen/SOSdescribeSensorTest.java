@@ -14,6 +14,8 @@ import org.apache.log4j.BasicConfigurator;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import ucar.nc2.dataset.NetcdfDataset;
 
@@ -22,6 +24,8 @@ import ucar.nc2.dataset.NetcdfDataset;
  * @author SCowan
  */
 public class SOSdescribeSensorTest {
+    private static Logger _log = LoggerFactory.getLogger(SOSParser.class);
+    
     private static String outputDir = null;
     private static String baseLocalDir = null;
     private static String exampleOutputDir = null;
@@ -235,7 +239,7 @@ public class SOSdescribeSensorTest {
             // test to make sure we got an exception
             testOut = writer.toString();
             assertTrue("no exception in output - bad_request_responseformat_query", testOut.contains("Exception"));
-            assertTrue("unexpected exception - bad_request_responseformat_query", testOut.contains("invalid argument responseFormat"));
+            assertTrue("unexpected exception - bad_request_responseformat_query", testOut.contains("responseFormat"));
             // 3rd test - bad_request_responseformat_mispelled_query - checks to see what is returned when responseformat is misspelled
             writer.close();
             writer = new CharArrayWriter();
@@ -245,7 +249,7 @@ public class SOSdescribeSensorTest {
             // test to make sure we got an exception
             testOut = writer.toString();
             assertTrue("no exception in output - bad_request_responseformat_mispelled_query", testOut.contains("Exception"));
-            assertTrue("unexpected exception - bad_request_responseformat_mispelled_query", testOut.contains("responseFormat"));
+            assertTrue("unexpected exception - bad_request_responseformat_mispelled_query", testOut.contains("responseformat"));
             // 4th test - bad_request_request_query - checks to see what is returned when an invalid request is sent
             writer.close();
             writer = new CharArrayWriter();
@@ -255,7 +259,7 @@ public class SOSdescribeSensorTest {
             // test to make sure we got an exception
             testOut = writer.toString();
             assertTrue("no exception in output - bad_request_request_query", testOut.contains("Exception"));
-            assertTrue("unexpected exception - bad_request_request_query", testOut.contains("Unrecognized request"));
+            assertTrue("unexpected exception - bad_request_request_query", testOut.contains("Error in request."));
             // 5th test - bad_request_request_mispelled_query - checks to see what is returned when request is misspelled
             writer.close();
             writer = new CharArrayWriter();
@@ -265,7 +269,7 @@ public class SOSdescribeSensorTest {
             // test to make sure we got an exception
             testOut = writer.toString();
             assertTrue("no exception in output - bad_request_request_mispelled_query", testOut.contains("Exception"));
-            assertTrue("unexpected exception - bad_request_request_mispelled_query", testOut.contains("parameter 'request'"));
+            assertTrue("unexpected exception - bad_request_request_mispelled_query", testOut.contains("request"));
             // 6th test - bad_request_version_query - checks to see what is returned when the version specified is invalid
             writer.close();
             writer = new CharArrayWriter();
@@ -275,7 +279,7 @@ public class SOSdescribeSensorTest {
             // test to make sure we got an exception
             testOut = writer.toString();
             assertTrue("no exception in output - bad_request_version_query", testOut.contains("Exception"));
-            assertTrue("unexpected exception - bad_request_version_query", testOut.contains("'version'"));
+            assertTrue("unexpected exception - bad_request_version_query", testOut.contains("version"));
             // 7th test - bad_request_version_misspelled_query - checks to see what is returned when version is misspelled
             writer.close();
             writer = new CharArrayWriter();
@@ -285,7 +289,7 @@ public class SOSdescribeSensorTest {
             // test to make sure we got an exception
             testOut = writer.toString();
             assertTrue("no exception in output - bad_request_version_misspelled_query", testOut.contains("Exception"));
-            assertTrue("unexpected exception - bad_request_version_misspelled_query", testOut.contains("'version'"));
+            assertTrue("unexpected exception - bad_request_version_misspelled_query", testOut.contains("version"));
             // 8th test - bad_request_service_query - checks to see what is returned when the service requested is invalid
             writer.close();
             writer = new CharArrayWriter();
@@ -295,7 +299,7 @@ public class SOSdescribeSensorTest {
             // test to make sure we got an exception
             testOut = writer.toString();
             assertTrue("no exception in output - bad_request_service_query", testOut.contains("Exception"));
-            assertTrue("unexpected exception - bad_request_service_query", testOut.contains("service parameter"));
+            assertTrue("unexpected exception - bad_request_service_query", testOut.contains("service"));
             // 9th test - bad_request_service_misspelled_query - checks to see what is returned when service is misspelled
             writer.close();
             writer = new CharArrayWriter();
@@ -305,7 +309,7 @@ public class SOSdescribeSensorTest {
             // test to make sure we got an exception
             testOut = writer.toString();
             assertTrue("no exception in output - bad_request_service_misspelled_query", testOut.contains("Exception"));
-            assertTrue("unexpected exception - bad_request_service_misspelled_query", testOut.contains("service parameter"));
+            assertTrue("unexpected exception - bad_request_service_misspelled_query", testOut.contains("service"));
             // 10th test - bad_request_procedure_query - checks to see what is returned when the procedure specified is invalid
             writer.close();
             writer = new CharArrayWriter();
@@ -315,7 +319,7 @@ public class SOSdescribeSensorTest {
             // test to make sure we got an exception
             testOut = writer.toString();
             assertTrue("no exception in output - bad_request_procedure_query", testOut.contains("Exception"));
-            assertTrue("unexpected exception - bad_request_procedure_query", testOut.contains("Procedure parameter"));
+            assertTrue("unexpected exception - bad_request_procedure_query", testOut.contains("procedure"));
             // 11th test - bad_request_procedure_misspelled_query - checks to see what is returned when procedure is misspelled
             writer.close();
             writer = new CharArrayWriter();
@@ -325,7 +329,7 @@ public class SOSdescribeSensorTest {
             // test to make sure we got an exception
             testOut = writer.toString();
             assertTrue("no exception in output - bad_request_procedure_misspelled_query", testOut.contains("Exception"));
-            assertTrue("unexpected exception - bad_request_procedure_misspelled_query", testOut.contains("procedure must be"));
+            assertTrue("unexpected exception - bad_request_procedure_misspelled_query", testOut.contains("procedure"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
