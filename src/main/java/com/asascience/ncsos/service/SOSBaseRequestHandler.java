@@ -620,6 +620,11 @@ public abstract class SOSBaseRequestHandler {
         return namingAuthority;
     }
     
+    public static String getGMLNetworkAll() {
+        // returns the network-all urn of the authority
+        return "urn:ioos:network:" + namingAuthority + ":all";
+    }
+    
     /**
      * Returns a composite string of the sensor urn
      * @param stationName name of the station holding the sensor

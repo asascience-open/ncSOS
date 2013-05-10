@@ -71,7 +71,7 @@ public class SOSGetObsTest {
     private static final String imeds15Req = baseRequest + "&observedProperty=watlev&offering=NOAA_8727235,NOAA_8729501&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
     
     private static final String tsIncompleteMultiDimensionalMultipleStations = "resources/datasets/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc";
-    private static final String timeSeriesIncomplete = baseRequest + "&observedProperty=temperature&offering=Station-9&eventtime=1990-01-01T00:00:00Z";
+    private static final String timeSeriesIncomplete = baseRequest + "&observedProperty=temperature&offering=Station-9";
     private static final String timeSeriesIncompleteWithTime = baseRequest + "&observedProperty=temperature&offering=Station-9&eventtime=1990-01-01T00:00:00Z";
     private static final String timeSeriesIncompleteMulti = baseRequest + "&observedProperty=temperature&offering=Station-9&eventtime=1990-01-01T00:00:00Z/1990-01-01T10:00:00Z";
     private static final String timeSeriesIncompleteMultiInvalid = baseRequest + "&observedProperty=temperature&offering=Station-9&eventtime=1990-02-01T00:00:00Z/1990-05-01T10:00:00Z";
@@ -669,7 +669,7 @@ public class SOSGetObsTest {
             writeOutput(md.enhanceGETRequest(dataset, timeSeriesIncompleteMultiInvalid, tsIncompleteMultiDimensionalMultipleStations),write);
             write.flush();
             write.close();
-            String fileName = "tsIncompleteMultiDimensionalMultipleStationsMultiTimeInvalid.xml";
+            String fileName = getCurrentMethod();
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             //dataAvailableInOutputFile(write);
@@ -697,7 +697,7 @@ public class SOSGetObsTest {
             writeOutput(md.enhanceGETRequest(dataset, timeSeriesIncompleteMulti, tsIncompleteMultiDimensionalMultipleStations),write);
             write.flush();
             write.close();
-            String fileName = "tsIncompleteMultiDimensionalMultipleStationsMultiTime.xml";
+            String fileName = getCurrentMethod();
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
@@ -725,7 +725,7 @@ public class SOSGetObsTest {
             writeOutput(md.enhanceGETRequest(dataset, timeSeriesIncomplete, tsIncompleteMultiDimensionalMultipleStations),write);
             write.flush();
             write.close();
-            String fileName = "tsIncompleteMultiDimensionalMultipleStations.xml";
+            String fileName = getCurrentMethod();
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
@@ -748,7 +748,7 @@ public class SOSGetObsTest {
             writeOutput(md.enhanceGETRequest(dataset, timeSeriesIncompleteWithTime, tsIncompleteMultiDimensionalMultipleStations),write);
             write.flush();
             write.close();
-            String fileName = "tsIncompleteMultiDimensionalMultipleStationsWithTime.xml";
+            String fileName = getCurrentMethod();
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
@@ -771,7 +771,7 @@ public class SOSGetObsTest {
             writeOutput(md.enhanceGETRequest(dataset, timeSeriestOrth, tsOrthogonalMultidimenstionalMultipleStations),write);
             write.flush();
             write.close();
-            String fileName = "tsOrthogonalMultidimenstionalMultipleStations.xml";
+            String fileName = getCurrentMethod();
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
