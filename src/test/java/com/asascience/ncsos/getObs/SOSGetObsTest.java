@@ -127,6 +127,11 @@ public class SOSGetObsTest {
     private static final String watlevNOAANavdPre = "resources/datasets/sura/watlev_NOAA_NAVD_PRE.nc";
     private static final String watlevNOAANavdRequest = baseRequest + String.format("&observedProperty=watlev&offering=NOAA_8767961&procedure=urn:ioos:station:%1$s:NOAA_8767961", defaultAuthority);
     
+    // test some exceptions (using imeds8)
+    private static final String testBadProcedure = baseRequest + String.format("&observedProperty=watlev&offering=network-all&procedure=urn:station:%1$s:CRMS_CS20-106", defaultAuthority);
+    private static final String testBadOffering = baseRequest + String.format("&observedProperty=watlev&offering=badOffering&procedure=urn:ioos:station:%1$s:CRMS_CS20-106", defaultAuthority);
+    private static final String testBadProcOffPair = baseRequest + String.format("&observedProperty=watlev&offering=CRMS20_106&procedure=urn:ioos:station:%1$s:CRMS20_15R", defaultAuthority);
+    
     //network all time series
     private static final String networkAllTimeSeries1 = datasets + "timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc";
     private static final String networkAllTimeSeries1Request = baseRequest + String.format("&observedProperty=temperature&offering=network-all&procedure=urn:ioos:network:%1$s:all", defaultAuthority);
@@ -2047,6 +2052,72 @@ public class SOSGetObsTest {
             String fileName = getCurrentMethod() + ".xml";
             fileWriter(base, fileName, write);
             assertTrue("no exception in output", write.toString().contains("Exception"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testInvalidRequestBadOffering() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(imeds8);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhanceGETRequest(dataset, testBadOffering, imeds8), write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            assertTrue("no exception in output", write.toString().contains("Exception"));
+            assertTrue("exception unrelated to bad offering", write.toString().contains("offer"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testInvalidRequestBadProcedure() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(imeds8);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhanceGETRequest(dataset, testBadProcedure, imeds8), write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            assertTrue("no exception in output", write.toString().contains("Exception"));
+            assertTrue("exception not related to invalid procedure", write.toString().contains("procedure"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testInvalidRequestProcedureNotInOffering() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(imeds8);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhanceGETRequest(dataset, testBadProcOffPair, imeds8), write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            assertTrue("no exception in output", write.toString().contains("Exception"));
+            assertTrue("exception not related to procedure and offering", write.toString().contains("Procedure") && write.toString().contains("offering"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
