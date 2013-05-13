@@ -65,6 +65,7 @@
 					<ows:Get />
 				</ows:HTTP>
 			</ows:DCP>
+      <ows:Parameter name="procedure" use="required" />
 			<ows:Parameter name="offering" use="required"/>
 			<ows:Parameter name="observedProperty" use="required"/>
 			<ows:Parameter name="eventTime" use="optional"/>

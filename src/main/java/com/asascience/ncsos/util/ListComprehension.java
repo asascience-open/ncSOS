@@ -62,4 +62,19 @@ public final class ListComprehension {
         }
         return out;
     }
+    
+    public static <I> List<I> filter(List<I> in, I fil) {
+        List<I> out = new ArrayList<I>();
+        for (I inObj : in) {
+            // test for null to avoid null reference
+            try {
+                if (inObj.equals(fil))
+                    out.add(inObj);
+            } catch (Exception ex) {
+                if (fil == null)
+                    out.add(inObj);
+            }
+        }
+        return out;
+    }
 }

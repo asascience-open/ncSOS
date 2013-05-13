@@ -173,7 +173,8 @@ public class SOSParser {
                     }
                     try {
                         // create a new handler for our get observation request and then write its result to output
-                        obsHandler = new SOSGetObservationRequestHandler(dataset, (String[])queryParameters.get("offering"),
+                        obsHandler = new SOSGetObservationRequestHandler(dataset, (String[])queryParameters.get("procedure"),
+                                                                        (String)queryParameters.get("offering"),
                                                                         (String[])queryParameters.get("observedproperty"),
                                                                         (String[])queryParameters.get("eventtime"),
                                                                         queryParameters.get("responseformat").toString(),
@@ -195,7 +196,7 @@ public class SOSParser {
                         }
                         // add our handler to the return value
                         retval.put("outputHandler", obsHandler.getOutputHandler());
-                    } catch (IOException ex) {
+                    } catch (Exception ex) {
                         _log.error(ex.getMessage());
                         errHandler.setErrorExceptionOutput("Internal Error in creating output for GetObservation request - " + ex.toString());
                         retval.put("outputHandler", errHandler.getOutputHandler());
@@ -206,10 +207,12 @@ public class SOSParser {
                         // resposne will always be text/xml
                         retval.put("responseContentType", "text/xml");
                         SOSDescribeSensorHandler sensorHandler;
+                        // get the first procedure
+                        String procedure = ((String[])queryParameters.get("procedure"))[0];
                         // create a describe sensor handler
                         sensorHandler = new SOSDescribeSensorHandler(dataset,
                                 queryParameters.get("responseformat").toString(),
-                                queryParameters.get("procedure").toString(),
+                                procedure,
                                 threddsURI,
                                 query);
                         retval.put("outputHandler",sensorHandler.getOutputHandler());
@@ -252,15 +255,15 @@ public class SOSParser {
             if (keyVal.length != 2) {
                 queryParameters.put("error", "invalid argument " + arg);
             } else {
-                if (keyVal[0].equalsIgnoreCase("offering")) {
+                if (keyVal[0].equalsIgnoreCase("procedure")) {
                     String[] howManyStation = keyVal[1].replace("%3A", ":").split(",");
-                    List<String> stList = new ArrayList<String>();
+//                    List<String> stList = Arrays.asList(howManyStation);
 
-                    for (int j = 0; j < howManyStation.length; j++) {
-                        stList.add(howManyStation[j].substring(howManyStation[j].lastIndexOf(":") + 1));
-                    }
+//                    for (int j = 0; j < howManyStation.length; j++) {
+//                        stList.add(howManyStation[j].substring(howManyStation[j].lastIndexOf(":") + 1));
+//                    }
                     
-                    queryParameters.put(keyVal[0].toLowerCase(), (String[]) stList.toArray(new String[stList.size()]) );
+                    queryParameters.put(keyVal[0].toLowerCase(), howManyStation );
                 } else if (keyVal[0].equalsIgnoreCase("responseformat")) {
                     try {
                         String val = URLDecoder.decode(keyVal[1], "UTF-8");
@@ -330,7 +333,7 @@ public class SOSParser {
             HashMap<String,Object> retval = new HashMap<String, Object>();
             String[] requiredGlobalParameters = { "request", "service", "version" };
             String[] requiredDSParameters = { "procedure", "responseformat" };
-            String[] requiredGOParameters = { "offering", "observedproperty", "responseformat" };
+            String[] requiredGOParameters = { "offering", "observedproperty", "responseformat", "procedure" };
             // general parameters expected
             if (queryParameters.containsKey("error")) {
                 retval.put("error", "Error with request - " + queryParameters.get("error").toString());
