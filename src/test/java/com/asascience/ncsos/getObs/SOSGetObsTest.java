@@ -126,6 +126,7 @@ public class SOSGetObsTest {
     
     private static final String watlevNOAANavdPre = "resources/datasets/sura/watlev_NOAA_NAVD_PRE.nc";
     private static final String watlevNOAANavdRequest = baseRequest + String.format("&observedProperty=watlev&offering=NOAA_8767961&procedure=urn:ioos:station:%1$s:NOAA_8767961", defaultAuthority);
+    private static final String watlevNOAANavdRequestIoos = IoosSosRequest + String.format("&observedProperty=watlev&offering=NOAA_8767961&procedure=urn:ioos:station:%1$s:NOAA_8767961", defaultAuthority);
     
     // test some exceptions (using imeds8)
     private static final String testBadProcedure = baseRequest + String.format("&observedProperty=watlev&offering=network-all&procedure=urn:station:%1$s:CRMS_CS20-106", defaultAuthority);
@@ -1883,6 +1884,30 @@ public class SOSGetObsTest {
             dataAvailableInOutputFile(write);
             // write as an example
             fileWriter(exampleOutputDir, "GetObservation-TimeSeries-om1.0.0.xml", write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testExampleTimeSeriesIoos() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(watlevNOAANavdPre);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhanceGETRequest(dataset, watlevNOAANavdRequestIoos, watlevNOAANavdPre),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+            // write as an example
+            fileWriter(exampleOutputDir, "GetObservation-TimeSeries-om1.0.0-IOOS1.0.xml", write);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {

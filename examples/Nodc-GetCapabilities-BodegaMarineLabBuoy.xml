@@ -61,6 +61,20 @@
                     <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/nodc/BodegaMarineLabBuoy.nc"/>
                 </ows:HTTP>
             </ows:DCP>
+            <ows:Parameter name="procedure" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>urn:ioos:network:authority:all</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:Cordell Bank Buoy</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Cordell Bank Buoy:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Cordell Bank Buoy:salinity</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Cordell Bank Buoy:density</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Cordell Bank Buoy:conductivity</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Cordell Bank Buoy:temperature_qc</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Cordell Bank Buoy:salinity_qc</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Cordell Bank Buoy:density_qc</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Cordell Bank Buoy:conductivity_qc</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
             <ows:Parameter name="offering" use="required">
                 <ows:AllowedValues>
                     <ows:Value>network-all</ows:Value>
@@ -148,6 +162,7 @@
                         <gml:endPosition>141267-12-09T12:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
                 </sos:time>
+                <sos:procedure xlink:href="urn:ioos:network:authority:all"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Cordell Bank Buoy"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="salinity"/>
@@ -187,6 +202,7 @@
                 <sos:observedProperty xlink:href="salinity_qc"/>
                 <sos:observedProperty xlink:href="density_qc"/>
                 <sos:observedProperty xlink:href="conductivity_qc"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:Cordell Bank Buoy"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Cordell Bank Buoy:temperature"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Cordell Bank Buoy:salinity"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Cordell Bank Buoy:density"/>

@@ -61,6 +61,13 @@
                     <ows:Get xlink:href="resources/datasets/satellite-sst/SST_Global_2x2deg_20120626_0000.nc"/>
                 </ows:HTTP>
             </ows:DCP>
+            <ows:Parameter name="procedure" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>urn:ioos:network:authority:all</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:Grid0</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Grid0:SST</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
             <ows:Parameter name="offering" use="required">
                 <ows:AllowedValues>
                     <ows:Value>network-all</ows:Value>
@@ -145,6 +152,7 @@
                         <gml:endPosition>2012-06-26T00:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
                 </sos:time>
+                <sos:procedure xlink:href="urn:ioos:network:authority:all"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Grid0"/>
                 <sos:observedProperty xlink:href="SST"/>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Grid0"/>
@@ -164,6 +172,7 @@
                 </sos:time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Grid0"/>
                 <sos:observedProperty xlink:href="SST"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:Grid0"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Grid0:SST"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
                 <sos:responseModel>om:ObservationCollection</sos:responseModel>

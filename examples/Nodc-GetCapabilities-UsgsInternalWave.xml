@@ -61,6 +61,17 @@
                     <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/nodc/usgs_internal_wave_timeSeries.nc"/>
                 </ows:HTTP>
             </ows:DCP>
+            <ows:Parameter name="procedure" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>urn:ioos:network:gov.noaa.nodc:all</ows:Value>
+                    <ows:Value>urn:ioos:station:gov.noaa.nodc:-2147483647</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.nodc:-2147483647:instrument_2</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.nodc:-2147483647:T_20</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.nodc:-2147483647:C_51</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.nodc:-2147483647:S_40</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.nodc:-2147483647:STH_71</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
             <ows:Parameter name="offering" use="required">
                 <ows:AllowedValues>
                     <ows:Value>network-all</ows:Value>
@@ -141,6 +152,7 @@
                         <gml:endPosition>1998-08-05T14:46:00Z</gml:endPosition>
                     </gml:TimePeriod>
                 </sos:time>
+                <sos:procedure xlink:href="urn:ioos:network:gov.noaa.nodc:all"/>
                 <sos:procedure xlink:href="urn:ioos:station:gov.noaa.nodc:-2147483647"/>
                 <sos:observedProperty xlink:href="instrument_2"/>
                 <sos:observedProperty xlink:href="T_20"/>
@@ -173,6 +185,7 @@
                 <sos:observedProperty xlink:href="C_51"/>
                 <sos:observedProperty xlink:href="S_40"/>
                 <sos:observedProperty xlink:href="STH_71"/>
+                <sos:procedure xlink:href="urn:ioos:station:gov.noaa.nodc:-2147483647"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.nodc:-2147483647:instrument_2"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.nodc:-2147483647:T_20"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.nodc:-2147483647:C_51"/>

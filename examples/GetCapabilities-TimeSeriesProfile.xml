@@ -61,6 +61,15 @@
                     <ows:Get xlink:href="resources/datasets/timeSeriesProfile-Ragged-MultipeStations-H.5.3/timeSeriesProfile-Ragged-MultipeStations-H.5.3.nc"/>
                 </ows:HTTP>
             </ows:DCP>
+            <ows:Parameter name="procedure" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>urn:ioos:network:authority:all</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:Station1</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Station1:temperature</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:Station2</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Station2:temperature</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
             <ows:Parameter name="offering" use="required">
                 <ows:AllowedValues>
                     <ows:Value>network-all</ows:Value>
@@ -136,6 +145,7 @@
                         <gml:endPosition>1990-01-01T03:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
                 </sos:time>
+                <sos:procedure xlink:href="urn:ioos:network:authority:all"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Station1"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Station2"/>
                 <sos:observedProperty xlink:href="temperature"/>
@@ -162,6 +172,7 @@
                 </sos:time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Station1"/>
                 <sos:observedProperty xlink:href="temperature"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:Station1"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Station1:temperature"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
                 <sos:responseModel>om:ObservationCollection</sos:responseModel>
@@ -184,6 +195,7 @@
                 </sos:time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Station2"/>
                 <sos:observedProperty xlink:href="temperature"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:Station2"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Station2:temperature"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
                 <sos:responseModel>om:ObservationCollection</sos:responseModel>

@@ -61,6 +61,29 @@
                     <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc"/>
                 </ows:HTTP>
             </ows:DCP>
+            <ows:Parameter name="procedure" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>urn:ioos:network:authority:all</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:Trajectory0</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Trajectory0:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Trajectory0:humidity</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:Trajectory1</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Trajectory1:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Trajectory1:humidity</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:Trajectory2</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Trajectory2:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Trajectory2:humidity</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:Trajectory3</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Trajectory3:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Trajectory3:humidity</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:Trajectory4</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Trajectory4:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Trajectory4:humidity</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:Trajectory5</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Trajectory5:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Trajectory5:humidity</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
             <ows:Parameter name="offering" use="required">
                 <ows:AllowedValues>
                     <ows:Value>network-all</ows:Value>
@@ -155,6 +178,7 @@
                         <gml:endPosition>1990-01-02T17:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
                 </sos:time>
+                <sos:procedure xlink:href="urn:ioos:network:authority:all"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Trajectory0"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Trajectory1"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Trajectory2"/>
@@ -191,6 +215,7 @@
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Trajectory0"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:Trajectory0"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Trajectory0:temperature"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Trajectory0:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
@@ -215,6 +240,7 @@
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Trajectory1"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:Trajectory1"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Trajectory1:temperature"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Trajectory1:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
@@ -239,6 +265,7 @@
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Trajectory2"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:Trajectory2"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Trajectory2:temperature"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Trajectory2:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
@@ -263,6 +290,7 @@
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Trajectory3"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:Trajectory3"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Trajectory3:temperature"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Trajectory3:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
@@ -287,6 +315,7 @@
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Trajectory4"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:Trajectory4"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Trajectory4:temperature"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Trajectory4:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
@@ -311,6 +340,7 @@
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Trajectory5"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:Trajectory5"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Trajectory5:temperature"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Trajectory5:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>

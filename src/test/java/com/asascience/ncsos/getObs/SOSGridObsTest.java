@@ -24,17 +24,19 @@ import ucar.nc2.dataset.NetcdfDataset;
  */
 public class SOSGridObsTest {
     
+    private static final String defaultAuthority = "authority";
+    
     private static final String sst_1 = "resources/datasets/satellite-sst/SST_Global_2x2deg_20120626_0000.nc";
-    private static String sst_1_reqs = "request=GetObservation&service=sos&version=1.0.0&lat=-52.0&lon=0.0&observedProperty=sst&offering=sst&eventtime=1990-01-01T00:00:00Z/2013-05-17T09:57:00.000-04:00&responseformat=";
+    private static String sst_1_reqs = String.format("request=GetObservation&service=sos&version=1.0.0&lat=-52.0&lon=0.0&observedProperty=sst&offering=network-all&procedure=urn:ioos:station:%1$s:Grid0&eventtime=1990-01-01T00:00:00Z/2013-05-17T09:57:00.000-04:00&responseformat=", defaultAuthority);
     private static final String sst_2 = "resources/datasets/satellite-sst/SST_Global_2x2deg_20120627_0000.nc";
-    private static String sst_2_reqs = "request=GetObservation&service=sos&version=1.0.0&lat=-54.0,-52.0,-50.0&lon=-120.0,0.0,74.0&observedProperty=sst&offering=sst&eventtime=1990-01-01T00:00:00Z/2013-05-17T09:57:00.000-04:00&responseformat=";
-    private static String sst_2_network_all = "request=GetObservation&service=sos&version=1.0.0&lat=-54.0,-52.0,-50.0&lon=-120.0,0.0,74.0&observedProperty=sst&offering=network-all&eventtime=1990-01-01T00:00:00Z/2013-05-17T09:57:00.000-04:00&responseformat=";
+    private static String sst_2_reqs = String.format("request=GetObservation&service=sos&version=1.0.0&lat=-54.0,-52.0,-50.0&lon=-120.0,0.0,74.0&observedProperty=sst&offering=network-all&procedure=urn:ioos:station:%1$s:Grid0&eventtime=1990-01-01T00:00:00Z/2013-05-17T09:57:00.000-04:00&responseformat=", defaultAuthority);
+    private static String sst_2_network_all = String.format("request=GetObservation&service=sos&version=1.0.0&lat=-54.0,-52.0,-50.0&lon=-120.0,0.0,74.0&observedProperty=sst&offering=network-all&procedure=urn:ioos:network:%1$s:all&eventtime=1990-01-01T00:00:00Z/2013-05-17T09:57:00.000-04:00&responseformat=", defaultAuthority);
     
     // NODC Tests
     private static final String datasets = "resources/datasets/";
     private static final String sst_pathfinder = datasets + "nodc/00000110200000-NODC-L4_GHRSST-SSTskin-AVHRR_Pathfinder-PFV5.0_Daily_Climatology_1982_2008_DayNightCombined-v02.0-fv01.0.nc";
-    private static String sst_pathfinder_grid0 = "request=GetObservation&service=sos&version=1.0.0&lat=56.3611&lon=176.2466&observedProperty=analysed_sst&offering=Grid0&responseformat=";
-    private static String sst_pathfinder_network_all = "request=GetObservation&service=sos&version=1.0.0&lat=56.3611&lon=176.2466&observedProperty=sea_ice_fraction&offering=network_all&responseformat=";
+    private static String sst_pathfinder_grid0 = String.format("request=GetObservation&service=sos&version=1.0.0&lat=56.3611&lon=176.2466&observedProperty=analysed_sst&offering=Grid0&procedure=urn:ioos:station:%1$s:Grid0&responseformat=", "org.ghrsst");
+    private static String sst_pathfinder_network_all = String.format("request=GetObservation&service=sos&version=1.0.0&lat=56.3611&lon=176.2466&observedProperty=sea_ice_fraction&offering=network-all&procedure=urn:ioos:network:%1$s:all&responseformat=", "org.ghrsst");
     
     private static String baseLocalDir = null;
     private static String outputDir = null;
