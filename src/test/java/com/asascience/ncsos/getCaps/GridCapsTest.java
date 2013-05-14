@@ -31,6 +31,8 @@ public class GridCapsTest {
     
     private static final String testGetCapsSST1 = "resources/datasets/satellite-sst/SST_Global_2x2deg_20120626_0000.nc";
     private static final String testGetCapsSST2 = "resources/datasets/satellite-sst/SST_Global_2x2deg_20120627_0000.nc";
+    
+    private static final String testGetCapsNodc = "resources/datasets/nodc/00000110200000-NODC-L4_GHRSST-SSTskin-AVHRR_Pathfinder-PFV5.0_Daily_Climatology_1982_2008_DayNightCombined-v02.0-fv01.0.nc";
 
     @BeforeClass
     public static void SetupEnviron() {
@@ -109,7 +111,7 @@ public class GridCapsTest {
             writeOutput(md.enhanceGETRequest(dataset, baseRequest, testGetCapsSST1),writer);
             writer.flush();
             writer.close();
-            String fileName = "getCapsSST1.xml";
+            String fileName = getCurrentMethod() + ".xml";
             fileWriter(outputDir, fileName, writer);
             // write as an example
             fileWriter(exampleOutputDir, "GetCapabilities-Grid-om1.0.0.xml", writer);
@@ -132,7 +134,28 @@ public class GridCapsTest {
             writeOutput(md.enhanceGETRequest(dataset, baseRequest, testGetCapsSST2),writer);
             writer.flush();
             writer.close();
-            String fileName = "getCapsSST2.xml";
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(outputDir, fileName, writer);
+            assertFalse(writer.toString().contains("Exception"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testParseNodcPathfinder() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(testGetCapsNodc);
+            SOSParser md = new SOSParser();
+            Writer writer = new CharArrayWriter();
+            writeOutput(md.enhanceGETRequest(dataset, baseRequest, testGetCapsNodc),writer);
+            writer.flush();
+            writer.close();
+            String fileName = getCurrentMethod() + ".xml";
             fileWriter(outputDir, fileName, writer);
             assertFalse(writer.toString().contains("Exception"));
         } catch (IOException ex) {

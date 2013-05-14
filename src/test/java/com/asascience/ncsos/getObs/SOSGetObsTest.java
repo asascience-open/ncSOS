@@ -26,70 +26,72 @@ public class SOSGetObsTest {
     private static String base = null;
     private static String exampleOutputDir = null;
     private static final String datasets = "resources/datasets/";
+    private static final String defaultAuthority = "authority";
    
     // final strings
     private static final String baseRequest = "request=GetObservation&version=1.0.0&service=sos&responseformat=text%2Fxml%3Bsubtype%3D%22om%2F1.0.0%22";
     private static final String IoosSosRequest = "request=GetObservation&version=1.0.0&service=sos&responseFormat=text%2Fxml%3Bsubtype%3D%22om%2F1.0.0%2Fprofiles%2Fioos_sos%2F1.0%22";
     
     private static final String imeds1 = "resources/datasets/sura/Hsig_UNDKennedy_IKE_VIMS_3D_WAVEONLY.nc";
-    private static final String imeds1Req = baseRequest + "&observedProperty=hs&offering=UNDKennedy_S,UNDKennedy_X,UNDKennedy_Z&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
+    private static final String imeds1Req = baseRequest + String.format("&observedProperty=hs&offering=network-all&procedure=urn:ioos:station:%1$s:UNDKennedy_S,urn:ioos:station:%1$s:UNDKennedy_X,urn:ioos:station:%1$s:UNDKennedy_Z&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z", defaultAuthority);
     
     private static final String imeds4 = "resources/datasets/sura/hs_USACE-CHL.nc";
-    private static final String imeds4Req = baseRequest + "&observedProperty=hs&offering=USACE-CHL_2410508B,USACE-CHL_2410513B,USACE-CHL_2410510B&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
+    private static final String imeds4Req = baseRequest + String.format("&observedProperty=hs&offering=network-all&procedure=urn:ioos:station:%1$s:USACE-CHL_2410508B,urn:ioos:station:%1$s:USACE-CHL_2410513B,urn:ioos:station:%1$s:USACE-CHL_2410510B&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z", defaultAuthority);
 
     private static final String imeds5 = "resources/datasets/sura/hwm_TCOON_NAVD88.nc";
-    private static final String imeds5Req = baseRequest + "&observedProperty=hwm&offering=TCOON_87747701,TCOON_87705701,TCOON_87705201,TCOON_87704751,TCOON_87708221&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
+    private static final String imeds5Req = baseRequest + String.format("&observedProperty=hwm&offering=network-all&procedure=urn:ioos:station:%1$s:TCOON_87747701,urn:ioos:station:%1$s:TCOON_87705701,urn:ioos:station:%1$s:TCOON_87705201,urn:ioos:station:%1$s:TCOON_87704751,urn:ioos:station:%1$s:TCOON_87708221&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z", defaultAuthority);
 
     private static final String imeds6 = "resources/datasets/sura/tm_CSI.nc";
-    private static final String imeds6Req = baseRequest + "&observedProperty=tp&offering=CSI_15,CSI_06,CSI_09&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
-    private static final String imeds6IoosReq = IoosSosRequest + "&observedProperty=tp&offering=CSI_03";
+    private static final String imeds6Req = baseRequest + String.format("&observedProperty=tp&offering=network-all&procedure=urn:ioos:station:%1$s:CSI_15,urn:ioos:station:%1$s:CSI_06,urn:ioos:station:%1$s:CSI_09&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z", defaultAuthority);
+    private static final String imeds6IoosReq = IoosSosRequest + String.format("&observedProperty=tp&offering=CSI_03&procedure=urn:ioos:station:%1$s:CSI_03", defaultAuthority);
     
     private static final String imeds7 = "resources/datasets/sura/tm_IKE.nc";
-    private static final String imeds7Req = baseRequest + "&observedProperty=tp&offering=CSI_06,CSI_09,NDBC_42020,NDBC_42019,USACE-CHL_2410513B,NDBC_42059&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
+    private static final String imeds7Req = baseRequest + String.format("&observedProperty=tp&offering=network-all&procedure=urn:ioos:station:%1$s:CSI_06,urn:ioos:station:%1$s:CSI_09,urn:ioos:station:%1$s:NDBC_42020,urn:ioos:station:%1$s:NDBC_42019,urn:ioos:station:%1$s:USACE-CHL_2410513B,urn:ioos:station:%1$s:NDBC_42059&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z", defaultAuthority);
+    private static final String imeds7ReqIoos = IoosSosRequest + String.format("&observedProperty=tp&offering=network-all&procedure=urn:ioos:station:%1$s:CSI_06,urn:ioos:station:%1$s:CSI_09,urn:ioos:station:%1$s:NDBC_42020,urn:ioos:station:%1$s:NDBC_42019,urn:ioos:station:%1$s:USACE-CHL_2410513B,urn:ioos:station:%1$s:NDBC_42059&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z", defaultAuthority);
     
     private static final String imeds8 = "resources/datasets/sura/watlev_CRMS.nc";
-    private static final String imeds8Req = baseRequest + "&observedProperty=watlev&offering=CRMS_CS20-106,CRMS_CS20-15R,CRMS_DCPBS03,CRMS_DCPBS04&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
+    private static final String imeds8Req = baseRequest + String.format("&observedProperty=watlev&offering=network-all&procedure=urn:ioos:station:%1$s:CRMS_CS20-106,urn:ioos:station:%1$s:CRMS_CS20-15R,urn:ioos:station:%1$s:CRMS_DCPBS03,urn:ioos:station:%1$s:CRMS_DCPBS04&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z", defaultAuthority);
     
     private static final String imeds9 = "resources/datasets/sura/watlev_CRMS_2005.nc";
-    private static final String imeds9Req = baseRequest + "&observedProperty=watlev&offering=CRMS_CS20-106,CRMS_CS20-15R,CRMS_DCPBS03,CRMS_DCPBS04&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
+    private static final String imeds9Req = baseRequest + String.format("&observedProperty=watlev&offering=network-all&procedure=urn:ioos:station:%1$s:CRMS_CS20-106,urn:ioos:station:%1$s:CRMS_CS20-15R,urn:ioos:station:%1$s:CRMS_DCPBS03,urn:ioos:station:%1$s:CRMS_DCPBS04&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z", defaultAuthority);
     
     private static final String imeds10 = "resources/datasets/sura/watlev_CRMS_2008.F.C_IKE_VIMS_3D_NOWAVE.nc";
-    private static final String imeds10Req = baseRequest + "&observedProperty=watlev&offering=CRMS_CRMS0161-H01,CRMS_DCPBA07,CRMS_CRMS0174-H01,&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
+    private static final String imeds10Req = baseRequest + String.format("&observedProperty=watlev&offering=network-all&procedure=urn:ioos:station:%1$s:CRMS_CRMS0161-H01,urn:ioos:station:%1$s:CRMS_DCPBA07,urn:ioos:station:%1$s:CRMS_CRMS0174-H01,&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z", defaultAuthority);
     
     private static final String imeds11 = "resources/datasets/sura/watlev_CRMS_2008.F.C__IKE_VIMS_3D_WITHWAVE.nc";
-    private static final String imeds11Req = baseRequest + "&observedProperty=watlev&offering=CRMS_CRMS0161-H01,CRMS_DCPBA07,CRMS_CRMS0174-H01,&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
+    private static final String imeds11Req = baseRequest + String.format("&observedProperty=watlev&offering=network-all&procedure=urn:ioos:station:%1$s:CRMS_CRMS0161-H01,urn:ioos:station:%1$s:CRMS_DCPBA07,urn:ioos:station:%1$s:CRMS_CRMS0174-H01,&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z", defaultAuthority);
     
     private static final String imeds12 = "resources/datasets/sura/watlev_CSI.nc";
-    private static final String imeds12Req = baseRequest + "&observedProperty=watlev&offering=CSI_03,CSI_06,CSI_09,CSI_15&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
+    private static final String imeds12Req = baseRequest + String.format("&observedProperty=watlev&offering=network-all&procedure=urn:ioos:station:%1$s:CSI_03,urn:ioos:station:%1$s:CSI_06,urn:ioos:station:%1$s:CSI_09,urn:ioos:station:%1$s:CSI_15&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z", defaultAuthority);
     
     private static final String imeds13 = "resources/datasets/sura/watlev_IKE.nc";
-    private static final String imeds13Req = baseRequest + "&observedProperty=watlev&offering=CSI_06,CSI_09&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
+    private static final String imeds13Req = baseRequest + String.format("&observedProperty=watlev&offering=network-all&procedure=urn:ioos:station:%1$s:CSI_06,urn:ioos:station:%1$s:CSI_09&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z", defaultAuthority);
     
     private static final String imeds14 = "resources/datasets/sura/watlev_IKE.P.UL-Ike2Dh.61.nc";
     
     private static final String imeds15 = "resources/datasets/sura/watlev_NOAA_NAVD_PRE.nc";
-    private static final String imeds15Req = baseRequest + "&observedProperty=watlev&offering=NOAA_8727235,NOAA_8729501&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z";
+    private static final String imeds15Req = baseRequest + String.format("&observedProperty=watlev&offering=network-all&procedure=urn:ioos:station:%1$s:NOAA_8727235,urn:ioos:station:%1$s:NOAA_8729501&eventtime=1990-01-01T00:00:00Z/2009-01-01T00:00:00Z", defaultAuthority);
     
     private static final String tsIncompleteMultiDimensionalMultipleStations = "resources/datasets/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc";
-    private static final String timeSeriesIncomplete = baseRequest + "&observedProperty=temperature&offering=Station-9";
-    private static final String timeSeriesIncompleteWithTime = baseRequest + "&observedProperty=temperature&offering=Station-9&eventtime=1990-01-01T00:00:00Z";
-    private static final String timeSeriesIncompleteMulti = baseRequest + "&observedProperty=temperature&offering=Station-9&eventtime=1990-01-01T00:00:00Z/1990-01-01T10:00:00Z";
-    private static final String timeSeriesIncompleteMultiInvalid = baseRequest + "&observedProperty=temperature&offering=Station-9&eventtime=1990-02-01T00:00:00Z/1990-05-01T10:00:00Z";
-    private static final String timeSeriesIncompleteMultiStation = baseRequest + "&observedProperty=temperature&offering=Station-9,Station-8&eventtime=1990-01-01T00:00:00Z/1990-01-01T8:00:00Z";
-    private static final String timeSeriesIncompleteMultiStationx3 = baseRequest + "&observedProperty=temperature&offering=urn:ioos:station:authority:Station-9,urn:ioos:station:authority:Station-8,urn:ioos:station:authority:Station-7&eventtime=1990-01-01T00:00:00Z/1990-01-01T8:00:00Z";
+    private static final String timeSeriesIncomplete = baseRequest + String.format("&observedProperty=temperature&offering=Station-9&procedure=urn:ioos:station:%1$s:Station-9", defaultAuthority);
+    private static final String timeSeriesIncompleteWithTime = baseRequest + String.format("&observedProperty=temperature&offering=Station-9&eventtime=1990-01-01T00:00:00Z&procedure=urn:ioos:station:%1$s:Station-9", defaultAuthority);
+    private static final String timeSeriesIncompleteMulti = baseRequest + String.format("&observedProperty=temperature&offering=Station-9&eventtime=1990-01-01T00:00:00Z/1990-01-01T10:00:00Z&procedure=urn:ioos:station:%1$s:Station-9", defaultAuthority);
+    private static final String timeSeriesIncompleteMultiInvalid = baseRequest + String.format("&observedProperty=temperature&offering=Station-9&eventtime=1990-02-01T00:00:00Z/1990-05-01T10:00:00Z&procedure=urn:ioos:station:%1$s:Station-9", defaultAuthority);
+    private static final String timeSeriesIncompleteMultiStation = baseRequest + String.format("&observedProperty=temperature&offering=network-all&eventtime=1990-01-01T00:00:00Z/1990-01-01T8:00:00Z&procedure=urn:ioos:station:%1$s:Station-9,urn:ioos:station:%1$s:Station-8",defaultAuthority);
+    private static final String timeSeriesIncompleteMultiStationx3 = baseRequest + String.format("&observedProperty=temperature&procedure=urn:ioos:station:%1$s:Station-9,urn:ioos:station:%1$s:Station-8,urn:ioos:station:%1$s:Station-7&offering=network-all&eventtime=1990-01-01T00:00:00Z/1990-01-01T8:00:00Z", defaultAuthority);
     
     private static final String tsOrthogonalMultidimenstionalMultipleStations = "resources/datasets/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1/timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1.nc";
-    private static final String timeSeriestOrth = baseRequest + "&observedProperty=alt&offering=Station-1&eventtime=1990-01-01T00:00:00Z";
+    private static final String timeSeriestOrth = baseRequest + String.format("&observedProperty=alt&offering=Station-1&procedure=urn:ioos:station:%1$s:Station-1&eventtime=1990-01-01T00:00:00Z", defaultAuthority);
     
     private static final String RaggedMultiConventions = "resources/datasets/timeSeriesProfile-Ragged-MultipeStations-H.5.3/timeSeriesProfile-Ragged-MultipeStations-H.5.3.nc";
     private static final String MultiDimensionalSingleStations = "resources/datasets/timeSeriesProfile-Multidimensional-SingleStation-H.5.2/timeSeriesProfile-Multidimensional-SingleStation-H.5.2.nc";
     private static final String MultiDimensionalMultiStations = "resources/datasets/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1.nc";
     
     private static final String ContiguousRaggedMultipleProfiles = "resources/datasets/profile-Contiguous-Ragged-MultipleProfiles-H.3.4/profile-Contiguous-Ragged-MultipleProfiles-H.3.4.nc";
-    private static final String profileRequest = baseRequest + "&observedProperty=temperature,humidity&offering=Profile0&eventTime=1990-01-01T00:00:00Z";
-    private static final String profileRequestMultiTime = baseRequest + "&observedProperty=temperature,humidity&offering=Profile1,Profile2,Profile3&eventTime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z";
-    private static final String profileRequestMultiTime2 = baseRequest + "&observedProperty=temperature,humidity&offering=Profile1,Profile2&eventTime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z";
-    private static final String profileRequestMultiTime3 = baseRequest + "&service=sos&observedProperty=temperature,humidity&offering=Profile3&eventTime=1990-01-01T00:00:00Z/1990-01-01T03:00:00Z";
+    private static final String profileRequest = baseRequest + String.format("&observedProperty=temperature,humidity&offering=Profile0&procedure=urn:ioos:station:%1$s:Profile0&eventTime=1990-01-01T00:00:00Z", defaultAuthority);
+    private static final String profileRequestMultiTime = baseRequest + String.format("&observedProperty=temperature,humidity&offering=network-all&procedure=urn:ioos:station:%1$s:Profile1,urn:ioos:station:%1$s:Profile2,urn:ioos:station:%1$s:Profile3&eventTime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z", defaultAuthority);
+    private static final String profileRequestMultiTime2 = baseRequest + String.format("&observedProperty=temperature,humidity&offering=network-all&procedure=urn:ioos:station:%1$s:Profile1,urn:ioos:station:%1$s:Profile2&eventTime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z", defaultAuthority);
+    private static final String profileRequestMultiTime3 = baseRequest + String.format("&service=sos&observedProperty=temperature,humidity&offering=Profile3&procedure=urn:ioos:station:%1$s:Profile3&eventTime=1990-01-01T00:00:00Z/1990-01-01T03:00:00Z", defaultAuthority);
     
     private static final String IncompleteMultiDimensionalMultipleProfiles = "resources/datasets/profile-Incomplete-MultiDimensional-MultipleProfiles-H.3.2/profile-Incomplete-MultiDimensional-MultipleProfiles-H.3.2.nc";
     
@@ -98,103 +100,109 @@ public class SOSGetObsTest {
     private static final String OrthogonalSingleDimensionalSingleProfile = "resources/datasets/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3.nc";
     
     private static final String IndexedRaggedMultipleProfiles = "resources/datasets/profile-Indexed-Ragged-MultipleProfiles-H.3.5/profile-Indexed-Ragged-MultipleProfiles-H.3.5.nc";
-    private static final String profileRequestIndexed = baseRequest + "&observedProperty=temperature,humidity&offering=1&eventTime=1990-01-01T01:00:00Z/1990-01-01T04:00:00Z";
+    private static final String profileRequestIndexed = baseRequest + String.format("&observedProperty=temperature,humidity&procedure=urn:ioos:station:%1$s:Profile1&offering=Profile1&eventTime=1990-01-01T01:00:00Z/1990-01-01T04:00:00Z", defaultAuthority);
     
-    private static final String timeSeriesProfileRequestSingle = baseRequest + "&observedProperty=temperature&offering=uri.sos:Station1&eventtime=1990-01-01T00:00:00Z";
-    private static final String timeSeriesProfileRequestMulti = baseRequest + "&observedProperty=temperature&offering=uri.sos:Station1&eventtime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z";
-    private static final String timeSeriesProfileRequestMultiStation = baseRequest + "&observedProperty=temperature&offering=Station1,Station2&eventTime=1990-01-01T00:00:00Z/1990-01-01T05:00:00Z";
+    private static final String timeSeriesProfileRequestSingle = baseRequest + String.format("&observedProperty=temperature&procedure=urn:ioos:station:%1$s:Station1&offering=Station1&eventtime=1990-01-01T00:00:00Z", defaultAuthority);
+    private static final String timeSeriesProfileRequestMulti = baseRequest + String.format("&observedProperty=temperature&procedure=urn:ioos:station:%1$s:Station1&offering=Station1&eventtime=1990-01-01T00:00:00Z/1990-01-01T02:00:00Z", defaultAuthority);
+    private static final String timeSeriesProfileRequestMultiStation = baseRequest + String.format("&observedProperty=temperature&offering=network-all&procedure=urn:ioos:station:%1$s:Station1,urn:ioos:station:%1$s:Station2&eventTime=1990-01-01T00:00:00Z/1990-01-01T05:00:00Z", defaultAuthority);
 
-    private static final String timeSeriesProfileRequestMultiInvalidDates = baseRequest + "&observedProperty=temperature&offering=uri.sos:Station1&eventtime=1990-04-01T00:00:00Z/1990-08-01T02:00:00Z";
-    private static final String timeSeriesProfileRequest2 = baseRequest + "&observedProperty=temperature&offering=Station1&eventTime=1990-01-01T00:00:00Z";
-    private static final String timeSeriesTimeRequestT2 = baseRequest + "&observedProperty=temperature&offering=Station1&eventtime=1990-01-01T02:00:00Z";
-    private static final String timeSeriesTimeRequestT1 = baseRequest + "&observedProperty=temperature&offering=Station1&eventtime=1990-01-01T00:00:00Z";
-    private static final String timeSeriesProfileRequest3 = baseRequest + "&observedProperty=temperature&offering=Station2&eventTime=1990-01-01T04:00:00Z";
+    private static final String timeSeriesProfileRequestMultiInvalidDates = baseRequest + String.format("&observedProperty=temperature&procedure=urn:ioos:station:%1$s:Station1&offering=Station1&eventtime=1990-04-01T00:00:00Z/1990-08-01T02:00:00Z", defaultAuthority);
+    private static final String timeSeriesProfileRequest2 = baseRequest + String.format("&observedProperty=temperature&offering=Station1&procedure=urn:ioos:station:%1$s:Station1&eventTime=1990-01-01T00:00:00Z", defaultAuthority);
+    private static final String timeSeriesTimeRequestT2 = baseRequest + String.format("&observedProperty=temperature&offering=Station1&procedure=urn:ioos:station:%1$s:Station1&eventtime=1990-01-01T02:00:00Z", defaultAuthority);
+    private static final String timeSeriesTimeRequestT1 = baseRequest + String.format("&observedProperty=temperature&offering=Station1&procedure=urn:ioos:station:%1$s:Station1&eventtime=1990-01-01T00:00:00Z", defaultAuthority);
+    private static final String timeSeriesProfileRequest3 = baseRequest + String.format("&observedProperty=temperature&offering=Station2&procedure=urn:ioos:station:%1$s:Station2&eventTime=1990-01-01T04:00:00Z", defaultAuthority);
     
     private static final String trajectoryIncompleteMultidimensionalMultipleTrajectories = "resources/datasets/trajectory-Incomplete-Multidimensional-MultipleTrajectories-H.4.1/trajectory-Incomplete-Multidimensional-MultipleTrajectories-H.4.1.nc";
-    private static final String trajectoryIncompleteRequest1 = baseRequest + "&observedProperty=temperature&offering=Trajectory1&eventTime=1970-01-01T00:00:00Z/2012-07-11T00:00:00";
+    private static final String trajectoryIncompleteRequest1 = baseRequest + String.format("&observedProperty=temperature&offering=Trajectory1&procedure=urn:ioos:station:%1$s:Trajectory1&eventTime=1970-01-01T00:00:00Z/2012-07-11T00:00:00", defaultAuthority);
     
     private static final String trajectoryContiguousRaggedMultipleTrajectories = "resources/datasets/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc";
-    private static final String trajectoryContiguousRequest1 = baseRequest + "&observedProperty=temperature&offering=Trajectory1&eventtime=1970-01-01T00:00:00Z/2012-07-11T00:00:00";
+    private static final String trajectoryContiguousRequest1 = baseRequest + String.format("&observedProperty=temperature&procedure=urn:ioos:station:%1$s:Trajectory1&offering=Trajectory1&eventtime=1970-01-01T00:00:00Z/2012-07-11T00:00:00", defaultAuthority);
     
     private static final String trajectoryProfileMultidimensionalMultipleTrajectories = "resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc";
-    private static final String sectionRequest1 = baseRequest + "&observedProperty=salinity&offering=Trajectory2&eventTime=1990-01-01T00:00:00Z";
+    private static final String sectionRequest1 = baseRequest + String.format("&observedProperty=salinity&procedure=urn:ioos:station:%1$s:Trajectory2&offering=Trajectory2&eventTime=1990-01-01T00:00:00Z", defaultAuthority);
     
     private static final String externalHawaiiStation = "resources/datasets/sura/wqbkn_2012_08_01.nc";
-    private static final String externalHawaiiRequest1 = baseRequest + "&observedProperty=temp&offering=WQBKN";
+    private static final String externalHawaiiRequest1 = baseRequest + String.format("&observedProperty=temp&offering=WQBKN&procedure=urn:ioos:station:%1$s:WQBKN", defaultAuthority);
     
     private static final String watlevNOAANavdPre = "resources/datasets/sura/watlev_NOAA_NAVD_PRE.nc";
-    private static final String watlevNOAANavdRequest = baseRequest + "&observedProperty=watlev&offering=NOAA_8767961";
+    private static final String watlevNOAANavdRequest = baseRequest + String.format("&observedProperty=watlev&offering=NOAA_8767961&procedure=urn:ioos:station:%1$s:NOAA_8767961", defaultAuthority);
+    private static final String watlevNOAANavdRequestIoos = IoosSosRequest + String.format("&observedProperty=watlev&offering=NOAA_8767961&procedure=urn:ioos:station:%1$s:NOAA_8767961", defaultAuthority);
+    
+    // test some exceptions (using imeds8)
+    private static final String testBadProcedure = baseRequest + String.format("&observedProperty=watlev&offering=network-all&procedure=urn:station:%1$s:CRMS_CS20-106", defaultAuthority);
+    private static final String testBadOffering = baseRequest + String.format("&observedProperty=watlev&offering=badOffering&procedure=urn:ioos:station:%1$s:CRMS_CS20-106", defaultAuthority);
+    private static final String testBadProcOffPair = baseRequest + String.format("&observedProperty=watlev&offering=CRMS20_106&procedure=urn:ioos:station:%1$s:CRMS20_15R", defaultAuthority);
     
     //network all time series
     private static final String networkAllTimeSeries1 = datasets + "timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc";
-    private static final String networkAllTimeSeries1Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllTimeSeries1Request = baseRequest + String.format("&observedProperty=temperature&offering=network-all&procedure=urn:ioos:network:%1$s:all", defaultAuthority);
     private static final String networkAllTimeSeries2 = datasets + "timeSeries-Orthogonal-Multidimensional-MultipeStations-H.2.1/timeSeries-Orthogonal-Multidimensional-MultipeStations-H.2.1.nc";
-    private static final String networkAllTimeSeries2Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllTimeSeries2Request = baseRequest + String.format("&observedProperty=temperature&offering=network-all&procedure=urn:ioos:network:%1$s:all", defaultAuthority);
     
     // network all trajectory
     private static final String networkAllTrajectory1 = datasets + "trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc";
-    private static final String networkAllTrajectory1Request1 = baseRequest + "&observedProperty=temperature&offering=network-all";
-    private static final String networkAllTrajectory1Request2 = baseRequest + "&observedProperty=temperature&offering=network-all&eventtime=1970-01-01T00:00:00Z/2012-07-11T00:00:00";
-    private static final String networkAllTrajectory1Request3 = baseRequest + "&observedProperty=humidity&offering=network-all";
+    private static final String networkAllTrajectory1Request1 = baseRequest + String.format("&observedProperty=temperature&offering=network-all&procedure=urn:ioos:network:%1$s:all", defaultAuthority);
+    private static final String networkAllTrajectory1Request2 = baseRequest + String.format("&observedProperty=temperature&offering=network-all&procedure=urn:ioos:network:%1$s:all&eventtime=1970-01-01T00:00:00Z/2012-07-11T00:00:00", defaultAuthority);
+    private static final String networkAllTrajectory1Request3 = baseRequest + String.format("&observedProperty=humidity&offering=network-all&procedure=urn:ioos:network:%1$s:all", defaultAuthority);
     private static final String networkAllTrajectory2 = datasets + "trajectory-Incomplete-Multidimensional-MultipleTrajectories-H.4.1/trajectory-Incomplete-Multidimensional-MultipleTrajectories-H.4.1.nc";
-    private static final String networkAllTrajectory2Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllTrajectory2Request = baseRequest + String.format("&observedProperty=temperature&offering=network-all&procedure=urn:ioos:network:%1$s:all", defaultAuthority);
     private static final String networkAllTrajectory3 = datasets + "trajectory-Incomplete-Multidimensional-SingleTrajectory-H.4.2/trajectory-Incomplete-Multidimensional-SingleTrajectory-H.4.2.nc";
-    private static final String networkAllTrajectory3Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllTrajectory3Request = baseRequest + String.format("&observedProperty=temperature&offering=network-all&procedure=urn:ioos:network:%1$s:all", defaultAuthority);
     private static final String networkAllTrajectory4 = datasets + "trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4.nc";
-    private static final String networkAllTrajectory4Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllTrajectory4Request = baseRequest + String.format("&observedProperty=temperature&offering=network-all&procedure=urn:ioos:network:%1$s:all", defaultAuthority);
     
     // network all time series profile
     private static final String networkAllTimeSeriesProfile1 = datasets + "timeSeriesProfile-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1.nc";
-    private static final String networkAllTimeSeriesProfile1Request = baseRequest + "&observedProperty=temperature&offering=network-all&eventTime=1990-01-01T04:00:00Z";
+    private static final String networkAllTimeSeriesProfile1Request = baseRequest + String.format("&observedProperty=temperature&offering=network-all&procedure=urn:ioos:network:%1$s:all&eventTime=1990-01-01T04:00:00Z", defaultAuthority);
     private static final String networkAllTimeSeriesProfile2 = datasets + "timeSeriesProfile-Multidimensional-SingleStation-H.5.2/timeSeriesProfile-Multidimensional-SingleStation-H.5.2.nc";
-    private static final String networkAllTimeSeriesProfile2Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllTimeSeriesProfile2Request = baseRequest + String.format("&observedProperty=temperature&offering=network-all&procedure=urn:ioos:network:%1$s:all", defaultAuthority);
     private static final String networkAllTimeSeriesProfile3 = datasets + "timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Orthogonal-Multidimensional-MultipeStations-H.5.1.nc";
-    private static final String networkAllTimeSeriesProfile3Request = baseRequest + "&observedProperty=station_info&offering=network-all";
+    private static final String networkAllTimeSeriesProfile3Request = baseRequest + String.format("&observedProperty=station_info&offering=network-all&procedure=urn:ioos:network:%1$s:all", defaultAuthority);
     private static final String networkAllTimeSeriesProfile4 = datasets + "timeSeriesProfile-Ragged-MultipeStations-H.5.3/timeSeriesProfile-Ragged-MultipeStations-H.5.3.nc";
-    private static final String networkAllTimeSeriesProfile4Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllTimeSeriesProfile4Request = baseRequest + String.format("&observedProperty=temperature&offering=network-all&procedure=urn:ioos:network:%1$s:all", defaultAuthority);
     private static final String networkAllTimeSeriesProfile5 = datasets + "timeSeriesProfile-Ragged-SingleStation-H.5.3/timeSeriesProfile-Ragged-SingleStation-H.5.3.nc";
-    private static final String networkAllTimeSeriesProfile5Request = baseRequest + "&observedProperty=time&offering=network-all";
+    private static final String networkAllTimeSeriesProfile5Request = baseRequest + String.format("&observedProperty=time&offering=network-all&procedure=urn:ioos:network:%1$s:all", defaultAuthority);
     
     
     // network all profile
     private static final String networkAllProfile1 = "resources/datasets/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1.nc";
-    private static final String networkAllProfile1Request = baseRequest + "&observedProperty=temperature,humidity&offering=network-all";
+    private static final String networkAllProfile1Request = baseRequest + String.format("&observedProperty=temperature,humidity&offering=network-all&procedure=urn:ioos:network:%1$s:all", defaultAuthority);
     private static final String networkAllProfile2 = datasets + "profile-Contiguous-Ragged-MultipleProfiles-H.3.4/profile-Contiguous-Ragged-MultipleProfiles-H.3.4.nc";
-    private static final String networkAllProfile2Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllProfile2Request = baseRequest + String.format("&observedProperty=temperature&offering=network-all&procedure=urn:ioos:network:%1$s:all", defaultAuthority);
     private static final String networkAllProfile3 = datasets + "profile-Incomplete-MultiDimensional-MultipleProfiles-H.3.2/profile-Incomplete-MultiDimensional-MultipleProfiles-H.3.2.nc";
-    private static final String networkAllProfile3Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllProfile3Request = baseRequest + String.format("&observedProperty=temperature&offering=network-all&procedure=urn:ioos:network:%1$s:all", defaultAuthority);
     private static final String networkAllProfile4 = datasets + "profile-Indexed-Ragged-MultipleProfiles-H.3.5/profile-Indexed-Ragged-MultipleProfiles-H.3.5.nc";
-    private static final String networkAllProfile4Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllProfile4Request = baseRequest + String.format("&observedProperty=temperature&offering=network-allprocedure=urn:ioos:network:%1$s:all", defaultAuthority);
     private static final String networkAllProfile5 = datasets + "profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3/profile-Orthogonal-SingleDimensional-SingleProfile-H.3.3.nc";
-    private static final String networkAllProfile5Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllProfile5Request = baseRequest + String.format("&observedProperty=temperature&offering=network-all&procedure=urn:ioos:network:%1$s:all", defaultAuthority);
     
     // network all section
     private static final String networkAllTrajectoryProfile1 = "resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc";
-    private static final String networkAllTrajectoryProfile1Request = baseRequest + "&observedProperty=salinity&offering=network-all";
+    private static final String networkAllTrajectoryProfile1Request = baseRequest + String.format("&observedProperty=salinity&offering=network-all&procedure=urn:ioos:network:%1$s:all", defaultAuthority);
     private static final String networkAllTrajectoryProfile2 = datasets + "trajectoryProfile-Multidimensional-SingleTrajectory-H.6.2/trajectoryProfile-Multidimensional-SingleTrajectory-H.6.2.nc";
-    private static final String networkAllTrajectoryProfile2Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllTrajectoryProfile2Request = baseRequest + String.format("&observedProperty=temperature&offering=network-all&procedure=urn:ioos:network:%1$s:all", defaultAuthority);
     private static final String networkAllTrajectoryProfile3 = datasets + "trajectoryProfile-Ragged-MultipleTrajectories-H.6.3/trajectoryProfile-Ragged-MultipleTrajectories-H.6.3.nc";
-    private static final String networkAllTrajectoryProfile3Request = baseRequest + "&observedProperty=temperature&offering=network-all";
+    private static final String networkAllTrajectoryProfile3Request = baseRequest + String.format("&observedProperty=temperature&offering=network-all&procedure=urn:ioos:network:%1$s:all", defaultAuthority);
     
     // IoosSos1.0 response format
     private static final String kachemakBay = datasets + "nodc/KachemakBay.nc";
     private static final String seaMapPoint = datasets + "SEAMAPdataCStructs7.nc";
-    private static final String seaMapPointRequest = IoosSosRequest + "&observedProperty=Air_Temperature&offering=network-all";
-    private static final String timeSeriesIncompIoosSosRequest1 = IoosSosRequest + "&observedProperty=temperature,humidity&offering=Station-1,Station-3&eventtime=1990-01-01T00:00:00Z";
-    private static final String pointIoosSosRequest1 = IoosSosRequest + "&observedProperty=fluorene&offering=network-all&eventtime=1990-01-01T00:00:48Z";
+    private static final String seaMapPointRequest = IoosSosRequest + String.format("&observedProperty=Air_Temperature&offering=network-all&procedure=urn:ioos:network:%1$s:all", defaultAuthority);
+    private static final String timeSeriesIncompIoosSosRequest1 = IoosSosRequest + String.format("&observedProperty=temperature,humidity&offering=network-all&eventtime=1990-01-01T00:00:00Z&procedure=urn:ioos:station:%1$s:Station-1,urn:ioos:station:%1$s:Station-3", defaultAuthority);
+    private static final String pointIoosSosRequest1 = IoosSosRequest + String.format("&observedProperty=fluorene&offering=network-all&eventtime=1990-01-01T00:00:48Z&procedure=urn:ioos:network:%1$s:all", defaultAuthority);
     private static final String bodegaMarineLabBuoy = datasets + "nodc/BodegaMarineLabBuoy.nc";
-    private static final String bodegaIoosRequest1 = IoosSosRequest + "&observedProperty=density,temperature,salinity&offering=Cordell Bank Buoy&eventtime=140835-01-26T00:00:00Z/140835-12-31T23:59:59";
+    private static final String bodegaIoosRequest1 = IoosSosRequest + String.format("&observedProperty=density,temperature,salinity&offering=Cordell Bank Buoy&eventtime=140835-01-26T00:00:00Z/140835-12-31T23:59:59&procedure=urn:ioos:station:%1$s:Cordell Bank Buoy", defaultAuthority);
     // TODO: below are currently unsupported by IOOS response format, once they are
     // tests will need to be re-written for them to reflect that
     
     // uses networkAllTrajectory1 dataset
-    private static final String ioosTrajectoryRequest = IoosSosRequest + "&observedProperty=temperature&offering=Trajectory1,Trajectory2,Trajectory4";
+    private static final String ioosTrajectoryRequest = IoosSosRequest + String.format("&observedProperty=temperature&offering=network-all&procedure=urn:ioos:station:%1$s:Trajectory1,urn:ioos:station:%1$s:Trajectory2,urn:ioos:station:%1$s:Trajectory4", defaultAuthority);
     // uses networkAllTimeSeriesProfile1 dataset
-    private static final String ioosTimeSeriesProfileRequest = IoosSosRequest + "&observedProperty=temperature&offering=network-all&eventTime=1990-01-01T04:00:00Z";
+    private static final String ioosTimeSeriesProfileRequest = IoosSosRequest + String.format("&observedProperty=temperature&offering=network-all&procedure=urn:ioos:network:%1$s:all&eventTime=1990-01-01T04:00:00Z", defaultAuthority);
     // uses networkAllProfile1 dataset
-    private static final String ioosProfileRequest = IoosSosRequest + "&observedProperty=temperature,humidity&offering=Profile10,Profile42";
+    private static final String ioosProfileRequest = IoosSosRequest + String.format("&observedProperty=temperature,humidity&offering=network-all&procedure=urn:ioos:station:%1$s:Profile10,urn:ioos:station:%1$s:Profile42", defaultAuthority);
     // uses networkAllTrajectoryProfile1 dataset
-    private static final String ioosTrajectoryProfileRequest = IoosSosRequest + "&observedProperty=salinity&offering=Trajectory0,Trajectory5";
+    private static final String ioosTrajectoryProfileRequest = IoosSosRequest + String.format("&observedProperty=salinity&offering=network-all&procedure=urn:ioos:station:%1$s:Trajectory0,urn:ioos:station:%1$s:Trajectory5", defaultAuthority);
     
     @BeforeClass
     public static void SetupEnviron() {
@@ -281,7 +289,7 @@ public class SOSGetObsTest {
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, imeds1Req, imeds1),write);
             write.flush();
-            write.close();String fileName = "imeds1.xml";
+            write.close();String fileName = getCurrentMethod() + ".xml";
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
@@ -397,6 +405,29 @@ public class SOSGetObsTest {
             write.flush();
             write.close();
             String fileName = "imeds7.xml";
+            fileWriter(base, fileName, write);
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testEnhanceIMEDS7IOOS() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(imeds7);
+
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhanceGETRequest(dataset, imeds7ReqIoos, imeds7),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
@@ -592,7 +623,7 @@ public class SOSGetObsTest {
     }
     
     @Test
-    public void testMultiTimeCreateDataStruct3Stations() {
+    public void testTimeSeries3Stations() {
         System.out.println("\n------" + getCurrentMethod() + "------");
         
         try {
@@ -603,7 +634,7 @@ public class SOSGetObsTest {
             writeOutput(md.enhanceGETRequest(dataset, timeSeriesIncompleteMultiStationx3, tsIncompleteMultiDimensionalMultipleStations),write);
             write.flush();
             write.close();
-            String fileName = "tsDatax3.xml";
+            String fileName = getCurrentMethod() + ".xml";
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
@@ -625,7 +656,7 @@ public class SOSGetObsTest {
     }
     
     @Test
-    public void testMultiTimeCreateDataStruct() {
+    public void testTimeSeriesCreateDataStruct() {
         System.out.println("\n------" + getCurrentMethod() + "------");
         
         try {
@@ -636,7 +667,7 @@ public class SOSGetObsTest {
             writeOutput(md.enhanceGETRequest(dataset, timeSeriesIncompleteMultiStation, tsIncompleteMultiDimensionalMultipleStations),write);
             write.flush();
             write.close();
-            String fileName = "tsData.xml";
+            String fileName = getCurrentMethod() + ".xml";
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
@@ -669,7 +700,7 @@ public class SOSGetObsTest {
             writeOutput(md.enhanceGETRequest(dataset, timeSeriesIncompleteMultiInvalid, tsIncompleteMultiDimensionalMultipleStations),write);
             write.flush();
             write.close();
-            String fileName = getCurrentMethod();
+            String fileName = getCurrentMethod() + ".xml";
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             //dataAvailableInOutputFile(write);
@@ -697,7 +728,7 @@ public class SOSGetObsTest {
             writeOutput(md.enhanceGETRequest(dataset, timeSeriesIncompleteMulti, tsIncompleteMultiDimensionalMultipleStations),write);
             write.flush();
             write.close();
-            String fileName = getCurrentMethod();
+            String fileName = getCurrentMethod() + ".xml";
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
@@ -725,7 +756,7 @@ public class SOSGetObsTest {
             writeOutput(md.enhanceGETRequest(dataset, timeSeriesIncomplete, tsIncompleteMultiDimensionalMultipleStations),write);
             write.flush();
             write.close();
-            String fileName = getCurrentMethod();
+            String fileName = getCurrentMethod() + ".xml";
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
@@ -748,7 +779,7 @@ public class SOSGetObsTest {
             writeOutput(md.enhanceGETRequest(dataset, timeSeriesIncompleteWithTime, tsIncompleteMultiDimensionalMultipleStations),write);
             write.flush();
             write.close();
-            String fileName = getCurrentMethod();
+            String fileName = getCurrentMethod() + ".xml";
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
@@ -771,7 +802,7 @@ public class SOSGetObsTest {
             writeOutput(md.enhanceGETRequest(dataset, timeSeriestOrth, tsOrthogonalMultidimenstionalMultipleStations),write);
             write.flush();
             write.close();
-            String fileName = getCurrentMethod();
+            String fileName = getCurrentMethod() + ".xml";
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
@@ -1861,6 +1892,30 @@ public class SOSGetObsTest {
     }
     
     @Test
+    public void testExampleTimeSeriesIoos() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(watlevNOAANavdPre);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhanceGETRequest(dataset, watlevNOAANavdRequestIoos, watlevNOAANavdPre),write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            assertFalse("exception in output", write.toString().contains("Exception"));
+            dataAvailableInOutputFile(write);
+            // write as an example
+            fileWriter(exampleOutputDir, "GetObservation-TimeSeries-om1.0.0-IOOS1.0.xml", write);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
     public void testIoosSosTimeSeries() {
         System.out.println("\n------" + getCurrentMethod() + "------");
         
@@ -2022,6 +2077,72 @@ public class SOSGetObsTest {
             String fileName = getCurrentMethod() + ".xml";
             fileWriter(base, fileName, write);
             assertTrue("no exception in output", write.toString().contains("Exception"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testInvalidRequestBadOffering() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(imeds8);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhanceGETRequest(dataset, testBadOffering, imeds8), write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            assertTrue("no exception in output", write.toString().contains("Exception"));
+            assertTrue("exception unrelated to bad offering", write.toString().contains("offer"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testInvalidRequestBadProcedure() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(imeds8);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhanceGETRequest(dataset, testBadProcedure, imeds8), write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            assertTrue("no exception in output", write.toString().contains("Exception"));
+            assertTrue("exception not related to invalid procedure", write.toString().contains("procedure"));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+    }
+    
+    @Test
+    public void testInvalidRequestProcedureNotInOffering() {
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(imeds8);
+            SOSParser md = new SOSParser();
+            Writer write = new CharArrayWriter();
+            writeOutput(md.enhanceGETRequest(dataset, testBadProcOffPair, imeds8), write);
+            write.flush();
+            write.close();
+            String fileName = getCurrentMethod() + ".xml";
+            fileWriter(base, fileName, write);
+            assertTrue("no exception in output", write.toString().contains("Exception"));
+            assertTrue("exception not related to procedure and offering", write.toString().contains("Procedure") && write.toString().contains("offering"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {

@@ -61,6 +61,41 @@
                     <ows:Get xlink:href="resources/datasets/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc"/>
                 </ows:HTTP>
             </ows:DCP>
+            <ows:Parameter name="procedure" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>urn:ioos:network:authority:all</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:Station-0</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Station-0:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Station-0:humidity</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:Station-1</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Station-1:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Station-1:humidity</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:Station-2</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Station-2:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Station-2:humidity</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:Station-3</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Station-3:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Station-3:humidity</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:Station-4</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Station-4:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Station-4:humidity</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:Station-5</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Station-5:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Station-5:humidity</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:Station-6</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Station-6:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Station-6:humidity</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:Station-7</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Station-7:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Station-7:humidity</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:Station-8</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Station-8:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Station-8:humidity</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:Station-9</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Station-9:temperature</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:Station-9:humidity</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
             <ows:Parameter name="offering" use="required">
                 <ows:AllowedValues>
                     <ows:Value>network-all</ows:Value>
@@ -172,6 +207,7 @@
                         <gml:endPosition>1990-01-01T19:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
                 </sos:time>
+                <sos:procedure xlink:href="urn:ioos:network:authority:all"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Station-0"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Station-1"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Station-2"/>
@@ -217,6 +253,7 @@
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Station-0"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:Station-0"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-0:temperature"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-0:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
@@ -242,6 +279,7 @@
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Station-1"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:Station-1"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-1:temperature"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-1:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
@@ -267,6 +305,7 @@
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Station-2"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:Station-2"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-2:temperature"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-2:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
@@ -292,6 +331,7 @@
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Station-3"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:Station-3"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-3:temperature"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-3:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
@@ -317,6 +357,7 @@
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Station-4"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:Station-4"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-4:temperature"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-4:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
@@ -342,6 +383,7 @@
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Station-5"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:Station-5"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-5:temperature"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-5:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
@@ -367,6 +409,7 @@
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Station-6"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:Station-6"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-6:temperature"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-6:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
@@ -392,6 +435,7 @@
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Station-7"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:Station-7"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-7:temperature"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-7:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
@@ -417,6 +461,7 @@
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Station-8"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:Station-8"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-8:temperature"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-8:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
@@ -442,6 +487,7 @@
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Station-9"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:Station-9"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-9:temperature"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-9:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>

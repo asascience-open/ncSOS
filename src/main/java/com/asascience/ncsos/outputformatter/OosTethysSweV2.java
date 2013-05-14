@@ -165,7 +165,7 @@ public class OosTethysSweV2 implements SOSOutputFormatter {
         timePeriod.appendChild(createNodeWithText("gml:endPosition", obsHandler.getEndTime(index)));
         samplingTime.appendChild(timePeriod);
         // procedure
-        parent.appendChild(createNodeWithAttribute("om:procedure", XLINK, STATION_GML_BASE + procName));
+        parent.appendChild(createNodeWithAttribute("om:procedure", XLINK, procName));
         // add each of the observed properties we are looking for
         for (String obs : obsHandler.getObservedProperties()) {
             // don't add height/depth vars; lat & lon
@@ -174,7 +174,7 @@ public class OosTethysSweV2 implements SOSOutputFormatter {
                 parent.appendChild(createNodeWithAttribute("om:observedProperty", XLINK, obs));
         }
         // feature of interest
-        parent.appendChild(createNodeWithAttribute("om:featureOfInterest", XLINK, obsHandler.getFeatureOfInterest(procName)));
+        parent.appendChild(createNodeWithAttribute("om:featureOfInterest", XLINK, procName));
     }
     
     private String getSRSName() {

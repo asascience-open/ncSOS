@@ -175,21 +175,21 @@ public class GetCapsOutputter implements SOSOutputFormatter {
         setOperationMethods((Element)getObs.getElementsByTagName("ows:HTTP").item(0), threddsURI);
         // set info for get observation operation
         // get our parameters that need to be filled
-        Element eventtime = null, offering = null, observedproperty = null;
+        Element eventtime = null, offering = null, observedproperty = null, procedure = null;
         NodeList nodes = getObs.getElementsByTagName("ows:Parameter");
         for (int i=0; i<nodes.getLength(); i++) {
             Element elem = (Element) nodes.item(i);
             if (elem.getAttribute("name").equalsIgnoreCase("offering")) {
                 offering = elem;
-                continue;
             }
-            if (elem.getAttribute("name").equalsIgnoreCase("observedProperty")) {
+            else if (elem.getAttribute("name").equalsIgnoreCase("observedProperty")) {
                 observedproperty = elem;
-                continue;
             }
-            if (elem.getAttribute("name").equalsIgnoreCase("eventTime")) {
+            else if (elem.getAttribute("name").equalsIgnoreCase("eventTime")) {
                 eventtime = elem;
-                continue;
+            }
+            else if (elem.getAttribute("name").equalsIgnoreCase("procedure")) {
+                procedure = elem;
             }
         }
         // set eventtime
@@ -229,6 +229,24 @@ public class GetCapsOutputter implements SOSOutputFormatter {
                 Element value = getDocument().createElement("ows:Value");
                 value.setTextContent(name);
                 aV.appendChild(value);
+            }
+        }
+        // set procedure parameter - list of procedures
+        // add allowed values node
+        Element allowedValues = getDocument().createElement("ows:AllowedValues");
+        procedure.appendChild(allowedValues);
+        // add network-all value
+        Element na = getDocument().createElement("ows:Value");
+        na.setTextContent(SOSBaseRequestHandler.getGMLNetworkAll());
+        allowedValues.appendChild(na);
+        for (String stationName : stationNames) {
+            Element elem = getDocument().createElement("ows:Value");
+            elem.setTextContent(SOSBaseRequestHandler.getGMLName(stationName));
+            allowedValues.appendChild(elem);
+            for (String senName : dataVarShortNames) {
+                Element sElem = getDocument().createElement("ows:Value");
+                sElem.setTextContent(SOSBaseRequestHandler.getSensorGMLName(stationName, senName));
+                allowedValues.appendChild(sElem);
             }
         }
         // set additional response formats, supported
