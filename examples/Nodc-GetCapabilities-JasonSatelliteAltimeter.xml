@@ -61,6 +61,22 @@
                     <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/nodc/jason2_satelliteAltimeter.nc"/>
                 </ows:HTTP>
             </ows:DCP>
+            <ows:Parameter name="procedure" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>urn:ioos:network:authority:all</ows:Value>
+                    <ows:Value>urn:ioos:station:authority:unknown</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:unknown:surface_type</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:unknown:orb_state_flag_rest</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:unknown:ecmwf_meteo_map_avail</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:unknown:interp_flag_meteo</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:unknown:range_numval_ku</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:unknown:model_wet_tropo_corr</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:unknown:atmos_corr_sig0_ku</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:unknown:tb_187</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:unknown:rad_water_vapor</ows:Value>
+                    <ows:Value>urn:ioos:sensor:authority:unknown:ssha</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
             <ows:Parameter name="offering" use="required">
                 <ows:AllowedValues>
                     <ows:Value>network-all</ows:Value>
@@ -151,6 +167,7 @@
                         <gml:endPosition>2011-01-20T05:03:02Z</gml:endPosition>
                     </gml:TimePeriod>
                 </sos:time>
+                <sos:procedure xlink:href="urn:ioos:network:authority:all"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:unknown"/>
                 <sos:observedProperty xlink:href="surface_type"/>
                 <sos:observedProperty xlink:href="orb_state_flag_rest"/>
@@ -193,6 +210,7 @@
                 <sos:observedProperty xlink:href="tb_187"/>
                 <sos:observedProperty xlink:href="rad_water_vapor"/>
                 <sos:observedProperty xlink:href="ssha"/>
+                <sos:procedure xlink:href="urn:ioos:station:authority:unknown"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:unknown:surface_type"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:unknown:orb_state_flag_rest"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:authority:unknown:ecmwf_meteo_map_avail"/>

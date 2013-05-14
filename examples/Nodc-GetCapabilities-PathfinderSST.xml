@@ -61,6 +61,17 @@
                     <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/nodc/00000110200000-NODC-L4_GHRSST-SSTskin-AVHRR_Pathfinder-PFV5.0_Daily_Climatology_1982_2008_DayNightCombined-v02.0-fv01.0.nc"/>
                 </ows:HTTP>
             </ows:DCP>
+            <ows:Parameter name="procedure" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>urn:ioos:network:org.ghrsst:all</ows:Value>
+                    <ows:Value>urn:ioos:station:org.ghrsst:Grid0</ows:Value>
+                    <ows:Value>urn:ioos:sensor:org.ghrsst:Grid0:analysed_sst</ows:Value>
+                    <ows:Value>urn:ioos:sensor:org.ghrsst:Grid0:analysis_error</ows:Value>
+                    <ows:Value>urn:ioos:sensor:org.ghrsst:Grid0:sea_ice_fraction</ows:Value>
+                    <ows:Value>urn:ioos:sensor:org.ghrsst:Grid0:sea_ice_fraction_error</ows:Value>
+                    <ows:Value>urn:ioos:sensor:org.ghrsst:Grid0:mask</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
             <ows:Parameter name="offering" use="required">
                 <ows:AllowedValues>
                     <ows:Value>network-all</ows:Value>
@@ -153,6 +164,7 @@
                         <gml:endPosition>1995-01-10T20:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
                 </sos:time>
+                <sos:procedure xlink:href="urn:ioos:network:org.ghrsst:all"/>
                 <sos:procedure xlink:href="urn:ioos:station:org.ghrsst:Grid0"/>
                 <sos:observedProperty xlink:href="analysed_sst"/>
                 <sos:observedProperty xlink:href="analysis_error"/>
@@ -180,6 +192,7 @@
                 <sos:observedProperty xlink:href="sea_ice_fraction"/>
                 <sos:observedProperty xlink:href="sea_ice_fraction_error"/>
                 <sos:observedProperty xlink:href="mask"/>
+                <sos:procedure xlink:href="urn:ioos:station:org.ghrsst:Grid0"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:org.ghrsst:Grid0:analysed_sst"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:org.ghrsst:Grid0:analysis_error"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:org.ghrsst:Grid0:sea_ice_fraction"/>

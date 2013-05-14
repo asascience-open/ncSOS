@@ -61,6 +61,34 @@
                     <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/nodc/aoml_tsg.nc"/>
                 </ows:HTTP>
             </ows:DCP>
+            <ows:Parameter name="procedure" use="required">
+                <ows:AllowedValues>
+                    <ows:Value>urn:ioos:network:gov.noaa.aoml.phod:all</ows:Value>
+                    <ows:Value>urn:ioos:station:gov.noaa.aoml.phod:Trajectory20080615</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:plt</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:tsg</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:tmsr</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:sstr</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:crs</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:intp</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:sal</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:cond</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:ext</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:sst</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_a</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_b</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_c</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_d</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_e</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_f</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_g</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_h</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_i</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_j</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_k</ows:Value>
+                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_l</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
             <ows:Parameter name="offering" use="required">
                 <ows:AllowedValues>
                     <ows:Value>network-all</ows:Value>
@@ -175,6 +203,7 @@
                         <gml:endPosition>2008-06-15T23:59:49Z</gml:endPosition>
                     </gml:TimePeriod>
                 </sos:time>
+                <sos:procedure xlink:href="urn:ioos:network:gov.noaa.aoml.phod:all"/>
                 <sos:procedure xlink:href="urn:ioos:station:gov.noaa.aoml.phod:Trajectory20080615"/>
                 <sos:observedProperty xlink:href="plt"/>
                 <sos:observedProperty xlink:href="tsg"/>
@@ -241,6 +270,7 @@
                 <sos:observedProperty xlink:href="flag_j"/>
                 <sos:observedProperty xlink:href="flag_k"/>
                 <sos:observedProperty xlink:href="flag_l"/>
+                <sos:procedure xlink:href="urn:ioos:station:gov.noaa.aoml.phod:Trajectory20080615"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:plt"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:tsg"/>
                 <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:tmsr"/>

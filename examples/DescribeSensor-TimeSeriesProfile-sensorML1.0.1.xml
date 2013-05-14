@@ -120,7 +120,7 @@
             <sml:capabilities name="networkProcedures">
                 <swe:SimpleDataRecord>
                     <gml:metaDataProperty
-                        xlink:href="urn:ioos:network:authority:all" xlink:title="network-all"/>
+                        xlink:href="urn:ioos:network:authorityall" xlink:title="network-all"/>
                 </swe:SimpleDataRecord>
             </sml:capabilities>
         </sml:System>
