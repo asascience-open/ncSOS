@@ -1,16 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  
-  <parent>
-    <groupId>org.sonatype.oss</groupId>
-    <artifactId>oss-parent</artifactId>
-    <version>7</version>
-  </parent>
 
   <groupId>com.asascience</groupId>
   <artifactId>ncsos</artifactId>
-  <version>2.0</version>
+  <version>RC3-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>ncsos</name>
@@ -18,97 +12,100 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <thredds.version>4.3.16</thredds.version>
   </properties>
   
+  
   <repositories>
-	<repository>
-	  <releases>
-        <enabled>true</enabled>
-        <checksumPolicy>warn</checksumPolicy>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-        <checksumPolicy>warn</checksumPolicy>
-      </snapshots>
-	  <id>unidata</id>
-	  <name>Unidata Artifact Repository</name>
-	  <url>https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/</url>
-	  <layout>default</layout>
-	</repository>
+    <repository>
+      <id>asascience</id>
+      <name>asascience</name>
+      <url>http://geo.asascience.com/nexus/content/repositories/thirdparty/</url>
+    </repository>
+    <repository>
+      <releases>
+          <enabled>true</enabled>
+          <checksumPolicy>warn</checksumPolicy>
+        </releases>
+        <snapshots>
+          <enabled>false</enabled>
+          <checksumPolicy>warn</checksumPolicy>
+        </snapshots>
+      <id>unidata</id>
+      <name>Unidata Artifact Repository</name>
+      <url>https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/</url>
+      <layout>default</layout>
+    </repository>
   </repositories>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>edu.ucar</groupId>
+        <artifactId>thredds-parent</artifactId>
+        <version>${thredds.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.5</version>
       <scope>test</scope>
     </dependency>
-	<dependency>
-	  <groupId>jdom</groupId>
-	  <artifactId>jdom</artifactId>
-	  <version>1.1</version>
-	</dependency>
-	<dependency>
-	  <groupId>joda-time</groupId>
-	  <artifactId>joda-time</artifactId>
-	  <version>2.0</version>
-	</dependency>
-	<dependency>
-	  <groupId>log4j</groupId>
-	  <artifactId>log4j</artifactId>
-	  <version>1.2.16</version>
-	</dependency>
-	<dependency>
-	  <groupId>edu.ucar</groupId>
-	  <artifactId>netcdf</artifactId>
-	  <version>4.3.16</version>
-	</dependency>
-	<dependency>
-	  <groupId>org.apache.tomcat</groupId>
-	  <artifactId>servlet-api</artifactId>
-	  <version>6.0.35</version>
-	</dependency>
-	<dependency>
-	  <groupId>org.slf4j</groupId>
-	  <artifactId>slf4j-api</artifactId>
-	  <version>1.6.4</version>
-	</dependency>
-	<dependency>
-	  <groupId>org.slf4j</groupId>
-	  <artifactId>slf4j-log4j12</artifactId>
-	  <version>1.6.4</version>
-	</dependency>
-	<dependency>
-	  <groupId>org.springframework</groupId>
-	  <artifactId>spring-context</artifactId>
-	  <version>3.0.5.RELEASE</version>
-	</dependency>
-	<dependency>
-	  <groupId>org.springframework</groupId>
-	  <artifactId>spring-core</artifactId>
-	  <version>3.0.5.RELEASE</version>
-	</dependency>
-	<dependency>
-	  <groupId>org.springframework</groupId>
-	  <artifactId>spring-web</artifactId>
-	  <version>3.0.5.RELEASE</version>
-	</dependency>
-	<dependency>
-	  <groupId>org.springframework</groupId>
-	  <artifactId>spring-webmvc</artifactId>
-	  <version>3.0.5.RELEASE</version>
-	</dependency>
-	<dependency>
-	  <groupId>edu.ucar</groupId>
-	  <artifactId>visadCdm</artifactId>
-	  <version>4.3.10</version>
-	</dependency>
-	<dependency>
-	  <groupId>edu.ucar</groupId>
-	  <artifactId>tds</artifactId>
-	  <version>4.3.10</version>
-	</dependency>
+    <dependency>
+      <groupId>org.jdom</groupId>
+      <artifactId>jdom</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>edu.ucar</groupId>
+      <artifactId>netcdf</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>edu.ucar</groupId>
+      <artifactId>tds</artifactId>
+      <classifier>classes</classifier>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>json-taglib</groupId>
+          <artifactId>json-taglib</artifactId>
+        </exclusion>
+      </exclusions> 
+    </dependency>
+    <dependency>
+      <groupId>json-taglib</groupId>
+      <artifactId>json-taglib</artifactId>
+      <scope>runtime</scope>
+    </dependency>
   </dependencies>
   
   <build>
@@ -149,6 +146,7 @@
       </includes>
     </resource>
   </resources>
+  
 	<plugins>
 	  <plugin>
 		<artifactId>maven-antrun-plugin</artifactId>
