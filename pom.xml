@@ -16,6 +16,14 @@
   </properties>
   
   
+  <distributionManagement>
+    <repository>
+      <id>asa-sonatype-nexus-snapshots</id>
+      <name>ASA Nexus SNAPSHOT Repo</name>
+      <url>http://geo.asascience.com/nexus/content/repositories/snapshots/</url>
+    </repository>
+  </distributionManagement>
+  
   <repositories>
     <repository>
       <id>asascience</id>
