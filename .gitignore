@@ -22,3 +22,6 @@ nb-configuration.xml
 *.log
 *.out*
 *.diff
+.classpath
+.project
+.settings/
