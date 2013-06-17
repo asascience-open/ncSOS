@@ -9,7 +9,6 @@ import com.asascience.ncsos.service.SOSParser;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Formatter;
 import java.util.HashMap;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -18,12 +17,8 @@ import org.apache.log4j.BasicConfigurator;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import thredds.servlet.DatasetHandler;
-import ucar.nc2.NetcdfFile;
-import ucar.nc2.constants.FeatureType;
 import ucar.nc2.dataset.NetcdfDataset;
-import ucar.nc2.ft.FeatureDataset;
-import ucar.nc2.ft.FeatureDatasetFactoryManager;
+
 
 /**
  * Controller for SOS service
