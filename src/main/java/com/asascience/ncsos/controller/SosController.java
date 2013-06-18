@@ -16,7 +16,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.BasicConfigurator;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 import ucar.nc2.dataset.NetcdfDataset;
+
 
 /**
  * Controller for SOS service
@@ -68,9 +70,9 @@ public class SosController implements ISosContoller {
             //see http://tomcat.apache.org/tomcat-5.5-doc/config/context.html ----- workdir    
             String tempdir = System.getProperty("java.io.tmpdir");
             
+         
             //return netcdf dataset
             dataset = DatasetHandlerAdapter.openDataset(req, res);
-            
             //set the response type
             Writer writer = res.getWriter();
             //TODO create new service???
@@ -91,7 +93,16 @@ public class SosController implements ISosContoller {
             _log.error(e.getMessage());
             //close the dataset remove memory hang
         } finally {
-            DatasetHandlerAdapter.closeDataset(dataset);
+        	// This is a workaround for a bug in thredds. On the second request 
+        	// for a ncml object the request will fail due to an error
+        	// with the cached object. In order to get around this, the
+        	// cache for the ncml files must be cleared.
+        	if(dataset.getReferencedFile().getLocation().toLowerCase().endsWith("xml") ||
+        		dataset.getReferencedFile().getLocation().toLowerCase().endsWith("ncml"))
+                dataset.getReferencedFile().setFileCache(null);
+        	
+           DatasetHandlerAdapter.closeDataset(dataset);
+            
         }
 
     }
