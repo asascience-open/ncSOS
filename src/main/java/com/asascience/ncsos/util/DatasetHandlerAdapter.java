@@ -29,14 +29,18 @@
 package com.asascience.ncsos.util;
 
 import java.io.IOException;
+import java.util.Formatter;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import thredds.servlet.DatasetHandler;
 import thredds.servlet.ServletUtil;
 import ucar.nc2.NetcdfFile;
+import ucar.nc2.constants.FeatureType;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.ft.FeatureDataset;
+import ucar.nc2.ft.FeatureDatasetFactoryManager;
 import ucar.nc2.ft.PointFeature;
 import ucar.nc2.ft.PointFeatureCollection;
 
@@ -73,15 +77,18 @@ public class DatasetHandlerAdapter {
                 _log.error("Failed to open dataset <" + datasetPath + ">: "
                         + e.getMessage());
             }
+            
         } else {
             try {
-
-                netcdfFile = DatasetHandler.getNetcdfFile(req, res, datasetPath);
-                _log.debug("netcdfFile location: " + netcdfFile.getLocation());
-                dataset = new NetcdfDataset(netcdfFile);
+            	
+                            netcdfFile = DatasetHandler.getNetcdfFile(req, res, datasetPath);
+            //    _log.debug("netcdfFile location: " + netcdfFile.getLocation());
+               dataset = new NetcdfDataset(netcdfFile);
+            
             } catch (IOException e) {
                 _log.error("Failed to open dataset <" + datasetPath + ">: "
                         + e.getMessage());
+                e.printStackTrace();
             }
         }
         return dataset;

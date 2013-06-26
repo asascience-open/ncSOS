@@ -236,19 +236,26 @@ public class SOSDescribeNetworkM1_0 extends BaseDescribeSensor implements ISOSDe
             // identifiers for station
             String stationNameFixed = station.getValue().replaceAll("[Pp]rofile|[Tt]rajectory", "");
             // stationID
-            network.addIdentifierToComponent(station.getValue(), "stationID", VocabDefinitions.GetIoosDefinition("stationID"), this.procedure.substring(0,this.procedure.lastIndexOf(":")) + station.getValue());
+            network.addIdentifierToComponent(station.getValue(), "stationID", 
+            		VocabDefinitions.GetIoosDefinition("stationID"), 
+            		this.procedure.substring(0,this.procedure.lastIndexOf(":")) + station.getValue());
             // shortName
             VariableSimpleIF pVar = this.checkForRequiredVariable("platform_short_name");
-            network.addIdentifierToComponent(station.getValue(), "shortName", VocabDefinitions.GetIoosDefinition("shortName"), this.checkForRequiredValue(pVar, stationNameFixed));
+            network.addIdentifierToComponent(station.getValue(), "shortName", 
+            		VocabDefinitions.GetIoosDefinition("shortName"),
+            		this.checkForRequiredValue(pVar, stationNameFixed));
 
             // longName
             pVar = this.checkForRequiredVariable("platform_long_name");
-            network.addIdentifierToComponent(station.getValue(), "longName", VocabDefinitions.GetIoosDefinition("longName"), this.checkForRequiredValue(pVar, stationNameFixed));
+            network.addIdentifierToComponent(station.getValue(), "longName", 
+            		VocabDefinitions.GetIoosDefinition("longName"), 
+            		this.checkForRequiredValue(pVar, stationNameFixed));
 
             // wmoid if it exists
             pVar = this.getVariableByName("platform_wmo_code");
             if (pVar != null) {
-                network.addIdentifierToComponent(station.getValue(), "wmoId", VocabDefinitions.GetIoosDefinition("wmoId"), this.checkForRequiredValue(pVar, stationNameFixed));
+                network.addIdentifierToComponent(station.getValue(), "wmoId", 
+                		VocabDefinitions.GetIoosDefinition("wmoId"), this.checkForRequiredValue(pVar, stationNameFixed));
             }
             // valid time
             network.setComponentValidTime(station.getValue(), this.stationData.getTimeBegin(station.getKey()), this.stationData.getTimeEnd(station.getKey()));

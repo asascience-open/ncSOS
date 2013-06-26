@@ -54,14 +54,14 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
         }
         
         // make sure that the responseFormat we recieved is acceptable
-        if (!responseFormat.equalsIgnoreCase(ACCEPTABLE_RESPONSE_FORMAT)) {
+    /*    if (!responseFormat.equalsIgnoreCase(ACCEPTABLE_RESPONSE_FORMAT)) {
             // return exception
             output = new BaseOutputFormatter();
             _log.error("got unhandled response format " + responseFormat + "; printing exception...");
             output.setupExceptionOutput("Unhandled response format " + responseFormat);
             return;
         }
-        
+      */  
         // check our procedure
         if (!checkDatasetForProcedure(procedure)) {
             // the procedure does not match any known procedure
@@ -72,6 +72,7 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
         }
         
         // find out needed info based on whether this is a station or sensor look up
+        
         if (this.procedure.contains("station")) {
             setNeededInfoForStation(dataset, uri, query);
             describer.setupOutputDocument(output);

@@ -173,11 +173,12 @@ public class SOSDescribePlatformM1_0 extends BaseDescribeSensor implements ISOSD
     
     private void formatSmlNetworkProcedures() {
         // create the network urn
-        String networkUrn = this.procedure.substring(0, this.procedure.lastIndexOf(":"));
+        String networkUrn = this.procedure.substring(0, this.procedure.lastIndexOf(":") +1);
         networkUrn = networkUrn.replaceAll(":station:|:sensor:", ":network:");
         networkUrn += "all";
         
-        platform.addSmlCapabilitiesGmlMetadata("sml:System", "networkProcedures", "network-all", networkUrn);
+        platform.addSmlCapabilitiesGmlMetadata( SOSOutputFormatter.SYSTEM, "networkProcedures", 
+        		"network-all", networkUrn);
     }
     
     private void formatSmlContacts() {
@@ -191,10 +192,10 @@ public class SOSDescribePlatformM1_0 extends BaseDescribeSensor implements ISOSD
         String org = this.checkForRequiredValue("creator_name");
         String url = this.getGlobalAttribute("creator_url", null);
         HashMap<String, String> address = createAddressForContact("creator");
-        contactInfo.put("sml:address", address);
+        contactInfo.put("address", address);
         HashMap<String, String> phone = new HashMap<String, String>();
-        phone.put("sml:voice", this.getGlobalAttribute("creator_phone", null));
-        contactInfo.put("sml:phone", phone);
+        phone.put("voice", this.getGlobalAttribute("creator_phone", null));
+        contactInfo.put("phone", phone);
         platform.addContactNode(role, org, contactInfo, url);
 
         contactInfo.clear();
@@ -204,20 +205,20 @@ public class SOSDescribePlatformM1_0 extends BaseDescribeSensor implements ISOSD
         org = this.checkForRequiredValue("publisher_name");
         url = this.getGlobalAttribute("publisher_url", null);
         address = createAddressForContact("publisher");
-        contactInfo.put("sml:address", address);
-        phone.put("sml:voice", this.getGlobalAttribute("publisher_phone", null));
-        contactInfo.put("sml:phone", phone);
+        contactInfo.put("address", address);
+        phone.put("voice", this.getGlobalAttribute("publisher_phone", null));
+        contactInfo.put("phone", phone);
         platform.addContactNode(role, org, contactInfo, url);
     }
     
     private HashMap<String,String> createAddressForContact(String contactPrefix) {
         HashMap<String,String> address = new HashMap<String, String>();
-        address.put("sml:deliveryPoint", this.getGlobalAttribute(contactPrefix + "_address", null));
-        address.put("sml:city", this.getGlobalAttribute(contactPrefix + "_city", null));
-        address.put("sml:administrativeArea", this.getGlobalAttribute(contactPrefix + "_state", null));
-        address.put("sml:postalCode", this.getGlobalAttribute(contactPrefix+"_zipcode", null));
-        address.put("sml:country", this.checkForRequiredValue(contactPrefix + "_country"));
-        address.put("sml:electronicMailAddress", this.checkForRequiredValue(contactPrefix + "_email"));
+        address.put("deliveryPoint", this.getGlobalAttribute(contactPrefix + "_address", null));
+        address.put("city", this.getGlobalAttribute(contactPrefix + "_city", null));
+        address.put("administrativeArea", this.getGlobalAttribute(contactPrefix + "_state", null));
+        address.put("postalCode", this.getGlobalAttribute(contactPrefix+"_zipcode", null));
+        address.put("country", this.checkForRequiredValue(contactPrefix + "_country"));
+        address.put("electronicMailAddress", this.checkForRequiredValue(contactPrefix + "_email"));
         return address;
     }
     

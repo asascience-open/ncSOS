@@ -22,16 +22,13 @@ import ucar.nc2.dataset.NetcdfDataset;
  *
  * @author scowan
  */
-public class TestXMLOutputter implements SOSOutputFormatter {
+public class TestXMLOutputter extends SOSOutputFormatter {
 
-    private Document document;
     private ArrayList<DataSlice> infoList;
     private iStationData CDMDataset;
     // observation metadata strings
     private String title, history, institution, source, description, location, featureOfInterest;
     
-    private final String OM_OBSERVATION = "om:Observation";
-    private final String OM_OBSERVATION_COLLECTION = "om:ObservationCollection";
     private final String NAN = "NaN";
     private final String TEMPLATE = "templates/testxmloutputter.xml";
     
@@ -114,14 +111,18 @@ public class TestXMLOutputter implements SOSOutputFormatter {
         }
         
         document = parseTemplateXML();
+        initNamespaces();
+
         
         setCollectionMetadata();
         
         for (int i=0; i<CDMDataset.getNumberOfStations(); i++) {
-            document = XMLDomUtils.addObservationElement(document);
+            document = XMLDomUtils.addObservationElement(document, MEMBER, OM_NS, OBSERVATION, OM_NS);
             // add description, name and bounded by
-            document = XMLDomUtils.addNode(document, OM_OBSERVATION, "gml:description", description, i);
-            document = XMLDomUtils.addNode(document, OM_OBSERVATION, "gml:name", title, i);
+            document = XMLDomUtils.addNode(document, OBSERVATION, OM_NS,
+            								DESCRIPTION, GML_NS, description, i);
+            document = XMLDomUtils.addNode(document, OBSERVATION, OM_NS,
+            								NAME, GML_NS, title, i);
         }
     }
 
@@ -131,10 +132,15 @@ public class TestXMLOutputter implements SOSOutputFormatter {
 //        setSystemGMLID();
         
         // set metadata from generic metadata, um for now just use some place holder
-        document = XMLDomUtils.addNode(document, OM_OBSERVATION_COLLECTION, "gml:metaDataProperty", "om:member");
-        document =XMLDomUtils.setNodeAttribute(document, "gml:metaDataProperty", "xlink:title", "disclaimer");
-        document = XMLDomUtils.addNode(document, "gml:metaDataProperty", "gml:GenericMetaData", 0);
-        document = XMLDomUtils.addNode(document, "gml:GenericMetaData", "gml:description", "DISCLAIMER", 0);
+        document = XMLDomUtils.addNode(document, OBSERVATION_COLLECTION, OM_NS,
+        		META_DATA_PROP, GML_NS, MEMBER, OM_NS);
+        document =XMLDomUtils.setNodeAttribute(document, META_DATA_PROP, GML_NS, 
+        									   TITLE, XLINK_NS, "disclaimer");
+        document = XMLDomUtils.addNode(document, 
+        							 META_DATA_PROP, GML_NS, 
+        							 GENERIC_META_DATA, GML_NS, 0);
+        document = XMLDomUtils.addNode(document,  GENERIC_META_DATA, GML_NS,
+        							  DESCRIPTION, GML_NS, "DISCLAIMER", 0);
     }
     
     private void setSystemGMLID() {
@@ -151,6 +157,8 @@ public class TestXMLOutputter implements SOSOutputFormatter {
         // to be more to it than that, so leaving this in commented out until i can affirm what this should be
 //        XMLDomUtils.setObsGMLIDAttributeFromNode(document, "om:ObservationCollection", "gml:id", getGMLID("GML_ID_NAME"));
         // meantime place-holder
-        XMLDomUtils.setObsGMLIDAttributeFromNode(document, OM_OBSERVATION_COLLECTION, "gml:id", "GML_ID_NAME");
+        XMLDomUtils.setObsGMLIDAttributeFromNode(document, 
+        			OBSERVATION_COLLECTION, OM_NS,
+        			ID, GML_NS, "GML_ID_NAME");
     }
 }

@@ -16,7 +16,7 @@
       <sml:classification>
         <sml:ClassifierList></sml:ClassifierList>
       </sml:classification>
-      <sml:validTime />
+      <sml:capabilities />
       <sml:contact>
         <sml:ContactList />
       </sml:contact>

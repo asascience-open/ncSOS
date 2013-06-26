@@ -29,9 +29,11 @@ public class XMLDomUtils {
         try {
             //File file = new File(templateFileLocation);
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setNamespaceAware(true);
             DocumentBuilder db = dbf.newDocumentBuilder();
             doc = db.parse(templateFileLocation);
             doc.getDocumentElement().normalize();
+            
             //setRouteElement(doc.getDocumentElement().getNodeName());
 
         } catch (Exception e) {
@@ -41,66 +43,120 @@ public class XMLDomUtils {
         return doc;
     }
 
-    public static String getAttributeFromNode(Document doc, String routeSearch, String container, String attribute) {
-        Element fstNmElmnt1 = getElementBaseOnContainer(doc, routeSearch, container);
+    public static String getAttributeFromNode(Document doc, String routeSearch, 
+    						String routeNamespace, String container, 
+    						String containerNamespace, String attribute) {
+        Element fstNmElmnt1 = getElementBaseOnContainer(doc, routeSearch, routeNamespace,
+        												container, containerNamespace);
         String response = fstNmElmnt1.getAttribute(attribute);
         return response;
     }
 
-    private static Element getElementBaseOnContainer(Document doc, String routeSearch, String container) {
-        NodeList serviceProviderNodeList = doc.getElementsByTagName(routeSearch);
+    private static Element getElementBaseOnContainer(Document doc, String routeSearch,
+    												String routeNamespace, 
+    												String container, String containerNamespace) {
+        NodeList serviceProviderNodeList = doc.getElementsByTagNameNS(routeNamespace, routeSearch);
         //get the first node in the the list matching the above name
         Node fstNode = serviceProviderNodeList.item(0);
         //create an element from the node
         Element fstElmnt = (Element) fstNode;
-        NodeList fstNm1 = fstElmnt.getElementsByTagName(container);
+        NodeList fstNm1 = fstElmnt.getElementsByTagNameNS(containerNamespace, container);
         Element fstNmElmnt1 = (Element) fstNm1.item(0);
         return fstNmElmnt1;
     }
 
-    public static void setAttributeFromNode(Document doc, String routeSearch, String container, String attribute, String value) {
-        Element fstNmElmnt1 = getElementBaseOnContainer(doc, routeSearch, container);
+    public static void setAttributeFromNode(Document doc, String routeSearch, String routeNamespace,
+    		String container, String containerNamespace, String attribute, String value) {
+        Element fstNmElmnt1 = getElementBaseOnContainer(doc, routeSearch, routeNamespace,
+        		container, containerNamespace);
         fstNmElmnt1.setAttribute((attribute), value);
     }
 
-    public static void setNodeValue(Document doc, String container, String node, String value) {
-        Element fstNmElmnt1 = getElementBaseOnContainerAndNode(doc, container, node);
+    public static void setNodeValue(Document doc, 
+    								String container,
+    								String containerNamespace,
+    								String node, 
+    								String nodeNamespace,
+    								String value) {
+        Element fstNmElmnt1 = getElementBaseOnContainerAndNode(doc, container, containerNamespace,
+        														node, nodeNamespace);
+        NodeList fstNm = fstNmElmnt1.getChildNodes();
+        fstNm.item(0).setNodeValue(value);
+    }
+    
+    
+
+    public static void setNodeValue(Document doc, 
+    								String container,
+    								String containerNamespace,
+    								String node, 
+    								String nodeNamespace,
+    								String value, 
+    								int stationNumber) {
+        Element fstNmElmnt1 = getElementBaseOnContainerAndNode(doc, container, containerNamespace,
+        														node, nodeNamespace, stationNumber);
         NodeList fstNm = fstNmElmnt1.getChildNodes();
         fstNm.item(0).setNodeValue(value);
     }
 
-    public static void setNodeValue(Document doc, String container, String node, String value, int stationNumber) {
-        Element fstNmElmnt1 = getElementBaseOnContainerAndNode(doc, container, node, stationNumber);
-        NodeList fstNm = fstNmElmnt1.getChildNodes();
-        fstNm.item(0).setNodeValue(value);
-    }
-
-    private static Element getElementBaseOnContainerAndNode(Document doc, String container, String node, int stationNumber) {
-        NodeList serviceProviderNodeList = doc.getElementsByTagName(container);
+    private static Element getElementBaseOnContainerAndNode(Document doc, String container, 
+    		String containerNamespace,
+    		String node, 
+    		String nodeNamespace,
+    		int stationNumber) {
+        NodeList serviceProviderNodeList = doc.getElementsByTagNameNS(containerNamespace, container);
         //get the first node in the the list matching the above name
         Node fstNode = serviceProviderNodeList.item(stationNumber);
         //create an element from the node
         Element fstElmnt = (Element) fstNode;
-        NodeList fstNm1 = fstElmnt.getElementsByTagName(node);
+        NodeList fstNm1 = fstElmnt.getElementsByTagNameNS(nodeNamespace, node);
         Element fstNmElmnt1 = (Element) fstNm1.item(0);
         return fstNmElmnt1;
     }
 
-    private static Element getElementBaseOnContainerAndNode(Document doc, String container, String node) {
-        NodeList serviceProviderNodeList = doc.getElementsByTagName(container);
+    private static Element getElementBaseOnContainerAndNode(Document doc, 
+    							String container,
+    							String containerNamespace,
+    							String node,
+    							String nodeNamespace) {
+    	 NodeList serviceProviderNodeList = null;
+    	if(containerNamespace != null)
+    		serviceProviderNodeList = doc.getElementsByTagNameNS(containerNamespace, container);
+    	else 
+    		serviceProviderNodeList = doc.getElementsByTagName( container);
+    	
         //get the first node in the the list matching the above name
         Node fstNode = serviceProviderNodeList.item(0);
         //create an element from the node
         Element fstElmnt = (Element) fstNode;
-        NodeList fstNm1 = fstElmnt.getElementsByTagName(node);
+        NodeList fstNm1 = null;
+        if(nodeNamespace != null)
+        	fstNm1 = fstElmnt.getElementsByTagNameNS(nodeNamespace, node);
+        else
+        	fstNm1 = fstElmnt.getElementsByTagName(node);
+
         Element fstNmElmnt1 = (Element) fstNm1.item(0);
         return fstNmElmnt1;
     }
 
-    public static String getNodeValue(Document doc, String container, String node) {
-        Element fstNmElmnt1 = getElementBaseOnContainerAndNode(doc, container, node);
+    public static String getNodeValue(Document doc, 
+    								String container,
+    								String containerNamespace,
+    								String node,
+    								String nodeNamespace) {
+        Element fstNmElmnt1 = getElementBaseOnContainerAndNode(doc, container,
+        													containerNamespace, 
+        													node,
+        													nodeNamespace);
         NodeList fstNm = fstNmElmnt1.getChildNodes();
         return fstNm.item(0).getNodeValue();
+    }
+
+
+    public static String getNodeValue(Document doc, 
+    		String container,
+    		String node) {
+    	return getNodeValue(doc, container, null, node, null);
     }
 
     public static void writeXMLDOMToFile(Document doc, String fileName) {
@@ -122,8 +178,11 @@ public class XMLDomUtils {
         }
     }
 
-    public static String getObsGMLIDAttributeFromNode(Document doc, String container, String attribute) {
-        NodeList serviceProviderNodeList = doc.getElementsByTagName(container);
+    public static String getObsGMLIDAttributeFromNode(Document doc, 
+    												  String container,
+    												  String containerNamespace,
+    												  String attribute) {
+        NodeList serviceProviderNodeList = doc.getElementsByTagNameNS(containerNamespace, container);
         //get the first node in the the list matching the above name
         Node fstNode = serviceProviderNodeList.item(0);
         //create an element from the node
@@ -132,15 +191,32 @@ public class XMLDomUtils {
         return response;
     }
 
-    public static void setObsGMLIDAttributeFromNode(Document doc, String container, String attribute, String value) {
-        NodeList serviceProviderNodeList = doc.getElementsByTagName(container);
-        //get the first node in the the list matching the above name
-        Node fstNode = serviceProviderNodeList.item(0);
-        //create an element from the node
-        Element fstElmnt = (Element) fstNode;
-        fstElmnt.setAttribute((attribute), value);
+    public static void setObsGMLIDAttributeFromNode(Document doc, 
+    												String container, 
+    												String namespace, 
+    												String attribute, 
+    												String value) {
+    	 setObsGMLIDAttributeFromNode(doc, container, namespace,
+    			 					  attribute, null, value);
     }
 
+
+    public static void setObsGMLIDAttributeFromNode(Document doc, 
+    		String container, 
+    		String namespace, 
+    		String attribute, 
+    		String attributeNamespace,
+    		String value) {
+    	NodeList serviceProviderNodeList = doc.getElementsByTagNameNS(namespace, container);
+    	//get the first node in the the list matching the above name
+    	Node fstNode = serviceProviderNodeList.item(0);
+    	//create an element from the node
+    	Element fstElmnt = (Element) fstNode;
+    	if(attributeNamespace != null)
+    		fstElmnt.setAttributeNS(attributeNamespace, (attribute), value);
+    	else
+    		fstElmnt.setAttribute((attribute), value);
+    }
     public static Document getExceptionDom() {
         InputStream isTemplate = XMLDomUtils.class.getClassLoader().getResourceAsStream("templates/exception.xml");
         Document exceptionDom = getTemplateDom(isTemplate);
@@ -149,7 +225,7 @@ public class XMLDomUtils {
     
     public static Document getExceptionDom(String exceptionMessage) {
         Document exceptionDom = getExceptionDom();
-        setNodeValue(exceptionDom, "Exception", "ExceptionText", exceptionMessage);
+        setNodeValue(exceptionDom, "Exception", "", "ExceptionText", "", exceptionMessage);
         return exceptionDom;
     }
 
@@ -157,16 +233,23 @@ public class XMLDomUtils {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    public static Document addObservationElement(Document doc) {
-        NodeList obsOfferingList = doc.getElementsByTagName("om:member");
+    public static Document addObservationElement(Document doc, 
+    											 String obsListName, 
+    											 String obsListNamespace,
+    											 String obsName,
+    											 String obsNamespace) {
+        NodeList obsOfferingList = doc.getElementsByTagNameNS(obsListNamespace, obsListName);
         Element obsOfferEl = (Element) obsOfferingList.item(0);
 
-        obsOfferEl.appendChild(doc.createElement("om:Observation"));
+        obsOfferEl.appendChild(doc.createElementNS(obsName, obsNamespace));
         return doc;
     }
 
-    public static Element checkNodeExists(Document doc, String container, String node) {
-        Element fstNmElmnt1 = getElementBaseOnContainerAndNode(doc, container, node);
+    public static Element checkNodeExists(Document doc, String container, 
+    									 String containerNamespace,
+    									 String node, String nodeNamespace) {
+        Element fstNmElmnt1 = getElementBaseOnContainerAndNode(doc, container, containerNamespace,
+        														node, nodeNamespace);
         return fstNmElmnt1;
     }
 
@@ -175,33 +258,54 @@ public class XMLDomUtils {
         return null;
     }
     
-    public static Document addNode(Document doc, String parentName, Node childNode) {
-        NodeList parentList = doc.getElementsByTagName(parentName);
+    public static Document addNode(Document doc, 
+    							   String parentName, 
+    							   String parentNamespace,
+    							   Node childNode) {
+        NodeList parentList = doc.getElementsByTagNameNS(parentNamespace, parentName);
         Node parent = parentList.item(0);
         parent.appendChild(childNode);
         return doc;
     }
     
-    public static Document addNode(Document doc, String Obs, String nodeName, String value, int stationNumber) {
-        NodeList obsOfferingList = doc.getElementsByTagName(Obs);
+    public static Document addNode(Document doc, String Obs, 
+    								String obsNamespace, 
+    								String nodeName,
+    								String nodeNamespace,
+    								String value, 
+    								int stationNumber) {
+        NodeList obsOfferingList = doc.getElementsByTagNameNS(obsNamespace, Obs);
         Element obsOfferEl = (Element) obsOfferingList.item(stationNumber);
 
-        Element obsOfferingNode = doc.createElement(nodeName);
+        Element obsOfferingNode = doc.createElementNS(nodeNamespace, nodeName);
         obsOfferingNode.appendChild(doc.createTextNode(value));
         obsOfferEl.appendChild(obsOfferingNode);
         return doc;
     }
 
-    public static Document addNode(Document doc, String obs, String nodeName, int stationNumber) {
-        NodeList obsOfferingList = doc.getElementsByTagName(obs);
+    public static Document addNode(Document doc, 
+    							   String obs, 
+    							   String obsNamespace,
+    							   String nodeName, 
+    							   String nodeNamespace,
+    							   int stationNumber) {
+        NodeList obsOfferingList = doc.getElementsByTagNameNS(obsNamespace, obs);
         Element obsOfferEl = (Element) obsOfferingList.item(stationNumber);
-        Element obsOfferingNode = doc.createElement(nodeName);
+        Element obsOfferingNode = doc.createElementNS(nodeNamespace, nodeName);
         obsOfferEl.appendChild(obsOfferingNode);
         return doc;
     }
 
-    public static Document addNode(Document doc, String obs, String nodeaddingto, String newNode, String atrributeName, String value, int stationNumber) {
-        NodeList obsOfferingList = doc.getElementsByTagName(obs);
+    public static Document addNode(Document doc, 
+    							   String obs, 
+    							   String obsNamespace,
+    							   String nodeaddingto, 
+    							   String newNode, 
+    							   String newNodeNamespace,
+    							   String atrributeName, 
+    							   String value, 
+    							   int stationNumber) {
+        NodeList obsOfferingList = doc.getElementsByTagNameNS(obsNamespace, obs);
         Element obsOfferEl = (Element) obsOfferingList.item(stationNumber);
         NodeList nodes = obsOfferEl.getChildNodes();
         for (int i = 0; i < nodes.getLength(); i++) {
@@ -209,7 +313,7 @@ public class XMLDomUtils {
             if (nodeListNode.getNodeName().equalsIgnoreCase(nodeaddingto)) {
 
                 Element obsOfferEl1 = (Element) nodes.item(i);
-                Element obsOfferingNode = doc.createElement(newNode);
+                Element obsOfferingNode = doc.createElementNS(newNodeNamespace, newNode);
                 obsOfferingNode.setAttribute(atrributeName, value);
                 obsOfferEl1.appendChild(obsOfferingNode);
             }
@@ -217,40 +321,74 @@ public class XMLDomUtils {
         return doc;
     }
 
-    public static Document addNode(Document doc, String obsLocation, String obs, String nodeName, String value, int stationNumber) {
-        NodeList obsOfferingList1 = doc.getElementsByTagName(obsLocation);
+    public static Document addNodeAtLocation(Document doc, 
+    								String obsLocation, 
+    								String obsLocationNamespace,
+    								String obs, 
+    								String obsNamespace,
+    								String nodeName, 
+    								String nodeNamespace,
+    								String value, 
+    								int stationNumber) {
+        NodeList obsOfferingList1 = doc.getElementsByTagNameNS(obsLocationNamespace, obsLocation);
         Element obsOfferEl111 = (Element) obsOfferingList1.item(stationNumber);
-        NodeList obsOfferingList = obsOfferEl111.getElementsByTagName(obs);
+        NodeList obsOfferingList = obsOfferEl111.getElementsByTagNameNS(obsNamespace, obs);
         Element obsOfferEl = (Element) obsOfferingList.item(0);
-        Element obsOfferingNode = doc.createElement(nodeName);
+        Element obsOfferingNode = doc.createElementNS(nodeNamespace, nodeName);
         obsOfferingNode.appendChild(doc.createTextNode(value));
         obsOfferEl.appendChild(obsOfferingNode);
         return doc;
     }
     
-    public static Document addNode(Document doc, String parentNodeName, String nodeNameToInsert, String nodeNameToInsertBefore) {
-        NodeList nodeList = doc.getElementsByTagName(parentNodeName);
+    public static Document addNode(Document doc, 
+    		String parentNodeName, String parentNs,
+    		String nodeNameToInsert, String insertNodeNs,
+    		String nodeNameToInsertBefore, String insertBeforeNodeNs) {
+        NodeList nodeList = doc.getElementsByTagNameNS(parentNs, parentNodeName);
         Element parentEl = (Element)nodeList.item(0);
-        nodeList = parentEl.getElementsByTagName(nodeNameToInsertBefore);
+        nodeList = parentEl.getElementsByTagNameNS(insertBeforeNodeNs, nodeNameToInsertBefore);
         Element existingEl = (Element)nodeList.item(0);
-        Element newNode = doc.createElement(nodeNameToInsert);
+        Element newNode = doc.createElementNS(insertNodeNs, nodeNameToInsert);
         parentEl.insertBefore(newNode, existingEl);
         return doc;
     }
     
-    public static Document setNodeAttribute(Document doc, String nodeName, String attributeName, String attributeValue) {
-        NodeList nodeList = doc.getElementsByTagName(nodeName);
+    public static Document setNodeAttribute(Document doc, 
+    										String nodeName,
+    										String nodeNamespace,
+    										String attributeName, 
+    										String attributeValue) {
+        NodeList nodeList = doc.getElementsByTagNameNS(nodeNamespace, nodeName);
         Element el = (Element)nodeList.item(0);
         el.setAttribute(attributeName, attributeValue);
         return doc;
     }
 
+    public static Document setNodeAttribute(Document doc, 
+    		String nodeName,
+    		String nodeNamespace,
+    		String attributeName,
+    		String attributeNamespace,
+    		String attributeValue) {
+    	NodeList nodeList = doc.getElementsByTagNameNS(nodeNamespace, nodeName);
+    	Element el = (Element)nodeList.item(0);
+    	el.setAttributeNS(attributeNamespace, attributeName, attributeValue);
+    	return doc;
+    }
+
     //METHOD OVERRIDE-------------------------------------------------------------
-    public static Document addNodeAndAttribute(Document doc, String obs, String nodeName, String attribute, String value, int stationNumber) {
-        NodeList obsOfferingList = doc.getElementsByTagName(obs);
+    public static Document addNodeAndAttribute(Document doc, 
+    										   String obs, 
+    										   String obsNamespace,
+    										   String nodeName, 
+    										   String nodeNamespace,
+    										   String attribute, 
+    										   String value, 
+    										   int stationNumber) {
+        NodeList obsOfferingList = doc.getElementsByTagNameNS(obsNamespace, obs);
         Element obsOfferEl = (Element) obsOfferingList.item(stationNumber);
 
-        Element obsOfferingNode = doc.createElement(nodeName);
+        Element obsOfferingNode = doc.createElementNS(nodeNamespace, nodeName);
         obsOfferingNode.setAttribute(attribute, value);
         obsOfferEl.appendChild(obsOfferingNode);
         return doc;
@@ -259,15 +397,25 @@ public class XMLDomUtils {
     /*
      * add node to attribute with allocation number
      */
-    public static Document addNodeAndAttribute(Document doc, String obs, String nodeName, int index, String attribute, String value, int stationNumber) {
-        NodeList obsOfferingList1 = doc.getElementsByTagName("swe:DataRecord");
+    public static Document addNodeAndAttribute(Document doc, 
+    										   String obs, 
+    										   String obsNamespace,
+    										   String nodeName, 
+    										   String nodeNamespace, 
+    										   int index, 
+    										   String attribute, 
+    										   String value, 
+    										   int stationNumber,
+    										   String dataRecordName,
+    										   String dataRecordNamespace) {
+        NodeList obsOfferingList1 = doc.getElementsByTagNameNS(dataRecordName, dataRecordNamespace);
         Element obsOfferEl1 = (Element) obsOfferingList1.item(stationNumber);
 
-        NodeList obsOfferingList = obsOfferEl1.getElementsByTagName(obs);
+        NodeList obsOfferingList = obsOfferEl1.getElementsByTagNameNS(obsNamespace, obs);
 
         Element obsOfferEl = (Element) obsOfferingList.item(index);
 
-        Element obsOfferingNode = doc.createElement(nodeName);
+        Element obsOfferingNode = doc.createElementNS(nodeNamespace, nodeName);
         obsOfferingNode.setAttribute(attribute, value);
         obsOfferEl.appendChild(obsOfferingNode);
         return doc;

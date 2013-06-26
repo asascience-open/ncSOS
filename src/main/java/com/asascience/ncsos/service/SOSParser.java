@@ -25,6 +25,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  * @modified scowan
  */
 public class SOSParser {
+	
     private HashMap<String, Object> queryParameters;
     private Logger _log;
     private Map<String, String> coordsHash;
@@ -32,7 +33,18 @@ public class SOSParser {
     private final String defService = "sos";
     private final String defVersion = "1.0.0";
     private final String TRUE_STRING = "true";
-
+    public final static String PROCEDURE = "procedure";
+    public final static String VERSION = "version";
+    public final static String REQUEST = "request";
+    public final static String SERVICE = "service";
+    public final static String LAT = "lat";
+    public final static String LON = "lon";
+    public final static String DEPTH = "depth";
+    public final static String RESPONSE_FORMAT = "responseFormat";
+    public final static String OUTPUT_FORMAT = "outputFormat";
+    public final static String OBSERVED_PROPERTY ="observedProperty";
+    public final static String OFFERING  = "offering";
+    public final static String EVENT_TIME = "eventTime";
     // millisecs per sec * secs per hour * hour per day * day limit (1 week)
     private final long CACHE_AGE_LIMIT = 1000 * 3600 * 24 * 7;
     // debug value
@@ -87,7 +99,7 @@ public class SOSParser {
             // add the request to our query parameters, as well as some other default values
             queryParameters.put("request", "GetCapabilities");
             queryParameters.put("service", defService);
-            queryParameters.put("version", defVersion);
+            queryParameters.put(VERSION, defVersion);
         }
         
         // check the query parameters to make sure all required parameters are passed in
@@ -120,7 +132,7 @@ public class SOSParser {
                             Calendar today = Calendar.getInstance();
                             //if the file is older than seven days (age limit) reprocess the data
                             if (today.getTimeInMillis() - fileDateTime > CACHE_AGE_LIMIT) {
-                                _log.debug("File is older than 7 secs");
+                                _log.debug("File is older than 7 days");
                                 capHandler = createGetCapsCacheFile(dataset, threddsURI, savePath);
                                 capHandler.resetCapabilitiesSections(sections);
                             } else {
@@ -164,20 +176,30 @@ public class SOSParser {
                 case GetObservation:
                     SOSGetObservationRequestHandler obsHandler = null;
                     // setup our coordsHash
-                    if (queryParameters.containsKey("lat") && queryParameters.containsKey("lon")) {
-                        coordsHash.put("lat", queryParameters.get("lat").toString());
-                        coordsHash.put("lon", queryParameters.get("lon").toString());
+                    if (queryParameters.containsKey(LAT) && queryParameters.containsKey(LON)) {
+                        coordsHash.put(LAT, queryParameters.get(LAT).toString());
+                        coordsHash.put(LON, queryParameters.get(LON).toString());
                     }
-                    if (queryParameters.containsKey("depth")) {
-                        coordsHash.put("depth", queryParameters.get("depth").toString());
+                    if (queryParameters.containsKey(DEPTH)) {
+                        coordsHash.put(DEPTH, queryParameters.get(DEPTH).toString());
                     }
                     try {
+                    	
+                    	String [] procedure = null;
+                    	String [] eventTime = null;
+                    	
+                    	if(queryParameters.containsKey(PROCEDURE))
+                    		procedure =  (String[])queryParameters.get(PROCEDURE);
+                    
+                    	if(queryParameters.containsKey(EVENT_TIME))
+                    		eventTime = (String[])queryParameters.get(EVENT_TIME);
                         // create a new handler for our get observation request and then write its result to output
-                        obsHandler = new SOSGetObservationRequestHandler(dataset, (String[])queryParameters.get("procedure"),
-                                                                        (String)queryParameters.get("offering"),
-                                                                        (String[])queryParameters.get("observedproperty"),
-                                                                        (String[])queryParameters.get("eventtime"),
-                                                                        queryParameters.get("responseformat").toString(),
+                        obsHandler = new SOSGetObservationRequestHandler(dataset, 
+                        												procedure,
+                                                                        (String)queryParameters.get(OFFERING),
+                                                                        (String[])queryParameters.get(OBSERVED_PROPERTY),
+                                                                        eventTime,
+                                                                        queryParameters.get(RESPONSE_FORMAT).toString(),
                                                                         coordsHash);
                         // below indicates that we got an exception and we should return it
                         if (obsHandler.getOutputHandler().getClass() == GetCapsOutputter.class) {
@@ -208,10 +230,10 @@ public class SOSParser {
                         retval.put("responseContentType", "text/xml");
                         SOSDescribeSensorHandler sensorHandler;
                         // get the first procedure
-                        String procedure = ((String[])queryParameters.get("procedure"))[0];
+                        String procedure = ((String[])queryParameters.get(PROCEDURE))[0];
                         // create a describe sensor handler
                         sensorHandler = new SOSDescribeSensorHandler(dataset,
-                                queryParameters.get("responseformat").toString(),
+                                queryParameters.get(OUTPUT_FORMAT).toString(),
                                 procedure,
                                 threddsURI,
                                 query);
@@ -255,7 +277,7 @@ public class SOSParser {
             if (keyVal.length != 2) {
                 queryParameters.put("error", "invalid argument " + arg);
             } else {
-                if (keyVal[0].equalsIgnoreCase("procedure")) {
+                if (keyVal[0].equalsIgnoreCase(PROCEDURE)) {
                     String[] howManyStation = keyVal[1].replace("%3A", ":").split(",");
 //                    List<String> stList = Arrays.asList(howManyStation);
 
@@ -264,33 +286,34 @@ public class SOSParser {
 //                    }
                     
                     queryParameters.put(keyVal[0].toLowerCase(), howManyStation );
-                } else if (keyVal[0].equalsIgnoreCase("responseformat")) {
+                } else if (keyVal[0].equalsIgnoreCase(RESPONSE_FORMAT) ||
+                		keyVal[0].equalsIgnoreCase(OUTPUT_FORMAT)) {
                     try {
                         String val = URLDecoder.decode(keyVal[1], "UTF-8");
-                        queryParameters.put(keyVal[0].toLowerCase(),val);
+                        queryParameters.put(keyVal[0],val);
                     } catch (Exception e) {
                         _log.debug("Exception in decoding: " + keyVal[1] + " - " + e.getMessage());
                         _log.error("Exception in decoding: " + keyVal[1] + " - " + e.getMessage());
                         queryParameters.put(keyVal[0],keyVal[1]);
                     }
-                } else if (keyVal[0].equalsIgnoreCase("eventtime")) {
+                } else if (keyVal[0].equalsIgnoreCase(EVENT_TIME)) {
                     String[] eventtime;
                     if (keyVal[1].contains("/")) {
                         eventtime = keyVal[1].split("/");
                     } else {
                         eventtime = new String[] { keyVal[1] };
                     }
-                    queryParameters.put(keyVal[0].toLowerCase(),eventtime);
-                } else if (keyVal[0].equalsIgnoreCase("observedproperty")) {
+                    queryParameters.put(keyVal[0],eventtime);
+                } else if (keyVal[0].equalsIgnoreCase(OBSERVED_PROPERTY)) {
                     String[] param;
                     if (keyVal[1].contains(",")) {
                         param = keyVal[1].split(",");
                     } else {
                         param = new String[] { keyVal[1] };
                     }
-                    queryParameters.put(keyVal[0].toLowerCase(),param);
+                    queryParameters.put(keyVal[0],param);
                 } else {
-                    queryParameters.put(keyVal[0].toLowerCase(), keyVal[1]);
+                    queryParameters.put(keyVal[0], keyVal[1]);
                 }
             }
         }
@@ -331,9 +354,10 @@ public class SOSParser {
     private HashMap<String, Object> checkQueryParameters() {
         try {
             HashMap<String,Object> retval = new HashMap<String, Object>();
-            String[] requiredGlobalParameters = { "request", "service", "version" };
-            String[] requiredDSParameters = { "procedure", "responseformat" };
-            String[] requiredGOParameters = { "offering", "observedproperty", "responseformat", "procedure" };
+            String[] requiredGlobalParameters = {REQUEST, SERVICE, VERSION };
+            String[] requiredDSParameters = { PROCEDURE, OUTPUT_FORMAT };
+            String[] requiredGOParameters = { PROCEDURE, OFFERING, OBSERVED_PROPERTY, RESPONSE_FORMAT };
+            System.out.println(queryParameters.toString());
             // general parameters expected
             if (queryParameters.containsKey("error")) {
                 retval.put("error", "Error with request - " + queryParameters.get("error").toString());
@@ -346,7 +370,7 @@ public class SOSParser {
                     }
                 }
                 // check requirements for version and service
-                if (!queryParameters.get("version").toString().equalsIgnoreCase("1.0.0")) {
+                if (!queryParameters.get(VERSION).toString().equalsIgnoreCase("1.0.0")) {
                     retval.put("error", "Currently only version 1.0.0 is supported.");
                     return retval;
                 } else if (!queryParameters.get("service").toString().equalsIgnoreCase("sos")) {

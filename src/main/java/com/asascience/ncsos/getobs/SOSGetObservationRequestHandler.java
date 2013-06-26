@@ -33,7 +33,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     private String contentType;
     
     private static final String FILL_VALUE_NAME = "_FillValue";
-    private static final String IOOSOM1_0_0 = "text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0\"";
+    private static final String IOOSOM1_0_0 = "text/xml;schema=\"om/1.0.0/profiles/ioos_sos/1.0\"";
     private static final String OM1_0_0 = "text/xml;subtype=\"om/1.0.0\"";
     
     private final List<String> eventTimes;
@@ -53,7 +53,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             String offering,
             String[] variableNames,
             String[] eventTime,
-            String outputFormat,
+            String responseFormat,
             Map<String, String> latLonRequest) throws IOException {
         super(netCDFDataset);
         
@@ -63,17 +63,17 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             eventTimes = new ArrayList<String>();
         
         // set up our formatter
-        if(outputFormat.equalsIgnoreCase(OM1_0_0)) {
+        if(responseFormat.equalsIgnoreCase(OM1_0_0)) {
             contentType = "text/xml";
 //            output = new OosTethysSwe(this.obsProperties, getFeatureDataset(), CDMDataSet, netCDFDataset);
             output = new OosTethysSweV2(this);
-        } else if (outputFormat.equalsIgnoreCase(IOOSOM1_0_0)) {
+        } else if (responseFormat.equalsIgnoreCase(IOOSOM1_0_0)) {
             contentType = "text/xml";
             output = new IoosSos10(this);
         } else {
-            _log.error("Uknown/Unhandled responseFormat: " + outputFormat);
+            _log.error("Uknown/Unhandled responseFormat: " + responseFormat);
             output = new GetCapsOutputter();
-            output.setupExceptionOutput("Could not recognize output format");
+            output.setupExceptionOutput("Could not recognize response format: " + responseFormat);
         }
         
         // make sure that all of the requested variable names are in the dataset
@@ -101,35 +101,39 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
 
         this.obsProperties = checkNetcdfFileForAxis(heightAxis, variableNames);
         
+      
+        	// strip out each of the station names
+  
         // unaltered procedures
         this.procedures = Arrays.copyOf(requestedStationNames, requestedStationNames.length);
-        
-        // strip out each of the station names
         for (int i=0; i<requestedStationNames.length; i++) {
-            requestedStationNames[i] = requestedStationNames[i].substring(requestedStationNames[i].lastIndexOf(":")+1);
+        	requestedStationNames[i] = requestedStationNames[i].substring(requestedStationNames[i].lastIndexOf(":")+1);
         }
-        
+
         // get all station names if 'network-all'
         try {
-            if (requestedStationNames.length == 1 && requestedStationNames[0].equalsIgnoreCase("all")) {
-                requestedStationNames = getStationNames().values().toArray(new String[getStationNames().values().size()]);
-                // need to set the procedures to this new set
-                List<String> naProcs = ListComprehension.map(new ArrayList<String>(getStationNames().values()) {}, new ListComprehension.Func<String, String>() {
-                    public String apply(String in) {
-                        return SOSBaseRequestHandler.getGMLName(in);
-                    }
-                });
-                this.procedures = naProcs.toArray(new String[naProcs.size()]);
-            }
+        	if (requestedStationNames.length == 1 && requestedStationNames[0].equalsIgnoreCase("all")) {
+        		requestedStationNames = getStationNames().values().toArray(new String[getStationNames().values().size()]);
+        		// need to set the procedures to this new set
+        		List<String> naProcs = ListComprehension.map(new ArrayList<String>(getStationNames().values()) {}, new ListComprehension.Func<String, String>() {
+        			public String apply(String in) {
+        				return SOSBaseRequestHandler.getGMLName(in);
+        			}
+        		});
+        		this.procedures = naProcs.toArray(new String[naProcs.size()]);
+        	}
         } catch (Exception ex) {
-            _log.error(ex.toString());
-            requestedStationNames = null;
+        	_log.error(ex.toString());
+        	requestedStationNames = null;
         }
-        
+
+     
         // check that the procedures are valid
         checkProcedureValidity();
         // and are a part of the offering
-        checkProceduresAgainstOffering(offering);
+        
+        if(offering != null)
+        	checkProceduresAgainstOffering(offering);
         
         setCDMDatasetForStations(netCDFDataset, requestedStationNames, eventTime, latLonRequest);
     }
@@ -381,28 +385,30 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             }
             stProc.add(SOSBaseRequestHandler.getGMLName(stname));
         }
-        for (String proc : this.procedures) {
-            if (ListComprehension.filter(stProc, proc).size() < 1) {
-                _log.error("Invalid procedure: " + proc);
-                output.setupExceptionOutput("Invalid procedure " + proc + ". Check GetCapabilities document for valid procedures.");
-            }
-        }
+        
+        	for (String proc : this.procedures) {
+        		if (ListComprehension.filter(stProc, proc).size() < 1) {
+        			_log.error("Invalid procedure: " + proc);
+        			output.setupExceptionOutput("Invalid procedure " + proc + ". Check GetCapabilities document for valid procedures.");
+        		}
+        	}
+        
     }
+    
 
     private void checkProceduresAgainstOffering(String offering) {
         // if the offering is 'network-all' no error (network-all should have all procedures)
         if (offering.equalsIgnoreCase("network-all"))
             return;
-        
-        // currently in ncSOS the only offerings that exist are network-all and each of the stations
-        // in the dataset. So basically we need to check that the offering exists
-        // in each of the procedures requested.
-        for (String proc : this.procedures) {
-            if (!proc.toLowerCase().contains(offering.toLowerCase())) {
-                _log.error("Invalid procedure " + proc + " for offering " + offering);
-                output.setupExceptionOutput("Procedure " + proc + " does not exist in the offering " + offering + ". Check GetCapabilities document for valid procedures for this offering.");
-            }
-        }
+        	// currently in ncSOS the only offerings that exist are network-all and each of the stations
+        	// in the dataset. So basically we need to check that the offering exists
+        	// in each of the procedures requested.
+        	for (String proc : this.procedures) {
+        		if (!proc.toLowerCase().contains(offering.toLowerCase())) {
+        			_log.error("Invalid procedure " + proc + " for offering " + offering);
+        			output.setupExceptionOutput("Procedure " + proc + " does not exist in the offering " + offering + ". Check GetCapabilities document for valid procedures for this offering.");
+        		}
+        	}
         
     }
 }
