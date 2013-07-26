@@ -53,7 +53,7 @@ public final class ListComprehension {
         for (I inObj : in) {
             // test for null to avoid null reference
             try {
-                if (!inObj.equals(weed))
+                if (inObj != null && !inObj.equals(weed))
                     out.add(inObj);
             } catch (Exception ex) {
                 if (weed != null)

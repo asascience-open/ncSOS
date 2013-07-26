@@ -27,21 +27,23 @@ import org.w3c.dom.ls.LSSerializer;
  *
  * @author SCowan
  */
-public class BaseOutputFormatter implements SOSOutputFormatter {
+public class BaseOutputFormatter extends SOSOutputFormatter {
     protected class SubElement {
         public HashMap<String,String> attributes;
         public String tag;
+        public String tagNS;
         public String textContent;
         
-        public SubElement(String tag) {
+        public SubElement(String tag, String tagNS) {
             this.attributes = new HashMap<String, String>();
             this.textContent = null;
             this.tag = tag;
+            this.tagNS = tagNS;
         }
     }
     
     protected String DEFAULT_VALUE = "UNKNOWN";
-    protected Document document;
+  //  protected Document document;
     
     private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BaseOutputFormatter.class);
     
@@ -82,12 +84,31 @@ public class BaseOutputFormatter implements SOSOutputFormatter {
     }
     //</editor-fold>
     
+    public void setBoundedBy(String srsName, String lowerCorner, String upperCorner) {
+        /*
+         * <gml:boundedBy>
+         *   <gml:Envelope srsName='srsName'>
+         *     <gml:lowerCorner>'lowerCorner'</gml:lowerCorner>
+         *     <gml:upperCorner>'upperCorner'</gml:upperCorner>
+         *   </gml:Envelope>
+         * </gml:boundedBy>
+         */
+        Element parent = (Element) this.document.getElementsByTagNameNS(GML_NS, BOUNDED_BY).item(0);
+        parent = addNewNode(parent, ENVELOPE, GML_NS, SRS_NAME, srsName);
+        addNewNode(parent, LOWER_CORNER, GML_NS, lowerCorner);
+        addNewNode(parent, UPPER_CORNER, GML_NS, upperCorner);
+    }
+    
+    
+    
     //<editor-fold defaultstate="collapsed" desc="Protected Methods">
     protected void loadTemplateXML(String templateLocation) {
         InputStream templateInputStream = null;
         try {
             templateInputStream = getClass().getClassLoader().getResourceAsStream(templateLocation);
             this.document = XMLDomUtils.getTemplateDom(templateInputStream);
+            
+            initNamespaces();
         } catch (Exception ex) {
             logger.error(ex.toString());
         } finally {
@@ -103,7 +124,8 @@ public class BaseOutputFormatter implements SOSOutputFormatter {
     }
     
     protected Element createSubElement(SubElement element) {
-        Element retval = this.document.createElement(element.tag);
+        Element retval = createElementNS(element.tagNS, element.tag);
+
         if (element.textContent != null) {
             retval.setTextContent(element.textContent);
         }
@@ -117,40 +139,77 @@ public class BaseOutputFormatter implements SOSOutputFormatter {
         return (Element) document.getFirstChild();
     }
     
-    protected Element addNewNode(String parentName, String nodeName) {
-        Element parent = (Element) this.document.getElementsByTagName(parentName).item(0);
-        return addNewNode(parent, nodeName);
+    protected Element addNewNode(String parentName, 
+    							 String parentNS,
+    							 String nodeName, 
+    							 String nodeNS) {
+        Element parent = (Element) this.document.getElementsByTagNameNS(parentNS, parentName).item(0);
+        return addNewNode(parent, nodeName, nodeNS);
     }
     
-    protected Element addNewNode(Node parent, String nodeName) {
-        Element child = this.document.createElement(nodeName);
+    protected Element addNewNode(Node parent, String nodeName, String nodeNS) {
+    	Element child = null;
+    	if(nodeNS != null) {
+    		child = createElementNS(nodeNS, nodeName);
+    	}
+    	else
+    		child = this.document.createElement(nodeName);
         parent.appendChild(child);
         return child;
     }
     
-    protected Element addNewNode(String parentName, String nodeName, String textValue) {
-        Element parent = (Element) this.document.getElementsByTagName(parentName).item(0);
-        return addNewNode(parent, nodeName, textValue);
+    protected Element addNewNode(String parentName, 
+    							 String parentNS,
+    							 String nodeName, 
+    							 String nodeNS,
+    							 String textValue) {
+        Element parent = (Element) this.document.getElementsByTagNameNS(parentNS, parentName).item(0);
+        return addNewNode(parent, nodeName, nodeNS,  textValue);
     }
     
-    protected Element addNewNode(Node parent, String nodeName, String textValue) {
-        Element child = this.document.createElement(nodeName);
+    protected Element addNewNode(Node parent, 
+    							 String nodeName, 
+    							 String nodeNS, 
+    							 String textValue) {
+        Element child = createElementNS(nodeNS, nodeName);
         child.setTextContent(textValue);
         parent.appendChild(child);
         return child;
     }
     
-    protected Element addNewNode(String parentName, String nodeName, String attrName, String attrValue) {
-        Element parent = (Element) this.document.getElementsByTagName(parentName).item(0);
-        return addNewNode(parent, nodeName, attrName, attrValue);
+    protected Element addNewNode(String parentName,
+    							 String parentNS,
+    							 String nodeName, 
+    							 String nodeNS,
+    							 String attrName, 
+    							 String attrValue) {
+        Element parent = (Element) this.document.getElementsByTagNameNS(parentNS, parentName).item(0);
+        return addNewNode(parent, nodeName, nodeNS, attrName, attrValue);
     }
     
-    protected Element addNewNode(Node parent, String nodeName, String attrName, String attrValue) {
-        Element child = this.document.createElement(nodeName);
-        child.setAttribute(attrName, attrValue);
-        parent.appendChild(child);
-        return child;
+    protected Element addNewNode(Node parent, 
+    							 String nodeName, 
+    							 String nodeNS,
+    							 String attrName, 
+    							 String attrValue) {
+    	return addNewNode(parent, nodeName, nodeNS, attrName, null, attrValue);
     }
+    
+    protected Element addNewNode(Node parent, 
+    		String nodeName, 
+    		String nodeNS,
+    		String attrName, 
+    		String attrNS,
+    		String attrValue) {
+    	Element child = createElementNS(nodeNS, nodeName);
+
+    	if(attrNS != null)
+    		child.setAttributeNS(attrNS,attrName, attrValue);    	
+    	else
+    		child.setAttribute(attrName, attrValue);
+    	parent.appendChild(child);
+    	return child;
+}
     //</editor-fold>
     
     

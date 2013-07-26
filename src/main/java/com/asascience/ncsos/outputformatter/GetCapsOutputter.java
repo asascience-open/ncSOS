@@ -27,17 +27,16 @@ import ucar.unidata.geoloc.LatLonRect;
  *
  * @author scowan
  */
-public class GetCapsOutputter implements SOSOutputFormatter {
+public class GetCapsOutputter extends SOSOutputFormatter {
     
-    private Document document;
     private DOMImplementationLS impl;
     private boolean exceptionFlag;
-    
+
     private Element getCaps, getObs, descSen;
     
     private final static String TEMPLATE = "templates/sosGetCapabilities.xml";
-    private final static String capabilitiesElement = "sos:Capabilities";
-    private final static String observationOfferingElement = "sos:ObservationOfferingList";
+
+
 
     /**
      * Creates instance of a Get Capabilities outputter. Reads the sosGetCapabilities.xml
@@ -45,6 +44,9 @@ public class GetCapsOutputter implements SOSOutputFormatter {
      */
     public GetCapsOutputter() {
         document = parseTemplateXML();
+        
+        initNamespaces();
+   
         
         exceptionFlag = false;
         
@@ -69,7 +71,7 @@ public class GetCapsOutputter implements SOSOutputFormatter {
     
     /**
      * Sets the output XML document
-     * @param setter a org.w3c.dom.Document
+     * @param setter a org.w3c.dom.Document  
      */
     public void setDocument(Document setter) {
         this.document = setter;
@@ -89,7 +91,7 @@ public class GetCapsOutputter implements SOSOutputFormatter {
      * sets the service identification information 
      */
     public void parseServiceIdentification(String title, String history, String access) {
-        NodeList nodeLst = getDocument().getElementsByTagName("ows:ServiceIdentification");
+        NodeList nodeLst = getDocument().getElementsByTagNameNS(OWS_NS, "ServiceIdentification");
 
         for (int s = 0; s < nodeLst.getLength(); s++) {
 
@@ -99,25 +101,25 @@ public class GetCapsOutputter implements SOSOutputFormatter {
                 //looks at the one node
                 Element fstElmnt = (Element) fstNode;
                 //looks at title
-                NodeList fstNmElmntLst = fstElmnt.getElementsByTagName("ows:Title");
+                NodeList fstNmElmntLst = fstElmnt.getElementsByTagNameNS(OWS_NS,"Title");
                 Element fstNmElmnt = (Element) fstNmElmntLst.item(0);
                 NodeList fstNm = fstNmElmnt.getChildNodes();
                 fstNm.item(0).setTextContent(title.trim());
 
                 //looks at the adstract
-                NodeList lstNmElmntLst = fstElmnt.getElementsByTagName("ows:Abstract");
+                NodeList lstNmElmntLst = fstElmnt.getElementsByTagNameNS(OWS_NS,"Abstract");
                 Element lstNmElmnt = (Element) lstNmElmntLst.item(0);
                 NodeList lstNm = lstNmElmnt.getChildNodes();
                 lstNm.item(0).setTextContent(history.trim());
                 
-                fstElmnt.getElementsByTagName("ows:AccessConstraints").item(0).setTextContent(access.trim());
+                fstElmnt.getElementsByTagNameNS(OWS_NS,"AccessConstraints").item(0).setTextContent(access.trim());
             }
         }
     }
     
     public void removeServiceIdentification() {
-        Element capsNode = (Element) getDocument().getElementsByTagName(capabilitiesElement).item(0);
-        Node node = capsNode.getElementsByTagName("ows:ServiceIdentification").item(0);
+        Element capsNode = (Element) getDocument().getElementsByTagNameNS(SOS_NS, CAPABILITIES).item(0);
+        Node node = capsNode.getElementsByTagNameNS(OWS_NS, "ServiceIdentification").item(0);
         
         capsNode.removeChild(node);
     }
@@ -127,21 +129,21 @@ public class GetCapsOutputter implements SOSOutputFormatter {
      */
     public void parseServiceDescription(String dataPage, String primaryOwnership) {
         //get service provider node list
-        NodeList serviceProviderNodeList = getDocument().getElementsByTagName("ows:ServiceProvider");
+        NodeList serviceProviderNodeList = getDocument().getElementsByTagNameNS(OWS_NS, "ServiceProvider");
         //get the first node in the the list matching the above name
         Node fstNode = serviceProviderNodeList.item(0);
         //create an element from the node
         Element fstElmnt = (Element) fstNode;
         // set org info
         // url
-        fstElmnt.getElementsByTagName("ows:ProviderSite").item(0).setTextContent(dataPage.trim());
+        fstElmnt.getElementsByTagNameNS(OWS_NS, "ProviderSite").item(0).setTextContent(dataPage.trim());
         // name
-        fstElmnt.getElementsByTagName("ows:ProviderName").item(0).setTextContent(primaryOwnership.trim());
+        fstElmnt.getElementsByTagNameNS(OWS_NS, "ProviderName").item(0).setTextContent(primaryOwnership.trim());
     }
     
     public void removeServiceProvider() {
-        Element capsNode = (Element) getDocument().getElementsByTagName(capabilitiesElement).item(0);
-        Node serviceProviderNode = capsNode.getElementsByTagName("ows:ServiceProvider").item(0);
+        Element capsNode = (Element) getDocument().getElementsByTagNameNS(SOS_NS, CAPABILITIES).item(0);
+        Node serviceProviderNode = capsNode.getElementsByTagNameNS(OWS_NS, "ServiceProvider").item(0);
         
         capsNode.removeChild(serviceProviderNode);
     }
@@ -151,12 +153,12 @@ public class GetCapsOutputter implements SOSOutputFormatter {
      * @param threddsURI 
      */
     public void setOperationGetCaps(String threddsURI) {
-        setOperationMethods((Element)getCaps.getElementsByTagName("ows:HTTP").item(0), threddsURI);
+        setOperationMethods((Element)getCaps.getElementsByTagNameNS(OWS_NS, "HTTP").item(0), threddsURI);
     }
     
     public void removeOperations() {
-        Element capsNode = (Element) getDocument().getElementsByTagName(capabilitiesElement).item(0);
-        Node operationsNode = capsNode.getElementsByTagName("ows:OperationsMetadata").item(0);
+        Element capsNode = (Element) getDocument().getElementsByTagNameNS(SOS_NS, CAPABILITIES).item(0);
+        Node operationsNode = capsNode.getElementsByTagNameNS(OWS_NS, "OperationsMetadata").item(0);
         capsNode.removeChild(operationsNode);
     }
     
@@ -170,104 +172,111 @@ public class GetCapsOutputter implements SOSOutputFormatter {
      * @param gridDataset
      * @param gridBbox 
      */
-    public void setOperationGetObs(String threddsURI, CalendarDate startDate, CalendarDate endDate, List<String> dataVarShortNames, String[] stationNames, boolean gridDataset, LatLonRect gridBbox, FeatureType ftype) {
+    public void setOperationGetObs(String threddsURI, CalendarDate startDate, CalendarDate endDate, 
+    								List<String> dataVarShortNames, String[] stationNames, 
+    								boolean gridDataset, LatLonRect gridBbox, FeatureType ftype) {
         // set url info
-        setOperationMethods((Element)getObs.getElementsByTagName("ows:HTTP").item(0), threddsURI);
+        setOperationMethods((Element)getObs.getElementsByTagNameNS(OWS_NS, "HTTP").item(0), threddsURI);
         // set info for get observation operation
         // get our parameters that need to be filled
         Element eventtime = null, offering = null, observedproperty = null, procedure = null;
-        NodeList nodes = getObs.getElementsByTagName("ows:Parameter");
+        NodeList nodes =  getObs.getElementsByTagNameNS(OWS_NS, PARAMETER);
         for (int i=0; i<nodes.getLength(); i++) {
             Element elem = (Element) nodes.item(i);
-            if (elem.getAttribute("name").equalsIgnoreCase("offering")) {
-                offering = elem;
-            }
-            else if (elem.getAttribute("name").equalsIgnoreCase("observedProperty")) {
-                observedproperty = elem;
-            }
-            else if (elem.getAttribute("name").equalsIgnoreCase("eventTime")) {
-                eventtime = elem;
-            }
-            else if (elem.getAttribute("name").equalsIgnoreCase("procedure")) {
-                procedure = elem;
+            String nameAtt = elem.getAttribute(NAME);
+            if(nameAtt != null) {
+//            	if(nameAtt.equals(OFFERING)){
+//            		offering = elem;
+//            	}
+//            	else 
+            		if(nameAtt.equals(OBSERVED_PROPERTY)){
+                    observedproperty = elem;
+            	}
+//            	else if(nameAtt.equals(EVENT_TIME)){
+//                    eventtime = elem;
+//            	}
+//            	else if(nameAtt.equals(PROCEDURE)){
+//                    procedure = elem;
+//            	}
+            	
             }
         }
-        // set eventtime
-        if (eventtime != null && endDate != null && startDate != null) {
-            Element allowedValues = getDocument().createElement("ows:AllowedValues");
-            eventtime.appendChild(allowedValues);
-            Element range = getDocument().createElement("ows:Range");
-            allowedValues.appendChild(range);
-            // min value
-            Element min = getDocument().createElement("ows:MinimumValue");
-            min.setTextContent(startDate.toString());
-            allowedValues.appendChild(min);
-            // max value
-            Element max = getDocument().createElement("ows:MaximumValue");
-            max.setTextContent(endDate.toString());
-            allowedValues.appendChild(max);
-        }
+//        // set eventtime
+//        if (eventtime != null && endDate != null && startDate != null) {
+//            Element allowedValues = getDocument().createElementNS(OWS_NS, ALLOWED_VALUES);
+//            eventtime.appendChild(allowedValues);
+//            Element range = getDocument().createElementNS(OWS_NS,"Range");
+//            allowedValues.appendChild(range);
+//            // min value
+//            Element min = getDocument().createElementNS(OWS_NS, "MinimumValue");
+//            min.setTextContent(startDate.toString());
+//            allowedValues.appendChild(min);
+//            // max value
+//            Element max = getDocument().createElementNS(OWS_NS, "MaximumValue");
+//            max.setTextContent(endDate.toString());
+//            allowedValues.appendChild(max);
+//        }
         // set observedProperty parameter
         if (observedproperty != null) {
-            Element allowedValues = getDocument().createElement("ows:AllowedValues");
+            Element allowedValues = createElementNS(OWS_NS, ALLOWED_VALUES);
             observedproperty.appendChild(allowedValues);
             for (String name : dataVarShortNames) {
-                Element value = getDocument().createElement("ows:value");
+                Element value = createElementNS(OWS_NS, VALUE);
                 value.setTextContent(name);
                 allowedValues.appendChild(value);
             }
         }
-        // set offering parameter - list of station names
-        if (offering != null && stationNames != null) {
-            Element aV = getDocument().createElement("ows:AllowedValues");
-            offering.appendChild(aV);
-            // add network-all as an offering
-            Element network = document.createElement("ows:Value");
-            network.setTextContent("network-all");
-            aV.appendChild(network);
-            for (String name : stationNames) {
-                Element value = getDocument().createElement("ows:Value");
-                value.setTextContent(name);
-                aV.appendChild(value);
-            }
-        }
+//        // set offering parameter - list of station names
+//        if (offering != null && stationNames != null) {
+//            Element aV = getDocument().createElementNS(OWS_NS, ALLOWED_VALUES);
+//            offering.appendChild(aV);
+//            // add network-all as an offering
+//            Element network = document.createElementNS(OWS_NS, VALUE);
+//            network.setTextContent("network-all");
+//            aV.appendChild(network);
+//            for (String name : stationNames) {
+//                Element value = getDocument().createElementNS(OWS_NS, VALUE);
+//                value.setTextContent(name);
+//                aV.appendChild(value);
+//            }
+//        }
         // set procedure parameter - list of procedures
         // add allowed values node
-        Element allowedValues = getDocument().createElement("ows:AllowedValues");
-        procedure.appendChild(allowedValues);
-        // add network-all value
-        Element na = getDocument().createElement("ows:Value");
-        na.setTextContent(SOSBaseRequestHandler.getGMLNetworkAll());
-        allowedValues.appendChild(na);
-        for (String stationName : stationNames) {
-            Element elem = getDocument().createElement("ows:Value");
-            elem.setTextContent(SOSBaseRequestHandler.getGMLName(stationName));
-            allowedValues.appendChild(elem);
-            for (String senName : dataVarShortNames) {
-                Element sElem = getDocument().createElement("ows:Value");
-                sElem.setTextContent(SOSBaseRequestHandler.getSensorGMLName(stationName, senName));
-                allowedValues.appendChild(sElem);
-            }
-        }
-        // set additional response formats, supported
-        switch(ftype) {
-            case STATION:
-                // add new ioos response format for TimeSeries data
-                NodeList nlist = getObs.getElementsByTagName("ows:Parameter");
-                for (int n = 0; n<nlist.getLength(); n++) {
-                    Element elm = (Element) nlist.item(n);
-                    if ("responseFormat".equals(elm.getAttribute("name"))) {
-                        Element av = (Element) elm.getElementsByTagName("ows:AllowedValues").item(0);
-                        Element rf = document.createElement("ows:Value");
-                        rf.setTextContent("text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0\"");
-                        av.appendChild(rf);
-                    }
-                }
-                break;
-        }
-        // add lat and lon as parameters if we are a grid dataset
-        if (gridDataset)
-            addLatLonParameters(getObs, gridBbox);
+//        Element allowedValues = getDocument().createElementNS(OWS_NS, VALUE);
+//        procedure.appendChild(allowedValues);
+//        // add network-all value
+//        Element na = getDocument().createElementNS(OWS_NS, VALUE);
+//        na.setTextContent(SOSBaseRequestHandler.getGMLNetworkAll());
+//        allowedValues.appendChild(na);
+//        for (String stationName : stationNames) {
+//            Element elem = getDocument().createElementNS(OWS_NS, VALUE);
+//            elem.setTextContent(SOSBaseRequestHandler.getGMLName(stationName));
+//            allowedValues.appendChild(elem);
+//            for (String senName : dataVarShortNames) {
+//                Element sElem = getDocument().createElementNS(OWS_NS, VALUE);
+//                sElem.setTextContent(SOSBaseRequestHandler.getSensorGMLName(stationName, senName));
+//                allowedValues.appendChild(sElem);
+//            }
+//        }
+//        // set additional response formats, supported
+//        switch(ftype) {
+//            case STATION:
+//                // add new ioos response format for TimeSeries data
+//                NodeList nlist = getObs.getElementsByTagNameNS(OWS_NS, PARAMETER);
+//                for (int n = 0; n<nlist.getLength(); n++) {
+//                    Element elm = (Element) nlist.item(n);
+//                    if (RESPONSE_FORMAT.equals(elm.getAttribute(NAME))) {
+//                        Element av = (Element) elm.getElementsByTagNameNS(OWS_NS, ALLOWED_VALUES).item(0);
+//                        Element rf = document.createElementNS(OWS_NS, VALUE);
+//                        rf.setTextContent(IOOS_RF_1_0);
+//                        av.appendChild(rf);
+//                    }
+//                }
+//                break;
+//        }
+//        // add lat and lon as parameters if we are a grid dataset
+//        if (gridDataset)
+//            addLatLonParameters(getObs, gridBbox);
     }
     
     /**
@@ -278,31 +287,35 @@ public class GetCapsOutputter implements SOSOutputFormatter {
      */
     public void setOperationDescSen(String threddsURI, String[] stationNames, List<String> sensorNames) {
         // set url info
-        setOperationMethods((Element)descSen.getElementsByTagName("ows:HTTP").item(0), threddsURI);
+        setOperationMethods((Element)descSen.getElementsByTagNameNS(OWS_NS, "HTTP").item(0), threddsURI);
         // set procedure allowed values of each station and sensor for the dataset
         Element procedure = null;
-        NodeList nodes = descSen.getElementsByTagName("ows:Parameter");
+        NodeList nodes = descSen.getElementsByTagNameNS(OWS_NS, PARAMETER);
         for (int i=0; i<nodes.getLength(); i++) {
             Element elem = (Element) nodes.item(i);
-            if (elem.getAttribute("name").equalsIgnoreCase("procedure")) {
+            if (elem != null && elem.getAttribute(NAME).equals(PROCEDURE)) {
                 procedure = elem;
                 break;
             }
         }
         if (procedure != null && stationNames!= null) {
             // add allowed values node
-            Element allowedValues = getDocument().createElement("ows:AllowedValues");
+            Element allowedValues = createElementNS(OWS_NS, ALLOWED_VALUES);
+
             procedure.appendChild(allowedValues);
             // add network-all value
-            Element na = getDocument().createElement("ows:Value");
+            Element na = createElementNS(OWS_NS, VALUE);
+
             na.setTextContent("urn:ioos:network:" + SOSBaseRequestHandler.getNamingAuthority() + ":all");
             allowedValues.appendChild(na);
             for (String stationName : stationNames) {
-                Element elem = getDocument().createElement("ows:Value");
+                Element elem = createElementNS(OWS_NS, VALUE);
+
                 elem.setTextContent(SOSBaseRequestHandler.getGMLName(stationName));
                 allowedValues.appendChild(elem);
                 for (String senName : sensorNames) {
-                    Element sElem = getDocument().createElement("ows:Value");
+                    Element sElem = createElementNS(OWS_NS, VALUE);
+
                     sElem.setTextContent(SOSBaseRequestHandler.getSensorGMLName(stationName, senName));
                     allowedValues.appendChild(sElem);
                 }
@@ -310,19 +323,22 @@ public class GetCapsOutputter implements SOSOutputFormatter {
         }
     }
     
+    
+    
     public void setObservationOfferingNetwork(LatLonRect datasetRect, String[] stations, List<String> sensors, CalendarDateRange datasetTime, FeatureType ftype) {
         // add the network-all observation offering
-        Element offeringList = (Element) document.getElementsByTagName(observationOfferingElement).item(0);
-        Element obsOffering = document.createElement("sos:ObservationOffering");
-        obsOffering.setAttribute("gml:id", "network-all");
+        Element offeringList = (Element) document.getElementsByTagNameNS(SOS_NS, OBSERVATION_OFFERING_LIST).item(0);
+        Element obsOffering = createElementNS(SOS_NS, OBSERVATION_OFFERING);
+        obsOffering.setAttributeNS(GML_NS, ID, "network-all");
+      
         // add description, name and srs
-        Element desc = document.createElement("gml:description");
+        Element desc = createElementNS(GML_NS, DESCRIPTION);
         desc.setTextContent("All stations in the netCDF dataset.");
         obsOffering.appendChild(desc);
-        Element name = document.createElement("gml:name");
-        name.setTextContent("urn:ioos:network:" + SOSBaseRequestHandler.getNamingAuthority() + ":all");
+        Element name = createElementNS(GML_NS, NAME);
+        name.setTextContent(NETWORK_URN + SOSBaseRequestHandler.getNamingAuthority() + NETWORK_URN_END_ALL );
         obsOffering.appendChild(name);
-        Element srsName = getDocument().createElement("gml:srsName");
+        Element srsName = createElementNS(GML_NS, "srsName");
         srsName.setTextContent("EPSG:4326");
         obsOffering.appendChild(srsName);
         // bounds
@@ -331,35 +347,35 @@ public class GetCapsOutputter implements SOSOutputFormatter {
         if (datasetTime != null)
             obsOffering.appendChild(getStationPeriod(datasetTime));
         // add network all to procedure list
-        Element naProcedure = getDocument().createElement("sos:procedure");
+        Element naProcedure = createElementNS(SOS_NS, PROCEDURE);
         naProcedure.setAttribute("xlink:href", SOSBaseRequestHandler.getGMLNetworkAll());
         obsOffering.appendChild(naProcedure);
         // procedures
         for (String str : stations) {
-            Element proc = getDocument().createElement("sos:procedure");
+            Element proc = createElementNS(SOS_NS, PROCEDURE);
             proc.setAttribute("xlink:href", SOSBaseRequestHandler.getGMLName(str));
             obsOffering.appendChild(proc);
         }
         // observed properties
         for (String str : sensors) {
-            Element value = getDocument().createElement("sos:observedProperty");
+            Element value =createElementNS(SOS_NS, "observedProperty");
             value.setAttribute("xlink:href", str);
             obsOffering.appendChild(value);
         }
         // feature of interests
         for (String str: stations) {
-            Element foi = getDocument().createElement("sos:featureOfInterest");
+            Element foi = createElementNS(SOS_NS, "featureOfInterest");
             foi.setAttribute("xlink:href", SOSBaseRequestHandler.getGMLName(str));
             obsOffering.appendChild(foi);
         }
         // response format
-        Element rf = getDocument().createElement("sos:responseFormat");
+        Element rf = createElementNS(SOS_NS, RESPONSE_FORMAT);
         rf.setTextContent("text/xml; subtype=\"om/1.0.0\"");
         obsOffering.appendChild(rf);
         // if supported by feature type, add new repsonse format
         switch(ftype) {
             case STATION:
-                rf = getDocument().createElement("sos:responseFormat");
+                rf = createElementNS(SOS_NS, RESPONSE_FORMAT);
                 rf.setTextContent("text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0");
                 obsOffering.appendChild(rf);
                 break;
@@ -367,10 +383,10 @@ public class GetCapsOutputter implements SOSOutputFormatter {
                 break;
         }
         // response model/mode -- blank for now?
-        Element rm = getDocument().createElement("sos:responseModel");
+        Element rm = createElementNS(SOS_NS, RESPONSE_MODEL);
         rm.setTextContent("om:ObservationCollection");
         obsOffering.appendChild(rm);
-        Element rm2 = getDocument().createElement("sos:responseMode");
+        Element rm2 = createElementNS(SOS_NS, RESPONSE_MODE);
         rm2.setTextContent("inline");
         obsOffering.appendChild(rm2);
 
@@ -378,17 +394,17 @@ public class GetCapsOutputter implements SOSOutputFormatter {
         offeringList.appendChild(obsOffering);
     }
     
-    public void setObservationOfferingList(String stationName, int stationIndex, LatLonRect rect, List<String> sensorNames, CalendarDateRange stationDates, FeatureType ftype) {
-        Element offeringList = (Element) getDocument().getElementsByTagName(observationOfferingElement).item(0);
+    public void setObservationOfferingList(String stationName,LatLonRect rect, List<String> sensorNames, CalendarDateRange stationDates, FeatureType ftype) {
+        Element offeringList = (Element) getDocument().getElementsByTagNameNS(SOS_NS, OBSERVATION_OFFERING_LIST).item(0);
         // iterate through offerings (stations)
-        Element obsOffering = getDocument().createElement("sos:ObservationOffering");
-        obsOffering.setAttribute("gml:id", stationName);
+        Element obsOffering = createElementNS(SOS_NS, OBSERVATION_OFFERING);
+        obsOffering.setAttributeNS(GML_NS, ID, stationName);
         // gml:name
-        Element gmlName = getDocument().createElement("gml:name");
+        Element gmlName = createElementNS(GML_NS, NAME);
         gmlName.setTextContent(SOSBaseRequestHandler.getGMLName(stationName));
         obsOffering.appendChild(gmlName);
         // gml:srsName - default to EPSG:4326 for now
-        Element srsName = getDocument().createElement("gml:srsName");
+        Element srsName = createElementNS(GML_NS, "srsName");
         srsName.setTextContent("EPSG:4326");
         obsOffering.appendChild(srsName);
         // bounds
@@ -396,44 +412,44 @@ public class GetCapsOutputter implements SOSOutputFormatter {
         // add time envelope
         obsOffering.appendChild(getStationPeriod(stationDates));
         // feature of interest -- station name?
-        Element foi = getDocument().createElement("sos:featureOfInterest");
+        Element foi = createElementNS(SOS_NS, FEATURE_INTEREST);
         foi.setAttribute("xlink:href", SOSBaseRequestHandler.getGMLName(stationName));
         obsOffering.appendChild(foi);
         // observed properties
         for (String str : sensorNames) {
-            Element value = getDocument().createElement("sos:observedProperty");
+            Element value = createElementNS(SOS_NS, OBSERVED_PROPERTY);
             value.setAttribute("xlink:href", str);
             obsOffering.appendChild(value);
         }
         // procedure for this station
-        Element selfProcedure = getDocument().createElement("sos:procedure");
+        Element selfProcedure = createElementNS(SOS_NS, PROCEDURE);
         selfProcedure.setAttribute("xlink:href", SOSBaseRequestHandler.getGMLName(stationName));
         obsOffering.appendChild(selfProcedure);
-        // procedures
-        for (String str : sensorNames) {
-            Element proc = getDocument().createElement("sos:procedure");
-            proc.setAttribute("xlink:href", SOSBaseRequestHandler.getSensorGMLName(stationName, str));
-            obsOffering.appendChild(proc);
-        }
+//        // procedures
+//        for (String str : sensorNames) {
+//            Element proc = getDocument().createElementNS(SOS_NS, PROCEDURE);
+//            proc.setAttribute("xlink:href", SOSBaseRequestHandler.getSensorGMLName(stationName, str));
+//            obsOffering.appendChild(proc);
+//        }
         // response format
-        Element rf = getDocument().createElement("sos:responseFormat");
+        Element rf = createElementNS(SOS_NS, RESPONSE_FORMAT);
         rf.setTextContent("text/xml;subtype=\"om/1.0.0\"");
         obsOffering.appendChild(rf);
         // if supported by feature type, add new repsonse format
         switch(ftype) {
             case STATION:
-                rf = getDocument().createElement("sos:responseFormat");
-                rf.setTextContent("text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0");
+                rf = createElementNS(SOS_NS, RESPONSE_FORMAT);
+                rf.setTextContent(this.IOOS_RF_1_0);
                 obsOffering.appendChild(rf);
                 break;
             default:
                 break;
         }
         // response model/mode -- blank for now?
-        Element rm = getDocument().createElement("sos:responseModel");
+        Element rm = createElementNS(SOS_NS, RESPONSE_MODEL);
         rm.setTextContent("om:ObservationCollection");
         obsOffering.appendChild(rm);
-        rm = getDocument().createElement("sos:responseMode");
+        rm = createElementNS(SOS_NS, "responseMode");
         rm.setTextContent("inline");
         obsOffering.appendChild(rm);
 
@@ -442,8 +458,8 @@ public class GetCapsOutputter implements SOSOutputFormatter {
     }
     
     public void removeContents() {
-        Element capsNode = (Element) getDocument().getElementsByTagName(capabilitiesElement).item(0);
-        Node contentNode = capsNode.getElementsByTagName("sos:Contents").item(0);
+        Element capsNode = (Element) getDocument().getElementsByTagNameNS(SOS_NS, CAPABILITIES).item(0);
+        Node contentNode = capsNode.getElementsByTagNameNS(SOS_NS, "Contents").item(0);
         capsNode.removeChild(contentNode);
     }
     
@@ -497,7 +513,7 @@ public class GetCapsOutputter implements SOSOutputFormatter {
     
     private void setOperationMethods(Element parent, String threddsURI) {
         //set get capabilities GET request link
-        NodeList getList = parent.getElementsByTagName("ows:Get");
+        NodeList getList = parent.getElementsByTagNameNS(OWS_NS, "Get");
         Element getElm = (Element) getList.item(0);
         getElm.setAttribute("xlink:href", threddsURI);
 
@@ -509,17 +525,17 @@ public class GetCapsOutputter implements SOSOutputFormatter {
     }
     
     private Element getStationPeriod(CalendarDateRange stationDateRange) {
-        Element retval = getDocument().createElement("sos:time");
+        Element retval = createElementNS(SOS_NS, TIME);
         if (stationDateRange != null) {
             // time
-            Element timePeriod = getDocument().createElement("gml:TimePeriod");
+            Element timePeriod = createElementNS(GML_NS, TIME_PERIOD);
             timePeriod.setAttribute("xsi:type", "gml:TimePeriodType");
             // begin
-            Element begin = getDocument().createElement("gml:beginPosition");
+            Element begin = createElementNS(GML_NS, BEGIN_POSITION);
             begin.setTextContent(stationDateRange.getStart().toString());
             timePeriod.appendChild(begin);
             // end
-            Element end = getDocument().createElement("gml:endPosition");
+            Element end = createElementNS(GML_NS, END_POSITION);
             end.setTextContent(stationDateRange.getEnd().toString());
             timePeriod.appendChild(end);
             retval.appendChild(timePeriod);
@@ -528,17 +544,17 @@ public class GetCapsOutputter implements SOSOutputFormatter {
     }
     
     private Element getStationBounds(LatLonRect rect) {
-        Element retval = getDocument().createElement("gml:boundedBy");
+        Element retval = createElementNS(GML_NS, BOUNDED_BY);
         
         if (rect != null) {
-            Element envelope = getDocument().createElement("gml:Envelope");
+            Element envelope = createElementNS(GML_NS, ENVELOPE);
             envelope.setAttribute("srsName", "http://www.opengis.net/def/crs/EPSG/0/4326");
             // lower corner
-            Element lowercorner = getDocument().createElement("gml:lowerCorner");
+            Element lowercorner = createElementNS(GML_NS, LOWER_CORNER);
             lowercorner.setTextContent(rect.getLowerLeftPoint().getLatitude() + " " + rect.getLowerLeftPoint().getLongitude());
             envelope.appendChild(lowercorner);
             // upper corner
-            Element uppercorner = getDocument().createElement("gml:upperCorner");
+            Element uppercorner = createElementNS(GML_NS, UPPER_CORNER);
             uppercorner.setTextContent(rect.getUpperRightPoint().getLatitude() + " " + rect.getUpperRightPoint().getLongitude());
             envelope.appendChild(uppercorner);
             retval.appendChild(envelope);
@@ -548,47 +564,47 @@ public class GetCapsOutputter implements SOSOutputFormatter {
     }
     
     private void prepOperationsMetadata() {
-        Element operationMetadata = (Element) document.getElementsByTagName("ows:OperationsMetadata").item(0);
+        Element operationMetadata = (Element) document.getElementsByTagNameNS(OWS_NS, "OperationsMetadata").item(0);
         // get our operations
-        NodeList operations = operationMetadata.getElementsByTagName("ows:Operation");
+        NodeList operations = operationMetadata.getElementsByTagNameNS(OWS_NS, "Operation");
         for (int i=0; i<operations.getLength(); i++) {
             Element op = (Element) operations.item(i);
-            if (op.getAttribute("name").equalsIgnoreCase("getcapabilities"))
+            if (op.getAttribute(NAME).equalsIgnoreCase("getcapabilities"))
                 getCaps = op;
-            else if (op.getAttribute("name").equalsIgnoreCase("getobservation"))
+            else if (op.getAttribute(NAME).equalsIgnoreCase("getobservation"))
                 getObs = op;
-            else if (op.getAttribute("name").equalsIgnoreCase("describesensor"))
+            else if (op.getAttribute(NAME).equalsIgnoreCase("describesensor"))
                 descSen = op;
         }
     }
     
     private void addLatLonParameters(Element parent, LatLonRect bbox) {
         // lat
-        Element lat = getDocument().createElement("ows:Parameter");
-        lat.setAttribute("name", "lat");
-        lat.setAttribute("use", "required");
-        Element latAllowedValues = getDocument().createElement("ows:AllowedValues");
+        Element lat = createElementNS(OWS_NS, PARAMETER);
+        lat.setAttribute(NAME, LAT);
+        lat.setAttribute(USE, REQUIRED);
+        Element latAllowedValues = createElementNS(OWS_NS, ALLOWED_VALUES);
         // min
-        Element latMin = getDocument().createElement("ows:MinimumValue");
+        Element latMin = createElementNS(OWS_NS, MINIMUM_VALUE);
         latMin.setTextContent(bbox.getLowerLeftPoint().getLatitude() + "");
         latAllowedValues.appendChild(latMin);
         // max
-        Element latMax = getDocument().createElement("ows:MaximumValue");
+        Element latMax = createElementNS(OWS_NS, MAXIMUM_VALUE);
         latMax.setTextContent(bbox.getUpperRightPoint().getLatitude() + "");
         latAllowedValues.appendChild(latMax);
         lat.appendChild(latAllowedValues);
         parent.appendChild(lat);
-        // lon
-        Element lon = getDocument().createElement("ows:Parameter");
-        lon.setAttribute("name", "lon");
-        lon.setAttribute("use", "required");
-        Element lonAllowedValues = getDocument().createElement("ows:AllowedValues");
+        // lon 
+        Element lon = createElementNS(OWS_NS, PARAMETER);
+        lon.setAttribute(NAME, LON);
+        lon.setAttribute(USE, REQUIRED);
+        Element lonAllowedValues = createElementNS(OWS_NS, ALLOWED_VALUES);
         // min
-        Element lonMin = getDocument().createElement("ows:MinimumValue");
+        Element lonMin = createElementNS(OWS_NS, MINIMUM_VALUE);
         lonMin.setTextContent(bbox.getLowerLeftPoint().getLongitude() + "");
         lonAllowedValues.appendChild(lonMin);
         // max
-        Element lonMax = getDocument().createElement("ows:MaximumValue");
+        Element lonMax = createElementNS(OWS_NS, MAXIMUM_VALUE);
         lonMax.setTextContent(bbox.getUpperRightPoint().getLongitude() + "");
         lonAllowedValues.appendChild(lonMax);
         lon.appendChild(lonAllowedValues);

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testConfiguration>
-	<dataSourceDirectory>C:\NCSOS\ncSOS\resources\datasets</dataSourceDirectory>
-	<outputDirectory>C:\NCSOS\ncSOS\target\test_out\</outputDirectory>
+	<dataSourceDirectory>.\resources\datasets</dataSourceDirectory>
+	<outputDirectory>.\target\test_out\</outputDirectory>
 	<tomcatLocation>C:\apache-tomcat-7.0.40\</tomcatLocation>
-	<projectDirectory>C:\NCSOS\ncSOS\</projectDirectory>
+	<projectDirectory>.</projectDirectory>
 	<SOSdescribeSensorTest>
 		timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2\timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc
 		timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1\timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1.nc

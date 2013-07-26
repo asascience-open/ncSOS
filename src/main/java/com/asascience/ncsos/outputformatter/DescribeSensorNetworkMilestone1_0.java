@@ -22,21 +22,7 @@ public class DescribeSensorNetworkMilestone1_0 extends DescribeSensorPlatformMil
         loadTemplateXML(NETWORK_TEMPLATE);
     }
     
-    public void setBoundedBy(String srsName, String lowerCorner, String upperCorner) {
-        /*
-         * <gml:boundedBy>
-         *   <gml:Envelope srsName='srsName'>
-         *     <gml:lowerCorner>'lowerCorner'</gml:lowerCorner>
-         *     <gml:upperCorner>'upperCorner'</gml:upperCorner>
-         *   </gml:Envelope>
-         * </gml:boundedBy>
-         */
-        Element parent = (Element) this.document.getElementsByTagName("gml:boundedBy").item(0);
-        parent = addNewNode(parent, "gml:Envelope", "srsName", srsName);
-        addNewNode(parent, "gml:lowerCorner", lowerCorner);
-        addNewNode(parent, "gml:upperCorner", upperCorner);
-    }
-    
+   
     public void addSmlComponent(String componentName) {
         // add a new component to the ComponentList
         /*
@@ -53,13 +39,13 @@ public class DescribeSensorNetworkMilestone1_0 extends DescribeSensorPlatformMil
          *   </sml:System>
          * </sml:component>
          */
-        Element parent = (Element) this.document.getElementsByTagName("sml:ComponentList").item(0);
-        parent = addNewNode(parent, "sml:component", "name", componentName);
-        parent = addNewNode(parent, "sml:System");
-        addNewNode(addNewNode(parent, "sml:identification"), "sml:IdentifierList");
-        addNewNode(parent, "sml:validTime");
-        addNewNode(parent, "sml:location");
-        addNewNode(addNewNode(parent, "sml:outputs"), "sml:OutputList");
+        Element parent = (Element) this.document.getElementsByTagNameNS(SML_NS, COMPONENT_LIST).item(0);
+        parent = addNewNode(parent, COMPONENT, SML_NS, NAME, componentName);
+        parent = addNewNode(parent, SYSTEM, SML_NS);
+        addNewNode(addNewNode(parent, IDENTIFICATION, SML_NS),  IDENTIFIER_LIST, SML_NS);
+        addNewNode(parent, SML_CAPABILITIES, SML_NS, NAME, "observationTimeRange");
+        addNewNode(parent, LOCATION, SML_NS);
+        addNewNode(addNewNode(parent, OUTPUTS, SML_NS), OUTPUT_LIST, SML_NS);
     }
     
     public void addIdentifierToComponent(String componentName, String identName, String identDef, String identVal) {
@@ -77,10 +63,10 @@ public class DescribeSensorNetworkMilestone1_0 extends DescribeSensorPlatformMil
             return;
         }
         // create an identifier in the component
-        parent = (Element) parent.getElementsByTagName("sml:IdentifierList").item(0);
-        parent = addNewNode(parent, "sml:identifier", "name", identName);
-        parent = addNewNode(parent, "sml:Term", "definition", identDef);
-        addNewNode(parent, "sml:value", identVal);
+        parent = (Element) parent.getElementsByTagNameNS(SML_NS, IDENTIFIER_LIST).item(0);
+        parent = addNewNode(parent, IDENTIFIER, SML_NS, NAME, identName);
+        parent = addNewNode(parent, TERM, SML_NS, DEFINITION, identDef);
+        addNewNode(parent, SML_VALUE, SML_NS, identVal);
     }
     
     public void setComponentValidTime(String componentName, String beginPosition, String endPosition) {
@@ -94,12 +80,13 @@ public class DescribeSensorNetworkMilestone1_0 extends DescribeSensorPlatformMil
         Element parent = getComponent(componentName);
         if (parent == null)
             return;
-        
-        // set valid time
-        parent = (Element) parent.getElementsByTagName("sml:validTime").item(0);
-        parent = addNewNode(parent, "gml:TimePeriod");
-        addNewNode(parent, "gml:beginPosition", beginPosition);
-        addNewNode(parent, "gml:endPosition", endPosition);
+        //CDM TO_DO
+//        // set valid time
+        parent = (Element) parent.getElementsByTagNameNS(SML_NS, SML_CAPABILITIES).item(0);
+setValidTime(parent, beginPosition, endPosition);
+        //        parent = addNewNode(parent, TIME_PERIOD, GML_NS);
+//        addNewNode(parent, BEGIN_POSITION, GML_NS, beginPosition);
+//        addNewNode(parent, END_POSITION, GML_NS, endPosition);
     }
     
     public void setComponentLocation(String componentName, String srs, String pos) {
@@ -114,9 +101,9 @@ public class DescribeSensorNetworkMilestone1_0 extends DescribeSensorPlatformMil
             return;
         
         // set location
-        parent = (Element) parent.getElementsByTagName("sml:location").item(0);
-        parent = addNewNode(parent, "gml:Point", "srsName", srs);
-        addNewNode(parent, "gml:pos", pos);
+        parent = (Element) parent.getElementsByTagNameNS(SML_NS, LOCATION).item(0);
+        parent = addNewNode(parent, POINT, GML_NS, SRS_NAME, srs);
+        addNewNode(parent, POS, GML_NS, pos);
     }
     
     public void setComponentLocation(String componentName, String srs, List<String> pos) {
@@ -133,10 +120,10 @@ public class DescribeSensorNetworkMilestone1_0 extends DescribeSensorPlatformMil
             return;
         
         // set location
-        parent = (Element) parent.getElementsByTagName("sml:location").item(0);
-        parent = addNewNode(parent, "gml:LineString", "srsName", srs);
+        parent = (Element) parent.getElementsByTagNameNS(SML_NS, LOCATION).item(0);
+        parent = addNewNode(parent, LINE_STRING, GML_NS, SRS_NAME, srs);
         for (String str : pos) {
-            addNewNode(parent, "gml:pos", str);
+            addNewNode(parent, POS, GML_NS, str);
         }
     }
     
@@ -153,10 +140,10 @@ public class DescribeSensorNetworkMilestone1_0 extends DescribeSensorPlatformMil
             return;
         
         // set location
-        parent = (Element) parent.getElementsByTagName("sml:location").item(0);
-        parent = addNewNode(parent, "gml:boundedBy", "srsName", srs);
-        addNewNode(parent, "gml:lowerCorner", lowerCorner);
-        addNewNode(parent, "gml:upperCorner", upperCorner);
+        parent = (Element) parent.getElementsByTagNameNS(SML_NS, LOCATION).item(0);
+        parent = addNewNode(parent, BOUNDED_BY, GML_NS, SRS_NAME, srs);
+        addNewNode(parent, LOWER_CORNER, GML_NS, lowerCorner);
+        addNewNode(parent, UPPER_CORNER, GML_NS, upperCorner);
     }
     
     public void addComponentOutput(String componentName, String outName, String outURN, String outDef, String featureType, String units) {
@@ -175,21 +162,21 @@ public class DescribeSensorNetworkMilestone1_0 extends DescribeSensorPlatformMil
             return;
         }
         // add output
-        parent = (Element) parent.getElementsByTagName("sml:OutputList").item(0);
-        parent = addNewNode(parent, "sml:output", "name", outName);
-        parent.setAttribute("xlink:title", outURN);
-        parent = addNewNode(parent, "swe:Quantity", "definition", outDef);
-        addNewNode(addNewNode(parent, "gml:metaDataProperty"), "gml:name", "codeSpace", CF_CONVENTIONS);
-        addNewNode(parent, "swe:uom", "code", units);
+        parent = (Element) parent.getElementsByTagNameNS(SML_NS, OUTPUT_LIST).item(0);
+        parent = addNewNode(parent, OUTPUT, SML_NS, NAME, outName);
+        parent.setAttributeNS(XLINK_NS, TITLE, outURN);
+        parent = addNewNode(parent, QUANTITY, SWE_NS, DEFINITION, outDef);
+        addNewNode(addNewNode(parent, META_DATA_PROP, GML_NS), NAME, GML_NS, CODE_SPACE, CF_CONVENTIONS);
+        addNewNode(parent, UOM, SWE_NS, CODE, units);
     }
     
     
     private Element getComponent(String componentName) {
-        Element parent = (Element) this.document.getElementsByTagName("sml:ComponentList").item(0);
-        NodeList nl = parent.getElementsByTagName("sml:component");
+        Element parent = (Element) this.document.getElementsByTagNameNS(SML_NS, COMPONENT_LIST).item(0);
+        NodeList nl = parent.getElementsByTagNameNS(SML_NS, COMPONENT);
         for (int n=0; n<nl.getLength(); n++) {
             parent = (Element) nl.item(n);
-            if (parent.getAttribute("name") == null ? componentName == null : parent.getAttribute("name").equals(componentName))
+            if (parent.getAttribute(NAME) == null ? componentName == null : parent.getAttribute(NAME).equals(componentName))
                 break;
             parent = null;
         }

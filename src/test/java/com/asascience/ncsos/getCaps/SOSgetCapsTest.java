@@ -168,7 +168,11 @@ public class SOSgetCapsTest {
         
        NetcdfDataset dataset = NetcdfDataset.openDataset(imeds8);
         SOSGetCapabilitiesRequestHandler sosget = new SOSGetCapabilitiesRequestHandler(dataset, "threddsURI-IMEDS8", "All");
-         assertEquals(FeatureType.STATION, sosget.getDatasetFeatureType());
+         sosget = new SOSGetCapabilitiesRequestHandler(dataset, "threddsURI-IMEDS8", "All");
+
+         sosget = new SOSGetCapabilitiesRequestHandler(dataset, "threddsURI-IMEDS8", "All");
+         sosget = new SOSGetCapabilitiesRequestHandler(dataset, "threddsURI-IMEDS8", "All");
+        assertEquals(FeatureType.STATION, sosget.getDatasetFeatureType());
          //station
     }
     
@@ -184,7 +188,7 @@ public class SOSgetCapsTest {
 
         System.out.println("------END " + getCurrentMethod() + "------");
     }
-    
+    /*
     @Test
     public void testCanProcessTrajectory() throws IOException {
         System.out.println("\n------" + getCurrentMethod() + "------");
@@ -226,7 +230,7 @@ public class SOSgetCapsTest {
         
         System.out.println("------END " + getCurrentMethod() + "------");
     }
-
+    
     @Test
     public void testTrajStartEndTimeCorrect() throws IOException {
         System.out.println("\n------" + getCurrentMethod() + "------");
@@ -1284,7 +1288,7 @@ public class SOSgetCapsTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
+    */
 //    @Test
 //    public void testInsertClassNameHere() {
 //        System.out.println("\n------" + getCurrentMethod() + "------");

@@ -22,7 +22,7 @@ import org.w3c.dom.ls.LSSerializer;
  *
  * @author SCowan
  */
-public class CachedFileFormatter implements SOSOutputFormatter {
+public class CachedFileFormatter extends SOSOutputFormatter {
     
     private Document document;
     private String errorString;
@@ -35,7 +35,7 @@ public class CachedFileFormatter implements SOSOutputFormatter {
     private static final int SECTION_COUNT = 4;
     private BitSet requestedSections;
     
-    private final static String capabilitiesElement = "sos:Capabilities";
+    private final static String capabilitiesElement = "Capabilities";
     
     public CachedFileFormatter(File fileToRead) {
         errorString = null;
@@ -66,22 +66,22 @@ public class CachedFileFormatter implements SOSOutputFormatter {
             }
         }
         
-        Element capsNode = (Element) document.getElementsByTagName(capabilitiesElement).item(0);
+        Element capsNode = (Element) document.getElementsByTagNameNS(SOS_NS, capabilitiesElement).item(0);
         
         if (!this.requestedSections.get(Sections.SERVICEIDENTIFICATION.ordinal())) {
-            Node node = capsNode.getElementsByTagName("ows:ServiceIdentification").item(0);
+            Node node = capsNode.getElementsByTagNameNS(OWS_NS,"ServiceIdentification").item(0);
             capsNode.removeChild(node);
         }
         if (!this.requestedSections.get(Sections.SERVICEPROVIDER.ordinal())) {
-            Node node = capsNode.getElementsByTagName("ows:ServiceProvider").item(0);
+            Node node = capsNode.getElementsByTagNameNS(OWS_NS, "ServiceProvider").item(0);
             capsNode.removeChild(node);
         }
         if (!this.requestedSections.get(Sections.OPERATIONSMETADATA.ordinal())) {
-            Node node = capsNode.getElementsByTagName("ows:OperationsMetadata").item(0);
+            Node node = capsNode.getElementsByTagNameNS(OWS_NS, "OperationsMetadata").item(0);
             capsNode.removeChild(node);
         }
         if (!this.requestedSections.get(Sections.CONTENTS.ordinal())) {
-            Node node = capsNode.getElementsByTagName("sos:Contents").item(0);
+            Node node = capsNode.getElementsByTagNameNS(SOS_NS, "Contents").item(0);
             capsNode.removeChild(node);
         }
     }

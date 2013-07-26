@@ -16,8 +16,9 @@ import org.w3c.dom.NodeList;
 public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
     
     private static final String TEMPLATE_LOCATION = "templates/describePlatformM1.0.xml";
-    private final static String IOOSURL = "http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0";
-
+	private final static String IOOSURL = "http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0";
+	private final static String OBSERVATION_TIME_RANGE = "observationTimeRange";
+	private final static String OBS_TR_DEF = "http://mmisw.org/ont/ioos/definition/observationTimeRange";
     public DescribeSensorPlatformMilestone1_0() {
         super();
         loadTemplateXML(TEMPLATE_LOCATION);
@@ -30,7 +31,7 @@ public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
      */
     public void setDescriptionNode(String description) {
         // get our description node and set its string content
-        document.getElementsByTagName("gml:description").item(0).setTextContent(description);
+        document.getElementsByTagNameNS(GML_NS, DESCRIPTION).item(0).setTextContent(description);
     }
     
     /**
@@ -38,7 +39,23 @@ public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
      * @param name name (urn) of the station
      */
     public void setName(String name) {
-         document.getElementsByTagName("gml:name").item(0).setTextContent(name);
+         document.getElementsByTagNameNS(GML_NS, NAME).item(0).setTextContent(name);
+    }
+    
+    
+    public void setBoundedBy(String srsName, String lowerCorner, String upperCorner) {
+        /*
+         * <gml:boundedBy>
+         *   <gml:Envelope srsName='srsName'>
+         *     <gml:lowerCorner>'lowerCorner'</gml:lowerCorner>
+         *     <gml:upperCorner>'upperCorner'</gml:upperCorner>
+         *   </gml:Envelope>
+         * </gml:boundedBy>
+         */
+        Element parent = (Element) this.document.getElementsByTagNameNS(GML_NS, BOUNDED_BY).item(0);
+        parent = addNewNode(parent, ENVELOPE, GML_NS, SRS_NAME, srsName);
+        addNewNode(parent, LOWER_CORNER, GML_NS, lowerCorner);
+        addNewNode(parent, UPPER_CORNER, GML_NS, upperCorner);
     }
     
     /**
@@ -55,9 +72,9 @@ public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
          *   </sml:Term>
          * </sml:identifier>
          */
-        Element ident = addNewNode("sml:IdentifierList", "sml:identifier",  "name", name);
-        ident = addNewNode(ident, "sml:Term", "definition", definition);
-        addNewNode(ident, "sml:value", value);
+        Element ident = addNewNode(IDENTIFIER_LIST, SML_NS,  IDENTIFIER, SML_NS, NAME, name);
+        ident = addNewNode(ident, TERM, SML_NS, DEFINITION, definition);
+        addNewNode(ident, SML_VALUE, SML_NS,value);
     }
     
     /**
@@ -67,9 +84,10 @@ public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
      * @param classifierValue value of the classification (eg 'GLIDER')
      */
     public void addToClassificationNode(String classifierName, String definition, String classifierValue) {
-        Element parent = addNewNode("sml:ClassifierList", "sml:classifier", "name", classifierName);
-        parent = addNewNode(parent, "sml:Term", "definition", definition);
-        addNewNode(parent, "sml:value", classifierValue);
+        Element parent = addNewNode("ClassifierList", SML_NS, 
+        							"classifier", SML_NS, NAME, classifierName);
+        parent = addNewNode(parent, TERM, SML_NS, DEFINITION, definition);
+        addNewNode(parent, SML_VALUE, SML_NS, classifierValue);
     }
 
     /**
@@ -88,10 +106,11 @@ public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
          *   </sml:Term>
          * </sml:classifier>
          */
-        Element parent = addNewNode("sml:ClassifierList", "sml:classifier", "name", name);
-        parent = addNewNode(parent, "sml:Term", "definition", definition);
-        addNewNode(parent, "sml:codeSpace", "xlink:href", "http://mmisw.org/ont/ioos/" + codeSpace);
-        addNewNode(parent, "sml:value", value);
+        Element parent = addNewNode("ClassifierList", SML_NS,  
+        							"classifier", SML_NS, NAME, name);
+        parent = addNewNode(parent, TERM, SML_NS, DEFINITION, definition);
+        addNewNode(parent, CODE_SPACE, SML_NS, HREF, XLINK_NS, "http://mmisw.org/ont/ioos/" + codeSpace);
+        addNewNode(parent, SML_VALUE, SML_NS, value);
     }
     
     /**
@@ -101,23 +120,38 @@ public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
      */
     public void setValidTime(String timeBegin, String timeEnd) {
         /*
-         * <gml:TimePeriod>
-         *   <gml:beginPosition>'timeBegin'</gml:beginPosition>
-         *   <gml:endPosition>'timeEnd'</gml:endPosition>
-         * </gml:TimePeriod>
+        
+      <sml:capabilities name="observationTimeRange">
+        <swe:DataRecord>
+          <swe:field name="observationTimeRange">
+            <swe:TimeRange definition="http://mmisw.org/ont/ioos/definition/observationTimeRange">
+              <swe:value>2008-04-28T08:00:00.000Z 2012-12-27T19:00:00.000Z</swe:value>
+            </swe:TimeRange>
+          </swe:field>
+        </swe:DataRecord>
+      </sml:capabilities>     
+
          */
-       Element parent = addNewNode("sml:validTime", "gml:TimePeriod");
-       addNewNode(parent, "gml:beginPosition", timeBegin);
-       addNewNode(parent, "gml:endPosition", timeEnd);
+    	
+    	Element parent = addNewNode(SML_CAPABILITIES, SML_NS, DATA_RECORD, SWE_NS);
+    	setValidTime(parent, timeBegin, timeEnd);
+    	
     }
     
+    public void setValidTime(Element parent, String timeBegin, String timeEnd){
+    	parent.setAttribute(NAME, OBSERVATION_TIME_RANGE);
+    	parent = addNewNode(parent, FIELD, SWE_NS, NAME, OBSERVATION_TIME_RANGE);
+    	parent = addNewNode(parent, TIME_RANGE, SWE_NS, DEFINITION, OBS_TR_DEF);
+    	addNewNode(parent, SML_VALUE, SWE_NS, timeBegin + " " + timeEnd);
+
+    }
     /**
      * Adds a sml:capabilities node that defines a metadata property for the sensor
      * @param name name of the capability
      * @param title name of the metadata
      * @param href reference to the metadata
      */
-    public void addSmlCapabilitiesGmlMetadata(String parentName, String name, String title, String href) {
+    public void addSmlCapabilitiesGmlMetadata(String parentName,  String name, String title, String href) {
         /*
          * <sml:capabilities name='name'>
          *   <swe:SimpleDataRecord>
@@ -125,13 +159,15 @@ public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
          *   </swe:SimpleDataRecord>
          * </sml:capabilities>
          */
-        Element parent = (Element) ((parentName != null) ? this.document.getElementsByTagName(parentName).item(0) : this.getParentNode());
-        parent = addNewNode(parent, "sml:capabilities", "name", name);
-        parent = addNewNode(parent, "swe:SimpleDataRecord");
-        parent = addNewNode(parent, "gml:metaDataProperty", "xlink:title", title);
-        parent.setAttribute("xlink:href", href);
+        Element parent = (Element) ((parentName != null) ? this.document.getElementsByTagNameNS(SML_NS, parentName).item(0) : this.getParentNode());
+        parent = addNewNode(parent, "capabilities", SML_NS, NAME, name);
+        parent = addNewNode(parent, "SimpleDataRecord", SWE_NS);
+        parent = addNewNode(parent, META_DATA_PROP, GML_NS, TITLE, XLINK_NS, title);
+        parent.setAttributeNS(XLINK_NS, HREF, href);
     }
     
+    
+  
     /**
      * Accessor method to add a contact node to the sml:System node structure. Most
      * information is gathered from global Attributes of the dataset
@@ -139,34 +175,38 @@ public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
      * @param organizationName the name of the orginization or individual
      * @param contactInfo info for contacting the...um...contact
      */
-    public void addContactNode(String role, String organizationName, HashMap<String, HashMap<String, String>> contactInfo, String onlineResource) {
+    public void addContactNode(String role, String organizationName, HashMap<String, 
+    		HashMap<String, String>> contactInfo, String onlineResource) {
         // add sml:member as the head node, in the ContactList
 //        document = XMLDomUtils.addNode(document, "sml:System", "sml:contact", "sml:history");
-        Element contact = (Element) getParentNode().getElementsByTagName("sml:ContactList").item(0);
-        contact = this.addNewNode(contact, "sml:member");
-        contact.setAttribute("xlink:role", role);
+        Element contact = (Element) getParentNode().getElementsByTagNameNS(SML_NS,CONTACT_LIST).item(0);
+        contact = this.addNewNode(contact, MEMBER, SML_NS);
+        contact.setAttributeNS(XLINK_NS, "role", role);
         /* *** */
-        Element parent = addNewNode(contact, "sml:ResponseibleParty");
+        Element parent = addNewNode(contact, "ResponseibleParty", SML_NS);
         /* *** */
-        addNewNode(parent, "sml:organizationName", organizationName);
+        addNewNode(parent, "organizationName", SML_NS, organizationName);
         /* *** */
-        parent = addNewNode(parent, "sml:contactInfo");
+        parent = addNewNode(parent, "contactInfo", SML_NS);
+        
+        
+
         /* *** */
         // super nesting for great justice
         if (contactInfo != null) {
             for (String key : contactInfo.keySet()) {
                 // add key as node
-                Element sparent = addNewNode(parent, key);
+                Element sparent = addNewNode(parent, key, null);
                 HashMap<String, String> vals = (HashMap<String, String>)contactInfo.get(key);
                 for (String vKey : vals.keySet()) {
                     if (vals.get(vKey) != null)
-                        addNewNode(sparent, vKey, vals.get(vKey).toString());
+                        addNewNode(sparent, vKey, SML_NS, vals.get(vKey).toString());
                 }
             }
         }
         // add online resource if it exists
         if (onlineResource != null) {
-            addNewNode(parent, "sml:onlineResource", "xlink:href", onlineResource);
+            addNewNode(parent, "onlineResource", SML_NS, HREF, XLINK_NS, onlineResource);
         }
     }
 
@@ -184,11 +224,11 @@ public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
          * </sml:capabilities>
          */
         Element parent = getParentNode();
-        parent = addNewNode(parent, "sml:capabilities", "name", "ioosServiceMetadata");
-        parent = addNewNode(parent, "swe:SimpleDataRecord");
-        parent = addNewNode(parent, "gml:metaDataProperty", "xlink:title", "ioosTemplateVersion");
-        parent.setAttribute("xlink:href", IOOSURL);
-        addNewNode(parent, "gml:version", "1.0");
+        parent = addNewNode(parent, "capabilities", SML_NS, NAME, "ioosServiceMetadata");
+        parent = addNewNode(parent, "SimpleDataRecord", SWE_NS);
+        parent = addNewNode(parent, META_DATA_PROP, GML_NS, TITLE, XLINK_NS, "ioosTemplateVersion");
+        parent.setAttributeNS(XLINK_NS, HREF, IOOSURL);
+        addNewNode(parent, VERSION, GML_NS, "1.0");
     }
     
     /**
@@ -213,13 +253,13 @@ public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
          * </sml:component>
          */
         // add to the <sml:ComponentList> node
-        Element parent = addNewNode("sml:ComponentList", "sml:component", "name", compName);
-        parent = addNewNode(parent, "sml:System", "gml:id", compId);
-        addNewNode(parent, "gml:description", description);
-        addNewNode(parent, "sml:identification", "xlink:href", urn);
-        addNewNode(parent, "sml:documentation", "xlink:href", dsUrl);
-        parent = addNewNode(parent, "sml:outputs");
-        addNewNode(parent, "sml:OutputList");
+        Element parent = addNewNode(COMPONENT_LIST, SML_NS, COMPONENT, SML_NS, NAME, compName);
+        parent = addNewNode(parent, SYSTEM, SML_NS, ID, GML_NS, compId);
+        addNewNode(parent, DESCRIPTION, GML_NS, description);
+        addNewNode(parent, IDENTIFICATION, SML_NS, HREF, XLINK_NS, urn);
+        addNewNode(parent, "documentation", SML_NS, HREF, XLINK_NS, dsUrl);
+        parent = addNewNode(parent, OUTPUTS, SML_NS);
+        addNewNode(parent, OUTPUT_LIST, SML_NS);
     }
     
     /**
@@ -238,15 +278,15 @@ public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
          * </sml:output>
          */
         // find a component that has the attribute 'name' with its value same as 'compName'
-        NodeList ns = this.document.getElementsByTagName("sml:component");
+        NodeList ns = this.document.getElementsByTagNameNS(SML_NS, COMPONENT);
         Element parent = null;
         for (int n=0; n<ns.getLength(); n++) {
-            if (((Element)ns.item(n)).getAttribute("name").equalsIgnoreCase(compName)) {
+            if (((Element)ns.item(n)).getAttribute(NAME).equalsIgnoreCase(compName)) {
                 parent = (Element) ns.item(n);
-                parent = (Element) parent.getElementsByTagName("sml:OutputList").item(0);
-                parent = addNewNode(parent, "sml:output", "name", outName);
-                parent = addNewNode(parent, "swe:Quantity", "definition", definition);
-                addNewNode(parent, "swe:uom", "code", uom);
+                parent = (Element) parent.getElementsByTagNameNS(SML_NS,OUTPUT_LIST).item(0);
+                parent = addNewNode(parent, OUTPUT, SML_NS, NAME, outName);
+                parent = addNewNode(parent, QUANTITY, SWE_NS, DEFINITION, definition);
+                addNewNode(parent, UOM, SWE_NS, CODE, uom);
             }
         }
     }
@@ -264,8 +304,8 @@ public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
          *   </gml:Point>
          * </sml:location
          */
-        Element parent = addNewNode("sml:location", "gml:Point", "srsName", srsName);
-        addNewNode(parent, "gml:pos", pos);
+        Element parent = addNewNode(LOCATION, SML_NS, POINT, GML_NS, SRS_NAME, srsName);
+        addNewNode(parent, POS, GML_NS, pos);
     }
     
     public void setSmlPosLocationLine(String srsName, List<String> posLine) {
@@ -278,9 +318,9 @@ public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
          *   </gml:LineString>
          * </sml:location>
          */
-        Element parent = addNewNode("sml:location", "gml:LineString", "srsName", srsName);
+        Element parent = addNewNode(LOCATION, SML_NS, LINE_STRING, GML_NS, SRS_NAME, srsName);
         for (String pos : posLine) {
-            addNewNode(parent, "gml:pos", pos);
+            addNewNode(parent, POS, GML_NS, pos);
         }
     }
     
@@ -293,9 +333,9 @@ public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
          *   </gml:boundedBy>
          * </sml:location
          */
-        Element parent = addNewNode("sml:location", "gml:boundedBy", "srsName", srsName);
-        addNewNode(parent, "gml:lowerCorner", lowerCorner);
-        addNewNode(parent, "gml:upperCorner", upperCorner);
+        Element parent = addNewNode(LOCATION, SML_NS, BOUNDED_BY, GML_NS, SRS_NAME, srsName);
+        addNewNode(parent, LOWER_CORNER, GML_NS, lowerCorner);
+        addNewNode(parent, UPPER_CORNER, GML_NS, upperCorner);
     }
     
     //</editor-fold>
