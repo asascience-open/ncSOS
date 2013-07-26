@@ -201,6 +201,7 @@ public abstract class SOSOutputFormatter {
     		SWE_NS = root.getAttribute(SWE);
     		SWE2_NS = root.getAttribute(SWE2);
     		XLINK_NS = root.getAttribute(XLINK);
+    		nsToPrefix.put(OM_NS, "om");
     		nsToPrefix.put(OWS_NS, "ows");
     		nsToPrefix.put(GML_NS, "gml");
     		nsToPrefix.put(SOS_NS, "sos");
