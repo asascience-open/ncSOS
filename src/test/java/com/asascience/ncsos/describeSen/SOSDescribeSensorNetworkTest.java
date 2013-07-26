@@ -36,7 +36,7 @@ public class SOSDescribeSensorNetworkTest {
     private static String exampleOutputDir = null;
     private static List<String> stationTests;
     private final static String systemSeparator = System.getProperty("file.separator").toString();
-    private static String query = "request=DescribeSensor&service=sos&version=1.0.0&procedure=urn:ioos:network:authority:all&responseformat=";
+    private static String query = "request=DescribeSensor&service=sos&version=1.0.0&procedure=urn:ioos:network:authority:all&outputFormat=";
     
     private static  String dataSourceDirectory;
  

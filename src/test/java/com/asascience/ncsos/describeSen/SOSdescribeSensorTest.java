@@ -125,18 +125,18 @@ public class SOSdescribeSensorTest {
     
     private static final String bad_requests_set = "resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc";
     private static final String bad_request_control_query = "procedure=urn:ioos:station:authority:Trajectory2";
-    private static final String bad_request_responseformat_query = "request=DescribeSensor&service=sos&version=1.0.0&responseFormat=text/xml;subtype=\"5\"";
-    private static final String bad_request_responseformat_mispelled_query = "request=DescribeSensor&service=sos&version=1.0.0&respnseformat=";
-    private static final String bad_request_request_query = "request=DescrbeSensor&service=sos&version=1.0.0&responseFormat=";
-    private static final String bad_request_request_mispelled_query = "reqst=DescribeSensor&service=sos&version=1.0.0&responseFormat=";
-    private static final String bad_request_version_query = "request=DescribeSensor&service=SOS&version=1.0.&responseformat=";
-    private static final String bad_request_version_misspelled_query = "request=DescribeSensor&service=SOS&vrsion=1.0.0&responseformat=";
-    private static final String bad_request_service_query = "request=DescribeSensor&service=s0s&version=1.0.0&responseformat=";
-    private static final String bad_request_service_misspelled_query = "request=DescribeSensor&servce=sos&version=1.0.0&responseformat=";
-    private static final String bad_request_procedure_query = "request=DescribeSensor&service=sos&version=1.0.0&procedure=urn:tds:station:trajectory2&responseformat=";
-    private static final String bad_request_procedure_misspelled_query = "request=DescribeSensor&service=sos&version=1.0.0&procdure=urn:ioos:station:authority:trajectory2&responseformat=";
+    private static final String bad_request_outputformat_query = "request=DescribeSensor&service=sos&version=1.0.0&outputFormat=text/xml;subtype=\"5\"";
+    private static final String bad_request_outputformat_mispelled_query = "request=DescribeSensor&service=sos&version=1.0.0&respnseformat=";
+    private static final String bad_request_request_query = "request=DescrbeSensor&service=sos&version=1.0.0&outputFormat=";
+    private static final String bad_request_request_mispelled_query = "reqst=DescribeSensor&service=sos&version=1.0.0&outputFormat=";
+    private static final String bad_request_version_query = "request=DescribeSensor&service=SOS&version=1.0.&outputFormat=";
+    private static final String bad_request_version_misspelled_query = "request=DescribeSensor&service=SOS&vrsion=1.0.0&outputFormat=";
+    private static final String bad_request_service_query = "request=DescribeSensor&service=s0s&version=1.0.0&outputFormat=";
+    private static final String bad_request_service_misspelled_query = "request=DescribeSensor&servce=sos&version=1.0.0&outputFormat=";
+    private static final String bad_request_procedure_query = "request=DescribeSensor&service=sos&version=1.0.0&procedure=urn:tds:station:trajectory2&outputFormat=";
+    private static final String bad_request_procedure_misspelled_query = "request=DescribeSensor&service=sos&version=1.0.0&procdure=urn:ioos:station:authority:trajectory2&outputFormat=";
     
-    private static String baseQuery = "request=DescribeSensor&service=sos&version=1.0.0&responseformat=";
+    private static String baseQuery = "request=DescribeSensor&service=sos&version=1.0.0&outputFormat=";
     
     @BeforeClass
     public static void SetupEnviron() throws FileNotFoundException, UnsupportedEncodingException {
@@ -219,7 +219,7 @@ public class SOSdescribeSensorTest {
         System.out.println("\n------" + getCurrentMethod() + "------");
         
         try {
-            String valid_response_format = URLEncoder.encode("text/xml;subtype=\"sensorML/1.0.1\"", "UTF-8");
+            String valid_outputFormat = URLEncoder.encode("text/xml;subtype=\"sensorML/1.0.1\"", "UTF-8");
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bad_requests_set);
             SOSParser parser = new SOSParser();
             Writer writer = new CharArrayWriter();
@@ -230,30 +230,30 @@ public class SOSdescribeSensorTest {
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer, false);
             // no output, just check that there is no exception
             assertFalse("exception in output", writer.toString().contains("Exception"));
-            // 2nd test - bad_request_responseformat_query - checks to see what is returned when an invalid response format is returned
+            // 2nd test - bad_request_outputformat_query - checks to see what is returned when an invalid response format is returned
             writer.close();
             writer = new CharArrayWriter();
-            writeOutput(parser.enhanceGETRequest(dataset, bad_request_responseformat_query + "&" + bad_request_control_query, bad_requests_set), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, bad_request_outputformat_query + "&" + bad_request_control_query, bad_requests_set), writer);
             // add to test output
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer, true);
             // test to make sure we got an exception
             testOut = writer.toString();
-            assertTrue("no exception in output - bad_request_responseformat_query", testOut.contains("Exception"));
-            assertTrue("unexpected exception - bad_request_responseformat_query", testOut.contains("responseFormat"));
-            // 3rd test - bad_request_responseformat_mispelled_query - checks to see what is returned when responseformat is misspelled
+            assertTrue("no exception in output - bad_request_outputformat_query", testOut.contains("Exception"));
+            assertTrue("unexpected exception - bad_request_outputformat_query", testOut.contains("outputFormat"));
+            // 3rd test - bad_request_outputformat_mispelled_query - checks to see what is returned when outputFormat is misspelled
             writer.close();
             writer = new CharArrayWriter();
-            writeOutput(parser.enhanceGETRequest(dataset, bad_request_responseformat_mispelled_query + valid_response_format + "&" + bad_request_control_query, bad_requests_set), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, bad_request_outputformat_mispelled_query + valid_outputFormat + "&" + bad_request_control_query, bad_requests_set), writer);
             // add to test output
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer, true);
             // test to make sure we got an exception
             testOut = writer.toString();
-            assertTrue("no exception in output - bad_request_responseformat_mispelled_query", testOut.contains("Exception"));
-            assertTrue("unexpected exception - bad_request_responseformat_mispelled_query", testOut.contains("responseformat"));
+            assertTrue("no exception in output - bad_request_outputformat_mispelled_query", testOut.contains("Exception"));
+            assertTrue("unexpected exception - bad_request_outputformat_mispelled_query", testOut.contains("outputFormat"));
             // 4th test - bad_request_request_query - checks to see what is returned when an invalid request is sent
             writer.close();
             writer = new CharArrayWriter();
-            writeOutput(parser.enhanceGETRequest(dataset, bad_request_request_query + valid_response_format + "&" + bad_request_control_query, bad_requests_set), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, bad_request_request_query + valid_outputFormat + "&" + bad_request_control_query, bad_requests_set), writer);
             // add to test output
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer, true);
             // test to make sure we got an exception
@@ -263,7 +263,7 @@ public class SOSdescribeSensorTest {
             // 5th test - bad_request_request_mispelled_query - checks to see what is returned when request is misspelled
             writer.close();
             writer = new CharArrayWriter();
-            writeOutput(parser.enhanceGETRequest(dataset, bad_request_request_mispelled_query + valid_response_format + "&" + bad_request_control_query, bad_requests_set), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, bad_request_request_mispelled_query + valid_outputFormat + "&" + bad_request_control_query, bad_requests_set), writer);
             // add to test output
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer, true);
             // test to make sure we got an exception
@@ -273,7 +273,7 @@ public class SOSdescribeSensorTest {
             // 6th test - bad_request_version_query - checks to see what is returned when the version specified is invalid
             writer.close();
             writer = new CharArrayWriter();
-            writeOutput(parser.enhanceGETRequest(dataset, bad_request_version_query + valid_response_format + "&" + bad_request_control_query, bad_requests_set), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, bad_request_version_query + valid_outputFormat + "&" + bad_request_control_query, bad_requests_set), writer);
             // add to test output
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer, true);
             // test to make sure we got an exception
@@ -283,7 +283,7 @@ public class SOSdescribeSensorTest {
             // 7th test - bad_request_version_misspelled_query - checks to see what is returned when version is misspelled
             writer.close();
             writer = new CharArrayWriter();
-            writeOutput(parser.enhanceGETRequest(dataset, bad_request_version_misspelled_query + valid_response_format + "&" + bad_request_control_query, bad_requests_set), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, bad_request_version_misspelled_query + valid_outputFormat + "&" + bad_request_control_query, bad_requests_set), writer);
             // add to test output
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer, true);
             // test to make sure we got an exception
@@ -293,7 +293,7 @@ public class SOSdescribeSensorTest {
             // 8th test - bad_request_service_query - checks to see what is returned when the service requested is invalid
             writer.close();
             writer = new CharArrayWriter();
-            writeOutput(parser.enhanceGETRequest(dataset, bad_request_service_query + valid_response_format + "&" + bad_request_control_query, bad_requests_set), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, bad_request_service_query + valid_outputFormat + "&" + bad_request_control_query, bad_requests_set), writer);
             // add to test output
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer, true);
             // test to make sure we got an exception
@@ -303,7 +303,7 @@ public class SOSdescribeSensorTest {
             // 9th test - bad_request_service_misspelled_query - checks to see what is returned when service is misspelled
             writer.close();
             writer = new CharArrayWriter();
-            writeOutput(parser.enhanceGETRequest(dataset, bad_request_service_misspelled_query + valid_response_format + "&" + bad_request_control_query, bad_requests_set), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, bad_request_service_misspelled_query + valid_outputFormat + "&" + bad_request_control_query, bad_requests_set), writer);
             // add to test output
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer, true);
             // test to make sure we got an exception
@@ -313,7 +313,7 @@ public class SOSdescribeSensorTest {
             // 10th test - bad_request_procedure_query - checks to see what is returned when the procedure specified is invalid
             writer.close();
             writer = new CharArrayWriter();
-            writeOutput(parser.enhanceGETRequest(dataset, bad_request_procedure_query + valid_response_format, bad_requests_set), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, bad_request_procedure_query + valid_outputFormat, bad_requests_set), writer);
             // add to test output
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer, true);
             // test to make sure we got an exception
@@ -323,7 +323,7 @@ public class SOSdescribeSensorTest {
             // 11th test - bad_request_procedure_misspelled_query - checks to see what is returned when procedure is misspelled
             writer.close();
             writer = new CharArrayWriter();
-            writeOutput(parser.enhanceGETRequest(dataset, bad_request_procedure_misspelled_query + valid_response_format, bad_requests_set), writer);
+            writeOutput(parser.enhanceGETRequest(dataset, bad_request_procedure_misspelled_query + valid_outputFormat, bad_requests_set), writer);
             // add to test output
             fileWriter(outputDir, getCurrentMethod() + ".xml", writer, true);
             // test to make sure we got an exception
