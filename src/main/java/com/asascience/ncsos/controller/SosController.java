@@ -93,6 +93,8 @@ public class SosController implements ISosContoller {
             _log.error(e.getMessage());
             //close the dataset remove memory hang
         } finally {
+        	
+        
         	// This is a workaround for a bug in thredds. On the second request 
         	// for a ncml object the request will fail due to an error
         	// with the cached object. In order to get around this, the
@@ -100,7 +102,6 @@ public class SosController implements ISosContoller {
         	if(dataset.getReferencedFile().getLocation().toLowerCase().endsWith("xml") ||
         		dataset.getReferencedFile().getLocation().toLowerCase().endsWith("ncml"))
                 dataset.getReferencedFile().setFileCache(null);
-        	
            DatasetHandlerAdapter.closeDataset(dataset);
             
         }

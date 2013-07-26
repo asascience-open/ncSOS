@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package thredds.server.sos.controller;
+package com.asascience.ncsos.controller;
 
 import java.io.IOException;
 import java.net.URL;

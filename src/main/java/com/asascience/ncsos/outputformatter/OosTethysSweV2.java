@@ -22,11 +22,11 @@ import org.w3c.dom.ls.LSSerializer;
  *
  * @author SCowan
  */
-public class OosTethysSweV2 implements SOSOutputFormatter {
+public class OosTethysSweV2 extends SOSOutputFormatter {
 
     private static final String TEMPLATE = "templates/oostethysswe.xml";
     private static final String XLINK = "xlink:href";
-    private static final String OM_OBSERVATION = "om:Observation";
+    private static final String OBSERVATION = "Observation";
     private static final String STATION_GML_BASE = "urn:ioos:station:" + SOSBaseRequestHandler.getNamingAuthority() + ":";
     private static final String MMI_CF = "http://mmisw.org/ont/cf/parameter/";
     private static final String BLOCK_SEPERATOR = " ";
@@ -51,6 +51,8 @@ public class OosTethysSweV2 implements SOSOutputFormatter {
         
         this.infoList = new ArrayList<DataSlice>();
         parseTemplateXML();
+        initNamespaces();
+
         this.obsHandler = obsHandler;
         
         try {
@@ -129,16 +131,16 @@ public class OosTethysSweV2 implements SOSOutputFormatter {
     
     
     private Element addNewObservation() {
-        Element member = (Element) document.getElementsByTagName("om:member").item(0);
-        Element observation = document.createElement(OM_OBSERVATION);
+        Element member = (Element) document.getElementsByTagNameNS(OM_NS, MEMBER).item(0);
+        Element observation = createElementNS(OM_NS, OBSERVATION);
         
-        Element parent = document.createElement("gml:description");
+        Element parent = createElementNS(GML_NS, DESCRIPTION);
         observation.appendChild(parent);
-        parent = document.createElement("gml:name");
+        parent = createElementNS(GML_NS, NAME);
         observation.appendChild(parent);
-        parent = document.createElement("gml:boundedBy");
+        parent = createElementNS(GML_NS, BOUNDED_BY);
         observation.appendChild(parent);
-        parent = document.createElement("om:samplingTime");
+        parent = createElementNS(OM_NS, SAMPLING_TIME);
         observation.appendChild(parent);
         
         member.appendChild(observation);
@@ -151,30 +153,30 @@ public class OosTethysSweV2 implements SOSOutputFormatter {
 //        parent.getElementsByTagName("gml:description").item(0).setTextContent("");
 //        parent.getElementsByTagName("name").item(0).setTextContent("");
         // set bounded by
-        Element bounds = (Element) parent.getElementsByTagName("gml:boundedBy").item(0);
-        Element envelope = document.createElement("gml:Envelope");
-        envelope.setAttribute("srsName", getSRSName());
-        envelope.appendChild(createNodeWithText("gml:lowerCorner", obsHandler.getStationLowerCorner(index)));
-        envelope.appendChild(createNodeWithText("gml:upperCorner", obsHandler.getStationUpperCorner(index)));
+        Element bounds = (Element) parent.getElementsByTagNameNS(GML_NS, BOUNDED_BY).item(0);
+        Element envelope = createElementNS(GML_NS, ENVELOPE);
+        envelope.setAttribute(SRS_NAME, getSRSName());
+        envelope.appendChild(createNodeWithText(GML_NS, LOWER_CORNER, obsHandler.getStationLowerCorner(index)));
+        envelope.appendChild(createNodeWithText(GML_NS, UPPER_CORNER, obsHandler.getStationUpperCorner(index)));
         bounds.appendChild(envelope);
         // sampling time
-        Element samplingTime = (Element) parent.getElementsByTagName("om:samplingTime").item(0);
-        Element timePeriod = document.createElement("gml:TimePeriod");
+        Element samplingTime = (Element) parent.getElementsByTagNameNS(OM_NS, SAMPLING_TIME).item(0);
+        Element timePeriod = createElementNS(GML_NS, TIME_PERIOD);
         timePeriod.setAttribute("gml:id", "DATA_TIME");
-        timePeriod.appendChild(createNodeWithText("gml:beginPosition", obsHandler.getStartTime(index)));
-        timePeriod.appendChild(createNodeWithText("gml:endPosition", obsHandler.getEndTime(index)));
+        timePeriod.appendChild(createNodeWithText(GML_NS, BEGIN_POSITION, obsHandler.getStartTime(index)));
+        timePeriod.appendChild(createNodeWithText(GML_NS, END_POSITION, obsHandler.getEndTime(index)));
         samplingTime.appendChild(timePeriod);
         // procedure
-        parent.appendChild(createNodeWithAttribute("om:procedure", XLINK, procName));
+        parent.appendChild(createNodeWithAttribute(OM_NS, PROCEDURE, XLINK, procName));
         // add each of the observed properties we are looking for
         for (String obs : obsHandler.getObservedProperties()) {
             // don't add height/depth vars; lat & lon
             if (!obs.equalsIgnoreCase("alt") && !obs.equalsIgnoreCase("height") && !obs.equalsIgnoreCase("z") &&
                 !obs.equalsIgnoreCase("lat") && !obs.equalsIgnoreCase("lon"))
-                parent.appendChild(createNodeWithAttribute("om:observedProperty", XLINK, obs));
+                parent.appendChild(createNodeWithAttribute(OM_NS, OBSERVED_PROPERTY, XLINK, obs));
         }
         // feature of interest
-        parent.appendChild(createNodeWithAttribute("om:featureOfInterest", XLINK, procName));
+        parent.appendChild(createNodeWithAttribute(OM_NS, FEATURE_INTEREST, XLINK, procName));
     }
     
     private String getSRSName() {
@@ -186,14 +188,14 @@ public class OosTethysSweV2 implements SOSOutputFormatter {
         }
     }
     
-    private Element createNodeWithText(String elemName, String text) {
-        Element retval = document.createElement(elemName);
+    private Element createNodeWithText(String elemNs,String elemName,  String text) {
+        Element retval = createElementNS(elemNs,elemName);
         retval.setTextContent(text);
         return retval;
     }
     
-    private Element createNodeWithAttribute(String elemName, String attrName, String attrValue) {
-        Element retval = document.createElement(elemName);
+    private Element createNodeWithAttribute(String elemNs,String elemName,  String attrName, String attrValue) {
+        Element retval = createElementNS(elemNs, elemName);
         retval.setAttribute(attrName, attrValue);
         return retval;
     }
@@ -203,15 +205,15 @@ public class OosTethysSweV2 implements SOSOutputFormatter {
     }
     
     private Element createField(String name, String code, String fillValue) {
-        Element retval = document.createElement("swe:field");
+        Element retval = createElementNS(SWE_NS, FIELD);
         retval.setAttribute("name", name);
-        Element quantity = document.createElement("swe:Quantity");
+        Element quantity =createElementNS(SWE_NS, QUANTITY);
         String definition = MMI_CF + name;
-        quantity.setAttribute("definition", definition);
-        quantity.appendChild(createNodeWithAttribute("swe:uom", "code", code));
+        quantity.setAttribute(DEFINITION, definition);
+        quantity.appendChild(createNodeWithAttribute(SWE_NS, UOM, CODE, code));
         if (fillValue != null) {
-            Element nilValues = document.createElement("swe:nilValues");
-            Element filValues = createNodeWithAttribute("swe:nilValue", "reason", "http://www.opengis.net/def/nil/OGC/0/missing");
+            Element nilValues = createElementNS(SWE_NS, "nilValues");
+            Element filValues = createNodeWithAttribute(SWE_NS, "nilValue", "reason", "http://www.opengis.net/def/nil/OGC/0/missing");
             filValues.setTextContent(fillValue);
             nilValues.appendChild(filValues);
             quantity.appendChild(nilValues);
@@ -221,16 +223,16 @@ public class OosTethysSweV2 implements SOSOutputFormatter {
     }
     
     private Element createTimeField(String name, String def) {
-        Element retval = createNodeWithAttribute("swe:field", "name", name);
-        Element time = createNodeWithAttribute("swe:Time", "definition", "http://www.opengis.net/def/property/OGC/0/SamplingTime");
-        time.appendChild(createNodeWithAttribute("swe:uom", XLINK, "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"));
+        Element retval = createNodeWithAttribute(SWE_NS, FIELD, NAME, name);
+        Element time = createNodeWithAttribute(SWE_NS, TIME, DEFINITION, "http://www.opengis.net/def/property/OGC/0/SamplingTime");
+        time.appendChild(createNodeWithAttribute(SWE_NS, UOM, XLINK, "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"));
         retval.appendChild(time);
         return retval;
     }
     
     private Element getEncodingElement() {
-        Element retval = document.createElement("swe:encoding");
-        Element txtBlock = createNodeWithAttribute("swe:TextBlock", "blockSeparator", BLOCK_SEPERATOR);
+        Element retval = createElementNS(SWE_NS, "encoding");
+        Element txtBlock = createNodeWithAttribute(SWE_NS, "TextBlock", "blockSeparator", BLOCK_SEPERATOR);
         txtBlock.setAttribute("decimalSeparator", DECIMAL_SEPERATOR);
         txtBlock.setAttribute("tokenSeparator", TOKEN_SEPERATOR);
         retval.appendChild(txtBlock);
@@ -238,24 +240,24 @@ public class OosTethysSweV2 implements SOSOutputFormatter {
     }
 
     private org.w3c.dom.Node getResultNode(int index) {
-        Element parent = document.createElement("om:result");
+        Element parent = createElementNS(OM_NS, "result");
         
-        Element dataArray = document.createElement("swe:dataArray");
+        Element dataArray = createElementNS(SWE_NS, DATA_ARRAY);
         
-        Element elemCount = document.createElement("swe:elementCount");
-        Element count = document.createElement("swe:Count");
-        count.appendChild(createNodeWithText("swe:value", "" + obsHandler.getObservedProperties().length));
+        Element elemCount = createElementNS(SWE_NS, ELEMENT_COUNT);
+        Element count = createElementNS(SWE_NS, COUNT);
+        count.appendChild(createNodeWithText(SWE_NS, SML_VALUE, "" + obsHandler.getObservedProperties().length));
         elemCount.appendChild(count);
         dataArray.appendChild(elemCount);
         
-        Element elemType = document.createElement("swe:elementType");
-        elemType.setAttribute("name", "SimpleDataArray");
-        Element dataRecord = document.createElement("swe:DataRecord");
+        Element elemType = createElementNS(SWE_NS, "elementType");
+        elemType.setAttribute(NAME, "SimpleDataArray");
+        Element dataRecord = createElementNS(SWE_NS, DATA_RECORD);
         boolean timeSet = false;
         Element timeField = null;
         ArrayList<Element> opFields = new ArrayList<Element>();
         for (String obsProp: obsHandler.getObservedProperties()) {
-            if (obsProp.toLowerCase().contains("time") && !timeSet) {
+            if (obsProp.toLowerCase().contains(TIME) && !timeSet) {
                 timeField = createTimeField(obsProp, "iso8601");
                 timeSet = true;
             } else {
@@ -282,7 +284,8 @@ public class OosTethysSweV2 implements SOSOutputFormatter {
         dataArray.appendChild(getEncodingElement());
         
 //        dataArray.appendChild(createNodeWithText("swe:values", obsHandler.getValueBlockForAllObs(BLOCK_SEPERATOR, DECIMAL_SEPERATOR, TOKEN_SEPERATOR, index)));
-        dataArray.appendChild(createNodeWithText("swe:values", processDataBlock(obsHandler.getValueBlockForAllObs(BLOCK_SEPERATOR, DECIMAL_SEPERATOR, TOKEN_SEPERATOR, index))));
+        dataArray.appendChild(createNodeWithText(SWE_NS,"values", 
+        		processDataBlock(obsHandler.getValueBlockForAllObs(BLOCK_SEPERATOR, DECIMAL_SEPERATOR, TOKEN_SEPERATOR, index))));
         
         parent.appendChild(dataArray);
         
@@ -322,13 +325,13 @@ public class OosTethysSweV2 implements SOSOutputFormatter {
     }
 
     private void setCollectionInfo() {
-        Element coll = (Element) document.getElementsByTagName("om:ObservationCollection").item(0);
-        coll.getElementsByTagName("gml:name").item(0).setTextContent(obsHandler.getTitle());
-        coll.getElementsByTagName("gml:description").item(0).setTextContent(obsHandler.getDescription());
+        Element coll = (Element) document.getElementsByTagNameNS(OM_NS, "ObservationCollection").item(0);
+        coll.getElementsByTagNameNS(GML_NS, NAME).item(0).setTextContent(obsHandler.getTitle());
+        coll.getElementsByTagNameNS(GML_NS, DESCRIPTION).item(0).setTextContent(obsHandler.getDescription());
         
-        Element bounds = (Element) coll.getElementsByTagName("gml:boundedBy").item(0);
-        ((Element)bounds.getElementsByTagName("gml:Envelope").item(0)).setAttribute("srsName", getSRSName());
-        bounds.getElementsByTagName("gml:lowerCorner").item(0).setTextContent(obsHandler.getBoundedLowerCorner());
-        bounds.getElementsByTagName("gml:upperCorner").item(0).setTextContent(obsHandler.getBoundedUpperCorner());
+        Element bounds = (Element) coll.getElementsByTagNameNS(GML_NS, BOUNDED_BY).item(0);
+        ((Element)bounds.getElementsByTagNameNS(GML_NS, ENVELOPE).item(0)).setAttribute(SRS_NAME, getSRSName());
+        bounds.getElementsByTagNameNS(GML_NS, LOWER_CORNER).item(0).setTextContent(obsHandler.getBoundedLowerCorner());
+        bounds.getElementsByTagNameNS(GML_NS, UPPER_CORNER).item(0).setTextContent(obsHandler.getBoundedUpperCorner());
     }
 }
