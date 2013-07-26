@@ -13,6 +13,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSOutput;
@@ -71,7 +72,7 @@ public class OosTethysSweV2 extends SOSOutputFormatter {
         InputStream templateInputStream = null;
         try {
             templateInputStream = getClass().getClassLoader().getResourceAsStream(TEMPLATE);
-            document = XMLDomUtils.getTemplateDom(templateInputStream);
+            this.document = XMLDomUtils.getTemplateDom(templateInputStream);
         } catch (Exception ex) {
             _log.error(ex.toString());
         } finally {
@@ -324,7 +325,8 @@ public class OosTethysSweV2 extends SOSOutputFormatter {
     }
 
     private void setCollectionInfo() {
-        Element coll = (Element) document.getElementsByTagNameNS(OM_NS, "ObservationCollection").item(0);
+        NodeList col1 = document.getElementsByTagNameNS(OM_NS, "ObservationCollection");
+        Element coll = (Element) col1.item(0);
         coll.getElementsByTagNameNS(GML_NS, NAME).item(0).setTextContent(obsHandler.getTitle());
         coll.getElementsByTagNameNS(GML_NS, DESCRIPTION).item(0).setTextContent(obsHandler.getDescription());
         
