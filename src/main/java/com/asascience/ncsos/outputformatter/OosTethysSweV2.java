@@ -38,7 +38,6 @@ public class OosTethysSweV2 extends SOSOutputFormatter {
     private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(OosTethysSweV2.class);
     
     private DOMImplementationLS impl;
-    private Document document;
     private ArrayList<DataSlice> infoList;
     
     public OosTethysSweV2(SOSGetObservationRequestHandler obsHandler) {
