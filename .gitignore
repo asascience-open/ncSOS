@@ -4,6 +4,8 @@ src/test/java/com/asascience/ncSOS/getObs/output/*
 src/test/java/com/asascience/ncSOS/getCaps/output/*
 build/*
 nb-configuration.xml
+.idea
+ncsos.iml
 # Compiled source #
 ###################
 *.com
