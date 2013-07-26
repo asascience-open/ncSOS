@@ -33,7 +33,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     private String contentType;
     
     private static final String FILL_VALUE_NAME = "_FillValue";
-    private static final String IOOSOM1_0_0 = "text/xml;schema=\"om/1.0.0/profiles/ioos_sos/1.0\"";
+    private static final String IOOSOM1_0_0 = "text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0\"";
     private static final String OM1_0_0 = "text/xml;subtype=\"om/1.0.0\"";
     
     private final List<String> eventTimes;
