@@ -30,21 +30,19 @@ import ucar.unidata.geoloc.LatLonRect;
  */
 public class DescribeSensorFormatter extends SOSOutputFormatter {
     
-    private Document document;
-    
     private final String TEMPLATE = "templates/sosDescribeSensor.xml";
     private final String uri;
     private final String query;
     private DOMImplementationLS impl;
     
     private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(DescribeSensorFormatter.class);
-    
+
     /**
      * Creates a new formatter instance that uses the sosDescribeSensor.xml as a
      * template (found in the resources templates folder)
      */
     public DescribeSensorFormatter() {
-        document = parseTemplateXML();
+        this.document = parseTemplateXML();
         initNamespaces();
 
         this.uri = this.query = null;
@@ -93,7 +91,7 @@ public class DescribeSensorFormatter extends SOSOutputFormatter {
     public Document getDocument() {
         return document;
     }
-    
+
     /*********************/
     /* Interface Methods */
     /**************************************************************************/

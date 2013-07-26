@@ -72,7 +72,7 @@ public class SOSDescribeSensor extends SOSDescribeStation implements ISOSDescrib
 
     @Override
     public void setupOutputDocument(SOSOutputFormatter output) {
-        DescribeSensorFormatter dsf = (DescribeSensorFormatter) output;
+        DescribeSensorFormatter dsf = new DescribeSensorFormatter();
         if (errorString == null) {
             // system node
             dsf.setSystemId("sensor-" + stationName + "-" + sensorId);

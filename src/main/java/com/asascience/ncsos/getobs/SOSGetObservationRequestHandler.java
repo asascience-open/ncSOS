@@ -71,7 +71,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             contentType = "text/xml";
             output = new IoosSos10(this);
         } else {
-            _log.error("Uknown/Unhandled responseFormat: " + responseFormat);
+            _log.error("Unknown/Unhandled responseFormat: " + responseFormat);
             output = new GetCapsOutputter();
             output.setupExceptionOutput("Could not recognize response format: " + responseFormat);
         }
@@ -357,7 +357,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     public String getFillValue(String obsProp) {
         Attribute[] attrs = getAttributesOfVariable(obsProp);
         for (Attribute attr : attrs) {
-            if (attr.getName().equalsIgnoreCase(FILL_VALUE_NAME)) {
+            if (attr.getFullNameEscaped().equalsIgnoreCase(FILL_VALUE_NAME)) {
                 return attr.getValue(0).toString();
             }
         }
@@ -369,7 +369,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         if (attrs == null)
             return false;
         for (Attribute attr : attrs) {
-            if (attr.getName().equalsIgnoreCase(FILL_VALUE_NAME))
+            if (attr.getFullNameEscaped().equalsIgnoreCase(FILL_VALUE_NAME))
                 return true;
         }
         return false;

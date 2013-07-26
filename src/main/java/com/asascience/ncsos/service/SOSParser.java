@@ -226,7 +226,7 @@ public class SOSParser {
                     break;
                 case DescribeSensor:
                     try {
-                        // resposne will always be text/xml
+                        // response will always be text/xml
                         retval.put("responseContentType", "text/xml");
                         SOSDescribeSensorHandler sensorHandler;
                         // get the first procedure
@@ -239,7 +239,7 @@ public class SOSParser {
                                 query);
                         retval.put("outputHandler",sensorHandler.getOutputHandler());
                     } catch (Exception ex) {
-                        _log.error(ex.toString());
+                        _log.error(ex.getStackTrace().toString());
                         errHandler.setErrorExceptionOutput("Internal System Exception in setting up DescribeSensor handler - " + ex.toString());
                         retval.put("outputHandler", errHandler.getOutputHandler());
                     }
