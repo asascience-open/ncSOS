@@ -382,8 +382,8 @@ public class GetCapsOutputter extends SOSOutputFormatter {
             default:
                 break;
         }
-        // response model/mode -- blank for now?
-        Element rm = createElementNS(SOS_NS, RESPONSE_MODEL);
+        // result model/mode -- blank for now?
+        Element rm = createElementNS(SOS_NS, RESULT_MODEL);
         rm.setTextContent("om:ObservationCollection");
         obsOffering.appendChild(rm);
         Element rm2 = createElementNS(SOS_NS, RESPONSE_MODE);
@@ -445,8 +445,8 @@ public class GetCapsOutputter extends SOSOutputFormatter {
             default:
                 break;
         }
-        // response model/mode -- blank for now?
-        Element rm = createElementNS(SOS_NS, RESPONSE_MODEL);
+        // result model/mode -- blank for now?
+        Element rm = createElementNS(SOS_NS, RESULT_MODEL);
         rm.setTextContent("om:ObservationCollection");
         obsOffering.appendChild(rm);
         rm = createElementNS(SOS_NS, "responseMode");

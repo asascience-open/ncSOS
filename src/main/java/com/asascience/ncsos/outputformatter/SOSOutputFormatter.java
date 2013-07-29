@@ -121,7 +121,7 @@ public abstract class SOSOutputFormatter {
     public static final String NETWORK_URN = "urn:ioos:network:";
     public static final String NETWORK_URN_END_ALL = ":all";
     public static final String DESCRIPTION = "description";
-    public static final String RESPONSE_MODEL = "responseModel";
+    public static final String RESULT_MODEL = "resultModel";
     public static final String RESPONSE_MODE = "responseMode";
     public static final String ID = "id";
     public static final String VALID_TIME = "validTime";
