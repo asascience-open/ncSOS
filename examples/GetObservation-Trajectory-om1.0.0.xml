@@ -34,7 +34,7 @@
             <om:observedProperty xlink:href="temperature"/>
             <om:featureOfInterest xlink:href="urn:ioos:station:authority:Trajectory1"/>
             <om:result>
-                <swe:dataArray>
+                <swe:DataArray>
                     <swe:elementCount>
                         <swe:Count>
                             <swe:value>2</swe:value>
@@ -64,7 +64,7 @@
                             decimalSeparator="." tokenSeparator=","/>
                     </swe:encoding>
                     <swe:values>1990-01-01T00:00:00Z,30.085434,0.0 1990-01-01T01:00:00Z,23.481789,1.0 1990-01-01T02:00:00Z,6.884098,2.0 1990-01-01T03:00:00Z,24.744984,3.0 1990-01-01T04:00:00Z,32.749203,4.0 1990-01-01T05:00:00Z,28.534737,5.0 1990-01-01T06:00:00Z,18.571844,6.0 1990-01-01T07:00:00Z,8.528454,7.0 1990-01-01T08:00:00Z,29.381937,8.0 1990-01-01T09:00:00Z,37.13585,9.0 1990-01-01T10:00:00Z,2.1386168,10.0 1990-01-01T11:00:00Z,23.701757,11.0 1990-01-01T12:00:00Z,28.328003,12.0</swe:values>
-                </swe:dataArray>
+                </swe:DataArray>
             </om:result>
         </om:Observation>
     </om:member>

@@ -34,7 +34,7 @@
             <om:observedProperty xlink:href="salinity"/>
             <om:featureOfInterest xlink:href="urn:ioos:station:authority:Trajectory2"/>
             <om:result>
-                <swe:dataArray>
+                <swe:DataArray>
                     <swe:elementCount>
                         <swe:Count>
                             <swe:value>2</swe:value>
@@ -64,7 +64,7 @@
                             decimalSeparator="." tokenSeparator=","/>
                     </swe:encoding>
                     <swe:values>1990-01-01T00:00:00Z,37.15755,0.0 1990-01-01T00:00:00Z,9.691621,1.0 1990-01-01T00:00:00Z,11.261549,2.0 1990-01-01T00:00:00Z,-999.9,-999.9 1990-01-01T00:00:00Z,-999.9,-999.9 1990-01-01T00:00:00Z,-999.9,-999.9 1990-01-01T00:00:00Z,-999.9,-999.9 1990-01-01T00:00:00Z,-999.9,-999.9</swe:values>
-                </swe:dataArray>
+                </swe:DataArray>
             </om:result>
         </om:Observation>
     </om:member>

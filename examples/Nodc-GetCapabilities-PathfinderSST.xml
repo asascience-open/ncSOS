@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sos:Capabilities version="1.0.0" xmlns:gml="http://www.opengis.net/gml"
-    xmlns:oost="http://www.oostethys.org/schemas/0.1.0/oostethys"
+    xmlns:om="http://www.opengis.net/om/1.0"
     xmlns:ows="http://www.opengis.net/ows/1.1"
     xmlns:sos="http://www.opengis.net/sos/1.0"
-    xmlns:swe="http://www.opengis.net/swe/1.0.1"
     xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sos/1.0 http://schemas.opengis.net/sos/1.0.0/sosGetCapabilities.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sos/1.0      http://schemas.opengis.net/sos/1.0.0/sosAll.xsd">
     <ows:ServiceIdentification>
         <ows:Title>AVHRR Pathfinder Version 5.0 and 5.1 Harmonic Climatology for Daily Day/Night Combined Sea Surface Temperature, 1982-2008</ows:Title>
         <ows:Abstract>NODC</ows:Abstract>
@@ -22,7 +21,6 @@
         <ows:ProviderSite>http://www.ghrsst.org</ows:ProviderSite>
         <ows:ServiceContact>
             <ows:IndividualName/>
-            <ows:PositionName/>
             <ows:ContactInfo>
                 <ows:Phone>
                     <ows:Voice/>
@@ -42,7 +40,8 @@
         <ows:Operation name="GetCapabilities">
             <ows:DCP>
                 <ows:HTTP>
-                    <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/nodc/00000110200000-NODC-L4_GHRSST-SSTskin-AVHRR_Pathfinder-PFV5.0_Daily_Climatology_1982_2008_DayNightCombined-v02.0-fv01.0.nc"/>
+                    <ows:Get xlink:href="C:\Dev\ncSOS\resources/datasets/nodc/00000110200000-NODC-L4_GHRSST-SSTskin-AVHRR_Pathfinder-PFV5.0_Daily_Climatology_1982_2008_DayNightCombined-v02.0-fv01.0.nc"/>
+                    <ows:Post/>
                 </ows:HTTP>
             </ows:DCP>
             <ows:Parameter name="Sections">
@@ -58,82 +57,35 @@
         <ows:Operation name="GetObservation">
             <ows:DCP>
                 <ows:HTTP>
-                    <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/nodc/00000110200000-NODC-L4_GHRSST-SSTskin-AVHRR_Pathfinder-PFV5.0_Daily_Climatology_1982_2008_DayNightCombined-v02.0-fv01.0.nc"/>
+                    <ows:Get xlink:href="C:\Dev\ncSOS\resources/datasets/nodc/00000110200000-NODC-L4_GHRSST-SSTskin-AVHRR_Pathfinder-PFV5.0_Daily_Climatology_1982_2008_DayNightCombined-v02.0-fv01.0.nc"/>
+                    <ows:Post/>
                 </ows:HTTP>
             </ows:DCP>
-            <ows:Parameter name="procedure" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>urn:ioos:network:org.ghrsst:all</ows:Value>
-                    <ows:Value>urn:ioos:station:org.ghrsst:Grid0</ows:Value>
-                    <ows:Value>urn:ioos:sensor:org.ghrsst:Grid0:analysed_sst</ows:Value>
-                    <ows:Value>urn:ioos:sensor:org.ghrsst:Grid0:analysis_error</ows:Value>
-                    <ows:Value>urn:ioos:sensor:org.ghrsst:Grid0:sea_ice_fraction</ows:Value>
-                    <ows:Value>urn:ioos:sensor:org.ghrsst:Grid0:sea_ice_fraction_error</ows:Value>
-                    <ows:Value>urn:ioos:sensor:org.ghrsst:Grid0:mask</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="offering" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>network-all</ows:Value>
-                    <ows:Value>Grid0</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
+            <ows:Parameter name="offering" use="optional"/>
             <ows:Parameter name="observedProperty" use="required">
                 <ows:AllowedValues>
-                    <ows:value>analysed_sst</ows:value>
-                    <ows:value>analysis_error</ows:value>
-                    <ows:value>sea_ice_fraction</ows:value>
-                    <ows:value>sea_ice_fraction_error</ows:value>
-                    <ows:value>mask</ows:value>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="eventTime" use="optional">
-                <ows:AllowedValues>
-                    <ows:Range/>
-                    <ows:MinimumValue>1995-01-10T20:00:00Z</ows:MinimumValue>
-                    <ows:MaximumValue>1995-01-10T20:00:00Z</ows:MaximumValue>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="responseFormat" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>text/xml;subtype="om/1.0.0"</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="lat" use="required">
-                <ows:AllowedValues>
-                    <ows:MinimumValue>-89.9800033569336</ows:MinimumValue>
-                    <ows:MaximumValue>89.9800033569336</ows:MaximumValue>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="lon" use="required">
-                <ows:AllowedValues>
-                    <ows:MinimumValue>-179.98199462890625</ows:MinimumValue>
-                    <ows:MaximumValue>179.98199462890625</ows:MaximumValue>
+                    <ows:Value>analysed_sst</ows:Value>
+                    <ows:Value>analysis_error</ows:Value>
+                    <ows:Value>sea_ice_fraction</ows:Value>
+                    <ows:Value>sea_ice_fraction_error</ows:Value>
+                    <ows:Value>mask</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
         </ows:Operation>
         <ows:Operation name="DescribeSensor">
             <ows:DCP>
                 <ows:HTTP>
-                    <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/nodc/00000110200000-NODC-L4_GHRSST-SSTskin-AVHRR_Pathfinder-PFV5.0_Daily_Climatology_1982_2008_DayNightCombined-v02.0-fv01.0.nc"/>
+                    <ows:Get/>
+                    <ows:Post/>
                 </ows:HTTP>
             </ows:DCP>
-            <ows:Parameter name="procedure" use="required">
+            <ows:Parameter name="outputFormat">
                 <ows:AllowedValues>
-                    <ows:Value>urn:ioos:network:org.ghrsst:all</ows:Value>
-                    <ows:Value>urn:ioos:station:org.ghrsst:Grid0</ows:Value>
-                    <ows:Value>urn:ioos:sensor:org.ghrsst:Grid0:analysed_sst</ows:Value>
-                    <ows:Value>urn:ioos:sensor:org.ghrsst:Grid0:analysis_error</ows:Value>
-                    <ows:Value>urn:ioos:sensor:org.ghrsst:Grid0:sea_ice_fraction</ows:Value>
-                    <ows:Value>urn:ioos:sensor:org.ghrsst:Grid0:sea_ice_fraction_error</ows:Value>
-                    <ows:Value>urn:ioos:sensor:org.ghrsst:Grid0:mask</ows:Value>
+                    <!-- Specify the flavor of SML described by these templates -->
+                    <ows:Value>text/xml;subtype="sensorML/1.0.1/profiles/ioos_sos/1.0"</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
-            <ows:Parameter name="responseformat" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>text/xml;subtype="sensorML/1.0.1"</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
+            <ows:Parameter name="procedure" use="required"/>
         </ows:Operation>
         <ows:Parameter name="service" use="required">
             <ows:AllowedValues>
@@ -158,12 +110,12 @@
                         <gml:upperCorner>90.0 128.0</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1995-01-10T20:00:00Z</gml:beginPosition>
                         <gml:endPosition>1995-01-10T20:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:procedure xlink:href="urn:ioos:network:org.ghrsst:all"/>
                 <sos:procedure xlink:href="urn:ioos:station:org.ghrsst:Grid0"/>
                 <sos:observedProperty xlink:href="analysed_sst"/>
@@ -173,19 +125,19 @@
                 <sos:observedProperty xlink:href="mask"/>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:org.ghrsst:Grid0"/>
                 <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="Grid0">
                 <gml:name>urn:ioos:station:org.ghrsst:Grid0</gml:name>
                 <gml:srsName>EPSG:4326</gml:srsName>
                 <gml:boundedBy/>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1995-01-10T20:00:00Z</gml:beginPosition>
                         <gml:endPosition>1995-01-10T20:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:org.ghrsst:Grid0"/>
                 <sos:observedProperty xlink:href="analysed_sst"/>
                 <sos:observedProperty xlink:href="analysis_error"/>
@@ -193,13 +145,8 @@
                 <sos:observedProperty xlink:href="sea_ice_fraction_error"/>
                 <sos:observedProperty xlink:href="mask"/>
                 <sos:procedure xlink:href="urn:ioos:station:org.ghrsst:Grid0"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:org.ghrsst:Grid0:analysed_sst"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:org.ghrsst:Grid0:analysis_error"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:org.ghrsst:Grid0:sea_ice_fraction"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:org.ghrsst:Grid0:sea_ice_fraction_error"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:org.ghrsst:Grid0:mask"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
         </sos:ObservationOfferingList>

@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sos:Capabilities version="1.0.0" xmlns:gml="http://www.opengis.net/gml"
-    xmlns:oost="http://www.oostethys.org/schemas/0.1.0/oostethys"
+    xmlns:om="http://www.opengis.net/om/1.0"
     xmlns:ows="http://www.opengis.net/ows/1.1"
     xmlns:sos="http://www.opengis.net/sos/1.0"
-    xmlns:swe="http://www.opengis.net/swe/1.0.1"
     xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sos/1.0 http://schemas.opengis.net/sos/1.0.0/sosGetCapabilities.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sos/1.0      http://schemas.opengis.net/sos/1.0.0/sosAll.xsd">
     <ows:ServiceIdentification>
         <ows:Title/>
         <ows:Abstract/>
@@ -22,7 +21,6 @@
         <ows:ProviderSite/>
         <ows:ServiceContact>
             <ows:IndividualName/>
-            <ows:PositionName/>
             <ows:ContactInfo>
                 <ows:Phone>
                     <ows:Voice/>
@@ -42,7 +40,8 @@
         <ows:Operation name="GetCapabilities">
             <ows:DCP>
                 <ows:HTTP>
-                    <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc"/>
+                    <ows:Get xlink:href="C:\Dev\ncSOS\resources/datasets/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc"/>
+                    <ows:Post/>
                 </ows:HTTP>
             </ows:DCP>
             <ows:Parameter name="Sections">
@@ -58,96 +57,32 @@
         <ows:Operation name="GetObservation">
             <ows:DCP>
                 <ows:HTTP>
-                    <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc"/>
+                    <ows:Get xlink:href="C:\Dev\ncSOS\resources/datasets/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc"/>
+                    <ows:Post/>
                 </ows:HTTP>
             </ows:DCP>
-            <ows:Parameter name="procedure" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>urn:ioos:network:authority:all</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Trajectory0</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Trajectory0:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Trajectory0:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Trajectory1</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Trajectory1:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Trajectory1:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Trajectory2</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Trajectory2:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Trajectory2:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Trajectory3</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Trajectory3:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Trajectory3:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Trajectory4</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Trajectory4:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Trajectory4:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Trajectory5</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Trajectory5:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Trajectory5:humidity</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="offering" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>network-all</ows:Value>
-                    <ows:Value>Trajectory0</ows:Value>
-                    <ows:Value>Trajectory1</ows:Value>
-                    <ows:Value>Trajectory2</ows:Value>
-                    <ows:Value>Trajectory3</ows:Value>
-                    <ows:Value>Trajectory4</ows:Value>
-                    <ows:Value>Trajectory5</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
+            <ows:Parameter name="offering" use="optional"/>
             <ows:Parameter name="observedProperty" use="required">
                 <ows:AllowedValues>
-                    <ows:value>temperature</ows:value>
-                    <ows:value>humidity</ows:value>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="eventTime" use="optional">
-                <ows:AllowedValues>
-                    <ows:Range/>
-                    <ows:MinimumValue>1990-01-01T00:00:00Z</ows:MinimumValue>
-                    <ows:MaximumValue>1990-01-02T17:00:00Z</ows:MaximumValue>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="responseFormat" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>text/xml;subtype="om/1.0.0"</ows:Value>
+                    <ows:Value>temperature</ows:Value>
+                    <ows:Value>humidity</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
         </ows:Operation>
         <ows:Operation name="DescribeSensor">
             <ows:DCP>
                 <ows:HTTP>
-                    <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc"/>
+                    <ows:Get/>
+                    <ows:Post/>
                 </ows:HTTP>
             </ows:DCP>
-            <ows:Parameter name="procedure" use="required">
+            <ows:Parameter name="outputFormat">
                 <ows:AllowedValues>
-                    <ows:Value>urn:ioos:network:authority:all</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Trajectory0</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Trajectory0:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Trajectory0:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Trajectory1</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Trajectory1:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Trajectory1:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Trajectory2</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Trajectory2:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Trajectory2:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Trajectory3</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Trajectory3:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Trajectory3:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Trajectory4</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Trajectory4:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Trajectory4:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Trajectory5</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Trajectory5:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Trajectory5:humidity</ows:Value>
+                    <!-- Specify the flavor of SML described by these templates -->
+                    <ows:Value>text/xml;subtype="sensorML/1.0.1/profiles/ioos_sos/1.0"</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
-            <ows:Parameter name="responseformat" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>text/xml;subtype="sensorML/1.0.1"</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
+            <ows:Parameter name="procedure" use="required"/>
         </ows:Operation>
         <ows:Parameter name="service" use="required">
             <ows:AllowedValues>
@@ -172,12 +107,12 @@
                         <gml:upperCorner>44.764617919921875 -0.6124314069747925</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00Z</gml:beginPosition>
                         <gml:endPosition>1990-01-02T17:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:procedure xlink:href="urn:ioos:network:authority:all"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Trajectory0"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Trajectory1"/>
@@ -194,7 +129,7 @@
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Trajectory4"/>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Trajectory5"/>
                 <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="Trajectory0">
@@ -206,20 +141,18 @@
                         <gml:upperCorner>43.00862503051758 -1.6318601369857788</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00Z</gml:beginPosition>
                         <gml:endPosition>1990-01-01T23:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Trajectory0"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Trajectory0"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Trajectory0:temperature"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Trajectory0:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="Trajectory1">
@@ -231,20 +164,18 @@
                         <gml:upperCorner>44.759944915771484 -7.495859622955322</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00Z</gml:beginPosition>
                         <gml:endPosition>1990-01-01T12:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Trajectory1"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Trajectory1"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Trajectory1:temperature"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Trajectory1:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="Trajectory2">
@@ -256,20 +187,18 @@
                         <gml:upperCorner>43.104679107666016 -6.194129943847656</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00Z</gml:beginPosition>
                         <gml:endPosition>1990-01-01T10:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Trajectory2"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Trajectory2"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Trajectory2:temperature"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Trajectory2:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="Trajectory3">
@@ -281,20 +210,18 @@
                         <gml:upperCorner>43.848636627197266 -2.251742362976074</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00Z</gml:beginPosition>
                         <gml:endPosition>1990-01-02T17:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Trajectory3"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Trajectory3"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Trajectory3:temperature"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Trajectory3:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="Trajectory4">
@@ -306,20 +233,18 @@
                         <gml:upperCorner>42.99815368652344 -2.3874528408050537</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00Z</gml:beginPosition>
                         <gml:endPosition>1990-01-02T10:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Trajectory4"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Trajectory4"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Trajectory4:temperature"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Trajectory4:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="Trajectory5">
@@ -331,20 +256,18 @@
                         <gml:upperCorner>44.764617919921875 -0.6124314069747925</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00Z</gml:beginPosition>
                         <gml:endPosition>1990-01-02T13:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Trajectory5"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Trajectory5"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Trajectory5:temperature"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Trajectory5:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
         </sos:ObservationOfferingList>

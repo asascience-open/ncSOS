@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sos:Capabilities version="1.0.0" xmlns:gml="http://www.opengis.net/gml"
-    xmlns:oost="http://www.oostethys.org/schemas/0.1.0/oostethys"
+    xmlns:om="http://www.opengis.net/om/1.0"
     xmlns:ows="http://www.opengis.net/ows/1.1"
     xmlns:sos="http://www.opengis.net/sos/1.0"
-    xmlns:swe="http://www.opengis.net/swe/1.0.1"
     xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sos/1.0 http://schemas.opengis.net/sos/1.0.0/sosGetCapabilities.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sos/1.0      http://schemas.opengis.net/sos/1.0.0/sosAll.xsd">
     <ows:ServiceIdentification>
         <ows:Title/>
         <ows:Abstract/>
@@ -22,7 +21,6 @@
         <ows:ProviderSite/>
         <ows:ServiceContact>
             <ows:IndividualName/>
-            <ows:PositionName/>
             <ows:ContactInfo>
                 <ows:Phone>
                     <ows:Voice/>
@@ -43,6 +41,7 @@
             <ows:DCP>
                 <ows:HTTP>
                     <ows:Get xlink:href="resources/datasets/profile-Contiguous-Ragged-MultipleProfiles-H.3.4/profile-Contiguous-Ragged-MultipleProfiles-H.3.4.nc"/>
+                    <ows:Post/>
                 </ows:HTTP>
             </ows:DCP>
             <ows:Parameter name="Sections">
@@ -59,81 +58,31 @@
             <ows:DCP>
                 <ows:HTTP>
                     <ows:Get xlink:href="resources/datasets/profile-Contiguous-Ragged-MultipleProfiles-H.3.4/profile-Contiguous-Ragged-MultipleProfiles-H.3.4.nc"/>
+                    <ows:Post/>
                 </ows:HTTP>
             </ows:DCP>
-            <ows:Parameter name="procedure" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>urn:ioos:network:authority:all</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Profile0</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Profile0:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Profile0:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Profile1</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Profile1:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Profile1:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Profile2</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Profile2:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Profile2:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Profile3</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Profile3:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Profile3:humidity</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="offering" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>network-all</ows:Value>
-                    <ows:Value>Profile0</ows:Value>
-                    <ows:Value>Profile1</ows:Value>
-                    <ows:Value>Profile2</ows:Value>
-                    <ows:Value>Profile3</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
+            <ows:Parameter name="offering" use="optional"/>
             <ows:Parameter name="observedProperty" use="required">
                 <ows:AllowedValues>
-                    <ows:value>temperature</ows:value>
-                    <ows:value>humidity</ows:value>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="eventTime" use="optional">
-                <ows:AllowedValues>
-                    <ows:Range/>
-                    <ows:MinimumValue>1990-01-01T00:00:00Z</ows:MinimumValue>
-                    <ows:MaximumValue>1990-01-01T03:00:00Z</ows:MaximumValue>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="responseFormat" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>text/xml;subtype="om/1.0.0"</ows:Value>
+                    <ows:Value>temperature</ows:Value>
+                    <ows:Value>humidity</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
         </ows:Operation>
         <ows:Operation name="DescribeSensor">
             <ows:DCP>
                 <ows:HTTP>
-                    <ows:Get xlink:href="resources/datasets/profile-Contiguous-Ragged-MultipleProfiles-H.3.4/profile-Contiguous-Ragged-MultipleProfiles-H.3.4.nc"/>
+                    <ows:Get/>
+                    <ows:Post/>
                 </ows:HTTP>
             </ows:DCP>
-            <ows:Parameter name="procedure" use="required">
+            <ows:Parameter name="outputFormat">
                 <ows:AllowedValues>
-                    <ows:Value>urn:ioos:network:authority:all</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Profile0</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Profile0:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Profile0:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Profile1</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Profile1:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Profile1:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Profile2</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Profile2:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Profile2:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Profile3</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Profile3:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Profile3:humidity</ows:Value>
+                    <!-- Specify the flavor of SML described by these templates -->
+                    <ows:Value>text/xml;subtype="sensorML/1.0.1/profiles/ioos_sos/1.0"</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
-            <ows:Parameter name="responseformat" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>text/xml;subtype="sensorML/1.0.1"</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
+            <ows:Parameter name="procedure" use="required"/>
         </ows:Operation>
         <ows:Parameter name="service" use="required">
             <ows:AllowedValues>
@@ -158,12 +107,12 @@
                         <gml:upperCorner>90.0 134.0</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00Z</gml:beginPosition>
                         <gml:endPosition>1990-01-01T03:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:procedure xlink:href="urn:ioos:network:authority:all"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Profile0"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Profile1"/>
@@ -176,7 +125,7 @@
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Profile2"/>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Profile3"/>
                 <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="Profile0">
@@ -188,20 +137,18 @@
                         <gml:upperCorner>13.0 34.0</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00Z</gml:beginPosition>
                         <gml:endPosition>1990-01-01T00:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Profile0"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Profile0"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Profile0:temperature"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Profile0:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="Profile1">
@@ -213,20 +160,18 @@
                         <gml:upperCorner>82.0 15.0</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T01:00:00Z</gml:beginPosition>
                         <gml:endPosition>1990-01-01T01:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Profile1"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Profile1"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Profile1:temperature"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Profile1:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="Profile2">
@@ -238,20 +183,18 @@
                         <gml:upperCorner>71.0 134.0</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T02:00:00Z</gml:beginPosition>
                         <gml:endPosition>1990-01-01T02:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Profile2"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Profile2"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Profile2:temperature"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Profile2:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="Profile3">
@@ -263,20 +206,18 @@
                         <gml:upperCorner>90.0 130.0</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T03:00:00Z</gml:beginPosition>
                         <gml:endPosition>1990-01-01T03:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Profile3"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Profile3"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Profile3:temperature"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Profile3:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
         </sos:ObservationOfferingList>

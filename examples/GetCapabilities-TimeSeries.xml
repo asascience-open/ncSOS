@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sos:Capabilities version="1.0.0" xmlns:gml="http://www.opengis.net/gml"
-    xmlns:oost="http://www.oostethys.org/schemas/0.1.0/oostethys"
+    xmlns:om="http://www.opengis.net/om/1.0"
     xmlns:ows="http://www.opengis.net/ows/1.1"
     xmlns:sos="http://www.opengis.net/sos/1.0"
-    xmlns:swe="http://www.opengis.net/swe/1.0.1"
     xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sos/1.0 http://schemas.opengis.net/sos/1.0.0/sosGetCapabilities.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sos/1.0      http://schemas.opengis.net/sos/1.0.0/sosAll.xsd">
     <ows:ServiceIdentification>
         <ows:Title/>
         <ows:Abstract/>
@@ -22,7 +21,6 @@
         <ows:ProviderSite/>
         <ows:ServiceContact>
             <ows:IndividualName/>
-            <ows:PositionName/>
             <ows:ContactInfo>
                 <ows:Phone>
                     <ows:Voice/>
@@ -43,6 +41,7 @@
             <ows:DCP>
                 <ows:HTTP>
                     <ows:Get xlink:href="resources/datasets/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc"/>
+                    <ows:Post/>
                 </ows:HTTP>
             </ows:DCP>
             <ows:Parameter name="Sections">
@@ -59,124 +58,31 @@
             <ows:DCP>
                 <ows:HTTP>
                     <ows:Get xlink:href="resources/datasets/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc"/>
+                    <ows:Post/>
                 </ows:HTTP>
             </ows:DCP>
-            <ows:Parameter name="procedure" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>urn:ioos:network:authority:all</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Station-0</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-0:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-0:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Station-1</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-1:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-1:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Station-2</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-2:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-2:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Station-3</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-3:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-3:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Station-4</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-4:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-4:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Station-5</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-5:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-5:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Station-6</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-6:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-6:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Station-7</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-7:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-7:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Station-8</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-8:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-8:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Station-9</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-9:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-9:humidity</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="offering" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>network-all</ows:Value>
-                    <ows:Value>Station-0</ows:Value>
-                    <ows:Value>Station-1</ows:Value>
-                    <ows:Value>Station-2</ows:Value>
-                    <ows:Value>Station-3</ows:Value>
-                    <ows:Value>Station-4</ows:Value>
-                    <ows:Value>Station-5</ows:Value>
-                    <ows:Value>Station-6</ows:Value>
-                    <ows:Value>Station-7</ows:Value>
-                    <ows:Value>Station-8</ows:Value>
-                    <ows:Value>Station-9</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
+            <ows:Parameter name="offering" use="optional"/>
             <ows:Parameter name="observedProperty" use="required">
                 <ows:AllowedValues>
-                    <ows:value>temperature</ows:value>
-                    <ows:value>humidity</ows:value>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="eventTime" use="optional">
-                <ows:AllowedValues>
-                    <ows:Range/>
-                    <ows:MinimumValue>1921-12-13T20:45:53Z</ows:MinimumValue>
-                    <ows:MaximumValue>1990-01-01T19:00:00Z</ows:MaximumValue>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="responseFormat" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>text/xml;subtype="om/1.0.0"</ows:Value>
-                    <ows:Value>text/xml;subtype="om/1.0.0/profiles/ioos_sos/1.0"</ows:Value>
+                    <ows:Value>temperature</ows:Value>
+                    <ows:Value>humidity</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
         </ows:Operation>
         <ows:Operation name="DescribeSensor">
             <ows:DCP>
                 <ows:HTTP>
-                    <ows:Get xlink:href="resources/datasets/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc"/>
+                    <ows:Get/>
+                    <ows:Post/>
                 </ows:HTTP>
             </ows:DCP>
-            <ows:Parameter name="procedure" use="required">
+            <ows:Parameter name="outputFormat">
                 <ows:AllowedValues>
-                    <ows:Value>urn:ioos:network:authority:all</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Station-0</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-0:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-0:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Station-1</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-1:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-1:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Station-2</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-2:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-2:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Station-3</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-3:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-3:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Station-4</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-4:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-4:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Station-5</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-5:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-5:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Station-6</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-6:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-6:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Station-7</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-7:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-7:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Station-8</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-8:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-8:humidity</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:Station-9</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-9:temperature</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:Station-9:humidity</ows:Value>
+                    <!-- Specify the flavor of SML described by these templates -->
+                    <ows:Value>text/xml;subtype="sensorML/1.0.1/profiles/ioos_sos/1.0"</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
-            <ows:Parameter name="responseformat" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>text/xml;subtype="sensorML/1.0.1"</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
+            <ows:Parameter name="procedure" use="required"/>
         </ows:Operation>
         <ows:Parameter name="service" use="required">
             <ows:AllowedValues>
@@ -201,12 +107,12 @@
                         <gml:upperCorner>90.0 160.0001</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1921-12-13T20:45:53Z</gml:beginPosition>
                         <gml:endPosition>1990-01-01T19:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:procedure xlink:href="urn:ioos:network:authority:all"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Station-0"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Station-1"/>
@@ -232,7 +138,7 @@
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Station-9"/>
                 <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0/profiles/ioos_sos/1.0</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="Station-0">
@@ -244,21 +150,19 @@
                         <gml:upperCorner>29.0001 160.0001</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00Z</gml:beginPosition>
                         <gml:endPosition>1990-01-01T19:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Station-0"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Station-0"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-0:temperature"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-0:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseFormat>text/xml;subtype="om/1.0.0/profiles/ioos_sos/1.0</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:responseFormat>text/xml;subtype="om/1.0.0/profiles/ioos_sos/1.0"</sos:responseFormat>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="Station-1">
@@ -270,21 +174,19 @@
                         <gml:upperCorner>87.0001 39.0001</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1921-12-13T20:45:53Z</gml:beginPosition>
                         <gml:endPosition>1990-01-01T09:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Station-1"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Station-1"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-1:temperature"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-1:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseFormat>text/xml;subtype="om/1.0.0/profiles/ioos_sos/1.0</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:responseFormat>text/xml;subtype="om/1.0.0/profiles/ioos_sos/1.0"</sos:responseFormat>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="Station-2">
@@ -296,21 +198,19 @@
                         <gml:upperCorner>90.0 143.0001</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1921-12-13T20:45:53Z</gml:beginPosition>
                         <gml:endPosition>1990-01-01T14:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Station-2"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Station-2"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-2:temperature"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-2:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseFormat>text/xml;subtype="om/1.0.0/profiles/ioos_sos/1.0</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:responseFormat>text/xml;subtype="om/1.0.0/profiles/ioos_sos/1.0"</sos:responseFormat>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="Station-3">
@@ -322,21 +222,19 @@
                         <gml:upperCorner>90.0 68.0001</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1921-12-13T20:45:53Z</gml:beginPosition>
                         <gml:endPosition>1990-01-01T16:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Station-3"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Station-3"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-3:temperature"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-3:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseFormat>text/xml;subtype="om/1.0.0/profiles/ioos_sos/1.0</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:responseFormat>text/xml;subtype="om/1.0.0/profiles/ioos_sos/1.0"</sos:responseFormat>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="Station-4">
@@ -348,21 +246,19 @@
                         <gml:upperCorner>37.0001 116.0001</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1921-12-13T20:45:53Z</gml:beginPosition>
                         <gml:endPosition>1990-01-01T03:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Station-4"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Station-4"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-4:temperature"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-4:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseFormat>text/xml;subtype="om/1.0.0/profiles/ioos_sos/1.0</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:responseFormat>text/xml;subtype="om/1.0.0/profiles/ioos_sos/1.0"</sos:responseFormat>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="Station-5">
@@ -374,21 +270,19 @@
                         <gml:upperCorner>90.0 49.0001</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00Z</gml:beginPosition>
                         <gml:endPosition>1990-01-01T19:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Station-5"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Station-5"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-5:temperature"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-5:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseFormat>text/xml;subtype="om/1.0.0/profiles/ioos_sos/1.0</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:responseFormat>text/xml;subtype="om/1.0.0/profiles/ioos_sos/1.0"</sos:responseFormat>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="Station-6">
@@ -400,21 +294,19 @@
                         <gml:upperCorner>1.0001 58.0001</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1990-01-01T00:00:00Z</gml:beginPosition>
                         <gml:endPosition>1990-01-01T19:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Station-6"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Station-6"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-6:temperature"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-6:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseFormat>text/xml;subtype="om/1.0.0/profiles/ioos_sos/1.0</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:responseFormat>text/xml;subtype="om/1.0.0/profiles/ioos_sos/1.0"</sos:responseFormat>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="Station-7">
@@ -426,21 +318,19 @@
                         <gml:upperCorner>4.0001 100.0001</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1921-12-13T20:45:53Z</gml:beginPosition>
                         <gml:endPosition>1990-01-01T15:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Station-7"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Station-7"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-7:temperature"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-7:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseFormat>text/xml;subtype="om/1.0.0/profiles/ioos_sos/1.0</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:responseFormat>text/xml;subtype="om/1.0.0/profiles/ioos_sos/1.0"</sos:responseFormat>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="Station-8">
@@ -452,21 +342,19 @@
                         <gml:upperCorner>90.0 45.0001</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1921-12-13T20:45:53Z</gml:beginPosition>
                         <gml:endPosition>1990-01-01T09:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Station-8"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Station-8"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-8:temperature"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-8:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseFormat>text/xml;subtype="om/1.0.0/profiles/ioos_sos/1.0</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:responseFormat>text/xml;subtype="om/1.0.0/profiles/ioos_sos/1.0"</sos:responseFormat>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="Station-9">
@@ -478,21 +366,19 @@
                         <gml:upperCorner>82.0001 20.0001</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>1921-12-13T20:45:53Z</gml:beginPosition>
                         <gml:endPosition>1990-01-01T11:00:00Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:Station-9"/>
                 <sos:observedProperty xlink:href="temperature"/>
                 <sos:observedProperty xlink:href="humidity"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:Station-9"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-9:temperature"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:Station-9:humidity"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseFormat>text/xml;subtype="om/1.0.0/profiles/ioos_sos/1.0</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:responseFormat>text/xml;subtype="om/1.0.0/profiles/ioos_sos/1.0"</sos:responseFormat>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
         </sos:ObservationOfferingList>

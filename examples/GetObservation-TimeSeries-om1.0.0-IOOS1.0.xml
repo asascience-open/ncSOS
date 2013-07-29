@@ -52,9 +52,10 @@
             <om:result>
                 <swe2:DataRecord xsi:schemaLocation="http://www.opengis.net/swe/2.0 http://schemas.opengis.net/sweCommon/2.0/swe.xsd">
                     <swe2:field name="stations">
-                        <swe2:DataRecord>
+                        <swe2:DataRecord definition="http://mmisw.org/ont/ioos/definition/stations">
                             <swe2:field name="authority_noaa_8767961">
-                                <swe2:DataRecord id="authority_noaa_8767961">
+                                <swe2:DataRecord
+                                    definition="http://mmisw.org/ont/ioos/definition/station" id="authority_noaa_8767961">
                                     <swe2:field name="stationID">
                                     <swe2:Text definition="http://mmisw.org/ont/ioos/definition/stationID">
                                     <swe2:value>urn:ioos:station:authority:NOAA_8767961</swe2:value>
@@ -62,7 +63,7 @@
                                     </swe2:field>
                                     <swe2:field name="platformLocation">
                                     <swe2:Vector
-                                    definition="http://www.opengis.get/def/property/OGC/0/PlatformLocation"
+                                    definition="http://www.opengis.net/def/property/OGC/0/PlatformLocation"
                                     localFrame="#PlatformFrame" referenceFrame="https://ioostech.googlecode.com/svn/trunk/IoosCRS/IoosBuoyCRS.xml">
                                     <swe2:coordinate name="latitude">
                                     <swe2:Quantity
@@ -88,9 +89,10 @@
                                     </swe2:Vector>
                                     </swe2:field>
                                     <swe2:field name="sensors">
-                                    <swe2:DataRecord>
+                                    <swe2:DataRecord definition="http://mmisw.org/ont/ioos/definition/sensors">
                                     <swe2:field name="authority_noaa_8767961_watlev">
-                                    <swe2:DataRecord id="authority_noaa_8767961_watlev">
+                                    <swe2:DataRecord
+                                    definition="http://mmisw.org/ont/ioos/definition/sensor" id="authority_noaa_8767961_watlev">
                                     <swe2:field name="sensorID">
                                     <swe2:Text definition="http://mmisw.org/ont/ioos/definition/sensorID">
                                     <swe2:value>urn:ioos:sensor:authority:NOAA_8767961:watlev</swe2:value>
@@ -112,14 +114,14 @@
                         </swe2:DataRecord>
                     </swe2:field>
                     <swe2:field name="observationData">
-                        <swe2:DataArray>
+                        <swe2:DataArray definition="http://mmisw.org/ont/ioos/definition/sensorObservationCollection">
                             <swe2:elementCount>
                                 <swe2:Count>
                                     <swe2:value>1488</swe2:value>
                                 </swe2:Count>
                             </swe2:elementCount>
                             <swe2:elementType name="observations">
-                                <swe2:DataRecord>
+                                <swe2:DataRecord definition="http://mmisw.org/ont/ioos/definition/sensorObservations">
                                     <swe2:field name="time">
                                     <swe2:Time definition="http://www.opengis.net/def/property/OGC/0/SamplingTime">
                                     <swe2:uom xlink:href="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"/>

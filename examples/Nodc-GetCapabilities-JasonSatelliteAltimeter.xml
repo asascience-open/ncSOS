@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sos:Capabilities version="1.0.0" xmlns:gml="http://www.opengis.net/gml"
-    xmlns:oost="http://www.oostethys.org/schemas/0.1.0/oostethys"
+    xmlns:om="http://www.opengis.net/om/1.0"
     xmlns:ows="http://www.opengis.net/ows/1.1"
     xmlns:sos="http://www.opengis.net/sos/1.0"
-    xmlns:swe="http://www.opengis.net/swe/1.0.1"
     xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sos/1.0 http://schemas.opengis.net/sos/1.0.0/sosGetCapabilities.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sos/1.0      http://schemas.opengis.net/sos/1.0.0/sosAll.xsd">
     <ows:ServiceIdentification>
         <ows:Title>GDR - Standard dataset</ows:Title>
         <ows:Abstract>CNES</ows:Abstract>
@@ -22,7 +21,6 @@
         <ows:ProviderSite/>
         <ows:ServiceContact>
             <ows:IndividualName/>
-            <ows:PositionName/>
             <ows:ContactInfo>
                 <ows:Phone>
                     <ows:Voice/>
@@ -42,7 +40,8 @@
         <ows:Operation name="GetCapabilities">
             <ows:DCP>
                 <ows:HTTP>
-                    <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/nodc/jason2_satelliteAltimeter.nc"/>
+                    <ows:Get xlink:href="C:\Dev\ncSOS\resources/datasets/nodc/jason2_satelliteAltimeter.nc"/>
+                    <ows:Post/>
                 </ows:HTTP>
             </ows:DCP>
             <ows:Parameter name="Sections">
@@ -58,85 +57,40 @@
         <ows:Operation name="GetObservation">
             <ows:DCP>
                 <ows:HTTP>
-                    <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/nodc/jason2_satelliteAltimeter.nc"/>
+                    <ows:Get xlink:href="C:\Dev\ncSOS\resources/datasets/nodc/jason2_satelliteAltimeter.nc"/>
+                    <ows:Post/>
                 </ows:HTTP>
             </ows:DCP>
-            <ows:Parameter name="procedure" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>urn:ioos:network:authority:all</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:unknown</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:unknown:surface_type</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:unknown:orb_state_flag_rest</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:unknown:ecmwf_meteo_map_avail</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:unknown:interp_flag_meteo</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:unknown:range_numval_ku</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:unknown:model_wet_tropo_corr</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:unknown:atmos_corr_sig0_ku</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:unknown:tb_187</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:unknown:rad_water_vapor</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:unknown:ssha</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="offering" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>network-all</ows:Value>
-                    <ows:Value>unknown</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
+            <ows:Parameter name="offering" use="optional"/>
             <ows:Parameter name="observedProperty" use="required">
                 <ows:AllowedValues>
-                    <ows:value>surface_type</ows:value>
-                    <ows:value>orb_state_flag_rest</ows:value>
-                    <ows:value>ecmwf_meteo_map_avail</ows:value>
-                    <ows:value>interp_flag_meteo</ows:value>
-                    <ows:value>range_numval_ku</ows:value>
-                    <ows:value>model_wet_tropo_corr</ows:value>
-                    <ows:value>atmos_corr_sig0_ku</ows:value>
-                    <ows:value>tb_187</ows:value>
-                    <ows:value>rad_water_vapor</ows:value>
-                    <ows:value>ssha</ows:value>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="eventTime" use="optional">
-                <ows:AllowedValues>
-                    <ows:Range/>
-                    <ows:MinimumValue>2011-01-20T05:03:00Z</ows:MinimumValue>
-                    <ows:MaximumValue>2011-01-20T05:03:02Z</ows:MaximumValue>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="responseFormat" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>text/xml;subtype="om/1.0.0"</ows:Value>
+                    <ows:Value>surface_type</ows:Value>
+                    <ows:Value>orb_state_flag_rest</ows:Value>
+                    <ows:Value>ecmwf_meteo_map_avail</ows:Value>
+                    <ows:Value>interp_flag_meteo</ows:Value>
+                    <ows:Value>range_numval_ku</ows:Value>
+                    <ows:Value>model_wet_tropo_corr</ows:Value>
+                    <ows:Value>atmos_corr_sig0_ku</ows:Value>
+                    <ows:Value>tb_187</ows:Value>
+                    <ows:Value>rad_water_vapor</ows:Value>
+                    <ows:Value>ssha</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
         </ows:Operation>
         <ows:Operation name="DescribeSensor">
             <ows:DCP>
                 <ows:HTTP>
-                    <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/nodc/jason2_satelliteAltimeter.nc"/>
+                    <ows:Get/>
+                    <ows:Post/>
                 </ows:HTTP>
             </ows:DCP>
-            <ows:Parameter name="procedure" use="required">
+            <ows:Parameter name="outputFormat">
                 <ows:AllowedValues>
-                    <ows:Value>urn:ioos:network:authority:all</ows:Value>
-                    <ows:Value>urn:ioos:station:authority:unknown</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:unknown:surface_type</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:unknown:orb_state_flag_rest</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:unknown:ecmwf_meteo_map_avail</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:unknown:interp_flag_meteo</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:unknown:range_numval_ku</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:unknown:model_wet_tropo_corr</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:unknown:atmos_corr_sig0_ku</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:unknown:tb_187</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:unknown:rad_water_vapor</ows:Value>
-                    <ows:Value>urn:ioos:sensor:authority:unknown:ssha</ows:Value>
+                    <!-- Specify the flavor of SML described by these templates -->
+                    <ows:Value>text/xml;subtype="sensorML/1.0.1/profiles/ioos_sos/1.0"</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
-            <ows:Parameter name="responseformat" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>text/xml;subtype="sensorML/1.0.1"</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
+            <ows:Parameter name="procedure" use="required"/>
         </ows:Operation>
         <ows:Parameter name="service" use="required">
             <ows:AllowedValues>
@@ -161,12 +115,12 @@
                         <gml:upperCorner>-66.14943799999999 17.270479000000005</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>2011-01-20T05:03:00Z</gml:beginPosition>
                         <gml:endPosition>2011-01-20T05:03:02Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:procedure xlink:href="urn:ioos:network:authority:all"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:unknown"/>
                 <sos:observedProperty xlink:href="surface_type"/>
@@ -181,7 +135,7 @@
                 <sos:observedProperty xlink:href="ssha"/>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:unknown"/>
                 <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="unknown">
@@ -193,12 +147,12 @@
                         <gml:upperCorner>-66.14943799999999 17.270478999999998</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>2011-01-20T05:03:00Z</gml:beginPosition>
                         <gml:endPosition>2011-01-20T05:03:02Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:authority:unknown"/>
                 <sos:observedProperty xlink:href="surface_type"/>
                 <sos:observedProperty xlink:href="orb_state_flag_rest"/>
@@ -211,18 +165,8 @@
                 <sos:observedProperty xlink:href="rad_water_vapor"/>
                 <sos:observedProperty xlink:href="ssha"/>
                 <sos:procedure xlink:href="urn:ioos:station:authority:unknown"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:unknown:surface_type"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:unknown:orb_state_flag_rest"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:unknown:ecmwf_meteo_map_avail"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:unknown:interp_flag_meteo"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:unknown:range_numval_ku"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:unknown:model_wet_tropo_corr"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:unknown:atmos_corr_sig0_ku"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:unknown:tb_187"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:unknown:rad_water_vapor"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:authority:unknown:ssha"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
         </sos:ObservationOfferingList>

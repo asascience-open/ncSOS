@@ -56,23 +56,26 @@
                     </sml:classifier>
                 </sml:ClassifierList>
             </sml:classification>
-            <sml:validTime>
-                <gml:TimePeriod>
-                    <gml:beginPosition>1990-01-01T00:00:00Z</gml:beginPosition>
-                    <gml:endPosition>1990-01-01T03:00:00Z</gml:endPosition>
-                </gml:TimePeriod>
-            </sml:validTime>
+            <sml:capabilities>
+                <swe:DataRecord name="observationTimeRange">
+                    <swe:field name="observationTimeRange">
+                        <swe:TimeRange definition="http://mmisw.org/ont/ioos/definition/observationTimeRange">
+                            <swe:value>1990-01-01T00:00:00Z 1990-01-01T03:00:00Z</swe:value>
+                        </swe:TimeRange>
+                    </swe:field>
+                </swe:DataRecord>
+            </sml:capabilities>
             <sml:contact>
                 <sml:ContactList>
                     <sml:member xlink:role="http://mmisw.org/ont/ioos/definition/operator">
                         <sml:ResponseibleParty>
                             <sml:organizationName>UNKNOWN</sml:organizationName>
                             <sml:contactInfo>
-                                <sml:phone/>
-                                <sml:address>
-                                    <sml:country>UNKNOWN</sml:country>
+                                <phone/>
+                                <address>
                                     <sml:electronicMailAddress>UNKNOWN</sml:electronicMailAddress>
-                                </sml:address>
+                                    <sml:country>UNKNOWN</sml:country>
+                                </address>
                             </sml:contactInfo>
                         </sml:ResponseibleParty>
                     </sml:member>
@@ -80,11 +83,11 @@
                         <sml:ResponseibleParty>
                             <sml:organizationName>UNKNOWN</sml:organizationName>
                             <sml:contactInfo>
-                                <sml:phone/>
-                                <sml:address>
-                                    <sml:country>UNKNOWN</sml:country>
+                                <phone/>
+                                <address>
                                     <sml:electronicMailAddress>UNKNOWN</sml:electronicMailAddress>
-                                </sml:address>
+                                    <sml:country>UNKNOWN</sml:country>
+                                </address>
                             </sml:contactInfo>
                         </sml:ResponseibleParty>
                     </sml:member>
@@ -120,7 +123,7 @@
             <sml:capabilities name="networkProcedures">
                 <swe:SimpleDataRecord>
                     <gml:metaDataProperty
-                        xlink:href="urn:ioos:network:authorityall" xlink:title="network-all"/>
+                        xlink:href="urn:ioos:network:authority:all" xlink:title="network-all"/>
                 </swe:SimpleDataRecord>
             </sml:capabilities>
         </sml:System>

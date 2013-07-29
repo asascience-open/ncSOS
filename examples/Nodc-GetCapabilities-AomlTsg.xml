@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sos:Capabilities version="1.0.0" xmlns:gml="http://www.opengis.net/gml"
-    xmlns:oost="http://www.oostethys.org/schemas/0.1.0/oostethys"
+    xmlns:om="http://www.opengis.net/om/1.0"
     xmlns:ows="http://www.opengis.net/ows/1.1"
     xmlns:sos="http://www.opengis.net/sos/1.0"
-    xmlns:swe="http://www.opengis.net/swe/1.0.1"
     xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sos/1.0 http://schemas.opengis.net/sos/1.0.0/sosGetCapabilities.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sos/1.0      http://schemas.opengis.net/sos/1.0.0/sosAll.xsd">
     <ows:ServiceIdentification>
         <ows:Title>Underway sea surface temperature and salinity aboard the David Starr Jordan on 20080615.</ows:Title>
         <ows:Abstract>US DOC; NOAA; Office of Marine and Aviation Operations</ows:Abstract>
@@ -22,7 +21,6 @@
         <ows:ProviderSite/>
         <ows:ServiceContact>
             <ows:IndividualName/>
-            <ows:PositionName/>
             <ows:ContactInfo>
                 <ows:Phone>
                     <ows:Voice/>
@@ -42,7 +40,8 @@
         <ows:Operation name="GetCapabilities">
             <ows:DCP>
                 <ows:HTTP>
-                    <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/nodc/aoml_tsg.nc"/>
+                    <ows:Get xlink:href="C:\Dev\ncSOS\resources/datasets/nodc/aoml_tsg.nc"/>
+                    <ows:Post/>
                 </ows:HTTP>
             </ows:DCP>
             <ows:Parameter name="Sections">
@@ -58,121 +57,52 @@
         <ows:Operation name="GetObservation">
             <ows:DCP>
                 <ows:HTTP>
-                    <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/nodc/aoml_tsg.nc"/>
+                    <ows:Get xlink:href="C:\Dev\ncSOS\resources/datasets/nodc/aoml_tsg.nc"/>
+                    <ows:Post/>
                 </ows:HTTP>
             </ows:DCP>
-            <ows:Parameter name="procedure" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>urn:ioos:network:gov.noaa.aoml.phod:all</ows:Value>
-                    <ows:Value>urn:ioos:station:gov.noaa.aoml.phod:Trajectory20080615</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:plt</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:tsg</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:tmsr</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:sstr</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:crs</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:intp</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:sal</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:cond</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:ext</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:sst</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_a</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_b</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_c</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_d</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_e</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_f</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_g</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_h</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_i</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_j</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_k</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_l</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="offering" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>network-all</ows:Value>
-                    <ows:Value>Trajectory20080615</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
+            <ows:Parameter name="offering" use="optional"/>
             <ows:Parameter name="observedProperty" use="required">
                 <ows:AllowedValues>
-                    <ows:value>plt</ows:value>
-                    <ows:value>tsg</ows:value>
-                    <ows:value>tmsr</ows:value>
-                    <ows:value>sstr</ows:value>
-                    <ows:value>crs</ows:value>
-                    <ows:value>intp</ows:value>
-                    <ows:value>sal</ows:value>
-                    <ows:value>cond</ows:value>
-                    <ows:value>ext</ows:value>
-                    <ows:value>sst</ows:value>
-                    <ows:value>flag_a</ows:value>
-                    <ows:value>flag_b</ows:value>
-                    <ows:value>flag_c</ows:value>
-                    <ows:value>flag_d</ows:value>
-                    <ows:value>flag_e</ows:value>
-                    <ows:value>flag_f</ows:value>
-                    <ows:value>flag_g</ows:value>
-                    <ows:value>flag_h</ows:value>
-                    <ows:value>flag_i</ows:value>
-                    <ows:value>flag_j</ows:value>
-                    <ows:value>flag_k</ows:value>
-                    <ows:value>flag_l</ows:value>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="eventTime" use="optional">
-                <ows:AllowedValues>
-                    <ows:Range/>
-                    <ows:MinimumValue>2008-06-15T00:00:19Z</ows:MinimumValue>
-                    <ows:MaximumValue>2008-06-15T23:59:49Z</ows:MaximumValue>
-                </ows:AllowedValues>
-            </ows:Parameter>
-            <ows:Parameter name="responseFormat" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>text/xml;subtype="om/1.0.0"</ows:Value>
+                    <ows:Value>plt</ows:Value>
+                    <ows:Value>tsg</ows:Value>
+                    <ows:Value>tmsr</ows:Value>
+                    <ows:Value>sstr</ows:Value>
+                    <ows:Value>crs</ows:Value>
+                    <ows:Value>intp</ows:Value>
+                    <ows:Value>sal</ows:Value>
+                    <ows:Value>cond</ows:Value>
+                    <ows:Value>ext</ows:Value>
+                    <ows:Value>sst</ows:Value>
+                    <ows:Value>flag_a</ows:Value>
+                    <ows:Value>flag_b</ows:Value>
+                    <ows:Value>flag_c</ows:Value>
+                    <ows:Value>flag_d</ows:Value>
+                    <ows:Value>flag_e</ows:Value>
+                    <ows:Value>flag_f</ows:Value>
+                    <ows:Value>flag_g</ows:Value>
+                    <ows:Value>flag_h</ows:Value>
+                    <ows:Value>flag_i</ows:Value>
+                    <ows:Value>flag_j</ows:Value>
+                    <ows:Value>flag_k</ows:Value>
+                    <ows:Value>flag_l</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
         </ows:Operation>
         <ows:Operation name="DescribeSensor">
             <ows:DCP>
                 <ows:HTTP>
-                    <ows:Get xlink:href="C:/Users/scowan/Projects/maven/ncSOS/resources/datasets/nodc/aoml_tsg.nc"/>
+                    <ows:Get/>
+                    <ows:Post/>
                 </ows:HTTP>
             </ows:DCP>
-            <ows:Parameter name="procedure" use="required">
+            <ows:Parameter name="outputFormat">
                 <ows:AllowedValues>
-                    <ows:Value>urn:ioos:network:gov.noaa.aoml.phod:all</ows:Value>
-                    <ows:Value>urn:ioos:station:gov.noaa.aoml.phod:Trajectory20080615</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:plt</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:tsg</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:tmsr</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:sstr</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:crs</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:intp</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:sal</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:cond</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:ext</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:sst</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_a</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_b</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_c</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_d</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_e</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_f</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_g</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_h</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_i</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_j</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_k</ows:Value>
-                    <ows:Value>urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_l</ows:Value>
+                    <!-- Specify the flavor of SML described by these templates -->
+                    <ows:Value>text/xml;subtype="sensorML/1.0.1/profiles/ioos_sos/1.0"</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
-            <ows:Parameter name="responseformat" use="required">
-                <ows:AllowedValues>
-                    <ows:Value>text/xml;subtype="sensorML/1.0.1"</ows:Value>
-                </ows:AllowedValues>
-            </ows:Parameter>
+            <ows:Parameter name="procedure" use="required"/>
         </ows:Operation>
         <ows:Parameter name="service" use="required">
             <ows:AllowedValues>
@@ -197,12 +127,12 @@
                         <gml:upperCorner>34.342 0.0</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>2008-06-15T00:00:19Z</gml:beginPosition>
                         <gml:endPosition>2008-06-15T23:59:49Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:procedure xlink:href="urn:ioos:network:gov.noaa.aoml.phod:all"/>
                 <sos:procedure xlink:href="urn:ioos:station:gov.noaa.aoml.phod:Trajectory20080615"/>
                 <sos:observedProperty xlink:href="plt"/>
@@ -229,7 +159,7 @@
                 <sos:observedProperty xlink:href="flag_l"/>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:gov.noaa.aoml.phod:Trajectory20080615"/>
                 <sos:responseFormat>text/xml; subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
             <sos:ObservationOffering gml:id="Trajectory20080615">
@@ -241,12 +171,12 @@
                         <gml:upperCorner>34.342 0.0</gml:upperCorner>
                     </gml:Envelope>
                 </gml:boundedBy>
-                <sos:time>
+                <sos:Time>
                     <gml:TimePeriod xsi:type="gml:TimePeriodType">
                         <gml:beginPosition>2008-06-15T00:00:19Z</gml:beginPosition>
                         <gml:endPosition>2008-06-15T23:59:49Z</gml:endPosition>
                     </gml:TimePeriod>
-                </sos:time>
+                </sos:Time>
                 <sos:featureOfInterest xlink:href="urn:ioos:station:gov.noaa.aoml.phod:Trajectory20080615"/>
                 <sos:observedProperty xlink:href="plt"/>
                 <sos:observedProperty xlink:href="tsg"/>
@@ -271,30 +201,8 @@
                 <sos:observedProperty xlink:href="flag_k"/>
                 <sos:observedProperty xlink:href="flag_l"/>
                 <sos:procedure xlink:href="urn:ioos:station:gov.noaa.aoml.phod:Trajectory20080615"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:plt"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:tsg"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:tmsr"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:sstr"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:crs"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:intp"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:sal"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:cond"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:ext"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:sst"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_a"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_b"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_c"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_d"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_e"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_f"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_g"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_h"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_i"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_j"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_k"/>
-                <sos:procedure xlink:href="urn:ioos:sensor:gov.noaa.aoml.phod:Trajectory20080615:flag_l"/>
                 <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
-                <sos:responseModel>om:ObservationCollection</sos:responseModel>
+                <sos:resultModel>om:ObservationCollection</sos:resultModel>
                 <sos:responseMode>inline</sos:responseMode>
             </sos:ObservationOffering>
         </sos:ObservationOfferingList>
