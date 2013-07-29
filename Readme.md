@@ -19,18 +19,21 @@ _You will need a working THREDDS installation of a least version **4.3.16** to r
         <load-on-startup>1</load-on-startup>
     </servlet>
     ```
+    
     ```xml
     <servlet-mapping>
         <servlet-name>sos</servlet-name>
         <url-pattern>/sos/*</url-pattern>
     </servlet-mapping>
     ```
+
 6. Add the following service definition to enable SOS in your THREDDS catalog XML files:
-    ```xml
-    <service name="sos" serviceType="SOS" base="/thredds/sos/" />
-    ``` 
+```xml
+<service name="sos" serviceType="SOS" base="/thredds/sos/" />
+``` 
 7. Restart Tomcat
-##ChangeLog
+
+## ChangeLog
 
 ### RC5
 * IOOS SWE Milestone 1.0 support
