@@ -188,7 +188,7 @@ public class SOSgetCapsTest {
 
         System.out.println("------END " + getCurrentMethod() + "------");
     }
-    /*
+
     @Test
     public void testCanProcessTrajectory() throws IOException {
         System.out.println("\n------" + getCurrentMethod() + "------");
@@ -1288,7 +1288,7 @@ public class SOSgetCapsTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    */
+
 //    @Test
 //    public void testInsertClassNameHere() {
 //        System.out.println("\n------" + getCurrentMethod() + "------");

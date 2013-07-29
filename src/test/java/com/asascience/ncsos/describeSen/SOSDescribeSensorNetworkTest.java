@@ -59,8 +59,7 @@ public class SOSDescribeSensorNetworkTest {
         InputStream templateInputStream = null;
         stationTests = new ArrayList<String>();
         try {
-        	String current = new java.io.File( "." ).getCanonicalPath();
-            File configFile = new File(current + systemSeparator + "testConfig" + systemSeparator + "tests_config.xml");
+            File configFile = new File("resources/tests_config.xml");
             templateInputStream = new FileInputStream(configFile);
             Document configDoc = XMLDomUtils.getTemplateDom(templateInputStream);
             // read from the config file
