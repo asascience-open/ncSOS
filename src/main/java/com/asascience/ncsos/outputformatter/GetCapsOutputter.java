@@ -136,7 +136,7 @@ public class GetCapsOutputter extends SOSOutputFormatter {
         Element fstElmnt = (Element) fstNode;
         // set org info
         // url
-        fstElmnt.getElementsByTagNameNS(OWS_NS, "ProviderSite").item(0).setTextContent(dataPage.trim());
+        fstElmnt.getElementsByTagNameNS(OWS_NS, "ProviderSite").item(0).getAttributes().getNamedItemNS(XLINK_NS,"href").setNodeValue(dataPage.trim());
         // name
         fstElmnt.getElementsByTagNameNS(OWS_NS, "ProviderName").item(0).setTextContent(primaryOwnership.trim());
     }

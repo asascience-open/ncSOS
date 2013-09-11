@@ -22,7 +22,7 @@
 	</ows:ServiceIdentification>
 	<ows:ServiceProvider>
 		<ows:ProviderName> </ows:ProviderName>
-		<ows:ProviderSite> </ows:ProviderSite>
+		<ows:ProviderSite xlink:href=" "> </ows:ProviderSite>
 		<ows:ServiceContact>
 			<ows:IndividualName> </ows:IndividualName>
 			<ows:ContactInfo>
