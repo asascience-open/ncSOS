@@ -122,7 +122,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                 		getStationNames().values().toArray(new String[getStationNames().values().size()]), 
                 		false, null, this.getDatasetFeatureType());
             // set describe sensor output
-           // out.setOperationDescSen(threddsURI, getStationNames().values().toArray(new String[getStationNames().values().size()]), getSensorNames());
+           out.setOperationDescSen(threddsURI, getStationNames().values().toArray(new String[getStationNames().values().size()]), getSensorNames());
         } else {
             // remove operations metadata
             out.removeOperations();
