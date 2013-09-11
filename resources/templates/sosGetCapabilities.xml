@@ -45,7 +45,6 @@
 			<ows:DCP>
 				<ows:HTTP>
 					<ows:Get />
-					<ows:Post />
 				</ows:HTTP>
 			</ows:DCP>
 			<ows:Parameter name="Sections">
@@ -62,7 +61,6 @@
 			<ows:DCP>
 				<ows:HTTP>
 					<ows:Get />
-					<ows:Post/>
 				</ows:HTTP>
 			</ows:DCP>
 			<ows:Parameter name="offering" use="optional"/>
@@ -73,7 +71,6 @@
 			<ows:DCP>
 				<ows:HTTP>
 					<ows:Get />
-					<ows:Post/>
 				</ows:HTTP>
 			</ows:DCP>
 			<ows:Parameter name="outputFormat">
