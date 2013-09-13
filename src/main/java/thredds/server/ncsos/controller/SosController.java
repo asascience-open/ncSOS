@@ -2,7 +2,7 @@
 based on iso controller NOAA - ASA
  * @author abird
  */
-package com.asascience.ncsos.controller;
+package thredds.server.ncsos.controller;
 
 import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import com.asascience.ncsos.service.SOSParser;
@@ -57,7 +57,7 @@ public class SosController implements ISosContoller {
      * @throws ServletException if ServletException occurred
      * @throws IOException if IOException occurred 
      */
-    @RequestMapping(params = {})
+    @RequestMapping(value="/**", params = {})
     @Override
     public void handleSOSRequest(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
         _log.info("Handling SOS metadata request.");

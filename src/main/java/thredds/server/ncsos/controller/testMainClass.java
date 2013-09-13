@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.asascience.ncsos.controller;
+package thredds.server.ncsos.controller;
 
 import com.asascience.ncsos.service.SOSParser;
 import java.io.CharArrayWriter;
