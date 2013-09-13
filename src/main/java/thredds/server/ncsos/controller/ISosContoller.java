@@ -26,7 +26,7 @@
 * CONTRACT, NEGLIGENCE OR OTHER TORTUOUS ACTION, ARISING OUT OF OR IN
 * CONNECTION WITH THE ACCESS, USE OR PERFORMANCE OF THIS SOFTWARE. 
  */
-package com.asascience.ncsos.controller;
+package thredds.server.ncsos.controller;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
