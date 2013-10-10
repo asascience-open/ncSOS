@@ -24,6 +24,13 @@ import ucar.nc2.dataset.NetcdfDataset;
  * @author SCowan
  */
 public class SOSdescribeSensorTest {
+    public static final String ACCEPTVERSIONS = "acceptVersions";
+    public static final String EXCEPTION_TEXT = "Exception";
+    public static final String FILE_EXT = ".xml";
+    public static final String OUTPUTFORMAT = "outputFormat";
+    public static final String PROCEDURE = "procedure";
+    public static final String REQUEST = "request";
+    public static final String SERVICE = "service";
     private static Logger _log = LoggerFactory.getLogger(SOSParser.class);
     
     private static String outputDir = null;
@@ -125,18 +132,18 @@ public class SOSdescribeSensorTest {
     
     private static final String bad_requests_set = "resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc";
     private static final String bad_request_control_query = "procedure=urn:ioos:station:authority:Trajectory2";
-    private static final String bad_request_outputformat_query = "request=DescribeSensor&service=sos&version=1.0.0&outputFormat=text/xml;subtype=\"5\"";
-    private static final String bad_request_outputformat_mispelled_query = "request=DescribeSensor&service=sos&version=1.0.0&respnseformat=";
-    private static final String bad_request_request_query = "request=DescrbeSensor&service=sos&version=1.0.0&outputFormat=";
-    private static final String bad_request_request_mispelled_query = "reqst=DescribeSensor&service=sos&version=1.0.0&outputFormat=";
-    private static final String bad_request_version_query = "request=DescribeSensor&service=SOS&version=1.0.&outputFormat=";
+    private static final String bad_request_outputformat_query = "request=DescribeSensor&service=sos&Acceptversions=1.0.0&outputFormat=text/xml;subtype=\"5\"";
+    private static final String bad_request_outputformat_mispelled_query = "request=DescribeSensor&service=sos&Acceptversions=1.0.0&respnseformat=";
+    private static final String bad_request_request_query = "request=DescrbeSensor&service=sos&Acceptversions=1.0.0&outputFormat=";
+    private static final String bad_request_request_mispelled_query = "reqst=DescribeSensor&service=sos&Acceptversions=1.0.0&outputFormat=";
+    private static final String bad_request_version_query = "request=DescribeSensor&service=SOS&Acceptversions=1.0.&outputFormat=";
     private static final String bad_request_version_misspelled_query = "request=DescribeSensor&service=SOS&vrsion=1.0.0&outputFormat=";
-    private static final String bad_request_service_query = "request=DescribeSensor&service=s0s&version=1.0.0&outputFormat=";
-    private static final String bad_request_service_misspelled_query = "request=DescribeSensor&servce=sos&version=1.0.0&outputFormat=";
-    private static final String bad_request_procedure_query = "request=DescribeSensor&service=sos&version=1.0.0&procedure=urn:tds:station:trajectory2&outputFormat=";
-    private static final String bad_request_procedure_misspelled_query = "request=DescribeSensor&service=sos&version=1.0.0&procdure=urn:ioos:station:authority:trajectory2&outputFormat=";
+    private static final String bad_request_service_query = "request=DescribeSensor&service=s0s&Acceptversions=1.0.0&outputFormat=";
+    private static final String bad_request_service_misspelled_query = "request=DescribeSensor&servce=sos&Acceptversions=1.0.0&outputFormat=";
+    private static final String bad_request_procedure_query = "request=DescribeSensor&service=sos&Acceptversions=1.0.0&procedure=urn:tds:station:trajectory2&outputFormat=";
+    private static final String bad_request_procedure_misspelled_query = "request=DescribeSensor&service=sos&Acceptversions=1.0.0&procdure=urn:ioos:station:authority:trajectory2&outputFormat=";
     
-    private static String baseQuery = "request=DescribeSensor&service=sos&version=1.0.0&outputFormat=";
+    private static String baseQuery = "request=DescribeSensor&service=sos&Acceptversions=1.0.0&outputFormat=text/xml";
     
     @BeforeClass
     public static void SetupEnviron() throws FileNotFoundException, UnsupportedEncodingException {
@@ -227,109 +234,161 @@ public class SOSdescribeSensorTest {
             // first test - bad_request_control_query - should return w/o exception
             writeOutput(parser.enhanceGETRequest(dataset, baseQuery + bad_request_control_query, bad_requests_set), writer);
             // add to test output
-            fileWriter(outputDir, getCurrentMethod() + ".xml", writer, false);
+            fileWriter(outputDir, getCurrentMethod() + FILE_EXT, writer, false);
             // no output, just check that there is no exception
-            assertFalse("exception in output", writer.toString().contains("Exception"));
+            assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
             // 2nd test - bad_request_outputformat_query - checks to see what is returned when an invalid response format is returned
             writer.close();
+            
+            
+            
+            
             writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(dataset, bad_request_outputformat_query + "&" + bad_request_control_query, bad_requests_set), writer);
             // add to test output
-            fileWriter(outputDir, getCurrentMethod() + ".xml", writer, true);
+            fileWriter(outputDir, getCurrentMethod() + FILE_EXT, writer, true);
             // test to make sure we got an exception
             testOut = writer.toString();
-            assertTrue("no exception in output - bad_request_outputformat_query", testOut.contains("Exception"));
-            assertTrue("unexpected exception - bad_request_outputformat_query", testOut.contains("outputFormat"));
+            assertTrue("no exception in output - bad_request_outputformat_query", testOut.contains(EXCEPTION_TEXT));
+            assertTrue("unexpected exception - bad_request_outputformat_query", testOut.contains(OUTPUTFORMAT));
             // 3rd test - bad_request_outputformat_mispelled_query - checks to see what is returned when outputFormat is misspelled
             writer.close();
+            
+            
+            
+            
             writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(dataset, bad_request_outputformat_mispelled_query + valid_outputFormat + "&" + bad_request_control_query, bad_requests_set), writer);
             // add to test output
-            fileWriter(outputDir, getCurrentMethod() + ".xml", writer, true);
+            fileWriter(outputDir, getCurrentMethod() + FILE_EXT, writer, true);
             // test to make sure we got an exception
             testOut = writer.toString();
-            assertTrue("no exception in output - bad_request_outputformat_mispelled_query", testOut.contains("Exception"));
-            assertTrue("unexpected exception - bad_request_outputformat_mispelled_query", testOut.contains("outputFormat"));
+            assertTrue("no exception in output - bad_request_outputformat_mispelled_query", testOut.contains(EXCEPTION_TEXT));
+            assertTrue("unexpected exception - bad_request_outputformat_mispelled_query", testOut.contains(OUTPUTFORMAT));
             // 4th test - bad_request_request_query - checks to see what is returned when an invalid request is sent
             writer.close();
+            
+            
+            
+            
+            
             writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(dataset, bad_request_request_query + valid_outputFormat + "&" + bad_request_control_query, bad_requests_set), writer);
             // add to test output
-            fileWriter(outputDir, getCurrentMethod() + ".xml", writer, true);
+            fileWriter(outputDir, getCurrentMethod() + FILE_EXT, writer, true);
             // test to make sure we got an exception
             testOut = writer.toString();
-            assertTrue("no exception in output - bad_request_request_query", testOut.contains("Exception"));
+            assertTrue("no exception in output - bad_request_request_query", testOut.contains(EXCEPTION_TEXT));
             assertTrue("unexpected exception - bad_request_request_query", testOut.contains("Error in request."));
             // 5th test - bad_request_request_mispelled_query - checks to see what is returned when request is misspelled
             writer.close();
+            
+            
+            
+            
             writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(dataset, bad_request_request_mispelled_query + valid_outputFormat + "&" + bad_request_control_query, bad_requests_set), writer);
             // add to test output
-            fileWriter(outputDir, getCurrentMethod() + ".xml", writer, true);
+            fileWriter(outputDir, getCurrentMethod() + FILE_EXT, writer, true);
             // test to make sure we got an exception
             testOut = writer.toString();
-            assertTrue("no exception in output - bad_request_request_mispelled_query", testOut.contains("Exception"));
-            assertTrue("unexpected exception - bad_request_request_mispelled_query", testOut.contains("request"));
+            assertTrue("no exception in output - bad_request_request_mispelled_query", testOut.contains(EXCEPTION_TEXT));
+            assertTrue("unexpected exception - bad_request_request_mispelled_query", testOut.contains(REQUEST));
             // 6th test - bad_request_version_query - checks to see what is returned when the version specified is invalid
             writer.close();
+            
+            
+            
+            
             writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(dataset, bad_request_version_query + valid_outputFormat + "&" + bad_request_control_query, bad_requests_set), writer);
             // add to test output
-            fileWriter(outputDir, getCurrentMethod() + ".xml", writer, true);
+            fileWriter(outputDir, getCurrentMethod() + FILE_EXT, writer, true);
             // test to make sure we got an exception
             testOut = writer.toString();
-            assertTrue("no exception in output - bad_request_version_query", testOut.contains("Exception"));
-            assertTrue("unexpected exception - bad_request_version_query", testOut.contains("version"));
+            
+            //should not fail on this any more as version is not required
+            assertTrue("no exception in output - bad_request_version_query", testOut.contains(EXCEPTION_TEXT));
+            //
+            assertTrue("unexpected exception - bad_request_version_query", testOut.contains("VersionNegotiationFailed, Currently only version 1.0.0 is supported."));
             // 7th test - bad_request_version_misspelled_query - checks to see what is returned when version is misspelled
             writer.close();
+            
+            
+            
+            
+            
             writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(dataset, bad_request_version_misspelled_query + valid_outputFormat + "&" + bad_request_control_query, bad_requests_set), writer);
             // add to test output
-            fileWriter(outputDir, getCurrentMethod() + ".xml", writer, true);
+            fileWriter(outputDir, getCurrentMethod() + FILE_EXT, writer, true);
             // test to make sure we got an exception
             testOut = writer.toString();
-            assertTrue("no exception in output - bad_request_version_misspelled_query", testOut.contains("Exception"));
+             //
+            //should not fail on this any more as version is not required
+            //assertTrue("no exception in output - bad_request_version_misspelled_query", testOut.contains("Exception"));
+            //
             assertTrue("unexpected exception - bad_request_version_misspelled_query", testOut.contains("version"));
             // 8th test - bad_request_service_query - checks to see what is returned when the service requested is invalid
             writer.close();
+            
+            
+            
+            
             writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(dataset, bad_request_service_query + valid_outputFormat + "&" + bad_request_control_query, bad_requests_set), writer);
             // add to test output
-            fileWriter(outputDir, getCurrentMethod() + ".xml", writer, true);
+            fileWriter(outputDir, getCurrentMethod() + FILE_EXT, writer, true);
             // test to make sure we got an exception
             testOut = writer.toString();
-            assertTrue("no exception in output - bad_request_service_query", testOut.contains("Exception"));
-            assertTrue("unexpected exception - bad_request_service_query", testOut.contains("service"));
+            assertTrue("no exception in output - bad_request_service_query", testOut.contains(EXCEPTION_TEXT));
+            assertTrue("unexpected exception - bad_request_service_query", testOut.contains(SERVICE));
             // 9th test - bad_request_service_misspelled_query - checks to see what is returned when service is misspelled
             writer.close();
+            
+            
+            
+            
             writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(dataset, bad_request_service_misspelled_query + valid_outputFormat + "&" + bad_request_control_query, bad_requests_set), writer);
             // add to test output
-            fileWriter(outputDir, getCurrentMethod() + ".xml", writer, true);
+            fileWriter(outputDir, getCurrentMethod() + FILE_EXT, writer, true);
             // test to make sure we got an exception
             testOut = writer.toString();
-            assertTrue("no exception in output - bad_request_service_misspelled_query", testOut.contains("Exception"));
-            assertTrue("unexpected exception - bad_request_service_misspelled_query", testOut.contains("service"));
+            assertTrue("no exception in output - bad_request_service_misspelled_query", testOut.contains(EXCEPTION_TEXT));
+            assertTrue("unexpected exception - bad_request_service_misspelled_query", testOut.contains(SERVICE));
             // 10th test - bad_request_procedure_query - checks to see what is returned when the procedure specified is invalid
             writer.close();
+            
+            
+            
+            
+            
             writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(dataset, bad_request_procedure_query + valid_outputFormat, bad_requests_set), writer);
             // add to test output
-            fileWriter(outputDir, getCurrentMethod() + ".xml", writer, true);
+            fileWriter(outputDir, getCurrentMethod() + FILE_EXT, writer, true);
             // test to make sure we got an exception
             testOut = writer.toString();
-            assertTrue("no exception in output - bad_request_procedure_query", testOut.contains("Exception"));
-            assertTrue("unexpected exception - bad_request_procedure_query", testOut.contains("procedure"));
+            assertTrue("no exception in output - bad_request_procedure_query", testOut.contains(EXCEPTION_TEXT));
+            assertTrue("unexpected exception - bad_request_procedure_query", testOut.contains(PROCEDURE));
             // 11th test - bad_request_procedure_misspelled_query - checks to see what is returned when procedure is misspelled
             writer.close();
+            
+            
+            
+            
             writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(dataset, bad_request_procedure_misspelled_query + valid_outputFormat, bad_requests_set), writer);
             // add to test output
-            fileWriter(outputDir, getCurrentMethod() + ".xml", writer, true);
+            fileWriter(outputDir, getCurrentMethod() + FILE_EXT, writer, true);
             // test to make sure we got an exception
             testOut = writer.toString();
-            assertTrue("no exception in output - bad_request_procedure_misspelled_query", testOut.contains("Exception"));
-            assertTrue("unexpected exception - bad_request_procedure_misspelled_query", testOut.contains("procedure"));
+            assertTrue("no exception in output - bad_request_procedure_misspelled_query", testOut.contains(EXCEPTION_TEXT));
+            assertTrue("unexpected exception - bad_request_procedure_misspelled_query", testOut.contains(PROCEDURE));
+            writer.close();
+            
+            
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -346,7 +405,7 @@ public class SOSdescribeSensorTest {
         writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + bdss_1_query, bdss_1_set), writer);
         fileWriter(outputDir, "watlev_NOAA_NAVD_PRE.xml", writer, false);
         // test for expected values below
-        assertFalse("exception in output", writer.toString().contains("Exception"));
+        assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         assertTrue("missing component", writer.toString().contains("<sml:component name=\"Sensor watlev\">"));
         assertTrue("station id not as expected", writer.toString().contains("<sml:value>urn:ioos:station:authority:NOAA_8779748</sml:value>"));
         System.out.println("------End testBasicDescribeSensorStation------");
@@ -360,7 +419,7 @@ public class SOSdescribeSensorTest {
         Writer writer = new CharArrayWriter();
         writeOutput(parser.enhanceGETRequest(dataset, baseQuery + bdss_2_query, bdss_2_set), writer);
         fileWriter(outputDir, "timeSeriesProfile-Multidimensional-MultipleStations-H.5.1.xml", writer, false);
-        assertFalse("exception in output", writer.toString().contains("Exception"));
+        assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         assertTrue("missing component", writer.toString().contains("<sml:component name=\"Sensor temperature\">"));
         assertTrue("missing/invalid coords", writer.toString().contains("37.5 -76.5"));
         // write as an example
@@ -378,7 +437,7 @@ public class SOSdescribeSensorTest {
         fileWriter(outputDir, "trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.xml", writer, false);
         // write as an example
         fileWriter(exampleOutputDir, "DescribeSensor-Trajectory-sensorML1.0.1.xml", writer, false);
-        assertFalse("exception in output", writer.toString().contains("Exception"));
+        assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
 //        assertTrue("missing component", writer.toString().contains("<sml:component name=\"Sensor humidity\">"));
 //        assertTrue("missing/invalid coords", writer.toString().contains("1990-01-01T00:00:00Z,5.429996490478516,-35.31080627441406"));
         System.out.println("------End testBasicDescribeSensorTrajectory------");
@@ -392,7 +451,7 @@ public class SOSdescribeSensorTest {
         Writer writer = new CharArrayWriter();
         writeOutput(parser.enhanceGETRequest(dataset, baseQuery + bdst_2_query, bdst_2_set), writer);
         fileWriter(outputDir, "trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4.xml", writer, false);
-        assertFalse("exception in output", writer.toString().contains("Exception"));
+        assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
 //        assertTrue("missing component", writer.toString().contains("<sml:identification xlink:href=\"urn:ioos:station:authority:Trajectory7::temperature\"/>"));
 //        assertTrue("missing/invalid coords", writer.toString().contains("1990-01-01T09:00:00Z,29.956968307495117,-1.6200900077819824"));
         System.out.println("------End testBasicDescribeSensorTrajectory2------");
@@ -407,7 +466,7 @@ public class SOSdescribeSensorTest {
         writeOutput(parser.enhanceGETRequest(dataset, baseQuery + bdsp_1_query, bdsp_1_set), writer);
         fileWriter(outputDir, "profile-Contiguous-Ragged-MultipleProfiles-H.3.4.xml", writer, false);
         // write as an example
-        assertFalse("exception in output", writer.toString().contains("Exception"));
+        assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
 //        assertTrue("missing component", writer.toString().contains("<sml:System gml:id=\"sensor-humidity\">"));
 //        assertTrue("missing/invalid latitude", writer.toString().contains("<swe:value>134.0</swe:value>"));
         fileWriter(exampleOutputDir, "DescribeSensor-Profile-sensorML1.0.1.xml", writer, false);
@@ -422,7 +481,7 @@ public class SOSdescribeSensorTest {
         Writer writer = new CharArrayWriter();
         writeOutput(parser.enhanceGETRequest(dataset, baseQuery + bdsp_2_query, bdsp_2_set), writer);
         fileWriter(outputDir, "profile-Indexed-Ragged-MultipleProfiles-H.3.5.xml", writer, false);
-        assertFalse("exception in output", writer.toString().contains("Exception"));
+        assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
 //        assertTrue("missing/invalid unit of measurement", writer.toString().contains("<swe:uom code=\"m\"/>"));
 //        assertTrue("missing/invalid altitude", writer.toString().contains("<swe:value>9.813936233520508</swe:value>"));
         System.out.println("------End testBasicDescribeSensorProfile2------");
@@ -436,7 +495,7 @@ public class SOSdescribeSensorTest {
         Writer writer = new CharArrayWriter();
         writeOutput(parser.enhanceGETRequest(dataset, baseQuery + bdsp_3_query, bdsp_3_set), writer);
         fileWriter(outputDir, "profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1.xml", writer, false);
-        assertFalse("exception in output", writer.toString().contains("Exception"));
+        assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         System.out.println("------End testBasicDescribeSensorProfile2------");
     }
     
@@ -448,7 +507,7 @@ public class SOSdescribeSensorTest {
         Writer writer = new CharArrayWriter();
         writeOutput(parser.enhanceGETRequest(dataset, baseQuery + bdss_watlev_query, bdss_1_set), writer);
         fileWriter(outputDir, "watlev_NOAA_NAVD_PRE_watlev-sensor.xml", writer, false);
-        assertFalse("exception in output", writer.toString().contains("Exception"));
+        assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         assertTrue("missing/invalid identifier", writer.toString().contains("<sml:identifier name=\"coordinates\">"));
         assertTrue("missing/invalid sensor id", writer.toString().contains("<sml:value>urn:ioos:sensor:authority:NOAA_8724698:watlev</sml:value>"));
         // write as an example
@@ -464,7 +523,7 @@ public class SOSdescribeSensorTest {
         Writer writer = new CharArrayWriter();
         writeOutput(parser.enhanceGETRequest(dataset, baseQuery + bdsg_1_query, bdsg_1_set), writer);
         fileWriter(outputDir, "SST_Global_2x2deg_20120626_0000.xml", writer, false);
-        assertFalse("exception in output", writer.toString().contains("Exception"));
+        assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
 //        assertTrue("missing/invalid identifier", writer.toString().contains("<sml:identifier name=\"coordinates\">"));
 //        assertTrue("missing/invalid sensor id", writer.toString().contains("<sml:value>urn:ioos:sensor:authority:NOAA_8724698::watlev</sml:value>"));
         // write as an example
@@ -482,7 +541,7 @@ public class SOSdescribeSensorTest {
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(dataset, baseQuery + bdstp_1_query, bdstp_1_set), writer);
             fileWriter(outputDir, "trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1_trajectory2.xml", writer, false);
-            assertFalse("exception in output", writer.toString().contains("Exception"));
+            assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
             // write as an example
             fileWriter(exampleOutputDir, "DescribeSensor-Section-sensorML1.0.1.xml", writer, false);
         } catch (IOException ex) {
@@ -502,7 +561,7 @@ public class SOSdescribeSensorTest {
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(dataset, baseQuery + bdstp_2_query, bdstp_2_set), writer);
             fileWriter(outputDir, "trajectoryProfile-Ragged-MultipleTrajectories-H.6.3_trajectory3.xml", writer, false);
-            assertFalse("exception in output", writer.toString().contains("Exception"));
+            assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -520,7 +579,7 @@ public class SOSdescribeSensorTest {
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(dataset, baseQuery + bdsp_1_query_bad, bdsp_1_set), writer);
             fileWriter(outputDir, "profile-bad-station-request.xml", writer, false);
-            assertTrue("no exception in output", writer.toString().contains("Exception"));
+            assertTrue("no exception in output", writer.toString().contains(EXCEPTION_TEXT));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -539,7 +598,7 @@ public class SOSdescribeSensorTest {
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + bdss_2_bad_sensor, bdss_2_set), writer);
             fileWriter(outputDir, "station-bad-sensor-request.xml", writer, false);
             // test for expected values below
-            assertTrue("no exception in output", writer.toString().contains("Exception"));
+            assertTrue("no exception in output", writer.toString().contains(EXCEPTION_TEXT));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -558,7 +617,7 @@ public class SOSdescribeSensorTest {
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + bdss_1_query_bad, bdss_1_set), writer);
             fileWriter(outputDir, "station-bad-station-request.xml", writer, false);
             // test for expected values below
-            assertTrue("no exception in output", writer.toString().contains("Exception"));
+            assertTrue("no exception in output", writer.toString().contains(EXCEPTION_TEXT));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -577,7 +636,7 @@ public class SOSdescribeSensorTest {
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + bdst_1_query_bad, bdst_1_set), writer);
             fileWriter(outputDir, "trajectory-bad-station-request.xml", writer, false);
             // test for expected values below
-            assertTrue("no exception in output", writer.toString().contains("Exception"));
+            assertTrue("no exception in output", writer.toString().contains(EXCEPTION_TEXT));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -596,7 +655,7 @@ public class SOSdescribeSensorTest {
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + bdstp_1_query_bad, bdstp_1_set), writer);
             fileWriter(outputDir, "section-bad-station-request.xml", writer, false);
             // test for expected values below
-            assertTrue("no exception in output", writer.toString().contains("Exception"));
+            assertTrue("no exception in output", writer.toString().contains(EXCEPTION_TEXT));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -615,7 +674,7 @@ public class SOSdescribeSensorTest {
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + ext_hawaii_query, ext_hawaii_set), writer);
             fileWriter(outputDir, "station-hawaii-external.xml", writer, false);
             // test for expected values below
-            assertFalse("exception in output", writer.toString().contains("Exception"));
+            assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
             // write as an example for TimeSeries
             fileWriter(exampleOutputDir, "DescribeSensor-TimeSeries-sensorML1.0.1.xml", writer, false);
         } catch (IOException ex) {
@@ -636,7 +695,7 @@ public class SOSdescribeSensorTest {
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + andrw_query, andrw_set), writer);
             fileWriter(outputDir, "andrw-lft.xml", writer, false);
             // test for expected values below
-            assertTrue("no exception in output", writer.toString().contains("Exception"));
+            assertTrue("no exception in output", writer.toString().contains(EXCEPTION_TEXT));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -655,7 +714,7 @@ public class SOSdescribeSensorTest {
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + usace_query, usace_set), writer);
             fileWriter(outputDir, "hs-usace-chl.xml", writer, false);
             // test for expected values below
-            assertFalse("exception in output", writer.toString().contains("Exception"));
+            assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -674,7 +733,7 @@ public class SOSdescribeSensorTest {
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + undkennedy_query, undkennedy_set), writer);
             fileWriter(outputDir, "hsig-undkennedy-ike-vims-3d-waveonly.xml", writer, false);
             // test for expected values below
-            assertFalse("exception in output", writer.toString().contains("Exception"));
+            assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -693,7 +752,7 @@ public class SOSdescribeSensorTest {
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + hwm_tcoon_query, hwm_tcoon_set), writer);
             fileWriter(outputDir, "hwm-tcoon-navd.xml", writer, false);
             // test for expected values below
-            assertFalse("exception in output", writer.toString().contains("Exception"));
+            assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -712,7 +771,7 @@ public class SOSdescribeSensorTest {
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + tm_csi_query, tm_csi_set), writer);
             fileWriter(outputDir, "tm-csi.xml", writer, false);
             // test for expected values below
-            assertFalse("exception in output", writer.toString().contains("Exception"));
+            assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -731,7 +790,7 @@ public class SOSdescribeSensorTest {
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + tm_ike_query, tm_ike_set), writer);
             fileWriter(outputDir, "tm-ike.xml", writer, false);
             // test for expected values below
-            assertFalse("exception in output", writer.toString().contains("Exception"));
+            assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -750,7 +809,7 @@ public class SOSdescribeSensorTest {
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + crms_query, crms_set), writer);
             fileWriter(outputDir, "watlev-crms.xml", writer, false);
             // test for expected values below
-            assertFalse("exception in output", writer.toString().contains("Exception"));
+            assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -769,7 +828,7 @@ public class SOSdescribeSensorTest {
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + crms_2005_query, crms_2005_set), writer);
             fileWriter(outputDir, "watlev-crms-2005.xml", writer, false);
             // test for expected values below
-            assertFalse("exception in output", writer.toString().contains("Exception"));
+            assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -788,7 +847,7 @@ public class SOSdescribeSensorTest {
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + crms_2008_query, crms_2008_set), writer);
             fileWriter(outputDir, "crms-2008-ike-wave.xml", writer, false);
             // test for expected values below
-            assertFalse("exception in output", writer.toString().contains("Exception"));
+            assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -807,7 +866,7 @@ public class SOSdescribeSensorTest {
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + crms_2008_nowave_query, crms_2008_nowave_set), writer);
             fileWriter(outputDir, "crms-2008-ike-nowave.xml", writer, false);
             // test for expected values below
-            assertFalse("exception in output", writer.toString().contains("Exception"));
+            assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -826,7 +885,7 @@ public class SOSdescribeSensorTest {
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + crms_2008_basecycle_query, crms_2008_basecycle_set), writer);
             fileWriter(outputDir, "crms-2008-base-cycle.xml", writer, false);
             // test for expected values below
-            assertFalse("exception in output", writer.toString().contains("Exception"));
+            assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -845,7 +904,7 @@ public class SOSdescribeSensorTest {
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + watlev_csi_query, watlev_csi_set), writer);
             fileWriter(outputDir, "watlev-csi.xml", writer, false);
             // test for expected values below
-            assertFalse("exception in output", writer.toString().contains("Exception"));
+            assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -864,7 +923,7 @@ public class SOSdescribeSensorTest {
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + watlev_ike_query, watlev_ike_set), writer);
             fileWriter(outputDir, "watlev-ike.xml", writer, false);
             // test for expected values below
-            assertFalse("exception in output", writer.toString().contains("Exception"));
+            assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -883,7 +942,7 @@ public class SOSdescribeSensorTest {
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + watlev_ike_61_query, watlev_ike_61_set), writer);
             fileWriter(outputDir, "watlev-ike-61.xml", writer, false);
             // test for expected values below
-            assertFalse("exception in output", writer.toString().contains("Exception"));
+            assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -902,7 +961,7 @@ public class SOSdescribeSensorTest {
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + watlev_noaa_query, watlev_noaa_set), writer);
             fileWriter(outputDir, "watlev-noaa.xml", writer, false);
             // test for expected values below
-            assertFalse("exception in output", writer.toString().contains("Exception"));
+            assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -921,7 +980,7 @@ public class SOSdescribeSensorTest {
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + noaa_navd_query, noaa_navd_set), writer);
             fileWriter(outputDir, "watlev-noaa-navd.xml", writer, false);
             // test for expected values below
-            assertFalse("exception in output", writer.toString().contains("Exception"));
+            assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -938,9 +997,9 @@ public class SOSdescribeSensorTest {
             SOSParser parser = new SOSParser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + jason_satellite_query, jason_satellite_set), writer);
-            fileWriter(outputDir, getCurrentMethod() + ".xml", writer, false);
+            fileWriter(outputDir, getCurrentMethod() + FILE_EXT, writer, false);
             // test for expected values below
-            assertFalse("exception in output", writer.toString().contains("Exception"));
+            assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -957,9 +1016,9 @@ public class SOSdescribeSensorTest {
             SOSParser parser = new SOSParser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + bodega_marinelab_query, bodega_marinelab_set), writer);
-            fileWriter(outputDir, getCurrentMethod() + ".xml", writer, false);
+            fileWriter(outputDir, getCurrentMethod() + FILE_EXT, writer, false);
             // test for expected values below
-            assertFalse("exception in output", writer.toString().contains("Exception"));
+            assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {

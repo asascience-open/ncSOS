@@ -28,6 +28,9 @@ import ucar.unidata.geoloc.LatLonRect;
  * @author scowan
  */
 public class GetCapsOutputter extends SOSOutputFormatter {
+    public static final String GMLTIMEPERIODTYPE = "gml:TimePeriodType";
+    public static final String XLINKHREF = "xlink:href";
+    public static final String XSITYPE = "xsi:type";
     
     private DOMImplementationLS impl;
     private boolean exceptionFlag;
@@ -348,24 +351,24 @@ public class GetCapsOutputter extends SOSOutputFormatter {
             obsOffering.appendChild(getStationPeriod(datasetTime));
         // add network all to procedure list
         Element naProcedure = createElementNS(SOS_NS, PROCEDURE);
-        naProcedure.setAttribute("xlink:href", SOSBaseRequestHandler.getGMLNetworkAll());
+        naProcedure.setAttribute(XLINKHREF, SOSBaseRequestHandler.getGMLNetworkAll());
         obsOffering.appendChild(naProcedure);
         // procedures
         for (String str : stations) {
             Element proc = createElementNS(SOS_NS, PROCEDURE);
-            proc.setAttribute("xlink:href", SOSBaseRequestHandler.getGMLName(str));
+            proc.setAttribute(XLINKHREF, SOSBaseRequestHandler.getGMLName(str));
             obsOffering.appendChild(proc);
         }
         // observed properties
         for (String str : sensors) {
             Element value =createElementNS(SOS_NS, "observedProperty");
-            value.setAttribute("xlink:href", str);
+            value.setAttribute(XLINKHREF, str);
             obsOffering.appendChild(value);
         }
         // feature of interests
         for (String str: stations) {
             Element foi = createElementNS(SOS_NS, "featureOfInterest");
-            foi.setAttribute("xlink:href", SOSBaseRequestHandler.getGMLName(str));
+            foi.setAttribute(XLINKHREF, SOSBaseRequestHandler.getGMLName(str));
             obsOffering.appendChild(foi);
         }
         // response format
@@ -413,17 +416,17 @@ public class GetCapsOutputter extends SOSOutputFormatter {
         obsOffering.appendChild(getStationPeriod(stationDates));
         // feature of interest -- station name?
         Element foi = createElementNS(SOS_NS, FEATURE_INTEREST);
-        foi.setAttribute("xlink:href", SOSBaseRequestHandler.getGMLName(stationName));
+        foi.setAttribute(XLINKHREF, SOSBaseRequestHandler.getGMLName(stationName));
         obsOffering.appendChild(foi);
         // observed properties
         for (String str : sensorNames) {
             Element value = createElementNS(SOS_NS, OBSERVED_PROPERTY);
-            value.setAttribute("xlink:href", str);
+            value.setAttribute(XLINKHREF, str);
             obsOffering.appendChild(value);
         }
         // procedure for this station
         Element selfProcedure = createElementNS(SOS_NS, PROCEDURE);
-        selfProcedure.setAttribute("xlink:href", SOSBaseRequestHandler.getGMLName(stationName));
+        selfProcedure.setAttribute(XLINKHREF, SOSBaseRequestHandler.getGMLName(stationName));
         obsOffering.appendChild(selfProcedure);
 //        // procedures
 //        for (String str : sensorNames) {
@@ -515,7 +518,7 @@ public class GetCapsOutputter extends SOSOutputFormatter {
         //set get capabilities GET request link
         NodeList getList = parent.getElementsByTagNameNS(OWS_NS, "Get");
         Element getElm = (Element) getList.item(0);
-        getElm.setAttribute("xlink:href", threddsURI);
+        getElm.setAttribute(XLINKHREF, threddsURI);
 
         //set get capabilities Post request link -- not supported TODO
 //        NodeList fstNm12 = fstNmElmnt.getElementsByTagName("ows:Post");
@@ -529,7 +532,7 @@ public class GetCapsOutputter extends SOSOutputFormatter {
         if (stationDateRange != null) {
             // time
             Element timePeriod = createElementNS(GML_NS, TIME_PERIOD);
-            timePeriod.setAttribute("xsi:type", "gml:TimePeriodType");
+            timePeriod.setAttribute(XSITYPE, GMLTIMEPERIODTYPE);
             // begin
             Element begin = createElementNS(GML_NS, BEGIN_POSITION);
             begin.setTextContent(stationDateRange.getStart().toString());

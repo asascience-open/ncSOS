@@ -15,15 +15,15 @@ import org.w3c.dom.Element;
  *
  * @author SCowan
  */
-
 /// class contains necessary info for finding a data slice in a data set, then 
 /// saving found information. Used primarily by GRID datasets
 class DataSlice {
+
     private double latitude, longitude, depth;
     private String eventTime;
     private float[] dataValue;
     private int stationNumber;
-    
+
     public DataSlice(double latitude, double longitude, double depth, String eventTime, float[] dataValue) {
         this.latitude = latitude;
         this.longitude = longitude;
@@ -31,30 +31,35 @@ class DataSlice {
         this.eventTime = eventTime;
         this.dataValue = dataValue;
     }
-    
+
     public void setStationNumber(int stNum) {
         this.stationNumber = stNum;
     }
+
     public int getStationNumber() {
         return this.stationNumber;
     }
-    
+
     public String getEventTime() {
         return eventTime;
     }
+
     public Double getLatitude() {
         return latitude;
     }
+
     public Double getLongitude() {
         return longitude;
     }
+
     public Double getDepth() {
         return depth;
     }
+
     public Float[] getDataValues() {
         if (dataValue != null) {
             Float[] retval = new Float[dataValue.length];
-            for(int i=0;i<dataValue.length;i++) {
+            for (int i = 0; i < dataValue.length; i++) {
                 retval[i] = dataValue[i];
             }
             return retval;
@@ -71,33 +76,34 @@ class DataSlice {
  * @version 1.0.0
  */
 public abstract class SOSOutputFormatter {
-	private Map<String, String> nsToPrefix;
-	public static final String OBSERVATION = "Observation";
+
+    private Map<String, String> nsToPrefix;
+    public static final String OBSERVATION = "Observation";
     public static final String OBSERVATION_COLLECTION = "ObservationCollection";
-	public static final String MEMBER = "member";
-	public static final String SAMPLING_TIME = "samplingTime";
-	public static final String META_DATA_PROP = "metaDataProperty";
-	public static final String TIME_PERIOD = "TimePeriod";
-	public static final String BEGIN_POSITION  = "beginPosition";
-	public static final String END_POSITION = "endPosition";
-	public static final String IDENTIFICATION = "identification";
-	public static final String BOUNDED_BY = "boundedBy";
-	public static final String ENVELOPE = "Envelope";
-	public static final String UPPER_CORNER =  "upperCorner";
-	public static final String LOWER_CORNER = "lowerCorner";
-	public static final String GENERIC_META_DATA = "GenericMetaData";
-	public static final String POINT = "Point";
-	public static final String POS = "pos";
-	public static final String RESULT = "result";
+    public static final String MEMBER = "member";
+    public static final String SAMPLING_TIME = "samplingTime";
+    public static final String META_DATA_PROP = "metaDataProperty";
+    public static final String TIME_PERIOD = "TimePeriod";
+    public static final String BEGIN_POSITION = "beginPosition";
+    public static final String END_POSITION = "endPosition";
+    public static final String IDENTIFICATION = "identification";
+    public static final String BOUNDED_BY = "boundedBy";
+    public static final String ENVELOPE = "Envelope";
+    public static final String UPPER_CORNER = "upperCorner";
+    public static final String LOWER_CORNER = "lowerCorner";
+    public static final String GENERIC_META_DATA = "GenericMetaData";
+    public static final String POINT = "Point";
+    public static final String POS = "pos";
+    public static final String RESULT = "result";
     public static final String NAME = "name";
-    public static final String TIME = "Time";
+    public static final String TIME = "time";
     public static final String ITEM = "item";
     public static final String FIELD = "field";
     public static final String CODE_SPACE = "codeSpace";
     public static final String CODE = "code";
     public static final String DEFINITION = "definition";
     public static final String UOM = "uom";
-    public static final String TERM =  "Term";
+    public static final String TERM = "Term";
     public static final String OFFERING = "offering";
     public static final String OBSERVED_PROPERTY = "observedProperty";
     public static final String OBSERVATION_OFFERING = "ObservationOffering";
@@ -147,7 +153,7 @@ public abstract class SOSOutputFormatter {
     public static final String TITLE = "title";
     public static final String DATA_RECORD = "DataRecord";
     public static final String DATA_ARRAY = "DataArray";
-    public static final String COORDINATE  = "coordinate";
+    public static final String COORDINATE = "coordinate";
     public static final String ELEMENT_COUNT = "elementCount";
     public static final String CONTACT_LIST = "ContactList";
     public static final String COUNT = "Count";
@@ -159,12 +165,10 @@ public abstract class SOSOutputFormatter {
     private final static String SWE = "xmlns:swe";
     private final static String OM = "xmlns:om";
     private final static String SWE2 = "xmlns:swe2";
-
     private final static String XLINK = "xmlns:xlink";
     protected Document document;
-
     protected String OWS_NS;
-    protected  String GML_NS;
+    protected String GML_NS;
     protected String SOS_NS;
     protected String SML_NS;
     protected String SWE_NS;
@@ -172,59 +176,58 @@ public abstract class SOSOutputFormatter {
     protected String XLINK_NS;
     protected String SWE2_NS;
 
-    public SOSOutputFormatter(){
-    	nsToPrefix = new HashMap<String, String>();
-  
+    public SOSOutputFormatter() {
+        nsToPrefix = new HashMap<String, String>();
+
 
     }
-    
- 
-    public String getNamespacePrefix(String namespace){
-    	return nsToPrefix.get(namespace);
-    	
+
+    public String getNamespacePrefix(String namespace) {
+        return nsToPrefix.get(namespace);
+
     }
-    
-    protected Element createElementNS(String elemNs, String elemVal){
-    	Element elem = document.createElementNS(elemNs, elemVal);
-		elem.setPrefix(this.getNamespacePrefix(elemNs));
-		return elem;
+
+    protected Element createElementNS(String elemNs, String elemVal) {
+        Element elem = document.createElementNS(elemNs, elemVal);
+        elem.setPrefix(this.getNamespacePrefix(elemNs));
+        return elem;
     }
-    
-    protected void initNamespaces(){
-    	if(document != null){
-    		Element root = document.getDocumentElement();
-    		OM_NS = root.getAttribute(OM);
-    		OWS_NS = root.getAttribute(OWS);
-    		GML_NS = root.getAttribute(GML);
-    		SOS_NS = root.getAttribute(SOS);
-    		SML_NS = root.getAttribute(SML);
-    		SWE_NS = root.getAttribute(SWE);
-    		SWE2_NS = root.getAttribute(SWE2);
-    		XLINK_NS = root.getAttribute(XLINK);
-    		nsToPrefix.put(OM_NS, "om");
-    		nsToPrefix.put(OWS_NS, "ows");
-    		nsToPrefix.put(GML_NS, "gml");
-    		nsToPrefix.put(SOS_NS, "sos");
-    		nsToPrefix.put(SML_NS, "sml");
-    		nsToPrefix.put(SWE_NS, "swe");
-    		nsToPrefix.put(SWE2_NS, "swe2");
-    		nsToPrefix.put(XLINK_NS, "xlink");
-    	}
+
+    protected void initNamespaces() {
+        if (document != null) {
+            Element root = document.getDocumentElement();
+            OM_NS = root.getAttribute(OM);
+            OWS_NS = root.getAttribute(OWS);
+            GML_NS = root.getAttribute(GML);
+            SOS_NS = root.getAttribute(SOS);
+            SML_NS = root.getAttribute(SML);
+            SWE_NS = root.getAttribute(SWE);
+            SWE2_NS = root.getAttribute(SWE2);
+            XLINK_NS = root.getAttribute(XLINK);
+            nsToPrefix.put(OM_NS, "om");
+            nsToPrefix.put(OWS_NS, "ows");
+            nsToPrefix.put(GML_NS, "gml");
+            nsToPrefix.put(SOS_NS, "sos");
+            nsToPrefix.put(SML_NS, "sml");
+            nsToPrefix.put(SWE_NS, "swe");
+            nsToPrefix.put(SWE2_NS, "swe2");
+            nsToPrefix.put(XLINK_NS, "xlink");
+        }
     }
-    
-    
-    
+
     /**
      * Adds data from a formatted string to some container defined in the individual formatters.
      * @param dataFormattedString a csv string that usually follows the format of key=value,key1=value1,key2=value2,etc
      *  'value' can be csvs as well, allowing for multiple values per key
      */
     public abstract void addDataFormattedStringToInfoList(String dataFormattedString);
+
     /**
      * Sets up the outputter to write an exception when writeOutput is invoked.
      * @param message - message to display to the user
      */
     public abstract void setupExceptionOutput(String message);
+
     /**
      * Writes prepared output to the writer (usually will be a response stream from a http request
      * @param writer the stream where the output will be written to.
