@@ -27,3 +27,8 @@ ncsos.iml
 .classpath
 .project
 .settings/
+/nbproject/
+/dist
+/lib
+*.db
+/tests

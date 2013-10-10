@@ -19,22 +19,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 import ucar.nc2.dataset.NetcdfDataset;
+
 /**
  * Reads and parses a sos request coming in from thredds.
  * @author abird
  * @modified scowan
  */
 public class SOSParser {
-	
+
+    public static final String ERROR = "error";
+    public static final String GETCAPABILITIES = "GetCapabilities";
+    public static final String OUTPUTHANDLER = "outputHandler";
+    public static final String RESPONSECONTENTTYPE = "responseContentType";
+    public static final String SECTIONS = "sections";
+    public static final String TEXTXML = "text/xml";
+    public static final String USECACHE = "usecache";
     private HashMap<String, Object> queryParameters;
     private Logger _log;
     private Map<String, String> coordsHash;
-    
     private final String defService = "sos";
     private final String defVersion = "1.0.0";
     private final String TRUE_STRING = "true";
     public final static String PROCEDURE = "procedure";
-    public final static String VERSION = "version";
+    public final static String ACCEPT_VERSIONS = "AcceptVersions";
     public final static String REQUEST = "request";
     public final static String SERVICE = "service";
     public final static String LAT = "lat";
@@ -42,26 +49,26 @@ public class SOSParser {
     public final static String DEPTH = "depth";
     public final static String RESPONSE_FORMAT = "responseFormat";
     public final static String OUTPUT_FORMAT = "outputFormat";
-    public final static String OBSERVED_PROPERTY ="observedProperty";
-    public final static String OFFERING  = "offering";
+    public final static String OBSERVED_PROPERTY = "observedProperty";
+    public final static String OFFERING = "offering";
     public final static String EVENT_TIME = "eventTime";
+    private final int numDays = 7;
     // millisecs per sec * secs per hour * hour per day * day limit (1 week)
-    private final long CACHE_AGE_LIMIT = 1000 * 3600 * 24 * 7;
-    // debug value
-//    private final long CACHE_AGE_LIMIT = 7;
-    
+    private final long CACHE_AGE_LIMIT = 1000 * 3600 * 24 * numDays;
+
     // enum for supported request types (used primarily for string comparison)
     private enum SupportedRequests {
+
         GetCapabilities, GetObservation, DescribeSensor
     }
-    
+
     /**
      * Sets the logger for error output using the SOSParser class.
      */
     public SOSParser() {
         _log = LoggerFactory.getLogger(SOSParser.class);
     }
-    
+
     /**
      * enhanceGETRequest - provides direct access to parsing a sos request and create handler for the type of request coming in
      * @param dataset NetcdfDataset to enhanceGETRequest the NCML
@@ -87,42 +94,44 @@ public class SOSParser {
         // clear anything that can cause issue if we were to use the same parser for multiple requests
         queryParameters = new HashMap<String, Object>();
         coordsHash = new HashMap<String, String>();
-        
+
         // error handler
         SOSErrorResponseHandler errHandler = new SOSErrorResponseHandler(null);
-        
+
         if (query != null) {
             // parse the query string
             ParseQuery(query);
         } else {
             // we are assuming that a request made here w/o a query string is a 'GetCapabilities' request
             // add the request to our query parameters, as well as some other default values
-            queryParameters.put("request", "GetCapabilities");
-            queryParameters.put("service", defService);
-            queryParameters.put(VERSION, defVersion);
+            queryParameters.put(REQUEST, GETCAPABILITIES);
+            queryParameters.put(SERVICE, defService);
+            queryParameters.put(ACCEPT_VERSIONS, defVersion);
         }
-        
+
         // check the query parameters to make sure all required parameters are passed in
-        HashMap<String,Object> retval = checkQueryParameters();
-        if (retval.containsKey("error")) {
-            errHandler.setErrorExceptionOutput(retval.get("error").toString());
-            retval.put("outputHandler", errHandler.getOutputHandler());
-            retval.put("responseContentType", "text/xml");
+        HashMap<String, Object> retval = checkQueryParameters();
+
+        if (retval.containsKey(ERROR)) {
+            errHandler.setErrorExceptionOutput(retval.get(ERROR).toString());
+            retval.put(OUTPUTHANDLER, errHandler.getOutputHandler());
+            retval.put(RESPONSECONTENTTYPE, TEXTXML);
             return retval;
         }
-        
+
         try {
-            switch (SupportedRequests.valueOf(queryParameters.get("request").toString())) {
+            switch (SupportedRequests.valueOf(queryParameters.get(REQUEST).toString())) {
                 case GetCapabilities:
                     _log.debug("In GetCapabilities of switch");
                     SOSGetCapabilitiesRequestHandler capHandler = null;
                     // indicate that our response will be in xml
-                    retval.put("responseContentType", "text/xml");
+                    retval.put(RESPONSECONTENTTYPE, TEXTXML);
                     String sections = "all";
-                    if (queryParameters.containsKey("sections"))
-                        sections = queryParameters.get("sections").toString();
+                    if (queryParameters.containsKey(SECTIONS)) {
+                        sections = queryParameters.get(SECTIONS).toString();
+                    }
                     // check to see if cache is enabled
-                    if (queryParameters.containsKey("usecache") && queryParameters.get("usecache").toString().equals(TRUE_STRING) && savePath != null) {
+                    if (queryParameters.containsKey(USECACHE) && queryParameters.get(USECACHE).toString().equals(TRUE_STRING) && savePath != null) {
                         //Check to see if get caps exists, if it does not actual parse the file
                         _log.debug("Cache enabled for GetCapabilities");
                         File f = new File(savePath + getCacheXmlFileName(threddsURI));
@@ -132,17 +141,17 @@ public class SOSParser {
                             Calendar today = Calendar.getInstance();
                             //if the file is older than seven days (age limit) reprocess the data
                             if (today.getTimeInMillis() - fileDateTime > CACHE_AGE_LIMIT) {
-                                _log.debug("File is older than 7 days");
+                                _log.debug("File is older than " + Integer.toString(numDays) + " days");
                                 capHandler = createGetCapsCacheFile(dataset, threddsURI, savePath);
                                 capHandler.resetCapabilitiesSections(sections);
                             } else {
                                 try {
                                     // add the cached file to the response
-                                    retval.put("outputHandler", fileIsInDate(f, sections));
+                                    retval.put(OUTPUTHANDLER, fileIsInDate(f, sections));
                                 } catch (Exception ex) {
                                     _log.error(ex.getLocalizedMessage());
                                     errHandler.setErrorExceptionOutput("Unable to retrieve cached get capabilities document");
-                                    retval.put("outputHandler", errHandler.getOutputHandler());
+                                    retval.put(OUTPUTHANDLER, errHandler.getOutputHandler());
                                 }
                             }
                         } else {
@@ -166,11 +175,10 @@ public class SOSParser {
                     }
                     if (capHandler != null) {
                         parseGetCaps(capHandler);
-                        retval.put("outputHandler", capHandler.getOutputHandler());
-                    }
-                    else if (!retval.containsKey("outputHandler")) {
+                        retval.put(OUTPUTHANDLER, capHandler.getOutputHandler());
+                    } else if (!retval.containsKey(OUTPUTHANDLER)) {
                         errHandler.setErrorExceptionOutput("Internal Error in preparing output for GetCapabilities request, received null handler.");
-                        retval.put("outputHandler", errHandler.getOutputHandler());
+                        retval.put(OUTPUTHANDLER, errHandler.getOutputHandler());
                     }
                     break;
                 case GetObservation:
@@ -184,31 +192,33 @@ public class SOSParser {
                         coordsHash.put(DEPTH, queryParameters.get(DEPTH).toString());
                     }
                     try {
-                    	
-                    	String [] procedure = null;
-                    	String [] eventTime = null;
-                    	
-                    	if(queryParameters.containsKey(PROCEDURE))
-                    		procedure =  (String[])queryParameters.get(PROCEDURE);
-                    
-                    	if(queryParameters.containsKey(EVENT_TIME))
-                    		eventTime = (String[])queryParameters.get(EVENT_TIME);
+
+                        String[] procedure = null;
+                        String[] eventTime = null;
+
+                        if (queryParameters.containsKey(PROCEDURE)) {
+                            procedure = (String[]) queryParameters.get(PROCEDURE);
+                        }
+
+                        if (queryParameters.containsKey(EVENT_TIME)) {
+                            eventTime = (String[]) queryParameters.get(EVENT_TIME);
+                        }
                         // create a new handler for our get observation request and then write its result to output
-                        obsHandler = new SOSGetObservationRequestHandler(dataset, 
-                        												procedure,
-                                                                        (String)queryParameters.get(OFFERING),
-                                                                        (String[])queryParameters.get(OBSERVED_PROPERTY),
-                                                                        eventTime,
-                                                                        queryParameters.get(RESPONSE_FORMAT).toString(),
-                                                                        coordsHash);
+                        obsHandler = new SOSGetObservationRequestHandler(dataset,
+                                procedure,
+                                (String) queryParameters.get(OFFERING),
+                                (String[]) queryParameters.get(OBSERVED_PROPERTY),
+                                eventTime,
+                                queryParameters.get(RESPONSE_FORMAT).toString(),
+                                coordsHash);
                         // below indicates that we got an exception and we should return it
                         if (obsHandler.getOutputHandler().getClass() == GetCapsOutputter.class) {
-                            retval.put("responseContentType", "text/xml");
-                            retval.put("outputHandler", obsHandler.getOutputHandler());
+                            retval.put(RESPONSECONTENTTYPE, TEXTXML);
+                            retval.put(OUTPUTHANDLER, obsHandler.getOutputHandler());
                             break;
                         }
                         // set our content type for the response
-                        retval.put("responseContentType", obsHandler.getContentType());
+                        retval.put(RESPONSECONTENTTYPE, obsHandler.getContentType());
                         if (obsHandler.getFeatureDataset() == null) {
                             obsHandler.setException("Uknown or invalid feature type");
                         } else if (obsHandler.getDatasetFeatureType() == ucar.nc2.constants.FeatureType.GRID && obsHandler.getCDMDataset() == null) {
@@ -217,37 +227,37 @@ public class SOSParser {
                             obsHandler.parseObservations();
                         }
                         // add our handler to the return value
-                        retval.put("outputHandler", obsHandler.getOutputHandler());
+                        retval.put(OUTPUTHANDLER, obsHandler.getOutputHandler());
                     } catch (Exception ex) {
                         _log.error(ex.getMessage());
                         errHandler.setErrorExceptionOutput("Internal Error in creating output for GetObservation request - " + ex.toString());
-                        retval.put("outputHandler", errHandler.getOutputHandler());
+                        retval.put(OUTPUTHANDLER, errHandler.getOutputHandler());
                     }
                     break;
                 case DescribeSensor:
                     try {
                         // response will always be text/xml
-                        retval.put("responseContentType", "text/xml");
+                        retval.put(RESPONSECONTENTTYPE, TEXTXML);
                         SOSDescribeSensorHandler sensorHandler;
                         // get the first procedure
-                        String procedure = ((String[])queryParameters.get(PROCEDURE))[0];
+                        String procedure = ((String[]) queryParameters.get(PROCEDURE))[0];
                         // create a describe sensor handler
                         sensorHandler = new SOSDescribeSensorHandler(dataset,
                                 queryParameters.get(OUTPUT_FORMAT).toString(),
                                 procedure,
                                 threddsURI,
                                 query);
-                        retval.put("outputHandler",sensorHandler.getOutputHandler());
+                        retval.put(OUTPUTHANDLER, sensorHandler.getOutputHandler());
                     } catch (Exception ex) {
                         _log.error(ex.getStackTrace().toString());
                         errHandler.setErrorExceptionOutput("Internal System Exception in setting up DescribeSensor handler - " + ex.toString());
-                        retval.put("outputHandler", errHandler.getOutputHandler());
+                        retval.put(OUTPUTHANDLER, errHandler.getOutputHandler());
                     }
                     break;
                 default:
                     // return a 'not supported' error
-                    errHandler.setErrorExceptionOutput(queryParameters.get("request").toString() + " is not a supported request");
-                    retval.put("outputHandler", errHandler.getOutputHandler());
+                    errHandler.setErrorExceptionOutput(queryParameters.get(REQUEST).toString() + " is not a supported request");
+                    retval.put(OUTPUTHANDLER, errHandler.getOutputHandler());
                     _log.debug(queryParameters.get("request").toString() + " is not a supported request");
                     _log.error("Invalid request parameter: " + queryParameters.get("request").toString() + " is not a supported request");
                     break;
@@ -258,24 +268,25 @@ public class SOSParser {
             _log.debug("Exception encountered " + ex.getMessage());
             try {
                 errHandler.setErrorExceptionOutput("Unrecognized request " + queryParameters.get("request").toString());
-                retval.put("outputHandler", errHandler.getOutputHandler());
-            } catch (Exception e) { }
+                retval.put(OUTPUTHANDLER, errHandler.getOutputHandler());
+            } catch (Exception e) {
+            }
         }
-        
+
         return retval;
     }
-    
+
     private void parseGetCaps(SOSGetCapabilitiesRequestHandler capHandler) throws IOException {
         // do our parsing
         capHandler.parseGetCapabilitiesDocument();
     }
-    
+
     private void ParseQuery(String query) {
         String[] queryArguments = query.split("&");
-        for(String arg : queryArguments) {
+        for (String arg : queryArguments) {
             String[] keyVal = arg.split("=");
             if (keyVal.length != 2) {
-                queryParameters.put("error", "invalid argument " + arg);
+                queryParameters.put(ERROR, "invalid argument " + arg);
             } else {
                 if (keyVal[0].equalsIgnoreCase(PROCEDURE)) {
                     String[] howManyStation = keyVal[1].replace("%3A", ":").split(",");
@@ -284,48 +295,48 @@ public class SOSParser {
 //                    for (int j = 0; j < howManyStation.length; j++) {
 //                        stList.add(howManyStation[j].substring(howManyStation[j].lastIndexOf(":") + 1));
 //                    }
-                    
-                    queryParameters.put(keyVal[0].toLowerCase(), howManyStation );
-                } else if (keyVal[0].equalsIgnoreCase(RESPONSE_FORMAT) ||
-                		keyVal[0].equalsIgnoreCase(OUTPUT_FORMAT)) {
+
+                    queryParameters.put(keyVal[0].toLowerCase(), howManyStation);
+                } else if (keyVal[0].equalsIgnoreCase(RESPONSE_FORMAT)
+                        || keyVal[0].equalsIgnoreCase(OUTPUT_FORMAT)) {
                     try {
                         String val = URLDecoder.decode(keyVal[1], "UTF-8");
-                        queryParameters.put(keyVal[0],val);
+                        queryParameters.put(keyVal[0], val);
                     } catch (Exception e) {
                         _log.debug("Exception in decoding: " + keyVal[1] + " - " + e.getMessage());
                         _log.error("Exception in decoding: " + keyVal[1] + " - " + e.getMessage());
-                        queryParameters.put(keyVal[0],keyVal[1]);
+                        queryParameters.put(keyVal[0], keyVal[1]);
                     }
                 } else if (keyVal[0].equalsIgnoreCase(EVENT_TIME)) {
                     String[] eventtime;
                     if (keyVal[1].contains("/")) {
                         eventtime = keyVal[1].split("/");
                     } else {
-                        eventtime = new String[] { keyVal[1] };
+                        eventtime = new String[]{keyVal[1]};
                     }
-                    queryParameters.put(keyVal[0],eventtime);
+                    queryParameters.put(keyVal[0], eventtime);
                 } else if (keyVal[0].equalsIgnoreCase(OBSERVED_PROPERTY)) {
                     String[] param;
                     if (keyVal[1].contains(",")) {
                         param = keyVal[1].split(",");
                     } else {
-                        param = new String[] { keyVal[1] };
+                        param = new String[]{keyVal[1]};
                     }
-                    queryParameters.put(keyVal[0],param);
+                    queryParameters.put(keyVal[0], param);
                 } else {
                     queryParameters.put(keyVal[0], keyVal[1]);
                 }
             }
         }
     }
-        
+
     private String getCacheXmlFileName(String threddsURI) {
         _log.debug("thredds uri: " + threddsURI);
         String[] splitStr = threddsURI.split("/");
-        String dName = splitStr[splitStr.length-1];
+        String dName = splitStr[splitStr.length - 1];
         splitStr = dName.split("\\.");
         dName = "";
-        for (int i=0; i<splitStr.length-1; i++) {
+        for (int i = 0; i < splitStr.length - 1; i++) {
             dName += splitStr[i] + ".";
         }
         return "/" + dName + "xml";
@@ -350,40 +361,43 @@ public class SOSParser {
         retval.setSections(sections);
         return retval;
     }
-    
+
     private HashMap<String, Object> checkQueryParameters() {
         try {
-            HashMap<String,Object> retval = new HashMap<String, Object>();
-            String[] requiredGlobalParameters = {REQUEST, SERVICE, VERSION };
-            String[] requiredDSParameters = { PROCEDURE, OUTPUT_FORMAT };
-            String[] requiredGOParameters = { PROCEDURE, OFFERING, OBSERVED_PROPERTY, RESPONSE_FORMAT };
+            HashMap<String, Object> retval = new HashMap<String, Object>();
+            String[] requiredGlobalParameters = {REQUEST, SERVICE};
+            String[] requiredDSParameters = {PROCEDURE, OUTPUT_FORMAT};
+            String[] requiredGOParameters = {PROCEDURE, OFFERING, OBSERVED_PROPERTY, RESPONSE_FORMAT};
             System.out.println(queryParameters.toString());
             // general parameters expected
-            if (queryParameters.containsKey("error")) {
-                retval.put("error", "Error with request - " + queryParameters.get("error").toString());
+            if (queryParameters.containsKey(ERROR)) {
+                retval.put(ERROR, "Error with request - " + queryParameters.get(ERROR).toString());
                 return retval;
             } else {
                 for (String req : requiredGlobalParameters) {
                     if (!queryParameters.containsKey(req)) {
-                        retval.put("error", "Required parameter '" + req + "' not found. Check GetCapabilities document for required parameters.");
+                        retval.put(ERROR, "Required parameter '" + req + "' not found. Check GetCapabilities document for required parameters.");
                         return retval;
                     }
                 }
                 // check requirements for version and service
-                if (!queryParameters.get(VERSION).toString().equalsIgnoreCase("1.0.0")) {
-                    retval.put("error", "Currently only version 1.0.0 is supported.");
-                    return retval;
-                } else if (!queryParameters.get("service").toString().equalsIgnoreCase("sos")) {
-                    retval.put("error", "Currently the only supported service is SOS.");
+                if (queryParameters.containsKey(ACCEPT_VERSIONS)) {
+                    if (!queryParameters.get(ACCEPT_VERSIONS).toString().equalsIgnoreCase(defVersion)) {
+                        retval.put(ERROR, "VersionNegotiationFailed, Currently only version " + defVersion + " is supported.");
+                        return retval;
+                    }
+                }
+                if (!queryParameters.get(SERVICE).toString().equalsIgnoreCase(defService)) {
+                    retval.put(ERROR, "Currently the only supported service is SOS.");
                     return retval;
                 }
             }
             // specific parameters expected
-            switch (SupportedRequests.valueOf(queryParameters.get("request").toString())) {
+            switch (SupportedRequests.valueOf(queryParameters.get(REQUEST).toString())) {
                 case DescribeSensor:
                     for (String req : requiredDSParameters) {
                         if (!queryParameters.containsKey(req)) {
-                            retval.put("error", "Required parameter '" + req + "' not found. Check GetCapabilities document for required parameters of DescribeSensor requests.");
+                            retval.put(ERROR, "Required parameter '" + req + "' not found. Check GetCapabilities document for required parameters of DescribeSensor requests.");
                             return retval;
                         }
                     }
@@ -391,7 +405,7 @@ public class SOSParser {
                 case GetObservation:
                     for (String req : requiredGOParameters) {
                         if (!queryParameters.containsKey(req)) {
-                            retval.put("error", "Required parameter '" + req + "' not found. Check GetCapabilities document for required parameters of GetObservation requests.");
+                            retval.put(ERROR, "Required parameter '" + req + "' not found. Check GetCapabilities document for required parameters of GetObservation requests.");
                             return retval;
                         }
                     }
@@ -402,8 +416,8 @@ public class SOSParser {
             return retval;
         } catch (Exception ex) {
             _log.error(ex.toString());
-            HashMap<String,Object> retval = new HashMap<String, Object>();
-            retval.put("error", "Error in request. Check required parameters from GetCapabilities document and try again.");
+            HashMap<String, Object> retval = new HashMap<String, Object>();
+            retval.put(ERROR, "Error in request. Check required parameters from GetCapabilities document and try again.");
             return retval;
         }
     }
