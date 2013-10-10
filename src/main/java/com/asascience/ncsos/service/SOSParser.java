@@ -323,6 +323,15 @@ public class SOSParser {
                         param = new String[]{keyVal[1]};
                     }
                     queryParameters.put(keyVal[0], param);
+                } else if (keyVal[0].equalsIgnoreCase(ACCEPT_VERSIONS)) {
+                    String[] param;
+                    if (keyVal[1].contains(",")) {
+                        param = keyVal[1].split(",");
+                    } else {
+                        param = new String[]{keyVal[1]};
+                    }
+                    queryParameters.put(ACCEPT_VERSIONS, param);
+
                 } else {
                     queryParameters.put(keyVal[0], keyVal[1]);
                 }
@@ -382,7 +391,13 @@ public class SOSParser {
                 }
                 // check requirements for version and service
                 if (queryParameters.containsKey(ACCEPT_VERSIONS)) {
-                    if (!queryParameters.get(ACCEPT_VERSIONS).toString().equalsIgnoreCase(defVersion)) {
+                    String[] versions = (String[]) queryParameters.get(ACCEPT_VERSIONS);
+                    if (versions != null && versions.length ==1) {                        
+                        if (!versions[0].toString().equalsIgnoreCase(defVersion)) {
+                            retval.put(ERROR, "VersionNegotiationFailed, Currently only version " + defVersion + " is supported.");
+                            return retval;
+                        }
+                    }else{
                         retval.put(ERROR, "VersionNegotiationFailed, Currently only version " + defVersion + " is supported.");
                         return retval;
                     }

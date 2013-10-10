@@ -29,7 +29,7 @@ public class SOSGetObsTest {
     private static final String defaultAuthority = "authority";
    
     // final strings
-    private static final String baseRequest = "request=GetObservation&AcceptVersions=1.0.0&service=sos&responseFormat=text%2Fxml%3Bsubtype%3D%22om%2F1.0.0%22";
+    private static final String baseRequest = "request=GetObservation&acceptVersions=1.0.0&service=sos&responseFormat=text%2Fxml%3Bsubtype%3D%22om%2F1.0.0%22";
     private static final String IoosSosRequest = "request=GetObservation&AcceptVersions=1.0.0&service=sos&responseFormat=text%2Fxml%3Bsubtype%3D%22om%2F1.0.0%2Fprofiles%2Fioos_sos%2F1.0%22";
     
     private static final String imeds1 = "resources/datasets/sura/Hsig_UNDKennedy_IKE_VIMS_3D_WAVEONLY.nc";
