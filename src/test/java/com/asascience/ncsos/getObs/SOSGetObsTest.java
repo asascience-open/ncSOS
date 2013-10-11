@@ -430,6 +430,8 @@ public class SOSGetObsTest {
             String fileName = getCurrentMethod() + ".xml";
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
+            //must contain dimension in CompositePhenomenon
+            assertTrue("Invalid CompositePhenomenon", write.toString().contains("<swe:CompositePhenomenon dimension=\"1\" gml:id=\"observedProperties\">"));
             dataAvailableInOutputFile(write);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());

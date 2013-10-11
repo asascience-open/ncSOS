@@ -24,6 +24,16 @@ import ucar.nc2.constants.FeatureType;
  * @author SCowan
  */
 public class IoosSos10 extends BaseOutputFormatter {
+    public static final String COMPOSITEPHENOMENON = "CompositePhenomenon";
+    public static final String DIMENSION = "dimension";
+    public static final String MULTIPOINT = "MultiPoint";
+    public static final String OBSERVATIONDATA = "observationData";
+    public static final String OBSERVEDPROPERTIES = "observedProperties";
+    public static final String POINTMEMBERS = "pointMembers";
+    public static final String RESPONSE_OBSERVED_PROPERTIES = "Response Observed Properties";
+    public static final String SRSNAME = "srsName";
+    public static final String STATIONS = "stations";
+    public static final String XSISCHEMALOCATION = "xsi:schemaLocation";
     
     // private fields
     private String[] procedures;
@@ -224,12 +234,12 @@ public class IoosSos10 extends BaseOutputFormatter {
          * </swe:CompositePhenomenon>
          */
         List<String> obsProps = new ArrayList<String>(this.parent.getRequestedObservedProperties());
-        Element parent = createElementNS(SWE_NS, "CompositePhenomenon");
-        parent.setAttribute("dimenion", obsProps.size() + "");
-        parent.setAttributeNS(GML_NS, ID, "observedProperties");
+        Element parent = createElementNS(SWE_NS, COMPOSITEPHENOMENON);
+        parent.setAttribute(DIMENSION, obsProps.size() + "");
+        parent.setAttributeNS(GML_NS, ID, OBSERVEDPROPERTIES);
         
         Element name = createElementNS(GML_NS, NAME);
-        name.setTextContent("Response Observed Properties");
+        name.setTextContent(RESPONSE_OBSERVED_PROPERTIES);
         parent.appendChild(name);
         // add a swe:component for each observed property
         for (String op : obsProps) {
@@ -296,9 +306,9 @@ public class IoosSos10 extends BaseOutputFormatter {
         
         // location for each station
         Element loc = createElementNS(GML_NS, LOCATION);
-        Element mPoint = createElementNS(GML_NS, "MultiPoint");
-        mPoint.setAttribute("srsName", "http://www.opengis.net/def/crs/EPSG/0/4326");
-        Element pMmbrs = createElementNS(GML_NS, "pointMembers");
+        Element mPoint = createElementNS(GML_NS, MULTIPOINT);
+        mPoint.setAttribute(SRSNAME, "http://www.opengis.net/def/crs/EPSG/0/4326");
+        Element pMmbrs = createElementNS(GML_NS, POINTMEMBERS);
         for (int i=0; i<this.parent.getProcedures().length; i++) {
             String stName = SOSBaseRequestHandler.getGMLName(this.parent.getCDMDataset().getStationName(i));
             Element point = createElementNS(GML_NS, POINT);
@@ -349,11 +359,11 @@ public class IoosSos10 extends BaseOutputFormatter {
          * <swe2:DataRecord>
          */
         // create DataRecord Element
-        org.w3c.dom.Element parent = createSwe2Element(DATA_RECORD, "xsi:schemaLocation", SWE2_SCHEMALOCATION);
+        org.w3c.dom.Element parent = createSwe2Element(DATA_RECORD, XSISCHEMALOCATION, SWE2_SCHEMALOCATION);
         // create 1st field, the static data field
         org.w3c.dom.Element static_data = createElementNS(SWE2_NS, FIELD);
         // set name to 'stations'
-        static_data.setAttribute(NAME, "stations");
+        static_data.setAttribute(NAME, STATIONS);
         // add static data to data record
         parent.appendChild(static_data);
         // create dataRecord for static data
@@ -367,7 +377,7 @@ public class IoosSos10 extends BaseOutputFormatter {
         static_data.appendChild(static_record);
         // create 2nd field, dynamic data (observation data)
         org.w3c.dom.Element dynamic_data = createElementNS(SWE2_NS, FIELD);
-        dynamic_data.setAttribute(NAME, "observationData");
+        dynamic_data.setAttribute(NAME, OBSERVATIONDATA);
         
         // create the dynamic data (obwervationData)
         Element dynamic_array = createSwe2Element(DATA_ARRAY);
