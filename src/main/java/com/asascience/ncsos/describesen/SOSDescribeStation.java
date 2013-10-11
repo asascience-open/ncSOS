@@ -32,6 +32,9 @@ import ucar.nc2.dataset.NetcdfDataset;
  * @deprecated use SOSDescribePlatformM1_0 instead
  */
 public class SOSDescribeStation extends SOSBaseRequestHandler implements ISOSDescribeSensor {
+    public static final String CONTRIBUTOR = "contributor";
+    public static final String HISTORY = "history";
+    public static final String PLATFORMTYPE = "platformtype";
     
     protected Attribute platformType, historyAttribute;
     protected String stationName;
@@ -58,14 +61,14 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements ISOSDes
         stationName = procSplit[procSplit.length - 1];
         
         // get our platform type
-        platformType = dataset.findGlobalAttributeIgnoreCase("platformtype");
+        platformType = dataset.findGlobalAttributeIgnoreCase(PLATFORMTYPE);
         // history attribute
-        historyAttribute = dataset.findGlobalAttributeIgnoreCase("history");
+        historyAttribute = dataset.findGlobalAttributeIgnoreCase(HISTORY);
         
         // creator contact info
         for (Attribute attr : dataset.getGlobalAttributes()) {
             String attrName = attr.getName().toLowerCase();
-            if (attrName.contains("contributor")) {
+            if (attrName.contains(CONTRIBUTOR)) {
                 if (contributorAttributes == null)
                     contributorAttributes = new ArrayList<Attribute>();
                 contributorAttributes.add(attr);
@@ -98,13 +101,13 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements ISOSDes
         errorString = null;
         
         // get our platform type
-        platformType = dataset.findGlobalAttributeIgnoreCase("platformtype");
+        platformType = dataset.findGlobalAttributeIgnoreCase(PLATFORMTYPE);
         // history attribute
-        historyAttribute = dataset.findGlobalAttributeIgnoreCase("history");
+        historyAttribute = dataset.findGlobalAttributeIgnoreCase(HISTORY);
         // creator contact info
         for (Attribute attr : dataset.getGlobalAttributes()) {
             String attrName = attr.getName().toLowerCase();
-            if (attrName.contains("contributor")) {
+            if (attrName.contains(CONTRIBUTOR)) {
                 if (contributorAttributes == null)
                     contributorAttributes = new ArrayList<Attribute>();
                 contributorAttributes.add(attr);

@@ -63,8 +63,8 @@
 					<ows:Get />
 				</ows:HTTP>
 			</ows:DCP>
-			<ows:Parameter name="offering" use="optional"/>
-			<ows:Parameter name="observedProperty" use="required"/>
+			<ows:Parameter name="offering"/>
+			<ows:Parameter name="observedProperty"/>
 	
 		</ows:Operation>
 		<ows:Operation name="DescribeSensor">

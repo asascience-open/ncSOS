@@ -23,6 +23,10 @@ import ucar.nc2.time.CalendarDate;
  * @version 1.0.0
  */
 public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
+    public static final String ALL = "all";
+    public static final String NETWORK = "network";
+    public static final String SENSOR = "sensor";
+    public static final String STATION = "station";
     
     private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(SOSDescribeSensorHandler.class);
     private final String procedure;
@@ -73,20 +77,17 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
         
         // find out needed info based on whether this is a station or sensor look up
         
-        if (this.procedure.contains("station")) {
+        if (this.procedure.contains(STATION)) {
             setNeededInfoForStation(dataset, uri, query);
             describer.setupOutputDocument(output);
-        } else if (this.procedure.contains("sensor")) {
+        } else if (this.procedure.contains(SENSOR)) {
             output = new DescribeSensorFormatter(uri, query);
             setNeededInfoForSensor(dataset);
             describer.setupOutputDocument((DescribeSensorFormatter)output);
-        } else if (this.procedure.contains("network")) {
+        } else if (this.procedure.contains(NETWORK)) {
             output = new DescribeSensorNetworkMilestone1_0();
             describer = new SOSDescribeNetworkM1_0(dataset, procedure, query);
             describer.setupOutputDocument(output);
-//            output = new DescribeNetworkFormatter(uri, query);
-//            setNeededInfoForNetwork(dataset);
-//            describer.setupOutputDocument((DescribeNetworkFormatter)output);
         } else {
             output = new BaseOutputFormatter();
             output.setupExceptionOutput("Unknown procedure (not a station, sensor or 'network'): " + this.procedure);
@@ -128,7 +129,7 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
             _log.error("procedure is null");
             return false;
         }
-        if (procedure.toLowerCase().contains("network") && procedure.toLowerCase().contains("all"))
+        if (procedure.toLowerCase().contains(NETWORK) && procedure.toLowerCase().contains(ALL))
             return true;
         // get a list of procedures from dataset and compare it to the passed-in procedure
         // get list of station names

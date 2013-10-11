@@ -26,6 +26,8 @@ import ucar.nc2.dataset.NetcdfDataset;
  * @version 1.0.0
  */
 public class SOSDescribeSensor extends SOSDescribeStation implements ISOSDescribeSensor {
+    public static final String SENSOR = "sensor-";
+    public static final String SPACER = "-";
     
     private String sensorId;
     private Variable sensorVariable;
@@ -75,7 +77,7 @@ public class SOSDescribeSensor extends SOSDescribeStation implements ISOSDescrib
         DescribeSensorFormatter dsf = new DescribeSensorFormatter();
         if (errorString == null) {
             // system node
-            dsf.setSystemId("sensor-" + stationName + "-" + sensorId);
+            dsf.setSystemId(SENSOR + stationName + SPACER + sensorId);
             // set description
             formatSetDescription(dsf);
             // identification node
