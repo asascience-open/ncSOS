@@ -133,8 +133,10 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements ISOSDes
             formatSetIdentification(dsf);
             // classification node
             formatSetClassification(dsf);
-            // contact node
+            // contact node            
             formatSetContactNodes(dsf);
+            //Documentation           
+            
             // history node
             formatSetHistoryNodes(dsf);
             // location node
