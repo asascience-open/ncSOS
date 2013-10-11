@@ -29,6 +29,7 @@ public class IoosSos10 extends BaseOutputFormatter {
     public static final String COMPOSITEPHENOMENON = "CompositePhenomenon";
     public static final String DECIMALSEPARATOR = "decimalSeparator";
     public static final String DIMENSION = "dimension";
+    public static final String DISCLAIMER = "disclaimer";
     public static final String MULTIPOINT = "MultiPoint";
     public static final String OBSERVATIONDATA = "observationData";
     public static final String OBSERVEDPROPERTIES = "observedProperties";
@@ -139,13 +140,13 @@ public class IoosSos10 extends BaseOutputFormatter {
         List<SubElement> metaData = new ArrayList<SubElement>();
         HashMap<String, String> attrs = new HashMap<String, String>();
         SubElement subElm = new SubElement(GENERIC_META_DATA, GML_NS);
-        String disclaimer = this.parent.getGlobalAttribute("disclaimer", null);
+        String disclaimer = this.parent.getGlobalAttribute(DISCLAIMER, null);
         if (disclaimer != null) {
             metaData.add(subElm);
             subElm = new SubElement(GML_NS, DESCRIPTION);
             subElm.textContent = disclaimer;
             metaData.add(subElm);
-            attrs.put("xlink:title", "disclaimer");
+            attrs.put("xlink:title", DISCLAIMER);
             this.createMetadataProperty(attrs, metaData);
         }
 
@@ -166,8 +167,12 @@ public class IoosSos10 extends BaseOutputFormatter {
          *   'Add sub elements for each in list'
          * </gml:metaDataProperty>
          */
-        Element parent = (Element) this.document.getElementsByTagNameNS(OM_NS, OBSERVATION_COLLECTION).item(0);
-        parent = this.addNewNode(parent, META_DATA_PROP, GML_NS);
+        Element parent1 = (Element) this.document.getElementsByTagNameNS(OM_NS, OBSERVATION_COLLECTION).item(0);
+        
+        Element member = (Element) this.document.getElementsByTagNameNS(OM_NS, MEMBER).item(0);
+                      
+        //Element parent = this.addNewNode(parent1, META_DATA_PROP, GML_NS);
+        Element parent = createElementNS(GML_NS, META_DATA_PROP);
         for (Map.Entry<String, String> entry : attributes.entrySet()) {
             parent.setAttribute(entry.getKey(), entry.getValue());
         }
@@ -176,6 +181,8 @@ public class IoosSos10 extends BaseOutputFormatter {
             parent.appendChild(this.createSubElement(elm));
         }
 
+        parent1.insertBefore(parent, member);
+        
         return parent;
     }
 

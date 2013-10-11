@@ -385,6 +385,12 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
+            
+            int lastMemberIdx = write.toString().lastIndexOf("</om:member>");
+            int metaIdx = write.toString().lastIndexOf("<gml:metaDataProperty");
+            
+            assertTrue("invalid meta data property order",lastMemberIdx>metaIdx);
+            
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {

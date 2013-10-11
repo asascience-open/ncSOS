@@ -156,7 +156,7 @@ public class BaseOutputFormatter extends SOSOutputFormatter {
         parent.appendChild(child);
         return child;
     }
-
+    
     protected Element addNewNode(String parentName,
             String parentNS,
             String nodeName,
