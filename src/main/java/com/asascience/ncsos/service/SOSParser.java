@@ -34,6 +34,7 @@ public class SOSParser {
     public static final String SECTIONS = "sections";
     public static final String TEXTXML = "text/xml";
     public static final String USECACHE = "usecache";
+    public static final String XML = "xml";
     private HashMap<String, Object> queryParameters;
     private Logger _log;
     private Map<String, String> coordsHash;
@@ -290,23 +291,11 @@ public class SOSParser {
             } else {
                 if (keyVal[0].equalsIgnoreCase(PROCEDURE)) {
                     String[] howManyStation = keyVal[1].replace("%3A", ":").split(",");
-//                    List<String> stList = Arrays.asList(howManyStation);
-
-//                    for (int j = 0; j < howManyStation.length; j++) {
-//                        stList.add(howManyStation[j].substring(howManyStation[j].lastIndexOf(":") + 1));
-//                    }
-
                     queryParameters.put(keyVal[0].toLowerCase(), howManyStation);
-                } else if (keyVal[0].equalsIgnoreCase(RESPONSE_FORMAT)
-                        || keyVal[0].equalsIgnoreCase(OUTPUT_FORMAT)) {
-                    try {
-                        String val = URLDecoder.decode(keyVal[1], "UTF-8");
-                        queryParameters.put(keyVal[0], val);
-                    } catch (Exception e) {
-                        _log.debug("Exception in decoding: " + keyVal[1] + " - " + e.getMessage());
-                        _log.error("Exception in decoding: " + keyVal[1] + " - " + e.getMessage());
-                        queryParameters.put(keyVal[0], keyVal[1]);
-                    }
+                } else if (keyVal[0].equalsIgnoreCase(RESPONSE_FORMAT)) {                    
+                    parseOutputFormat(RESPONSE_FORMAT,keyVal[1]);
+                } else if (keyVal[0].equalsIgnoreCase(OUTPUT_FORMAT)) {                    
+                    parseOutputFormat(OUTPUT_FORMAT,keyVal[1]);                    
                 } else if (keyVal[0].equalsIgnoreCase(EVENT_TIME)) {
                     String[] eventtime;
                     if (keyVal[1].contains("/")) {
@@ -339,6 +328,17 @@ public class SOSParser {
         }
     }
 
+    public void parseOutputFormat(String fieldName,String value) {
+        try {
+            String val = URLDecoder.decode(value, "UTF-8");
+            queryParameters.put(fieldName, val);
+        } catch (Exception e) {
+            _log.debug("Exception in decoding: " + value + " - " + e.getMessage());
+            _log.error("Exception in decoding: " + value + " - " + e.getMessage());
+            queryParameters.put(fieldName, value);
+        }
+    }
+
     private String getCacheXmlFileName(String threddsURI) {
         _log.debug("thredds uri: " + threddsURI);
         String[] splitStr = threddsURI.split("/");
@@ -348,7 +348,7 @@ public class SOSParser {
         for (int i = 0; i < splitStr.length - 1; i++) {
             dName += splitStr[i] + ".";
         }
-        return "/" + dName + "xml";
+        return "/" + dName + XML;
     }
 
     private SOSGetCapabilitiesRequestHandler createGetCapsCacheFile(NetcdfDataset dataset, String threddsURI, String savePath) throws IOException {
@@ -376,6 +376,7 @@ public class SOSParser {
             HashMap<String, Object> retval = new HashMap<String, Object>();
             String[] requiredGlobalParameters = {REQUEST, SERVICE};
             String[] requiredDSParameters = {PROCEDURE, OUTPUT_FORMAT};
+            //required GRID Parameters
             String[] requiredGOParameters = {PROCEDURE, OFFERING, OBSERVED_PROPERTY, RESPONSE_FORMAT};
             System.out.println(queryParameters.toString());
             // general parameters expected
@@ -391,13 +392,18 @@ public class SOSParser {
                 }
                 // check requirements for version and service
                 if (queryParameters.containsKey(ACCEPT_VERSIONS)) {
-                    String[] versions = (String[]) queryParameters.get(ACCEPT_VERSIONS);
-                    if (versions != null && versions.length ==1) {                        
+                    String[] versions = null;
+                    if (queryParameters.get(ACCEPT_VERSIONS) instanceof String[]) {
+                        versions = (String[]) queryParameters.get(ACCEPT_VERSIONS);
+                    } else if (queryParameters.get(ACCEPT_VERSIONS) instanceof String) {
+                        versions = new String[]{(String) queryParameters.get(ACCEPT_VERSIONS)};
+                    }
+                    if (versions != null && versions.length == 1) {
                         if (!versions[0].toString().equalsIgnoreCase(defVersion)) {
                             retval.put(ERROR, "VersionNegotiationFailed, Currently only version " + defVersion + " is supported.");
                             return retval;
                         }
-                    }else{
+                    } else {
                         retval.put(ERROR, "VersionNegotiationFailed, Currently only version " + defVersion + " is supported.");
                         return retval;
                     }
