@@ -30,9 +30,13 @@ import ucar.unidata.geoloc.LatLonRect;
  */
 public class DescribeSensorFormatter extends SOSOutputFormatter {
     public static final String CODE = "code";
+    public static final String CONTACT = "contact";
     public static final String COORDINATE = "coordinate";
-
-    public static final String HISTORY = "history";
+    public static final String DOCUMENTATION = "documentation";
+    public static final String NAME = "name";
+    public static final String PROCEDURE = "procedure";
+    public static final String SENSOR_ = "Sensor ";
+    public static final String SENSOR_WITH_SPACER = "sensor-";
     public static final String UOM = "uom";
     private final String TEMPLATE = "templates/sosDescribeSensor.xml";
     private final String uri;
@@ -404,9 +408,8 @@ public class DescribeSensorFormatter extends SOSOutputFormatter {
      */
     public void addContactNode(String role, String organizationName, HashMap<String, HashMap<String, String>> contactInfo, String onlineResource) {
         // setup and and insert a contact node (after history)
-        document = XMLDomUtils.addNode(document, SYSTEM, SML_NS,
-                "contact", SML_NS, HISTORY, SML_NS);
-        NodeList contacts = getParentNode().getElementsByTagNameNS(SML_NS, "contact");
+        document = XMLDomUtils.addNode(document, SYSTEM, SML_NS, CONTACT, SML_NS, HISTORY, SML_NS);
+        NodeList contacts = getParentNode().getElementsByTagNameNS(SML_NS, CONTACT);
         Element contact = null;
         for (int i = 0; i < contacts.getLength(); i++) {
             if (!contacts.item(i).hasAttributes()) {
@@ -448,7 +451,7 @@ public class DescribeSensorFormatter extends SOSOutputFormatter {
      * Removes the first contact node instance from the xml document
      */
     public void deleteContactNodeFirst() {
-        getParentNode().removeChild(getParentNode().getElementsByTagNameNS(SML_NS, "contact").item(0));
+        getParentNode().removeChild(getParentNode().getElementsByTagNameNS(SML_NS, CONTACT).item(0));
     }
 
     /**
@@ -629,24 +632,24 @@ public class DescribeSensorFormatter extends SOSOutputFormatter {
             // component node
             Element component = createElementNS(SML_NS, COMPONENT);
 
-            component.setAttribute("name", "Sensor " + fName);
+            component.setAttribute(NAME, SENSOR_ + fName);
             // system node
             Element system = createElementNS(SML_NS, SYSTEM);
 
-            system.setAttributeNS(GML_NS, ID, "sensor-" + fName);
+            system.setAttributeNS(GML_NS, ID, SENSOR_WITH_SPACER + fName);
             // identification node
             Element ident = createElementNS(SML_NS, IDENTIFICATION);
 
             ident.setAttributeNS(XLINK_NS, HREF, procedure.replaceAll(":station:", ":sensor:") + ":" + fName);
             // documentation (url) node
-            Element doc = createElementNS(SML_NS, "documentation");
+            Element doc = createElementNS(SML_NS, DOCUMENTATION);
 
             // need to construct url for sensor request
             String url = this.uri;
             String[] reqParams = this.query.split("&");
             // look for procedure
             for (int j = 0; j < reqParams.length; j++) {
-                if (reqParams[j].contains("procedure")) // add sensor
+                if (reqParams[j].contains(PROCEDURE)) // add sensor
                 {
                     reqParams[j] += ":" + fName;
                 }
@@ -686,7 +689,7 @@ public class DescribeSensorFormatter extends SOSOutputFormatter {
         parent = addNewNodeToParentWithAttribute(SML_NS, SYSTEM, parent, GML_NS, ID, compId);
         addNewNodeToParentWithTextValue(GML_NS, DESCRIPTION, parent, description);
         addNewNodeToParentWithAttribute(SML_NS, IDENTIFICATION, parent, XLINK_NS, HREF, urn);
-        addNewNodeToParentWithAttribute(SML_NS, "documentation", parent, XLINK_NS, HREF, dsUrl);
+        addNewNodeToParentWithAttribute(SML_NS, DOCUMENTATION, parent, XLINK_NS, HREF, dsUrl);
         parent = addNewNodeToParent(SML_NS, OUTPUTS, parent);
         addNewNodeToParent(SML_NS, OUTPUT_LIST, parent);
     }
@@ -749,7 +752,7 @@ public class DescribeSensorFormatter extends SOSOutputFormatter {
      */
     public void setPositionName(String name) {
         Element position = (Element) getParentNode().getElementsByTagNameNS(SML_NS, "position").item(0);
-        position.setAttribute("name", name);
+        position.setAttribute(NAME, name);
     }
 
     /**

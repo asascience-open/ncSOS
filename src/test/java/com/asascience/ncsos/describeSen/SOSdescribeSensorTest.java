@@ -407,6 +407,12 @@ public class SOSdescribeSensorTest {
         // test for expected values below
         assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         assertTrue("missing component", writer.toString().contains("<sml:component name=\"Sensor watlev\">"));
+        
+        int idxDocumentation = writer.toString().indexOf("<sml:documentation/>");
+        int idxhistory = writer.toString().indexOf("<sml:history/>");
+        assertTrue("Invalid Documentation and history order",idxDocumentation<idxhistory);
+        
+        
         assertTrue("station id not as expected", writer.toString().contains("<sml:value>urn:ioos:station:authority:NOAA_8779748</sml:value>"));
         System.out.println("------End testBasicDescribeSensorStation------");
     }

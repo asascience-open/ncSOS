@@ -71,6 +71,7 @@ public class SOSDescribePlatformM1_0 extends BaseDescribeSensor implements ISOSD
         formatSmlContacts();
         formatSmlHistory();
         formatSmlDocumentation();
+        
         if (this.getGridDataset() != null) {
             formatSmlLocationBbox();
         } else if (locationLineFlag) {
