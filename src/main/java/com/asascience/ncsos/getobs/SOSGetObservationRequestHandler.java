@@ -24,18 +24,19 @@ import ucar.nc2.dataset.NetcdfDataset;
  * @author abird
  */
 public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
-    
+    public static final String DEPTH = "depth";
+    public static final String STANDARD_NAME = "standard_name";
+
+    public static final String TEXTXML = "text/xml";
+    public static final String UNKNOWN = "unknown";
     private String[] obsProperties;
     private String[] procedures;
     private iStationData CDMDataSet;
-    
     private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(SOSGetObservationRequestHandler.class);
     private String contentType;
-    
     private static final String FILL_VALUE_NAME = "_FillValue";
     private static final String IOOSOM1_0_0 = "text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0\"";
     private static final String OM1_0_0 = "text/xml;subtype=\"om/1.0.0\"";
-    
     private final List<String> eventTimes;
 
     /**
@@ -56,26 +57,27 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             String responseFormat,
             Map<String, String> latLonRequest) throws IOException {
         super(netCDFDataset);
-        
-        if (eventTime != null && eventTime.length > 0)
+
+        if (eventTime != null && eventTime.length > 0) {
             eventTimes = Arrays.asList(eventTime);
-        else
+        } else {
             eventTimes = new ArrayList<String>();
-        
+        }
+
         // set up our formatter
-        if(responseFormat.equalsIgnoreCase(OM1_0_0)) {
-            contentType = "text/xml";
+        if (responseFormat.equalsIgnoreCase(OM1_0_0)) {
+            contentType = TEXTXML;
 //            output = new OosTethysSwe(this.obsProperties, getFeatureDataset(), CDMDataSet, netCDFDataset);
             output = new OosTethysSweV2(this);
         } else if (responseFormat.equalsIgnoreCase(IOOSOM1_0_0)) {
-            contentType = "text/xml";
+            contentType = TEXTXML;
             output = new IoosSos10(this);
         } else {
             _log.error("Unknown/Unhandled responseFormat: " + responseFormat);
             output = new GetCapsOutputter();
             output.setupExceptionOutput("Could not recognize response format: " + responseFormat);
         }
-        
+
         // make sure that all of the requested variable names are in the dataset
         for (String vars : variableNames) {
             boolean isInDataset = false;
@@ -95,56 +97,59 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
                 return;
             }
         }
-        
+
         //this.stationName = stationName[0];        
         CoordinateAxis heightAxis = netCDFDataset.findCoordinateAxis(AxisType.Height);
 
         this.obsProperties = checkNetcdfFileForAxis(heightAxis, variableNames);
-        
-      
-        	// strip out each of the station names
-  
+
+
+        // strip out each of the station names
+
         // unaltered procedures
         this.procedures = Arrays.copyOf(requestedStationNames, requestedStationNames.length);
-        for (int i=0; i<requestedStationNames.length; i++) {
-        	requestedStationNames[i] = requestedStationNames[i].substring(requestedStationNames[i].lastIndexOf(":")+1);
+        for (int i = 0; i < requestedStationNames.length; i++) {
+            requestedStationNames[i] = requestedStationNames[i].substring(requestedStationNames[i].lastIndexOf(":") + 1);
         }
 
         // get all station names if 'network-all'
         try {
-        	if (requestedStationNames.length == 1 && requestedStationNames[0].equalsIgnoreCase("all")) {
-        		requestedStationNames = getStationNames().values().toArray(new String[getStationNames().values().size()]);
-        		// need to set the procedures to this new set
-        		List<String> naProcs = ListComprehension.map(new ArrayList<String>(getStationNames().values()) {}, new ListComprehension.Func<String, String>() {
-        			public String apply(String in) {
-        				return SOSBaseRequestHandler.getGMLName(in);
-        			}
-        		});
-        		this.procedures = naProcs.toArray(new String[naProcs.size()]);
-        	}
+            if (requestedStationNames.length == 1 && requestedStationNames[0].equalsIgnoreCase("all")) {
+                requestedStationNames = getStationNames().values().toArray(new String[getStationNames().values().size()]);
+                // need to set the procedures to this new set
+                List<String> naProcs = ListComprehension.map(new ArrayList<String>(getStationNames().values()) {
+                }, new ListComprehension.Func<String, String>() {
+
+                    public String apply(String in) {
+                        return SOSBaseRequestHandler.getGMLName(in);
+                    }
+                });
+                this.procedures = naProcs.toArray(new String[naProcs.size()]);
+            }
         } catch (Exception ex) {
-        	_log.error(ex.toString());
-        	requestedStationNames = null;
+            _log.error(ex.toString());
+            requestedStationNames = null;
         }
 
-     
+
         // check that the procedures are valid
         checkProcedureValidity();
         // and are a part of the offering
-        
-        if(offering != null)
-        	checkProceduresAgainstOffering(offering);
-        
+
+        if (offering != null) {
+            checkProceduresAgainstOffering(offering);
+        }
+
         setCDMDatasetForStations(netCDFDataset, requestedStationNames, eventTime, latLonRequest);
     }
-    
+
     private void setCDMDatasetForStations(NetcdfDataset netCDFDataset, String[] requestedStationNames, String[] eventTime, Map<String, String> latLonRequest) throws IOException {
         // strip out text if the station is defined by indices
         if (isStationDefinedByIndices()) {
             String[] editedStationNames = new String[requestedStationNames.length];
-            for (int i=0; i<requestedStationNames.length; i++) {
-                if (requestedStationNames[i].contains("unknown")) {
-                    editedStationNames[i] = "unknown";
+            for (int i = 0; i < requestedStationNames.length; i++) {
+                if (requestedStationNames[i].contains(UNKNOWN)) {
+                    editedStationNames[i] = UNKNOWN;
                 } else {
                     editedStationNames[i] = requestedStationNames[i].replaceAll("[A-Za-z]+", "");
                 }
@@ -156,7 +161,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         if (getDatasetFeatureType() == FeatureType.GRID) {
             Variable depthAxis;
             if (!latLonRequest.isEmpty()) {
-                depthAxis = (netCDFDataset.findVariable("depth"));
+                depthAxis = (netCDFDataset.findVariable(DEPTH));
                 if (depthAxis != null) {
                     this.obsProperties = checkNetcdfFileForAxis((CoordinateAxis1D) depthAxis, this.obsProperties);
                 }
@@ -165,9 +170,8 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
 
                 CDMDataSet = new Grid(requestedStationNames, eventTime, this.obsProperties, latLonRequest);
                 CDMDataSet.setData(getGridDataset());
-            } 
-        }
-        //if the stations are not of cdm type grid then check to see and set cdm data type        
+            }
+        } //if the stations are not of cdm type grid then check to see and set cdm data type        
         else {
 
             if (getDatasetFeatureType() == FeatureType.TRAJECTORY) {
@@ -180,7 +184,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
                 CDMDataSet = new Profile(requestedStationNames, eventTime, this.obsProperties);
             } else if (getDatasetFeatureType() == FeatureType.SECTION) {
                 CDMDataSet = new Section(requestedStationNames, eventTime, this.obsProperties);
-            }else {
+            } else {
                 _log.error("Have a null CDMDataSet, this will cause a null reference exception!");
                 // print exception and then return the doc
                 output = new GetCapsOutputter();
@@ -189,12 +193,12 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
                 return;
             }
             //only set the data is it is valid
-            if (CDMDataSet!=null){
+            if (CDMDataSet != null) {
                 CDMDataSet.setData(getFeatureTypeDataSet());
             }
         }
     }
-    
+
     /**
      * checks for the presence of height in the netcdf dataset if it finds it but not in the variables selected it adds it
      * @param Axis the axis being checked
@@ -227,7 +231,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         }
         return variableNames1;
     }
-    
+
     /**
      * sets the output to display an exception message
      * @param exceptionMessage the exception message to display in the return
@@ -240,38 +244,40 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
      * Create the observation data for getObs, passing it to our formatter
      */
     public void parseObservations() {
-        for(int s = 0;s<CDMDataSet.getNumberOfStations();s++) {
+        for (int s = 0; s < CDMDataSet.getNumberOfStations(); s++) {
             String dataString = CDMDataSet.getDataResponse(s);
             for (String dataPoint : dataString.split(";")) {
-                if(!dataPoint.equals(""))
+                if (!dataPoint.equals("")) {
                     output.addDataFormattedStringToInfoList(dataPoint);
+                }
             }
-        }                
+        }
     }
-    
+
     /**
      * Returns the 'standard_name' attribute of a variable, if it exists
      * @param varName the name of the variable
      * @return the 'standard_name' if it exists, otherwise ""
      */
     public String getVariableStandardName(String varName) {
-        String retval = "unknown";
-        
+        String retval = UNKNOWN;
+
         for (Variable var : netCDFDataset.getVariables()) {
             if (varName.equalsIgnoreCase(var.getFullName())) {
-                Attribute attr = var.findAttribute("standard_name");
-                if (attr != null)
+                Attribute attr = var.findAttribute(STANDARD_NAME);
+                if (attr != null) {
                     retval = attr.getStringValue();
+                }
             }
         }
-        
+
         return retval;
     }
-    
+
     public List<String> getRequestedEventTimes() {
         return this.eventTimes;
     }
-    
+
     /**
      * Gets the dataset wrapped by the cdm feature type giving multiple easy to 
      * access functions
@@ -288,7 +294,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     public String getContentType() {
         return contentType;
     }
-    
+
     //<editor-fold defaultstate="collapsed" desc="Helper functions for building GetObs XML">
     /**
      * Looks up a stations index by a string name
@@ -298,54 +304,55 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     public int getIndexFromStationName(String stName) {
         return getStationIndex(stName);
     }
-    
+
     public String getStationLowerCorner(int relIndex) {
         return formatDegree(CDMDataSet.getLowerLat(relIndex)) + " " + formatDegree(CDMDataSet.getLowerLon(relIndex));
     }
-    
+
     public String getStationUpperCorner(int relIndex) {
         return formatDegree(CDMDataSet.getUpperLat(relIndex)) + " " + formatDegree(CDMDataSet.getUpperLon(relIndex));
     }
-    
+
     public String getBoundedLowerCorner() {
         return formatDegree(CDMDataSet.getBoundLowerLat()) + " " + formatDegree(CDMDataSet.getBoundLowerLon());
     }
-    
+
     public String getBoundedUpperCorner() {
         return formatDegree(CDMDataSet.getBoundUpperLat()) + " " + formatDegree(CDMDataSet.getBoundUpperLon());
     }
-    
+
     public String getStartTime(int relIndex) {
         return CDMDataSet.getTimeBegin(relIndex);
     }
-    
+
     public String getEndTime(int relIndex) {
         return CDMDataSet.getTimeEnd(relIndex);
     }
-    
+
     public List<String> getRequestedObservedProperties() {
         CoordinateAxis heightAxis = netCDFDataset.findCoordinateAxis(AxisType.Height);
-        
+
         List<String> retval = Arrays.asList(obsProperties);
-        
-        if (heightAxis != null)
+
+        if (heightAxis != null) {
             retval = ListComprehension.filterOut(retval, heightAxis.getShortName());
-        
+        }
+
         return retval;
     }
-    
+
     public String[] getObservedProperties() {
         return obsProperties;
     }
-    
+
     public String[] getProcedures() {
         return procedures;
     }
-    
+
     public String getUnitsString(String dataVarName) {
         return getUnitsOfVariable(dataVarName);
     }
-    
+
     public String getValueBlockForAllObs(String block, String decimal, String token, int relIndex) {
         _log.info("Getting data for index: " + relIndex);
         String retval = CDMDataSet.getDataResponse(relIndex);
@@ -366,14 +373,16 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
 
     public boolean hasFillValue(String obsProp) {
         Attribute[] attrs = getAttributesOfVariable(obsProp);
-        if (attrs == null)
+        if (attrs == null) {
             return false;
+        }
         for (Attribute attr : attrs) {
-            if (attr.getFullNameEscaped().equalsIgnoreCase(FILL_VALUE_NAME))
+            if (attr.getFullNameEscaped().equalsIgnoreCase(FILL_VALUE_NAME)) {
                 return true;
+            }
         }
         return false;
-        
+
     }
 
     private void checkProcedureValidity() {
@@ -385,30 +394,30 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             }
             stProc.add(SOSBaseRequestHandler.getGMLName(stname));
         }
-        
-        	for (String proc : this.procedures) {
-        		if (ListComprehension.filter(stProc, proc).size() < 1) {
-        			_log.error("Invalid procedure: " + proc);
-        			output.setupExceptionOutput("Invalid procedure " + proc + ". Check GetCapabilities document for valid procedures.");
-        		}
-        	}
-        
+
+        for (String proc : this.procedures) {
+            if (ListComprehension.filter(stProc, proc).size() < 1) {
+                _log.error("Invalid procedure: " + proc);
+                output.setupExceptionOutput("Invalid procedure " + proc + ". Check GetCapabilities document for valid procedures.");
+            }
+        }
+
     }
-    
 
     private void checkProceduresAgainstOffering(String offering) {
         // if the offering is 'network-all' no error (network-all should have all procedures)
-        if (offering.equalsIgnoreCase("network-all"))
+        if (offering.equalsIgnoreCase("network-all")) {
             return;
-        	// currently in ncSOS the only offerings that exist are network-all and each of the stations
-        	// in the dataset. So basically we need to check that the offering exists
-        	// in each of the procedures requested.
-        	for (String proc : this.procedures) {
-        		if (!proc.toLowerCase().contains(offering.toLowerCase())) {
-        			_log.error("Invalid procedure " + proc + " for offering " + offering);
-        			output.setupExceptionOutput("Procedure " + proc + " does not exist in the offering " + offering + ". Check GetCapabilities document for valid procedures for this offering.");
-        		}
-        	}
-        
+        }
+        // currently in ncSOS the only offerings that exist are network-all and each of the stations
+        // in the dataset. So basically we need to check that the offering exists
+        // in each of the procedures requested.
+        for (String proc : this.procedures) {
+            if (!proc.toLowerCase().contains(offering.toLowerCase())) {
+                _log.error("Invalid procedure " + proc + " for offering " + offering);
+                output.setupExceptionOutput("Procedure " + proc + " does not exist in the offering " + offering + ". Check GetCapabilities document for valid procedures for this offering.");
+            }
+        }
+
     }
 }
