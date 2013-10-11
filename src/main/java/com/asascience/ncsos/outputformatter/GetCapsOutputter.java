@@ -28,7 +28,13 @@ import ucar.unidata.geoloc.LatLonRect;
  * @author scowan
  */
 public class GetCapsOutputter extends SOSOutputFormatter {
+    public static final String CONTENTS = "Contents";
+    public static final String EPSG4326 = "EPSG:4326";
     public static final String GMLTIMEPERIODTYPE = "gml:TimePeriodType";
+    public static final String INLINE = "inline";
+    public static final String OMOBSERVATIONCOLLECTION = "om:ObservationCollection";
+    public static final String RESPONSEMODE = "responseMode";
+    public static final String SRSNAME = "srsName";
     public static final String XLINKHREF = "xlink:href";
     public static final String XSITYPE = "xsi:type";
     
@@ -341,8 +347,8 @@ public class GetCapsOutputter extends SOSOutputFormatter {
         Element name = createElementNS(GML_NS, NAME);
         name.setTextContent(NETWORK_URN + SOSBaseRequestHandler.getNamingAuthority() + NETWORK_URN_END_ALL );
         obsOffering.appendChild(name);
-        Element srsName = createElementNS(GML_NS, "srsName");
-        srsName.setTextContent("EPSG:4326");
+        Element srsName = createElementNS(GML_NS, SRSNAME);
+        srsName.setTextContent(EPSG4326);
         obsOffering.appendChild(srsName);
         // bounds
         obsOffering.appendChild(getStationBounds(datasetRect));
@@ -387,7 +393,7 @@ public class GetCapsOutputter extends SOSOutputFormatter {
         }
         // result model/mode -- blank for now?
         Element rm = createElementNS(SOS_NS, RESULT_MODEL);
-        rm.setTextContent("om:ObservationCollection");
+        rm.setTextContent(OMOBSERVATIONCOLLECTION);
         obsOffering.appendChild(rm);
         Element rm2 = createElementNS(SOS_NS, RESPONSE_MODE);
         rm2.setTextContent("inline");
@@ -407,8 +413,8 @@ public class GetCapsOutputter extends SOSOutputFormatter {
         gmlName.setTextContent(SOSBaseRequestHandler.getGMLName(stationName));
         obsOffering.appendChild(gmlName);
         // gml:srsName - default to EPSG:4326 for now
-        Element srsName = createElementNS(GML_NS, "srsName");
-        srsName.setTextContent("EPSG:4326");
+        Element srsName = createElementNS(GML_NS, SRSNAME);
+        srsName.setTextContent(EPSG4326);
         obsOffering.appendChild(srsName);
         // bounds
         obsOffering.appendChild(getStationBounds(rect));
@@ -428,12 +434,6 @@ public class GetCapsOutputter extends SOSOutputFormatter {
         Element selfProcedure = createElementNS(SOS_NS, PROCEDURE);
         selfProcedure.setAttribute(XLINKHREF, SOSBaseRequestHandler.getGMLName(stationName));
         obsOffering.appendChild(selfProcedure);
-//        // procedures
-//        for (String str : sensorNames) {
-//            Element proc = getDocument().createElementNS(SOS_NS, PROCEDURE);
-//            proc.setAttribute("xlink:href", SOSBaseRequestHandler.getSensorGMLName(stationName, str));
-//            obsOffering.appendChild(proc);
-//        }
         // response format
         Element rf = createElementNS(SOS_NS, RESPONSE_FORMAT);
         rf.setTextContent("text/xml;subtype=\"om/1.0.0\"");
@@ -450,10 +450,10 @@ public class GetCapsOutputter extends SOSOutputFormatter {
         }
         // result model/mode -- blank for now?
         Element rm = createElementNS(SOS_NS, RESULT_MODEL);
-        rm.setTextContent("om:ObservationCollection");
+        rm.setTextContent(OMOBSERVATIONCOLLECTION);
         obsOffering.appendChild(rm);
-        rm = createElementNS(SOS_NS, "responseMode");
-        rm.setTextContent("inline");
+        rm = createElementNS(SOS_NS, RESPONSEMODE);
+        rm.setTextContent(INLINE);
         obsOffering.appendChild(rm);
 
         // add offering
@@ -462,7 +462,7 @@ public class GetCapsOutputter extends SOSOutputFormatter {
     
     public void removeContents() {
         Element capsNode = (Element) getDocument().getElementsByTagNameNS(SOS_NS, CAPABILITIES).item(0);
-        Node contentNode = capsNode.getElementsByTagNameNS(SOS_NS, "Contents").item(0);
+        Node contentNode = capsNode.getElementsByTagNameNS(SOS_NS, CONTENTS).item(0);
         capsNode.removeChild(contentNode);
     }
     
@@ -551,7 +551,7 @@ public class GetCapsOutputter extends SOSOutputFormatter {
         
         if (rect != null) {
             Element envelope = createElementNS(GML_NS, ENVELOPE);
-            envelope.setAttribute("srsName", "http://www.opengis.net/def/crs/EPSG/0/4326");
+            envelope.setAttribute(SRSNAME, "http://www.opengis.net/def/crs/EPSG/0/4326");
             // lower corner
             Element lowercorner = createElementNS(GML_NS, LOWER_CORNER);
             lowercorner.setTextContent(rect.getLowerLeftPoint().getLatitude() + " " + rect.getLowerLeftPoint().getLongitude());

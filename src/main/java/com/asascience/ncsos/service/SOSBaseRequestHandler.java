@@ -24,13 +24,18 @@ import ucar.nc2.ft.*;
  * @modified scowan
  */
 public abstract class SOSBaseRequestHandler {
+    public static final String CF_ROLE = "cf_role";
+    public static final String GRID = "grid";
+    public static final String NAME = "name";
+    public static final String PROFILE = "profile";
+    public static final String TRAJECTORY = "trajectory";
 
     private static final String STATION_GML_BASE = "urn:ioos:station:";
     private static final String SENSOR_GML_BASE = "urn:ioos:sensor:";
     private static final String DEF_NAMING_AUTHORITY = "authority";  // TODO: default for naming_authority
     private static final NumberFormat FORMAT_DEGREE;
     // list of keywords to filter variables on to remove non-data variables from the list
-    private static final String[] NON_DATAVAR_NAMES = { "rowsize", "row_size", "profile", "info", "time", "z", "alt", "height", "station_info" };
+    private static final String[] NON_DATAVAR_NAMES = { "rowsize", "row_size", PROFILE, "info", "time", "z", "alt", "height", "station_info" };
     private FeatureDataset featureDataset;
     private FeatureCollection CDMPointFeatureCollection;
     private GridDataset gridDataSet = null;
@@ -188,13 +193,13 @@ public abstract class SOSBaseRequestHandler {
             // look for cf_role attr
             if (this.stationVariable == null) {
                 for (Attribute attr : var.getAttributes()) {
-                    if(attr.getFullName().equalsIgnoreCase("cf_role")) {
+                    if(attr.getFullName().equalsIgnoreCase(CF_ROLE)) {
                         this.stationVariable = var;
                         String attrValue = attr.getStringValue().toLowerCase();
                         // parse name based on role
-                        if (attrValue.contains("trajectory") && stationVariable.getDataType() == DataType.INT)
+                        if (attrValue.contains(TRAJECTORY) && stationVariable.getDataType() == DataType.INT)
                             parseTrajectoryIdsToNames();
-                        else if (attrValue.contains("profile") && stationVariable.getDataType() == DataType.INT)
+                        else if (attrValue.contains(PROFILE) && stationVariable.getDataType() == DataType.INT)
                             parseProfileIdsToNames();
                         else
                             parseStationNames();
@@ -204,7 +209,7 @@ public abstract class SOSBaseRequestHandler {
             }
             // check name for grid data (does not have cf_role)
             String varName = var.getFullName().toLowerCase();
-            if (varName.contains("grid") && varName.contains("name")) {
+            if (varName.contains(GRID) && varName.contains(NAME)) {
                 this.stationVariable = var;
                 parseGridIdsToName();
             }
@@ -232,7 +237,7 @@ public abstract class SOSBaseRequestHandler {
         for (Iterator<VariableSimpleIF> it = getFeatureDataset().getDataVariables().iterator(); it.hasNext();) {
             VariableSimpleIF var = it.next();
             String name = var.getShortName();
-            if (name.equalsIgnoreCase("profile") || name.toLowerCase().contains("info") || name.toLowerCase().contains("time") ||
+            if (name.equalsIgnoreCase(PROFILE) || name.toLowerCase().contains("info") || name.toLowerCase().contains("time") ||
                 name.toLowerCase().contains("row") || name.equalsIgnoreCase("z") || name.equalsIgnoreCase("alt") ||
                 name.equalsIgnoreCase("height"))
                 name.toLowerCase(); // no-op
