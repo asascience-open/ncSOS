@@ -147,12 +147,10 @@ public class SOSDescribeSensorNetworkTest {
 
     @Test
     public void testTimeSeriesSet1() {
-    	
   
     		System.out.println("\n------" + currentTest + "------");
     		System.out.println("------outputFolder: " +testOutFile);
-    		String fullPathTestFile= "C:\\Dev\\ncSOS\\resources\\datasets\\aggregationBug\\wqb.ncml";//dataSourceDirectory + systemSeparator + currentTest;
-
+    		String fullPathTestFile= System.getProperty("user.dir")+"\\resources\\datasets\\aggregationBug\\wqb.ncml";//dataSourceDirectory + systemSeparator + currentTest;
     		try {
     			NetcdfDataset dataset = NetcdfDataset.openDataset(fullPathTestFile);
     			SOSParser parser = new SOSParser();
