@@ -573,7 +573,7 @@ public class IoosSos10 extends BaseOutputFormatter {
         /*
          * Creates the following:
          * <swe2:encoding>
-         *   <swe2:TextEncoding decimalSeparator="DECIMAL_SEPERATOR" tokenSeperator="TOKEN_SEPERATOR" blockSeperator="BLOCK_SEPERATOR" />
+         *   <swe2:TextEncoding decimalSeparator="DECIMAL_SEPERATOR" tokenSeparator="TOKEN_SEPERATOR" blockSeparator="BLOCK_SEPERATOR" />
          * </swe2:encoding>
          */
         Element encoding = createSwe2Element("encoding");
