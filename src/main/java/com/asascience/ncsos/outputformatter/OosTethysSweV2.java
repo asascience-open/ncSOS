@@ -209,8 +209,7 @@ public class OosTethysSweV2 extends SOSOutputFormatter {
         retval.setAttribute("name", name);
         Element quantity =createElementNS(SWE_NS, QUANTITY);
         String definition = MMI_CF + name;
-        quantity.setAttribute(DEFINITION, definition);
-        quantity.appendChild(createNodeWithAttribute(SWE_NS, UOM, CODE, code));
+        quantity.setAttribute(DEFINITION, definition);        
         if (fillValue != null) {
             Element nilValues = createElementNS(SWE_NS, "nilValues");
             Element filValues = createNodeWithAttribute(SWE_NS, "nilValue", "reason", "http://www.opengis.net/def/nil/OGC/0/missing");
@@ -218,6 +217,7 @@ public class OosTethysSweV2 extends SOSOutputFormatter {
             nilValues.appendChild(filValues);
             quantity.appendChild(nilValues);
         }
+        quantity.appendChild(createNodeWithAttribute(SWE_NS, UOM, CODE, code));
         retval.appendChild(quantity);
         return retval;
     }

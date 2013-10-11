@@ -594,6 +594,13 @@ public class SOSGetObsTest {
             fileWriter(base, fileName, write);
             assertFalse("exception in output", write.toString().contains("Exception"));
             dataAvailableInOutputFile(write);
+            
+            
+            int idxUnit = write.toString().indexOf("<swe:uom code=\"m\"/>");
+            int idxNil = write.toString().indexOf("<swe:nilValues>");
+            
+            assertTrue("invalid unit/nill order",idxUnit>idxNil);
+            
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
