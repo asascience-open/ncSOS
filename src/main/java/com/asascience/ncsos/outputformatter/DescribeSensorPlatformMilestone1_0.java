@@ -132,18 +132,17 @@ public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
       </sml:capabilities>     
 
          */
-    	
+        Element parentNode = (Element) this.document.getElementsByTagNameNS(SML_NS,SML_CAPABILITIES).item(0);
+        parentNode.setAttribute(NAME, OBSERVATION_TIME_RANGE);
     	Element parent = addNewNode(SML_CAPABILITIES, SML_NS, DATA_RECORD, SWE_NS);
     	setValidTime(parent, timeBegin, timeEnd);
     	
     }
     
-    public void setValidTime(Element parent, String timeBegin, String timeEnd){
-    	parent.setAttribute(NAME, OBSERVATION_TIME_RANGE);
+    public void setValidTime(Element parent, String timeBegin, String timeEnd){    	
     	parent = addNewNode(parent, FIELD, SWE_NS, NAME, OBSERVATION_TIME_RANGE);
     	parent = addNewNode(parent, TIME_RANGE, SWE_NS, DEFINITION, OBS_TR_DEF);
     	addNewNode(parent, SML_VALUE, SWE_NS, timeBegin + " " + timeEnd);
-
     }
     /**
      * Adds a sml:capabilities node that defines a metadata property for the sensor
