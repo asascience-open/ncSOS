@@ -24,7 +24,9 @@ import ucar.nc2.constants.FeatureType;
  * @author SCowan
  */
 public class IoosSos10 extends BaseOutputFormatter {
+    public static final String BLOCKSEPARATOR = "blockSeparator";
     public static final String COMPOSITEPHENOMENON = "CompositePhenomenon";
+    public static final String DECIMALSEPARATOR = "decimalSeparator";
     public static final String DIMENSION = "dimension";
     public static final String MULTIPOINT = "MultiPoint";
     public static final String OBSERVATIONDATA = "observationData";
@@ -33,6 +35,8 @@ public class IoosSos10 extends BaseOutputFormatter {
     public static final String RESPONSE_OBSERVED_PROPERTIES = "Response Observed Properties";
     public static final String SRSNAME = "srsName";
     public static final String STATIONS = "stations";
+    public static final String TEXTENCODING = "TextEncoding";
+    public static final String TOKENSEPARATOR = "tokenSeparator";
     public static final String XSISCHEMALOCATION = "xsi:schemaLocation";
     
     // private fields
@@ -574,10 +578,10 @@ public class IoosSos10 extends BaseOutputFormatter {
          */
         Element encoding = createSwe2Element("encoding");
         HashMap<String, String> map = new HashMap<String, String>();
-        map.put("decimalSeperator", DECIMAL_SEPERATOR);
-        map.put("tokenSeperator", TOKEN_SEPERATOR);
-        map.put("blockSeperator", BLOCK_SEPERATOR);
-        encoding.appendChild(createSwe2Element("TextEncoding", map));
+        map.put(DECIMALSEPARATOR, DECIMAL_SEPERATOR);
+        map.put(TOKENSEPARATOR, TOKEN_SEPERATOR);
+        map.put(BLOCKSEPARATOR, BLOCK_SEPERATOR);
+        encoding.appendChild(createSwe2Element(TEXTENCODING, map));
         return encoding;
     }
     
