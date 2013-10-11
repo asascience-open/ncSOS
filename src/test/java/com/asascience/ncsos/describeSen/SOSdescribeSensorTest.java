@@ -4,6 +4,7 @@
  */
 package com.asascience.ncsos.describeSen;
 
+import com.asascience.ncsos.outputformatter.DescribeSensorPlatformMilestone1_0;
 import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import com.asascience.ncsos.service.SOSParser;
 import com.asascience.ncsos.util.XMLDomUtils;
@@ -670,6 +671,14 @@ public class SOSdescribeSensorTest {
     }
     
     @Test
+    public void testUnitConversion() {
+        assertEquals("Sm-1",DescribeSensorPlatformMilestone1_0.parseUnitString("S m-1"));       
+        assertEquals("Sm-1",DescribeSensorPlatformMilestone1_0.parseUnitString("S:m-1"));       
+        assertEquals("Sm-1",DescribeSensorPlatformMilestone1_0.parseUnitString("S\nm-1"));       
+        assertEquals("Sm-1",DescribeSensorPlatformMilestone1_0.parseUnitString("S   m-1"));       
+    }
+    
+    @Test
     public void testExternalHawaiiFile() {
         System.out.println("\n------" + getCurrentMethod() + "------");
         
@@ -683,6 +692,12 @@ public class SOSdescribeSensorTest {
             assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
             // write as an example for TimeSeries
             fileWriter(exampleOutputDir, "DescribeSensor-TimeSeries-sensorML1.0.1.xml", writer, false);
+            assertFalse("contains invalid unit code", writer.toString().contains("<swe:uom code=\"S m-1\"/>"));
+            assertTrue("contains invalid unit code", writer.toString().contains("<swe:uom code=\"Sm-1\"/>"));
+            
+            writer.close();
+            
+            
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {

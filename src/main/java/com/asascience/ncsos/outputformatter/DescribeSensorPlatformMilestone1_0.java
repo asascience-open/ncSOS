@@ -6,6 +6,8 @@ package com.asascience.ncsos.outputformatter;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -292,11 +294,19 @@ public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
                 parent = (Element) parent.getElementsByTagNameNS(SML_NS, OUTPUT_LIST).item(0);
                 parent = addNewNode(parent, OUTPUT, SML_NS, NAME, outName);
                 parent = addNewNode(parent, QUANTITY, SWE_NS, DEFINITION, definition);
-                addNewNode(parent, UOM, SWE_NS, CODE, uom);
+                addNewNode(parent, UOM, SWE_NS, CODE, parseUnitString(uom));
             }
         }
     }
 
+    public static String parseUnitString(String units){        
+        String unitStr =units.replaceAll("[\\s+]","");
+        unitStr =unitStr.replaceAll("\\:\\.","");
+        //keeps
+        unitStr = unitStr.replaceAll("[^A-Za-z0-9-]", "");
+        return unitStr;
+    }
+    
     /**
      * Sets a gml:Point for the location
      * @param srsName srs/crs projection being used for coords
