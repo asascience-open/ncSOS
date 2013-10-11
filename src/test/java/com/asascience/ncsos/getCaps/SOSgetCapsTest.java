@@ -34,14 +34,14 @@ public class SOSgetCapsTest {
     private static String baseTomcatDir = null;
     private static String exampleOutputDir = null;
     
-    private static String baseRequest = "request=GetCapabilities&version=1.0.0&service=sos&sections=all";
+    private static String baseRequest = "request=GetCapabilities&acceptVersions=1.0.0&service=sos&sections=all";
     
-    private static String OperationsRequest = "request=GetCapabilities&version=1.0.0&service=sos&sections=OperationsMetadata";
-    private static String ServiceIdRequest = "request=GetCapabilities&version=1.0.0&service=sos&sections=ServiceIdentification";
-    private static String ServiceProvRequest = "request=GetCapabilities&version=1.0.0&service=sos&sections=ServiceProvider";
-    private static String ContentsRequest = "request=GetCapabilities&version=1.0.0&service=sos&sections=Contents";
-    private static String OpsAndContentsRequest = "request=GetCapabilities&version=1.0.0&service=sos&sections=OperationsMetadata,Contents";
-    private static String BadSectionRequest = "request=GetCapabilities&version=1.0.0&service=sos&sections=BadSection";
+    private static String OperationsRequest = "request=GetCapabilities&acceptVersions=1.0.0&service=sos&sections=OperationsMetadata";
+    private static String ServiceIdRequest = "request=GetCapabilities&acceptVersions=1.0.0&service=sos&sections=ServiceIdentification";
+    private static String ServiceProvRequest = "request=GetCapabilities&acceptVersions=1.0.0&service=sos&sections=ServiceProvider";
+    private static String ContentsRequest = "request=GetCapabilities&acceptVersions=1.0.0&service=sos&sections=Contents";
+    private static String OpsAndContentsRequest = "request=GetCapabilities&acceptVersions=1.0.0&service=sos&sections=OperationsMetadata,Contents";
+    private static String BadSectionRequest = "request=GetCapabilities&acceptVersions=1.0.0&service=sos&sections=BadSection";
     
     // work thredds
     private static String catalinaThredds = "work/Catalina/localhost/thredds";
