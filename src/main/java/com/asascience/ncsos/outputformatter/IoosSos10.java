@@ -153,8 +153,14 @@ public class IoosSos10 extends BaseOutputFormatter {
         // ioosTemplateVersion
         metaData = new ArrayList<SubElement>();
         attrs = new HashMap<String, String>();
+        subElm = new SubElement(NAME, GML_NS);
+        subElm.textContent = "ncSOS";
+
+        metaData.add(subElm);
+
         subElm = new SubElement(VERSION, GML_NS);
-        subElm.textContent = "1.0";
+        subElm.textContent = "RC6";
+
         metaData.add(subElm);
         attrs.put("xlink:title", "ioosTemplateVersion");
         attrs.put("xlink:href", ioosTemplateURL);
@@ -168,9 +174,9 @@ public class IoosSos10 extends BaseOutputFormatter {
          * </gml:metaDataProperty>
          */
         Element parent1 = (Element) this.document.getElementsByTagNameNS(OM_NS, OBSERVATION_COLLECTION).item(0);
-        
+
         Element member = (Element) this.document.getElementsByTagNameNS(OM_NS, MEMBER).item(0);
-                      
+
         //Element parent = this.addNewNode(parent1, META_DATA_PROP, GML_NS);
         Element parent = createElementNS(GML_NS, META_DATA_PROP);
         for (Map.Entry<String, String> entry : attributes.entrySet()) {
@@ -182,7 +188,7 @@ public class IoosSos10 extends BaseOutputFormatter {
         }
 
         parent1.insertBefore(parent, member);
-        
+
         return parent;
     }
 
