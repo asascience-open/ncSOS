@@ -18,7 +18,8 @@
       </sml:classification>
       <sml:validTime />
       <!-- <sml:contact /> placeholder -->
-      <sml:history></sml:history>
+      <sml:documentation></sml:documentation>	 
+	  <sml:history></sml:history>
       <sml:location></sml:location>
       <sml:position>
         <sml:dataDefinition></sml:dataDefinition>

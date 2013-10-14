@@ -81,12 +81,12 @@
 			</ows:Parameter>
 			<ows:Parameter name="procedure" use="required"/>
 		</ows:Operation>
-		<ows:Parameter name="service" use="required">
+		<ows:Parameter name="service">
 			<ows:AllowedValues>
 				<ows:Value>SOS</ows:Value>
 			</ows:AllowedValues>
 		</ows:Parameter>
-		<ows:Parameter name="version" use="required">
+		<ows:Parameter name="version">
 			<ows:AllowedValues>
 				<ows:Value>1.0.0</ows:Value>
 			</ows:AllowedValues>

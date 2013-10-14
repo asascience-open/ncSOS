@@ -38,101 +38,103 @@ public class SOSdescribeSensorTest {
     private static String baseLocalDir = null;
     private static String exampleOutputDir = null;
  
+    private static final String station_Procedure = "procedure=urn:ioos:station:authority:";
+    
     private static final String bdss_1_set = "resources/datasets/sura/watlev_NOAA_NAVD_PRE.nc";
-    private static final String bdss_1_query = "procedure=urn:ioos:station:authority:NOAA_8779748";
+    private static final String bdss_1_query = station_Procedure+"NOAA_8779748";
     private static final String bdss_watlev_query = "procedure=urn:ioos:sensor:authority:NOAA_8724698:watlev";
-    private static final String bdss_1_query_bad = "procedure=urn:ioos:station:authority:badstationname";
+    private static final String bdss_1_query_bad = station_Procedure+"badstationname";
     
     private static final String bdss_2_set = "resources/datasets/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1.nc";
-    private static final String bdss_2_query = "procedure=urn:ioos:station:authority:Station1";
+    private static final String bdss_2_query = station_Procedure+"Station1";
     private static final String bdss_2_bad_sensor = "procedure=urn:ioos:sensor:authority:Station1:badsensor";
     
     private static final String bdst_1_set = "resources/datasets/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc";
-    private static final String bdst_1_query = "procedure=urn:ioos:station:authority:Trajectory3";
-    private static final String bdst_1_query_bad = "procedure=urn:ioos:station:authority:Trajectory100";
+    private static final String bdst_1_query = station_Procedure+"Trajectory3";
+    private static final String bdst_1_query_bad = station_Procedure+"Trajectory100";
     
     private static final String bdst_2_set = "resources/datasets/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4.nc";
-    private static final String bdst_2_query = "procedure=urn:ioos:station:authority:Trajectory7";
+    private static final String bdst_2_query = station_Procedure+"Trajectory7";
     
     private static final String bdsp_1_set = "resources/datasets/profile-Contiguous-Ragged-MultipleProfiles-H.3.4/profile-Contiguous-Ragged-MultipleProfiles-H.3.4.nc";
-    private static final String bdsp_1_query = "procedure=urn:ioos:station:authority:Profile3";
-    private static final String bdsp_1_query_bad = "procedure=urn:ioos:station:authority:Profile100";
+    private static final String bdsp_1_query = station_Procedure+"Profile3";
+    private static final String bdsp_1_query_bad = station_Procedure+"Profile100";
     
     private static final String bdsp_2_set = "resources/datasets/profile-Indexed-Ragged-MultipleProfiles-H.3.5/profile-Indexed-Ragged-MultipleProfiles-H.3.5.nc";
-    private static final String bdsp_2_query = "procedure=urn:ioos:station:authority:Profile5";
+    private static final String bdsp_2_query = station_Procedure+"Profile5";
     
     private static final String bdsp_3_set = "resources/datasets/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1.nc";
-    private static final String bdsp_3_query = "procedure=urn:ioos:station:authority:Profile32";
+    private static final String bdsp_3_query = station_Procedure+"Profile32";
     
     private static final String bdsg_1_set = "resources/datasets/satellite-sst/SST_Global_2x2deg_20120626_0000.nc";
-    private static final String bdsg_1_query = "procedure=urn:ioos:station:authority:Grid0";
+    private static final String bdsg_1_query = station_Procedure+"Grid0";
     
     private static final String bdstp_1_set = "resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc";
-    private static final String bdstp_1_query = "procedure=urn:ioos:station:authority:Trajectory2";
-    private static final String bdstp_1_query_bad = "procedure=urn:ioos:station:authority:Trajectory200";
+    private static final String bdstp_1_query = station_Procedure+"Trajectory2";
+    private static final String bdstp_1_query_bad = station_Procedure+"Trajectory200";
     
     private static final String bdstp_2_set = "resources/datasets/trajectoryProfile-Ragged-MultipleTrajectories-H.6.3/trajectoryProfile-Ragged-MultipleTrajectories-H.6.3.nc";
-    private static final String bdstp_2_query = "procedure=urn:ioos:station:authority:Trajectory3";
+    private static final String bdstp_2_query = station_Procedure+"Trajectory3";
     
     private static final String ext_hawaii_set = "resources/datasets/sura/wqbkn_2012_08_01.nc";
-    private static final String ext_hawaii_query = "procedure=urn:ioos:station:authority:WQBKN";
+    private static final String ext_hawaii_query = station_Procedure+"WQBKN";
     
     private static final String andrw_set = "resources/datasets/sura/andrw.lft.nc";
-    private static final String andrw_query = "procedure=urn:ioos:station:authority:Site-79-2";
+    private static final String andrw_query = station_Procedure+"Site-79-2";
     
     private static final String usace_set = "resources/datasets/sura/hs_USACE-CHL.nc";
-    private static final String usace_query = "procedure=urn:ioos:station:authority:USACE-CHL_2410504B";
+    private static final String usace_query = station_Procedure+"USACE-CHL_2410504B";
     
     private static final String undkennedy_set = "resources/datasets/sura/Hsig_UNDKennedy_IKE_VIMS_3D_WAVEONLY.nc";
-    private static final String undkennedy_query = "procedure=urn:ioos:station:authority:UNDKennedy_R";
+    private static final String undkennedy_query = station_Procedure+"UNDKennedy_R";
     
     private static final String hwm_tcoon_set = "resources/datasets/sura/hwm_TCOON_NAVD88.nc";
-    private static final String hwm_tcoon_query = "procedure=urn:ioos:station:authority:TCOON_8779770";
+    private static final String hwm_tcoon_query = station_Procedure+"TCOON_8779770";
     
     private static final String tm_csi_set = "resources/datasets/sura/tm_CSI.nc";
-    private static final String tm_csi_query = "procedure=urn:ioos:station:authority:CSI_03";
+    private static final String tm_csi_query = station_Procedure+"CSI_03";
     
     private static final String tm_ike_set = "resources/datasets/sura/tm_IKE.nc";
-    private static final String tm_ike_query = "procedure=urn:ioos:station:authority:CSI_09";
+    private static final String tm_ike_query = station_Procedure+"CSI_09";
     
     private static final String crms_set = "resources/datasets/sura/watlev_CRMS.nc";
-    private static final String crms_query = "procedure=urn:ioos:station:authority:CRMS_BA04-07";
+    private static final String crms_query = station_Procedure+"CRMS_BA04-07";
     
     private static final String crms_2005_set = "resources/datasets/sura/watlev_CRMS_2005.nc";
-    private static final String crms_2005_query = "procedure=urn:ioos:station:authority:CRMS_BA04-10";
+    private static final String crms_2005_query = station_Procedure+"CRMS_BA04-10";
     
     private static final String crms_2008_set = "resources/datasets/sura/watlev_CRMS_2008.F.C__IKE_VIMS_3D_WITHWAVE.nc";
-    private static final String crms_2008_query = "procedure=urn:ioos:station:authority:CRMS_BA04-56";
+    private static final String crms_2008_query = station_Procedure+"CRMS_BA04-56";
     
     private static final String crms_2008_nowave_set = "resources/datasets/sura/watlev_CRMS_2008.F.C_IKE_VIMS_3D_NOWAVE.nc";
-    private static final String crms_2008_nowave_query = "procedure=urn:ioos:station:authority:CRMS_BS08-09";
+    private static final String crms_2008_nowave_query = station_Procedure+"CRMS_BS08-09";
     
     private static final String crms_2008_basecycle_set = "resources/datasets/sura/watlev_CRMS_2008.F.C_mod_base_cycle_5.nc";
-    private static final String crms_2008_basecycle_query = "procedure=urn:ioos:station:authority:CRMS_CS20-03";
+    private static final String crms_2008_basecycle_query = station_Procedure+"CRMS_CS20-03";
     
     private static final String watlev_csi_set = "resources/datasets/sura/watlev_CSI.nc";
-    private static final String watlev_csi_query = "procedure=urn:ioos:station:authority:CSI_15";
+    private static final String watlev_csi_query = station_Procedure+"CSI_15";
     
     private static final String watlev_ike_set = "resources/datasets/sura/watlev_IKE.nc";
-    private static final String watlev_ike_query = "procedure=urn:ioos:station:authority:CRMS_BA01-01";
+    private static final String watlev_ike_query = station_Procedure+"CRMS_BA01-01";
     
     private static final String watlev_ike_61_set = "resources/datasets/sura/watlev_IKE.P.UL-Ike2Dh.61.nc";
-    private static final String watlev_ike_61_query = "procedure=urn:ioos:station:authority:USACE-CHL_2410504B";
+    private static final String watlev_ike_61_query = station_Procedure+"USACE-CHL_2410504B";
     
     private static final String watlev_noaa_set = "resources/datasets/sura/watlev_NOAA.F.C.nc";
-    private static final String watlev_noaa_query = "procedure=urn:ioos:station:authority:NOAA_8724698";
+    private static final String watlev_noaa_query = station_Procedure+"NOAA_8724698";
     
     private static final String noaa_navd_set = "resources/datasets/sura/watlev_NOAA_NAVD_PRE.nc";
-    private static final String noaa_navd_query = "procedure=urn:ioos:station:authority:NOAA_8726347";
+    private static final String noaa_navd_query = station_Procedure+"NOAA_8726347";
     
     private static final String jason_satellite_set = "resources/datasets/nodc/jason2_satelliteAltimeter.nc";
-    private static final String jason_satellite_query = "procedure=urn:ioos:station:authority:unknown";
+    private static final String jason_satellite_query = station_Procedure+"unknown";
     
     private static final String bodega_marinelab_set = "resources/datasets/nodc/BodegaMarineLabBuoy.nc";
-    private static final String bodega_marinelab_query = "procedure=urn:ioos:station:authority:Cordell Bank Buoy";
+    private static final String bodega_marinelab_query = station_Procedure+"Cordell Bank Buoy";
     
     private static final String bad_requests_set = "resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc";
-    private static final String bad_request_control_query = "procedure=urn:ioos:station:authority:Trajectory2";
+    private static final String bad_request_control_query = station_Procedure+"Trajectory2";
     private static final String bad_request_outputformat_query = "request=DescribeSensor&service=sos&Acceptversions=1.0.0&outputFormat=text/xml;subtype=\"5\"";
     private static final String bad_request_outputformat_mispelled_query = "request=DescribeSensor&service=sos&Acceptversions=1.0.0&respnseformat=";
     private static final String bad_request_request_query = "request=DescrbeSensor&service=sos&Acceptversions=1.0.0&outputFormat=";
@@ -143,6 +145,10 @@ public class SOSdescribeSensorTest {
     private static final String bad_request_service_misspelled_query = "request=DescribeSensor&servce=sos&Acceptversions=1.0.0&outputFormat=";
     private static final String bad_request_procedure_query = "request=DescribeSensor&service=sos&Acceptversions=1.0.0&procedure=urn:tds:station:trajectory2&outputFormat=";
     private static final String bad_request_procedure_misspelled_query = "request=DescribeSensor&service=sos&Acceptversions=1.0.0&procdure=urn:ioos:station:authority:trajectory2&outputFormat=";
+    //single station (not aggregation)
+    private static final String gliderDataSet = "resources/datasets/glider/penobscot-20131011T073911_rt0.nc";
+    private static final String gliderDataRequest = "request=DescribeSensor&procedure=urn:ioos:network:edu.rutgers.marine:all&service=SOS&version=1.0.0&outputFormat=text/xml;subtype=\"sensorML/1.0.1/profiles/ioos_sos/1.0\"";
+    
     
     private static String baseQuery = "request=DescribeSensor&service=sos&Acceptversions=1.0.0&outputFormat=text/xml";
     
@@ -221,6 +227,11 @@ public class SOSdescribeSensorTest {
     /***************************************************************************
      * Tests *******************************************************************
      ***************************************************************************/
+    
+    @Test
+    public void testGliderDataSetNotWorkingWithSensorML() {
+        
+    }
     
     @Test
     public void testBadRequestStringsDescribeSensor() {

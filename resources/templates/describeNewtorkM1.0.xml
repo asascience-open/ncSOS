@@ -20,8 +20,8 @@
       <sml:contact>
         <sml:ContactList />
       </sml:contact>
-      <sml:history />
       <sml:documentation />
+      <sml:history />      
       <sml:components>
         <sml:ComponentList />
       </sml:components>

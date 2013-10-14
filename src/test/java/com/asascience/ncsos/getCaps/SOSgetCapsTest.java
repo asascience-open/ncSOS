@@ -351,6 +351,7 @@ public class SOSgetCapsTest {
     }
 
     @Test
+    @Ignore
     public void testLargeDatasets() throws IOException {
 //        fail("removed - test is expensive");
         System.out.println("\n------" + getCurrentMethod() + "------");
@@ -805,7 +806,7 @@ public class SOSgetCapsTest {
         write.close();
         fileWriter(base, fileName, write);
         assertFalse(write.toString().contains("Exception"));
-        assertTrue(write.toString().contains("<sos:ObservationOffering gml:id="));
+        assertTrue(write.toString().contains("<sos:ObservationOffering gml:id="));        
         
         System.out.println("------END " + getCurrentMethod() + "------");
     }
