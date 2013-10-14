@@ -26,6 +26,7 @@ import ucar.nc2.ft.*;
 public abstract class SOSBaseRequestHandler {
     public static final String CF_ROLE = "cf_role";
     public static final String GRID = "grid";
+    public static final String GRID_MAPPING = "grid_mapping";
     public static final String NAME = "name";
     public static final String PROFILE = "profile";
     public static final String TRAJECTORY = "trajectory";
@@ -667,7 +668,7 @@ public abstract class SOSBaseRequestHandler {
         ArrayList<String> returnList = new ArrayList<String>();
         for (VariableSimpleIF var : featureDataset.getDataVariables()) {
             for (Attribute attr : var.getAttributes()) {
-                if (attr.getName().equalsIgnoreCase("grid_mapping")) {
+                if (attr.getName().equalsIgnoreCase(GRID_MAPPING)) {
                     String stName = attr.getValue(0).toString();
                     String auth = getAuthorityFromVariable(stName);
                     if (auth != null && !returnList.contains(auth)) {

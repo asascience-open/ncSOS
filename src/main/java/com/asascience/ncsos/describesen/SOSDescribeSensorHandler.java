@@ -32,7 +32,7 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
     private final String procedure;
     private ISOSDescribeSensor describer;
     
-    private final String ACCEPTABLE_RESPONSE_FORMAT = "text/xml;subtype=\"sensorML/1.0.1\"";
+    //private final String ACCEPTABLE_RESPONSE_FORMAT = "text/xml;subtype=\"sensorML/1.0.1\"";
     
     /**
      * Creates a DescribeSensor handler that will parse the information and setup

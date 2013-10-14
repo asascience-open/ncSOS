@@ -59,12 +59,6 @@ public class GetCapsOutputter extends SOSOutputFormatter {
     public static final String XLINKHREF = XLINK_HREF;
     public static final String XLINK_TITLE = "xlink:title";
     public static final String XSITYPE = "xsi:type";
-    public static final String[] possibleValueList = {"allowedValues", "anyValue", "noValues", "valuesListReference"};
-    public static final String[] possibleValueLink = {
-        "\"http://www.opengis.net/ows/1.1\":AllowedValues",
-        "\"http://www.opengis.net/ows/1.1\":AnyValue",
-        "\"http://www.opengis.net/ows/1.1\":NoValues",
-        "\"http://www.opengis.net/ows/1.1\":ValuesReference"};
     private DOMImplementationLS impl;
     private boolean exceptionFlag;
     private Element getCaps, getObs, descSen;
