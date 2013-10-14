@@ -16,17 +16,23 @@ import org.w3c.dom.NodeList;
  * @author SCowan
  */
 public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
+    public static final String BLANK = "";
     public static final String CAPABILITIES = "capabilities";
     public static final String CLASSIFIER = "classifier";
     public static final String CLASSIFIERLIST = "ClassifierList";
 
     public static final String CONTACTINFO = "contactInfo";
+    public static final String DEFINITION = "definition";
     public static final String DOCUMENTATION = "documentation";
+    public static final String FIELD = "field";
+    public static final String NAME = "name";
     public static final String ONLINERESOURCE = "onlineResource";
     public static final String ORGANIZATION_NAME = "organizationName";
     public static final String RESPONSIBLE_PARTY = "ResponsibleParty";
     public static final String ROLE = "role";
     public static final String SIMPLEDATARECORD = "SimpleDataRecord";
+    public static final String TEXT = "Text";
+    public static final String VALUE = "value";
     private static final String TEMPLATE_LOCATION = "templates/describePlatformM1.0.xml";
     private final static String IOOSURL = "http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0";
     private final static String OBSERVATION_TIME_RANGE = "observationTimeRange";
@@ -231,14 +237,67 @@ public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
          *   </swe:SimpleDataRecord>
          * </sml:capabilities>
          */
-        Element parent = getParentNode();
-        parent = addNewNode(parent, CAPABILITIES, SML_NS, NAME, "ioosServiceMetadata");
-        parent = addNewNode(parent, SIMPLEDATARECORD, SWE_NS);
-        parent = addNewNode(parent, META_DATA_PROP, GML_NS, TITLE, XLINK_NS, "ioosTemplateVersion");
-        parent.setAttributeNS(XLINK_NS, HREF, IOOSURL);
-        addNewNode(parent, VERSION, GML_NS, "1.0");
+         Element parent = getParentNode();
+        parent = addNewNodeToParentWithAttribute(SML_NS, CAPABILITIES, parent, NAME, "ioosServiceMetadata");
+        Element parent1 = addNewNodeToParent(SWE_NS, SIMPLEDATARECORD, parent);
+        
+        parent = addNewNodeToParentWithAttribute(SWE_NS, FIELD, parent1, BLANK, NAME, "ioosTemplateVersion");
+        parent = addNewNodeToParentWithAttribute(SWE_NS, TEXT, parent, BLANK, DEFINITION, "http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0");
+        parent = addNewNodeToParentWithTextValue(SWE_NS, VALUE, parent, "1.0");
+        
+       parent = addNewNodeToParentWithAttribute(SWE_NS, FIELD, parent1, BLANK, NAME, "softwareVersion");
+        parent = addNewNodeToParentWithAttribute(SWE_NS, TEXT, parent, BLANK, DEFINITION, "http://github.com/asascience-open/ncSOS/releases/tag/RC6");
+        parent = addNewNodeToParentWithTextValue(SWE_NS, VALUE, parent, "RC6");
+        
+    }
+    
+      private Element addNewNodeToParentWithAttribute(
+            String nameSpace,
+            String nameOfNewNode, Element parentNode,
+            String attributeName, String attributeValue) {
+
+        return addNewNodeToParentWithAttribute(nameSpace,
+                nameOfNewNode, parentNode, null,
+                attributeName, attributeValue);
+    }
+      
+  private Element addNewNodeToParentWithTextValue(
+            String nameSpace,
+            String nameOfNewNode, Element parentNode,
+            String textContentValue) {
+        Element retval = createElementNS(nameSpace, nameOfNewNode);
+
+        retval.setTextContent(textContentValue);
+        parentNode.appendChild(retval);
+        return retval;
+    }
+  
+    private Element addNewNodeToParent(String nameSpace,
+            String nameOfNewNode,
+            Element parentNode) {
+        Element retval = createElementNS(nameSpace, nameOfNewNode);
+
+        parentNode.appendChild(retval);
+        return retval;
     }
 
+    
+    private Element addNewNodeToParentWithAttribute(
+            String nameSpace,
+            String nameOfNewNode, Element parentNode,
+            String attributeNS,
+            String attributeName, String attributeValue) {
+        Element retval = createElementNS(nameSpace, nameOfNewNode);
+
+        if (attributeNS != null) {
+            retval.setAttributeNS(attributeNS, attributeName, attributeValue);
+        } else {
+            retval.setAttribute(attributeName, attributeValue);
+        }
+        parentNode.appendChild(retval);
+        return retval;
+    }
+    
     /**
      * Adds an <sml:component> complex element, to the ComponentList
      * @param compName name of the component
@@ -300,10 +359,10 @@ public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
     }
 
     public static String parseUnitString(String units){        
-        String unitStr =units.replaceAll("[\\s+]","");
-        unitStr =unitStr.replaceAll("\\:\\.","");
+        String unitStr =units.replaceAll("[\\s+]", BLANK);
+        unitStr =unitStr.replaceAll("\\:\\.", BLANK);
         //keeps
-        unitStr = unitStr.replaceAll("[^A-Za-z0-9-]", "");
+        unitStr = unitStr.replaceAll("[^A-Za-z0-9-]", BLANK);
         return unitStr;
     }
     

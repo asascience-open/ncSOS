@@ -29,6 +29,9 @@ import ucar.unidata.geoloc.LatLonRect;
  * @version 1.0.0
  */
 public class DescribeSensorFormatter extends SOSOutputFormatter {
+    public static final String CLASSIFIER = "classifier";
+    public static final String CLASSIFIERLIST = "ClassifierList";
+
     public static final String CODE = "code";
     public static final String CONTACT = "contact";
     public static final String COORDINATE = "coordinate";
@@ -323,8 +326,8 @@ public class DescribeSensorFormatter extends SOSOutputFormatter {
      * @param classifierValue value of the classification (eg 'GLIDER')
      */
     public void addToClassificationNode(String classifierName, String definition, String classifierValue) {
-        Element parent = (Element) getParentNode().getElementsByTagNameNS(SML_NS, "ClassifierList").item(0);
-        parent = addNewNodeToParentWithAttribute(SML_NS, "classifier", parent, NAME, classifierName);
+        Element parent = (Element) getParentNode().getElementsByTagNameNS(SML_NS, CLASSIFIERLIST).item(0);
+        parent = addNewNodeToParentWithAttribute(SML_NS, CLASSIFIER, parent, NAME, classifierName);
         parent = addNewNodeToParentWithAttribute(SML_NS, TERM, parent, DEFINITION, definition);
         addNewNodeToParentWithTextValue(SML_NS, SML_VALUE, parent, classifierValue);
     }
@@ -345,8 +348,8 @@ public class DescribeSensorFormatter extends SOSOutputFormatter {
          *   </sml:Term>
          * </sml:classifier>
          */
-        Element parent = (Element) document.getElementsByTagNameNS(SML_NS, "ClassifierList").item(0);
-        parent = addNewNodeToParentWithAttribute(SML_NS, "classifier", parent, NAME, name);
+        Element parent = (Element) document.getElementsByTagNameNS(SML_NS, CLASSIFIERLIST).item(0);
+        parent = addNewNodeToParentWithAttribute(SML_NS, CLASSIFIER, parent, NAME, name);
         parent = addNewNodeToParentWithAttribute(SML_NS, "Term", parent, DEFINITION, definition);
         addNewNodeToParentWithAttribute(SML_NS, CODE_SPACE, parent,
                 XLINK_NS, HREF, "http://mmisw.org/ont/ioos/" + codeSpace);
@@ -727,22 +730,34 @@ public class DescribeSensorFormatter extends SOSOutputFormatter {
 
     public void addIoosServiceMetadata1_0() {
         /*
-         * <sml:capabilities name="ioosServiceMetadata">
-         *   <swe:SimpleDataRecord>
-         *     <gml:metaDataProperty xlink:title="ioosTemplateVersion" xlink:href="http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0">
-         *       <gml:version>1.0</gml:version>
-         *     </gml:metaDataProperty>
-         *   </swe:SimpleDataRecord>
-         * </sml:capabilities>
+        <sml:capabilities name="ioosServiceMetadata">
+            <swe:SimpleDataRecord>
+                <swe:field name="ioosTemplateVersion">
+                    <swe:Text definition="http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0">
+                        <swe:value>1.0</swe:value>
+                    </swe:Text>
+                    </swe:field>
+                    <swe:field name="softwareVersion">
+                        <swe:Text definition="http://github.com/asascience-open/ncSOS/releases/tag/RC6">
+                    <swe:value>RC6</swe:value>
+                    </swe:Text>
+                </swe:field>
+            </swe:SimpleDataRecord>
+        </sml:capabilities>
+         * 
          */
         Element parent = getParentNode();
         parent = addNewNodeToParentWithAttribute(SML_NS, "capabilities", parent, NAME, "ioosServiceMetadata");
-        parent = addNewNodeToParent(SWE_NS, "SimpleDataRecord", parent);
-        parent = addNewNodeToParentWithAttribute(GML_NS, META_DATA_PROP, parent,
-                XLINK_NS, TITLE, "ioosTemplateVersion");
-        parent.setAttributeNS(XLINK_NS, HREF,
-                "http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0");
-        addNewNodeToParentWithTextValue(GML_NS, "version", parent, "1.0");
+        Element parent1 = addNewNodeToParent(SWE_NS, "SimpleDataRecord", parent);
+        
+        parent = addNewNodeToParentWithAttribute(SWE_NS, "field", parent1, "", "name", "ioosTemplateVersion");
+        parent = addNewNodeToParentWithAttribute(SWE_NS, "Text", parent, "", "definition", "http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0");
+        parent = addNewNodeToParentWithTextValue(SWE_NS, "value", parent, "1.0");
+        
+       parent = addNewNodeToParentWithAttribute(SWE_NS, "field", parent1, "", "name", "softwareVersion");
+        parent = addNewNodeToParentWithAttribute(SWE_NS, "Text", parent, "", "definition", "http://github.com/asascience-open/ncSOS/releases/tag/RC6");
+        parent = addNewNodeToParentWithTextValue(SWE_NS, "value", parent, "RC6");
+        
     }
 
     /**
