@@ -22,20 +22,18 @@ import ucar.unidata.geoloc.LatLonRect;
 public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
 
     private final String threddsURI;
-    
+
     private enum Sections {
+
         OPERATIONSMETADATA, SERVICEIDENTIFICATION, SERVICEPROVIDER, CONTENTS
     }
-    
     private String sections;
     private BitSet requestedSections;
     private static final int SECTION_COUNT = 4;
-    
     private static CalendarDate setStartDate;
     private static CalendarDate setEndDate;
     private static HashMap<Integer, CalendarDateRange> stationDateRange;
     private static HashMap<Integer, LatLonRect> stationBBox;
-    
     private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(SOSGetCapabilitiesRequestHandler.class);
 
     /**
@@ -52,20 +50,20 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         this.threddsURI = threddsURI;
         this.sections = sections.toLowerCase();
         output = new GetCapsOutputter();
-        
+
         requestedSections = new BitSet(SECTION_COUNT);
-        
+
         if (getFeatureDataset() == null) {
             // error, couldn't read dataset
             output.setupExceptionOutput("Unable to read dataset's feature type. Reported as " + FeatureDatasetFactoryManager.findFeatureType(netCDFDataset).toString() + "; unable to process.");
             return;
         }
-        
+
         SetSectionBits();
-        
+
         CalculateBoundsForFeatureSet();
     }
-    
+
     /**
      * Used for creating quick exception responses
      * @param emptyDataset
@@ -77,29 +75,30 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
         this.threddsURI = "";
         output = new GetCapsOutputter();
     }
-    
+
     public void resetCapabilitiesSections(String sections) {
         this.sections = sections.toLowerCase();
         requestedSections = new BitSet(SECTION_COUNT);
         SetSectionBits();
     }
-    
+
     /**
      * Creates the output for the get capabilities response
      */
     public void parseGetCapabilitiesDocument() {
         GetCapsOutputter out = (GetCapsOutputter) output;
         // early exit if we have an exception output
-        if (out.hasExceptionOut())
+        if (out.hasExceptionOut()) {
             return;
+        }
         // service identification; parse if it is the section identified or 'all'
         if (this.requestedSections.get(Sections.SERVICEIDENTIFICATION.ordinal())) {
-            out.parseServiceIdentification(title ,Region, Access);
+            out.parseServiceIdentification(title, Region, Access);
         } else {
             // remove identification from doc
             out.removeServiceIdentification();
         }
-        
+
         // service provider; parse if it is the section identified or 'all'
         if (this.requestedSections.get(Sections.SERVICEPROVIDER.ordinal())) {
             out.parseServiceDescription(PublisherURL, PrimaryOwnership);
@@ -107,27 +106,32 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
             // remove service provider from doc
             out.removeServiceProvider();
         }
-        
+
         // operations metadata; parse if it is the section identified or 'all'
         if (this.requestedSections.get(Sections.OPERATIONSMETADATA.ordinal())) {
             // set get capabilities output
             out.setOperationGetCaps(threddsURI);
             // set get observation output
-            if (getGridDataset() != null)
-                out.setOperationGetObs(threddsURI, setStartDate, setEndDate, getSensorNames(), 
-                					   getStationNames().values().toArray(new String[getStationNames().values().size()]), 
-                					   true, getGridDataset().getBoundingBox(), this.getDatasetFeatureType());
-            else
-                out.setOperationGetObs(threddsURI, setStartDate, setEndDate, getSensorNames(), 
-                		getStationNames().values().toArray(new String[getStationNames().values().size()]), 
-                		false, null, this.getDatasetFeatureType());
+            if (getGridDataset() != null) {
+                out.setOperationGetObs(threddsURI, setStartDate, setEndDate, getSensorNames(),
+                        getStationNames().values().toArray(new String[getStationNames().values().size()]),
+                        true, getGridDataset().getBoundingBox(), this.getDatasetFeatureType());
+            } else {
+                out.setOperationGetObs(threddsURI, setStartDate, setEndDate, getSensorNames(),
+                        getStationNames().values().toArray(new String[getStationNames().values().size()]),
+                        false, null, this.getDatasetFeatureType());
+            }
             // set describe sensor output
-           out.setOperationDescSen(threddsURI, getStationNames().values().toArray(new String[getStationNames().values().size()]), getSensorNames());
+            out.setOperationDescSen(threddsURI, getStationNames().values().toArray(new String[getStationNames().values().size()]), getSensorNames());
         } else {
             // remove operations metadata
             out.removeOperations();
         }
-        
+
+        //adds the extended capabilties to the get caps results
+        out.addExtendedCapabilities();
+
+
         // Contents; parse if it is the section identified or 'all'
         if (this.requestedSections.get(Sections.CONTENTS.ordinal())) {
             // observation offering list
@@ -142,21 +146,22 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
             }
             LatLonRect setRange = new LatLonRect(new LatLonPointImpl(latMin, lonMin), new LatLonPointImpl(latMax, lonMax));
             CalendarDateRange setTime = null;
-            if (setStartDate != null && setEndDate != null)
-                setTime = CalendarDateRange.of(setStartDate,setEndDate);
-            
+            if (setStartDate != null && setEndDate != null) {
+                setTime = CalendarDateRange.of(setStartDate, setEndDate);
+            }
+
             out.setObservationOfferingNetwork(setRange, getStationNames().values().toArray(new String[getStationNames().values().size()]), getSensorNames(), setTime, this.getFeatureDataset().getFeatureType());
-          //  out.setObservationOfferingList( "network-all",setRange, getSensorNames(), setTime, this.getFeatureDataset().getFeatureType());
+            //  out.setObservationOfferingList( "network-all",setRange, getSensorNames(), setTime, this.getFeatureDataset().getFeatureType());
             // iterate through our stations and add them
             for (Integer index : getStationNames().keySet()) {
-                ((GetCapsOutputter)output).setObservationOfferingList(getStationNames().get(index), stationBBox.get(index), getSensorNames(), stationDateRange.get(index), this.getFeatureDataset().getFeatureType());
+                ((GetCapsOutputter) output).setObservationOfferingList(getStationNames().get(index), stationBBox.get(index), getSensorNames(), stationDateRange.get(index), this.getFeatureDataset().getFeatureType());
             }
         } else {
             // remove Contents node
             out.removeContents();
         }
     }
-    
+
     private void CalculateBoundsForFeatureSet() {
         if (getDatasetFeatureType() != null) {
             stationDateRange = new HashMap<Integer, CalendarDateRange>();
@@ -168,13 +173,15 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                     try {
                         TrajectoryFeatureCollection collection = (TrajectoryFeatureCollection) getFeatureTypeDataSet();
                         collection.resetIteration();
-                        while(collection.hasNext()) {
+                        while (collection.hasNext()) {
                             TrajectoryFeature feature = collection.next();
                             if (DatasetHandlerAdapter.calcBounds(feature)) {
-                                if (start == null || start.isAfter(feature.getCalendarDateRange().getStart()))
+                                if (start == null || start.isAfter(feature.getCalendarDateRange().getStart())) {
                                     start = feature.getCalendarDateRange().getStart();
-                                if (end == null || end.isBefore(feature.getCalendarDateRange().getEnd()))
+                                }
+                                if (end == null || end.isBefore(feature.getCalendarDateRange().getEnd())) {
                                     end = feature.getCalendarDateRange().getEnd();
+                                }
                                 stationDateRange.put(stationIndex, feature.getCalendarDateRange());
                                 stationBBox.put(stationIndex, feature.getBoundingBox());
                                 stationIndex++;
@@ -193,13 +200,15 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                     try {
                         StationTimeSeriesFeatureCollection collection = (StationTimeSeriesFeatureCollection) getFeatureTypeDataSet();
                         collection.resetIteration();
-                        while(collection.hasNext()) {
+                        while (collection.hasNext()) {
                             StationTimeSeriesFeature feature = collection.next();
                             if (DatasetHandlerAdapter.calcBounds(feature)) {
-                                if (start == null || start.isAfter(feature.getCalendarDateRange().getStart()))
+                                if (start == null || start.isAfter(feature.getCalendarDateRange().getStart())) {
                                     start = feature.getCalendarDateRange().getStart();
-                                if (end == null || end.isBefore(feature.getCalendarDateRange().getEnd()))
+                                }
+                                if (end == null || end.isBefore(feature.getCalendarDateRange().getEnd())) {
                                     end = feature.getCalendarDateRange().getEnd();
+                                }
                                 stationDateRange.put(stationIndex, feature.getCalendarDateRange());
                                 stationBBox.put(stationIndex, feature.getBoundingBox());
                             } else {
@@ -218,14 +227,16 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                     try {
                         ProfileFeatureCollection collection = (ProfileFeatureCollection) getFeatureTypeDataSet();
                         collection.resetIteration();
-                        while(collection.hasNext()) {
+                        while (collection.hasNext()) {
                             ProfileFeature feature = collection.next();
                             if (DatasetHandlerAdapter.calcBounds(feature)) {
                                 CalendarDate profileDate = CalendarDate.of(feature.getTime());
-                                if (start == null || start.isAfter(profileDate))
+                                if (start == null || start.isAfter(profileDate)) {
                                     start = profileDate;
-                                if (end == null || end.isBefore(profileDate))
+                                }
+                                if (end == null || end.isBefore(profileDate)) {
                                     end = profileDate;
+                                }
                                 stationDateRange.put(stationIndex, CalendarDateRange.of(profileDate, profileDate));
                                 stationBBox.put(stationIndex, new LatLonRect(feature.getLatLon(), feature.getLatLon()));
                                 stationIndex++;
@@ -250,14 +261,16 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                         CalendarDateRange nullrange = null;
                         StationProfileFeatureCollection collection = (StationProfileFeatureCollection) getFeatureTypeDataSet();
                         collection.resetIteration();
-                        while(collection.hasNext()) {
+                        while (collection.hasNext()) {
                             StationProfileFeature feature = collection.next();
                             PointFeatureCollection flattened = feature.flatten(null, nullrange);
                             if (DatasetHandlerAdapter.calcBounds(flattened)) {
-                                if (start == null || start.isAfter(flattened.getCalendarDateRange().getStart()))
+                                if (start == null || start.isAfter(flattened.getCalendarDateRange().getStart())) {
                                     start = flattened.getCalendarDateRange().getStart();
-                                if (end == null || end.isBefore(flattened.getCalendarDateRange().getEnd()))
+                                }
+                                if (end == null || end.isBefore(flattened.getCalendarDateRange().getEnd())) {
                                     end = flattened.getCalendarDateRange().getEnd();
+                                }
                                 stationDateRange.put(stationIndex, flattened.getCalendarDateRange());
                                 stationBBox.put(stationIndex, flattened.getBoundingBox());
                                 stationIndex++;
@@ -277,14 +290,16 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
                         CalendarDateRange nullrange = null;
                         SectionFeatureCollection collection = (SectionFeatureCollection) getFeatureTypeDataSet();
                         collection.resetIteration();
-                        while(collection.hasNext()) {
+                        while (collection.hasNext()) {
                             SectionFeature feature = collection.next();
                             PointFeatureCollection flattened = feature.flatten(null, nullrange);
                             if (DatasetHandlerAdapter.calcBounds(flattened)) {
-                                if (start == null || start.isAfter(flattened.getCalendarDateRange().getStart()))
+                                if (start == null || start.isAfter(flattened.getCalendarDateRange().getStart())) {
                                     start = flattened.getCalendarDateRange().getStart();
-                                if (end == null || end.isBefore(flattened.getCalendarDateRange().getEnd()))
+                                }
+                                if (end == null || end.isBefore(flattened.getCalendarDateRange().getEnd())) {
                                     end = flattened.getCalendarDateRange().getEnd();
+                                }
                                 stationDateRange.put(stationIndex, flattened.getCalendarDateRange());
                                 stationBBox.put(stationIndex, flattened.getBoundingBox());
                                 stationIndex++;
@@ -310,29 +325,32 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
             _log.error("Unknown feature type - getDatasetFeatureType is null");
         }
     }
-    
+
     private void GetExtentsFromSubFeatures(PointFeatureCollection coll, int index) {
         try {
             // calculate the bounds of this particular station
             CalendarDate start = CalendarDate.present();
             CalendarDate end = CalendarDate.of(0);
             double minLat = Double.POSITIVE_INFINITY, maxLat = Double.NEGATIVE_INFINITY, minLon = Double.POSITIVE_INFINITY, maxLon = Double.NEGATIVE_INFINITY;
-            for (coll.resetIteration();coll.hasNext();) {
+            for (coll.resetIteration(); coll.hasNext();) {
                 PointFeature pf = coll.next();
-                if (pf.getObservationTimeAsCalendarDate().isAfter(end))
+                if (pf.getObservationTimeAsCalendarDate().isAfter(end)) {
                     end = pf.getObservationTimeAsCalendarDate();
-                else if (pf.getObservationTimeAsCalendarDate().isBefore(start))
+                } else if (pf.getObservationTimeAsCalendarDate().isBefore(start)) {
                     start = pf.getObservationTimeAsCalendarDate();
+                }
 
-                if (minLat > pf.getLocation().getLatitude())
+                if (minLat > pf.getLocation().getLatitude()) {
                     minLat = pf.getLocation().getLatitude();
-                else if (maxLat < pf.getLocation().getLatitude())
+                } else if (maxLat < pf.getLocation().getLatitude()) {
                     maxLat = pf.getLocation().getLatitude();
+                }
 
-                if (minLon > pf.getLocation().getLongitude())
+                if (minLon > pf.getLocation().getLongitude()) {
                     minLon = pf.getLocation().getLongitude();
-                else if (maxLon < pf.getLocation().getLongitude())
+                } else if (maxLon < pf.getLocation().getLongitude()) {
                     maxLon = pf.getLocation().getLongitude();
+                }
             }
             // add the values to the table
             stationDateRange.put(index, CalendarDateRange.of(start, end));
@@ -348,8 +366,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
             stationBBox.put(index, new LatLonRect(new LatLonPointImpl(-90, -180), new LatLonPointImpl(90, 180)));
         }
     }
-    
-    
+
     private void SetSectionBits() {
         try {
             for (String sect : sections.split(",")) {

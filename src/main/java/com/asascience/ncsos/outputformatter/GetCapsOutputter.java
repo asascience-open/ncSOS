@@ -30,24 +30,34 @@ import ucar.unidata.geoloc.LatLonRect;
 public class GetCapsOutputter extends SOSOutputFormatter {
 
     public static final String ABSTRACT = "Abstract";
+    public static final String ACCESSCONSTRAINTS = "AccessConstraints";
     public static final String CONTENTS = "Contents";
     public static final String DESCRIBESENSOR = "describesensor";
     public static final String EPSG4326 = "EPSG:4326";
+    public static final String EXTENDED_CAPABILITIES = "ExtendedCapabilities";
     public static final String GETCAPABILITIES = "getcapabilities";
     public static final String GETOBSERVATION = "getobservation";
     public static final String GMLTIMEPERIODTYPE = "gml:TimePeriodType";
     public static final String HTTP = "HTTP";
     public static final String INLINE = "inline";
+    public static final String TITLE = "Title";
+    public static final String META_DATA_PROPERTY = "metaDataProperty";
+    public static final String NCSOS_NAME = "ncSOS";
     public static final String NETWORK_ALL = "network-all";
     public static final String OMOBSERVATIONCOLLECTION = "om:ObservationCollection";
     public static final String OPERATION = "Operation";
+    public static final String OPERATIONSMETADATA = "OperationsMetadata";
     public static final String PROVIDERNAME = "ProviderName";
     public static final String PROVIDERSITE = "ProviderSite";
+    public static final String RC6_NAME = "RC6";
     public static final String RESPONSEMODE = "responseMode";
+    public static final String SERVICEIDENTIFICATION = "ServiceIdentification";
     public static final String SERVICEPROVIDER = "ServiceProvider";
     public static final String SRSNAME = "srsName";
-    public static final String TITLE = "Title";
-    public static final String XLINKHREF = "xlink:href";
+    public static final String VERSION_1_0 = "1.0";
+    public static final String XLINK_HREF = "xlink:href";
+    public static final String XLINKHREF = XLINK_HREF;
+    public static final String XLINK_TITLE = "xlink:title";
     public static final String XSITYPE = "xsi:type";
     public static final String[] possibleValueList = {"allowedValues", "anyValue", "noValues", "valuesListReference"};
     public static final String[] possibleValueLink = {
@@ -110,7 +120,7 @@ public class GetCapsOutputter extends SOSOutputFormatter {
      * sets the service identification information 
      */
     public void parseServiceIdentification(String title, String history, String access) {
-        NodeList nodeLst = getDocument().getElementsByTagNameNS(OWS_NS, "ServiceIdentification");
+        NodeList nodeLst = getDocument().getElementsByTagNameNS(OWS_NS, SERVICEIDENTIFICATION);
 
         for (int s = 0; s < nodeLst.getLength(); s++) {
 
@@ -131,14 +141,14 @@ public class GetCapsOutputter extends SOSOutputFormatter {
                 NodeList lstNm = lstNmElmnt.getChildNodes();
                 lstNm.item(0).setTextContent(history.trim());
 
-                fstElmnt.getElementsByTagNameNS(OWS_NS, "AccessConstraints").item(0).setTextContent(access.trim());
+                fstElmnt.getElementsByTagNameNS(OWS_NS, ACCESSCONSTRAINTS).item(0).setTextContent(access.trim());
             }
         }
     }
 
     public void removeServiceIdentification() {
         Element capsNode = (Element) getDocument().getElementsByTagNameNS(SOS_NS, CAPABILITIES).item(0);
-        Node node = capsNode.getElementsByTagNameNS(OWS_NS, "ServiceIdentification").item(0);
+        Node node = capsNode.getElementsByTagNameNS(OWS_NS, SERVICEIDENTIFICATION).item(0);
 
         capsNode.removeChild(node);
     }
@@ -177,7 +187,7 @@ public class GetCapsOutputter extends SOSOutputFormatter {
 
     public void removeOperations() {
         Element capsNode = (Element) getDocument().getElementsByTagNameNS(SOS_NS, CAPABILITIES).item(0);
-        Node operationsNode = capsNode.getElementsByTagNameNS(OWS_NS, "OperationsMetadata").item(0);
+        Node operationsNode = capsNode.getElementsByTagNameNS(OWS_NS, OPERATIONSMETADATA).item(0);
         capsNode.removeChild(operationsNode);
     }
 
@@ -225,7 +235,7 @@ public class GetCapsOutputter extends SOSOutputFormatter {
     private void addObservationalOfferings(Element parentNode, String[] stationNames) {
         Element allowedValues = createElementNS(OWS_NS, ALLOWED_VALUES);
         parentNode.appendChild(allowedValues);
-        
+
         Element value = createElementNS(OWS_NS, VALUE);
         value.setTextContent(NETWORK_ALL);
         allowedValues.appendChild(value);
@@ -243,6 +253,44 @@ public class GetCapsOutputter extends SOSOutputFormatter {
             Element value = createElementNS(OWS_NS, VALUE);
             value.setTextContent(name);
             allowedValues.appendChild(value);
+        }
+    }
+
+    public void addExtendedCapabilities() {
+        Element operationMetadata = (Element) document.getElementsByTagNameNS(OWS_NS, OPERATIONSMETADATA).item(0);
+
+        if (operationMetadata != null) {
+            //section
+            Element extendCaps = createElementNS(OWS_NS, EXTENDED_CAPABILITIES);
+            //first props
+            Element metaProps = createElementNS(GML_NS, META_DATA_PROPERTY);
+            metaProps.setAttribute(XLINK_TITLE, "ioosTemplateVersion");
+            metaProps.setAttribute(XLINK_HREF, "http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0");
+
+            Element version = createElementNS(GML_NS, VERSION);
+            version.setTextContent(VERSION_1_0);
+            metaProps.appendChild(version);
+            //add it to the parent node
+            extendCaps.appendChild(metaProps);
+
+            //second props
+            metaProps = createElementNS(GML_NS, META_DATA_PROPERTY);
+            metaProps.setAttribute(XLINK_TITLE, "softwareVersion");
+            metaProps.setAttribute(XLINK_HREF, "http://github.com/asascience-open/" + NCSOS_NAME + "/releases/tag/" + RC6_NAME);
+            String[] nodeList = {NAME, VERSION};
+            String[] nodeValues = {NCSOS_NAME, RC6_NAME};
+            for (int i = 0; i < nodeList.length; i++) {
+                version = createElementNS(GML_NS, nodeList[i]);
+                version.setTextContent(nodeValues[i]);
+                metaProps.appendChild(version);
+            }
+
+            extendCaps.appendChild(metaProps);
+
+            //add nodes
+            if (extendCaps != null) {
+                operationMetadata.appendChild(extendCaps);
+            }
         }
     }
 
@@ -313,24 +361,24 @@ public class GetCapsOutputter extends SOSOutputFormatter {
         }
         // add network all to procedure list
         Element naProcedure = createElementNS(SOS_NS, PROCEDURE);
-        naProcedure.setAttribute(XLINKHREF, SOSBaseRequestHandler.getGMLNetworkAll());
+        naProcedure.setAttribute(XLINK_HREF, SOSBaseRequestHandler.getGMLNetworkAll());
         obsOffering.appendChild(naProcedure);
         // procedures
         for (String str : stations) {
             Element proc = createElementNS(SOS_NS, PROCEDURE);
-            proc.setAttribute(XLINKHREF, SOSBaseRequestHandler.getGMLName(str));
+            proc.setAttribute(XLINK_HREF, SOSBaseRequestHandler.getGMLName(str));
             obsOffering.appendChild(proc);
         }
         // observed properties
         for (String str : sensors) {
             Element value = createElementNS(SOS_NS, "observedProperty");
-            value.setAttribute(XLINKHREF, str);
+            value.setAttribute(XLINK_HREF, str);
             obsOffering.appendChild(value);
         }
         // feature of interests
         for (String str : stations) {
             Element foi = createElementNS(SOS_NS, "featureOfInterest");
-            foi.setAttribute(XLINKHREF, SOSBaseRequestHandler.getGMLName(str));
+            foi.setAttribute(XLINK_HREF, SOSBaseRequestHandler.getGMLName(str));
             obsOffering.appendChild(foi);
         }
         // response format
@@ -363,7 +411,7 @@ public class GetCapsOutputter extends SOSOutputFormatter {
         Element offeringList = (Element) getDocument().getElementsByTagNameNS(SOS_NS, OBSERVATION_OFFERING_LIST).item(0);
         // iterate through offerings (stations)
         Element obsOffering = createElementNS(SOS_NS, OBSERVATION_OFFERING);
-      
+
         obsOffering.setAttributeNS(GML_NS, ID, stationName);
         // gml:name
         Element gmlName = createElementNS(GML_NS, NAME);
@@ -379,17 +427,17 @@ public class GetCapsOutputter extends SOSOutputFormatter {
         obsOffering.appendChild(getStationPeriod(stationDates));
         // feature of interest -- station name?
         Element foi = createElementNS(SOS_NS, FEATURE_INTEREST);
-        foi.setAttribute(XLINKHREF, SOSBaseRequestHandler.getGMLName(stationName));
+        foi.setAttribute(XLINK_HREF, SOSBaseRequestHandler.getGMLName(stationName));
         obsOffering.appendChild(foi);
         // observed properties
         for (String str : sensorNames) {
             Element value = createElementNS(SOS_NS, OBSERVED_PROPERTY);
-            value.setAttribute(XLINKHREF, str);
+            value.setAttribute(XLINK_HREF, str);
             obsOffering.appendChild(value);
         }
         // procedure for this station
         Element selfProcedure = createElementNS(SOS_NS, PROCEDURE);
-        selfProcedure.setAttribute(XLINKHREF, SOSBaseRequestHandler.getGMLName(stationName));
+        selfProcedure.setAttribute(XLINK_HREF, SOSBaseRequestHandler.getGMLName(stationName));
         obsOffering.appendChild(selfProcedure);
         // response format
         Element rf = createElementNS(SOS_NS, RESPONSE_FORMAT);
@@ -473,7 +521,7 @@ public class GetCapsOutputter extends SOSOutputFormatter {
         //set get capabilities GET request link
         NodeList getList = parent.getElementsByTagNameNS(OWS_NS, "Get");
         Element getElm = (Element) getList.item(0);
-        getElm.setAttribute(XLINKHREF, threddsURI);
+        getElm.setAttribute(XLINK_HREF, threddsURI);
 
         //set get capabilities Post request link -- not supported TODO
 //        NodeList fstNm12 = fstNmElmnt.getElementsByTagName("ows:Post");
@@ -522,7 +570,7 @@ public class GetCapsOutputter extends SOSOutputFormatter {
     }
 
     private void prepOperationsMetadata() {
-        Element operationMetadata = (Element) document.getElementsByTagNameNS(OWS_NS, "OperationsMetadata").item(0);
+        Element operationMetadata = (Element) document.getElementsByTagNameNS(OWS_NS, OPERATIONSMETADATA).item(0);
         // get our operations
         NodeList operations = operationMetadata.getElementsByTagNameNS(OWS_NS, OPERATION);
         for (int i = 0; i < operations.getLength(); i++) {

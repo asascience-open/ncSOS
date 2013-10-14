@@ -808,6 +808,8 @@ public class SOSgetCapsTest {
         assertFalse(write.toString().contains("Exception"));
         assertTrue(write.toString().contains("<sos:ObservationOffering gml:id="));        
         
+         assertTrue("Requires Extended Capabilities",write.toString().contains("<ows:ExtendedCapabilities>"));        
+        
         System.out.println("------END " + getCurrentMethod() + "------");
     }
 
