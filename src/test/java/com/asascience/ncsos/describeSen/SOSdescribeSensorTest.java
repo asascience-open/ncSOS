@@ -25,6 +25,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  * @author SCowan
  */
 public class SOSdescribeSensorTest {
+
     public static final String ACCEPTVERSIONS = "acceptVersions";
     public static final String EXCEPTION_TEXT = "Exception";
     public static final String FILE_EXT = ".xml";
@@ -33,108 +34,76 @@ public class SOSdescribeSensorTest {
     public static final String REQUEST = "request";
     public static final String SERVICE = "service";
     private static Logger _log = LoggerFactory.getLogger(SOSParser.class);
-    
     private static String outputDir = null;
     private static String baseLocalDir = null;
     private static String exampleOutputDir = null;
- 
     private static final String station_Procedure = "procedure=urn:ioos:station:authority:";
-    
     private static final String bdss_1_set = "resources/datasets/sura/watlev_NOAA_NAVD_PRE.nc";
-    private static final String bdss_1_query = station_Procedure+"NOAA_8779748";
+    private static final String bdss_1_query = station_Procedure + "NOAA_8779748";
     private static final String bdss_watlev_query = "procedure=urn:ioos:sensor:authority:NOAA_8724698:watlev";
-    private static final String bdss_1_query_bad = station_Procedure+"badstationname";
-    
+    private static final String bdss_1_query_bad = station_Procedure + "badstationname";
     private static final String bdss_2_set = "resources/datasets/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1.nc";
-    private static final String bdss_2_query = station_Procedure+"Station1";
+    private static final String bdss_2_query = station_Procedure + "Station1";
     private static final String bdss_2_bad_sensor = "procedure=urn:ioos:sensor:authority:Station1:badsensor";
-    
     private static final String bdst_1_set = "resources/datasets/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc";
-    private static final String bdst_1_query = station_Procedure+"Trajectory3";
-    private static final String bdst_1_query_bad = station_Procedure+"Trajectory100";
-    
+    private static final String bdst_1_query = station_Procedure + "Trajectory3";
+    private static final String bdst_1_query_bad = station_Procedure + "Trajectory100";
     private static final String bdst_2_set = "resources/datasets/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4/trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4.nc";
-    private static final String bdst_2_query = station_Procedure+"Trajectory7";
-    
+    private static final String bdst_2_query = station_Procedure + "Trajectory7";
     private static final String bdsp_1_set = "resources/datasets/profile-Contiguous-Ragged-MultipleProfiles-H.3.4/profile-Contiguous-Ragged-MultipleProfiles-H.3.4.nc";
-    private static final String bdsp_1_query = station_Procedure+"Profile3";
-    private static final String bdsp_1_query_bad = station_Procedure+"Profile100";
-    
+    private static final String bdsp_1_query = station_Procedure + "Profile3";
+    private static final String bdsp_1_query_bad = station_Procedure + "Profile100";
     private static final String bdsp_2_set = "resources/datasets/profile-Indexed-Ragged-MultipleProfiles-H.3.5/profile-Indexed-Ragged-MultipleProfiles-H.3.5.nc";
-    private static final String bdsp_2_query = station_Procedure+"Profile5";
-    
+    private static final String bdsp_2_query = station_Procedure + "Profile5";
     private static final String bdsp_3_set = "resources/datasets/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1/profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1.nc";
-    private static final String bdsp_3_query = station_Procedure+"Profile32";
-    
+    private static final String bdsp_3_query = station_Procedure + "Profile32";
     private static final String bdsg_1_set = "resources/datasets/satellite-sst/SST_Global_2x2deg_20120626_0000.nc";
-    private static final String bdsg_1_query = station_Procedure+"Grid0";
-    
+    private static final String bdsg_1_query = station_Procedure + "Grid0";
     private static final String bdstp_1_set = "resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc";
-    private static final String bdstp_1_query = station_Procedure+"Trajectory2";
-    private static final String bdstp_1_query_bad = station_Procedure+"Trajectory200";
-    
+    private static final String bdstp_1_query = station_Procedure + "Trajectory2";
+    private static final String bdstp_1_query_bad = station_Procedure + "Trajectory200";
     private static final String bdstp_2_set = "resources/datasets/trajectoryProfile-Ragged-MultipleTrajectories-H.6.3/trajectoryProfile-Ragged-MultipleTrajectories-H.6.3.nc";
-    private static final String bdstp_2_query = station_Procedure+"Trajectory3";
-    
+    private static final String bdstp_2_query = station_Procedure + "Trajectory3";
     private static final String ext_hawaii_set = "resources/datasets/sura/wqbkn_2012_08_01.nc";
-    private static final String ext_hawaii_query = station_Procedure+"WQBKN";
-    
+    private static final String ext_hawaii_query = station_Procedure + "WQBKN";
     private static final String andrw_set = "resources/datasets/sura/andrw.lft.nc";
-    private static final String andrw_query = station_Procedure+"Site-79-2";
-    
+    private static final String andrw_query = station_Procedure + "Site-79-2";
     private static final String usace_set = "resources/datasets/sura/hs_USACE-CHL.nc";
-    private static final String usace_query = station_Procedure+"USACE-CHL_2410504B";
-    
+    private static final String usace_query = station_Procedure + "USACE-CHL_2410504B";
     private static final String undkennedy_set = "resources/datasets/sura/Hsig_UNDKennedy_IKE_VIMS_3D_WAVEONLY.nc";
-    private static final String undkennedy_query = station_Procedure+"UNDKennedy_R";
-    
+    private static final String undkennedy_query = station_Procedure + "UNDKennedy_R";
     private static final String hwm_tcoon_set = "resources/datasets/sura/hwm_TCOON_NAVD88.nc";
-    private static final String hwm_tcoon_query = station_Procedure+"TCOON_8779770";
-    
+    private static final String hwm_tcoon_query = station_Procedure + "TCOON_8779770";
     private static final String tm_csi_set = "resources/datasets/sura/tm_CSI.nc";
-    private static final String tm_csi_query = station_Procedure+"CSI_03";
-    
+    private static final String tm_csi_query = station_Procedure + "CSI_03";
     private static final String tm_ike_set = "resources/datasets/sura/tm_IKE.nc";
-    private static final String tm_ike_query = station_Procedure+"CSI_09";
-    
+    private static final String tm_ike_query = station_Procedure + "CSI_09";
     private static final String crms_set = "resources/datasets/sura/watlev_CRMS.nc";
-    private static final String crms_query = station_Procedure+"CRMS_BA04-07";
-    
+    private static final String crms_query = station_Procedure + "CRMS_BA04-07";
     private static final String crms_2005_set = "resources/datasets/sura/watlev_CRMS_2005.nc";
-    private static final String crms_2005_query = station_Procedure+"CRMS_BA04-10";
-    
+    private static final String crms_2005_query = station_Procedure + "CRMS_BA04-10";
     private static final String crms_2008_set = "resources/datasets/sura/watlev_CRMS_2008.F.C__IKE_VIMS_3D_WITHWAVE.nc";
-    private static final String crms_2008_query = station_Procedure+"CRMS_BA04-56";
-    
+    private static final String crms_2008_query = station_Procedure + "CRMS_BA04-56";
     private static final String crms_2008_nowave_set = "resources/datasets/sura/watlev_CRMS_2008.F.C_IKE_VIMS_3D_NOWAVE.nc";
-    private static final String crms_2008_nowave_query = station_Procedure+"CRMS_BS08-09";
-    
+    private static final String crms_2008_nowave_query = station_Procedure + "CRMS_BS08-09";
     private static final String crms_2008_basecycle_set = "resources/datasets/sura/watlev_CRMS_2008.F.C_mod_base_cycle_5.nc";
-    private static final String crms_2008_basecycle_query = station_Procedure+"CRMS_CS20-03";
-    
+    private static final String crms_2008_basecycle_query = station_Procedure + "CRMS_CS20-03";
     private static final String watlev_csi_set = "resources/datasets/sura/watlev_CSI.nc";
-    private static final String watlev_csi_query = station_Procedure+"CSI_15";
-    
+    private static final String watlev_csi_query = station_Procedure + "CSI_15";
     private static final String watlev_ike_set = "resources/datasets/sura/watlev_IKE.nc";
-    private static final String watlev_ike_query = station_Procedure+"CRMS_BA01-01";
-    
+    private static final String watlev_ike_query = station_Procedure + "CRMS_BA01-01";
     private static final String watlev_ike_61_set = "resources/datasets/sura/watlev_IKE.P.UL-Ike2Dh.61.nc";
-    private static final String watlev_ike_61_query = station_Procedure+"USACE-CHL_2410504B";
-    
+    private static final String watlev_ike_61_query = station_Procedure + "USACE-CHL_2410504B";
     private static final String watlev_noaa_set = "resources/datasets/sura/watlev_NOAA.F.C.nc";
-    private static final String watlev_noaa_query = station_Procedure+"NOAA_8724698";
-    
+    private static final String watlev_noaa_query = station_Procedure + "NOAA_8724698";
     private static final String noaa_navd_set = "resources/datasets/sura/watlev_NOAA_NAVD_PRE.nc";
-    private static final String noaa_navd_query = station_Procedure+"NOAA_8726347";
-    
+    private static final String noaa_navd_query = station_Procedure + "NOAA_8726347";
     private static final String jason_satellite_set = "resources/datasets/nodc/jason2_satelliteAltimeter.nc";
-    private static final String jason_satellite_query = station_Procedure+"unknown";
-    
+    private static final String jason_satellite_query = station_Procedure + "unknown";
     private static final String bodega_marinelab_set = "resources/datasets/nodc/BodegaMarineLabBuoy.nc";
-    private static final String bodega_marinelab_query = station_Procedure+"Cordell Bank Buoy";
-    
+    private static final String bodega_marinelab_query = station_Procedure + "Cordell Bank Buoy";
     private static final String bad_requests_set = "resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc";
-    private static final String bad_request_control_query = station_Procedure+"Trajectory2";
+    private static final String bad_request_control_query = station_Procedure + "Trajectory2";
     private static final String bad_request_outputformat_query = "request=DescribeSensor&service=sos&Acceptversions=1.0.0&outputFormat=text/xml;subtype=\"5\"";
     private static final String bad_request_outputformat_mispelled_query = "request=DescribeSensor&service=sos&Acceptversions=1.0.0&respnseformat=";
     private static final String bad_request_request_query = "request=DescrbeSensor&service=sos&Acceptversions=1.0.0&outputFormat=";
@@ -147,11 +116,16 @@ public class SOSdescribeSensorTest {
     private static final String bad_request_procedure_misspelled_query = "request=DescribeSensor&service=sos&Acceptversions=1.0.0&procdure=urn:ioos:station:authority:trajectory2&outputFormat=";
     //single station (not aggregation)
     private static final String gliderDataSet = "resources/datasets/glider/penobscot-20131011T073911_rt0.nc";
-    private static final String gliderDataRequest = "request=DescribeSensor&procedure=urn:ioos:network:edu.rutgers.marine:all&service=SOS&version=1.0.0&outputFormat=text/xml;subtype=\"sensorML/1.0.1/profiles/ioos_sos/1.0\"";
+    private static final String gliderDataRequest = "request=DescribeSensor&procedure=urn:ioos:network:edu.rutgers.marine:all&service=SOS&version=1.0.0&outputFormat=";
+    //
+    private static final String gliderDataSet_aggre ="resources/datasets/glider/timeagg.ncml";
+    private static final String gliderDataRequest_aggre = "request=DescribeSensor&procedure=urn:ioos:network:edu.rutgers.marine:all&service=SOS&version=1.0.0&outputFormat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%2Fprofiles%2Fioos_sos%2F1.0%22";
+    
+    
     
     
     private static String baseQuery = "request=DescribeSensor&service=sos&Acceptversions=1.0.0&outputFormat=text/xml";
-    
+
     @BeforeClass
     public static void SetupEnviron() throws FileNotFoundException, UnsupportedEncodingException {
         // not really a test, just used to set up the various string values
@@ -185,28 +159,29 @@ public class SOSdescribeSensorTest {
 
         File file = new File(outputDir);
         file.mkdirs();
-        
+
         file = new File(exampleOutputDir);
         file.mkdirs();
-        
+
         baseQuery += URLEncoder.encode("text/xml;subtype=\"sensorML/1.0.1\"", "UTF-8") + "&";
     }
-    
+
     private static String getCurrentMethod() {
         final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
-        for (int i=0; i<ste.length; i++) {
-            if (ste[i].getMethodName().contains(("test")))
+        for (int i = 0; i < ste.length; i++) {
+            if (ste[i].getMethodName().contains(("test"))) {
                 return ste[i].getMethodName();
+            }
         }
         return "could not find test name";
     }
-     
+
     private void writeOutput(HashMap<String, Object> outMap, Writer write) {
-        SOSOutputFormatter output = (SOSOutputFormatter)outMap.get("outputHandler");
+        SOSOutputFormatter output = (SOSOutputFormatter) outMap.get("outputHandler");
         assertNotNull("got null output", output);
         output.writeOutput(write);
     }
-    
+
     private static void fileWriter(String base, String fileName, Writer write, boolean append) throws IOException {
         File file = new File(base + fileName);
         Writer output = new BufferedWriter(new FileWriter(file, append));
@@ -223,20 +198,61 @@ public class SOSdescribeSensorTest {
             output.close();
         }
     }
-    
+
     /***************************************************************************
      * Tests *******************************************************************
      ***************************************************************************/
-    
     @Test
-    public void testGliderDataSetNotWorkingWithSensorML() {
+    public void testGliderDataSetNotWorkingWithSensorML_aggre() {
+        
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        try {          
+            NetcdfDataset cdfDataset = NetcdfDataset.openDataset(gliderDataSet_aggre);
+            SOSParser parser = new SOSParser();
+            Writer writer = new CharArrayWriter();
+            writeOutput(parser.enhanceGETRequest(cdfDataset, gliderDataRequest_aggre, gliderDataSet_aggre), writer);
+            fileWriter(outputDir, "Glider_Test_aggre.xml", writer, false);
+            writer.close();
+            // test for expected values below
+            assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
+
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+
         
     }
     
+    
+    @Test
+    public void testGliderDataSetNotWorkingWithSensorML(){
+
+        System.out.println("\n------" + getCurrentMethod() + "------");
+        try {
+            String valid_outputFormat = URLEncoder.encode("text/xml;subtype=\"sensorML/1.0.1/profiles/ioos_sos/1.0\"", "UTF-8");
+            NetcdfDataset cdfDataset = NetcdfDataset.openDataset(gliderDataSet);
+            SOSParser parser = new SOSParser();
+            Writer writer = new CharArrayWriter();
+            writeOutput(parser.enhanceGETRequest(cdfDataset, gliderDataRequest+valid_outputFormat, gliderDataSet), writer);
+            fileWriter(outputDir, "Glider_Test.xml", writer, false);
+            writer.close();
+            // test for expected values below
+            assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
+
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            System.out.println("------END " + getCurrentMethod() + "------");
+        }
+
+    }
+
     @Test
     public void testBadRequestStringsDescribeSensor() {
         System.out.println("\n------" + getCurrentMethod() + "------");
-        
+
         try {
             String valid_outputFormat = URLEncoder.encode("text/xml;subtype=\"sensorML/1.0.1\"", "UTF-8");
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bad_requests_set);
@@ -251,10 +267,10 @@ public class SOSdescribeSensorTest {
             assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
             // 2nd test - bad_request_outputformat_query - checks to see what is returned when an invalid response format is returned
             writer.close();
-            
-            
-            
-            
+
+
+
+
             writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(dataset, bad_request_outputformat_query + "&" + bad_request_control_query, bad_requests_set), writer);
             // add to test output
@@ -265,10 +281,10 @@ public class SOSdescribeSensorTest {
             assertTrue("unexpected exception - bad_request_outputformat_query", testOut.contains(OUTPUTFORMAT));
             // 3rd test - bad_request_outputformat_mispelled_query - checks to see what is returned when outputFormat is misspelled
             writer.close();
-            
-            
-            
-            
+
+
+
+
             writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(dataset, bad_request_outputformat_mispelled_query + valid_outputFormat + "&" + bad_request_control_query, bad_requests_set), writer);
             // add to test output
@@ -279,11 +295,11 @@ public class SOSdescribeSensorTest {
             assertTrue("unexpected exception - bad_request_outputformat_mispelled_query", testOut.contains(OUTPUTFORMAT));
             // 4th test - bad_request_request_query - checks to see what is returned when an invalid request is sent
             writer.close();
-            
-            
-            
-            
-            
+
+
+
+
+
             writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(dataset, bad_request_request_query + valid_outputFormat + "&" + bad_request_control_query, bad_requests_set), writer);
             // add to test output
@@ -294,10 +310,10 @@ public class SOSdescribeSensorTest {
             assertTrue("unexpected exception - bad_request_request_query", testOut.contains("Error in request."));
             // 5th test - bad_request_request_mispelled_query - checks to see what is returned when request is misspelled
             writer.close();
-            
-            
-            
-            
+
+
+
+
             writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(dataset, bad_request_request_mispelled_query + valid_outputFormat + "&" + bad_request_control_query, bad_requests_set), writer);
             // add to test output
@@ -308,45 +324,45 @@ public class SOSdescribeSensorTest {
             assertTrue("unexpected exception - bad_request_request_mispelled_query", testOut.contains(REQUEST));
             // 6th test - bad_request_version_query - checks to see what is returned when the version specified is invalid
             writer.close();
-            
-            
-            
-            
+
+
+
+
             writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(dataset, bad_request_version_query + valid_outputFormat + "&" + bad_request_control_query, bad_requests_set), writer);
             // add to test output
             fileWriter(outputDir, getCurrentMethod() + FILE_EXT, writer, true);
             // test to make sure we got an exception
             testOut = writer.toString();
-            
+
             //should not fail on this any more as version is not required
             assertTrue("no exception in output - bad_request_version_query", testOut.contains(EXCEPTION_TEXT));
             //
             assertTrue("unexpected exception - bad_request_version_query", testOut.contains("VersionNegotiationFailed, Currently only version 1.0.0 is supported."));
             // 7th test - bad_request_version_misspelled_query - checks to see what is returned when version is misspelled
             writer.close();
-            
-            
-            
-            
-            
+
+
+
+
+
             writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(dataset, bad_request_version_misspelled_query + valid_outputFormat + "&" + bad_request_control_query, bad_requests_set), writer);
             // add to test output
             fileWriter(outputDir, getCurrentMethod() + FILE_EXT, writer, true);
             // test to make sure we got an exception
             testOut = writer.toString();
-             //
+            //
             //should not fail on this any more as version is not required
             //assertTrue("no exception in output - bad_request_version_misspelled_query", testOut.contains("Exception"));
             //
             assertTrue("unexpected exception - bad_request_version_misspelled_query", testOut.contains("version"));
             // 8th test - bad_request_service_query - checks to see what is returned when the service requested is invalid
             writer.close();
-            
-            
-            
-            
+
+
+
+
             writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(dataset, bad_request_service_query + valid_outputFormat + "&" + bad_request_control_query, bad_requests_set), writer);
             // add to test output
@@ -357,10 +373,10 @@ public class SOSdescribeSensorTest {
             assertTrue("unexpected exception - bad_request_service_query", testOut.contains(SERVICE));
             // 9th test - bad_request_service_misspelled_query - checks to see what is returned when service is misspelled
             writer.close();
-            
-            
-            
-            
+
+
+
+
             writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(dataset, bad_request_service_misspelled_query + valid_outputFormat + "&" + bad_request_control_query, bad_requests_set), writer);
             // add to test output
@@ -371,11 +387,11 @@ public class SOSdescribeSensorTest {
             assertTrue("unexpected exception - bad_request_service_misspelled_query", testOut.contains(SERVICE));
             // 10th test - bad_request_procedure_query - checks to see what is returned when the procedure specified is invalid
             writer.close();
-            
-            
-            
-            
-            
+
+
+
+
+
             writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(dataset, bad_request_procedure_query + valid_outputFormat, bad_requests_set), writer);
             // add to test output
@@ -386,10 +402,10 @@ public class SOSdescribeSensorTest {
             assertTrue("unexpected exception - bad_request_procedure_query", testOut.contains(PROCEDURE));
             // 11th test - bad_request_procedure_misspelled_query - checks to see what is returned when procedure is misspelled
             writer.close();
-            
-            
-            
-            
+
+
+
+
             writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(dataset, bad_request_procedure_misspelled_query + valid_outputFormat, bad_requests_set), writer);
             // add to test output
@@ -399,15 +415,15 @@ public class SOSdescribeSensorTest {
             assertTrue("no exception in output - bad_request_procedure_misspelled_query", testOut.contains(EXCEPTION_TEXT));
             assertTrue("unexpected exception - bad_request_procedure_misspelled_query", testOut.contains(PROCEDURE));
             writer.close();
-            
-            
+
+
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
+
     @Test
     public void testBasicDescribeSensorStation() throws IOException {
         System.out.println("\n------Start testBasicDescribeSensorStation------");
@@ -419,16 +435,16 @@ public class SOSdescribeSensorTest {
         // test for expected values below
         assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         assertTrue("missing component", writer.toString().contains("<sml:component name=\"Sensor watlev\">"));
-        
+
         int idxDocumentation = writer.toString().indexOf("<sml:documentation/>");
         int idxhistory = writer.toString().indexOf("<sml:history/>");
-        assertTrue("Invalid Documentation and history order",idxDocumentation<idxhistory);
-        
-        
+        assertTrue("Invalid Documentation and history order", idxDocumentation < idxhistory);
+
+
         assertTrue("station id not as expected", writer.toString().contains("<sml:value>urn:ioos:station:authority:NOAA_8779748</sml:value>"));
         System.out.println("------End testBasicDescribeSensorStation------");
     }
-    
+
     @Test
     public void testBasicDescribeSensorStation2() throws IOException {
         System.out.println("\n------Start testBasicDescribeSensorStation2------");
@@ -444,7 +460,7 @@ public class SOSdescribeSensorTest {
         fileWriter(exampleOutputDir, "DescribeSensor-TimeSeriesProfile-sensorML1.0.1.xml", writer, false);
         System.out.println("------End testBasicDescribeSensorStation2------");
     }
-    
+
     @Test
     public void testBasicDescribeSensorTrajectory() throws IOException {
         System.out.println("\n------Start testBasicDescribeSensorTrajectory------");
@@ -460,7 +476,7 @@ public class SOSdescribeSensorTest {
 //        assertTrue("missing/invalid coords", writer.toString().contains("1990-01-01T00:00:00Z,5.429996490478516,-35.31080627441406"));
         System.out.println("------End testBasicDescribeSensorTrajectory------");
     }
-    
+
     @Test
     public void testBasicDescribeSensorTrajectory2() throws IOException {
         System.out.println("\n------Start testBasicDescribeSensorTrajectory2------");
@@ -474,7 +490,7 @@ public class SOSdescribeSensorTest {
 //        assertTrue("missing/invalid coords", writer.toString().contains("1990-01-01T09:00:00Z,29.956968307495117,-1.6200900077819824"));
         System.out.println("------End testBasicDescribeSensorTrajectory2------");
     }
-    
+
     @Test
     public void testBasicDescribeSensorProfile() throws IOException {
         System.out.println("\n------Start testBasicDescribeSensorProfile------");
@@ -490,7 +506,7 @@ public class SOSdescribeSensorTest {
         fileWriter(exampleOutputDir, "DescribeSensor-Profile-sensorML1.0.1.xml", writer, false);
         System.out.println("------End testBasicDescribeSensorProfile------");
     }
-    
+
     @Test
     public void testBasicDescribeSensorProfile2() throws IOException {
         System.out.println("\n------Start testBasicDescribeSensorProfile2------");
@@ -504,7 +520,7 @@ public class SOSdescribeSensorTest {
 //        assertTrue("missing/invalid altitude", writer.toString().contains("<swe:value>9.813936233520508</swe:value>"));
         System.out.println("------End testBasicDescribeSensorProfile2------");
     }
-    
+
     @Test
     public void testBasicDescribeSensorProfile3() throws IOException {
         System.out.println("\n------Start testBasicDescribeSensorProfile2------");
@@ -516,7 +532,7 @@ public class SOSdescribeSensorTest {
         assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         System.out.println("------End testBasicDescribeSensorProfile2------");
     }
-    
+
     @Test
     public void testBasicDescribeSensorSensor() throws IOException {
         System.out.println("\n------Start testBasicDescribeSensorSensor------");
@@ -532,7 +548,7 @@ public class SOSdescribeSensorTest {
         fileWriter(exampleOutputDir, "DescribeSensor-Sensor-sensorML1.0.1.xml", writer, false);
         System.out.println("------End testBasicDescribeSensorSensor------");
     }
-    
+
     @Test
     public void testBasicDescriptSensorGrid() throws IOException {
         System.out.println("\n------Start testBasicDescriptSensorGrid------");
@@ -548,11 +564,11 @@ public class SOSdescribeSensorTest {
         fileWriter(exampleOutputDir, "DescribeSensor-Grid-sensorML1.0.1.xml", writer, false);
         System.out.println("------End testBasicDescriptSensorGrid------");
     }
-    
+
     @Test
     public void testBasicDescribeSensorSection() {
         System.out.println("\n------" + getCurrentMethod() + "------");
-        
+
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdstp_1_set);
             SOSParser parser = new SOSParser();
@@ -568,11 +584,11 @@ public class SOSdescribeSensorTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
+
     @Test
     public void testBasicDescribeSensorSection2() {
         System.out.println("\n------" + getCurrentMethod() + "------");
-        
+
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdstp_2_set);
             SOSParser parser = new SOSParser();
@@ -586,11 +602,11 @@ public class SOSdescribeSensorTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
+
     @Test
     public void testBadStationNameProfile() {
         System.out.println("\n------" + getCurrentMethod() + "------");
-        
+
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdsp_1_set);
             SOSParser parser = new SOSParser();
@@ -604,11 +620,11 @@ public class SOSdescribeSensorTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
+
     @Test
     public void testBadSensorNameStation() {
         System.out.println("\n------" + getCurrentMethod() + "------");
-        
+
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + bdss_2_set);
             SOSParser parser = new SOSParser();
@@ -623,11 +639,11 @@ public class SOSdescribeSensorTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
+
     @Test
     public void testBadStationNameStation() {
         System.out.println("\n------" + getCurrentMethod() + "------");
-        
+
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + bdss_1_set);
             SOSParser parser = new SOSParser();
@@ -642,11 +658,11 @@ public class SOSdescribeSensorTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
+
     @Test
     public void testBadStationNameTrajectory() {
         System.out.println("\n------" + getCurrentMethod() + "------");
-        
+
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + bdst_1_set);
             SOSParser parser = new SOSParser();
@@ -661,11 +677,11 @@ public class SOSdescribeSensorTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
+
     @Test
     public void testBadStationNameTrajectoryProfile() {
         System.out.println("\n------" + getCurrentMethod() + "------");
-        
+
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + bdstp_1_set);
             SOSParser parser = new SOSParser();
@@ -680,19 +696,19 @@ public class SOSdescribeSensorTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
+
     @Test
     public void testUnitConversion() {
-        assertEquals("Sm-1",DescribeSensorPlatformMilestone1_0.parseUnitString("S m-1"));       
-        assertEquals("Sm-1",DescribeSensorPlatformMilestone1_0.parseUnitString("S:m-1"));       
-        assertEquals("Sm-1",DescribeSensorPlatformMilestone1_0.parseUnitString("S\nm-1"));       
-        assertEquals("Sm-1",DescribeSensorPlatformMilestone1_0.parseUnitString("S   m-1"));       
+        assertEquals("Sm-1", DescribeSensorPlatformMilestone1_0.parseUnitString("S m-1"));
+        assertEquals("Sm-1", DescribeSensorPlatformMilestone1_0.parseUnitString("S:m-1"));
+        assertEquals("Sm-1", DescribeSensorPlatformMilestone1_0.parseUnitString("S\nm-1"));
+        assertEquals("Sm-1", DescribeSensorPlatformMilestone1_0.parseUnitString("S   m-1"));
     }
-    
+
     @Test
     public void testExternalHawaiiFile() {
         System.out.println("\n------" + getCurrentMethod() + "------");
-        
+
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + ext_hawaii_set);
             SOSParser parser = new SOSParser();
@@ -705,21 +721,21 @@ public class SOSdescribeSensorTest {
             fileWriter(exampleOutputDir, "DescribeSensor-TimeSeries-sensorML1.0.1.xml", writer, false);
             assertFalse("contains invalid unit code", writer.toString().contains("<swe:uom code=\"S m-1\"/>"));
             assertTrue("contains invalid unit code", writer.toString().contains("<swe:uom code=\"Sm-1\"/>"));
-            
+
             writer.close();
-            
-            
+
+
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
+
     @Test
     public void testBadDataset() {
         System.out.println("\n------" + getCurrentMethod() + "------");
-        
+
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + andrw_set);
             SOSParser parser = new SOSParser();
@@ -734,11 +750,11 @@ public class SOSdescribeSensorTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
+
     @Test
     public void testUSACE() {
         System.out.println("\n------" + getCurrentMethod() + "------");
-        
+
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + usace_set);
             SOSParser parser = new SOSParser();
@@ -753,11 +769,11 @@ public class SOSdescribeSensorTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
+
     @Test
     public void testUNDKennedyIke() {
         System.out.println("\n------" + getCurrentMethod() + "------");
-        
+
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + undkennedy_set);
             SOSParser parser = new SOSParser();
@@ -772,11 +788,11 @@ public class SOSdescribeSensorTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
+
     @Test
     public void testTCOONNavd() {
         System.out.println("\n------" + getCurrentMethod() + "------");
-        
+
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + hwm_tcoon_set);
             SOSParser parser = new SOSParser();
@@ -791,11 +807,11 @@ public class SOSdescribeSensorTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
+
     @Test
     public void testTMCSI() {
         System.out.println("\n------" + getCurrentMethod() + "------");
-        
+
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + tm_csi_set);
             SOSParser parser = new SOSParser();
@@ -810,11 +826,11 @@ public class SOSdescribeSensorTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
+
     @Test
     public void testTMIKE() {
         System.out.println("\n------" + getCurrentMethod() + "------");
-        
+
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + tm_ike_set);
             SOSParser parser = new SOSParser();
@@ -829,11 +845,11 @@ public class SOSdescribeSensorTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
+
     @Test
     public void testWatlevCRMS() {
         System.out.println("\n------" + getCurrentMethod() + "------");
-        
+
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + crms_set);
             SOSParser parser = new SOSParser();
@@ -848,11 +864,11 @@ public class SOSdescribeSensorTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
+
     @Test
     public void testWatlevCRMS2005() {
         System.out.println("\n------" + getCurrentMethod() + "------");
-        
+
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + crms_2005_set);
             SOSParser parser = new SOSParser();
@@ -867,11 +883,11 @@ public class SOSdescribeSensorTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
+
     @Test
     public void testCRMS2008IKEWave() {
         System.out.println("\n------" + getCurrentMethod() + "------");
-        
+
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + crms_2008_set);
             SOSParser parser = new SOSParser();
@@ -886,11 +902,11 @@ public class SOSdescribeSensorTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
+
     @Test
     public void testWatlevCRMS2008NoWave() {
         System.out.println("\n------" + getCurrentMethod() + "------");
-        
+
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + crms_2008_nowave_set);
             SOSParser parser = new SOSParser();
@@ -905,11 +921,11 @@ public class SOSdescribeSensorTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
+
     @Test
     public void testCRMS2008BaseCycle() {
         System.out.println("\n------" + getCurrentMethod() + "------");
-        
+
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + crms_2008_basecycle_set);
             SOSParser parser = new SOSParser();
@@ -924,11 +940,11 @@ public class SOSdescribeSensorTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
+
     @Test
     public void testWatlevCSI() {
         System.out.println("\n------" + getCurrentMethod() + "------");
-        
+
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + watlev_csi_set);
             SOSParser parser = new SOSParser();
@@ -943,11 +959,11 @@ public class SOSdescribeSensorTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
+
     @Test
     public void testWatlevIke() {
         System.out.println("\n------" + getCurrentMethod() + "------");
-        
+
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + watlev_ike_set);
             SOSParser parser = new SOSParser();
@@ -962,11 +978,11 @@ public class SOSdescribeSensorTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
+
     @Test
     public void testWatlevIke61() {
         System.out.println("\n------" + getCurrentMethod() + "------");
-        
+
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + watlev_ike_61_set);
             SOSParser parser = new SOSParser();
@@ -981,11 +997,11 @@ public class SOSdescribeSensorTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
+
     @Test
     public void testWatlevNOAA() {
         System.out.println("\n------" + getCurrentMethod() + "------");
-        
+
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + watlev_noaa_set);
             SOSParser parser = new SOSParser();
@@ -1000,11 +1016,11 @@ public class SOSdescribeSensorTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
+
     @Test
     public void testWatlevNOAANAVD() {
         System.out.println("\n------" + getCurrentMethod() + "------");
-        
+
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + noaa_navd_set);
             SOSParser parser = new SOSParser();
@@ -1019,11 +1035,11 @@ public class SOSdescribeSensorTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
+
     @Test
     public void testJasonSatelliteAltemeter() {
         System.out.println("\n------" + getCurrentMethod() + "------");
-        
+
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + jason_satellite_set);
             SOSParser parser = new SOSParser();
@@ -1038,11 +1054,11 @@ public class SOSdescribeSensorTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
+
     @Test
     public void testCordellBankBuoy() {
         System.out.println("\n------" + getCurrentMethod() + "------");
-        
+
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + bodega_marinelab_set);
             SOSParser parser = new SOSParser();
@@ -1057,7 +1073,6 @@ public class SOSdescribeSensorTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
 //    @Test
 //    public void testInsertClassNameHere() {
 //        System.out.println("\n------" + getCurrentMethod() + "------");
