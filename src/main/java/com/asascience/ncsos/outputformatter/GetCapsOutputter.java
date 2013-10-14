@@ -363,7 +363,7 @@ public class GetCapsOutputter extends SOSOutputFormatter {
         Element offeringList = (Element) getDocument().getElementsByTagNameNS(SOS_NS, OBSERVATION_OFFERING_LIST).item(0);
         // iterate through offerings (stations)
         Element obsOffering = createElementNS(SOS_NS, OBSERVATION_OFFERING);
-        System.out.println(stationName);
+      
         obsOffering.setAttributeNS(GML_NS, ID, stationName);
         // gml:name
         Element gmlName = createElementNS(GML_NS, NAME);

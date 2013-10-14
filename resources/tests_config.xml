@@ -2,8 +2,8 @@
 <testConfiguration>
     <dataSourceDirectory>.\resources\datasets</dataSourceDirectory>
     <outputDirectory>.\target\test_out\</outputDirectory>
-	<tomcatLocation>C:\Tomcat-7.0.27\</tomcatLocation>
-	<projectDirectory>C:\Dev\ncSOS\</projectDirectory>
+	<tomcatLocation>C:\Program Files\Apache Software Foundation\Apache Tomcat 7.0.11\</tomcatLocation>
+	<projectDirectory>.\</projectDirectory>
 	<SOSdescribeSensorTest>
 		timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2\timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc
 		timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1\timeSeries-Orthogonal-Multidimenstional-MultipleStations-H.2.1.nc
