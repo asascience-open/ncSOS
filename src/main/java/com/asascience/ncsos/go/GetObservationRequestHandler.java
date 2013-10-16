@@ -240,7 +240,7 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
     }
 
     /**
-     * Create the observation data for getObs, passing it to our formatter
+     * Create the observation data for go, passing it to our formatter
      */
     public void parseObservations() {
         for (int s = 0; s < CDMDataSet.getNumberOfStations(); s++) {

@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.asascience.ncsos.getCaps;
+package com.asascience.ncsos;
 
 import com.asascience.ncsos.outputformatter.OutputFormatter;
-import com.asascience.ncsos.service.SOSParser;
+import com.asascience.ncsos.service.Parser;
 import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.*;
 import java.util.HashMap;
@@ -21,7 +21,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  *
  * @author abird
  */
-public class GridCapsTest {
+public class GCGridTest {
 
     private static String baseLocalDir = null;
     private static String outputDir = null;
@@ -106,7 +106,7 @@ public class GridCapsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(testGetCapsSST1);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, baseRequest, testGetCapsSST1),writer);
             writer.flush();
@@ -129,7 +129,7 @@ public class GridCapsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(testGetCapsSST2);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, baseRequest, testGetCapsSST2),writer);
             writer.flush();
@@ -150,7 +150,7 @@ public class GridCapsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(testGetCapsNodc);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, baseRequest, testGetCapsNodc),writer);
             writer.flush();
@@ -164,18 +164,5 @@ public class GridCapsTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
-//    @Test
-//    public void testInsertClassNameHere() {
-//        System.out.println("\n------" + getCurrentMethod() + "------");
-//        
-//        try {
-//            
-//        } catch (IOException ex) {
-//            System.out.println(ex.getMessage());
-//        } finally {
-//            System.out.println("------END " + getCurrentMethod() + "------");
-//        }
-//    }
 
 }

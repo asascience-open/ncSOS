@@ -4,7 +4,8 @@
  */
 package com.asascience.ncsos.controller;
 
-import com.asascience.ncsos.service.SOSParser;
+import com.asascience.ncsos.service.Parser;
+
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -26,7 +27,7 @@ public class testMainClass {
      */
     public static void main(String[] args) throws IOException, InterruptedException {
         Writer write = null;
-        SOSParser md = null;
+        Parser md = null;
         System.out.println("START");
         boolean stop = true;
         NetcdfDataset dataset = null;
@@ -34,7 +35,7 @@ public class testMainClass {
             try {
                 dataset = NetcdfDataset.openDataset(imeds13);
                 write = new CharArrayWriter();
-                md = new SOSParser();
+                md = new Parser();
                 md.enhanceGETRequest(dataset, "request=GetCapabilities&version=1&service=sos", imeds13);
                 write.flush();
                 write.close();

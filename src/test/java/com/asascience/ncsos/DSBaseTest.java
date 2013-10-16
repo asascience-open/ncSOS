@@ -2,11 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.asascience.ncsos.describeSen;
+package com.asascience.ncsos;
 
 import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.outputformatter.ds.IoosPlatform10Formatter;
-import com.asascience.ncsos.service.SOSParser;
+import com.asascience.ncsos.service.Parser;
 import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.*;
 import java.net.URLEncoder;
@@ -24,7 +24,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  *
  * @author SCowan
  */
-public class SOSdescribeSensorTest {
+public class DSBaseTest {
 
     public static final String ACCEPTVERSIONS = "acceptVersions";
     public static final String EXCEPTION_TEXT = "Exception";
@@ -33,7 +33,7 @@ public class SOSdescribeSensorTest {
     public static final String PROCEDURE = "procedure";
     public static final String REQUEST = "request";
     public static final String SERVICE = "service";
-    private static Logger _log = LoggerFactory.getLogger(SOSParser.class);
+    private static Logger _log = LoggerFactory.getLogger(Parser.class);
     private static String outputDir = null;
     private static String baseLocalDir = null;
     private static String exampleOutputDir = null;
@@ -208,7 +208,7 @@ public class SOSdescribeSensorTest {
         System.out.println("\n------" + getCurrentMethod() + "------");
         try {          
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(gliderDataSet_aggre);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(cdfDataset, gliderDataRequest_aggre, gliderDataSet_aggre), writer);
             fileWriter(outputDir, "Glider_Test_aggre.xml", writer, false);
@@ -233,7 +233,7 @@ public class SOSdescribeSensorTest {
         try {
             String valid_outputFormat = URLEncoder.encode("text/xml;subtype=\"sensorML/1.0.1/profiles/ioos_sos/1.0\"", "UTF-8");
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(gliderDataSet);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(cdfDataset, gliderDataRequest+valid_outputFormat, gliderDataSet), writer);
             fileWriter(outputDir, "Glider_Test.xml", writer, false);
@@ -256,7 +256,7 @@ public class SOSdescribeSensorTest {
         try {
             String valid_outputFormat = URLEncoder.encode("text/xml;subtype=\"sensorML/1.0.1\"", "UTF-8");
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bad_requests_set);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             String testOut = null;
             // first test - bad_request_control_query - should return w/o exception
@@ -428,7 +428,7 @@ public class SOSdescribeSensorTest {
     public void testBasicDescribeSensorStation() throws IOException {
         System.out.println("\n------Start testBasicDescribeSensorStation------");
         NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + bdss_1_set);
-        SOSParser parser = new SOSParser();
+        Parser parser = new Parser();
         Writer writer = new CharArrayWriter();
         writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + bdss_1_query, bdss_1_set), writer);
         fileWriter(outputDir, "watlev_NOAA_NAVD_PRE.xml", writer, false);
@@ -449,7 +449,7 @@ public class SOSdescribeSensorTest {
     public void testBasicDescribeSensorStation2() throws IOException {
         System.out.println("\n------Start testBasicDescribeSensorStation2------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdss_2_set);
-        SOSParser parser = new SOSParser();
+        Parser parser = new Parser();
         Writer writer = new CharArrayWriter();
         writeOutput(parser.enhanceGETRequest(dataset, baseQuery + bdss_2_query, bdss_2_set), writer);
         fileWriter(outputDir, "timeSeriesProfile-Multidimensional-MultipleStations-H.5.1.xml", writer, false);
@@ -465,7 +465,7 @@ public class SOSdescribeSensorTest {
     public void testBasicDescribeSensorTrajectory() throws IOException {
         System.out.println("\n------Start testBasicDescribeSensorTrajectory------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdst_1_set);
-        SOSParser parser = new SOSParser();
+        Parser parser = new Parser();
         Writer writer = new CharArrayWriter();
         writeOutput(parser.enhanceGETRequest(dataset, baseQuery + bdst_1_query, bdst_1_set), writer);
         fileWriter(outputDir, "trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.xml", writer, false);
@@ -481,7 +481,7 @@ public class SOSdescribeSensorTest {
     public void testBasicDescribeSensorTrajectory2() throws IOException {
         System.out.println("\n------Start testBasicDescribeSensorTrajectory2------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdst_2_set);
-        SOSParser parser = new SOSParser();
+        Parser parser = new Parser();
         Writer writer = new CharArrayWriter();
         writeOutput(parser.enhanceGETRequest(dataset, baseQuery + bdst_2_query, bdst_2_set), writer);
         fileWriter(outputDir, "trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4.xml", writer, false);
@@ -495,7 +495,7 @@ public class SOSdescribeSensorTest {
     public void testBasicDescribeSensorProfile() throws IOException {
         System.out.println("\n------Start testBasicDescribeSensorProfile------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdsp_1_set);
-        SOSParser parser = new SOSParser();
+        Parser parser = new Parser();
         Writer writer = new CharArrayWriter();
         writeOutput(parser.enhanceGETRequest(dataset, baseQuery + bdsp_1_query, bdsp_1_set), writer);
         fileWriter(outputDir, "profile-Contiguous-Ragged-MultipleProfiles-H.3.4.xml", writer, false);
@@ -511,7 +511,7 @@ public class SOSdescribeSensorTest {
     public void testBasicDescribeSensorProfile2() throws IOException {
         System.out.println("\n------Start testBasicDescribeSensorProfile2------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdsp_2_set);
-        SOSParser parser = new SOSParser();
+        Parser parser = new Parser();
         Writer writer = new CharArrayWriter();
         writeOutput(parser.enhanceGETRequest(dataset, baseQuery + bdsp_2_query, bdsp_2_set), writer);
         fileWriter(outputDir, "profile-Indexed-Ragged-MultipleProfiles-H.3.5.xml", writer, false);
@@ -525,7 +525,7 @@ public class SOSdescribeSensorTest {
     public void testBasicDescribeSensorProfile3() throws IOException {
         System.out.println("\n------Start testBasicDescribeSensorProfile2------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdsp_3_set);
-        SOSParser parser = new SOSParser();
+        Parser parser = new Parser();
         Writer writer = new CharArrayWriter();
         writeOutput(parser.enhanceGETRequest(dataset, baseQuery + bdsp_3_query, bdsp_3_set), writer);
         fileWriter(outputDir, "profile-Orthogonal-MultiDimensional-MultipleProfiles-H.3.1.xml", writer, false);
@@ -537,7 +537,7 @@ public class SOSdescribeSensorTest {
     public void testBasicDescribeSensorSensor() throws IOException {
         System.out.println("\n------Start testBasicDescribeSensorSensor------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdss_1_set);
-        SOSParser parser = new SOSParser();
+        Parser parser = new Parser();
         Writer writer = new CharArrayWriter();
         writeOutput(parser.enhanceGETRequest(dataset, baseQuery + bdss_watlev_query, bdss_1_set), writer);
         fileWriter(outputDir, "watlev_NOAA_NAVD_PRE_watlev-sensor.xml", writer, false);
@@ -553,7 +553,7 @@ public class SOSdescribeSensorTest {
     public void testBasicDescriptSensorGrid() throws IOException {
         System.out.println("\n------Start testBasicDescriptSensorGrid------");
         NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdsg_1_set);
-        SOSParser parser = new SOSParser();
+        Parser parser = new Parser();
         Writer writer = new CharArrayWriter();
         writeOutput(parser.enhanceGETRequest(dataset, baseQuery + bdsg_1_query, bdsg_1_set), writer);
         fileWriter(outputDir, "SST_Global_2x2deg_20120626_0000.xml", writer, false);
@@ -571,7 +571,7 @@ public class SOSdescribeSensorTest {
 
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdstp_1_set);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(dataset, baseQuery + bdstp_1_query, bdstp_1_set), writer);
             fileWriter(outputDir, "trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1_trajectory2.xml", writer, false);
@@ -591,7 +591,7 @@ public class SOSdescribeSensorTest {
 
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdstp_2_set);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(dataset, baseQuery + bdstp_2_query, bdstp_2_set), writer);
             fileWriter(outputDir, "trajectoryProfile-Ragged-MultipleTrajectories-H.6.3_trajectory3.xml", writer, false);
@@ -609,7 +609,7 @@ public class SOSdescribeSensorTest {
 
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + bdsp_1_set);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(dataset, baseQuery + bdsp_1_query_bad, bdsp_1_set), writer);
             fileWriter(outputDir, "profile-bad-station-request.xml", writer, false);
@@ -627,7 +627,7 @@ public class SOSdescribeSensorTest {
 
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + bdss_2_set);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + bdss_2_bad_sensor, bdss_2_set), writer);
             fileWriter(outputDir, "station-bad-sensor-request.xml", writer, false);
@@ -646,7 +646,7 @@ public class SOSdescribeSensorTest {
 
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + bdss_1_set);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + bdss_1_query_bad, bdss_1_set), writer);
             fileWriter(outputDir, "station-bad-station-request.xml", writer, false);
@@ -665,7 +665,7 @@ public class SOSdescribeSensorTest {
 
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + bdst_1_set);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + bdst_1_query_bad, bdst_1_set), writer);
             fileWriter(outputDir, "trajectory-bad-station-request.xml", writer, false);
@@ -684,7 +684,7 @@ public class SOSdescribeSensorTest {
 
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + bdstp_1_set);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + bdstp_1_query_bad, bdstp_1_set), writer);
             fileWriter(outputDir, "section-bad-station-request.xml", writer, false);
@@ -711,7 +711,7 @@ public class SOSdescribeSensorTest {
 
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + ext_hawaii_set);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + ext_hawaii_query, ext_hawaii_set), writer);
             fileWriter(outputDir, "station-hawaii-external.xml", writer, false);
@@ -738,7 +738,7 @@ public class SOSdescribeSensorTest {
 
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + andrw_set);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + andrw_query, andrw_set), writer);
             fileWriter(outputDir, "andrw-lft.xml", writer, false);
@@ -757,7 +757,7 @@ public class SOSdescribeSensorTest {
 
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + usace_set);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + usace_query, usace_set), writer);
             fileWriter(outputDir, "hs-usace-chl.xml", writer, false);
@@ -776,7 +776,7 @@ public class SOSdescribeSensorTest {
 
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + undkennedy_set);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + undkennedy_query, undkennedy_set), writer);
             fileWriter(outputDir, "hsig-undkennedy-ike-vims-3d-waveonly.xml", writer, false);
@@ -795,7 +795,7 @@ public class SOSdescribeSensorTest {
 
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + hwm_tcoon_set);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + hwm_tcoon_query, hwm_tcoon_set), writer);
             fileWriter(outputDir, "hwm-tcoon-navd.xml", writer, false);
@@ -814,7 +814,7 @@ public class SOSdescribeSensorTest {
 
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + tm_csi_set);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + tm_csi_query, tm_csi_set), writer);
             fileWriter(outputDir, "tm-csi.xml", writer, false);
@@ -833,7 +833,7 @@ public class SOSdescribeSensorTest {
 
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + tm_ike_set);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + tm_ike_query, tm_ike_set), writer);
             fileWriter(outputDir, "tm-ike.xml", writer, false);
@@ -852,7 +852,7 @@ public class SOSdescribeSensorTest {
 
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + crms_set);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + crms_query, crms_set), writer);
             fileWriter(outputDir, "watlev-crms.xml", writer, false);
@@ -871,7 +871,7 @@ public class SOSdescribeSensorTest {
 
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + crms_2005_set);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + crms_2005_query, crms_2005_set), writer);
             fileWriter(outputDir, "watlev-crms-2005.xml", writer, false);
@@ -890,7 +890,7 @@ public class SOSdescribeSensorTest {
 
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + crms_2008_set);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + crms_2008_query, crms_2008_set), writer);
             fileWriter(outputDir, "crms-2008-ike-wave.xml", writer, false);
@@ -909,7 +909,7 @@ public class SOSdescribeSensorTest {
 
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + crms_2008_nowave_set);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + crms_2008_nowave_query, crms_2008_nowave_set), writer);
             fileWriter(outputDir, "crms-2008-ike-nowave.xml", writer, false);
@@ -928,7 +928,7 @@ public class SOSdescribeSensorTest {
 
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + crms_2008_basecycle_set);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + crms_2008_basecycle_query, crms_2008_basecycle_set), writer);
             fileWriter(outputDir, "crms-2008-base-cycle.xml", writer, false);
@@ -947,7 +947,7 @@ public class SOSdescribeSensorTest {
 
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + watlev_csi_set);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + watlev_csi_query, watlev_csi_set), writer);
             fileWriter(outputDir, "watlev-csi.xml", writer, false);
@@ -966,7 +966,7 @@ public class SOSdescribeSensorTest {
 
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + watlev_ike_set);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + watlev_ike_query, watlev_ike_set), writer);
             fileWriter(outputDir, "watlev-ike.xml", writer, false);
@@ -985,7 +985,7 @@ public class SOSdescribeSensorTest {
 
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + watlev_ike_61_set);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + watlev_ike_61_query, watlev_ike_61_set), writer);
             fileWriter(outputDir, "watlev-ike-61.xml", writer, false);
@@ -1004,7 +1004,7 @@ public class SOSdescribeSensorTest {
 
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + watlev_noaa_set);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + watlev_noaa_query, watlev_noaa_set), writer);
             fileWriter(outputDir, "watlev-noaa.xml", writer, false);
@@ -1023,7 +1023,7 @@ public class SOSdescribeSensorTest {
 
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + noaa_navd_set);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + noaa_navd_query, noaa_navd_set), writer);
             fileWriter(outputDir, "watlev-noaa-navd.xml", writer, false);
@@ -1042,7 +1042,7 @@ public class SOSdescribeSensorTest {
 
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + jason_satellite_set);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + jason_satellite_query, jason_satellite_set), writer);
             fileWriter(outputDir, getCurrentMethod() + FILE_EXT, writer, false);
@@ -1061,7 +1061,7 @@ public class SOSdescribeSensorTest {
 
         try {
             NetcdfDataset cdfDataset = NetcdfDataset.openDataset(baseLocalDir + bodega_marinelab_set);
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
             writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + bodega_marinelab_query, bodega_marinelab_set), writer);
             fileWriter(outputDir, getCurrentMethod() + FILE_EXT, writer, false);

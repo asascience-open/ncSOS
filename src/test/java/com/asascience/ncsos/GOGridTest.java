@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.asascience.ncsos.getObs;
+package com.asascience.ncsos;
 
 import com.asascience.ncsos.outputformatter.OutputFormatter;
-import com.asascience.ncsos.service.SOSParser;
+import com.asascience.ncsos.service.Parser;
 import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.*;
 import java.net.URLEncoder;
@@ -22,7 +22,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  *
  * @author SCowan
  */
-public class SOSGridObsTest {
+public class GOGridTest {
     
     private static final String defaultAuthority = "authority";
     
@@ -109,7 +109,7 @@ public class SOSGridObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + sst_1);
             Writer writer = new CharArrayWriter();
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             try {
                 sst_1_reqs += URLEncoder.encode("text/xml;subtype=\"om/1.0.0\"", "UTF-8");
             } catch (Exception e) {
@@ -139,7 +139,7 @@ public class SOSGridObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + sst_2);
             Writer writer = new CharArrayWriter();
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             try {
                 sst_2_reqs += URLEncoder.encode("text/xml;subtype=\"om/1.0.0\"", "UTF-8");
             } catch (Exception e) {
@@ -167,7 +167,7 @@ public class SOSGridObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + sst_2);
             Writer writer = new CharArrayWriter();
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             try {
                 sst_2_network_all += URLEncoder.encode("text/xml;subtype=\"om/1.0.0\"", "UTF-8");
             } catch (Exception e) {
@@ -195,7 +195,7 @@ public class SOSGridObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + sst_pathfinder);
             Writer writer = new CharArrayWriter();
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             try {
                 sst_pathfinder_grid0 += URLEncoder.encode("text/xml;subtype=\"om/1.0.0\"", "UTF-8");
             } catch (Exception e) {
@@ -223,7 +223,7 @@ public class SOSGridObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(baseLocalDir + sst_pathfinder);
             Writer writer = new CharArrayWriter();
-            SOSParser parser = new SOSParser();
+            Parser parser = new Parser();
             try {
                 sst_pathfinder_network_all += URLEncoder.encode("text/xml;subtype=\"om/1.0.0\"", "UTF-8");
             } catch (Exception e) {

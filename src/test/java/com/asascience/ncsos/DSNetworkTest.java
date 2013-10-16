@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.asascience.ncsos.describeSen;
+package com.asascience.ncsos;
 
 import com.asascience.ncsos.outputformatter.OutputFormatter;
-import com.asascience.ncsos.service.SOSParser;
+import com.asascience.ncsos.service.Parser;
 import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.*;
 import java.net.URLEncoder;
@@ -31,7 +31,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  * @author SCowan
  */
 @RunWith(Parameterized.class) 
-public class SOSDescribeSensorNetworkTest {
+public class DSNetworkTest {
     private static String outputDir = null;
     private static String exampleOutputDir = null;
     private static List<String> stationTests;
@@ -42,7 +42,7 @@ public class SOSDescribeSensorNetworkTest {
  
     private String currentTest;
     private String testOutFile;
-    public SOSDescribeSensorNetworkTest(String currentTest, String testOut){
+    public DSNetworkTest(String currentTest, String testOut){
     	this.currentTest = currentTest;
     	this.testOutFile = testOut;
     }
@@ -70,7 +70,7 @@ public class SOSDescribeSensorNetworkTest {
             dataSourceDirectory = XMLDomUtils.getNodeValue(configDoc, container, "dataSourceDirectory");
             dataSourceDirectory = new File(dataSourceDirectory).getCanonicalPath();
             System.out.println("source +++++++" + dataSourceDirectory);
-           String testStr =  XMLDomUtils.getNodeValue(configDoc, container, "SOSdescribeSensorTest");
+           String testStr =  XMLDomUtils.getNodeValue(configDoc, container, "DSBaseTest");
            System.out.println(testStr);
            String [] testFiles = testStr.trim().split("\n");
            for(String file : testFiles)
@@ -153,7 +153,7 @@ public class SOSDescribeSensorNetworkTest {
     		String fullPathTestFile= System.getProperty("user.dir")+"\\resources\\datasets\\aggregationBug\\wqb.ncml";//dataSourceDirectory + systemSeparator + currentTest;
     		try {
     			NetcdfDataset dataset = NetcdfDataset.openDataset(fullPathTestFile);
-    			SOSParser parser = new SOSParser();
+    			Parser parser = new Parser();
     			Writer writer = new CharArrayWriter();
 //    			writeOutput(parser.enhanceGETRequest(dataset, query, fullPathTestFile), writer);
 //    			System.out.println("calling again");

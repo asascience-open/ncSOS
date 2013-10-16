@@ -5,7 +5,7 @@ based on iso controller NOAA - ASA
 package com.asascience.ncsos.controller;
 
 import com.asascience.ncsos.outputformatter.OutputFormatter;
-import com.asascience.ncsos.service.SOSParser;
+import com.asascience.ncsos.service.Parser;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
 import java.io.IOException;
 import java.io.Writer;
@@ -76,7 +76,7 @@ public class SosController implements ISosContoller {
             //set the response type
             Writer writer = res.getWriter();
             //TODO create new service???
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             respMap = md.enhanceGETRequest(dataset, req.getQueryString(), req.getRequestURL().toString(),tempdir);
             res.setContentType(respMap.get("responseContentType").toString());
             

@@ -25,7 +25,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  * @author abird
  * @modified scowan
  */
-public class SOSParser {
+public class Parser {
 
     public static final String ERROR = "error";
     public static final String GETCAPABILITIES = "GetCapabilities";
@@ -64,10 +64,10 @@ public class SOSParser {
     }
 
     /**
-     * Sets the logger for error output using the SOSParser class.
+     * Sets the logger for error output using the Parser class.
      */
-    public SOSParser() {
-        _log = LoggerFactory.getLogger(SOSParser.class);
+    public Parser() {
+        _log = LoggerFactory.getLogger(Parser.class);
     }
 
     /**

@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.asascience.ncsos.getObs;
+package com.asascience.ncsos;
 
 import com.asascience.ncsos.outputformatter.OutputFormatter;
-import com.asascience.ncsos.service.SOSParser;
+import com.asascience.ncsos.service.Parser;
 import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.*;
 import java.util.HashMap;
@@ -21,7 +21,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  *
  * @author SCowan
  */
-public class SOSGetObsTest {
+public class GOBaseTest {
     
     private static String base = null;
     private static String exampleOutputDir = null;
@@ -285,7 +285,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(imeds1);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, imeds1Req, imeds1),write);
             write.flush();
@@ -307,7 +307,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(imeds4);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, imeds4Req, imeds4),write);
             write.flush();
@@ -330,7 +330,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(imeds5);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, imeds5Req, imeds5),write);
             write.flush();
@@ -353,7 +353,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(imeds6);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, imeds6Req, imeds6),write);
             write.flush();
@@ -376,7 +376,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(imeds6);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, imeds6IoosReq, imeds6),write);
             write.flush();
@@ -405,7 +405,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(imeds7);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, imeds7Req, imeds7),write);
             write.flush();
@@ -428,7 +428,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(imeds7);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, imeds7ReqIoos, imeds7),write);
             write.flush();
@@ -453,7 +453,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(imeds8);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, imeds8Req, imeds8),write);
             write.flush();
@@ -476,7 +476,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(imeds9);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, imeds9Req, imeds9),write);
             write.flush();
@@ -499,7 +499,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(imeds10);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, imeds10Req, imeds10),write);
             write.flush();
@@ -522,7 +522,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(imeds11);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, imeds11Req, imeds11),write);
             write.flush();
@@ -545,7 +545,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(imeds12);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, imeds12Req, imeds12),write);
             write.flush();
@@ -568,7 +568,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, imeds13Req, imeds13),write);
             write.flush();
@@ -591,7 +591,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(imeds14);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, imeds13Req, imeds14),write);
             write.flush();
@@ -621,7 +621,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(imeds15);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, imeds15Req, imeds15),write);
             write.flush();
@@ -644,7 +644,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, timeSeriesIncompleteMultiStationx3, tsIncompleteMultiDimensionalMultipleStations),write);
             write.flush();
@@ -677,7 +677,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, timeSeriesIncompleteMultiStation, tsIncompleteMultiDimensionalMultipleStations),write);
             write.flush();
@@ -710,7 +710,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, timeSeriesIncompleteMultiInvalid, tsIncompleteMultiDimensionalMultipleStations),write);
             write.flush();
@@ -745,7 +745,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, timeSeriesIncompleteMulti, tsIncompleteMultiDimensionalMultipleStations),write);
             write.flush();
@@ -773,7 +773,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, timeSeriesIncomplete, tsIncompleteMultiDimensionalMultipleStations),write);
             write.flush();
@@ -796,7 +796,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, timeSeriesIncompleteWithTime, tsIncompleteMultiDimensionalMultipleStations),write);
             write.flush();
@@ -819,7 +819,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(tsOrthogonalMultidimenstionalMultipleStations);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, timeSeriestOrth, tsOrthogonalMultidimenstionalMultipleStations),write);
             write.flush();
@@ -842,7 +842,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(RaggedMultiConventions);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, timeSeriesProfileRequestMulti, RaggedMultiConventions),write);
             write.flush();
@@ -876,7 +876,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(RaggedMultiConventions);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, timeSeriesProfileRequestMultiInvalidDates, RaggedMultiConventions),write);
             write.flush();
@@ -908,7 +908,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(RaggedMultiConventions);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, timeSeriesProfileRequestSingle, RaggedMultiConventions),write);
             write.flush();
@@ -936,7 +936,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalSingleStations);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, timeSeriesProfileRequest2, MultiDimensionalSingleStations),write);
             write.flush();
@@ -961,7 +961,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(RaggedMultiConventions);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, timeSeriesTimeRequestT2, RaggedMultiConventions),write);
             write.flush();
@@ -993,7 +993,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(RaggedMultiConventions);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, timeSeriesTimeRequestT1, RaggedMultiConventions),write);
             write.flush();
@@ -1025,7 +1025,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalMultiStations);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, timeSeriesProfileRequest2, MultiDimensionalMultiStations),write);
             write.flush();
@@ -1050,7 +1050,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalMultiStations);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, timeSeriesProfileRequest3, MultiDimensionalMultiStations),write);
             write.flush();
@@ -1075,7 +1075,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(MultiDimensionalMultiStations);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, timeSeriesProfileRequestMultiStation, MultiDimensionalMultiStations),write);
             write.flush();
@@ -1117,7 +1117,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(ContiguousRaggedMultipleProfiles);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, profileRequestMultiTime3, ContiguousRaggedMultipleProfiles), write);
             write.flush();
@@ -1146,7 +1146,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(ContiguousRaggedMultipleProfiles);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, profileRequestMultiTime, ContiguousRaggedMultipleProfiles),write);
             write.flush();
@@ -1176,7 +1176,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(ContiguousRaggedMultipleProfiles);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, profileRequestMultiTime2, ContiguousRaggedMultipleProfiles),write);
             write.flush();
@@ -1203,7 +1203,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(ContiguousRaggedMultipleProfiles);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, profileRequest, ContiguousRaggedMultipleProfiles),write);
             write.flush();
@@ -1228,7 +1228,7 @@ public class SOSGetObsTest {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(IncompleteMultiDimensionalMultipleProfiles);
 
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, profileRequest, IncompleteMultiDimensionalMultipleProfiles),write);
             write.flush();
@@ -1252,7 +1252,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(IndexedRaggedMultipleProfiles);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, profileRequestIndexed, IndexedRaggedMultipleProfiles),write);
             write.flush();
@@ -1275,7 +1275,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(OrthogonalMultiDimensionalMultipleProfiles);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, profileRequest, OrthogonalMultiDimensionalMultipleProfiles),write);
             write.flush();
@@ -1299,7 +1299,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(OrthogonalSingleDimensionalSingleProfile);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, profileRequest, OrthogonalSingleDimensionalSingleProfile),write);
             write.flush();
@@ -1323,7 +1323,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(trajectoryContiguousRaggedMultipleTrajectories);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, trajectoryContiguousRequest1, trajectoryContiguousRaggedMultipleTrajectories),write);
             write.flush();
@@ -1347,7 +1347,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(trajectoryIncompleteMultidimensionalMultipleTrajectories);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, trajectoryIncompleteRequest1, trajectoryIncompleteMultidimensionalMultipleTrajectories),write);
             write.flush();
@@ -1369,7 +1369,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(trajectoryProfileMultidimensionalMultipleTrajectories);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, sectionRequest1, trajectoryProfileMultidimensionalMultipleTrajectories),write);
             write.flush();
@@ -1395,7 +1395,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(externalHawaiiStation);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, externalHawaiiRequest1, externalHawaiiStation),write);
             write.flush();
@@ -1418,7 +1418,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeries1);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, networkAllTimeSeries1Request, networkAllTimeSeries1),write);
             write.flush();
@@ -1441,7 +1441,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeries2);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, networkAllTimeSeries2Request, networkAllTimeSeries2),write);
             write.flush();
@@ -1464,7 +1464,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory1);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, networkAllTrajectory1Request1, networkAllTrajectory1),write);
             write.flush();
@@ -1487,7 +1487,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory1);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, networkAllTrajectory1Request2, networkAllTrajectory1),write);
             write.flush();
@@ -1510,7 +1510,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory1);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, networkAllTrajectory1Request3, networkAllTrajectory1),write);
             write.flush();
@@ -1533,7 +1533,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory2);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, networkAllTrajectory2Request, networkAllTrajectory2),write);
             write.flush();
@@ -1556,7 +1556,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory3);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, networkAllTrajectory3Request, networkAllTrajectory3),write);
             write.flush();
@@ -1577,7 +1577,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory4);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, networkAllTrajectory4Request, networkAllTrajectory4),write);
             write.flush();
@@ -1598,7 +1598,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeriesProfile1);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, networkAllTimeSeriesProfile1Request, networkAllTimeSeriesProfile1),write);
             write.flush();
@@ -1620,7 +1620,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeriesProfile2);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, networkAllTimeSeriesProfile2Request, networkAllTimeSeriesProfile2),write);
             write.flush();
@@ -1644,7 +1644,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeriesProfile3);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, networkAllTimeSeriesProfile3Request, networkAllTimeSeriesProfile3),write);
             write.flush();
@@ -1666,7 +1666,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeriesProfile4);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, networkAllTimeSeriesProfile4Request, networkAllTimeSeriesProfile4),write);
             write.flush();
@@ -1688,7 +1688,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeriesProfile5);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, networkAllTimeSeriesProfile5Request, networkAllTimeSeriesProfile5),write);
             write.flush();
@@ -1710,7 +1710,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllProfile1);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, networkAllProfile1Request, networkAllProfile1),write);
             write.flush();
@@ -1733,7 +1733,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllProfile2);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, networkAllProfile2Request, networkAllProfile2),write);
             write.flush();
@@ -1756,7 +1756,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllProfile3);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, networkAllProfile3Request, networkAllProfile3),write);
             write.flush();
@@ -1780,7 +1780,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllProfile4);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, networkAllProfile4Request, networkAllProfile4),write);
             write.flush();
@@ -1803,7 +1803,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllProfile5);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, networkAllProfile5Request, networkAllProfile5),write);
             write.flush();
@@ -1826,7 +1826,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectoryProfile1);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, networkAllTrajectoryProfile1Request, networkAllTrajectoryProfile1),write);
             write.flush();
@@ -1849,7 +1849,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectoryProfile2);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, networkAllTrajectoryProfile2Request, networkAllTrajectoryProfile2),write);
             write.flush();
@@ -1872,7 +1872,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectoryProfile3);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, networkAllTrajectoryProfile3Request, networkAllTrajectoryProfile3),write);
             write.flush();
@@ -1895,7 +1895,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(watlevNOAANavdPre);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, watlevNOAANavdRequest, watlevNOAANavdPre),write);
             write.flush();
@@ -1919,7 +1919,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(watlevNOAANavdPre);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, watlevNOAANavdRequestIoos, watlevNOAANavdPre),write);
             write.flush();
@@ -1943,7 +1943,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, timeSeriesIncompIoosSosRequest1, tsIncompleteMultiDimensionalMultipleStations), write);
             write.flush();
@@ -1964,7 +1964,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(kachemakBay);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, pointIoosSosRequest1, kachemakBay), write);
             write.flush();
@@ -1986,7 +1986,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(bodegaMarineLabBuoy);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, bodegaIoosRequest1, bodegaMarineLabBuoy), write);
             write.flush();
@@ -2007,7 +2007,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectory1);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, ioosTrajectoryRequest, networkAllTrajectory1), write);
             write.flush();
@@ -2028,7 +2028,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllProfile1);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, ioosProfileRequest, networkAllProfile1), write);
             write.flush();
@@ -2049,7 +2049,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTimeSeriesProfile1);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, ioosTimeSeriesProfileRequest, networkAllTimeSeriesProfile1), write);
             write.flush();
@@ -2070,7 +2070,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(networkAllTrajectoryProfile1);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, ioosTrajectoryProfileRequest, networkAllTrajectoryProfile1), write);
             write.flush();
@@ -2091,7 +2091,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(seaMapPoint);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, seaMapPointRequest, seaMapPoint), write);
             write.flush();
@@ -2112,7 +2112,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(imeds8);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, testBadOffering, imeds8), write);
             write.flush();
@@ -2134,7 +2134,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(imeds8);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, testBadProcedure, imeds8), write);
             write.flush();
@@ -2156,7 +2156,7 @@ public class SOSGetObsTest {
         
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(imeds8);
-            SOSParser md = new SOSParser();
+            Parser md = new Parser();
             Writer write = new CharArrayWriter();
             writeOutput(md.enhanceGETRequest(dataset, testBadProcOffPair, imeds8), write);
             write.flush();

@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package com.asascience.ncsos.controller;
+package com.asascience.ncsos;
 
 import java.io.IOException;
 import java.net.URL;
@@ -22,7 +22,7 @@ import org.junit.Test;
  *
  * @author abird
  */
-public class SosControllerTest {
+public class ControllerTest {
 
     /**
      * Test of getPath method, of class SosController.
