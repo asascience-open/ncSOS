@@ -165,7 +165,7 @@
 			<configuration>
 			  <target>
 				<copy file="resources/sos-servlet.xml" todir="target/" /> 
-				<copy file="resources/Readme.txt" todir="target/" />
+				<copy file="Readme.md" todir="target/" />
 				<zip destfile="target/ncSOS-${project.version}.zip" basedir="target/" includes="*xml *.txt *.jar" />
                 <copy file="target/ncSOS-${project.version}.zip" todir="jar/" />
                 <copy file="target/ncSOS-${project.version}.zip" tofile="jar/ncSOS.zip" />
