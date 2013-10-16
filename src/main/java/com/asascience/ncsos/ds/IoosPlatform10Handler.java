@@ -2,11 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.asascience.ncsos.describesen;
+package com.asascience.ncsos.ds;
 
 import com.asascience.ncsos.cdmclasses.*;
-import com.asascience.ncsos.outputformatter.ds.IoosPlatform10;
-import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
+import com.asascience.ncsos.outputformatter.OutputFormatter;
+import com.asascience.ncsos.outputformatter.ds.IoosPlatform10Formatter;
 import com.asascience.ncsos.util.LogReporter;
 import com.asascience.ncsos.util.VocabDefinitions;
 import java.io.IOException;
@@ -23,7 +23,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  *
  * @author SCowan
  */
-public class SOSDescribePlatformM1_0 extends BaseDescribeSensor implements ISOSDescribeSensor {
+public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterface {
     
     private final String procedure;
     private final String stationName;
@@ -32,12 +32,12 @@ public class SOSDescribePlatformM1_0 extends BaseDescribeSensor implements ISOSD
     private String errorString;
     private boolean locationLineFlag;
 
-    private final static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SOSDescribePlatformM1_0.class);
-    private final static String QUERY = "?service=SOS&request=DescribeSensor&version=1.0.0&outputFormat=text/xml;subtype=\"sensorML/1.0.1\"&procedure=";
+    private final static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(IoosPlatform10Handler.class);
+    private final static String QUERY = "?service=SOS&request=DescribeSensorHandler&version=1.0.0&outputFormat=text/xml;subtype=\"sensorML/1.0.1\"&procedure=";
     
-    private IoosPlatform10 platform;
+    private IoosPlatform10Formatter platform;
     
-    public SOSDescribePlatformM1_0(NetcdfDataset dataset, String procedure, String serverURL) throws IOException {
+    public IoosPlatform10Handler(NetcdfDataset dataset, String procedure, String serverURL) throws IOException {
         super(dataset, new LogReporter());
         this.procedure = procedure;
         this.stationName = procedure.substring(procedure.lastIndexOf(":")+1);
@@ -46,12 +46,12 @@ public class SOSDescribePlatformM1_0 extends BaseDescribeSensor implements ISOSD
         this.setStationData();
     }
     
-    public void setupOutputDocument(SOSOutputFormatter output) {
+    public void setupOutputDocument(OutputFormatter output) {
         if (errorString != null) {
             output.setupExceptionOutput(errorString);
         } else {
             try {
-                this.platform = (IoosPlatform10) output;
+                this.platform = (IoosPlatform10Formatter) output;
                 describePlatform();
             } catch (ClassCastException ex) {
                 logger.error(ex.toString());
@@ -178,7 +178,7 @@ public class SOSDescribePlatformM1_0 extends BaseDescribeSensor implements ISOSD
         networkUrn = networkUrn.replaceAll(":station:|:sensor:", ":network:");
         networkUrn += "all";
         
-        platform.addSmlCapabilitiesGmlMetadata( SOSOutputFormatter.SYSTEM, "networkProcedures", 
+        platform.addSmlCapabilitiesGmlMetadata( OutputFormatter.SYSTEM, "networkProcedures",
         		"network-all", networkUrn);
     }
     

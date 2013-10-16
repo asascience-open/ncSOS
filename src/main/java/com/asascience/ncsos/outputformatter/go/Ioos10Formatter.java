@@ -4,9 +4,9 @@
  */
 package com.asascience.ncsos.outputformatter.go;
 
-import com.asascience.ncsos.getobs.SOSGetObservationRequestHandler;
+import com.asascience.ncsos.go.GetObservationRequestHandler;
 import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
-import com.asascience.ncsos.service.SOSBaseRequestHandler;
+import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.VocabDefinitions;
 import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.*;
@@ -24,7 +24,7 @@ import ucar.nc2.constants.FeatureType;
  *
  * @author SCowan
  */
-public class Ioos10 extends BaseOutputFormatter {
+public class Ioos10Formatter extends BaseOutputFormatter {
 
     public static final String BLOCKSEPARATOR = "blockSeparator";
     public static final String COMPOSITEPHENOMENON = "CompositePhenomenon";
@@ -44,9 +44,9 @@ public class Ioos10 extends BaseOutputFormatter {
     // private fields
     private String[] procedures;
     // private final fields
-    private final SOSGetObservationRequestHandler parent;
+    private final GetObservationRequestHandler parent;
     // private static fields
-    private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(Ioos10.class);
+    private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(Ioos10Formatter.class);
     public static final String SENSOR_ID_DEF = "http://mmisw.org/ont/ioos/definition/sensorID";
     // private constant fields
     private static final String TEMPLATE = "templates/GO_ioos10.xml";
@@ -66,7 +66,7 @@ public class Ioos10 extends BaseOutputFormatter {
     private boolean hasError;
 
     //============== Constructor ============================================//
-    public Ioos10(SOSGetObservationRequestHandler parent) {
+    public Ioos10Formatter(GetObservationRequestHandler parent) {
         Boolean supported = false;
         for (FeatureType ft : supportedTypes) {
             if (parent.getDatasetFeatureType() == ft) {
@@ -233,7 +233,7 @@ public class Ioos10 extends BaseOutputFormatter {
         for (int i = 0; i < this.parent.getProcedures().length; i++) {
             String stName = this.parent.getCDMDataset().getStationName(i);
             Element member = createElementNS(GML_NS, MEMBER);
-            member.setAttribute("xlink:href", SOSBaseRequestHandler.getGMLName(stName));
+            member.setAttribute("xlink:href", BaseRequestHandler.getGMLName(stName));
             parent.appendChild(member);
         }
         return parent;
@@ -324,7 +324,7 @@ public class Ioos10 extends BaseOutputFormatter {
         mPoint.setAttribute(SRSNAME, "http://www.opengis.net/def/crs/EPSG/0/4326");
         Element pMmbrs = createElementNS(GML_NS, POINTMEMBERS);
         for (int i = 0; i < this.parent.getProcedures().length; i++) {
-            String stName = SOSBaseRequestHandler.getGMLName(this.parent.getCDMDataset().getStationName(i));
+            String stName = BaseRequestHandler.getGMLName(this.parent.getCDMDataset().getStationName(i));
             Element point = createElementNS(GML_NS, POINT);
             Element pname = createElementNS(GML_NS, NAME);
             pname.setTextContent(stName);
@@ -627,7 +627,7 @@ public class Ioos10 extends BaseOutputFormatter {
         Element field = createSwe2Element(FIELD, NAME, "stationID");
         Element text = createSwe2Element("Text", DEFINITION, "http://mmisw.org/ont/ioos/definition/stationID");
         Element value = createSwe2Element(SML_VALUE);
-        value.setTextContent(SOSBaseRequestHandler.getGMLName(stName));
+        value.setTextContent(BaseRequestHandler.getGMLName(stName));
         text.appendChild(value);
         field.appendChild(text);
         record.appendChild(field);
@@ -682,7 +682,7 @@ public class Ioos10 extends BaseOutputFormatter {
         Element field = createSwe2Element(FIELD, NAME, "sensorID");
         Element text = createSwe2Element("Text", DEFINITION, SENSOR_ID_DEF);
         Element value = createSwe2Element(SML_VALUE);
-        value.setTextContent(SOSBaseRequestHandler.getSensorGMLName(stName, op));
+        value.setTextContent(BaseRequestHandler.getSensorGMLName(stName, op));
         text.appendChild(value);
         field.appendChild(text);
         dataRecord.appendChild(field);
@@ -788,7 +788,7 @@ public class Ioos10 extends BaseOutputFormatter {
      */
     private String stationToFieldName(String stName) {
         // get the gml urn
-        String urn = SOSBaseRequestHandler.getGMLName(stName);
+        String urn = BaseRequestHandler.getGMLName(stName);
         // split on station/sensor
         String[] urnSplit = urn.split("(sensor|station):");
         // get the last index of split

@@ -4,8 +4,8 @@
  */
 package com.asascience.ncsos.outputformatter.gc;
 
-import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
-import com.asascience.ncsos.service.SOSBaseRequestHandler;
+import com.asascience.ncsos.outputformatter.OutputFormatter;
+import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +28,7 @@ import ucar.unidata.geoloc.LatLonRect;
  *
  * @author scowan
  */
-public class GetCapsOutputter extends SOSOutputFormatter {
+public class GetCapsFormatter extends OutputFormatter {
 
     public static final String ABSTRACT = "Abstract";
     public static final String ACCESSCONSTRAINTS = "AccessConstraints";
@@ -57,7 +57,6 @@ public class GetCapsOutputter extends SOSOutputFormatter {
     public static final String SRSNAME = "srsName";
     public static final String VERSION_1_0 = "1.0";
     public static final String XLINK_HREF = "xlink:href";
-    public static final String XLINKHREF = XLINK_HREF;
     public static final String XLINK_TITLE = "xlink:title";
     public static final String XSITYPE = "xsi:type";
     private DOMImplementationLS impl;
@@ -69,7 +68,7 @@ public class GetCapsOutputter extends SOSOutputFormatter {
      * Creates instance of a Get Capabilities outputter. Reads the sosGetCapabilities.xml
      * file as a template for the response.
      */
-    public GetCapsOutputter() {
+    public GetCapsFormatter() {
         document = parseTemplateXML();
 
         initNamespaces();
@@ -315,17 +314,17 @@ public class GetCapsOutputter extends SOSOutputFormatter {
             // add network-all value
             Element na = createElementNS(OWS_NS, VALUE);
 
-            na.setTextContent("urn:ioos:network:" + SOSBaseRequestHandler.getNamingAuthority() + ":all");
+            na.setTextContent("urn:ioos:network:" + BaseRequestHandler.getNamingAuthority() + ":all");
             allowedValues.appendChild(na);
             for (String stationName : stationNames) {
                 Element elem = createElementNS(OWS_NS, VALUE);
 
-                elem.setTextContent(SOSBaseRequestHandler.getGMLName(stationName));
+                elem.setTextContent(BaseRequestHandler.getGMLName(stationName));
                 allowedValues.appendChild(elem);
                 for (String senName : sensorNames) {
                     Element sElem = createElementNS(OWS_NS, VALUE);
 
-                    sElem.setTextContent(SOSBaseRequestHandler.getSensorGMLName(stationName, senName));
+                    sElem.setTextContent(BaseRequestHandler.getSensorGMLName(stationName, senName));
                     allowedValues.appendChild(sElem);
                 }
             }
@@ -343,7 +342,7 @@ public class GetCapsOutputter extends SOSOutputFormatter {
         desc.setTextContent("All stations in the netCDF dataset.");
         obsOffering.appendChild(desc);
         Element name = createElementNS(GML_NS, NAME);
-        name.setTextContent(NETWORK_URN + SOSBaseRequestHandler.getNamingAuthority() + NETWORK_URN_END_ALL);
+        name.setTextContent(NETWORK_URN + BaseRequestHandler.getNamingAuthority() + NETWORK_URN_END_ALL);
         obsOffering.appendChild(name);
         Element srsName = createElementNS(GML_NS, SRSNAME);
         srsName.setTextContent(EPSG4326);
@@ -356,12 +355,12 @@ public class GetCapsOutputter extends SOSOutputFormatter {
         }
         // add network all to procedure list
         Element naProcedure = createElementNS(SOS_NS, PROCEDURE);
-        naProcedure.setAttribute(XLINK_HREF, SOSBaseRequestHandler.getGMLNetworkAll());
+        naProcedure.setAttribute(XLINK_HREF, BaseRequestHandler.getGMLNetworkAll());
         obsOffering.appendChild(naProcedure);
         // procedures
         for (String str : stations) {
             Element proc = createElementNS(SOS_NS, PROCEDURE);
-            proc.setAttribute(XLINK_HREF, SOSBaseRequestHandler.getGMLName(str));
+            proc.setAttribute(XLINK_HREF, BaseRequestHandler.getGMLName(str));
             obsOffering.appendChild(proc);
         }
         // observed properties
@@ -373,7 +372,7 @@ public class GetCapsOutputter extends SOSOutputFormatter {
         // feature of interests
         for (String str : stations) {
             Element foi = createElementNS(SOS_NS, "featureOfInterest");
-            foi.setAttribute(XLINK_HREF, SOSBaseRequestHandler.getGMLName(str));
+            foi.setAttribute(XLINK_HREF, BaseRequestHandler.getGMLName(str));
             obsOffering.appendChild(foi);
         }
         // response format
@@ -410,7 +409,7 @@ public class GetCapsOutputter extends SOSOutputFormatter {
         obsOffering.setAttributeNS(GML_NS, ID, stationName);
         // gml:name
         Element gmlName = createElementNS(GML_NS, NAME);
-        gmlName.setTextContent(SOSBaseRequestHandler.getGMLName(stationName));
+        gmlName.setTextContent(BaseRequestHandler.getGMLName(stationName));
         obsOffering.appendChild(gmlName);
         // gml:srsName - default to EPSG:4326 for now
         Element srsName = createElementNS(GML_NS, SRSNAME);
@@ -422,7 +421,7 @@ public class GetCapsOutputter extends SOSOutputFormatter {
         obsOffering.appendChild(getStationPeriod(stationDates));
         // feature of interest -- station name?
         Element foi = createElementNS(SOS_NS, FEATURE_INTEREST);
-        foi.setAttribute(XLINK_HREF, SOSBaseRequestHandler.getGMLName(stationName));
+        foi.setAttribute(XLINK_HREF, BaseRequestHandler.getGMLName(stationName));
         obsOffering.appendChild(foi);
         // observed properties
         for (String str : sensorNames) {
@@ -432,7 +431,7 @@ public class GetCapsOutputter extends SOSOutputFormatter {
         }
         // procedure for this station
         Element selfProcedure = createElementNS(SOS_NS, PROCEDURE);
-        selfProcedure.setAttribute(XLINK_HREF, SOSBaseRequestHandler.getGMLName(stationName));
+        selfProcedure.setAttribute(XLINK_HREF, BaseRequestHandler.getGMLName(stationName));
         obsOffering.appendChild(selfProcedure);
         // response format
         Element rf = createElementNS(SOS_NS, RESPONSE_FORMAT);

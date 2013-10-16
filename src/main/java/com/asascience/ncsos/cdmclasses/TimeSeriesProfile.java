@@ -4,8 +4,9 @@
  */
 package com.asascience.ncsos.cdmclasses;
 
-import com.asascience.ncsos.getobs.SOSObservationOffering;
-import com.asascience.ncsos.service.SOSBaseRequestHandler;
+import com.asascience.ncsos.go.ObservationOffering;
+import com.asascience.ncsos.service.BaseRequestHandler;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,7 +57,7 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
     }
     
     /**
-     * gets the timeseriesprofile response for the getcaps request
+     * gets the timeseriesprofile response for the gc request
      * @param featureCollection1
      * @param document
      * @param featureOfInterestBase
@@ -67,13 +68,13 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
      */
     public static Document getCapsResponse(StationProfileFeatureCollection featureCollection1, Document document, String featureOfInterestBase, String GMLBase, List<String> observedPropertyList) throws IOException {
         StationProfileFeature stationProfileFeature = null;
-        SOSObservationOffering newOffering = null;
+        ObservationOffering newOffering = null;
         DateFormatter timePeriodFormatter = new DateFormatter();
         for (Station station : featureCollection1.getStations()) {
             String stationName = station.getName();
-            String stationLat = SOSBaseRequestHandler.formatDegree(station.getLatitude());
-            String stationLon = SOSBaseRequestHandler.formatDegree(station.getLongitude());
-            newOffering = new SOSObservationOffering();
+            String stationLat = BaseRequestHandler.formatDegree(station.getLatitude());
+            String stationLon = BaseRequestHandler.formatDegree(station.getLongitude());
+            newOffering = new ObservationOffering();
             newOffering.setObservationStationID(stationName);
             newOffering.setObservationStationLowerCorner(stationLat, stationLon);
             newOffering.setObservationStationUpperCorner(stationLat, stationLon);

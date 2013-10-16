@@ -4,7 +4,7 @@
  */
 package com.asascience.ncsos.getObs;
 
-import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
+import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.service.SOSParser;
 import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.*;
@@ -264,7 +264,7 @@ public class SOSGetObsTest {
     }
     
     private static void writeOutput(HashMap<String, Object> outMap, Writer writer) {
-        SOSOutputFormatter output = (SOSOutputFormatter)outMap.get("outputHandler");
+        OutputFormatter output = (OutputFormatter)outMap.get("outputHandler");
         assertNotNull("got null output", output);
         output.writeOutput(writer);
     }

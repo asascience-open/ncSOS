@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.asascience.ncsos.describesen;
+package com.asascience.ncsos.ds;
 
-import com.asascience.ncsos.outputformatter.ds.OosTethys;
-import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
+import com.asascience.ncsos.outputformatter.ds.OosTethysFormatter;
+import com.asascience.ncsos.outputformatter.OutputFormatter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -26,7 +26,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  * @author SCowan
  * @version 1.0.0
  */
-public class SOSDescribeSensor extends SOSDescribeStation implements ISOSDescribeSensor {
+public class DescribeSensorHandler extends DescribeStationHandler implements BaseDSInterface {
     public static final String SENSOR = "sensor-";
     public static final String SPACER = "-";
     
@@ -39,7 +39,7 @@ public class SOSDescribeSensor extends SOSDescribeStation implements ISOSDescrib
      * @param dataset netcdf dataset of any feature type
      * @param procedure request procedure (urn of sensor)
      */
-    public SOSDescribeSensor( NetcdfDataset dataset, String procedure ) throws IOException {
+    public DescribeSensorHandler(NetcdfDataset dataset, String procedure) throws IOException {
         super(dataset, procedure);
         // ignore errors from the station constructor
         errorString = null;
@@ -74,8 +74,8 @@ public class SOSDescribeSensor extends SOSDescribeStation implements ISOSDescrib
      **************************************************************************/
 
     @Override
-    public void setupOutputDocument(SOSOutputFormatter output) {
-        OosTethys dsf = new OosTethys();
+    public void setupOutputDocument(OutputFormatter output) {
+        OosTethysFormatter dsf = new OosTethysFormatter();
         if (errorString == null) {
             // system node
             dsf.setSystemId(SENSOR + stationName + SPACER + sensorId);
@@ -99,7 +99,7 @@ public class SOSDescribeSensor extends SOSDescribeStation implements ISOSDescrib
     /*******************
      * Private Methods *
      *******************/
-    private void removeUnusedNodes(OosTethys output) {
+    private void removeUnusedNodes(OosTethysFormatter output) {
         output.deleteClassificationNode();
         output.deleteComponentsNode();
         output.deleteHistoryNode();
@@ -114,16 +114,16 @@ public class SOSDescribeSensor extends SOSDescribeStation implements ISOSDescrib
     
     /**
      * Sets the sml:Identification node for Describe Sensor "sensorML/1.0.1" requests
-     * @param output a OosTethys instance
+     * @param output a OosTethysFormatter instance
      */
     @Override
-    protected void formatSetIdentification(OosTethys output) {
+    protected void formatSetIdentification(OosTethysFormatter output) {
         ArrayList<String> identNames = new ArrayList<String>();
         ArrayList<String> identDefinitions = new ArrayList<String>();
         ArrayList<String> identValues = new ArrayList<String>();
         identNames.add("SensorId"); identDefinitions.add(MMI_DEF_URL + "sensorID"); identValues.add(procedure);
         for (Attribute attr : sensorVariable.getAttributes()) {
-            identNames.add(attr.getName()); identDefinitions.add(MMI_DEF_URL + attr.getName()); identValues.add(attr.getValue(0).toString());
+            identNames.add(attr.getFullName()); identDefinitions.add(MMI_DEF_URL + attr.getFullName()); identValues.add(attr.getValue(0).toString());
         }
         output.setIdentificationNode(identNames.toArray(new String[identNames.size()]),
                 identDefinitions.toArray(new String[identDefinitions.size()]),
@@ -132,10 +132,10 @@ public class SOSDescribeSensor extends SOSDescribeStation implements ISOSDescrib
     
     /**
      * Sets the gml:description node for Describe Sensor "sensorML/1.0.1" requests
-     * @param output  a OosTethys instance
+     * @param output  a OosTethysFormatter instance
      */
     @Override
-    protected void formatSetDescription(OosTethys output) {
+    protected void formatSetDescription(OosTethysFormatter output) {
         output.setDescriptionNode("Sensor metadata for " + sensorId + " on " + stationName);
     }
 }

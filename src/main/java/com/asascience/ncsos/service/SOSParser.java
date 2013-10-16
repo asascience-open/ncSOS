@@ -4,13 +4,13 @@
  */
 package com.asascience.ncsos.service;
 
-import com.asascience.ncsos.describesen.SOSDescribeSensorHandler;
-import com.asascience.ncsos.error.SOSErrorResponseHandler;
-import com.asascience.ncsos.getcaps.SOSGetCapabilitiesRequestHandler;
-import com.asascience.ncsos.getobs.SOSGetObservationRequestHandler;
+import com.asascience.ncsos.ds.BaseDSHandler;
+import com.asascience.ncsos.error.ErrorResponseHandler;
+import com.asascience.ncsos.gc.GetCapabilitiesRequestHandler;
+import com.asascience.ncsos.go.GetObservationRequestHandler;
 import com.asascience.ncsos.outputformatter.CachedFileFormatter;
-import com.asascience.ncsos.outputformatter.gc.GetCapsOutputter;
-import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
+import com.asascience.ncsos.outputformatter.gc.GetCapsFormatter;
+import com.asascience.ncsos.outputformatter.OutputFormatter;
 import java.io.*;
 import java.net.URLDecoder;
 import java.util.*;
@@ -60,7 +60,7 @@ public class SOSParser {
     // enum for supported request types (used primarily for string comparison)
     private enum SupportedRequests {
 
-        GetCapabilities, GetObservation, DescribeSensor
+        GetCapabilities, GetObservation, DescribeSensorHandler
     }
 
     /**
@@ -97,7 +97,7 @@ public class SOSParser {
         coordsHash = new HashMap<String, String>();
 
         // error handler
-        SOSErrorResponseHandler errHandler = new SOSErrorResponseHandler(null);
+        ErrorResponseHandler errHandler = new ErrorResponseHandler(null);
 
         if (query != null) {
             // parse the query string
@@ -124,7 +124,7 @@ public class SOSParser {
             switch (SupportedRequests.valueOf(queryParameters.get(REQUEST).toString())) {
                 case GetCapabilities:
                     _log.debug("In GetCapabilities of switch");
-                    SOSGetCapabilitiesRequestHandler capHandler = null;
+                    GetCapabilitiesRequestHandler capHandler = null;
                     // indicate that our response will be in xml
                     retval.put(RESPONSECONTENTTYPE, TEXTXML);
                     String sections = "all";
@@ -168,7 +168,7 @@ public class SOSParser {
                         }
                     } else {
                         try {
-                            capHandler = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI, sections);
+                            capHandler = new GetCapabilitiesRequestHandler(dataset, threddsURI, sections);
                         } catch (IOException ex) {
                             _log.error(ex.getMessage());
                             capHandler = null;
@@ -183,7 +183,7 @@ public class SOSParser {
                     }
                     break;
                 case GetObservation:
-                    SOSGetObservationRequestHandler obsHandler = null;
+                    GetObservationRequestHandler obsHandler = null;
                     // setup our coordsHash
                     if (queryParameters.containsKey(LAT) && queryParameters.containsKey(LON)) {
                         coordsHash.put(LAT, queryParameters.get(LAT).toString());
@@ -205,7 +205,7 @@ public class SOSParser {
                             eventTime = (String[]) queryParameters.get(EVENT_TIME);
                         }
                         // create a new handler for our get observation request and then write its result to output
-                        obsHandler = new SOSGetObservationRequestHandler(dataset,
+                        obsHandler = new GetObservationRequestHandler(dataset,
                                 procedure,
                                 (String) queryParameters.get(OFFERING),
                                 (String[]) queryParameters.get(OBSERVED_PROPERTY),
@@ -213,7 +213,7 @@ public class SOSParser {
                                 queryParameters.get(RESPONSE_FORMAT).toString(),
                                 coordsHash);
                         // below indicates that we got an exception and we should return it
-                        if (obsHandler.getOutputHandler().getClass() == GetCapsOutputter.class) {
+                        if (obsHandler.getOutputHandler().getClass() == GetCapsFormatter.class) {
                             retval.put(RESPONSECONTENTTYPE, TEXTXML);
                             retval.put(OUTPUTHANDLER, obsHandler.getOutputHandler());
                             break;
@@ -235,15 +235,15 @@ public class SOSParser {
                         retval.put(OUTPUTHANDLER, errHandler.getOutputHandler());
                     }
                     break;
-                case DescribeSensor:
+                case DescribeSensorHandler:
                     try {
                         // response will always be text/xml
                         retval.put(RESPONSECONTENTTYPE, TEXTXML);
-                        SOSDescribeSensorHandler sensorHandler;
+                        BaseDSHandler sensorHandler;
                         // get the first procedure
                         String procedure = ((String[]) queryParameters.get(PROCEDURE))[0];
                         // create a describe sensor handler
-                        sensorHandler = new SOSDescribeSensorHandler(dataset,
+                        sensorHandler = new BaseDSHandler(dataset,
                                 queryParameters.get(OUTPUT_FORMAT).toString(),
                                 procedure,
                                 threddsURI,
@@ -251,7 +251,7 @@ public class SOSParser {
                         retval.put(OUTPUTHANDLER, sensorHandler.getOutputHandler());
                     } catch (Exception ex) {
                         _log.error(ex.getStackTrace().toString());
-                        errHandler.setErrorExceptionOutput("Internal System Exception in setting up DescribeSensor handler - " + ex.toString());
+                        errHandler.setErrorExceptionOutput("Internal System Exception in setting up DescribeSensorHandler handler - " + ex.toString());
                         retval.put(OUTPUTHANDLER, errHandler.getOutputHandler());
                     }
                     break;
@@ -277,7 +277,7 @@ public class SOSParser {
         return retval;
     }
 
-    private void parseGetCaps(SOSGetCapabilitiesRequestHandler capHandler) throws IOException {
+    private void parseGetCaps(GetCapabilitiesRequestHandler capHandler) throws IOException {
         // do our parsing
         capHandler.parseGetCapabilitiesDocument();
     }
@@ -351,9 +351,9 @@ public class SOSParser {
         return "/" + dName + XML;
     }
 
-    private SOSGetCapabilitiesRequestHandler createGetCapsCacheFile(NetcdfDataset dataset, String threddsURI, String savePath) throws IOException {
+    private GetCapabilitiesRequestHandler createGetCapsCacheFile(NetcdfDataset dataset, String threddsURI, String savePath) throws IOException {
         _log.debug("Writing cache file for Get Capabilities request.");
-        SOSGetCapabilitiesRequestHandler cacheHandle = new SOSGetCapabilitiesRequestHandler(dataset, threddsURI, "all");
+        GetCapabilitiesRequestHandler cacheHandle = new GetCapabilitiesRequestHandler(dataset, threddsURI, "all");
         parseGetCaps(cacheHandle);
         File file = new File(savePath + getCacheXmlFileName(threddsURI));
         file.createNewFile();
@@ -364,7 +364,7 @@ public class SOSParser {
         return cacheHandle;
     }
 
-    private SOSOutputFormatter fileIsInDate(File f, String sections) throws ParserConfigurationException, SAXException, IOException {
+    private OutputFormatter fileIsInDate(File f, String sections) throws ParserConfigurationException, SAXException, IOException {
         _log.debug("Using cached get capabilities doc");
         CachedFileFormatter retval = new CachedFileFormatter(f);
         retval.setSections(sections);
@@ -415,10 +415,10 @@ public class SOSParser {
             }
             // specific parameters expected
             switch (SupportedRequests.valueOf(queryParameters.get(REQUEST).toString())) {
-                case DescribeSensor:
+                case DescribeSensorHandler:
                     for (String req : requiredDSParameters) {
                         if (!queryParameters.containsKey(req)) {
-                            retval.put(ERROR, "Required parameter '" + req + "' not found. Check GetCapabilities document for required parameters of DescribeSensor requests.");
+                            retval.put(ERROR, "Required parameter '" + req + "' not found. Check GetCapabilities document for required parameters of DescribeSensorHandler requests.");
                             return retval;
                         }
                     }

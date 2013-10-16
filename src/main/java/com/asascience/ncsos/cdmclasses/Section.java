@@ -4,13 +4,12 @@
  */
 package com.asascience.ncsos.cdmclasses;
 
-import com.asascience.ncsos.getobs.SOSObservationOffering;
+import com.asascience.ncsos.go.ObservationOffering;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
 import java.io.IOException;
 import java.util.*;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
-import sun.util.logging.resources.logging;
 import ucar.nc2.ft.*;
 import ucar.nc2.time.CalendarDate;
 import ucar.nc2.time.CalendarDateRange;
@@ -81,7 +80,7 @@ public class Section extends baseCDMClass implements iStationData {
                 CalendarDateRange sectionDateRange = getDateRange(sFeature);
                 DateFormatter formatter = new DateFormatter();
                 
-                SOSObservationOffering newOffering = new SOSObservationOffering();
+                ObservationOffering newOffering = new ObservationOffering();
 
                 newOffering.setObservationStationLowerCorner(Double.toString(bbox.getLowerLeftPoint().getLatitude()), Double.toString(bbox.getLowerLeftPoint().getLongitude()));
                 newOffering.setObservationStationUpperCorner(Double.toString(bbox.getUpperRightPoint().getLatitude()), Double.toString(bbox.getUpperRightPoint().getLongitude()));

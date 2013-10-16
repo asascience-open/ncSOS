@@ -1,6 +1,6 @@
 package com.asascience.ncsos.service;
 
-import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
+import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.util.DiscreteSamplingGeometryUtil;
 import com.asascience.ncsos.util.ListComprehension;
 import java.io.IOException;
@@ -23,7 +23,7 @@ import ucar.nc2.ft.*;
  * @author tkunicki
  * @modified scowan
  */
-public abstract class SOSBaseRequestHandler {
+public abstract class BaseRequestHandler {
     public static final String CF_ROLE = "cf_role";
     public static final String GRID = "grid";
     public static final String GRID_MAPPING = "grid_mapping";
@@ -53,7 +53,7 @@ public abstract class SOSBaseRequestHandler {
     private HashMap<Integer, String> stationNames;
     private List<String> sensorNames;
     
-    private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(SOSBaseRequestHandler.class);
+    private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(BaseRequestHandler.class);
 
     static {
         FORMAT_DEGREE = NumberFormat.getNumberInstance();
@@ -61,14 +61,14 @@ public abstract class SOSBaseRequestHandler {
         FORMAT_DEGREE.setMaximumFractionDigits(14);
     }
     private FeatureType dataFeatureType;
-    protected SOSOutputFormatter output;
+    protected OutputFormatter output;
 
     /**
      * Takes in a dataset and wraps it based on its feature type.
      * @param netCDFDataset the dataset being acted on
      * @throws IOException
      */
-    public SOSBaseRequestHandler(NetcdfDataset netCDFDataset) throws IOException {
+    public BaseRequestHandler(NetcdfDataset netCDFDataset) throws IOException {
         // check for non-null dataset
         if(netCDFDataset == null) {
 //            _log.error("received null dataset -- probably exception output");
@@ -229,7 +229,6 @@ public abstract class SOSBaseRequestHandler {
     
     /**
      * Finds all variables that are sensor (data) variables and compiles a list of their names.
-     * @param dataset the dataset to search through
      */
     private void parseSensorNames() {
         // find all variables who's not a coordinate axis and does not have 'station' in the name
@@ -555,10 +554,10 @@ public abstract class SOSBaseRequestHandler {
     }
     
     /**
-     * Returns the SOSOutputFormatter being used by the request.
-     * @return SOSOutputFormatter
+     * Returns the OutputFormatter being used by the request.
+     * @return OutputFormatter
      */
-    public SOSOutputFormatter getOutputHandler() {
+    public OutputFormatter getOutputHandler() {
         return output;
     }
 

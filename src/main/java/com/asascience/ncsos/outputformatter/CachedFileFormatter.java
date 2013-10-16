@@ -22,7 +22,7 @@ import org.w3c.dom.ls.LSSerializer;
  *
  * @author SCowan
  */
-public class CachedFileFormatter extends SOSOutputFormatter {
+public class CachedFileFormatter extends OutputFormatter {
     
     private Document document;
     private String errorString;

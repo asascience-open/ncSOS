@@ -1,6 +1,6 @@
 package com.asascience.ncsos.cdmclasses;
 
-import com.asascience.ncsos.getobs.SOSObservationOffering;
+import com.asascience.ncsos.go.ObservationOffering;
 import java.io.IOException;
 import java.util.*;
 import org.joda.time.DateTime;
@@ -408,7 +408,7 @@ public class Grid extends baseCDMClass implements iStationData {
                 double[] lonDbl = lonData.getCoordValues();
                 double[] latDbl = latData.getCoordValues();
 
-                SOSObservationOffering newOffering = new SOSObservationOffering();
+                ObservationOffering newOffering = new ObservationOffering();
                 newOffering.setObservationStationLowerCorner(Double.toString(latDbl[0]), Double.toString(lonDbl[0]));
                 newOffering.setObservationStationUpperCorner(Double.toString(latDbl[latDbl.length - 1]), Double.toString(lonDbl[lonDbl.length - 1]));
 

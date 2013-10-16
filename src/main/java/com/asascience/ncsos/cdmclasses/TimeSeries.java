@@ -4,8 +4,8 @@
  */
 package com.asascience.ncsos.cdmclasses;
 
-import com.asascience.ncsos.getobs.SOSObservationOffering;
-import com.asascience.ncsos.service.SOSBaseRequestHandler;
+import com.asascience.ncsos.go.ObservationOffering;
+import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
     }
 
     /**
-     * gets the timeseries response for the getcaps request
+     * gets the timeseries response for the gc request
      * @param featureCollection
      * @param document
      * @param featureOfInterest
@@ -70,16 +70,16 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         String stationName = null;
         String stationLat = null;
         String stationLon = null;
-        SOSObservationOffering newOffering = null;
+        ObservationOffering newOffering = null;
         StationTimeSeriesFeature feature = null;
 
         List<Station> stationList = featureCollection.getStations();
         for (int i = 0; i < stationList.size(); i++) {
             feature = featureCollection.getStationFeature(stationList.get(i));
             stationName = stationList.get(i).getName();
-            stationLat = SOSBaseRequestHandler.formatDegree(stationList.get(i).getLatitude());
-            stationLon = SOSBaseRequestHandler.formatDegree(stationList.get(i).getLongitude());
-            newOffering = new SOSObservationOffering();
+            stationLat = BaseRequestHandler.formatDegree(stationList.get(i).getLatitude());
+            stationLon = BaseRequestHandler.formatDegree(stationList.get(i).getLongitude());
+            newOffering = new ObservationOffering();
             newOffering.setObservationStationID(stationName);
             newOffering.setObservationStationLowerCorner(stationLat, stationLon);
             newOffering.setObservationStationUpperCorner(stationLat, stationLon);

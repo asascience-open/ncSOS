@@ -56,8 +56,8 @@ public class DatasetHandlerAdapter {
     /** 
      * Open a NetcdfDataset based on the incoming url request.
      * 
-     * @param request incoming url request 
-     * @param response outgoing web based response
+     * @param req incoming url request
+     * @param res outgoing web based response
      * @return dataset a NetcdfDataset as specifing in the request
      */
     public static NetcdfDataset openDataset(final HttpServletRequest req,

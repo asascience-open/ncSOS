@@ -1,10 +1,10 @@
-package com.asascience.ncsos.getobs;
+package com.asascience.ncsos.go;
 
 import com.asascience.ncsos.cdmclasses.*;
-import com.asascience.ncsos.outputformatter.gc.GetCapsOutputter;
-import com.asascience.ncsos.outputformatter.go.Ioos10;
-import com.asascience.ncsos.outputformatter.go.OosTethys;
-import com.asascience.ncsos.service.SOSBaseRequestHandler;
+import com.asascience.ncsos.outputformatter.gc.GetCapsFormatter;
+import com.asascience.ncsos.outputformatter.go.Ioos10Formatter;
+import com.asascience.ncsos.outputformatter.go.OosTethysFormatter;
+import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.ListComprehension;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  * Get Observation Parser
  * @author abird
  */
-public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
+public class GetObservationRequestHandler extends BaseRequestHandler {
     public static final String DEPTH = "depth";
     public static final String STANDARD_NAME = "standard_name";
 
@@ -32,11 +32,11 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
     private String[] obsProperties;
     private String[] procedures;
     private iStationData CDMDataSet;
-    private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(SOSGetObservationRequestHandler.class);
+    private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(GetObservationRequestHandler.class);
     private String contentType;
     private static final String FILL_VALUE_NAME = "_FillValue";
-    private static final String IOOSOM1_0_0 = "text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0\"";
-    private static final String OM1_0_0 = "text/xml;subtype=\"om/1.0.0\"";
+    private static final String IOOS10_RESPONSE_FORMAT = "text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0\"";
+    private static final String OOSTETHYS_RESPONSE_FORMAT = "text/xml;subtype=\"om/1.0.0\"";
     private final List<String> eventTimes;
 
     /**
@@ -45,17 +45,17 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
      * @param requestedStationNames collection of offerings from the request
      * @param variableNames collection of observed properties from the request
      * @param eventTime event time range from the request
-     * @param outputFormat response format from the request
+     * @param responseFormat response format from the request
      * @param latLonRequest map of the latitudes and longitude (points or ranges) from the request
      * @throws IOException 
      */
-    public SOSGetObservationRequestHandler(NetcdfDataset netCDFDataset,
-            String[] requestedStationNames,
-            String offering,
-            String[] variableNames,
-            String[] eventTime,
-            String responseFormat,
-            Map<String, String> latLonRequest) throws IOException {
+    public GetObservationRequestHandler(NetcdfDataset netCDFDataset,
+                                        String[] requestedStationNames,
+                                        String offering,
+                                        String[] variableNames,
+                                        String[] eventTime,
+                                        String responseFormat,
+                                        Map<String, String> latLonRequest) throws IOException {
         super(netCDFDataset);
 
         if (eventTime != null && eventTime.length > 0) {
@@ -65,16 +65,15 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         }
 
         // set up our formatter
-        if (responseFormat.equalsIgnoreCase(OM1_0_0)) {
+        if (responseFormat.equalsIgnoreCase(OOSTETHYS_RESPONSE_FORMAT)) {
             contentType = TEXTXML;
-//            output = new OosTethysSwe(this.obsProperties, getFeatureDataset(), CDMDataSet, netCDFDataset);
-            output = new OosTethys(this);
-        } else if (responseFormat.equalsIgnoreCase(IOOSOM1_0_0)) {
+            output = new OosTethysFormatter(this);
+        } else if (responseFormat.equalsIgnoreCase(IOOS10_RESPONSE_FORMAT)) {
             contentType = TEXTXML;
-            output = new Ioos10(this);
+            output = new Ioos10Formatter(this);
         } else {
             _log.error("Unknown/Unhandled responseFormat: " + responseFormat);
-            output = new GetCapsOutputter();
+            output = new GetCapsFormatter();
             output.setupExceptionOutput("Could not recognize response format: " + responseFormat);
         }
 
@@ -91,7 +90,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
                 // make output an exception
                 _log.error("observed property - " + vars + " - was not found in the dataset");
                 // print exception and then return the doc
-                output = new GetCapsOutputter();
+                output = new GetCapsFormatter();
                 output.setupExceptionOutput("observed property - " + vars + " - was not found in the dataset");
                 CDMDataSet = null;
                 return;
@@ -121,7 +120,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
                 }, new ListComprehension.Func<String, String>() {
 
                     public String apply(String in) {
-                        return SOSBaseRequestHandler.getGMLName(in);
+                        return BaseRequestHandler.getGMLName(in);
                     }
                 });
                 this.procedures = naProcs.toArray(new String[naProcs.size()]);
@@ -187,7 +186,7 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
             } else {
                 _log.error("Have a null CDMDataSet, this will cause a null reference exception!");
                 // print exception and then return the doc
-                output = new GetCapsOutputter();
+                output = new GetCapsFormatter();
                 output.setupExceptionOutput("Null Dataset; could not recognize feature type");
                 CDMDataSet = null;
                 return;
@@ -387,12 +386,12 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
 
     private void checkProcedureValidity() {
         List<String> stProc = new ArrayList<String>();
-        stProc.add(SOSBaseRequestHandler.getGMLNetworkAll());
+        stProc.add(BaseRequestHandler.getGMLNetworkAll());
         for (String stname : this.getStationNames().values()) {
             for (String senname : this.getSensorNames()) {
-                stProc.add(SOSBaseRequestHandler.getSensorGMLName(stname, senname));
+                stProc.add(BaseRequestHandler.getSensorGMLName(stname, senname));
             }
-            stProc.add(SOSBaseRequestHandler.getGMLName(stname));
+            stProc.add(BaseRequestHandler.getGMLName(stname));
         }
 
         for (String proc : this.procedures) {

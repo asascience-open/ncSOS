@@ -22,7 +22,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  *
  * @author scowan
  */
-public class TestXMLOutputter extends SOSOutputFormatter {
+public class TestXMLOutputter extends OutputFormatter {
 
     private ArrayList<DataSlice> infoList;
     private iStationData CDMDataset;

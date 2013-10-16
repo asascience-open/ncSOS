@@ -3,19 +3,19 @@
  * and open the template in the editor.
  */
 
-package com.asascience.ncsos.getobs;
+package com.asascience.ncsos.go;
 
 import java.util.List;
 
 /**
  * This object is an observation offering object containing all the info needed for the section.
  * Used primarily as a shared structure among observations defining much of the items
- * needed for observation responses. Also implements the ObservationOffering
+ * needed for observation responses. Also implements the ObservationOfferingInterface
  * interface for a collection of getters and setters.
  * @author abird
  * @version 1.0.0
  */
-public final class SOSObservationOffering implements ObservationOffering {
+public final class ObservationOffering implements ObservationOfferingInterface {
    private String stationID;
     private String stationDescription;
     private String stationName;
@@ -29,12 +29,12 @@ public final class SOSObservationOffering implements ObservationOffering {
     private String featureOfInterest;
     private String obsResultModel;
     private String obsResponseMode;
-    private List observeredProperties;
+    private List observedProperties;
 
     /**
-     * Creates an instance of SOSObservationOffering with empty values;
+     * Creates an instance of ObservationOffering with empty values;
      */
-    public SOSObservationOffering() {
+    public ObservationOffering() {
         setObservationStationID(" ");
         setObservationStationDescription(" ");
         setObservationName(" ");
@@ -51,21 +51,21 @@ public final class SOSObservationOffering implements ObservationOffering {
     }
 
     /**
-     * observeredProperties getter
+     * observedProperties getter
      * @return List (of string types)
      */
     @Override
     public List getObservationObserveredList(){
-        return observeredProperties;
+        return observedProperties;
     }
 
     /**
-     * observeredProperties setter
+     * observedProperties setter
      * @param list List (of string types)
      */
     @Override
     public void setObservationObserveredList(List list){
-        this.observeredProperties = list;
+        this.observedProperties = list;
     }
 
     /**

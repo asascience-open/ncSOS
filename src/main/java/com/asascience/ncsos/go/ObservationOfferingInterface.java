@@ -1,13 +1,13 @@
-package com.asascience.ncsos.getobs;
+package com.asascience.ncsos.go;
 
 import java.util.List;
 
 /**
- * Interface of getters and setter for the SOSObservationOffering struct. See
- * SOSObservationOffering for documentation on each function.
+ * Interface of getters and setter for the ObservationOffering struct. See
+ * ObservationOffering for documentation on each function.
  * @author Abird
  */
-public interface ObservationOffering {
+public interface ObservationOfferingInterface {
     
     public String getObservationStationID();
     public void setObservationStationID(String stationID);

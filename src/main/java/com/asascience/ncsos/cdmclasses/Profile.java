@@ -4,7 +4,7 @@
  */
 package com.asascience.ncsos.cdmclasses;
 
-import com.asascience.ncsos.getobs.SOSObservationOffering;
+import com.asascience.ncsos.go.ObservationOffering;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,7 +58,7 @@ public class Profile extends baseCDMClass implements iStationData {
     }
     
     /**
-     * gets the Profile response for the getcaps request
+     * gets the Profile response for the gc request
      * @param profileCollection
      * @param document
      * @param featureOfInterestBase
@@ -84,7 +84,7 @@ public class Profile extends baseCDMClass implements iStationData {
             }
 
             //attributes
-            SOSObservationOffering newOffering = new SOSObservationOffering();
+            ObservationOffering newOffering = new ObservationOffering();
 
             newOffering.setObservationStationLowerCorner(Double.toString(pFeature.getLatLon().getLatitude()), Double.toString(pFeature.getLatLon().getLongitude()));
             newOffering.setObservationStationUpperCorner(Double.toString(pFeature.getLatLon().getLatitude()), Double.toString(pFeature.getLatLon().getLongitude()));

@@ -4,7 +4,7 @@ based on iso controller NOAA - ASA
  */
 package com.asascience.ncsos.controller;
 
-import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
+import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.service.SOSParser;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
 import java.io.IOException;
@@ -81,7 +81,7 @@ public class SosController implements ISosContoller {
             res.setContentType(respMap.get("responseContentType").toString());
             
             // tell our handler to write out the response
-            SOSOutputFormatter output = (SOSOutputFormatter)respMap.get("outputHandler");
+            OutputFormatter output = (OutputFormatter)respMap.get("outputHandler");
             output.writeOutput(writer);
             
             // log and flush writer

@@ -4,7 +4,7 @@
  */
 package com.asascience.ncsos.getCaps;
 
-import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
+import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.service.SOSParser;
 import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.*;
@@ -95,7 +95,7 @@ public class GridCapsTest {
     }
     
     private void writeOutput(HashMap<String, Object> outMap, Writer write) {
-        SOSOutputFormatter output = (SOSOutputFormatter)outMap.get("outputHandler");
+        OutputFormatter output = (OutputFormatter)outMap.get("outputHandler");
         assertNotNull("got null output", output);
         output.writeOutput(write);
     }

@@ -18,7 +18,7 @@ import org.w3c.dom.Element;
  * @author SCowan
  * @version 1.0.0
  */
-public abstract class SOSOutputFormatter {
+public abstract class OutputFormatter {
 
     private Map<String, String> nsToPrefix;
     public static final String OBSERVATION = "Observation";
@@ -49,7 +49,7 @@ public abstract class SOSOutputFormatter {
     public static final String TERM = "Term";
     public static final String OFFERING = "offering";
     public static final String OBSERVED_PROPERTY = "observedProperty";
-    public static final String OBSERVATION_OFFERING = "ObservationOffering";
+    public static final String OBSERVATION_OFFERING = "ObservationOfferingInterface";
     public static final String CAPABILITIES = "Capabilities";
     public static final String SML_CAPABILITIES = "capabilities";
     public static final String OBSERVATION_OFFERING_LIST = "ObservationOfferingList";
@@ -119,7 +119,7 @@ public abstract class SOSOutputFormatter {
     protected String XLINK_NS;
     protected String SWE2_NS;
 
-    public SOSOutputFormatter() {
+    public OutputFormatter() {
         nsToPrefix = new HashMap<String, String>();
 
 

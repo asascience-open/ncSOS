@@ -2,11 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.asascience.ncsos.describesen;
+package com.asascience.ncsos.ds;
 
 import com.asascience.ncsos.cdmclasses.*;
-import com.asascience.ncsos.outputformatter.ds.IoosNetwork10;
-import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
+import com.asascience.ncsos.outputformatter.OutputFormatter;
+import com.asascience.ncsos.outputformatter.ds.IoosNetwork10Formatter;
 import com.asascience.ncsos.util.ListComprehension;
 import com.asascience.ncsos.util.LogReporter;
 import com.asascience.ncsos.util.VocabDefinitions;
@@ -23,17 +23,17 @@ import ucar.nc2.dataset.NetcdfDataset;
  *
  * @author scowan
  */
-public class SOSDescribeNetworkM1_0 extends BaseDescribeSensor implements ISOSDescribeSensor {
+public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterface {
     
     private final String procedure;
     private final String server;
-    private final static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SOSDescribeNetworkM1_0.class);
+    private final static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(IoosNetwork10Handler.class);
     
-    private IoosNetwork10 network;
+    private IoosNetwork10Formatter network;
     private String errorString;
     private iStationData stationData;
     
-    public SOSDescribeNetworkM1_0(NetcdfDataset dataset) throws IOException {
+    public IoosNetwork10Handler(NetcdfDataset dataset) throws IOException {
         super(dataset);
         
         this.procedure = null;
@@ -41,7 +41,7 @@ public class SOSDescribeNetworkM1_0 extends BaseDescribeSensor implements ISOSDe
         setStationData();
     }
     
-    public SOSDescribeNetworkM1_0(NetcdfDataset dataset, String procedure, String serverURL) throws IOException {
+    public IoosNetwork10Handler(NetcdfDataset dataset, String procedure, String serverURL) throws IOException {
         super(dataset, new LogReporter());
         
         this.procedure = procedure;
@@ -49,14 +49,14 @@ public class SOSDescribeNetworkM1_0 extends BaseDescribeSensor implements ISOSDe
         setStationData();
     }
 
-    public void setupOutputDocument(SOSOutputFormatter output) {
+    public void setupOutputDocument(OutputFormatter output) {
         if (!checkForProcedure(this.procedure)) {
           output.setupExceptionOutput("Invalid procedure: " + this.procedure);  
         } else if (errorString != null) {
             output.setupExceptionOutput(errorString);
         } else {
             try {
-                this.network = (IoosNetwork10) output;
+                this.network = (IoosNetwork10Formatter) output;
                 describeNetwork();
             } catch (Exception ex) {
                 logger.error(ex.toString());

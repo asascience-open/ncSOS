@@ -2,13 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.asascience.ncsos.describesen;
+package com.asascience.ncsos.ds;
 
 import com.asascience.ncsos.outputformatter.*;
-import com.asascience.ncsos.outputformatter.ds.IoosNetwork10;
-import com.asascience.ncsos.outputformatter.ds.IoosPlatform10;
-import com.asascience.ncsos.outputformatter.ds.OosTethys;
-import com.asascience.ncsos.service.SOSBaseRequestHandler;
+import com.asascience.ncsos.outputformatter.ds.IoosNetwork10Formatter;
+import com.asascience.ncsos.outputformatter.ds.IoosPlatform10Formatter;
+import com.asascience.ncsos.outputformatter.ds.OosTethysFormatter;
+import com.asascience.ncsos.service.BaseRequestHandler;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -21,20 +21,20 @@ import ucar.nc2.dataset.NetcdfDataset;
  * @author SCowan
  * @version 1.0.0
  */
-public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
+public class BaseDSHandler extends BaseRequestHandler {
     public static final String ALL = "all";
     public static final String NETWORK = "network";
     public static final String SENSOR = "sensor";
     public static final String STATION = "station";
     
-    private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(SOSDescribeSensorHandler.class);
+    private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(BaseDSHandler.class);
     private final String procedure;
-    private ISOSDescribeSensor describer;
+    private BaseDSInterface describer;
     
     //private final String ACCEPTABLE_RESPONSE_FORMAT = "text/xml;subtype=\"sensorML/1.0.1\"";
     
     /**
-     * Creates a DescribeSensor handler that will parse the information and setup
+     * Creates a DescribeSensorHandler handler that will parse the information and setup
      * the output handler
      * @param dataset netcdf dataset being read
      * @param responseFormat response format from the request query string; only
@@ -44,7 +44,7 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
      * @param query entire query string from the request
      * @throws IOException 
      */
-    public SOSDescribeSensorHandler(NetcdfDataset dataset, String responseFormat, String procedure, String uri, String query) throws IOException {
+    public BaseDSHandler(NetcdfDataset dataset, String responseFormat, String procedure, String uri, String query) throws IOException {
         super(dataset);
         
         this.procedure = procedure;
@@ -80,12 +80,12 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
             setNeededInfoForStation(dataset, uri, query);
             describer.setupOutputDocument(output);
         } else if (this.procedure.contains(SENSOR)) {
-            output = new OosTethys(uri, query);
+            output = new OosTethysFormatter(uri, query);
             setNeededInfoForSensor(dataset);
-            describer.setupOutputDocument((OosTethys)output);
+            describer.setupOutputDocument((OosTethysFormatter)output);
         } else if (this.procedure.contains(NETWORK)) {
-            output = new IoosNetwork10();
-            describer = new SOSDescribeNetworkM1_0(dataset, procedure, query);
+            output = new IoosNetwork10Formatter();
+            describer = new IoosNetwork10Handler(dataset, procedure, query);
             describer.setupOutputDocument(output);
         } else {
             output = new BaseOutputFormatter();
@@ -95,15 +95,15 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
     }
 
     /**
-     * Exception version, used to create skeleton SOSDescribeSensorHandler that
+     * Exception version, used to create skeleton BaseDSHandler that
      * can throw an exception
      * @param dataset dataset, mostly unused
      * @throws IOException 
      */
-    public SOSDescribeSensorHandler(NetcdfDataset dataset) throws IOException {
+    public BaseDSHandler(NetcdfDataset dataset) throws IOException {
         super(dataset);
         
-        output = new OosTethys();
+        output = new OosTethysFormatter();
         this.procedure = null;
     }
     
@@ -114,13 +114,13 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
      */
     private void setNeededInfoForStation( NetcdfDataset dataset, String uri, String query ) throws IOException {
         // get our information based on feature type
-        output = new IoosPlatform10();
-        describer = new SOSDescribePlatformM1_0(dataset, procedure, uri);
+        output = new IoosPlatform10Formatter();
+        describer = new IoosPlatform10Handler(dataset, procedure, uri);
     }
     
     private void setNeededInfoForSensor( NetcdfDataset dataset ) throws IOException {
         // describe sensor (sensor) is very similar to describe sensor (station)
-        describer = new SOSDescribeSensor(dataset, procedure);
+        describer = new DescribeSensorHandler(dataset, procedure);
     }
 
     private boolean checkDatasetForProcedure(String procedure) {

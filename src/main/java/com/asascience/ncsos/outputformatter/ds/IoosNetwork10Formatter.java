@@ -12,15 +12,14 @@ import org.w3c.dom.NodeList;
  *
  * @author scowan
  */
-public class IoosNetwork10 extends IoosPlatform10 {
+public class IoosNetwork10Formatter extends IoosPlatform10Formatter {
 
     public static final String CF_CONVENTIONS = "http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#discrete-sampling-geometries";
     
-    public IoosNetwork10() {
+    public IoosNetwork10Formatter() {
         super();
     }
-    
-   
+
     public void addSmlComponent(String componentName) {
         // add a new component to the ComponentList
         /*
@@ -81,7 +80,7 @@ public class IoosNetwork10 extends IoosPlatform10 {
         //CDM TO_DO
 //        // set valid time
         parent = (Element) parent.getElementsByTagNameNS(SML_NS, SML_CAPABILITIES).item(0);
-setValidTime(parent, beginPosition, endPosition);
+        setValidTime(parent, beginPosition, endPosition);
         //        parent = addNewNode(parent, TIME_PERIOD, GML_NS);
 //        addNewNode(parent, BEGIN_POSITION, GML_NS, beginPosition);
 //        addNewNode(parent, END_POSITION, GML_NS, endPosition);

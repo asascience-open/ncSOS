@@ -2,9 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.asascience.ncsos.describesen;
+package com.asascience.ncsos.ds;
 
-import com.asascience.ncsos.service.SOSBaseRequestHandler;
+import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.IFReportMechanism;
 import java.io.IOException;
 import ucar.nc2.Attribute;
@@ -15,20 +15,20 @@ import ucar.nc2.dataset.NetcdfDataset;
  *
  * @author SCowan
  */
-public class BaseDescribeSensor extends SOSBaseRequestHandler {
+public class Ioos10Handler extends BaseRequestHandler {
     
-    private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BaseDescribeSensor.class);
+    private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Ioos10Handler.class);
     
     protected final IFReportMechanism reporter;
     protected final static String DEFAULT_STRING = "UNKNOWN";
     protected final static String URN_BASE = "urn:ioos:";
     
-    public BaseDescribeSensor(NetcdfDataset dataset) throws IOException {
+    public Ioos10Handler(NetcdfDataset dataset) throws IOException {
         super(dataset);
         reporter = null;
     }
     
-    public BaseDescribeSensor(NetcdfDataset dataset, IFReportMechanism report) throws IOException {
+    public Ioos10Handler(NetcdfDataset dataset, IFReportMechanism report) throws IOException {
         super(dataset);
         reporter = report;
     }
@@ -39,20 +39,20 @@ public class BaseDescribeSensor extends SOSBaseRequestHandler {
             for (String stname : this.getStationNames().values()) {
                 if (procedure.contains("sensor")) {
                     for (String senname : this.getSensorNames()) {
-                        validProcedure = SOSBaseRequestHandler.getSensorGMLName(stname, senname);
+                        validProcedure = BaseRequestHandler.getSensorGMLName(stname, senname);
                         logger.debug("Comparing " + procedure + " to " + validProcedure);
                         if (procedure.equalsIgnoreCase(validProcedure))
                             return true;
                     }
                 } else {
-                    validProcedure = SOSBaseRequestHandler.getGMLName(stname);
+                    validProcedure = BaseRequestHandler.getGMLName(stname);
                     logger.debug("Comparing " + procedure + " to " + validProcedure);
                     if (procedure.equalsIgnoreCase(validProcedure))
                         return true;
                 }
             }
         } else if (procedure.contains("network")) {
-            validProcedure = URN_BASE + "network:" + SOSBaseRequestHandler.namingAuthority + ":all";
+            validProcedure = URN_BASE + "network:" + BaseRequestHandler.namingAuthority + ":all";
             logger.debug("Comparing " + procedure + " to " + validProcedure);
             if (procedure.equalsIgnoreCase(validProcedure))
                 return true;

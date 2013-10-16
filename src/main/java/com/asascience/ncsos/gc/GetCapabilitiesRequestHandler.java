@@ -1,7 +1,7 @@
-package com.asascience.ncsos.getcaps;
+package com.asascience.ncsos.gc;
 
-import com.asascience.ncsos.outputformatter.gc.GetCapsOutputter;
-import com.asascience.ncsos.service.SOSBaseRequestHandler;
+import com.asascience.ncsos.outputformatter.gc.GetCapsFormatter;
+import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
 import java.io.IOException;
 import java.util.BitSet;
@@ -19,7 +19,7 @@ import ucar.unidata.geoloc.LatLonRect;
  * @author Abird
  * @version 1.0.0
  */
-public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
+public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
 
     private final String threddsURI;
 
@@ -34,10 +34,10 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
     private static CalendarDate setEndDate;
     private static HashMap<Integer, CalendarDateRange> stationDateRange;
     private static HashMap<Integer, LatLonRect> stationBBox;
-    private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(SOSGetCapabilitiesRequestHandler.class);
+    private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(GetCapabilitiesRequestHandler.class);
 
     /**
-     * Creates an instance of SOSGetCapabilitiesRequestHandler to handle the dataset
+     * Creates an instance of GetCapabilitiesRequestHandler to handle the dataset
      * and uri from the thredds request.
      * @param netCDFDataset dataset for which the Get Capabilities request is being
      * directed to
@@ -45,11 +45,11 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
      * @param sections string detailing what sections of the GC response should be returned
      * @throws IOException
      */
-    public SOSGetCapabilitiesRequestHandler(NetcdfDataset netCDFDataset, String threddsURI, String sections) throws IOException {
+    public GetCapabilitiesRequestHandler(NetcdfDataset netCDFDataset, String threddsURI, String sections) throws IOException {
         super(netCDFDataset);
         this.threddsURI = threddsURI;
         this.sections = sections.toLowerCase();
-        output = new GetCapsOutputter();
+        output = new GetCapsFormatter();
 
         requestedSections = new BitSet(SECTION_COUNT);
 
@@ -69,11 +69,11 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
      * @param emptyDataset
      * @throws IOException 
      */
-    public SOSGetCapabilitiesRequestHandler(NetcdfDataset emptyDataset) throws IOException {
+    public GetCapabilitiesRequestHandler(NetcdfDataset emptyDataset) throws IOException {
         super(emptyDataset);
         this.sections = "";
         this.threddsURI = "";
-        output = new GetCapsOutputter();
+        output = new GetCapsFormatter();
     }
 
     public void resetCapabilitiesSections(String sections) {
@@ -86,7 +86,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
      * Creates the output for the get capabilities response
      */
     public void parseGetCapabilitiesDocument() {
-        GetCapsOutputter out = (GetCapsOutputter) output;
+        GetCapsFormatter out = (GetCapsFormatter) output;
         // early exit if we have an exception output
         if (out.hasExceptionOut()) {
             return;
@@ -154,7 +154,7 @@ public class SOSGetCapabilitiesRequestHandler extends SOSBaseRequestHandler {
             //  out.setObservationOfferingList( "network-all",setRange, getSensorNames(), setTime, this.getFeatureDataset().getFeatureType());
             // iterate through our stations and add them
             for (Integer index : getStationNames().keySet()) {
-                ((GetCapsOutputter) output).setObservationOfferingList(getStationNames().get(index), stationBBox.get(index), getSensorNames(), stationDateRange.get(index), this.getFeatureDataset().getFeatureType());
+                ((GetCapsFormatter) output).setObservationOfferingList(getStationNames().get(index), stationBBox.get(index), getSensorNames(), stationDateRange.get(index), this.getFeatureDataset().getFeatureType());
             }
         } else {
             // remove Contents node

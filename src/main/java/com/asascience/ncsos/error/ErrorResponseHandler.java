@@ -4,8 +4,8 @@
  */
 package com.asascience.ncsos.error;
 
-import com.asascience.ncsos.outputformatter.gc.GetCapsOutputter;
-import com.asascience.ncsos.service.SOSBaseRequestHandler;
+import com.asascience.ncsos.outputformatter.gc.GetCapsFormatter;
+import com.asascience.ncsos.service.BaseRequestHandler;
 import java.io.IOException;
 import ucar.nc2.dataset.NetcdfDataset;
 
@@ -13,12 +13,12 @@ import ucar.nc2.dataset.NetcdfDataset;
  *
  * @author SCowan
  */
-public class SOSErrorResponseHandler extends SOSBaseRequestHandler {
+public class ErrorResponseHandler extends BaseRequestHandler {
     
-    public SOSErrorResponseHandler(NetcdfDataset dataset) throws IOException {
+    public ErrorResponseHandler(NetcdfDataset dataset) throws IOException {
         super(dataset);
         
-        output = new GetCapsOutputter();
+        output = new GetCapsFormatter();
     }
     
     /**

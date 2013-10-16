@@ -17,7 +17,7 @@ import org.w3c.dom.NodeList;
  *
  * @author SCowan
  */
-public class IoosPlatform10 extends BaseOutputFormatter {
+public class IoosPlatform10Formatter extends BaseOutputFormatter {
     public static final String BLANK = "";
     public static final String CAPABILITIES = "capabilities";
     public static final String CLASSIFIER = "classifier";
@@ -40,7 +40,7 @@ public class IoosPlatform10 extends BaseOutputFormatter {
     private final static String OBSERVATION_TIME_RANGE = "observationTimeRange";
     private final static String OBS_TR_DEF = "http://mmisw.org/ont/ioos/definition/observationTimeRange";
 
-    public IoosPlatform10() {
+    public IoosPlatform10Formatter() {
         super();
         loadTemplateXML(TEMPLATE_LOCATION);
     }

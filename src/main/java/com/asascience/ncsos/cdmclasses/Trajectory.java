@@ -1,6 +1,6 @@
 package com.asascience.ncsos.cdmclasses;
 
-import com.asascience.ncsos.getobs.SOSObservationOffering;
+import com.asascience.ncsos.go.ObservationOffering;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -323,7 +323,7 @@ public class Trajectory extends baseCDMClass implements iStationData {
     }
 
     /**
-     * gets the trajectory response for the getcaps request
+     * gets the trajectory response for the gc request
      * @param dataset
      * @param document
      * @param featureOfInterest
@@ -342,7 +342,7 @@ public class Trajectory extends baseCDMClass implements iStationData {
 
             //trajIter = tFeature.getPointFeatureIterator(-1);
             //attributes
-            SOSObservationOffering newOffering = new SOSObservationOffering();
+            ObservationOffering newOffering = new ObservationOffering();
             newOffering.setObservationStationLowerCorner(Double.toString(tFeature.getBoundingBox().getLatMin()), Double.toString(tFeature.getBoundingBox().getLonMin()));
             newOffering.setObservationStationUpperCorner(Double.toString(tFeature.getBoundingBox().getLatMax()), Double.toString(tFeature.getBoundingBox().getLonMax()));
 

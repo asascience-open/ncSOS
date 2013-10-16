@@ -4,7 +4,7 @@
  */
 package com.asascience.ncsos.describeSen;
 
-import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
+import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.service.SOSParser;
 import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.*;
@@ -36,7 +36,7 @@ public class SOSDescribeSensorNetworkTest {
     private static String exampleOutputDir = null;
     private static List<String> stationTests;
     private final static String systemSeparator = System.getProperty("file.separator").toString();
-    private static String query = "request=DescribeSensor&service=sos&version=1.0.0&procedure=urn:ioos:network:authority:all&outputFormat=";
+    private static String query = "request=DescribeSensorHandler&service=sos&version=1.0.0&procedure=urn:ioos:network:authority:all&outputFormat=";
     
     private static  String dataSourceDirectory;
  
@@ -109,7 +109,7 @@ public class SOSDescribeSensorNetworkTest {
     }
      
     private void writeOutput(HashMap<String, Object> outMap, Writer write) {
-        SOSOutputFormatter output = (SOSOutputFormatter)outMap.get("outputHandler");
+        OutputFormatter output = (OutputFormatter)outMap.get("outputHandler");
         assertNotNull("got null output", output);
         output.writeOutput(write);
     }
