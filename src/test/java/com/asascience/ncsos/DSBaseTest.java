@@ -26,7 +26,6 @@ import ucar.nc2.dataset.NetcdfDataset;
  */
 public class DSBaseTest {
 
-    public static final String ACCEPTVERSIONS = "acceptVersions";
     public static final String EXCEPTION_TEXT = "Exception";
     public static final String FILE_EXT = ".xml";
     public static final String OUTPUTFORMAT = "outputFormat";
@@ -104,16 +103,16 @@ public class DSBaseTest {
     private static final String bodega_marinelab_query = station_Procedure + "Cordell Bank Buoy";
     private static final String bad_requests_set = "resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc";
     private static final String bad_request_control_query = station_Procedure + "Trajectory2";
-    private static final String bad_request_outputformat_query = "request=DescribeSensor&service=sos&Acceptversions=1.0.0&outputFormat=text/xml;subtype=\"5\"";
-    private static final String bad_request_outputformat_mispelled_query = "request=DescribeSensor&service=sos&Acceptversions=1.0.0&respnseformat=";
-    private static final String bad_request_request_query = "request=DescrbeSensor&service=sos&Acceptversions=1.0.0&outputFormat=";
-    private static final String bad_request_request_mispelled_query = "reqst=DescribeSensor&service=sos&Acceptversions=1.0.0&outputFormat=";
-    private static final String bad_request_version_query = "request=DescribeSensor&service=SOS&Acceptversions=1.0.&outputFormat=";
+    private static final String bad_request_outputformat_query = "request=DescribeSensor&service=sos&version=1.0.0&outputFormat=text/xml;subtype=\"5\"";
+    private static final String bad_request_outputformat_mispelled_query = "request=DescribeSensor&service=sos&version=1.0.0&respnseformat=";
+    private static final String bad_request_request_query = "request=DescrbeSensor&service=sos&version=1.0.0&outputFormat=";
+    private static final String bad_request_request_mispelled_query = "reqst=DescribeSensor&service=sos&version=1.0.0&outputFormat=";
+    private static final String bad_request_version_query = "request=DescribeSensor&service=SOS&acceptVersions=1.0.&outputFormat=";
     private static final String bad_request_version_misspelled_query = "request=DescribeSensor&service=SOS&vrsion=1.0.0&outputFormat=";
-    private static final String bad_request_service_query = "request=DescribeSensor&service=s0s&Acceptversions=1.0.0&outputFormat=";
-    private static final String bad_request_service_misspelled_query = "request=DescribeSensor&servce=sos&Acceptversions=1.0.0&outputFormat=";
-    private static final String bad_request_procedure_query = "request=DescribeSensor&service=sos&Acceptversions=1.0.0&procedure=urn:tds:station:trajectory2&outputFormat=";
-    private static final String bad_request_procedure_misspelled_query = "request=DescribeSensor&service=sos&Acceptversions=1.0.0&procdure=urn:ioos:station:authority:trajectory2&outputFormat=";
+    private static final String bad_request_service_query = "request=DescribeSensor&service=s0s&version=1.0.0&outputFormat=";
+    private static final String bad_request_service_misspelled_query = "request=DescribeSensor&servce=sos&version=1.0.0&outputFormat=";
+    private static final String bad_request_procedure_query = "request=DescribeSensor&service=sos&version=1.0.0&procedure=urn:tds:station:trajectory2&outputFormat=";
+    private static final String bad_request_procedure_misspelled_query = "request=DescribeSensor&service=sos&version=1.0.0&procdure=urn:ioos:station:authority:trajectory2&outputFormat=";
     //single station (not aggregation)
     private static final String gliderDataSet = "resources/datasets/glider/penobscot-20131011T073911_rt0.nc";
     private static final String gliderDataRequest = "request=DescribeSensor&procedure=urn:ioos:network:edu.rutgers.marine:all&service=SOS&version=1.0.0&outputFormat=";
