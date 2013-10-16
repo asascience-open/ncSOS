@@ -104,27 +104,24 @@ public class DSBaseTest {
     private static final String bodega_marinelab_query = station_Procedure + "Cordell Bank Buoy";
     private static final String bad_requests_set = "resources/datasets/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1/trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1.nc";
     private static final String bad_request_control_query = station_Procedure + "Trajectory2";
-    private static final String bad_request_outputformat_query = "request=DescribeSensorHandler&service=sos&Acceptversions=1.0.0&outputFormat=text/xml;subtype=\"5\"";
-    private static final String bad_request_outputformat_mispelled_query = "request=DescribeSensorHandler&service=sos&Acceptversions=1.0.0&respnseformat=";
+    private static final String bad_request_outputformat_query = "request=DescribeSensor&service=sos&Acceptversions=1.0.0&outputFormat=text/xml;subtype=\"5\"";
+    private static final String bad_request_outputformat_mispelled_query = "request=DescribeSensor&service=sos&Acceptversions=1.0.0&respnseformat=";
     private static final String bad_request_request_query = "request=DescrbeSensor&service=sos&Acceptversions=1.0.0&outputFormat=";
-    private static final String bad_request_request_mispelled_query = "reqst=DescribeSensorHandler&service=sos&Acceptversions=1.0.0&outputFormat=";
-    private static final String bad_request_version_query = "request=DescribeSensorHandler&service=SOS&Acceptversions=1.0.&outputFormat=";
-    private static final String bad_request_version_misspelled_query = "request=DescribeSensorHandler&service=SOS&vrsion=1.0.0&outputFormat=";
-    private static final String bad_request_service_query = "request=DescribeSensorHandler&service=s0s&Acceptversions=1.0.0&outputFormat=";
-    private static final String bad_request_service_misspelled_query = "request=DescribeSensorHandler&servce=sos&Acceptversions=1.0.0&outputFormat=";
-    private static final String bad_request_procedure_query = "request=DescribeSensorHandler&service=sos&Acceptversions=1.0.0&procedure=urn:tds:station:trajectory2&outputFormat=";
-    private static final String bad_request_procedure_misspelled_query = "request=DescribeSensorHandler&service=sos&Acceptversions=1.0.0&procdure=urn:ioos:station:authority:trajectory2&outputFormat=";
+    private static final String bad_request_request_mispelled_query = "reqst=DescribeSensor&service=sos&Acceptversions=1.0.0&outputFormat=";
+    private static final String bad_request_version_query = "request=DescribeSensor&service=SOS&Acceptversions=1.0.&outputFormat=";
+    private static final String bad_request_version_misspelled_query = "request=DescribeSensor&service=SOS&vrsion=1.0.0&outputFormat=";
+    private static final String bad_request_service_query = "request=DescribeSensor&service=s0s&Acceptversions=1.0.0&outputFormat=";
+    private static final String bad_request_service_misspelled_query = "request=DescribeSensor&servce=sos&Acceptversions=1.0.0&outputFormat=";
+    private static final String bad_request_procedure_query = "request=DescribeSensor&service=sos&Acceptversions=1.0.0&procedure=urn:tds:station:trajectory2&outputFormat=";
+    private static final String bad_request_procedure_misspelled_query = "request=DescribeSensor&service=sos&Acceptversions=1.0.0&procdure=urn:ioos:station:authority:trajectory2&outputFormat=";
     //single station (not aggregation)
     private static final String gliderDataSet = "resources/datasets/glider/penobscot-20131011T073911_rt0.nc";
-    private static final String gliderDataRequest = "request=DescribeSensorHandler&procedure=urn:ioos:network:edu.rutgers.marine:all&service=SOS&version=1.0.0&outputFormat=";
+    private static final String gliderDataRequest = "request=DescribeSensor&procedure=urn:ioos:network:edu.rutgers.marine:all&service=SOS&version=1.0.0&outputFormat=";
     //
     private static final String gliderDataSet_aggre ="resources/datasets/glider/timeagg.ncml";
-    private static final String gliderDataRequest_aggre = "request=DescribeSensorHandler&procedure=urn:ioos:network:edu.rutgers.marine:all&service=SOS&version=1.0.0&outputFormat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%2Fprofiles%2Fioos_sos%2F1.0%22";
-    
-    
-    
-    
-    private static String baseQuery = "request=DescribeSensorHandler&service=sos&Acceptversions=1.0.0&outputFormat=text/xml";
+    private static final String gliderDataRequest_aggre = "request=DescribeSensor&procedure=urn:ioos:network:edu.rutgers.marine:all&service=SOS&version=1.0.0&outputFormat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%2Fprofiles%2Fioos_sos%2F1.0%22";
+
+    private static String baseQuery = "request=DescribeSensor&service=sos&version=1.0.0&outputFormat=text/xml";
 
     @BeforeClass
     public static void SetupEnviron() throws FileNotFoundException, UnsupportedEncodingException {
@@ -457,7 +454,7 @@ public class DSBaseTest {
         assertTrue("missing component", writer.toString().contains("<sml:component name=\"Sensor temperature\">"));
         assertTrue("missing/invalid coords", writer.toString().contains("37.5 -76.5"));
         // write as an example
-        fileWriter(exampleOutputDir, "DescribeSensorHandler-TimeSeriesProfile-sensorML1.0.1.xml", writer, false);
+        fileWriter(exampleOutputDir, "DescribeSensor-TimeSeriesProfile-sensorML1.0.1.xml", writer, false);
         System.out.println("------End testBasicDescribeSensorStation2------");
     }
 
@@ -470,7 +467,7 @@ public class DSBaseTest {
         writeOutput(parser.enhanceGETRequest(dataset, baseQuery + bdst_1_query, bdst_1_set), writer);
         fileWriter(outputDir, "trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.xml", writer, false);
         // write as an example
-        fileWriter(exampleOutputDir, "DescribeSensorHandler-Trajectory-sensorML1.0.1.xml", writer, false);
+        fileWriter(exampleOutputDir, "DescribeSensor-Trajectory-sensorML1.0.1.xml", writer, false);
         assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
 //        assertTrue("missing component", writer.toString().contains("<sml:component name=\"Sensor humidity\">"));
 //        assertTrue("missing/invalid coords", writer.toString().contains("1990-01-01T00:00:00Z,5.429996490478516,-35.31080627441406"));
@@ -503,7 +500,7 @@ public class DSBaseTest {
         assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
 //        assertTrue("missing component", writer.toString().contains("<sml:System gml:id=\"sensor-humidity\">"));
 //        assertTrue("missing/invalid latitude", writer.toString().contains("<swe:value>134.0</swe:value>"));
-        fileWriter(exampleOutputDir, "DescribeSensorHandler-Profile-sensorML1.0.1.xml", writer, false);
+        fileWriter(exampleOutputDir, "DescribeSensor-Profile-sensorML1.0.1.xml", writer, false);
         System.out.println("------End testBasicDescribeSensorProfile------");
     }
 
@@ -545,7 +542,7 @@ public class DSBaseTest {
         assertTrue("missing/invalid identifier", writer.toString().contains("<sml:identifier name=\"coordinates\">"));
         assertTrue("missing/invalid sensor id", writer.toString().contains("<sml:value>urn:ioos:sensor:authority:NOAA_8724698:watlev</sml:value>"));
         // write as an example
-        fileWriter(exampleOutputDir, "DescribeSensorHandler-Sensor-sensorML1.0.1.xml", writer, false);
+        fileWriter(exampleOutputDir, "DescribeSensor-Sensor-sensorML1.0.1.xml", writer, false);
         System.out.println("------End testBasicDescribeSensorSensor------");
     }
 
@@ -561,7 +558,7 @@ public class DSBaseTest {
 //        assertTrue("missing/invalid identifier", writer.toString().contains("<sml:identifier name=\"coordinates\">"));
 //        assertTrue("missing/invalid sensor id", writer.toString().contains("<sml:value>urn:ioos:sensor:authority:NOAA_8724698::watlev</sml:value>"));
         // write as an example
-        fileWriter(exampleOutputDir, "DescribeSensorHandler-Grid-sensorML1.0.1.xml", writer, false);
+        fileWriter(exampleOutputDir, "DescribeSensor-Grid-sensorML1.0.1.xml", writer, false);
         System.out.println("------End testBasicDescriptSensorGrid------");
     }
 
@@ -577,7 +574,7 @@ public class DSBaseTest {
             fileWriter(outputDir, "trajectoryProfile-Multidimensional-MultipleTrajectories-H.6.1_trajectory2.xml", writer, false);
             assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
             // write as an example
-            fileWriter(exampleOutputDir, "DescribeSensorHandler-Section-sensorML1.0.1.xml", writer, false);
+            fileWriter(exampleOutputDir, "DescribeSensor-Section-sensorML1.0.1.xml", writer, false);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {
@@ -718,7 +715,7 @@ public class DSBaseTest {
             // test for expected values below
             assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
             // write as an example for TimeSeries
-            fileWriter(exampleOutputDir, "DescribeSensorHandler-TimeSeries-sensorML1.0.1.xml", writer, false);
+            fileWriter(exampleOutputDir, "DescribeSensor-TimeSeries-sensorML1.0.1.xml", writer, false);
             assertFalse("contains invalid unit code", writer.toString().contains("<swe:uom code=\"S m-1\"/>"));
             assertTrue("contains invalid unit code", writer.toString().contains("<swe:uom code=\"Sm-1\"/>"));
 

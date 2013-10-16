@@ -60,7 +60,7 @@ public class Parser {
     // enum for supported request types (used primarily for string comparison)
     private enum SupportedRequests {
 
-        GetCapabilities, GetObservation, DescribeSensorHandler
+        GetCapabilities, GetObservation, DescribeSensor
     }
 
     /**
@@ -235,7 +235,7 @@ public class Parser {
                         retval.put(OUTPUTHANDLER, errHandler.getOutputHandler());
                     }
                     break;
-                case DescribeSensorHandler:
+                case DescribeSensor:
                     try {
                         // response will always be text/xml
                         retval.put(RESPONSECONTENTTYPE, TEXTXML);
@@ -415,7 +415,7 @@ public class Parser {
             }
             // specific parameters expected
             switch (SupportedRequests.valueOf(queryParameters.get(REQUEST).toString())) {
-                case DescribeSensorHandler:
+                case DescribeSensor:
                     for (String req : requiredDSParameters) {
                         if (!queryParameters.containsKey(req)) {
                             retval.put(ERROR, "Required parameter '" + req + "' not found. Check GetCapabilities document for required parameters of DescribeSensorHandler requests.");

@@ -1,6 +1,6 @@
 package com.asascience.ncsos.cdmclasses;
 
-import com.asascience.ncsos.go.ObservationOfferingInterface;
+import com.asascience.ncsos.go.ObservationOffering;
 import java.util.ArrayList;
 
 import org.w3c.dom.DOMException;
@@ -22,7 +22,7 @@ public class CDMUtils {
      * @param document
      * @return 
      */
-    public static Document addObsOfferingToDoc(ObservationOfferingInterface offering,Document document ) {
+    public static Document addObsOfferingToDoc(ObservationOffering offering,Document document ) {
 
         NodeList obsOfferingList = document.getElementsByTagName("ObservationOfferingList");
         Element obsOfferEl = (Element) obsOfferingList.item(0);
@@ -37,9 +37,9 @@ public class CDMUtils {
      * @param document
      * @return 
      */
-    public static Element constructObsOfferingNodes(ObservationOfferingInterface offering,Document document) {
+    public static Element constructObsOfferingNodes(ObservationOffering offering,Document document) {
         //Create the observation offering
-        Element obsOfferingEl = document.createElement("ObservationOfferingInterface");
+        Element obsOfferingEl = document.createElement("ObservationOffering");
         //add the station ID to the created element
         obsOfferingEl.setAttribute("gml:id", offering.getObservationStationID());
 
@@ -146,7 +146,7 @@ public class CDMUtils {
      * @param document
      * @throws DOMException 
      */
-    private static void checkEndDateElementNode(ObservationOfferingInterface offering, Element obsOfferingTimeEndEl,Document document) throws DOMException {
+    private static void checkEndDateElementNode(ObservationOffering offering, Element obsOfferingTimeEndEl,Document document) throws DOMException {
         //check the string to see if it either needs attribute of element
         if ((offering.getObservationTimeEnd().isEmpty()) || (offering.getObservationTimeEnd().length() < 2) || (offering.getObservationTimeEnd().contentEquals(""))) {
             obsOfferingTimeEndEl.setAttribute("indeterminatePosition", "unknown");

@@ -36,7 +36,7 @@ public class DSNetworkTest {
     private static String exampleOutputDir = null;
     private static List<String> stationTests;
     private final static String systemSeparator = System.getProperty("file.separator").toString();
-    private static String query = "request=DescribeSensorHandler&service=sos&version=1.0.0&procedure=urn:ioos:network:authority:all&outputFormat=";
+    private static String query = "request=DescribeSensor&service=sos&version=1.0.0&procedure=urn:ioos:network:authority:all&outputFormat=";
     
     private static  String dataSourceDirectory;
  
@@ -70,11 +70,11 @@ public class DSNetworkTest {
             dataSourceDirectory = XMLDomUtils.getNodeValue(configDoc, container, "dataSourceDirectory");
             dataSourceDirectory = new File(dataSourceDirectory).getCanonicalPath();
             System.out.println("source +++++++" + dataSourceDirectory);
-           String testStr =  XMLDomUtils.getNodeValue(configDoc, container, "DSBaseTest");
-           System.out.println(testStr);
-           String [] testFiles = testStr.trim().split("\n");
-           for(String file : testFiles)
-        	   stationTests.add(file);
+            String testStr =  XMLDomUtils.getNodeValue(configDoc, container, "TestFiles");
+            System.out.println(testStr);
+            String [] testFiles = testStr.trim().split("\n");
+            for(String file : testFiles)
+                stationTests.add(file);
             
         } finally {
             if (templateInputStream != null) {

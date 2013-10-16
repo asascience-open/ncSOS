@@ -49,7 +49,7 @@ public abstract class OutputFormatter {
     public static final String TERM = "Term";
     public static final String OFFERING = "offering";
     public static final String OBSERVED_PROPERTY = "observedProperty";
-    public static final String OBSERVATION_OFFERING = "ObservationOfferingInterface";
+    public static final String OBSERVATION_OFFERING = "ObservationOffering";
     public static final String CAPABILITIES = "Capabilities";
     public static final String SML_CAPABILITIES = "capabilities";
     public static final String OBSERVATION_OFFERING_LIST = "ObservationOfferingList";
