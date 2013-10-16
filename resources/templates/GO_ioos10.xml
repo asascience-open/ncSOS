@@ -7,6 +7,19 @@
  xmlns:swe2="http://www.opengis.net/swe/2.0"
  xmlns:swe = "http://www.opengis.net/swe/1.0.1"
  gml:id="SPOT5_DATA">
+    <gml:metaDataProperty xlink:title="disclaimer">
+        <gml:GenericMetaData>
+            <gml:description>
+                Data provided without any guarantee of accuracy. Provider assumes no liability whatsoever. USE AT YOUR OWN RISK.
+            </gml:description>
+        </gml:GenericMetaData>
+    </gml:metaDataProperty>
+    <gml:metaDataProperty xlink:title="ioosTemplateVersion" xlink:href="http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0">
+        <gml:version>1.0</gml:version>
+    </gml:metaDataProperty>
+    <gml:metaDataProperty xlink:title="softwareVersion" xlink:href="https://github.com/asascience-open/ncSOS/releases">
+        <gml:version>FILLME</gml:version>
+    </gml:metaDataProperty>
     <om:member>
       <om:Observation>
         <gml:description />

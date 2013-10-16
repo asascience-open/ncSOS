@@ -66,20 +66,15 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
     }
     
     private void describeNetwork() {
-        network.setDescriptionNode(this.getGlobalAttribute("description", "no description"));
+        network.setVersionMetadata();
         network.setName(this.procedure);
+        network.setDescriptionNode(this.getGlobalAttribute("description", "no description"));
         this.formatSmlIdentification();
         this.formatSmlClassification();
         this.formatSmlValidTime();
         this.formatSmlContacts();
         this.formatGmlBoundedBy();
         this.foramtSmlComponents();
-    }
-    
-    private void formatSmlServiceMetadata() {
-        // not 100% sure of what to do here
-        // I guess the ioosServiceMetadata is hardcoded...??
-        network.addIoosServiceMetadata1_0();
     }
     
     private void formatSmlIdentification() {

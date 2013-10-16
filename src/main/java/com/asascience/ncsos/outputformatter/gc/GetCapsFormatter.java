@@ -250,40 +250,24 @@ public class GetCapsFormatter extends OutputFormatter {
         }
     }
 
-    public void addExtendedCapabilities() {
+    public void setVersionMetadata() {
+        /*
+        <ows:ExtendedCapabilities>
+            <gml:metaDataProperty xlink:title="ioosTemplateVersion" xlink:href="http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0">
+                <gml:version>1.0</gml:version>
+            </gml:metaDataProperty>
+            <gml:metaDataProperty xlink:title="softwareVersion" xlink:href="https://github.com/asascience-open/ncSOS/releases">
+                <gml:version>FILLME</gml:version>
+            </gml:metaDataProperty>
+        </ows:ExtendedCapabilities
+         */
         Element operationMetadata = (Element) document.getElementsByTagNameNS(OWS_NS, OPERATIONSMETADATA).item(0);
-
-        if (operationMetadata != null) {
-            //section
-            Element extendCaps = createElementNS(OWS_NS, EXTENDED_CAPABILITIES);
-            //first props
-            Element metaProps = createElementNS(GML_NS, META_DATA_PROPERTY);
-            metaProps.setAttribute(XLINK_TITLE, "ioosTemplateVersion");
-            metaProps.setAttribute(XLINK_HREF, "http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0");
-
-            Element version = createElementNS(GML_NS, VERSION);
-            version.setTextContent(VERSION_1_0);
-            metaProps.appendChild(version);
-            //add it to the parent node
-            extendCaps.appendChild(metaProps);
-
-            //second props
-            metaProps = createElementNS(GML_NS, META_DATA_PROPERTY);
-            metaProps.setAttribute(XLINK_TITLE, "softwareVersion");
-            metaProps.setAttribute(XLINK_HREF, "http://github.com/asascience-open/" + NCSOS_NAME + "/releases/tag/" + RC6_NAME);
-            String[] nodeList = {NAME, VERSION};
-            String[] nodeValues = {NCSOS_NAME, RC6_NAME};
-            for (int i = 0; i < nodeList.length; i++) {
-                version = createElementNS(GML_NS, nodeList[i]);
-                version.setTextContent(nodeValues[i]);
-                metaProps.appendChild(version);
-            }
-
-            extendCaps.appendChild(metaProps);
-
-            //add nodes
-            if (extendCaps != null) {
-                operationMetadata.appendChild(extendCaps);
+        Element extendedCaps = (Element) operationMetadata.getElementsByTagNameNS(OWS_NS, "ExtendedCapabilities").item(0);
+        NodeList metadataProperties = extendedCaps.getElementsByTagNameNS(GML_NS, "metaDataProperty");
+        for (int j = 0 ; j < metadataProperties.getLength() ; j++) {
+            Element prop = (Element) metadataProperties.item(j);
+            if (prop.hasAttributeNS(XLINK_NS, "title") && prop.getAttributeNS(XLINK_NS, "title").equalsIgnoreCase("softwareVersion")) {
+                prop.getElementsByTagNameNS(GML_NS, "version").item(0).setTextContent(NCSOS_VERSION);
             }
         }
     }

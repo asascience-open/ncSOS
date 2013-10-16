@@ -120,7 +120,7 @@ public class DSBaseTest {
     private static final String gliderDataSet_aggre ="resources/datasets/glider/timeagg.ncml";
     private static final String gliderDataRequest_aggre = "request=DescribeSensor&procedure=urn:ioos:network:edu.rutgers.marine:all&service=SOS&version=1.0.0&outputFormat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%2Fprofiles%2Fioos_sos%2F1.0%22";
 
-    private static String baseQuery = "request=DescribeSensor&service=sos&version=1.0.0&outputFormat=text/xml";
+    private static String baseQuery = "request=DescribeSensor&service=sos&version=1.0.0&outputFormat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%2Fprofiles%2Fioos_sos%2F1.0%22";
 
     @BeforeClass
     public static void SetupEnviron() throws FileNotFoundException, UnsupportedEncodingException {

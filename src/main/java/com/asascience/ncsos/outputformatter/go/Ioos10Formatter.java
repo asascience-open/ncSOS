@@ -17,6 +17,7 @@ import java.util.Map;
 import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import ucar.nc2.Attribute;
 import ucar.nc2.constants.FeatureType;
 
@@ -100,7 +101,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
             Element description = (Element) this.document.getElementsByTagNameNS(GML_NS, DESCRIPTION).item(0);
             description.setTextContent(this.parent.getGlobalAttribute("description", "none"));
             // fill out metadata properties
-            this.constructMetadataProperties();
+            this.setVersionMetadata();
             // fill out <om:samplingTime>
             this.document = XMLDomUtils.addNode(this.document,
                     SAMPLING_TIME,
@@ -133,64 +134,20 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         }
     }
 
-    private void constructMetadataProperties() {
+    private void setVersionMetadata() {
         /*
-         * Add an element for each global metadata property
+        <gml:metaDataProperty xlink:title="softwareVersion" xlink:href="https://github.com/asascience-open/ncSOS/releases">
+            <gml:version>FILLME</gml:version>
+        </gml:metaDataProperty>
          */
-        // disclaimer
-        List<SubElement> metaData = new ArrayList<SubElement>();
-        HashMap<String, String> attrs = new HashMap<String, String>();
-        SubElement subElm = new SubElement(GENERIC_META_DATA, GML_NS);
-        String disclaimer = this.parent.getGlobalAttribute(DISCLAIMER, null);
-        if (disclaimer != null) {
-            metaData.add(subElm);
-            subElm = new SubElement(GML_NS, DESCRIPTION);
-            subElm.textContent = disclaimer;
-            metaData.add(subElm);
-            attrs.put("xlink:title", DISCLAIMER);
-            this.createMetadataProperty(attrs, metaData);
+        Element obscollection = (Element) this.document.getElementsByTagNameNS(OM_NS, OBSERVATION_COLLECTION).item(0);
+        NodeList metadataProps = obscollection.getElementsByTagNameNS(GML_NS, "metaDataProperty");
+        for (int i = 0 ; i < metadataProps.getLength() ; i++) {
+            Element md = (Element) metadataProps.item(i);
+            if (md.hasAttributeNS(XLINK_NS, "title") && md.getAttributeNS(XLINK_NS, "title").equalsIgnoreCase("softwareVersion")) {
+                md.getElementsByTagNameNS(GML_NS, "version").item(0).setTextContent(NCSOS_VERSION);
+            }
         }
-
-        // ioosTemplateVersion
-        metaData = new ArrayList<SubElement>();
-        attrs = new HashMap<String, String>();
-        subElm = new SubElement(NAME, GML_NS);
-        subElm.textContent = "ncSOS";
-
-        metaData.add(subElm);
-
-        subElm = new SubElement(VERSION, GML_NS);
-        subElm.textContent = "RC6";
-
-        metaData.add(subElm);
-        attrs.put("xlink:title", "ioosTemplateVersion");
-        attrs.put("xlink:href", ioosTemplateURL);
-        this.createMetadataProperty(attrs, metaData);
-    }
-
-    private org.w3c.dom.Node createMetadataProperty(HashMap<String, String> attributes, List<SubElement> elements) {
-        /*
-         * <gml:metaDataProperty xlink:title='title'>
-         *   'Add sub elements for each in list'
-         * </gml:metaDataProperty>
-         */
-        Element parent1 = (Element) this.document.getElementsByTagNameNS(OM_NS, OBSERVATION_COLLECTION).item(0);
-
-        Element member = (Element) this.document.getElementsByTagNameNS(OM_NS, MEMBER).item(0);
-
-        //Element parent = this.addNewNode(parent1, META_DATA_PROP, GML_NS);
-        Element parent = createElementNS(GML_NS, META_DATA_PROP);
-        for (Map.Entry<String, String> entry : attributes.entrySet()) {
-            parent.setAttribute(entry.getKey(), entry.getValue());
-        }
-
-        for (SubElement elm : elements) {
-            parent.appendChild(this.createSubElement(elm));
-        }
-
-        parent1.insertBefore(parent, member);
-
-        return parent;
     }
 
     //<editor-fold defaultstate="collapsed" desc="om:Observation children">

@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
+import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -226,31 +227,39 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
         }
     }
 
-    /**
-     * Adds constanct xml construct <sml:capabilities name="ioosServiceMetadata">
-     */
-    public void addIoosServiceMetadata1_0() {
+    public void setVersionMetadata() {
         /*
-         * <sml:capabilities name="ioosServiceMetadata">
-         *   <swe:SimpleDataRecord>
-         *     <gml:metaDataProperty xlink:title="ioosTemplateVersion" xlink:href="http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0">
-         *       <gml:version>1.0</gml:version>
-         *     </gml:metaDataProperty>
-         *   </swe:SimpleDataRecord>
-         * </sml:capabilities>
-         */
-         Element parent = getParentNode();
-        parent = addNewNodeToParentWithAttribute(SML_NS, CAPABILITIES, parent, NAME, "ioosServiceMetadata");
-        Element parent1 = addNewNodeToParent(SWE_NS, SIMPLEDATARECORD, parent);
-        
-        parent = addNewNodeToParentWithAttribute(SWE_NS, FIELD, parent1, BLANK, NAME, "ioosTemplateVersion");
-        parent = addNewNodeToParentWithAttribute(SWE_NS, TEXT, parent, BLANK, DEFINITION, "http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0");
-        parent = addNewNodeToParentWithTextValue(SWE_NS, VALUE, parent, "1.0");
-        
-       parent = addNewNodeToParentWithAttribute(SWE_NS, FIELD, parent1, BLANK, NAME, "softwareVersion");
-        parent = addNewNodeToParentWithAttribute(SWE_NS, TEXT, parent, BLANK, DEFINITION, "http://github.com/asascience-open/ncSOS/releases/tag/RC6");
-        parent = addNewNodeToParentWithTextValue(SWE_NS, VALUE, parent, "RC6");
-        
+        <sml:capabilities name="ioosServiceMetadata">
+            <swe:SimpleDataRecord>
+              <swe:field name="ioosTemplateVersion">
+                <swe:Text definition="http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0">
+                  <swe:value>1.0</swe:value>
+                </swe:Text>
+              </swe:field>
+              <swe:field name="softwareVersion">
+                <swe:Text definition="http://github.com/asascience-open/ncSOS/releases">
+                  <swe:value>THIS IS THE ONLY THIS THIS DOES</swe:value>
+                </swe:Text>
+              </swe:field>
+            </swe:SimpleDataRecord>
+        </sml:capabilities>
+        */
+        Element parent = getParentNode();
+        NodeList caps = parent.getElementsByTagNameNS(SML_NS, CAPABILITIES);
+        for (int i = 0; i < caps.getLength(); i++) {
+            Element pos = (Element)caps.item(i);
+            if (pos.hasAttribute(NAME) && (pos.getAttribute(NAME).equalsIgnoreCase("ioosServiceMetadata"))){
+                NodeList fields = pos.getElementsByTagNameNS(SWE_NS, "field");
+                for (int j = 0 ; j < fields.getLength() ; j++) {
+                    Element field = (Element)fields.item(j);
+                    if (field.hasAttribute("name") && field.getAttribute("name").equalsIgnoreCase("softwareVersion")) {
+                        Element txt = (Element) field.getElementsByTagNameNS(SWE_NS, "Text").item(0);
+                        Element val = (Element) txt.getElementsByTagNameNS(SWE_NS, "value").item(0);
+                        val.setTextContent(NCSOS_VERSION);
+                    }
+                }
+            }
+        }
     }
     
       private Element addNewNodeToParentWithAttribute(

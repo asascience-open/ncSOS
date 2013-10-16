@@ -8,7 +8,6 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
   xsi:schemaLocation="http://www.opengis.net/sos/1.0 
     http://schemas.opengis.net/sos/1.0.0/sosAll.xsd" version="1.0.0">
-
 	<ows:ServiceIdentification>
 		<ows:Title> </ows:Title>
 		<ows:Abstract> </ows:Abstract>
@@ -91,6 +90,14 @@
 				<ows:Value>1.0.0</ows:Value>
 			</ows:AllowedValues>
 		</ows:Parameter>
+     <ows:ExtendedCapabilities>
+       <gml:metaDataProperty xlink:title="ioosTemplateVersion" xlink:href="http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0">
+         <gml:version>1.0</gml:version>
+       </gml:metaDataProperty>
+       <gml:metaDataProperty xlink:title="softwareVersion" xlink:href="https://github.com/asascience-open/ncSOS/releases">
+         <gml:version>FILLME</gml:version>
+       </gml:metaDataProperty>
+     </ows:ExtendedCapabilities>
 	</ows:OperationsMetadata>
 	<sos:Contents>
 		<sos:ObservationOfferingList>

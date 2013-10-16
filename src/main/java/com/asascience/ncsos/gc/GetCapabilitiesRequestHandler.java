@@ -123,14 +123,13 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
             }
             // set describe sensor output
             out.setOperationDescSen(threddsURI, getStationNames().values().toArray(new String[getStationNames().values().size()]), getSensorNames());
+
+            //adds the extended capabilties to the get caps results
+            out.setVersionMetadata();
         } else {
             // remove operations metadata
             out.removeOperations();
         }
-
-        //adds the extended capabilties to the get caps results
-        out.addExtendedCapabilities();
-
 
         // Contents; parse if it is the section identified or 'all'
         if (this.requestedSections.get(Sections.CONTENTS.ordinal())) {

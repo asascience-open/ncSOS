@@ -729,38 +729,6 @@ public class OosTethysFormatter extends OutputFormatter {
         getParentNode().removeChild(getParentNode().getElementsByTagNameNS(SML_NS, "components").item(0));
     }
 
-    public void addIoosServiceMetadata1_0() {
-        /*
-        <sml:capabilities name="ioosServiceMetadata">
-            <swe:SimpleDataRecord>
-                <swe:field name="ioosTemplateVersion">
-                    <swe:Text definition="http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0">
-                        <swe:value>1.0</swe:value>
-                    </swe:Text>
-                    </swe:field>
-                    <swe:field name="softwareVersion">
-                        <swe:Text definition="http://github.com/asascience-open/ncSOS/releases/tag/RC6">
-                    <swe:value>RC6</swe:value>
-                    </swe:Text>
-                </swe:field>
-            </swe:SimpleDataRecord>
-        </sml:capabilities>
-         * 
-         */
-        Element parent = getParentNode();
-        parent = addNewNodeToParentWithAttribute(SML_NS, "capabilities", parent, NAME, "ioosServiceMetadata");
-        Element parent1 = addNewNodeToParent(SWE_NS, "SimpleDataRecord", parent);
-        
-        parent = addNewNodeToParentWithAttribute(SWE_NS, "field", parent1, "", "name", "ioosTemplateVersion");
-        parent = addNewNodeToParentWithAttribute(SWE_NS, "Text", parent, "", "definition", "http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0");
-        parent = addNewNodeToParentWithTextValue(SWE_NS, "value", parent, "1.0");
-        
-       parent = addNewNodeToParentWithAttribute(SWE_NS, "field", parent1, "", "name", "softwareVersion");
-        parent = addNewNodeToParentWithAttribute(SWE_NS, "Text", parent, "", "definition", "http://github.com/asascience-open/ncSOS/releases/tag/RC6");
-        parent = addNewNodeToParentWithTextValue(SWE_NS, "value", parent, "RC6");
-        
-    }
-
     /**
      * sets the name attribute of the sml:position node
      * @param name the value of the name attribute

@@ -61,26 +61,25 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
     
     //<editor-fold defaultstate="collapsed" desc="Describe Platform">
     private void describePlatform() {
-        platform.setDescriptionNode(this.getGlobalAttribute("description", "no description"));
+        platform.setVersionMetadata();
         platform.setName(this.procedure);
-        formatSmlIdentification();
-        formatSmlClassification();
-        formatSmlValidTime();
-        formatSmlServiceMetadata();
-        formatSmlNetworkProcedures();
-        formatSmlContacts();
-        formatSmlHistory();
-        formatSmlDocumentation();
+        platform.setDescriptionNode(this.getGlobalAttribute("description", "no description"));
+        this.formatSmlIdentification();
+        this.formatSmlClassification();
+        this.formatSmlNetworkProcedures();
+        this.formatSmlValidTime();
+        this.formatSmlContacts();
+        this.formatSmlHistory();
+        this.formatSmlDocumentation();
         
         if (this.getGridDataset() != null) {
-            formatSmlLocationBbox();
+            this.formatSmlLocationBbox();
         } else if (locationLineFlag) {
-            formatSmlLocationLine();
+            this.formatSmlLocationLine();
         } else {
-            formatSmlLocationPoint();
+            this.formatSmlLocationPoint();
         }
-        formatSmlComponents();
-        // remove unwanted nodes
+        this.formatSmlComponents();
     }
     
     private void formatSmlIdentification() {
@@ -164,12 +163,6 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
     
     private void formatSmlValidTime() {
         platform.setValidTime(this.stationData.getBoundTimeBegin(), this.stationData.getBoundTimeEnd());
-    }
-    
-    private void formatSmlServiceMetadata() {
-        // not 100% sure of what to do here
-        // I guess the ioosServiceMetadata is hardcoded...??
-        platform.addIoosServiceMetadata1_0();
     }
     
     private void formatSmlNetworkProcedures() {

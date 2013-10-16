@@ -6,26 +6,40 @@
  xmlns:swe="http://www.opengis.net/swe/1.0.1"
  xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
  version="1.0.1">
-  <sml:member>
-    <sml:System>
-      <gml:description />
-      <gml:name />
-      <sml:identification>
-        <sml:IdentifierList></sml:IdentifierList>
-      </sml:identification>
-      <sml:classification>
-        <sml:ClassifierList></sml:ClassifierList>
-      </sml:classification>
-      <sml:capabilities />
-      <sml:contact>
-        <sml:ContactList />
-      </sml:contact>
-      <sml:documentation />
-      <sml:history />     
-      <sml:location />
-      <sml:components>
-        <sml:ComponentList></sml:ComponentList>
-      </sml:components>
-    </sml:System>
-  </sml:member>
+    <sml:capabilities name="ioosServiceMetadata">
+        <swe:SimpleDataRecord>
+            <swe:field name="ioosTemplateVersion">
+                <swe:Text definition="http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0">
+                    <swe:value>1.0</swe:value>
+                </swe:Text>
+            </swe:field>
+            <swe:field name="softwareVersion">
+                <swe:Text definition="https://github.com/asascience-open/ncSOS/releases">
+                    <swe:value>FILLME</swe:value>
+                </swe:Text>
+            </swe:field>
+        </swe:SimpleDataRecord>
+    </sml:capabilities>
+    <sml:member>
+        <sml:System>
+            <gml:description />
+            <gml:name />
+            <sml:identification>
+                <sml:IdentifierList></sml:IdentifierList>
+            </sml:identification>
+            <sml:classification>
+                <sml:ClassifierList></sml:ClassifierList>
+            </sml:classification>
+            <sml:capabilities />
+            <sml:contact>
+                <sml:ContactList />
+            </sml:contact>
+            <sml:documentation />
+            <sml:history />
+            <sml:location />
+            <sml:components>
+                <sml:ComponentList></sml:ComponentList>
+            </sml:components>
+        </sml:System>
+    </sml:member>
 </sml:SensorML>

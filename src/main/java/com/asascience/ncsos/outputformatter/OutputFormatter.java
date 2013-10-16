@@ -21,6 +21,7 @@ import org.w3c.dom.Element;
 public abstract class OutputFormatter {
 
     private Map<String, String> nsToPrefix;
+    public static final String NCSOS_VERSION = "RC6";
     public static final String OBSERVATION = "Observation";
     public static final String OBSERVATION_COLLECTION = "ObservationCollection";
     public static final String MEMBER = "member";
