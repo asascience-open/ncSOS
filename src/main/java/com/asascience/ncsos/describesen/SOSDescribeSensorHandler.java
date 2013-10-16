@@ -5,15 +5,14 @@
 package com.asascience.ncsos.describesen;
 
 import com.asascience.ncsos.outputformatter.*;
+import com.asascience.ncsos.outputformatter.ds.IoosNetwork10;
+import com.asascience.ncsos.outputformatter.ds.IoosPlatform10;
+import com.asascience.ncsos.outputformatter.ds.OosTethys;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
-import com.asascience.ncsos.util.DatasetHandlerAdapter;
-import com.asascience.ncsos.util.DiscreteSamplingGeometryUtil;
+
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import ucar.nc2.dataset.NetcdfDataset;
-import ucar.nc2.ft.*;
-import ucar.nc2.time.CalendarDate;
 
 /**
  * Main handler class for Describe Sensor requests. Processes the request to determine
@@ -81,11 +80,11 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
             setNeededInfoForStation(dataset, uri, query);
             describer.setupOutputDocument(output);
         } else if (this.procedure.contains(SENSOR)) {
-            output = new DescribeSensorFormatter(uri, query);
+            output = new OosTethys(uri, query);
             setNeededInfoForSensor(dataset);
-            describer.setupOutputDocument((DescribeSensorFormatter)output);
+            describer.setupOutputDocument((OosTethys)output);
         } else if (this.procedure.contains(NETWORK)) {
-            output = new DescribeSensorNetworkMilestone1_0();
+            output = new IoosNetwork10();
             describer = new SOSDescribeNetworkM1_0(dataset, procedure, query);
             describer.setupOutputDocument(output);
         } else {
@@ -104,7 +103,7 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
     public SOSDescribeSensorHandler(NetcdfDataset dataset) throws IOException {
         super(dataset);
         
-        output = new DescribeSensorFormatter();
+        output = new OosTethys();
         this.procedure = null;
     }
     
@@ -115,7 +114,7 @@ public class SOSDescribeSensorHandler extends SOSBaseRequestHandler {
      */
     private void setNeededInfoForStation( NetcdfDataset dataset, String uri, String query ) throws IOException {
         // get our information based on feature type
-        output = new DescribeSensorPlatformMilestone1_0();
+        output = new IoosPlatform10();
         describer = new SOSDescribePlatformM1_0(dataset, procedure, uri);
     }
     

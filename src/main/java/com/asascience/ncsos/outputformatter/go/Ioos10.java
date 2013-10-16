@@ -2,9 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.asascience.ncsos.outputformatter;
+package com.asascience.ncsos.outputformatter.go;
 
 import com.asascience.ncsos.getobs.SOSGetObservationRequestHandler;
+import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import com.asascience.ncsos.util.VocabDefinitions;
 import com.asascience.ncsos.util.XMLDomUtils;
@@ -23,7 +24,7 @@ import ucar.nc2.constants.FeatureType;
  *
  * @author SCowan
  */
-public class IoosSos10 extends BaseOutputFormatter {
+public class Ioos10 extends BaseOutputFormatter {
 
     public static final String BLOCKSEPARATOR = "blockSeparator";
     public static final String COMPOSITEPHENOMENON = "CompositePhenomenon";
@@ -45,10 +46,10 @@ public class IoosSos10 extends BaseOutputFormatter {
     // private final fields
     private final SOSGetObservationRequestHandler parent;
     // private static fields
-    private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(IoosSos10.class);
+    private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(Ioos10.class);
     public static final String SENSOR_ID_DEF = "http://mmisw.org/ont/ioos/definition/sensorID";
     // private constant fields
-    private static final String TEMPLATE = "templates/ioossos_1_0.xml";
+    private static final String TEMPLATE = "templates/GO_ioos10.xml";
     private static final String RESPONSE_FORMAT = "text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0\"";
     private static final String SWE2_SCHEMALOCATION = "http://www.opengis.net/swe/2.0 http://schemas.opengis.net/sweCommon/2.0/swe.xsd";
     private static final String ioosTemplateURL = "http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0";
@@ -65,7 +66,7 @@ public class IoosSos10 extends BaseOutputFormatter {
     private boolean hasError;
 
     //============== Constructor ============================================//
-    public IoosSos10(SOSGetObservationRequestHandler parent) {
+    public Ioos10(SOSGetObservationRequestHandler parent) {
         Boolean supported = false;
         for (FeatureType ft : supportedTypes) {
             if (parent.getDatasetFeatureType() == ft) {

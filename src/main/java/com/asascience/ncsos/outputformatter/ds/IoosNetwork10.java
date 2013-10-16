@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.asascience.ncsos.outputformatter;
+package com.asascience.ncsos.outputformatter.ds;
 
 import java.util.List;
 import org.w3c.dom.Element;
@@ -12,14 +12,12 @@ import org.w3c.dom.NodeList;
  *
  * @author scowan
  */
-public class DescribeSensorNetworkMilestone1_0 extends DescribeSensorPlatformMilestone1_0 {
-    
-    public static final String NETWORK_TEMPLATE = "templates/describeNewtorkM1.0.xml";
+public class IoosNetwork10 extends IoosPlatform10 {
+
     public static final String CF_CONVENTIONS = "http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#discrete-sampling-geometries";
     
-    public DescribeSensorNetworkMilestone1_0() {
+    public IoosNetwork10() {
         super();
-        loadTemplateXML(NETWORK_TEMPLATE);
     }
     
    

@@ -1,9 +1,9 @@
 package com.asascience.ncsos.getobs;
 
 import com.asascience.ncsos.cdmclasses.*;
-import com.asascience.ncsos.outputformatter.GetCapsOutputter;
-import com.asascience.ncsos.outputformatter.IoosSos10;
-import com.asascience.ncsos.outputformatter.OosTethysSweV2;
+import com.asascience.ncsos.outputformatter.gc.GetCapsOutputter;
+import com.asascience.ncsos.outputformatter.go.Ioos10;
+import com.asascience.ncsos.outputformatter.go.OosTethys;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import com.asascience.ncsos.util.ListComprehension;
 import java.io.IOException;
@@ -68,10 +68,10 @@ public class SOSGetObservationRequestHandler extends SOSBaseRequestHandler {
         if (responseFormat.equalsIgnoreCase(OM1_0_0)) {
             contentType = TEXTXML;
 //            output = new OosTethysSwe(this.obsProperties, getFeatureDataset(), CDMDataSet, netCDFDataset);
-            output = new OosTethysSweV2(this);
+            output = new OosTethys(this);
         } else if (responseFormat.equalsIgnoreCase(IOOSOM1_0_0)) {
             contentType = TEXTXML;
-            output = new IoosSos10(this);
+            output = new Ioos10(this);
         } else {
             _log.error("Unknown/Unhandled responseFormat: " + responseFormat);
             output = new GetCapsOutputter();

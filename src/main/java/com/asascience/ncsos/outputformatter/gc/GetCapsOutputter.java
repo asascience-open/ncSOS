@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.asascience.ncsos.outputformatter;
+package com.asascience.ncsos.outputformatter.gc;
 
+import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.IOException;
@@ -62,7 +63,7 @@ public class GetCapsOutputter extends SOSOutputFormatter {
     private DOMImplementationLS impl;
     private boolean exceptionFlag;
     private Element getCaps, getObs, descSen;
-    private final static String TEMPLATE = "templates/sosGetCapabilities.xml";
+    private final static String TEMPLATE = "templates/GC.xml";
 
     /**
      * Creates instance of a Get Capabilities outputter. Reads the sosGetCapabilities.xml
@@ -379,7 +380,7 @@ public class GetCapsOutputter extends SOSOutputFormatter {
         Element rf = createElementNS(SOS_NS, RESPONSE_FORMAT);
         rf.setTextContent("text/xml; subtype=\"om/1.0.0\"");
         obsOffering.appendChild(rf);
-        // if supported by feature type, add new repsonse format
+        // if supported by feature type, add new response format
         switch (ftype) {
             case STATION:
                 rf = createElementNS(SOS_NS, RESPONSE_FORMAT);

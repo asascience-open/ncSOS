@@ -2,16 +2,18 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.asascience.ncsos.outputformatter;
+package com.asascience.ncsos.outputformatter.go;
 
 import com.asascience.ncsos.getobs.SOSGetObservationRequestHandler;
+import com.asascience.ncsos.outputformatter.DataSlice;
+import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
 import java.util.ArrayList;
-import org.w3c.dom.Document;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
@@ -23,9 +25,9 @@ import org.w3c.dom.ls.LSSerializer;
  *
  * @author SCowan
  */
-public class OosTethysSweV2 extends SOSOutputFormatter {
+public class OosTethys extends SOSOutputFormatter {
 
-    private static final String TEMPLATE = "templates/oostethysswe.xml";
+    private static final String TEMPLATE = "templates/GO_oostethys.xml";
     private static final String XLINK = "xlink:href";
     private static final String OBSERVATION = "Observation";
     private static final String STATION_GML_BASE = "urn:ioos:station:" + SOSBaseRequestHandler.getNamingAuthority() + ":";
@@ -36,12 +38,12 @@ public class OosTethysSweV2 extends SOSOutputFormatter {
     
     private final SOSGetObservationRequestHandler obsHandler;
     
-    private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(OosTethysSweV2.class);
+    private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(OosTethys.class);
     
     private DOMImplementationLS impl;
     private ArrayList<DataSlice> infoList;
     
-    public OosTethysSweV2(SOSGetObservationRequestHandler obsHandler) {
+    public OosTethys(SOSGetObservationRequestHandler obsHandler) {
         
         if (obsHandler == null) {
             BadInputs();
@@ -89,7 +91,7 @@ public class OosTethysSweV2 extends SOSOutputFormatter {
     
     //<editor-fold defaultstate="collapsed" desc="Interface Methods">
     public void addDataFormattedStringToInfoList(String dataFormattedString) {
-//        System.out.println("addDataFormattedStringToInfoList unused by OosTethysSweV2");
+//        System.out.println("addDataFormattedStringToInfoList unused by OosTethys");
     }
     
     public void emtpyInfoList() {

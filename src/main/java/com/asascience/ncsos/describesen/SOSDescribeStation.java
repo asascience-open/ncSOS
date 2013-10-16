@@ -4,7 +4,7 @@
  */
 package com.asascience.ncsos.describesen;
 
-import com.asascience.ncsos.outputformatter.DescribeSensorFormatter;
+import com.asascience.ncsos.outputformatter.ds.OosTethys;
 import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import java.io.IOException;
@@ -123,7 +123,7 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements ISOSDes
     /**************************************************************************/
 
     public void setupOutputDocument(SOSOutputFormatter output) {
-        DescribeSensorFormatter dsf = (DescribeSensorFormatter) output;
+        OosTethys dsf = (OosTethys) output;
         if (errorString == null) {
             // system node
             dsf.setSystemId("station-" + stationName);
@@ -162,9 +162,9 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements ISOSDes
      * Reads dataset for platform information (usually just platform type) for the
      * output. If no info is found, informs output to delete the Classification
      * root node.
-     * @param output a DescribeSensorFormatter instance (held by the handler)
+     * @param output a OosTethys instance (held by the handler)
      */
-    protected void formatSetClassification(DescribeSensorFormatter output) {
+    protected void formatSetClassification(OosTethys output) {
         if (platformType != null) {
             output.addToClassificationNode(platformType.getName(), "", platformType.getStringValue());
         } else {
@@ -174,9 +174,9 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements ISOSDes
 
     /**
      * Reads the dataset for contact information and passes along to output.
-     * @param output a DescribeSensorFormatter instance (held by the handler)
+     * @param output a OosTethys instance (held by the handler)
      */
-    protected void formatSetContactNodes(DescribeSensorFormatter output) {
+    protected void formatSetContactNodes(OosTethys output) {
         if (!CreatorName.equalsIgnoreCase("") || !CreatorEmail.equalsIgnoreCase("") || !CreatorPhone.equalsIgnoreCase("")) {
             String role = "http://mmisw.org/ont/ioos/definition/operator";
             HashMap<String, HashMap<String, String>> domainContactInfo = new HashMap<String, HashMap<String, String>>();
@@ -215,9 +215,9 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements ISOSDes
     
     /**
      * Reads the dataset for station Attributes and sends gathered info to formatter.
-     * @param formatter a DescribeSensorFormatter instance (held by the handler)
+     * @param formatter a OosTethys instance (held by the handler)
      */
-    protected void formatSetIdentification(DescribeSensorFormatter formatter) {
+    protected void formatSetIdentification(OosTethys formatter) {
         ArrayList<String> identNames = new ArrayList<String>();
         ArrayList<String> identDefinitions = new ArrayList<String>();
         ArrayList<String> identValues = new ArrayList<String>();
@@ -329,18 +329,18 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements ISOSDes
 
     /**
      * Gives output the value of the description global Attribute
-     * @param output a DescribeSensorFormatter instance (held by the handler)
+     * @param output a OosTethys instance (held by the handler)
      */
-    protected void formatSetDescription(DescribeSensorFormatter output) {
+    protected void formatSetDescription(OosTethys output) {
         output.setDescriptionNode(description);
     }
 
     /**
      * Gives output the value of the history global Attribute, or tells output
      * to delete the History root node if there is no Attribute
-     * @param output a DescribeSensorFormatter instance (held by the handler)
+     * @param output a OosTethys instance (held by the handler)
      */
-    protected void formatSetHistoryNodes(DescribeSensorFormatter output) {
+    protected void formatSetHistoryNodes(OosTethys output) {
         if (historyAttribute != null) {
             output.setHistoryEvents(historyAttribute.getStringValue());
         } else {
@@ -350,9 +350,9 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements ISOSDes
 
     /**
      * Gives output the station name and coordinates for the Location root node.
-     * @param output a DescribeSensorFormatter instance (held by the handler)
+     * @param output a OosTethys instance (held by the handler)
      */
-    protected void formatSetLocationNode(DescribeSensorFormatter output) {
+    protected void formatSetLocationNode(OosTethys output) {
         if (stationCoords != null) {
             if (stationCoords.length > 1) {
                 if (getCRSSRSAuthorities() != null)
@@ -368,7 +368,7 @@ public class SOSDescribeStation extends SOSBaseRequestHandler implements ISOSDes
         }
     }
     
-    private void removeUnusedNodes(DescribeSensorFormatter output) {
+    private void removeUnusedNodes(OosTethys output) {
         output.deletePosition();
         output.deleteTimePosition();
         output.deletePositions();

@@ -4,7 +4,7 @@
  */
 package com.asascience.ncsos.describeSen;
 
-import com.asascience.ncsos.outputformatter.DescribeSensorPlatformMilestone1_0;
+import com.asascience.ncsos.outputformatter.ds.IoosPlatform10;
 import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import com.asascience.ncsos.service.SOSParser;
 import com.asascience.ncsos.util.XMLDomUtils;
@@ -699,10 +699,10 @@ public class SOSdescribeSensorTest {
 
     @Test
     public void testUnitConversion() {
-        assertEquals("Sm-1", DescribeSensorPlatformMilestone1_0.parseUnitString("S m-1"));
-        assertEquals("Sm-1", DescribeSensorPlatformMilestone1_0.parseUnitString("S:m-1"));
-        assertEquals("Sm-1", DescribeSensorPlatformMilestone1_0.parseUnitString("S\nm-1"));
-        assertEquals("Sm-1", DescribeSensorPlatformMilestone1_0.parseUnitString("S   m-1"));
+        assertEquals("Sm-1", IoosPlatform10.parseUnitString("S m-1"));
+        assertEquals("Sm-1", IoosPlatform10.parseUnitString("S:m-1"));
+        assertEquals("Sm-1", IoosPlatform10.parseUnitString("S\nm-1"));
+        assertEquals("Sm-1", IoosPlatform10.parseUnitString("S   m-1"));
     }
 
     @Test

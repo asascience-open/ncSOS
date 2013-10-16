@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.asascience.ncsos.outputformatter;
+package com.asascience.ncsos.outputformatter.ds;
 
+import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +29,7 @@ import ucar.unidata.geoloc.LatLonRect;
  * @author SCowan
  * @version 1.0.0
  */
-public class DescribeSensorFormatter extends SOSOutputFormatter {
+public class OosTethys extends SOSOutputFormatter {
     public static final String CLASSIFIER = "classifier";
     public static final String CLASSIFIERLIST = "ClassifierList";
 
@@ -41,17 +42,17 @@ public class DescribeSensorFormatter extends SOSOutputFormatter {
     public static final String SENSOR_ = "Sensor ";
     public static final String SENSOR_WITH_SPACER = "sensor-";
     public static final String UOM = "uom";
-    private final String TEMPLATE = "templates/sosDescribeSensor.xml";
+    private final String TEMPLATE = "templates/DS_oostethys.xml";
     private final String uri;
     private final String query;
     private DOMImplementationLS impl;
-    private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(DescribeSensorFormatter.class);
+    private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(OosTethys.class);
 
     /**
      * Creates a new formatter instance that uses the sosDescribeSensor.xml as a
      * template (found in the resources templates folder)
      */
-    public DescribeSensorFormatter() {
+    public OosTethys() {
         this.document = parseTemplateXML();
         initNamespaces();
 
@@ -76,7 +77,7 @@ public class DescribeSensorFormatter extends SOSOutputFormatter {
      * @param uri the uri of the request (used to construct hrefs for components
      * @param query the query of the request (used to construct hrefs for components)
      */
-    public DescribeSensorFormatter(String uri, String query) {
+    public OosTethys(String uri, String query) {
         document = parseTemplateXML();
         this.uri = uri;
         this.query = query;

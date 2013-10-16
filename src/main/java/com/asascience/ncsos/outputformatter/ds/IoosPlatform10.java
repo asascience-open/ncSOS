@@ -2,12 +2,14 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.asascience.ncsos.outputformatter;
+package com.asascience.ncsos.outputformatter.ds;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -15,7 +17,7 @@ import org.w3c.dom.NodeList;
  *
  * @author SCowan
  */
-public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
+public class IoosPlatform10 extends BaseOutputFormatter {
     public static final String BLANK = "";
     public static final String CAPABILITIES = "capabilities";
     public static final String CLASSIFIER = "classifier";
@@ -33,12 +35,12 @@ public class DescribeSensorPlatformMilestone1_0 extends BaseOutputFormatter {
     public static final String SIMPLEDATARECORD = "SimpleDataRecord";
     public static final String TEXT = "Text";
     public static final String VALUE = "value";
-    private static final String TEMPLATE_LOCATION = "templates/describePlatformM1.0.xml";
+    private static final String TEMPLATE_LOCATION = "templates/DS_ioos10.xml";
     private final static String IOOSURL = "http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0";
     private final static String OBSERVATION_TIME_RANGE = "observationTimeRange";
     private final static String OBS_TR_DEF = "http://mmisw.org/ont/ioos/definition/observationTimeRange";
 
-    public DescribeSensorPlatformMilestone1_0() {
+    public IoosPlatform10() {
         super();
         loadTemplateXML(TEMPLATE_LOCATION);
     }

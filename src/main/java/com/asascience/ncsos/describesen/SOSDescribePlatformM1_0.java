@@ -5,7 +5,7 @@
 package com.asascience.ncsos.describesen;
 
 import com.asascience.ncsos.cdmclasses.*;
-import com.asascience.ncsos.outputformatter.DescribeSensorPlatformMilestone1_0;
+import com.asascience.ncsos.outputformatter.ds.IoosPlatform10;
 import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import com.asascience.ncsos.util.LogReporter;
 import com.asascience.ncsos.util.VocabDefinitions;
@@ -35,7 +35,7 @@ public class SOSDescribePlatformM1_0 extends BaseDescribeSensor implements ISOSD
     private final static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SOSDescribePlatformM1_0.class);
     private final static String QUERY = "?service=SOS&request=DescribeSensor&version=1.0.0&outputFormat=text/xml;subtype=\"sensorML/1.0.1\"&procedure=";
     
-    private DescribeSensorPlatformMilestone1_0 platform;
+    private IoosPlatform10 platform;
     
     public SOSDescribePlatformM1_0(NetcdfDataset dataset, String procedure, String serverURL) throws IOException {
         super(dataset, new LogReporter());
@@ -51,7 +51,7 @@ public class SOSDescribePlatformM1_0 extends BaseDescribeSensor implements ISOSD
             output.setupExceptionOutput(errorString);
         } else {
             try {
-                this.platform = (DescribeSensorPlatformMilestone1_0) output;
+                this.platform = (IoosPlatform10) output;
                 describePlatform();
             } catch (ClassCastException ex) {
                 logger.error(ex.toString());

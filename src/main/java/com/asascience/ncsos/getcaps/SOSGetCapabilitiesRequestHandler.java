@@ -1,6 +1,6 @@
 package com.asascience.ncsos.getcaps;
 
-import com.asascience.ncsos.outputformatter.GetCapsOutputter;
+import com.asascience.ncsos.outputformatter.gc.GetCapsOutputter;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
 import java.io.IOException;

@@ -4,7 +4,7 @@
  */
 package com.asascience.ncsos.error;
 
-import com.asascience.ncsos.outputformatter.GetCapsOutputter;
+import com.asascience.ncsos.outputformatter.gc.GetCapsOutputter;
 import com.asascience.ncsos.service.SOSBaseRequestHandler;
 import java.io.IOException;
 import ucar.nc2.dataset.NetcdfDataset;

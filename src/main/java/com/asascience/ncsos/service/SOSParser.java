@@ -9,7 +9,7 @@ import com.asascience.ncsos.error.SOSErrorResponseHandler;
 import com.asascience.ncsos.getcaps.SOSGetCapabilitiesRequestHandler;
 import com.asascience.ncsos.getobs.SOSGetObservationRequestHandler;
 import com.asascience.ncsos.outputformatter.CachedFileFormatter;
-import com.asascience.ncsos.outputformatter.GetCapsOutputter;
+import com.asascience.ncsos.outputformatter.gc.GetCapsOutputter;
 import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import java.io.*;
 import java.net.URLDecoder;

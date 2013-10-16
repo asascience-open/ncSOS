@@ -4,10 +4,11 @@
  */
 package com.asascience.ncsos.describesen;
 
-import com.asascience.ncsos.outputformatter.DescribeSensorFormatter;
+import com.asascience.ncsos.outputformatter.ds.OosTethys;
 import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import java.io.IOException;
 import java.util.ArrayList;
+
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -74,7 +75,7 @@ public class SOSDescribeSensor extends SOSDescribeStation implements ISOSDescrib
 
     @Override
     public void setupOutputDocument(SOSOutputFormatter output) {
-        DescribeSensorFormatter dsf = new DescribeSensorFormatter();
+        OosTethys dsf = new OosTethys();
         if (errorString == null) {
             // system node
             dsf.setSystemId(SENSOR + stationName + SPACER + sensorId);
@@ -98,7 +99,7 @@ public class SOSDescribeSensor extends SOSDescribeStation implements ISOSDescrib
     /*******************
      * Private Methods *
      *******************/
-    private void removeUnusedNodes(DescribeSensorFormatter output) {
+    private void removeUnusedNodes(OosTethys output) {
         output.deleteClassificationNode();
         output.deleteComponentsNode();
         output.deleteHistoryNode();
@@ -113,10 +114,10 @@ public class SOSDescribeSensor extends SOSDescribeStation implements ISOSDescrib
     
     /**
      * Sets the sml:Identification node for Describe Sensor "sensorML/1.0.1" requests
-     * @param output a DescribeSensorFormatter instance
+     * @param output a OosTethys instance
      */
     @Override
-    protected void formatSetIdentification(DescribeSensorFormatter output) {
+    protected void formatSetIdentification(OosTethys output) {
         ArrayList<String> identNames = new ArrayList<String>();
         ArrayList<String> identDefinitions = new ArrayList<String>();
         ArrayList<String> identValues = new ArrayList<String>();
@@ -131,10 +132,10 @@ public class SOSDescribeSensor extends SOSDescribeStation implements ISOSDescrib
     
     /**
      * Sets the gml:description node for Describe Sensor "sensorML/1.0.1" requests
-     * @param output  a DescribeSensorFormatter instance
+     * @param output  a OosTethys instance
      */
     @Override
-    protected void formatSetDescription(DescribeSensorFormatter output) {
+    protected void formatSetDescription(OosTethys output) {
         output.setDescriptionNode("Sensor metadata for " + sensorId + " on " + stationName);
     }
 }

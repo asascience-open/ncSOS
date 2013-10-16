@@ -5,7 +5,7 @@
 package com.asascience.ncsos.describesen;
 
 import com.asascience.ncsos.cdmclasses.*;
-import com.asascience.ncsos.outputformatter.DescribeSensorNetworkMilestone1_0;
+import com.asascience.ncsos.outputformatter.ds.IoosNetwork10;
 import com.asascience.ncsos.outputformatter.SOSOutputFormatter;
 import com.asascience.ncsos.util.ListComprehension;
 import com.asascience.ncsos.util.LogReporter;
@@ -29,7 +29,7 @@ public class SOSDescribeNetworkM1_0 extends BaseDescribeSensor implements ISOSDe
     private final String server;
     private final static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SOSDescribeNetworkM1_0.class);
     
-    private DescribeSensorNetworkMilestone1_0 network;
+    private IoosNetwork10 network;
     private String errorString;
     private iStationData stationData;
     
@@ -56,7 +56,7 @@ public class SOSDescribeNetworkM1_0 extends BaseDescribeSensor implements ISOSDe
             output.setupExceptionOutput(errorString);
         } else {
             try {
-                this.network = (DescribeSensorNetworkMilestone1_0) output;
+                this.network = (IoosNetwork10) output;
                 describeNetwork();
             } catch (Exception ex) {
                 logger.error(ex.toString());
