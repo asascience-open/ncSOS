@@ -31,9 +31,10 @@ public abstract class BaseRequestHandler {
     public static final String PROFILE = "profile";
     public static final String TRAJECTORY = "trajectory";
 
-    private static final String STATION_GML_BASE = "urn:ioos:station:";
-    private static final String SENSOR_GML_BASE = "urn:ioos:sensor:";
-    private static final String DEF_NAMING_AUTHORITY = "authority";  // TODO: default for naming_authority
+    public static final String STATION_URN_BASE = "urn:ioos:station:";
+    public static final String SENSOR_URN_BASE = "urn:ioos:sensor:";
+    public static final String NETWORK_URN_BASE = "urn:ioos:network:";
+    private static final String DEFAULT_NAMING_AUTHORITY = "ncsos";
     private static final NumberFormat FORMAT_DEGREE;
     // list of keywords to filter variables on to remove non-data variables from the list
     private static final String[] NON_DATAVAR_NAMES = { "rowsize", "row_size", PROFILE, "info", "time", "z", "alt", "height", "station_info" };
@@ -42,9 +43,7 @@ public abstract class BaseRequestHandler {
     private GridDataset gridDataSet = null;
     
     // Global Attributes
-    protected String Access, PublisherEmail, PublisherName, PublisherPhone, PublisherURL, CreatorEmail, CreatorName, CreatorPhone;
-    protected String PrimaryOwnership, Region, StandardNameVocabulary, title, history, description, featureOfInterestBaseQueryURL, featureType;
-    protected static String namingAuthority;
+    protected HashMap<String, String> global_attributes;
     
     // Variables and other information commonly needed
     protected final NetcdfDataset netCDFDataset;
@@ -155,27 +154,39 @@ public abstract class BaseRequestHandler {
      * Finds commonly used global attributes in the netcdf file.
      */
     private void parseGlobalAttributes() {
-        
-        Access = netCDFDataset.findAttValueIgnoreCase(null, "license", "NONE");
-        PublisherEmail = netCDFDataset.findAttValueIgnoreCase(null, "publisher_email", "");
-        PublisherName = netCDFDataset.findAttValueIgnoreCase(null, "publisher_name", "");
-        PublisherPhone = netCDFDataset.findAttValueIgnoreCase(null, "publisher_phone", "");
-        PublisherURL = netCDFDataset.findAttValueIgnoreCase(null, "publisher_url", "");
-        CreatorEmail = netCDFDataset.findAttValueIgnoreCase(null, "creator_email","");
-        CreatorName = netCDFDataset.findAttValueIgnoreCase(null,"creator_name","");
-        CreatorPhone = netCDFDataset.findAttValueIgnoreCase(null,"creator_phone","");
-        PrimaryOwnership = netCDFDataset.findAttValueIgnoreCase(null, "source", "");
-        Region = netCDFDataset.findAttValueIgnoreCase(null, "institution", "");
+        for (Attribute a : this.netCDFDataset.getGlobalAttributes()) {
+               this.global_attributes.put(a.getFullName().toLowerCase(), a.getStringValue().trim());
+        }
+        // Fill in required naming authority attribute
+        if (!this.global_attributes.containsKey("naming_authority")) {
+            this.global_attributes.put("naming_authority", DEFAULT_NAMING_AUTHORITY);
+        }
+        // Fill in required naming authority attribute
+        if (!this.global_attributes.containsKey("featureType")) {
+            this.global_attributes.put("featureType", "UNKNOWN");
+        }
+
+        /*
+        dataset_attributes.put("title",netCDFDataset.findAttValueIgnoreCase(null, "title", "No global attribute 'title'").trim());
+        summary = netCDFDataset.findAttValueIgnoreCase(null, "summary","No global attribute 'summary'").trim();
+        access_constraints = netCDFDataset.findAttValueIgnoreCase(null, "license", "NONE").trim();
+        PublisherEmail = netCDFDataset.findAttValueIgnoreCase(null, "publisher_email", "").trim();
+        PublisherName = netCDFDataset.findAttValueIgnoreCase(null, "publisher_name", "").trim();
+        PublisherPhone = netCDFDataset.findAttValueIgnoreCase(null, "publisher_phone", "").trim();
+        CreatorEmail = netCDFDataset.findAttValueIgnoreCase(null, "creator_email","").trim();
+        CreatorName = netCDFDataset.findAttValueIgnoreCase(null,"creator_name","".trim());
+        CreatorPhone = netCDFDataset.findAttValueIgnoreCase(null,"creator_phone","").trim();
+        PrimaryOwnership = netCDFDataset.findAttValueIgnoreCase(null, "source", "").trim();
+        Region = netCDFDataset.findAttValueIgnoreCase(null, "institution", "").trim();
         // old attributes, still looking up for now
-        title = netCDFDataset.findAttValueIgnoreCase(null, "title", "");
-        history = netCDFDataset.findAttValueIgnoreCase(null, "history", "");
-        description = netCDFDataset.findAttValueIgnoreCase(null, "description", "");
-        featureOfInterestBaseQueryURL = netCDFDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", null);
-        StandardNameVocabulary = netCDFDataset.findAttValueIgnoreCase(null, "standard_name_vocabulary", "none");
-        featureType = netCDFDataset.findAttValueIgnoreCase(null, "featureType", "unknown");
-        namingAuthority = netCDFDataset.findAttValueIgnoreCase(null, "naming_authority", DEF_NAMING_AUTHORITY);
-        if (namingAuthority.length() < 1)
-            namingAuthority = DEF_NAMING_AUTHORITY;
+
+        history = netCDFDataset.findAttValueIgnoreCase(null, "history", "").trim();
+        description = netCDFDataset.findAttValueIgnoreCase(null, "description", "").trim();
+        featureOfInterestBaseQueryURL = netCDFDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", "").trim();
+        StandardNameVocabulary = netCDFDataset.findAttValueIgnoreCase(null, "standard_name_vocabulary", "none").trim();
+        featureType = netCDFDataset.findAttValueIgnoreCase(null, "featureType", "unknown").trim();
+        namingAuthority = netCDFDataset.findAttValueIgnoreCase(null, "naming_authority", DEF_NAMING_AUTHORITY).trim();
+        */
     }
 
     /**
@@ -597,37 +608,17 @@ public abstract class BaseRequestHandler {
     }
 
     /**
-     * Returns base urn of a station procedure
-     * @return
-     */
-    public static String getGMLNameBase() {
-        return STATION_GML_BASE;
-    }
-
-    /**
      * Returns the urn of a station
      * @param stationName the station name to add to the name base
      * @return
      */
-    public static String getGMLName(String stationName) {
-        return STATION_GML_BASE + namingAuthority + ":" + stationName;
+    public String getUrnName(String stationName) {
+        return STATION_URN_BASE + this.global_attributes.get("naming_authority") + ":" + stationName;
     }
     
-    /**
-     * Returns the base string of the a sensor urn (does not include station and sensor name)
-     * @return sensor urn base string
-     */
-    public static String getGMLSensorNameBase() {
-        return SENSOR_GML_BASE;
-    }
-    
-    public static String getNamingAuthority() {
-        return namingAuthority;
-    }
-    
-    public static String getGMLNetworkAll() {
+    public String getUrnNetworkAll() {
         // returns the network-all urn of the authority
-        return "urn:ioos:network:" + namingAuthority + ":all";
+        return NETWORK_URN_BASE + this.global_attributes.get("naming_authority") + ":all";
     }
     
     /**
@@ -636,26 +627,10 @@ public abstract class BaseRequestHandler {
      * @param sensorName name of the sensor
      * @return urn of the station/sensor combo
      */
-    public static String getSensorGMLName(String stationName, String sensorName) {
-        return SENSOR_GML_BASE + namingAuthority + ":" + stationName + ":" + sensorName;
+    public String getSensorUrnName(String stationName, String sensorName) {
+        return SENSOR_URN_BASE + this.global_attributes.get("naming_authority") + ":" + stationName + ":" + sensorName;
     }
 
-    /**
-     * Gets the location of the datatset; allows access to dataset.getLocation()
-     * @return
-     */
-    public String getLocation() {
-        return netCDFDataset.getLocation();
-    }
-    
-    /**
-     * Gets the conventions used to analyse the coordinate system
-     * @return 
-     */
-    public String getConvention() {
-        return netCDFDataset.getConventionUsed();
-    }
-    
     /**
      * Finds the CRS/SRS authorities used for the data vars. This method reads
      * through variables in a highly inefficient manner, therefore if a method
@@ -667,7 +642,7 @@ public abstract class BaseRequestHandler {
         ArrayList<String> returnList = new ArrayList<String>();
         for (VariableSimpleIF var : featureDataset.getDataVariables()) {
             for (Attribute attr : var.getAttributes()) {
-                if (attr.getName().equalsIgnoreCase(GRID_MAPPING)) {
+                if (attr.getFullName().equalsIgnoreCase(GRID_MAPPING)) {
                     String stName = attr.getValue(0).toString();
                     String auth = getAuthorityFromVariable(stName);
                     if (auth != null && !returnList.contains(auth)) {
@@ -694,55 +669,13 @@ public abstract class BaseRequestHandler {
         return retval;
     }
 
-    /**
-     * Returns the base query url of the feature of interest
-     * @return
-     */
-    public String getFeatureOfInterestBase() {
-        if (featureOfInterestBaseQueryURL == null || featureOfInterestBaseQueryURL.contentEquals("null")) {
-            return "";
-        }
-        return featureOfInterestBaseQueryURL;
-    }
-
-    /**
-     * Adds the station name to the feature of interest base
-     * @param stationName name of the station to add
-     * @return the feature of interest base query url with the station
-     */
-    public String getFeatureOfInterest(String stationName) {
-        return featureOfInterestBaseQueryURL == null
-                ? getGMLName(stationName)
-                : featureOfInterestBaseQueryURL + stationName;
-    }
-    
-    /**
-     * Returns the standard_name_vocabulary global attribute
-     * @return standard_name_vocabulary
-     */
-    public String getStandardNameVocabulary() {
-        return StandardNameVocabulary;
-    }
-
-    /**
+                      /**
      * Formats degree, using a number formatter
      * @param degree a number to format to a degree
      * @return the number as a degree
      */
     public static String formatDegree(double degree) {
         return FORMAT_DEGREE.format(degree);
-    }
-    
-    public String getTitle() {
-        return title;
-    }
-    
-    public String getDescription() {
-        return description;
-    }
-    
-    public String getFeatureType() {
-        return featureType;
     }
     
     /**

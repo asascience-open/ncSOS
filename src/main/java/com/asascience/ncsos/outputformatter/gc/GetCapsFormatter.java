@@ -7,456 +7,287 @@ package com.asascience.ncsos.outputformatter.gc;
 import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.XMLDomUtils;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Writer;
-import java.util.List;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.bootstrap.DOMImplementationRegistry;
-import org.w3c.dom.ls.DOMImplementationLS;
-import org.w3c.dom.ls.LSOutput;
-import org.w3c.dom.ls.LSSerializer;
+import org.jdom.Element;
+import org.jdom.Namespace;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 import ucar.nc2.constants.FeatureType;
-import ucar.nc2.time.CalendarDate;
 import ucar.nc2.time.CalendarDateRange;
 import ucar.unidata.geoloc.LatLonRect;
 
+import java.io.Writer;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+
 /**
- *
- * @author scowan
+ * @author kwilcox
  */
 public class GetCapsFormatter extends OutputFormatter {
 
-    public static final String ABSTRACT = "Abstract";
-    public static final String ACCESSCONSTRAINTS = "AccessConstraints";
     public static final String CONTENTS = "Contents";
-    public static final String DESCRIBESENSOR = "describesensor";
     public static final String EPSG4326 = "EPSG:4326";
-    public static final String EXTENDED_CAPABILITIES = "ExtendedCapabilities";
-    public static final String GETCAPABILITIES = "getcapabilities";
-    public static final String GETOBSERVATION = "getobservation";
-    public static final String GMLTIMEPERIODTYPE = "gml:TimePeriodType";
     public static final String HTTP = "HTTP";
-    public static final String INLINE = "inline";
-    public static final String TITLE = "Title";
-    public static final String META_DATA_PROPERTY = "metaDataProperty";
-    public static final String NCSOS_NAME = "ncSOS";
-    public static final String NETWORK_ALL = "network-all";
-    public static final String OMOBSERVATIONCOLLECTION = "om:ObservationCollection";
-    public static final String OPERATION = "Operation";
-    public static final String OPERATIONSMETADATA = "OperationsMetadata";
-    public static final String PROVIDERNAME = "ProviderName";
-    public static final String PROVIDERSITE = "ProviderSite";
-    public static final String RC6_NAME = "RC6";
-    public static final String RESPONSEMODE = "responseMode";
-    public static final String SERVICEIDENTIFICATION = "ServiceIdentification";
-    public static final String SERVICEPROVIDER = "ServiceProvider";
-    public static final String SRSNAME = "srsName";
-    public static final String VERSION_1_0 = "1.0";
-    public static final String XLINK_HREF = "xlink:href";
-    public static final String XLINK_TITLE = "xlink:title";
-    public static final String XSITYPE = "xsi:type";
-    private DOMImplementationLS impl;
-    private boolean exceptionFlag;
-    private Element getCaps, getObs, descSen;
+    public static final String OPERATIONS_METADATA = "OperationsMetadata";
+    public static final String SERVICE_IDENTIFICATION = "ServiceIdentification";
+    public static final String SERVICE_PROVIDER = "ServiceProvider";
+    private boolean exceptionFlag = false;
     private final static String TEMPLATE = "templates/GC.xml";
 
-    /**
-     * Creates instance of a Get Capabilities outputter. Reads the sosGetCapabilities.xml
-     * file as a template for the response.
-     */
     public GetCapsFormatter() {
-        document = parseTemplateXML();
-
-        initNamespaces();
-
-        exceptionFlag = false;
-
-        getCaps = getObs = descSen = null;
-        prepOperationsMetadata();
-
-        try {
-            DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
-            impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
+        super();
     }
 
-    /**
-     * Gets the XML documents being help by the outputter.
-     * @return XML document based on the sosGetCapabilities template
-     */
-    public Document getDocument() {
-        return document;
+    @Override
+    protected String getTemplateLocation() {
+        return TEMPLATE;
     }
 
-    /**
-     * Sets the output XML document
-     * @param setter a org.w3c.dom.Document  
-     */
-    public void setDocument(Document setter) {
-        this.document = setter;
-    }
-
-    /**
-     * Returns flag that is set when setupExceptionOutput is called.
-     * @return boolean flag: T if there is an exception
-     */
     public boolean hasExceptionOut() {
         return exceptionFlag;
     }
 
-    /**
-     * sets the service identification information 
-     */
-    public void parseServiceIdentification(String title, String history, String access) {
-        NodeList nodeLst = getDocument().getElementsByTagNameNS(OWS_NS, SERVICEIDENTIFICATION);
+    private Element getRoot() {
+        return this.document.getRootElement();
+    }
 
-        for (int s = 0; s < nodeLst.getLength(); s++) {
-
-            Node fstNode = nodeLst.item(s);
-            if (fstNode.getNodeType() == Node.ELEMENT_NODE) {
-
-                //looks at the one node
-                Element fstElmnt = (Element) fstNode;
-                //looks at title
-                NodeList fstNmElmntLst = fstElmnt.getElementsByTagNameNS(OWS_NS, TITLE);
-                Element fstNmElmnt = (Element) fstNmElmntLst.item(0);
-                NodeList fstNm = fstNmElmnt.getChildNodes();
-                fstNm.item(0).setTextContent(title.trim());
-
-                //looks at the adstract
-                NodeList lstNmElmntLst = fstElmnt.getElementsByTagNameNS(OWS_NS, ABSTRACT);
-                Element lstNmElmnt = (Element) lstNmElmntLst.item(0);
-                NodeList lstNm = lstNmElmnt.getChildNodes();
-                lstNm.item(0).setTextContent(history.trim());
-
-                fstElmnt.getElementsByTagNameNS(OWS_NS, ACCESSCONSTRAINTS).item(0).setTextContent(access.trim());
-            }
+    public void parseServiceIdentification(HashMap<String, String> attrs) {
+        Namespace owsns = this.getNamespace("ows");
+        Element si = this.getRoot().getChild(SERVICE_IDENTIFICATION, owsns);
+        // Name
+        si.getChild("Title", owsns).setText(attrs.get("title"));
+        // Title
+        si.getChild("Abstract", owsns).setText(attrs.get("summary"));
+        // Access
+        si.getChild("AccessConstraints", owsns).setText(attrs.get("access_constraints"));
+        // Keywords
+        Element keywords = si.getChild("Keywords", owsns);
+        Element k = null;
+        for (String keyword : attrs.get("keywords").split(",")) {
+            keywords.addContent(new Element("Keyword", owsns).setText(keyword));
         }
+        // Fees
+        si.getChild("Fees", owsns).setText(attrs.get("fees"));
     }
 
     public void removeServiceIdentification() {
-        Element capsNode = (Element) getDocument().getElementsByTagNameNS(SOS_NS, CAPABILITIES).item(0);
-        Node node = capsNode.getElementsByTagNameNS(OWS_NS, SERVICEIDENTIFICATION).item(0);
-
-        capsNode.removeChild(node);
+        this.getRoot().removeChild(SERVICE_IDENTIFICATION, this.getNamespace("ows"));
     }
 
-    /**
-     * sets the service description, this is typically additional created user/site information
-     */
-    public void parseServiceDescription(String dataPage, String primaryOwnership) {
-        //get service provider node list
-        NodeList serviceProviderNodeList = getDocument().getElementsByTagNameNS(OWS_NS, SERVICEPROVIDER);
-        //get the first node in the the list matching the above name
-        Node fstNode = serviceProviderNodeList.item(0);
-        //create an element from the node
-        Element fstElmnt = (Element) fstNode;
-        // set org info
-        // url
-        fstElmnt.getElementsByTagNameNS(OWS_NS, PROVIDERSITE).item(0).getAttributes().getNamedItemNS(XLINK_NS, "href").setNodeValue(dataPage.trim());
-        // name
-        fstElmnt.getElementsByTagNameNS(OWS_NS, PROVIDERNAME).item(0).setTextContent(primaryOwnership.trim());
+    public void parseServiceDescription(HashMap<String, String> attrs) {
+        Namespace owsns = this.getNamespace("ows");
+        Element si = this.getRoot().getChild(SERVICE_PROVIDER, owsns);
+        // ProviderName
+        si.getChild("ProviderName", owsns).setText(attrs.get("publisher_name"));
+        // ProviderSite
+        si.getChild("ProviderSite", owsns).getAttribute("xhref", this.getNamespace("xlink")).setValue(attrs.get("publisher_url"));
+        // ServiceContact
+        Element sc = si.getChild("ServiceContact", owsns);
+        sc.getChild("IndividualName", owsns).setText(attrs.get("publisher_name"));
+        sc.getChild("ContactInfo", owsns).getChild("Phone", owsns).getChild("Voice", owsns).setText(attrs.get("publisher_phone"));
+        sc.getChild("ContactInfo", owsns).getChild("Address", owsns).getChild("ElectronicMailAddress", owsns).setText(attrs.get("publisher_email"));
     }
 
     public void removeServiceProvider() {
-        Element capsNode = (Element) getDocument().getElementsByTagNameNS(SOS_NS, CAPABILITIES).item(0);
-        Node serviceProviderNode = capsNode.getElementsByTagNameNS(OWS_NS, SERVICEPROVIDER).item(0);
-
-        capsNode.removeChild(serviceProviderNode);
+        this.getRoot().removeChild(SERVICE_PROVIDER, this.getNamespace("ows"));
     }
 
-    /**
-     * 
-     * @param threddsURI 
-     */
-    public void setOperationGetCaps(String threddsURI) {
-        setOperationMethods((Element) getCaps.getElementsByTagNameNS(OWS_NS, HTTP).item(0), threddsURI);
+    public void setURL(String threddsURI) {
+        Namespace owsns = this.getNamespace("ows");
+        Element si = this.getRoot().getChild(OPERATIONS_METADATA, owsns);
+        for (Object e : si.getChildren("Operation", owsns)) {
+            this.setHTTPMethods((Element) e, threddsURI);
+        }
     }
 
-    public void removeOperations() {
-        Element capsNode = (Element) getDocument().getElementsByTagNameNS(SOS_NS, CAPABILITIES).item(0);
-        Node operationsNode = capsNode.getElementsByTagNameNS(OWS_NS, OPERATIONSMETADATA).item(0);
-        capsNode.removeChild(operationsNode);
-    }
-
-    /**
-     * 
-     * @param threddsURI
-     * @param startDate
-     * @param endDate
-     * @param dataVarShortNames
-     * @param stationNames
-     * @param gridDataset
-     * @param gridBbox 
-     */
-    public void setOperationGetObs(String threddsURI, CalendarDate startDate, CalendarDate endDate,
-            List<String> dataVarShortNames, String[] stationNames,
-            boolean gridDataset, LatLonRect gridBbox, FeatureType ftype) {
-        // set url info
-        setOperationMethods((Element) getObs.getElementsByTagNameNS(OWS_NS, HTTP).item(0), threddsURI);
-        // set info for get observation operation
-        // get our parameters that need to be filled
-        Element eventtime = null, offering = null, observedproperty = null, procedure = null;
-        NodeList nodes = getObs.getElementsByTagNameNS(OWS_NS, PARAMETER);
-        for (int i = 0; i < nodes.getLength(); i++) {
-            Element elem = (Element) nodes.item(i);
-            String nameAtt = elem.getAttribute(NAME);
-            if (nameAtt != null) {
-                if (nameAtt.equals(OFFERING)) {
-                    offering = elem;
-                } else if (nameAtt.equals(OBSERVED_PROPERTY)) {
-                    observedproperty = elem;
+    public void setOperationsMetadataGetObs(HashMap<String, String> attrs, String threddsURI, List<String> dataVarShortNames, String[] stationNames) {
+        Namespace owsns = this.getNamespace("ows");
+        Element si = this.getRoot().getChild(OPERATIONS_METADATA, owsns);
+        for (Object e : si.getChildren("Operation", owsns)) {
+            Element op = (Element) e;
+            if (op.getAttributeValue("name").equalsIgnoreCase("GetObservation")) {
+                for (Object par : op.getChildren("Parameter", owsns)) {
+                    Element p = (Element) par;
+                    String name = p.getAttributeValue("name");
+                    Element allowed = new Element("AllowedValues", owsns);
+                    if (name.equalsIgnoreCase("offering")) {
+                        for (String s : stationNames) {
+                            allowed.addContent(new Element("Value", owsns).setText(s));
+                        }
+                        // Always add a 'network-all' offering
+                        allowed.addContent(new Element("Value", owsns).setText("network-all"));
+                        p.addContent(allowed);
+                    } else if (name.equalsIgnoreCase("observedProperty")) {
+                        for (String s : dataVarShortNames) {
+                            allowed.addContent(new Element("Value", owsns).setText(s));
+                        }
+                        p.addContent(allowed);
+                    } else if (name.equalsIgnoreCase("procedure")) {
+                        for (String s : stationNames) {
+                            allowed.addContent(new Element("Value", owsns).setText(BaseRequestHandler.STATION_URN_BASE + attrs.get("naming_authority") + ":" + s));
+                        }
+                        p.addContent(allowed);
+                    }
                 }
             }
         }
-
-        if (offering != null) {
-            addObservationalOfferings(offering, stationNames);
-        }
-
-        // set observedProperty parameter
-        if (observedproperty != null) {
-            addObservationalOfferings(observedproperty, dataVarShortNames);
-        }
     }
 
-    private void addObservationalOfferings(Element parentNode, String[] stationNames) {
-        Element allowedValues = createElementNS(OWS_NS, ALLOWED_VALUES);
-        parentNode.appendChild(allowedValues);
-
-        Element value = createElementNS(OWS_NS, VALUE);
-        value.setTextContent(NETWORK_ALL);
-        allowedValues.appendChild(value);
-        for (String name : stationNames) {
-            value = createElementNS(OWS_NS, VALUE);
-            value.setTextContent(name);
-            allowedValues.appendChild(value);
-        }
-    }
-
-    public void addObservationalOfferings(Element parentNode, List<String> dataVarShortNames) {
-        Element allowedValues = createElementNS(OWS_NS, ALLOWED_VALUES);
-        parentNode.appendChild(allowedValues);
-        for (String name : dataVarShortNames) {
-            Element value = createElementNS(OWS_NS, VALUE);
-            value.setTextContent(name);
-            allowedValues.appendChild(value);
-        }
+    public void removeOperationsMetadata() {
+        this.getRoot().removeChild(OPERATIONS_METADATA, this.getNamespace("ows"));
     }
 
     public void setVersionMetadata() {
-        /*
-        <ows:ExtendedCapabilities>
-            <gml:metaDataProperty xlink:title="ioosTemplateVersion" xlink:href="http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0">
-                <gml:version>1.0</gml:version>
-            </gml:metaDataProperty>
-            <gml:metaDataProperty xlink:title="softwareVersion" xlink:href="https://github.com/asascience-open/ncSOS/releases">
-                <gml:version>FILLME</gml:version>
-            </gml:metaDataProperty>
-        </ows:ExtendedCapabilities
-         */
-        Element operationMetadata = (Element) document.getElementsByTagNameNS(OWS_NS, OPERATIONSMETADATA).item(0);
-        Element extendedCaps = (Element) operationMetadata.getElementsByTagNameNS(OWS_NS, "ExtendedCapabilities").item(0);
-        NodeList metadataProperties = extendedCaps.getElementsByTagNameNS(GML_NS, "metaDataProperty");
-        for (int j = 0 ; j < metadataProperties.getLength() ; j++) {
-            Element prop = (Element) metadataProperties.item(j);
-            if (prop.hasAttributeNS(XLINK_NS, "title") && prop.getAttributeNS(XLINK_NS, "title").equalsIgnoreCase("softwareVersion")) {
-                prop.getElementsByTagNameNS(GML_NS, "version").item(0).setTextContent(NCSOS_VERSION);
+        Namespace owsns = this.getNamespace("ows");
+        Namespace gmlns = this.getNamespace("gml");
+        List<Element> md = this.getRoot().getChild(OPERATIONS_METADATA, owsns)
+                .getChild("ExtendedCapabilities", owsns)
+                .getChildren("metaDataProperty", gmlns);
+        for (Element e : md) {
+            if (e.getAttributeValue("href", this.getNamespace("xlink")).equalsIgnoreCase("softwareVersion")) {
+                e.getChild("version", gmlns).setText(NCSOS_VERSION);
             }
         }
     }
 
     /**
-     * 
      * @param threddsURI
      * @param stationNames
-     * @param sensorNames 
+     * @param sensorNames
      */
-    public void setOperationDescSen(String threddsURI, String[] stationNames, List<String> sensorNames) {
-        // set url info
-        setOperationMethods((Element) descSen.getElementsByTagNameNS(OWS_NS, HTTP).item(0), threddsURI);
-        // set procedure allowed values of each station and sensor for the dataset
-        Element procedure = null;
-        NodeList nodes = descSen.getElementsByTagNameNS(OWS_NS, PARAMETER);
-        for (int i = 0; i < nodes.getLength(); i++) {
-            Element elem = (Element) nodes.item(i);
-            if (elem != null && elem.getAttribute(NAME).equals(PROCEDURE)) {
-                procedure = elem;
-                break;
-            }
-        }
-        if (procedure != null && stationNames != null) {
-            // add allowed values node
-            Element allowedValues = createElementNS(OWS_NS, ALLOWED_VALUES);
-            procedure.appendChild(allowedValues);
-            // add network-all value
-            Element na = createElementNS(OWS_NS, VALUE);
-
-            na.setTextContent("urn:ioos:network:" + BaseRequestHandler.getNamingAuthority() + ":all");
-            allowedValues.appendChild(na);
-            for (String stationName : stationNames) {
-                Element elem = createElementNS(OWS_NS, VALUE);
-
-                elem.setTextContent(BaseRequestHandler.getGMLName(stationName));
-                allowedValues.appendChild(elem);
-                for (String senName : sensorNames) {
-                    Element sElem = createElementNS(OWS_NS, VALUE);
-
-                    sElem.setTextContent(BaseRequestHandler.getSensorGMLName(stationName, senName));
-                    allowedValues.appendChild(sElem);
+    public void setOperationsMetadataDescSen(HashMap<String, String> attrs, String threddsURI, List<String> sensorNames, String[] stationNames) {
+        Namespace owsns = this.getNamespace("ows");
+        Element si = this.getRoot().getChild(OPERATIONS_METADATA, owsns);
+        for (Object e : si.getChildren("Operation", owsns)) {
+            Element op = (Element) e;
+            if (op.getAttributeValue("name").equalsIgnoreCase("DescribeSensor")) {
+                for (Object par : op.getChildren("Parameter", owsns)) {
+                    Element p = (Element) par;
+                    String name = p.getAttributeValue("name");
+                    Element allowed = new Element("AllowedValues", owsns);
+                    if (name.equalsIgnoreCase("procedure")) {
+                        for (String s : stationNames) {
+                            allowed.addContent(new Element("Value", owsns).setText(BaseRequestHandler.STATION_URN_BASE + attrs.get("naming_authority") + ":" + s));
+                        }
+                        p.addContent(allowed);
+                    }
                 }
             }
         }
     }
 
-    public void setObservationOfferingNetwork(LatLonRect datasetRect, String[] stations, List<String> sensors, CalendarDateRange datasetTime, FeatureType ftype) {
-        // add the network-all observation offering
-        Element offeringList = (Element) document.getElementsByTagNameNS(SOS_NS, OBSERVATION_OFFERING_LIST).item(0);
-        Element obsOffering = createElementNS(SOS_NS, OBSERVATION_OFFERING);
-        obsOffering.setAttributeNS(GML_NS, ID, NETWORK_ALL);
-
-        // add description, name and srs
-        Element desc = createElementNS(GML_NS, DESCRIPTION);
-        desc.setTextContent("All stations in the netCDF dataset.");
-        obsOffering.appendChild(desc);
-        Element name = createElementNS(GML_NS, NAME);
-        name.setTextContent(NETWORK_URN + BaseRequestHandler.getNamingAuthority() + NETWORK_URN_END_ALL);
-        obsOffering.appendChild(name);
-        Element srsName = createElementNS(GML_NS, SRSNAME);
-        srsName.setTextContent(EPSG4326);
-        obsOffering.appendChild(srsName);
-        // bounds
-        obsOffering.appendChild(getStationBounds(datasetRect));
-        // time
-        if (datasetTime != null) {
-            obsOffering.appendChild(getStationPeriod(datasetTime));
-        }
-        // add network all to procedure list
-        Element naProcedure = createElementNS(SOS_NS, PROCEDURE);
-        naProcedure.setAttribute(XLINK_HREF, BaseRequestHandler.getGMLNetworkAll());
-        obsOffering.appendChild(naProcedure);
-        // procedures
-        for (String str : stations) {
-            Element proc = createElementNS(SOS_NS, PROCEDURE);
-            proc.setAttribute(XLINK_HREF, BaseRequestHandler.getGMLName(str));
-            obsOffering.appendChild(proc);
-        }
-        // observed properties
-        for (String str : sensors) {
-            Element value = createElementNS(SOS_NS, "observedProperty");
-            value.setAttribute(XLINK_HREF, str);
-            obsOffering.appendChild(value);
-        }
-        // feature of interests
-        for (String str : stations) {
-            Element foi = createElementNS(SOS_NS, "featureOfInterest");
-            foi.setAttribute(XLINK_HREF, BaseRequestHandler.getGMLName(str));
-            obsOffering.appendChild(foi);
-        }
-        // response format
-        Element rf = createElementNS(SOS_NS, RESPONSE_FORMAT);
-        rf.setTextContent("text/xml; subtype=\"om/1.0.0\"");
-        obsOffering.appendChild(rf);
-        // if supported by feature type, add new response format
-        switch (ftype) {
-            case STATION:
-                rf = createElementNS(SOS_NS, RESPONSE_FORMAT);
-                rf.setTextContent("text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0");
-                obsOffering.appendChild(rf);
-                break;
-            default:
-                break;
-        }
-        // result model/mode -- blank for now?
-        Element rm = createElementNS(SOS_NS, RESULT_MODEL);
-        rm.setTextContent(OMOBSERVATIONCOLLECTION);
-        obsOffering.appendChild(rm);
-        Element rm2 = createElementNS(SOS_NS, RESPONSE_MODE);
-        rm2.setTextContent("inline");
-        obsOffering.appendChild(rm2);
-
-        // add offering
-        offeringList.appendChild(obsOffering);
+    private Element buildOffering() {
+        return new Element("ObservationOffering", this.getNamespace("sos"));
     }
 
-    public void setObservationOfferingList(String stationName, LatLonRect rect, List<String> sensorNames, CalendarDateRange stationDates, FeatureType ftype) {
-        Element offeringList = (Element) getDocument().getElementsByTagNameNS(SOS_NS, OBSERVATION_OFFERING_LIST).item(0);
-        // iterate through offerings (stations)
-        Element obsOffering = createElementNS(SOS_NS, OBSERVATION_OFFERING);
+    public void setObservationOfferingNetwork(HashMap<String, String> attrs, LatLonRect datasetRect, String[] stations, List<String> sensors, CalendarDateRange dates, FeatureType ftype) {
+        Namespace owsns = this.getNamespace("ows");
+        Namespace gmlns = this.getNamespace("gml");
+        Namespace sosns = this.getNamespace("sos");
+        Namespace xlinkns = this.getNamespace("xlink");
+        Element ol = this.getRoot().getChild(CONTENTS, owsns).getChild(OBSERVATION_OFFERING_LIST, owsns);
 
-        obsOffering.setAttributeNS(GML_NS, ID, stationName);
-        // gml:name
-        Element gmlName = createElementNS(GML_NS, NAME);
-        gmlName.setTextContent(BaseRequestHandler.getGMLName(stationName));
-        obsOffering.appendChild(gmlName);
-        // gml:srsName - default to EPSG:4326 for now
-        Element srsName = createElementNS(GML_NS, SRSNAME);
-        srsName.setTextContent(EPSG4326);
-        obsOffering.appendChild(srsName);
-        // bounds
-        obsOffering.appendChild(getStationBounds(rect));
-        // add time envelope
-        obsOffering.appendChild(getStationPeriod(stationDates));
-        // feature of interest -- station name?
-        Element foi = createElementNS(SOS_NS, FEATURE_INTEREST);
-        foi.setAttribute(XLINK_HREF, BaseRequestHandler.getGMLName(stationName));
-        obsOffering.appendChild(foi);
-        // observed properties
-        for (String str : sensorNames) {
-            Element value = createElementNS(SOS_NS, OBSERVED_PROPERTY);
-            value.setAttribute(XLINK_HREF, str);
-            obsOffering.appendChild(value);
+        Element offering = this.buildOffering();
+        // Id
+        offering.setAttribute("id", "network-all", gmlns);
+        // Name
+        offering.addContent(new Element("name", gmlns).setText(BaseRequestHandler.NETWORK_URN_BASE + attrs.get("naming_authority") + ":all"));
+        // Description
+        offering.addContent(new Element("description", gmlns).setText("Network offering containing all features in the dataset"));
+        // SRS
+        offering.addContent(new Element("srsName", gmlns).setText(EPSG4326));
+        // Bounded By
+        offering.addContent(this.getBoundedBy(datasetRect));
+        // Time
+        offering.addContent(this.getTimePeriod(dates));
+        // Procedure
+        offering.addContent(new Element("procedure", sosns).setAttribute("href", BaseRequestHandler.NETWORK_URN_BASE + attrs.get("naming_authority") + ":all", xlinkns));
+        for (String s : stations) {
+            offering.addContent(new Element("procedure", sosns).setAttribute("href", BaseRequestHandler.STATION_URN_BASE + attrs.get("naming_authority") + ":" + s, xlinkns));
         }
-        // procedure for this station
-        Element selfProcedure = createElementNS(SOS_NS, PROCEDURE);
-        selfProcedure.setAttribute(XLINK_HREF, BaseRequestHandler.getGMLName(stationName));
-        obsOffering.appendChild(selfProcedure);
-        // response format
-        Element rf = createElementNS(SOS_NS, RESPONSE_FORMAT);
-        rf.setTextContent("text/xml;subtype=\"om/1.0.0\"");
-        obsOffering.appendChild(rf);
-        // if supported by feature type, add new repsonse format
+        // ObservedProperty
+        for (String s : sensors) {
+            offering.addContent(new Element("observedProperty", sosns).setAttribute("href", s, xlinkns));
+        }
+        // FeatureOfInterest
+        for (String s : stations) {
+            offering.addContent(new Element("featureOfInterest", sosns).setAttribute("href", BaseRequestHandler.STATION_URN_BASE + attrs.get("naming_authority") + ":" + s, xlinkns));
+        }
+        // ResponseFormat
+        offering.addContent(new Element("responseFormat", sosns).setText("text/xml; subtype=\"om/1.0.0\""));
         switch (ftype) {
             case STATION:
-                rf = createElementNS(SOS_NS, RESPONSE_FORMAT);
-                rf.setTextContent(this.IOOS_RF_1_0);
-                obsOffering.appendChild(rf);
+                offering.addContent(new Element("responseFormat", sosns).setText("text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0\""));
                 break;
             default:
                 break;
         }
-        // result model/mode -- blank for now?
-        Element rm = createElementNS(SOS_NS, RESULT_MODEL);
-        rm.setTextContent(OMOBSERVATIONCOLLECTION);
-        obsOffering.appendChild(rm);
-        rm = createElementNS(SOS_NS, RESPONSEMODE);
-        rm.setTextContent(INLINE);
-        obsOffering.appendChild(rm);
+        // ResultModel
+        offering.addContent(new Element("resultModel", sosns).setText("om:ObservationCollection"));
+        // ResponseMode
+        offering.addContent(new Element("responseMode", sosns).setText("inline"));
 
-        // add offering
-        offeringList.appendChild(obsOffering);
+        // Add the offering to the list
+        ol.addContent(offering);
+    }
+
+    public void setObservationOffering(HashMap<String, String> attrs, String stationName, LatLonRect datasetRect, List<String> sensors, CalendarDateRange dates, FeatureType ftype) {
+        Namespace owsns = this.getNamespace("ows");
+        Namespace gmlns = this.getNamespace("gml");
+        Namespace sosns = this.getNamespace("sos");
+        Namespace xlinkns = this.getNamespace("xlink");
+        Element ol = this.getRoot().getChild(CONTENTS, owsns).getChild(OBSERVATION_OFFERING_LIST, owsns);
+
+        Element offering = this.buildOffering();
+        // Id
+        offering.setAttribute("id", stationName, gmlns);
+        // Name
+        offering.addContent(new Element("name", gmlns).setText(BaseRequestHandler.STATION_URN_BASE + attrs.get("naming_authority") + ":" + stationName));
+        // Description
+        // offering.getChild("description", gmlns).setText("Network offering containing all features in the dataset");
+        // SRS
+        offering.addContent(new Element("srsName", gmlns).setText(EPSG4326));
+        // Bounded By
+        offering.addContent(this.getBoundedBy(datasetRect));
+        // Time
+        offering.addContent(this.getTimePeriod(dates));
+        // Procedure
+        offering.addContent(new Element("procedure", sosns).setAttribute("href", BaseRequestHandler.STATION_URN_BASE + attrs.get("naming_authority") + ":" + stationName, xlinkns));
+        // ObservedProperty
+        for (String s : sensors) {
+            offering.addContent(new Element("observedProperty", sosns).setAttribute("href", s, xlinkns));
+        }
+        // FeatureOfInterest
+        offering.addContent(new Element("featureOfInterest", sosns).setAttribute("href", BaseRequestHandler.STATION_URN_BASE + attrs.get("naming_authority") + ":" + stationName, xlinkns));
+        // ResponseFormat
+        offering.addContent(new Element("responseFormat", sosns).setText("text/xml; subtype=\"om/1.0.0\""));
+        switch (ftype) {
+            case STATION:
+                offering.addContent(new Element("responseFormat", sosns).setText("text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0\""));
+                break;
+            default:
+                break;
+        }
+        // ResultModel
+        offering.addContent(new Element("resultModel", sosns).setText("om:ObservationCollection"));
+        // ResponseMode
+        offering.addContent(new Element("responseMode", sosns).setText("inline"));
+
+        // Add the offering to the list
+        ol.addContent(offering);
     }
 
     public void removeContents() {
-        Element capsNode = (Element) getDocument().getElementsByTagNameNS(SOS_NS, CAPABILITIES).item(0);
-        Node contentNode = capsNode.getElementsByTagNameNS(SOS_NS, CONTENTS).item(0);
-        capsNode.removeChild(contentNode);
+        this.getRoot().removeChild(CONTENTS, this.getNamespace("ows"));
     }
 
     /*********************/
     /* Interface Methods */
-    /**************************************************************************/
-    public void addDataFormattedStringToInfoList(String dataFormattedString) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
-    public void emtpyInfoList() {
+    /**
+     * **********************************************************************
+     */
+    public void addDataFormattedStringToInfoList(String dataFormattedString) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -465,134 +296,38 @@ public class GetCapsFormatter extends OutputFormatter {
         exceptionFlag = true;
     }
 
-    public void writeOutput(Writer writer) {
-        // output our document to the writer
-        LSSerializer xmlSerializer = impl.createLSSerializer();
-        LSOutput xmlOut = impl.createLSOutput();
-        xmlSerializer.getDomConfig().setParameter("format-pretty-print", Boolean.TRUE);
-        xmlOut.setCharacterStream(writer);
-        xmlSerializer.write(document, xmlOut);
+    public void writeOutput(Writer writer) throws IOException {
+        XMLOutputter xmlOutput = new XMLOutputter();
+        xmlOutput.setFormat(Format.getPrettyFormat());
+        xmlOutput.output(this.document, writer);
     }
 
-    /**************************************************************************/
-    private Document parseTemplateXML() {
-        InputStream templateInputStream = null;
-        try {
-            templateInputStream = getClass().getClassLoader().getResourceAsStream(getTemplateLocation());
-            return XMLDomUtils.getTemplateDom(templateInputStream);
-        } finally {
-            if (templateInputStream != null) {
-                try {
-                    templateInputStream.close();
-                } catch (IOException e) {
-                    // ignore, closing..
-                }
-            }
-        }
+    private void setHTTPMethods(Element parent, String threddsURI) {
+        Namespace owsns = this.getNamespace("ows");
+        // GET
+        parent.getChild("DCP", owsns).getChild("HTTP", owsns).getChild("Get", owsns).setAttribute("href", threddsURI, this.getNamespace("xlink"));
+        // TODO: When (if) we ever support POST methods, add an additional Post tag here with the URL
     }
 
-    private String getTemplateLocation() {
-        return TEMPLATE;
+    private Element getBoundedBy(LatLonRect rect) {
+        Namespace gmlns = this.getNamespace("gml");
+        Element bb = new Element("boundedBy", gmlns);
+        Element env = new Element("Envelope", gmlns);
+        env.setAttribute("srsName", "http://www.opengis.net/def/crs/EPSG/0/4326");
+        env.getChild("lowerCorner", gmlns).setText(rect.getLowerLeftPoint().getLatitude() + " " + rect.getLowerLeftPoint().getLongitude());
+        env.getChild("upperCorner", gmlns).setText(rect.getUpperRightPoint().getLatitude() + " " + rect.getUpperRightPoint().getLongitude());
+        bb.addContent(env);
+        return bb;
     }
 
-    private void setOperationMethods(Element parent, String threddsURI) {
-        //set get capabilities GET request link
-        NodeList getList = parent.getElementsByTagNameNS(OWS_NS, "Get");
-        Element getElm = (Element) getList.item(0);
-        getElm.setAttribute(XLINK_HREF, threddsURI);
-
-        //set get capabilities Post request link -- not supported TODO
-//        NodeList fstNm12 = fstNmElmnt.getElementsByTagName("ows:Post");
-//        Element fstNmElmnt12 = (Element) fstNm12.item(0);
-//        if (fstNmElmnt12 != null)
-//            fstNmElmnt12.setAttribute("xlink:href", threddsURI);
-    }
-
-    private Element getStationPeriod(CalendarDateRange stationDateRange) {
-        Element retval = createElementNS(SOS_NS, TIME);
-        if (stationDateRange != null) {
-            // time
-            Element timePeriod = createElementNS(GML_NS, TIME_PERIOD);
-            timePeriod.setAttribute(XSITYPE, GMLTIMEPERIODTYPE);
-            // begin
-            Element begin = createElementNS(GML_NS, BEGIN_POSITION);
-            begin.setTextContent(stationDateRange.getStart().toString());
-            timePeriod.appendChild(begin);
-            // end
-            Element end = createElementNS(GML_NS, END_POSITION);
-            end.setTextContent(stationDateRange.getEnd().toString());
-            timePeriod.appendChild(end);
-            retval.appendChild(timePeriod);
-        }
-        return retval;
-    }
-
-    private Element getStationBounds(LatLonRect rect) {
-        Element retval = createElementNS(GML_NS, BOUNDED_BY);
-
-        if (rect != null) {
-            Element envelope = createElementNS(GML_NS, ENVELOPE);
-            envelope.setAttribute(SRSNAME, "http://www.opengis.net/def/crs/EPSG/0/4326");
-            // lower corner
-            Element lowercorner = createElementNS(GML_NS, LOWER_CORNER);
-            lowercorner.setTextContent(rect.getLowerLeftPoint().getLatitude() + " " + rect.getLowerLeftPoint().getLongitude());
-            envelope.appendChild(lowercorner);
-            // upper corner
-            Element uppercorner = createElementNS(GML_NS, UPPER_CORNER);
-            uppercorner.setTextContent(rect.getUpperRightPoint().getLatitude() + " " + rect.getUpperRightPoint().getLongitude());
-            envelope.appendChild(uppercorner);
-            retval.appendChild(envelope);
-        }
-
-        return retval;
-    }
-
-    private void prepOperationsMetadata() {
-        Element operationMetadata = (Element) document.getElementsByTagNameNS(OWS_NS, OPERATIONSMETADATA).item(0);
-        // get our operations
-        NodeList operations = operationMetadata.getElementsByTagNameNS(OWS_NS, OPERATION);
-        for (int i = 0; i < operations.getLength(); i++) {
-            Element op = (Element) operations.item(i);
-            if (op.getAttribute(NAME).equalsIgnoreCase(GETCAPABILITIES)) {
-                getCaps = op;
-            } else if (op.getAttribute(NAME).equalsIgnoreCase(GETOBSERVATION)) {
-                getObs = op;
-            } else if (op.getAttribute(NAME).equalsIgnoreCase(DESCRIBESENSOR)) {
-                descSen = op;
-            }
-        }
-    }
-
-    private void addLatLonParameters(Element parent, LatLonRect bbox) {
-        // lat
-        Element lat = createElementNS(OWS_NS, PARAMETER);
-        lat.setAttribute(NAME, LAT);
-        lat.setAttribute(USE, REQUIRED);
-        Element latAllowedValues = createElementNS(OWS_NS, ALLOWED_VALUES);
-        // min
-        Element latMin = createElementNS(OWS_NS, MINIMUM_VALUE);
-        latMin.setTextContent(bbox.getLowerLeftPoint().getLatitude() + "");
-        latAllowedValues.appendChild(latMin);
-        // max
-        Element latMax = createElementNS(OWS_NS, MAXIMUM_VALUE);
-        latMax.setTextContent(bbox.getUpperRightPoint().getLatitude() + "");
-        latAllowedValues.appendChild(latMax);
-        lat.appendChild(latAllowedValues);
-        parent.appendChild(lat);
-        // lon 
-        Element lon = createElementNS(OWS_NS, PARAMETER);
-        lon.setAttribute(NAME, LON);
-        lon.setAttribute(USE, REQUIRED);
-        Element lonAllowedValues = createElementNS(OWS_NS, ALLOWED_VALUES);
-        // min
-        Element lonMin = createElementNS(OWS_NS, MINIMUM_VALUE);
-        lonMin.setTextContent(bbox.getLowerLeftPoint().getLongitude() + "");
-        lonAllowedValues.appendChild(lonMin);
-        // max
-        Element lonMax = createElementNS(OWS_NS, MAXIMUM_VALUE);
-        lonMax.setTextContent(bbox.getUpperRightPoint().getLongitude() + "");
-        lonAllowedValues.appendChild(lonMax);
-        lon.appendChild(lonAllowedValues);
-        parent.appendChild(lon);
+    private Element getTimePeriod(CalendarDateRange dateRange) {
+        Namespace gmlns = this.getNamespace("gml");
+        Namespace sosns = this.getNamespace("sos");
+        Element tm = new Element("time", sosns);
+        Element tp = new Element("TimePeriod", gmlns);
+        tm.addContent(tp);
+        tp.getChild("beginPosition", gmlns).setText(dateRange.getStart().toString());
+        tp.getChild("endPosition", gmlns).setText(dateRange.getEnd().toString());
+        return tm;
     }
 }

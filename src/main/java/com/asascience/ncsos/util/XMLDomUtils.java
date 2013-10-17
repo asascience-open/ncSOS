@@ -1,9 +1,8 @@
 package com.asascience.ncsos.util;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.jdom.*;
+import org.jdom.input.*;
+import org.jdom.output.*;
 import java.io.File;
 import java.io.InputStream;
 import javax.xml.parsers.DocumentBuilder;
@@ -24,6 +23,33 @@ import javax.xml.transform.stream.StreamResult;
  */
 public class XMLDomUtils {
 
+
+    public static Document loadFile(InputStream filestream) {
+        Document doc = null;
+        try {
+            // Build the document with SAX and Xerces, with validation
+            SAXBuilder builder = new SAXBuilder(true);
+            // Create the JSON document and return
+            doc = builder.build(filestream);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return doc;
+    }
+
+    public static Document loadFile(String filepath) {
+        Document doc = null;
+        try {
+            // Build the document with SAX and Xerces, no validation
+            SAXBuilder builder = new SAXBuilder();
+            // Create the JSON document and return
+            doc = builder.build(new File(filepath));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return doc;
+    }
+
     public static Document getTemplateDom(InputStream templateFileLocation) {
         Document doc = null;
         try {
@@ -33,7 +59,7 @@ public class XMLDomUtils {
             DocumentBuilder db = dbf.newDocumentBuilder();
             doc = db.parse(templateFileLocation);
             doc.getDocumentElement().normalize();
-            
+
             //setRouteElement(doc.getDocumentElement().getNodeName());
 
         } catch (Exception e) {
@@ -85,7 +111,7 @@ public class XMLDomUtils {
     }
     
     
-
+    /*
     public static void setNodeValue(Document doc, 
     								String container,
     								String containerNamespace,
@@ -98,6 +124,7 @@ public class XMLDomUtils {
         NodeList fstNm = fstNmElmnt1.getChildNodes();
         fstNm.item(0).setNodeValue(value);
     }
+    */
 
     private static Element getElementBaseOnContainerAndNode(Document doc, String container, 
     		String containerNamespace,

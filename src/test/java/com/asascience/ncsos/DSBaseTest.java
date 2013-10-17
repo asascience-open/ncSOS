@@ -429,6 +429,7 @@ public class DSBaseTest {
         writeOutput(parser.enhanceGETRequest(cdfDataset, baseQuery + bdss_1_query, bdss_1_set), writer);
         fileWriter(outputDir, "watlev_NOAA_NAVD_PRE.xml", writer, false);
         // test for expected values below
+        System.out.println(writer.toString());
         assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         assertTrue("missing component", writer.toString().contains("<sml:component name=\"Sensor watlev\">"));
 

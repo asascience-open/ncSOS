@@ -1,15 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.asascience.ncsos.outputformatter;
 
+import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import com.asascience.ncsos.util.XMLDomUtils;
+import org.jdom.*;
 
 /**
  * Provides common functions for classes that define the response outputs for various
@@ -20,7 +17,7 @@ import org.w3c.dom.Element;
  */
 public abstract class OutputFormatter {
 
-    private Map<String, String> nsToPrefix;
+    private HashMap<String, Namespace> namespaces;
     public static final String NCSOS_VERSION = "RC6";
     public static final String OBSERVATION = "Observation";
     public static final String OBSERVATION_COLLECTION = "ObservationCollection";
@@ -102,61 +99,31 @@ public abstract class OutputFormatter {
     public static final String CONTACT_LIST = "ContactList";
     public static final String COUNT = "Count";
     public static final String VALUES = "values";
-    private final static String OWS = "xmlns:ows";
-    private final static String GML = "xmlns:gml";
-    private final static String SOS = "xmlns:sos";
-    private final static String SML = "xmlns:sml";
-    private final static String SWE = "xmlns:swe";
-    private final static String OM = "xmlns:om";
-    private final static String SWE2 = "xmlns:swe2";
-    private final static String XLINK = "xmlns:xlink";
     protected Document document;
-    protected String OWS_NS;
-    protected String GML_NS;
-    protected String SOS_NS;
-    protected String SML_NS;
-    protected String SWE_NS;
-    protected String OM_NS;
-    protected String XLINK_NS;
-    protected String SWE2_NS;
 
     public OutputFormatter() {
-        nsToPrefix = new HashMap<String, String>();
-
-
+        this.document = XMLDomUtils.loadFile(getClass().getClassLoader().getResourceAsStream(this.getTemplateLocation()));
+        this.initNamespaces();
     }
 
-    public String getNamespacePrefix(String namespace) {
-        return nsToPrefix.get(namespace);
-
+    protected String getTemplateLocation() {
+        return null;
     }
 
-    protected Element createElementNS(String elemNs, String elemVal) {
-        Element elem = document.createElementNS(elemNs, elemVal);
-        elem.setPrefix(this.getNamespacePrefix(elemNs));
-        return elem;
+    public Element getRoot() {
+        return this.document.getRootElement();
     }
 
     protected void initNamespaces() {
-        if (document != null) {
-            Element root = document.getDocumentElement();
-            OM_NS = root.getAttribute(OM);
-            OWS_NS = root.getAttribute(OWS);
-            GML_NS = root.getAttribute(GML);
-            SOS_NS = root.getAttribute(SOS);
-            SML_NS = root.getAttribute(SML);
-            SWE_NS = root.getAttribute(SWE);
-            SWE2_NS = root.getAttribute(SWE2);
-            XLINK_NS = root.getAttribute(XLINK);
-            nsToPrefix.put(OM_NS, "om");
-            nsToPrefix.put(OWS_NS, "ows");
-            nsToPrefix.put(GML_NS, "gml");
-            nsToPrefix.put(SOS_NS, "sos");
-            nsToPrefix.put(SML_NS, "sml");
-            nsToPrefix.put(SWE_NS, "swe");
-            nsToPrefix.put(SWE2_NS, "swe2");
-            nsToPrefix.put(XLINK_NS, "xlink");
+        this.namespaces = new HashMap<String, Namespace>();
+        Element root = document.getRootElement();
+        for (Attribute a : (List<Attribute>) root.getAttributes()) {
+            this.namespaces.put(a.getNamespacePrefix().toLowerCase(), a.getNamespace());
         }
+    }
+
+    public Namespace getNamespace(String namespace) {
+        return namespaces.get(namespace.toLowerCase());
     }
 
     /**
@@ -176,5 +143,5 @@ public abstract class OutputFormatter {
      * Writes prepared output to the writer (usually will be a response stream from a http request
      * @param writer the stream where the output will be written to.
      */
-    public abstract void writeOutput(Writer writer);
+    public abstract void writeOutput(Writer writer) throws IOException;
 }

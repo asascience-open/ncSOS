@@ -39,20 +39,20 @@ public class Ioos10Handler extends BaseRequestHandler {
             for (String stname : this.getStationNames().values()) {
                 if (procedure.contains("sensor")) {
                     for (String senname : this.getSensorNames()) {
-                        validProcedure = BaseRequestHandler.getSensorGMLName(stname, senname);
+                        validProcedure = this.getSensorUrnName(stname, senname);
                         logger.debug("Comparing " + procedure + " to " + validProcedure);
                         if (procedure.equalsIgnoreCase(validProcedure))
                             return true;
                     }
                 } else {
-                    validProcedure = BaseRequestHandler.getGMLName(stname);
+                    validProcedure = this.getUrnName(stname);
                     logger.debug("Comparing " + procedure + " to " + validProcedure);
                     if (procedure.equalsIgnoreCase(validProcedure))
                         return true;
                 }
             }
         } else if (procedure.contains("network")) {
-            validProcedure = URN_BASE + "network:" + BaseRequestHandler.namingAuthority + ":all";
+            validProcedure = URN_BASE + "network:" + this.global_attributes.get("naming_authority") + ":all";
             logger.debug("Comparing " + procedure + " to " + validProcedure);
             if (procedure.equalsIgnoreCase(validProcedure))
                 return true;

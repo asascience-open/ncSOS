@@ -1,107 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sos:Capabilities     
-  xmlns:sos="http://www.opengis.net/sos/1.0" 
-  xmlns:ows="http://www.opengis.net/ows/1.1" 
-  xmlns:gml="http://www.opengis.net/gml" 
-  xmlns:om="http://www.opengis.net/om/1.0" 
-  xmlns:xlink="http://www.w3.org/1999/xlink" 
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-  xsi:schemaLocation="http://www.opengis.net/sos/1.0 
-    http://schemas.opengis.net/sos/1.0.0/sosAll.xsd" version="1.0.0">
-	<ows:ServiceIdentification>
-		<ows:Title> </ows:Title>
-		<ows:Abstract> </ows:Abstract>
-		<ows:Keywords>
-			<ows:Keyword> </ows:Keyword>
-		</ows:Keywords>
-		<ows:ServiceType codeSpace="http://opengeospatial.net">OGC:SOS</ows:ServiceType>
-		<ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
-		<ows:Fees>NONE</ows:Fees>
-		<ows:AccessConstraints></ows:AccessConstraints>
-	</ows:ServiceIdentification>
-	<ows:ServiceProvider>
-		<ows:ProviderName> </ows:ProviderName>
-		<ows:ProviderSite xlink:href=" "> </ows:ProviderSite>
-		<ows:ServiceContact>
-			<ows:IndividualName> </ows:IndividualName>
-			<ows:ContactInfo>
-				<ows:Phone>
-					<ows:Voice> </ows:Voice>
+<sos:Capabilities
+        xmlns:sos="http://www.opengis.net/sos/1.0"
+        xmlns:ows="http://www.opengis.net/ows/1.1"
+        xmlns:gml="http://www.opengis.net/gml"
+        xmlns:om="http://www.opengis.net/om/1.0"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.opengis.net/sos/1.0 http://schemas.opengis.net/sos/1.0.0/sosAll.xsd"
+        version="1.0.0">
+    <ows:ServiceIdentification>
+        <ows:Title>FILLME</ows:Title>
+        <ows:Abstract>FILLME</ows:Abstract>
+        <ows:Keywords />
+        <ows:ServiceType codeSpace="http://opengeospatial.net">OGC:SOS</ows:ServiceType>
+        <ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
+        <ows:Fees>NONE</ows:Fees>
+        <ows:AccessConstraints>NONE</ows:AccessConstraints>
+    </ows:ServiceIdentification>
+    <ows:ServiceProvider>
+        <ows:ProviderName />
+        <ows:ProviderSite xlink:href="SITE URL"/>
+        <ows:ServiceContact>
+            <ows:IndividualName>CONTACT NAME</ows:IndividualName>
+            <ows:ContactInfo>
+                <ows:Phone>
+                    <ows:Voice>N/A</ows:Voice>
                 </ows:Phone>
-				<ows:Address>
-					<ows:DeliveryPoint> </ows:DeliveryPoint>
-					<ows:City> </ows:City>
-					<ows:AdministrativeArea> </ows:AdministrativeArea>
-					<ows:PostalCode> </ows:PostalCode>
-					<ows:Country> </ows:Country>
-					<ows:ElectronicMailAddress> </ows:ElectronicMailAddress>
-				</ows:Address>
-			</ows:ContactInfo>
-		</ows:ServiceContact>
-	</ows:ServiceProvider>
-	<ows:OperationsMetadata>
-		<ows:Operation name="GetCapabilities">
-			<ows:DCP>
-				<ows:HTTP>
-					<ows:Get />
-				</ows:HTTP>
-			</ows:DCP>
-			<ows:Parameter name="Sections">
-				<ows:AllowedValues>
-				  <ows:Value>ServiceIdentification</ows:Value>
-				  <ows:Value>ServiceProvider</ows:Value>
-				  <ows:Value>OperationsMetadata</ows:Value>
-				  <ows:Value>Contents</ows:Value>
-				  <ows:Value>All</ows:Value>
-				</ows:AllowedValues>
-			</ows:Parameter>
-		</ows:Operation>
-		<ows:Operation name="GetObservation">
-			<ows:DCP>
-				<ows:HTTP>
-					<ows:Get />
-				</ows:HTTP>
-			</ows:DCP>
-			<ows:Parameter name="offering"/>
-			<ows:Parameter name="observedProperty"/>
-	
-		</ows:Operation>
-		<ows:Operation name="DescribeSensor">
-			<ows:DCP>
-				<ows:HTTP>
-					<ows:Get />
-				</ows:HTTP>
-			</ows:DCP>
-			<ows:Parameter name="outputFormat">
-			  <ows:AllowedValues>
-			    <!-- Specify the flavor of SML described by these templates -->
-			    <ows:Value>text/xml;subtype="sensorML/1.0.1/profiles/ioos_sos/1.0"</ows:Value>
-			  </ows:AllowedValues>
-			</ows:Parameter>
-			<ows:Parameter name="procedure" use="required"/>
-		</ows:Operation>
-		<ows:Parameter name="service">
-			<ows:AllowedValues>
-				<ows:Value>SOS</ows:Value>
-			</ows:AllowedValues>
-		</ows:Parameter>
-		<ows:Parameter name="version">
-			<ows:AllowedValues>
-				<ows:Value>1.0.0</ows:Value>
-			</ows:AllowedValues>
-		</ows:Parameter>
-     <ows:ExtendedCapabilities>
-       <gml:metaDataProperty xlink:title="ioosTemplateVersion" xlink:href="http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0">
-         <gml:version>1.0</gml:version>
-       </gml:metaDataProperty>
-       <gml:metaDataProperty xlink:title="softwareVersion" xlink:href="https://github.com/asascience-open/ncSOS/releases">
-         <gml:version>FILLME</gml:version>
-       </gml:metaDataProperty>
-     </ows:ExtendedCapabilities>
-	</ows:OperationsMetadata>
-	<sos:Contents>
-		<sos:ObservationOfferingList>
-			
-		</sos:ObservationOfferingList>
-	</sos:Contents>
+                <ows:Address>
+                    <ows:ElectronicMailAddress>N/A</ows:ElectronicMailAddress>
+                </ows:Address>
+            </ows:ContactInfo>
+        </ows:ServiceContact>
+    </ows:ServiceProvider>
+    <ows:OperationsMetadata>
+        <ows:Operation name="GetCapabilities">
+            <ows:DCP>
+                <ows:HTTP>
+                    <ows:Get />
+                </ows:HTTP>
+            </ows:DCP>
+            <ows:Parameter name="Sections">
+                <ows:AllowedValues>
+                    <ows:Value>ServiceIdentification</ows:Value>
+                    <ows:Value>ServiceProvider</ows:Value>
+                    <ows:Value>OperationsMetadata</ows:Value>
+                    <ows:Value>Contents</ows:Value>
+                    <ows:Value>All</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+        </ows:Operation>
+        <ows:Operation name="GetObservation">
+            <ows:DCP>
+                <ows:HTTP>
+                    <ows:Get />
+                </ows:HTTP>
+            </ows:DCP>
+            <ows:Parameter name="offering" />
+            <ows:Parameter name="observedProperty" />
+            <ows:Parameter name="procedure" />
+        </ows:Operation>
+        <ows:Operation name="DescribeSensor">
+            <ows:DCP>
+                <ows:HTTP>
+                    <ows:Get />
+                </ows:HTTP>
+            </ows:DCP>
+            <ows:Parameter name="outputFormat">
+                <ows:AllowedValues>
+                    <ows:Value>text/xml;subtype="sensorML/1.0.1/profiles/ioos_sos/1.0"</ows:Value>
+                </ows:AllowedValues>
+            </ows:Parameter>
+            <ows:Parameter name="procedure" use="required"/>
+        </ows:Operation>
+        <ows:Parameter name="service">
+            <ows:AllowedValues>
+                <ows:Value>SOS</ows:Value>
+            </ows:AllowedValues>
+        </ows:Parameter>
+        <ows:Parameter name="version">
+            <ows:AllowedValues>
+                <ows:Value>1.0.0</ows:Value>
+            </ows:AllowedValues>
+        </ows:Parameter>
+        <ows:ExtendedCapabilities>
+            <gml:metaDataProperty xlink:title="ioosTemplateVersion"
+                                  xlink:href="http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0">
+                <gml:version>1.0</gml:version>
+            </gml:metaDataProperty>
+            <gml:metaDataProperty xlink:title="softwareVersion" xlink:href="https://github.com/asascience-open/ncSOS/releases">
+                <gml:version>FILLME</gml:version>
+            </gml:metaDataProperty>
+        </ows:ExtendedCapabilities>
+    </ows:OperationsMetadata>
+    <sos:Contents>
+        <sos:ObservationOfferingList />
+    </sos:Contents>
 </sos:Capabilities>

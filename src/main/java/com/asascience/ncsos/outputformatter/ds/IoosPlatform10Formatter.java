@@ -10,9 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
-import org.w3c.dom.Node;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import org.jdom.*;
 
 /**
  *
@@ -40,10 +38,19 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
     private final static String IOOSURL = "http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0";
     private final static String OBSERVATION_TIME_RANGE = "observationTimeRange";
     private final static String OBS_TR_DEF = "http://mmisw.org/ont/ioos/definition/observationTimeRange";
+    private Namespace GML_NS,SML_NS,XLINK_NS,SWE_NS = null;
 
     public IoosPlatform10Formatter() {
         super();
-        loadTemplateXML(TEMPLATE_LOCATION);
+        this.GML_NS = this.getNamespace("gml");
+        this.SML_NS = this.getNamespace("sml");
+        this.XLINK_NS = this.getNamespace("xlink");
+        this.SWE_NS = this.getNamespace("swe");
+    }
+
+    @Override
+    public String getTemplateLocation() {
+        return TEMPLATE_LOCATION;
     }
 
     //<editor-fold defaultstate="collapsed" desc="public methods">
@@ -52,8 +59,7 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
      * @param description usually the description attribute value of a netcdf dataset
      */
     public void setDescriptionNode(String description) {
-        // get our description node and set its string content
-        document.getElementsByTagNameNS(GML_NS, DESCRIPTION).item(0).setTextContent(description);
+        this.getRoot().getChild(DESCRIPTION, this.GML_NS).setText(description);
     }
 
     /**
@@ -61,22 +67,7 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
      * @param name name (urn) of the station
      */
     public void setName(String name) {
-        document.getElementsByTagNameNS(GML_NS, NAME).item(0).setTextContent(name);
-    }
-
-    public void setBoundedBy(String srsName, String lowerCorner, String upperCorner) {
-        /*
-         * <gml:boundedBy>
-         *   <gml:Envelope srsName='srsName'>
-         *     <gml:lowerCorner>'lowerCorner'</gml:lowerCorner>
-         *     <gml:upperCorner>'upperCorner'</gml:upperCorner>
-         *   </gml:Envelope>
-         * </gml:boundedBy>
-         */
-        Element parent = (Element) this.document.getElementsByTagNameNS(GML_NS, BOUNDED_BY).item(0);
-        parent = addNewNode(parent, ENVELOPE, GML_NS, SRS_NAME, srsName);
-        addNewNode(parent, LOWER_CORNER, GML_NS, lowerCorner);
-        addNewNode(parent, UPPER_CORNER, GML_NS, upperCorner);
+        this.getRoot().getChild(NAME, this.GML_NS).setText(name);
     }
 
     /**
@@ -93,7 +84,7 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
          *   </sml:Term>
          * </sml:identifier>
          */
-        Element ident = addNewNode(IDENTIFIER_LIST, SML_NS, IDENTIFIER, SML_NS, NAME, name);
+        Element ident = addNewNode(IDENTIFIER_LIST, this.SML_NS, IDENTIFIER, this.SML_NS, NAME, name);
         ident = addNewNode(ident, TERM, SML_NS, DEFINITION, definition);
         addNewNode(ident, SML_VALUE, SML_NS, value);
     }
@@ -128,7 +119,7 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
          */
         Element parent = addNewNode(CLASSIFIERLIST, SML_NS, CLASSIFIER, SML_NS, NAME, name);
         parent = addNewNode(parent, TERM, SML_NS, DEFINITION, definition);
-        addNewNode(parent, CODE_SPACE, SML_NS, HREF, XLINK_NS, "http://mmisw.org/ont/ioos/" + codeSpace);
+        addNewNode(parent, CODE_SPACE, this.SML_NS, HREF, this.XLINK_NS, "http://mmisw.org/ont/ioos/" + codeSpace);
         addNewNode(parent, SML_VALUE, SML_NS, value);
     }
 
@@ -151,11 +142,10 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
         </sml:capabilities>     
         
          */
-        Element parentNode = (Element) this.document.getElementsByTagNameNS(SML_NS, SML_CAPABILITIES).item(0);
+        Element parentNode = this.getRoot().getChild(SML_CAPABILITIES, this.SML_NS);
         parentNode.setAttribute(NAME, OBSERVATION_TIME_RANGE);
-        Element parent = addNewNode(SML_CAPABILITIES, SML_NS, DATA_RECORD, SWE_NS);
+        Element parent = addNewNode(SML_CAPABILITIES, this.SML_NS, DATA_RECORD, this.SWE_NS);
         setValidTime(parent, timeBegin, timeEnd);
-
     }
 
     public void setValidTime(Element parent, String timeBegin, String timeEnd) {
@@ -178,11 +168,11 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
          *   </swe:SimpleDataRecord>
          * </sml:capabilities>
          */
-        Element parent = (Element) ((parentName != null) ? this.document.getElementsByTagNameNS(SML_NS, parentName).item(0) : this.getParentNode());
+        Element parent = ((parentName != null) ? this.getRoot().getChild(parentName,SML_NS) : this.getRoot());
         parent = addNewNode(parent, CAPABILITIES, SML_NS, NAME, name);
         parent = addNewNode(parent, SIMPLEDATARECORD, SWE_NS);
         parent = addNewNode(parent, META_DATA_PROP, GML_NS, TITLE, XLINK_NS, title);
-        parent.setAttributeNS(XLINK_NS, HREF, href);
+        parent.setAttribute(HREF, href, this.XLINK_NS);
     }
 
     /**
@@ -195,17 +185,15 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
     public void addContactNode(String role, String organizationName, HashMap<String, HashMap<String, String>> contactInfo, String onlineResource) {
         // add sml:member as the head node, in the ContactList
 //        document = XMLDomUtils.addNode(document, "sml:System", "sml:contact", "sml:history");
-        Element contact = (Element) getParentNode().getElementsByTagNameNS(SML_NS, CONTACT_LIST).item(0);
-        contact = this.addNewNode(contact, MEMBER, SML_NS);
-        contact.setAttributeNS(XLINK_NS, ROLE, role);
+        Element contact = getRoot().getChild(CONTACT_LIST, this.SML_NS);
+        contact = this.addNewNode(contact, MEMBER, this.SML_NS);
+        contact.setAttribute(ROLE, role, this.XLINK_NS);
         /* *** */
         Element parent = addNewNode(contact, RESPONSIBLE_PARTY, SML_NS);
         /* *** */
         addNewNode(parent, ORGANIZATION_NAME, SML_NS, organizationName);
         /* *** */
         parent = addNewNode(parent, CONTACTINFO, SML_NS);
-
-
 
         /* *** */
         // super nesting for great justice
@@ -244,18 +232,14 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
             </swe:SimpleDataRecord>
         </sml:capabilities>
         */
-        Element parent = getParentNode();
-        NodeList caps = parent.getElementsByTagNameNS(SML_NS, CAPABILITIES);
-        for (int i = 0; i < caps.getLength(); i++) {
-            Element pos = (Element)caps.item(i);
-            if (pos.hasAttribute(NAME) && (pos.getAttribute(NAME).equalsIgnoreCase("ioosServiceMetadata"))){
-                NodeList fields = pos.getElementsByTagNameNS(SWE_NS, "field");
-                for (int j = 0 ; j < fields.getLength() ; j++) {
-                    Element field = (Element)fields.item(j);
-                    if (field.hasAttribute("name") && field.getAttribute("name").equalsIgnoreCase("softwareVersion")) {
-                        Element txt = (Element) field.getElementsByTagNameNS(SWE_NS, "Text").item(0);
-                        Element val = (Element) txt.getElementsByTagNameNS(SWE_NS, "value").item(0);
-                        val.setTextContent(NCSOS_VERSION);
+        Element parent = getRoot();
+        List<Element> caps = parent.getChildren(CAPABILITIES, this.SML_NS);
+        for (Element e : caps) {
+            if (e.getAttribute(NAME) != null && (e.getAttributeValue(NAME).equalsIgnoreCase("ioosServiceMetadata"))){
+                List<Element> fields = e.getChildren("field", this.SWE_NS);
+                for (Element field : fields) {
+                    if (field.getAttribute(NAME) != null && field.getAttributeValue(NAME).equalsIgnoreCase("softwareVersion")) {
+                        field.getChild("Text", this.SWE_NS).getChild("value", this.SWE_NS).setText(NCSOS_VERSION);
                     }
                 }
             }
@@ -276,19 +260,17 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
             String nameSpace,
             String nameOfNewNode, Element parentNode,
             String textContentValue) {
-        Element retval = createElementNS(nameSpace, nameOfNewNode);
-
-        retval.setTextContent(textContentValue);
-        parentNode.appendChild(retval);
+        Element retval = new Element(nameOfNewNode, nameSpace);
+        retval.setText(textContentValue);
+        parentNode.addContent(retval);
         return retval;
     }
   
     private Element addNewNodeToParent(String nameSpace,
             String nameOfNewNode,
             Element parentNode) {
-        Element retval = createElementNS(nameSpace, nameOfNewNode);
-
-        parentNode.appendChild(retval);
+        Element retval = new Element(nameOfNewNode, nameSpace);
+        parentNode.addContent(retval);
         return retval;
     }
 
@@ -296,16 +278,16 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
     private Element addNewNodeToParentWithAttribute(
             String nameSpace,
             String nameOfNewNode, Element parentNode,
-            String attributeNS,
+            Namespace attributeNS,
             String attributeName, String attributeValue) {
-        Element retval = createElementNS(nameSpace, nameOfNewNode);
+        Element retval = new Element(nameOfNewNode, nameSpace);
 
         if (attributeNS != null) {
-            retval.setAttributeNS(attributeNS, attributeName, attributeValue);
+            retval.setAttribute(attributeName, attributeValue, attributeNS);
         } else {
             retval.setAttribute(attributeName, attributeValue);
         }
-        parentNode.appendChild(retval);
+        parentNode.addContent(retval);
         return retval;
     }
     
@@ -356,12 +338,11 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
          * </sml:output>
          */
         // find a component that has the attribute 'name' with its value same as 'compName'
-        NodeList ns = this.document.getElementsByTagNameNS(SML_NS, COMPONENT);
+        List<Element> ns = this.getRoot().getChildren(COMPONENT, this.SML_NS);
         Element parent = null;
-        for (int n = 0; n < ns.getLength(); n++) {
-            if (((Element) ns.item(n)).getAttribute(NAME).equalsIgnoreCase(compName)) {
-                parent = (Element) ns.item(n);
-                parent = (Element) parent.getElementsByTagNameNS(SML_NS, OUTPUT_LIST).item(0);
+        for (Element n : ns) {
+            if (n.getAttribute(NAME) != null && n.getAttributeValue(NAME).equalsIgnoreCase(compName)) {
+                parent = n.getChild(OUTPUT_LIST, this.SML_NS);
                 parent = addNewNode(parent, OUTPUT, SML_NS, NAME, outName);
                 parent = addNewNode(parent, QUANTITY, SWE_NS, DEFINITION, definition);
                 addNewNode(parent, UOM, SWE_NS, CODE, parseUnitString(uom));
