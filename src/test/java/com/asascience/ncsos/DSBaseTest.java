@@ -14,10 +14,11 @@ import java.util.HashMap;
 import org.apache.log4j.BasicConfigurator;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
+import org.jdom.*;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
@@ -36,14 +37,14 @@ public class DSBaseTest {
     private static String outputDir = null;
     private static String baseLocalDir = null;
     private static String exampleOutputDir = null;
-    private static final String station_Procedure = "procedure=urn:ioos:station:authority:";
+    private static final String station_Procedure = "procedure=urn:ioos:station:ncsos:";
     private static final String bdss_1_set = "resources/datasets/sura/watlev_NOAA_NAVD_PRE.nc";
     private static final String bdss_1_query = station_Procedure + "NOAA_8779748";
-    private static final String bdss_watlev_query = "procedure=urn:ioos:sensor:authority:NOAA_8724698:watlev";
+    private static final String bdss_watlev_query = "procedure=urn:ioos:sensor:ncsos:NOAA_8724698:watlev";
     private static final String bdss_1_query_bad = station_Procedure + "badstationname";
     private static final String bdss_2_set = "resources/datasets/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1/timeSeriesProfile-Multidimensional-MultipeStations-H.5.1.nc";
     private static final String bdss_2_query = station_Procedure + "Station1";
-    private static final String bdss_2_bad_sensor = "procedure=urn:ioos:sensor:authority:Station1:badsensor";
+    private static final String bdss_2_bad_sensor = "procedure=urn:ioos:sensor:ncsos:Station1:badsensor";
     private static final String bdst_1_set = "resources/datasets/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3/trajectory-Contiguous-Ragged-MultipleTrajectories-H.4.3.nc";
     private static final String bdst_1_query = station_Procedure + "Trajectory3";
     private static final String bdst_1_query_bad = station_Procedure + "Trajectory100";
@@ -112,7 +113,7 @@ public class DSBaseTest {
     private static final String bad_request_service_query = "request=DescribeSensor&service=s0s&version=1.0.0&outputFormat=";
     private static final String bad_request_service_misspelled_query = "request=DescribeSensor&servce=sos&version=1.0.0&outputFormat=";
     private static final String bad_request_procedure_query = "request=DescribeSensor&service=sos&version=1.0.0&procedure=urn:tds:station:trajectory2&outputFormat=";
-    private static final String bad_request_procedure_misspelled_query = "request=DescribeSensor&service=sos&version=1.0.0&procdure=urn:ioos:station:authority:trajectory2&outputFormat=";
+    private static final String bad_request_procedure_misspelled_query = "request=DescribeSensor&service=sos&version=1.0.0&procdure=urn:ioos:station:ncsos:trajectory2&outputFormat=";
     //single station (not aggregation)
     private static final String gliderDataSet = "resources/datasets/glider/penobscot-20131011T073911_rt0.nc";
     private static final String gliderDataRequest = "request=DescribeSensor&procedure=urn:ioos:network:edu.rutgers.marine:all&service=SOS&version=1.0.0&outputFormat=";
@@ -120,7 +121,7 @@ public class DSBaseTest {
     private static final String gliderDataSet_aggre ="resources/datasets/glider/timeagg.ncml";
     private static final String gliderDataRequest_aggre = "request=DescribeSensor&procedure=urn:ioos:network:edu.rutgers.marine:all&service=SOS&version=1.0.0&outputFormat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%2Fprofiles%2Fioos_sos%2F1.0%22";
 
-    private static String baseQuery = "request=DescribeSensor&service=sos&version=1.0.0&outputFormat=text%2Fxml%3Bsubtype%3D%22sensorML%2F1.0.1%2Fprofiles%2Fioos_sos%2F1.0%22";
+    private static String baseQuery = "request=DescribeSensor&service=sos&version=1.0.0";
 
     @BeforeClass
     public static void SetupEnviron() throws FileNotFoundException, UnsupportedEncodingException {
@@ -159,7 +160,8 @@ public class DSBaseTest {
         file = new File(exampleOutputDir);
         file.mkdirs();
 
-        baseQuery += URLEncoder.encode("text/xml;subtype=\"sensorML/1.0.1\"", "UTF-8") + "&";
+        baseQuery += "&outputFormat=";
+        baseQuery += URLEncoder.encode("text/xml;subtype=\"sensorML/1.0.1/profiles/ioos_sos/1.0\"", "UTF-8") + "&";
     }
 
     private static String getCurrentMethod() {
@@ -172,7 +174,7 @@ public class DSBaseTest {
         return "could not find test name";
     }
 
-    private void writeOutput(HashMap<String, Object> outMap, Writer write) {
+    private void writeOutput(HashMap<String, Object> outMap, Writer write) throws IOException {
         OutputFormatter output = (OutputFormatter) outMap.get("outputHandler");
         assertNotNull("got null output", output);
         output.writeOutput(write);
@@ -433,12 +435,12 @@ public class DSBaseTest {
         assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         assertTrue("missing component", writer.toString().contains("<sml:component name=\"Sensor watlev\">"));
 
-        int idxDocumentation = writer.toString().indexOf("<sml:documentation/>");
-        int idxhistory = writer.toString().indexOf("<sml:history/>");
+        int idxDocumentation = writer.toString().indexOf("<sml:documentation />");
+        int idxhistory = writer.toString().indexOf("<sml:history />");
         assertTrue("Invalid Documentation and history order", idxDocumentation < idxhistory);
 
 
-        assertTrue("station id not as expected", writer.toString().contains("<sml:value>urn:ioos:station:authority:NOAA_8779748</sml:value>"));
+        assertTrue("station id not as expected", writer.toString().contains("<sml:value>urn:ioos:station:ncsos:NOAA_8779748</sml:value>"));
         System.out.println("------End testBasicDescribeSensorStation------");
     }
 
@@ -483,7 +485,7 @@ public class DSBaseTest {
         writeOutput(parser.enhanceGETRequest(dataset, baseQuery + bdst_2_query, bdst_2_set), writer);
         fileWriter(outputDir, "trajectory-Indexed-Ragged-MultipleTrajectories-H.4.4.xml", writer, false);
         assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
-//        assertTrue("missing component", writer.toString().contains("<sml:identification xlink:href=\"urn:ioos:station:authority:Trajectory7::temperature\"/>"));
+//        assertTrue("missing component", writer.toString().contains("<sml:identification xlink:href=\"urn:ioos:station:ncsos:Trajectory7::temperature\"/>"));
 //        assertTrue("missing/invalid coords", writer.toString().contains("1990-01-01T09:00:00Z,29.956968307495117,-1.6200900077819824"));
         System.out.println("------End testBasicDescribeSensorTrajectory2------");
     }
@@ -530,6 +532,7 @@ public class DSBaseTest {
         System.out.println("------End testBasicDescribeSensorProfile2------");
     }
 
+    @Ignore
     @Test
     public void testBasicDescribeSensorSensor() throws IOException {
         System.out.println("\n------Start testBasicDescribeSensorSensor------");
@@ -540,7 +543,7 @@ public class DSBaseTest {
         fileWriter(outputDir, "watlev_NOAA_NAVD_PRE_watlev-sensor.xml", writer, false);
         assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
         assertTrue("missing/invalid identifier", writer.toString().contains("<sml:identifier name=\"coordinates\">"));
-        assertTrue("missing/invalid sensor id", writer.toString().contains("<sml:value>urn:ioos:sensor:authority:NOAA_8724698:watlev</sml:value>"));
+        assertTrue("missing/invalid sensor id", writer.toString().contains("<sml:value>urn:ioos:sensor:ncsos:NOAA_8724698:watlev</sml:value>"));
         // write as an example
         fileWriter(exampleOutputDir, "DescribeSensor-Sensor-sensorML1.0.1.xml", writer, false);
         System.out.println("------End testBasicDescribeSensorSensor------");
@@ -556,7 +559,7 @@ public class DSBaseTest {
         fileWriter(outputDir, "SST_Global_2x2deg_20120626_0000.xml", writer, false);
         assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
 //        assertTrue("missing/invalid identifier", writer.toString().contains("<sml:identifier name=\"coordinates\">"));
-//        assertTrue("missing/invalid sensor id", writer.toString().contains("<sml:value>urn:ioos:sensor:authority:NOAA_8724698::watlev</sml:value>"));
+//        assertTrue("missing/invalid sensor id", writer.toString().contains("<sml:value>urn:ioos:sensor:ncsos:NOAA_8724698::watlev</sml:value>"));
         // write as an example
         fileWriter(exampleOutputDir, "DescribeSensor-Grid-sensorML1.0.1.xml", writer, false);
         System.out.println("------End testBasicDescriptSensorGrid------");
@@ -716,12 +719,9 @@ public class DSBaseTest {
             assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
             // write as an example for TimeSeries
             fileWriter(exampleOutputDir, "DescribeSensor-TimeSeries-sensorML1.0.1.xml", writer, false);
-            assertFalse("contains invalid unit code", writer.toString().contains("<swe:uom code=\"S m-1\"/>"));
-            assertTrue("contains invalid unit code", writer.toString().contains("<swe:uom code=\"Sm-1\"/>"));
-
+            assertFalse("contains invalid unit code", writer.toString().contains("<swe:uom code=\"S m-1\" />"));
+            assertTrue("contains invalid unit code", writer.toString().contains("<swe:uom code=\"Sm-1\" />"));
             writer.close();
-
-
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {

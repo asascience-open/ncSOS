@@ -1,19 +1,19 @@
 package com.asascience.ncsos.outputformatter;
 
+import com.asascience.ncsos.util.XMLDomUtils;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.Namespace;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
 
-import com.asascience.ncsos.util.XMLDomUtils;
-import org.jdom.*;
-
 /**
  * Provides common functions for classes that define the response outputs for various
  * SOS requests. Most importantly, provides a common end point for writing the response
  * to a writer provided by the controller.
- * @author SCowan
- * @version 1.0.0
  */
 public abstract class OutputFormatter {
 
@@ -107,7 +107,7 @@ public abstract class OutputFormatter {
     }
 
     protected String getTemplateLocation() {
-        return null;
+        return "templates/exception.xml";
     }
 
     public Element getRoot() {
@@ -116,31 +116,35 @@ public abstract class OutputFormatter {
 
     protected void initNamespaces() {
         this.namespaces = new HashMap<String, Namespace>();
-        Element root = document.getRootElement();
-        for (Attribute a : (List<Attribute>) root.getAttributes()) {
-            this.namespaces.put(a.getNamespacePrefix().toLowerCase(), a.getNamespace());
+        Element root = this.getRoot();
+        this.namespaces.put(root.getNamespace().getPrefix().toLowerCase(), root.getNamespace());
+        for (Namespace a : (List<Namespace>) root.getAdditionalNamespaces()) {
+            this.namespaces.put(a.getPrefix().toLowerCase(), a);
         }
     }
 
     public Namespace getNamespace(String namespace) {
-        return namespaces.get(namespace.toLowerCase());
+        return this.namespaces.get(namespace.toLowerCase());
     }
 
     /**
      * Adds data from a formatted string to some container defined in the individual formatters.
+     *
      * @param dataFormattedString a csv string that usually follows the format of key=value,key1=value1,key2=value2,etc
-     *  'value' can be csvs as well, allowing for multiple values per key
+     *                            'value' can be csvs as well, allowing for multiple values per key
      */
     public abstract void addDataFormattedStringToInfoList(String dataFormattedString);
 
     /**
      * Sets up the outputter to write an exception when writeOutput is invoked.
+     *
      * @param message - message to display to the user
      */
     public abstract void setupExceptionOutput(String message);
 
     /**
      * Writes prepared output to the writer (usually will be a response stream from a http request
+     *
      * @param writer the stream where the output will be written to.
      */
     public abstract void writeOutput(Writer writer) throws IOException;

@@ -1,10 +1,12 @@
 package com.asascience.ncsos.util;
 
 import org.jdom.*;
+import org.jdom.filter.ElementFilter;
 import org.jdom.input.*;
 import org.jdom.output.*;
 import java.io.File;
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -29,8 +31,8 @@ public class XMLDomUtils {
         Document doc = null;
         try {
             // Build the document with SAX and Xerces, with validation
-            SAXBuilder builder = new SAXBuilder(true);
-            // Create the JSON document and return
+            SAXBuilder builder = new SAXBuilder(false);
+            // Create the XML document and return
             doc = builder.build(filestream);
         } catch (Exception e) {
             e.printStackTrace();
@@ -57,19 +59,28 @@ public class XMLDomUtils {
 
     private static Element getElementBaseOnContainerAndNode(Document doc, 
     							String container,
-    							String containerNamespace,
+    							Namespace containerNamespace,
     							String node,
-    							String nodeNamespace) {
+                                Namespace nodeNamespace) {
+        Element fstNode = doc.getRootElement().getChild(container, containerNamespace);
+        return fstNode.getChild(node, nodeNamespace);
+    }
 
-        Element fstNode = (Element)doc.getRootElement().getChild(container, Namespace.getNamespace(containerNamespace));
-        return fstNode.getChild(node, Namespace.getNamespace(nodeNamespace));
+    private static Element getElementBaseOnContainerAndNode(Document doc,
+                                                            String container,
+                                                            String node) {
+        Element fstNode = doc.getRootElement();
+        if (!fstNode.getName().equals(container)) {
+            fstNode = fstNode.getChild(container);
+        }
+        return fstNode.getChild(node);
     }
 
     public static String getNodeValue(Document doc, 
     								String container,
-    								String containerNamespace,
+    								Namespace containerNamespace,
     								String node,
-    								String nodeNamespace) {
+                                    Namespace nodeNamespace) {
         Element fstNmElmnt1 = getElementBaseOnContainerAndNode(doc, container,
         													containerNamespace, 
         													node,
@@ -82,7 +93,8 @@ public class XMLDomUtils {
     public static String getNodeValue(Document doc, 
     		String container,
     		String node) {
-    	return getNodeValue(doc, container, null, node, null);
+        Element fstNmElmnt1 = getElementBaseOnContainerAndNode(doc, container, node);
+        return fstNmElmnt1.getValue();
     }
 
     public static Document getExceptionDom() {
@@ -153,6 +165,20 @@ public class XMLDomUtils {
     	Element el = doc.getRootElement().getChild(nodeName, nodeNamespace);
     	el.setAttribute(attributeName, attributeValue, attributeNamespace);
     	return doc;
+    }
+
+    public static Element getNestedChild(Element base, String tagname, Namespace namespace) {
+        if (base.getName().equals(tagname) && base.getNamespace().equals(namespace)) {
+            return base;
+        } else {
+            for (Element e : (List<Element>)base.getChildren()) {
+                Element x = XMLDomUtils.getNestedChild(e, tagname, namespace);
+                if (x instanceof Element) {
+                    return x;
+                }
+            }
+        }
+        return null;
     }
 
 }

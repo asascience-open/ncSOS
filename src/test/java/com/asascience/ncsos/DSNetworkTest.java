@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.w3c.dom.Document;
+import org.jdom.*;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
@@ -36,7 +36,7 @@ public class DSNetworkTest {
     private static String exampleOutputDir = null;
     private static List<String> stationTests;
     private final static String systemSeparator = System.getProperty("file.separator").toString();
-    private static String query = "request=DescribeSensor&service=sos&version=1.0.0&procedure=urn:ioos:network:authority:all&outputFormat=";
+    private static String query = "request=DescribeSensor&service=sos&version=1.0.0&procedure=urn:ioos:network:ncsos:all&outputFormat=";
     
     private static  String dataSourceDirectory;
  
@@ -108,7 +108,7 @@ public class DSNetworkTest {
         return "could not find test name";
     }
      
-    private void writeOutput(HashMap<String, Object> outMap, Writer write) {
+    private void writeOutput(HashMap<String, Object> outMap, Writer write) throws IOException {
         OutputFormatter output = (OutputFormatter)outMap.get("outputHandler");
         assertNotNull("got null output", output);
         output.writeOutput(write);

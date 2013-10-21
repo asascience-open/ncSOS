@@ -89,8 +89,8 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
         try {
             if (this.stationVariable.getDimensions().size() == 1) {
                 Dimension dim = this.stationVariable.getDimension(0);
-                if (this.stationVariable.getDataType() == ucar.ma2.DataType.CHAR ||
-                        this.stationVariable.getDataType() == ucar.ma2.DataType.STRING || 
+                if (this.stationVariable.getEnumTypedef().getBaseType() == ucar.ma2.DataType.CHAR ||
+                        this.stationVariable.getEnumTypedef().getBaseType() == ucar.ma2.DataType.STRING ||
                         dim.getLength() < 2) {
                     // single station if the dataType is a char or string or the length of the dimension is 1
                     formatIdentificationSingleStation();
@@ -152,7 +152,7 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
         platform.addSmlClassifier("platformType", VocabDefinitions.GetIoosDefinition("platformType"), "platform", this.checkForRequiredValue("platform_type"));
         platform.addSmlClassifier("operatorSector", VocabDefinitions.GetIoosDefinition("operatorSector"), "sector", this.checkForRequiredValue("operator_sector"));
         platform.addSmlClassifier("publisher", VocabDefinitions.GetIoosDefinition("publisher"), "organization", this.checkForRequiredValue("publisher"));
-        platform.addSmlClassifier("parentNetwork", "http://mmisw.org/ont/ioos/definition/parentNetwork", "organization", (String)this.getGlobalAttribute("institution", ""));
+        platform.addSmlClassifier("parentNetwork", "http://mmisw.org/ont/ioos/definition/parentNetwork", "organization", (String)this.getGlobalAttribute("institution", "UNKNOWN"));
         
         // sponsor is optional
         String value = (String)this.getGlobalAttribute("sponsor");
@@ -184,11 +184,11 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
         HashMap<String, HashMap<String,String>> contactInfo = new HashMap<String, HashMap<String,String>>();
         String role = "http://mmisw.org/ont/ioos/definition/operator";
         String org = this.checkForRequiredValue("creator_name");
-        String url = (String)this.getGlobalAttribute("creator_url");
+        String url = (String)this.getGlobalAttribute("creator_url", "No global attribute 'creator_url' found.");
         HashMap<String, String> address = createAddressForContact("creator");
         contactInfo.put("address", address);
         HashMap<String, String> phone = new HashMap<String, String>();
-        phone.put("voice", (String)this.getGlobalAttribute("creator_phone"));
+        phone.put("voice", (String)this.getGlobalAttribute("creator_phone", "No global attribute 'creator_phone' found."));
         contactInfo.put("phone", phone);
         platform.addContactNode(role, org, contactInfo, url);
 
@@ -197,10 +197,10 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
 
         role = "http://mmisw.org/on/ioos/definition/publisher";
         org = this.checkForRequiredValue("publisher_name");
-        url = (String)this.getGlobalAttribute("publisher_url");
+        url = (String)this.getGlobalAttribute("publisher_url", "No global attribute 'publisher_url' found.");
         address = createAddressForContact("publisher");
         contactInfo.put("address", address);
-        phone.put("voice", (String)this.getGlobalAttribute("publisher_phone"));
+        phone.put("voice", (String)this.getGlobalAttribute("publisher_phone", "No global attribute 'publisher_phone' found."));
         contactInfo.put("phone", phone);
         platform.addContactNode(role, org, contactInfo, url);
     }

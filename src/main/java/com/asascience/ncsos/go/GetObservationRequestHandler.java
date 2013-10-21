@@ -1,6 +1,7 @@
 package com.asascience.ncsos.go;
 
 import com.asascience.ncsos.cdmclasses.*;
+import com.asascience.ncsos.gc.GetCapabilitiesRequestHandler;
 import com.asascience.ncsos.outputformatter.gc.GetCapsFormatter;
 import com.asascience.ncsos.outputformatter.go.Ioos10Formatter;
 import com.asascience.ncsos.outputformatter.go.OosTethysFormatter;
@@ -73,7 +74,7 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
             output = new Ioos10Formatter(this);
         } else {
             _log.error("Unknown/Unhandled responseFormat: " + responseFormat);
-            output = new GetCapsFormatter();
+            output = new GetCapsFormatter(new GetCapabilitiesRequestHandler(netCDFDataset));
             output.setupExceptionOutput("Could not recognize response format: " + responseFormat);
         }
 
@@ -90,7 +91,7 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
                 // make output an exception
                 _log.error("observed property - " + vars + " - was not found in the dataset");
                 // print exception and then return the doc
-                output = new GetCapsFormatter();
+                output = new GetCapsFormatter(new GetCapabilitiesRequestHandler(netCDFDataset));
                 output.setupExceptionOutput("observed property - " + vars + " - was not found in the dataset");
                 CDMDataSet = null;
                 return;
@@ -186,7 +187,7 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
             } else {
                 _log.error("Have a null CDMDataSet, this will cause a null reference exception!");
                 // print exception and then return the doc
-                output = new GetCapsFormatter();
+                output = new GetCapsFormatter(new GetCapabilitiesRequestHandler(netCDFDataset));
                 output.setupExceptionOutput("Null Dataset; could not recognize feature type");
                 CDMDataSet = null;
                 return;

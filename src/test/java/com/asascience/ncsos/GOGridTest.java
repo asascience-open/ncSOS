@@ -15,7 +15,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.w3c.dom.Document;
+import org.jdom.*;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
@@ -24,7 +24,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  */
 public class GOGridTest {
     
-    private static final String defaultAuthority = "authority";
+    private static final String defaultAuthority = "ncsos";
     
     private static final String sst_1 = "resources/datasets/satellite-sst/SST_Global_2x2deg_20120626_0000.nc";
     private static String sst_1_reqs = String.format("request=GetObservation&service=sos&version=1.0.0&lat=-52.0&lon=0.0&observedProperty=sst&offering=network-all&procedure=urn:ioos:station:%1$s:Grid0&eventtime=1990-01-01T00:00:00Z/2013-05-17T09:57:00.000-04:00&responseformat=", defaultAuthority);
@@ -243,17 +243,4 @@ public class GOGridTest {
             System.out.println("------END " + getCurrentMethod() + "------");
         }
     }
-    
-//    @Test
-//    public void testInsertClassNameHere() {
-//        System.out.println("\n------" + getCurrentMethod() + "------");
-//        
-//        try {
-//            
-//        } catch (IOException ex) {
-//            System.out.println(ex.getMessage());
-//        } finally {
-//            System.out.println("------END " + getCurrentMethod() + "------");
-//        }
-//    }
 }

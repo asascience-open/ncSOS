@@ -1,5 +1,7 @@
 package com.asascience.ncsos.outputformatter;
 
+import com.asascience.ncsos.go.GetObservationRequestHandler;
+import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +30,8 @@ public class BaseOutputFormatter extends OutputFormatter {
             this.tagNS = tagNS;
         }
     }
+    protected BaseRequestHandler handler = null;
+    protected boolean hasError;
     protected String DEFAULT_VALUE = "UNKNOWN";
     private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BaseOutputFormatter.class);
 
@@ -58,8 +62,8 @@ public class BaseOutputFormatter extends OutputFormatter {
          * </gml:boundedBy>
          */
         Namespace gmlns = this.getNamespace("gml");
-        Element bb = this.document.getRootElement().getChild("boundedBy", gmlns);
-        Element env = new org.jdom.Element("Envelope", gmlns);
+        Element bb = this.getRoot().getChild("boundedBy", gmlns);
+        Element env = new Element("Envelope", gmlns);
         env.setAttribute("srsName", srsName);
         env.getChild("lowerCorner", gmlns).setText(lowerCorner);
         env.getChild("upperCorner", gmlns).setText(upperCorner);
@@ -97,7 +101,11 @@ public class BaseOutputFormatter extends OutputFormatter {
             Namespace attrNS,
             String attrValue) {
         Element child = new Element(nodeName, nodeNS);
-        child.setAttribute(attrName, attrValue, attrNS);
+        if (attrNS == null) {
+            child.setAttribute(attrName, attrValue);
+        } else {
+            child.setAttribute(attrName, attrValue, attrNS);
+        }
         parent.addContent(child);
         return child;
     }
@@ -108,7 +116,7 @@ public class BaseOutputFormatter extends OutputFormatter {
                                  Namespace nodeNS,
                                  String attrName,
                                  String attrValue) {
-        Element parent = this.getRoot().getChild(parentName, parentNS);
+        Element parent = XMLDomUtils.getNestedChild(this.getRoot(), parentName, parentNS);
         return this.addNewNode(parent, nodeName, nodeNS, attrName, attrValue);
     }
 
@@ -116,7 +124,7 @@ public class BaseOutputFormatter extends OutputFormatter {
                                  Namespace parentNS,
                                  String nodeName,
                                  Namespace nodeNS) {
-        Element parent = this.getRoot().getChild(parentName, parentNS);
-        return this.addNewNode(this.getRoot(), nodeName, nodeNS);
+        Element parent = XMLDomUtils.getNestedChild(this.getRoot(), parentName, parentNS);
+        return this.addNewNode(parent, nodeName, nodeNS);
     }
 }

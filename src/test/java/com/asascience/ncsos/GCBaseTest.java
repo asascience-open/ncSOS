@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.w3c.dom.Document;
+import org.jdom.*;
 import ucar.nc2.constants.FeatureType;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.ft.FeatureDataset;
@@ -139,7 +139,7 @@ public class GCBaseTest {
         file.mkdirs();
     }
     
-    private void writeOutput(HashMap<String, Object> outMap, Writer write) {
+    private void writeOutput(HashMap<String, Object> outMap, Writer write) throws IOException {
         OutputFormatter output = (OutputFormatter)outMap.get("outputHandler");
         assertNotNull("got null output", output);
         output.writeOutput(write);
