@@ -5,8 +5,7 @@
  xmlns:om="http://www.opengis.net/om/1.0"
  xmlns:gml="http://www.opengis.net/gml"
  xmlns:swe2="http://www.opengis.net/swe/2.0"
- xmlns:swe = "http://www.opengis.net/swe/1.0.1"
- gml:id="SPOT5_DATA">
+ xmlns:swe = "http://www.opengis.net/swe/1.0.1">
     <gml:metaDataProperty xlink:title="disclaimer">
         <gml:GenericMetaData>
             <gml:description>
