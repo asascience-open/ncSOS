@@ -104,7 +104,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
             // Get the om:Observation element
             Element obsElement = this.getRoot().getChild("member", this.OM_NS).getChild("Observation", this.OM_NS);
             // Description
-            obsElement.getChild("description", this.GML_NS).setText(this.handler.global_attributes.get("description"));
+            obsElement.getChild("description", this.GML_NS).setText((String)this.handler.getGlobalAttribute("description", "No description"));
 
             Element samplingTime = new Element("samplingTime", this.OM_NS);
             samplingTime.addContent(this.createTimePeriodTree());
@@ -256,7 +256,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         Element metadata = new Element("metaDataProperty", this.GML_NS);
         Element name = new Element("name", this.GML_NS);
         name.setAttribute("codeSpace", "http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#discrete-sampling-geometries");
-        name.setText(this.handler.global_attributes.get("featureType"));
+        name.setText((String)this.handler.getGlobalAttribute("featureType"));
         metadata.addContent(name);
         fc.addContent(metadata);
 

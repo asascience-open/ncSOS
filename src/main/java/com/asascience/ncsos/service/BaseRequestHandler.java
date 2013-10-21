@@ -43,7 +43,7 @@ public abstract class BaseRequestHandler {
     private GridDataset gridDataSet = null;
     
     // Global Attributes
-    public HashMap<String, String> global_attributes;
+    protected HashMap<String, String> global_attributes;
     
     // Variables and other information commonly needed
     protected final NetcdfDataset netCDFDataset;
