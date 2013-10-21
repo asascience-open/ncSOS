@@ -12,10 +12,6 @@ import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
-/**
- *
- * @author SCowan
- */
 public class BaseOutputFormatter extends OutputFormatter {
 
     protected class SubElement {
@@ -34,6 +30,10 @@ public class BaseOutputFormatter extends OutputFormatter {
     }
     protected String DEFAULT_VALUE = "UNKNOWN";
     private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BaseOutputFormatter.class);
+
+    public BaseOutputFormatter() {
+        super();
+    }
 
     public void addDataFormattedStringToInfoList(String dataFormattedString) {
     }
@@ -64,27 +64,6 @@ public class BaseOutputFormatter extends OutputFormatter {
         env.getChild("lowerCorner", gmlns).setText(lowerCorner);
         env.getChild("upperCorner", gmlns).setText(upperCorner);
         bb.addContent(env);
-    }
-
-    protected void loadTemplateXML(String templateLocation) {
-        InputStream templateInputStream = null;
-        try {
-            templateInputStream = getClass().getClassLoader().getResourceAsStream(templateLocation);
-            this.document = XMLDomUtils.getTemplateDom(templateInputStream);
-
-            initNamespaces();
-        } catch (Exception ex) {
-            logger.error(ex.toString());
-        } finally {
-            if (templateInputStream != null) {
-                try {
-                    templateInputStream.close();
-                } catch (IOException e) {
-                    // ignore, closing..
-                    logger.error(e.toString());
-                }
-            }
-        }
     }
 
     protected Element addNewNode(Element parent, String nodeName, Namespace nodeNS) {

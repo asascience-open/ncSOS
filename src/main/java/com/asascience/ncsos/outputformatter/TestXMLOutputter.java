@@ -15,7 +15,10 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.w3c.dom.Document;
+import org.jdom.Document;
+import org.jdom.Namespace;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
@@ -75,12 +78,10 @@ public class TestXMLOutputter extends OutputFormatter {
      */
     public void writeOutput(Writer writer) {
         parseOuput();
-        
-        DOMSource domSource = new DOMSource(document);
-        Result result = new StreamResult(writer);
         try {
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.transform(domSource, result);
+            XMLOutputter xmlOutput = new XMLOutputter();
+            xmlOutput.setFormat(Format.getPrettyFormat());
+            xmlOutput.output(this.document, writer);
         } catch (Exception e) {
             System.out.println("Error in writing TestXMLOutputter - " + e.getMessage());
         }
@@ -111,54 +112,38 @@ public class TestXMLOutputter extends OutputFormatter {
         }
         
         document = parseTemplateXML();
-        initNamespaces();
-
         
         setCollectionMetadata();
-        
+
+        Namespace om_ns    = this.getNamespace("om");
+        Namespace gml_ns   = this.getNamespace("gml");
+
         for (int i=0; i<CDMDataset.getNumberOfStations(); i++) {
-            document = XMLDomUtils.addObservationElement(document, MEMBER, OM_NS, OBSERVATION, OM_NS);
+            document = XMLDomUtils.addObservationElement(document, MEMBER, om_ns, OBSERVATION, om_ns);
             // add description, name and bounded by
-            document = XMLDomUtils.addNode(document, OBSERVATION, OM_NS,
-            								DESCRIPTION, GML_NS, description, i);
-            document = XMLDomUtils.addNode(document, OBSERVATION, OM_NS,
-            								NAME, GML_NS, title, i);
+            document = XMLDomUtils.addNode(document, OBSERVATION, om_ns,
+            								DESCRIPTION, gml_ns, description, i);
+            document = XMLDomUtils.addNode(document, OBSERVATION, om_ns,
+            								NAME, gml_ns, title, i);
         }
     }
 
     private void setCollectionMetadata() {
-        System.out.println("setCollectionMetadata");
-        // set out collection header
-//        setSystemGMLID();
+
+        Namespace om_ns    = this.getNamespace("om");
+        Namespace gml_ns   = this.getNamespace("gml");
+        Namespace xlink_ns = this.getNamespace("xlink");
         
         // set metadata from generic metadata, um for now just use some place holder
-        document = XMLDomUtils.addNode(document, OBSERVATION_COLLECTION, OM_NS,
-        		META_DATA_PROP, GML_NS, MEMBER, OM_NS);
-        document =XMLDomUtils.setNodeAttribute(document, META_DATA_PROP, GML_NS, 
-        									   TITLE, XLINK_NS, "disclaimer");
+        document = XMLDomUtils.addNode(document, OBSERVATION_COLLECTION, om_ns,
+        		META_DATA_PROP, gml_ns, MEMBER, om_ns);
+        document =XMLDomUtils.setNodeAttribute(document, META_DATA_PROP, gml_ns,
+        									   TITLE, xlink_ns, "disclaimer");
         document = XMLDomUtils.addNode(document, 
-        							 META_DATA_PROP, GML_NS, 
-        							 GENERIC_META_DATA, GML_NS, 0);
-        document = XMLDomUtils.addNode(document,  GENERIC_META_DATA, GML_NS,
-        							  DESCRIPTION, GML_NS, "DISCLAIMER", 0);
+        							 META_DATA_PROP, gml_ns,
+        							 GENERIC_META_DATA, gml_ns, 0);
+        document = XMLDomUtils.addNode(document,  GENERIC_META_DATA, gml_ns,
+        							  DESCRIPTION, gml_ns, "DISCLAIMER", 0);
     }
-    
-    private void setSystemGMLID() {
 
-        StringBuilder b = new StringBuilder();
-        if (CDMDataset != null) {
-
-            for (int i = 0; i < CDMDataset.getNumberOfStations(); i++) {
-                b.append(CDMDataset.getStationName(i));
-                b.append(",");
-            }
-        }
-        // so below is odd, the 'getGMLID' function returns the string that is passed into it. I am assuming that there needs
-        // to be more to it than that, so leaving this in commented out until i can affirm what this should be
-//        XMLDomUtils.setObsGMLIDAttributeFromNode(document, "om:ObservationCollection", "gml:id", getGMLID("GML_ID_NAME"));
-        // meantime place-holder
-        XMLDomUtils.setObsGMLIDAttributeFromNode(document, 
-        			OBSERVATION_COLLECTION, OM_NS,
-        			ID, GML_NS, "GML_ID_NAME");
-    }
 }

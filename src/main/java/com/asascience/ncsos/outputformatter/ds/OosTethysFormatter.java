@@ -12,13 +12,9 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.bootstrap.DOMImplementationRegistry;
-import org.w3c.dom.ls.DOMImplementationLS;
-import org.w3c.dom.ls.LSOutput;
-import org.w3c.dom.ls.LSSerializer;
+import org.jdom.*;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 import ucar.nc2.VariableSimpleIF;
 import ucar.unidata.geoloc.LatLonRect;
 
@@ -45,30 +41,20 @@ public class OosTethysFormatter extends OutputFormatter {
     private final String TEMPLATE = "templates/DS_oostethys.xml";
     private final String uri;
     private final String query;
-    private DOMImplementationLS impl;
     private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(OosTethysFormatter.class);
+    private Namespace GML_NS,SML_NS,XLINK_NS,SWE_NS = null;
 
     /**
      * Creates a new formatter instance that uses the sosDescribeSensor.xml as a
      * template (found in the resources templates folder)
      */
     public OosTethysFormatter() {
-        this.document = parseTemplateXML();
-        initNamespaces();
-
+        super();
+        this.GML_NS = this.getNamespace("gml");
+        this.SML_NS = this.getNamespace("sml");
+        this.XLINK_NS = this.getNamespace("xlink");
+        this.SWE_NS = this.getNamespace("swe");
         this.uri = this.query = null;
-        try {
-            DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
-            impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
-        } catch (ClassNotFoundException ex) {
-            System.out.println(ex.getMessage());
-        } catch (InstantiationException ex) {
-            System.out.println(ex.getMessage());
-        } catch (IllegalAccessException ex) {
-            System.out.println(ex.getMessage());
-        } catch (ClassCastException ex) {
-            System.out.println(ex.getMessage());
-        }
     }
 
     /**
@@ -78,29 +64,23 @@ public class OosTethysFormatter extends OutputFormatter {
      * @param query the query of the request (used to construct hrefs for components)
      */
     public OosTethysFormatter(String uri, String query) {
-        document = parseTemplateXML();
-        this.uri = uri;
-        this.query = query;
-        try {
-            DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
-            impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
-        } catch (ClassNotFoundException ex) {
-            System.out.println(ex.getMessage());
-        } catch (InstantiationException ex) {
-            System.out.println(ex.getMessage());
-        } catch (IllegalAccessException ex) {
-            System.out.println(ex.getMessage());
-        } catch (ClassCastException ex) {
-            System.out.println(ex.getMessage());
-        }
+        super();
+        this.GML_NS = this.getNamespace("gml");
+        this.SML_NS = this.getNamespace("sml");
+        this.XLINK_NS = this.getNamespace("xlink");
+        this.SWE_NS = this.getNamespace("swe");
+        this.uri = this.query = null;
     }
 
+    public String getTemplateLocation() {
+        return this.TEMPLATE;
+    }
     /**
      * The w3c DOM document that details the response for the request
      * @return w3c DOM document
      */
     public Document getDocument() {
-        return document;
+        return this.document;
     }
 
     /*********************/
@@ -118,44 +98,14 @@ public class OosTethysFormatter extends OutputFormatter {
         document = XMLDomUtils.getExceptionDom(message);
     }
 
-    public void writeOutput(Writer writer) {
-        // output our document to the writer
-        try {
-            DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
-            DOMImplementationLS impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
-            // output our document to the writer
-            LSSerializer xmlSerializer = impl.createLSSerializer();
-            LSOutput xmlOut = impl.createLSOutput();
-            xmlSerializer.getDomConfig().setParameter("format-pretty-print", Boolean.TRUE);
-            xmlOut.setCharacterStream(writer);
-            xmlSerializer.write(this.document, xmlOut);
-        } catch (Exception ex2) {
-            _log.error(ex2.getMessage());
-        }
-    }
-
-    /**************************************************************************/
-    /*******************
-     * Private Methods *
-     *******************/
-    private Document parseTemplateXML() {
-        InputStream templateInputStream = null;
-        try {
-            templateInputStream = getClass().getClassLoader().getResourceAsStream(TEMPLATE);
-            return XMLDomUtils.getTemplateDom(templateInputStream);
-        } finally {
-            if (templateInputStream != null) {
-                try {
-                    templateInputStream.close();
-                } catch (IOException e) {
-                    // ignore, closing..
-                }
-            }
-        }
+    public void writeOutput(Writer writer) throws IOException {
+        XMLOutputter xmlOutput = new XMLOutputter();
+        xmlOutput.setFormat(Format.getPrettyFormat());
+        xmlOutput.output(this.document, writer);
     }
 
     private Element getParentNode() {
-        return (Element) document.getElementsByTagNameNS(SML_NS, SYSTEM).item(0);
+        return this.getRoot().getChild(SYSTEM, this.SML_NS);
     }
 
     private String joinArray(String[] arrayToJoin, String adjoiningChar) {
@@ -168,17 +118,16 @@ public class OosTethysFormatter extends OutputFormatter {
         return retval.toString();
     }
 
-    private Element addNewNodeToParent(String nameSpace,
+    private Element addNewNodeToParent(Namespace nameSpace,
             String nameOfNewNode,
             Element parentNode) {
-        Element retval = createElementNS(nameSpace, nameOfNewNode);
-
-        parentNode.appendChild(retval);
+        Element retval = new Element(nameOfNewNode, nameSpace);
+        parentNode.addContent(retval);
         return retval;
     }
 
     private Element addNewNodeToParentWithAttribute(
-            String nameSpace,
+            Namespace nameSpace,
             String nameOfNewNode, Element parentNode,
             String attributeName, String attributeValue) {
 
@@ -188,29 +137,23 @@ public class OosTethysFormatter extends OutputFormatter {
     }
 
     private Element addNewNodeToParentWithAttribute(
-            String nameSpace,
+            Namespace nameSpace,
             String nameOfNewNode, Element parentNode,
-            String attributeNS,
+            Namespace attributeNS,
             String attributeName, String attributeValue) {
-        Element retval = createElementNS(nameSpace, nameOfNewNode);
-
-        if (attributeNS != null) {
-            retval.setAttributeNS(attributeNS, attributeName, attributeValue);
-        } else {
-            retval.setAttribute(attributeName, attributeValue);
-        }
-        parentNode.appendChild(retval);
+        Element retval = new Element(nameOfNewNode, nameSpace);
+        retval.setAttribute(attributeName, attributeValue, attributeNS);
+        parentNode.addContent(retval);
         return retval;
     }
 
     private Element addNewNodeToParentWithTextValue(
-            String nameSpace,
+            Namespace nameSpace,
             String nameOfNewNode, Element parentNode,
             String textContentValue) {
-        Element retval = createElementNS(nameSpace, nameOfNewNode);
-
-        retval.setTextContent(textContentValue);
-        parentNode.appendChild(retval);
+        Element retval = new Element(nameOfNewNode, nameSpace);
+        retval.setText(textContentValue);
+        parentNode.addContent(retval);
         return retval;
     }
 
@@ -241,8 +184,8 @@ public class OosTethysFormatter extends OutputFormatter {
      * @param id usually a string following the format "station-[station_name]" (or sensor)
      */
     public void setSystemId(String id) {
-        Element system = (Element) document.getElementsByTagNameNS(SML_NS, "System").item(0);
-        system.setAttributeNS(GML_NS, ID, id);
+        Element system = (Element) this.getRoot().getChild("System", SML_NS);
+        system.setAttribute(ID, id, GML_NS);
     }
 
     /**
@@ -251,7 +194,7 @@ public class OosTethysFormatter extends OutputFormatter {
      */
     public void setDescriptionNode(String description) {
         // get our description node and set its string content
-        document.getElementsByTagNameNS(GML_NS, DESCRIPTION).item(0).setTextContent(DESCRIPTION);
+        this.getRoot().getChild(DESCRIPTION, GML_NS).setText(DESCRIPTION);
     }
 
     /**
@@ -259,14 +202,14 @@ public class OosTethysFormatter extends OutputFormatter {
      * @param name name (urn) of the station
      */
     public void setName(String name) {
-        document.getElementsByTagNameNS(GML_NS, NAME).item(0).setTextContent(NAME);
+        this.getRoot().getChild(NAME, GML_NS).setText(NAME);
     }
 
     /**
      * Removes the gml:description node from the xml document
      */
     public void deleteDescriptionNode() {
-        getParentNode().removeChild(getParentNode().getElementsByTagNameNS(GML_NS, DESCRIPTION).item(0));
+        getParentNode().removeContent(getParentNode().getChild(DESCRIPTION, GML_NS));
     }
 
     /**
@@ -284,7 +227,7 @@ public class OosTethysFormatter extends OutputFormatter {
             return;
         }
         // get our Identifier List and add nodes to it
-        Element pList = (Element) document.getElementsByTagNameNS(SML_NS, IDENTIFIER_LIST).item(0);
+        Element pList = this.getRoot().getChild(IDENTIFIER_LIST, SML_NS);
         for (int i = 0; i < names.length; i++) {
             Element parent = addNewNodeToParentWithAttribute(SML_NS, IDENTIFIER, pList, NAME, names[i]);
             parent = addNewNodeToParentWithAttribute(SML_NS, TERM, parent, DEFINITION, definitions[i]);
@@ -306,8 +249,7 @@ public class OosTethysFormatter extends OutputFormatter {
          *   </sml:Term>
          * </sml:identifier>
          */
-        Element parent = (Element) document.getElementsByTagNameNS(SML_NS, IDENTIFIER_LIST).item(0);
-
+        Element parent = (Element) this.getRoot().getChild(IDENTIFIER_LIST, SML_NS);
         Element ident = addNewNodeToParentWithAttribute(SML_NS, IDENTIFIER, parent, NAME, name);
         ident = addNewNodeToParentWithAttribute(SML_NS, TERM, ident, DEFINITION, definition);
         addNewNodeToParentWithTextValue(SML_NS, SML_VALUE, ident, value);
@@ -317,7 +259,7 @@ public class OosTethysFormatter extends OutputFormatter {
      * Removes the sml:identification node from the xml document
      */
     public void deleteIdentificationNode() {
-        getParentNode().removeChild(getParentNode().getElementsByTagNameNS(SML_NS, IDENTIFICATION).item(0));
+        getParentNode().removeContent(getParentNode().getChild(IDENTIFICATION, SML_NS));
     }
 
     /**
@@ -327,7 +269,7 @@ public class OosTethysFormatter extends OutputFormatter {
      * @param classifierValue value of the classification (eg 'GLIDER')
      */
     public void addToClassificationNode(String classifierName, String definition, String classifierValue) {
-        Element parent = (Element) getParentNode().getElementsByTagNameNS(SML_NS, CLASSIFIERLIST).item(0);
+        Element parent = (Element) getParentNode().getChild(CLASSIFIERLIST, SML_NS);
         parent = addNewNodeToParentWithAttribute(SML_NS, CLASSIFIER, parent, NAME, classifierName);
         parent = addNewNodeToParentWithAttribute(SML_NS, TERM, parent, DEFINITION, definition);
         addNewNodeToParentWithTextValue(SML_NS, SML_VALUE, parent, classifierValue);
@@ -349,7 +291,7 @@ public class OosTethysFormatter extends OutputFormatter {
          *   </sml:Term>
          * </sml:classifier>
          */
-        Element parent = (Element) document.getElementsByTagNameNS(SML_NS, CLASSIFIERLIST).item(0);
+        Element parent = (Element) this.getRoot().getChild(CLASSIFIERLIST, SML_NS);
         parent = addNewNodeToParentWithAttribute(SML_NS, CLASSIFIER, parent, NAME, name);
         parent = addNewNodeToParentWithAttribute(SML_NS, "Term", parent, DEFINITION, definition);
         addNewNodeToParentWithAttribute(SML_NS, CODE_SPACE, parent,
@@ -361,7 +303,7 @@ public class OosTethysFormatter extends OutputFormatter {
      * Removes the sml:classification node from the xml document
      */
     public void deleteClassificationNode() {
-        getParentNode().removeChild(getParentNode().getElementsByTagNameNS(SML_NS, "classification").item(0));
+        getParentNode().removeContent(getParentNode().getChild("classification", SML_NS));
     }
 
     /**
@@ -376,7 +318,7 @@ public class OosTethysFormatter extends OutputFormatter {
          *   <gml:endPosition>'timeEnd'</gml:endPosition>
          * </gml:TimePeriod>
          */
-        Element parent = (Element) document.getElementsByTagNameNS(SML_NS, VALID_TIME).item(0);
+        Element parent = this.getRoot().getChild(VALID_TIME, SML_NS);
         parent = addNewNodeToParent(GML_NS, TIME_PERIOD, parent);
         addNewNodeToParentWithTextValue(GML_NS, BEGIN_POSITION, parent, timeBegin);
         addNewNodeToParentWithTextValue(GML_NS, END_POSITION, parent, timeEnd);
@@ -400,7 +342,7 @@ public class OosTethysFormatter extends OutputFormatter {
         parent = addNewNodeToParentWithAttribute(SML_NS, "capabilities", parent, NAME, name);
         parent = addNewNodeToParent(SWE_NS, "SimpleDataRecord", parent);
         parent = addNewNodeToParentWithAttribute(GML_NS, META_DATA_PROP, parent, XLINK_NS, TITLE, title);
-        parent.setAttributeNS(XLINK_NS, HREF, href);
+        parent.setAttribute(HREF, href, XLINK_NS);
     }
 
     /**
@@ -413,14 +355,14 @@ public class OosTethysFormatter extends OutputFormatter {
     public void addContactNode(String role, String organizationName, HashMap<String, HashMap<String, String>> contactInfo, String onlineResource) {
         // setup and and insert a contact node (after history)
         document = XMLDomUtils.addNode(document, SYSTEM, SML_NS, CONTACT, SML_NS, HISTORY, SML_NS);
-        NodeList contacts = getParentNode().getElementsByTagNameNS(SML_NS, CONTACT);
+        List<Element> contacts = getParentNode().getChildren(CONTACT, SML_NS);
         Element contact = null;
-        for (int i = 0; i < contacts.getLength(); i++) {
-            if (!contacts.item(i).hasAttributes()) {
-                contact = (Element) contacts.item(i);
+        for (Element e : contacts) {
+            if (e.getAttributes().size() > 0) {
+                contact = e;
             }
         }
-        contact.setAttributeNS(XLINK_NS, "role", role);
+        contact.setAttribute("role", role, XLINK_NS);
         /* *** */
         Element parent = addNewNodeToParent(SML_NS, "ResponseibleParty", contact);
         /* *** */
@@ -455,7 +397,7 @@ public class OosTethysFormatter extends OutputFormatter {
      * Removes the first contact node instance from the xml document
      */
     public void deleteContactNodeFirst() {
-        getParentNode().removeChild(getParentNode().getElementsByTagNameNS(SML_NS, CONTACT).item(0));
+        getParentNode().removeContent(getParentNode().getChild(CONTACT, SML_NS));
     }
 
     /**
@@ -463,15 +405,15 @@ public class OosTethysFormatter extends OutputFormatter {
      * @param history the Attribute value of the 
      */
     public void setHistoryEvents(String history) {
-        Element parent = (Element) document.getElementsByTagNameNS(SML_NS, HISTORY).item(0);
-        parent.setTextContent(history);
+        Element parent = this.getRoot().getChild(HISTORY, SML_NS);
+        parent.setText(history);
     }
 
     /**
      * Removes the sml:history node from the xml document
      */
     public void deleteHistoryNode() {
-        getParentNode().removeChild(getParentNode().getElementsByTagNameNS(SML_NS, HISTORY).item(0));
+        getParentNode().removeContent(getParentNode().getChild(HISTORY, SML_NS));
     }
 
     public void setSmlLocation(String srsName, String pos) {
@@ -482,7 +424,7 @@ public class OosTethysFormatter extends OutputFormatter {
          *   </gml:Point>
          * </sml:location
          */
-        Element parent = (Element) this.document.getElementsByTagNameNS(SML_NS, LOCATION).item(0);
+        Element parent = this.getRoot().getChild(LOCATION, SML_NS);
         parent = addNewNodeToParentWithAttribute(GML_NS, "Point", parent, SRS_NAME, srsName);
         addNewNodeToParentWithTextValue(GML_NS, POS, parent, pos);
     }
@@ -500,7 +442,7 @@ public class OosTethysFormatter extends OutputFormatter {
         if (coords.length < 1) {
             return;
         }
-        Element parent = (Element) getParentNode().getElementsByTagNameNS(SML_NS, LOCATION).item(0);
+        Element parent = (Element) getParentNode().getChild(LOCATION, SML_NS);
 
         parent = addNewNodeToParentWithAttribute(GML_NS, LINE_STRING, parent, SRS_NAME, srs);
         parent = addNewNodeToParentWithAttribute(GML_NS, "posList", parent, "srsDimension", "2");
@@ -513,7 +455,7 @@ public class OosTethysFormatter extends OutputFormatter {
                 coordsString += coords[i][0] + " " + coords[i][1] + "\n";
             }
         }
-        parent.setTextContent(coordsString);
+        parent.setText(coordsString);
     }
 
     /**
@@ -534,7 +476,7 @@ public class OosTethysFormatter extends OutputFormatter {
         if (coords.length < 1) {
             return;
         }
-        Element parent = (Element) getParentNode().getElementsByTagNameNS(SML_NS, LOCATION).item(0);
+        Element parent = (Element) getParentNode().getChild(LOCATION, SML_NS);
 
         parent = addNewNodeToParentWithAttribute(GML_NS, LINE_STRING, parent, SRS_NAME, srs);
         parent = addNewNodeToParentWithAttribute(GML_NS, "posList", parent, "srsDimension", "3");
@@ -546,7 +488,7 @@ public class OosTethysFormatter extends OutputFormatter {
                 coordsString += coords[i][0] + " " + coords[i][1] + " " + coords[i][2] + "\n";
             }
         }
-        parent.setTextContent(coordsString);
+        parent.setText(coordsString);
     }
 
     public void setOrderedLocationNode3Dimension(String stationName, double[][] coords) {
@@ -558,7 +500,7 @@ public class OosTethysFormatter extends OutputFormatter {
             return;
         }
 
-        Element parent = (Element) getParentNode().getElementsByTagNameNS(SML_NS, LOCATION).item(0);
+        Element parent = (Element) getParentNode().getChild(LOCATION, SML_NS);
 
         parent = addNewNodeToParentWithAttribute(GML_NS, "LineString", parent, "srsName", srs);
         parent = addNewNodeToParentWithAttribute(GML_NS, "posList", parent, "srsDimension", "3");
@@ -577,7 +519,7 @@ public class OosTethysFormatter extends OutputFormatter {
             coordsString += depthOrdered.get(key)[0] + " " + depthOrdered.get(key)[1] + " " + key + "\n";
         }
 
-        parent.setTextContent(coordsString);
+        parent.setText(coordsString);
     }
 
     /**
@@ -588,7 +530,7 @@ public class OosTethysFormatter extends OutputFormatter {
      * @deprecated 
      */
     public void setLocationNode(String stationName, double[] coords) {
-        Element parent = (Element) getParentNode().getElementsByTagNameNS(SML_NS, LOCATION).item(0);
+        Element parent = (Element) getParentNode().getChild(LOCATION, SML_NS);
 
         parent = addNewNodeToParentWithAttribute(GML_NS, "Point", parent, GML_NS, ID,
                 "STATION-LOCATION-" + stationName);
@@ -607,7 +549,7 @@ public class OosTethysFormatter extends OutputFormatter {
             throw new IllegalArgumentException("lowerPoint or upperPoint are not valid");
         }
 
-        Element parent = (Element) getParentNode().getElementsByTagNameNS(SML_NS, LOCATION).item(0);
+        Element parent = (Element) getParentNode().getChild(LOCATION, SML_NS);
 
         parent = addNewNodeToParent(GML_NS, BOUNDED_BY, parent);
         parent = addNewNodeToParentWithAttribute(GML_NS, ENVELOPE, parent, SRS_NAME, "");
@@ -619,7 +561,7 @@ public class OosTethysFormatter extends OutputFormatter {
      * Removes the sml:location node from the xml document
      */
     public void deleteLocationNode() {
-        getParentNode().removeChild(getParentNode().getElementsByTagNameNS(SML_NS, LOCATION).item(0));
+        getParentNode().removeContent(getParentNode().getChild(LOCATION, SML_NS));
     }
 
     /**
@@ -629,24 +571,24 @@ public class OosTethysFormatter extends OutputFormatter {
      */
     public void setComponentsNode(List<VariableSimpleIF> dataVariables, String procedure) {
         // iterate through our list and create the node
-        Element parent = (Element) document.getElementsByTagNameNS(SML_NS, "ComponentList").item(0);
+        Element parent = (Element) this.getRoot().getChild("ComponentList", SML_NS);
 
         for (int i = 0; i < dataVariables.size(); i++) {
             String fName = dataVariables.get(i).getFullName();
             // component node
-            Element component = createElementNS(SML_NS, COMPONENT);
+            Element component = new Element(COMPONENT, SML_NS);
 
             component.setAttribute(NAME, SENSOR_ + fName);
             // system node
-            Element system = createElementNS(SML_NS, SYSTEM);
+            Element system = new Element(SYSTEM, SML_NS);
 
-            system.setAttributeNS(GML_NS, ID, SENSOR_WITH_SPACER + fName);
+            system.setAttribute(ID, SENSOR_WITH_SPACER + fName, GML_NS);
             // identification node
-            Element ident = createElementNS(SML_NS, IDENTIFICATION);
+            Element ident = new Element(IDENTIFICATION, SML_NS);
 
-            ident.setAttributeNS(XLINK_NS, HREF, procedure.replaceAll(":station:", ":sensor:") + ":" + fName);
+            ident.setAttribute(HREF, procedure.replaceAll(":station:", ":sensor:") + ":" + fName, XLINK_NS);
             // documentation (url) node
-            Element doc = createElementNS(SML_NS, DOCUMENTATION);
+            Element doc = new Element(DOCUMENTATION, SML_NS);
 
             // need to construct url for sensor request
             String url = this.uri;
@@ -660,17 +602,17 @@ public class OosTethysFormatter extends OutputFormatter {
             }
             // rejoin
             url += "?" + joinArray(reqParams, "&");
-            doc.setAttributeNS(XLINK_NS, HREF, url);
+            doc.setAttribute(HREF, url, XLINK_NS);
             // description
-            Element desc = createElementNS(GML_NS, DESCRIPTION);
+            Element desc = new Element(DESCRIPTION, GML_NS);
 
-            desc.setTextContent(dataVariables.get(i).getDescription());
+            desc.setText(dataVariables.get(i).getDescription());
             // add all nodes
-            system.appendChild(ident);
-            system.appendChild(doc);
-            system.appendChild(desc);
-            component.appendChild(system);
-            parent.appendChild(component);
+            system.addContent(ident);
+            system.addContent(doc);
+            system.addContent(desc);
+            component.addContent(system);
+            parent.addContent(component);
         }
     }
 
@@ -688,7 +630,7 @@ public class OosTethysFormatter extends OutputFormatter {
          * </sml:component>
          */
         // add to the <sml:ComponentList> node
-        Element parent = (Element) this.document.getElementsByTagNameNS(SML_NS, COMPONENT_LIST).item(0);
+        Element parent = (Element) this.getRoot().getChild(COMPONENT_LIST, SML_NS);
         parent = addNewNodeToParentWithAttribute(SML_NS, COMPONENT, parent, NAME, compName);
         parent = addNewNodeToParentWithAttribute(SML_NS, SYSTEM, parent, GML_NS, ID, compId);
         addNewNodeToParentWithTextValue(GML_NS, DESCRIPTION, parent, description);
@@ -697,17 +639,17 @@ public class OosTethysFormatter extends OutputFormatter {
         parent = addNewNodeToParent(SML_NS, OUTPUTS, parent);
         addNewNodeToParent(SML_NS, OUTPUT_LIST, parent);
     }
-
+    /*
     public void addSmlOuptutToComponent(String compName, String outName, String definition, String uom) {
-        /*
+
          * <sml:output name='outName'>
          *   <swe:Quantity definition='definition'>
          *     <swe:uom code='degC' />
          *   </swe:Quantity>
          * </sml:output>
-         */
+
         // find a component that has the attribute 'name' with its value same as 'compName'
-        NodeList ns = this.document.getElementsByTagNameNS(SML_NS, COMPONENT);
+        NodeList ns = this.getRoot()..getElementsByTagNameNS(SML_NS, COMPONENT);
         Element parent = null;
         for (int n = 0; n < ns.getLength(); n++) {
             if (((Element) ns.item(n)).getAttribute(NAME).equalsIgnoreCase(compName)) {
@@ -721,12 +663,13 @@ public class OosTethysFormatter extends OutputFormatter {
             }
         }
     }
+    */
 
     /**
      * Removes the components node from the xml document
      */
     public void deleteComponentsNode() {
-        getParentNode().removeChild(getParentNode().getElementsByTagNameNS(SML_NS, "components").item(0));
+        getParentNode().removeContent(getParentNode().getChild("components", SML_NS));
     }
 
     /**
@@ -735,7 +678,7 @@ public class OosTethysFormatter extends OutputFormatter {
      * @deprecated 
      */
     public void setPositionName(String name) {
-        Element position = (Element) getParentNode().getElementsByTagNameNS(SML_NS, "position").item(0);
+        Element position = (Element) getParentNode().getChild("position", SML_NS);
         position.setAttribute(NAME, name);
     }
 
@@ -748,7 +691,7 @@ public class OosTethysFormatter extends OutputFormatter {
      * @deprecated 
      */
     public void setPositionDataDefinition(HashMap<String, HashMap<String, String>> fieldMap, String decimalSeparator, String blockSeparator, String tokenSeparator) {
-        Element dataDefinition = (Element) getParentNode().getElementsByTagNameNS(SML_NS, "dataDefinition").item(0);
+        Element dataDefinition = (Element) getParentNode().getChild("dataDefinition", SML_NS);
         // add data definition block
         Element parent = addNewNodeToParent(SWE_NS, "DataBlockDefinition", dataDefinition);
         // add components with "whenWhere"
@@ -789,7 +732,7 @@ public class OosTethysFormatter extends OutputFormatter {
             }
         }
         // lastly we need to add our encoding
-        parent = (Element) getParentNode().getElementsByTagNameNS(SML_NS, "dataDefinition").item(0);
+        parent = (Element) getParentNode().getChild("dataDefinition", SML_NS);
         // add encoding node
         parent = addNewNodeToParent(SWE_NS, "encoding", parent);
         // add TextBlock node with above attributes
@@ -806,7 +749,7 @@ public class OosTethysFormatter extends OutputFormatter {
      */
     public void setPositionValue(String valueText) {
         // simple, just add values with text content of parameter
-        Element parent = (Element) getParentNode().getElementsByTagNameNS(SML_NS, "position").item(0);
+        Element parent = (Element) getParentNode().getChild("position", SML_NS);
         addNewNodeToParentWithTextValue(SML_NS, "values", parent, valueText);
     }
 
@@ -815,7 +758,7 @@ public class OosTethysFormatter extends OutputFormatter {
      * @deprecated 
      */
     public void deletePosition() {
-        getParentNode().removeChild(getParentNode().getElementsByTagNameNS(SML_NS, "position").item(0));
+        getParentNode().removeContent(getParentNode().getChild("position", SML_NS));
     }
 
     /**
@@ -823,7 +766,7 @@ public class OosTethysFormatter extends OutputFormatter {
      * @deprecated 
      */
     public void deleteTimePosition() {
-        getParentNode().removeChild(getParentNode().getElementsByTagNameNS(SML_NS, "timePosition").item(0));
+        getParentNode().removeContent(getParentNode().getChild("timePosition", SML_NS));
     }
 
     /**
@@ -835,7 +778,7 @@ public class OosTethysFormatter extends OutputFormatter {
      * @deprecated 
      */
     public void setStationPositionsNode(HashMap<String, String> latitudeInfo, HashMap<String, String> longitudeInfo, HashMap<String, String> depthInfo, String definition) {
-        Element parent = (Element) getParentNode().getElementsByTagNameNS(SML_NS, "PositionList").item(0);
+        Element parent = (Element) getParentNode().getChild("PositionList", SML_NS);
 
         // add position w/ 'stationPosition' attribute
         parent = addNewNodeToParentWithAttribute(SML_NS, "position", parent, NAME, "stationPosition");
@@ -862,7 +805,7 @@ public class OosTethysFormatter extends OutputFormatter {
      * @deprecated 
      */
     public void setStationPositionsNode(double upperDepth, double lowerDepth, LatLonRect boundingBox) {
-        Element parent = (Element) getParentNode().getElementsByTagNameNS(SML_NS, "PositionList").item(0);
+        Element parent = (Element) getParentNode().getChild("PositionList", SML_NS);
 
         // add position w/ 'stationPosition' attribute
         parent = addNewNodeToParentWithAttribute(SML_NS, "position", parent, NAME, "stationPosition");
@@ -885,7 +828,7 @@ public class OosTethysFormatter extends OutputFormatter {
      * @deprecated 
      */
     public void setEndPointPositionsNode(HashMap<String, String> latitudeInfo, HashMap<String, String> longitudeInfo, HashMap<String, String> depthInfo, String definition) {
-        Element parent = (Element) getParentNode().getElementsByTagNameNS(SML_NS, "PositionList").item(0);
+        Element parent = (Element) getParentNode().getChild("PositionList", SML_NS);
 
         // follow steps outlined above with slight alterations
         parent = addNewNodeToParentWithAttribute(SML_NS, "position", parent, NAME, "endPosition");
@@ -903,6 +846,6 @@ public class OosTethysFormatter extends OutputFormatter {
      * @deprecated 
      */
     public void deletePositions() {
-        getParentNode().removeChild(getParentNode().getElementsByTagNameNS(SML_NS, "positions").item(0));
+        getParentNode().removeContent(getParentNode().getChild("positions", SML_NS));
     }
 }

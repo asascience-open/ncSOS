@@ -52,7 +52,7 @@ public class Ioos10Handler extends BaseRequestHandler {
                 }
             }
         } else if (procedure.contains("network")) {
-            validProcedure = URN_BASE + "network:" + this.global_attributes.get("naming_authority") + ":all";
+            validProcedure = URN_BASE + "network:" + this.getGlobalAttribute("naming_authority", this.DEFAULT_NAMING_AUTHORITY) + ":all";
             logger.debug("Comparing " + procedure + " to " + validProcedure);
             if (procedure.equalsIgnoreCase(validProcedure))
                 return true;
@@ -62,7 +62,7 @@ public class Ioos10Handler extends BaseRequestHandler {
     }
     
     protected String checkForRequiredValue(String globalName) {
-        String retval = this.getGlobalAttribute(globalName, null);
+        String retval = (String)this.getGlobalAttribute(globalName);
         
         try {
             if (retval == null) {

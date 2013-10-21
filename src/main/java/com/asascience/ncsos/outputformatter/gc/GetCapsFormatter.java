@@ -47,10 +47,6 @@ public class GetCapsFormatter extends OutputFormatter {
         return exceptionFlag;
     }
 
-    private Element getRoot() {
-        return this.document.getRootElement();
-    }
-
     public void parseServiceIdentification(HashMap<String, String> attrs) {
         Namespace owsns = this.getNamespace("ows");
         Element si = this.getRoot().getChild(SERVICE_IDENTIFICATION, owsns);
