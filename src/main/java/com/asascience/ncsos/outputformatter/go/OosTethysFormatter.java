@@ -5,147 +5,97 @@
 package com.asascience.ncsos.outputformatter.go;
 
 import com.asascience.ncsos.go.GetObservationRequestHandler;
-import com.asascience.ncsos.outputformatter.DataSlice;
-import com.asascience.ncsos.outputformatter.OutputFormatter;
-import com.asascience.ncsos.service.BaseRequestHandler;
+import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
 import com.asascience.ncsos.util.XMLDomUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
 import java.util.ArrayList;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.bootstrap.DOMImplementationRegistry;
-import org.w3c.dom.ls.DOMImplementationLS;
-import org.w3c.dom.ls.LSOutput;
-import org.w3c.dom.ls.LSSerializer;
+import org.jdom.*;
 
 /**
  *
  * @author SCowan
  */
-public class OosTethysFormatter extends OutputFormatter {
+public class OosTethysFormatter extends BaseOutputFormatter {
 
     private static final String TEMPLATE = "templates/GO_oostethys.xml";
-    private static final String XLINK = "xlink:href";
     private static final String OBSERVATION = "Observation";
-    private static final String STATION_GML_BASE = "urn:ioos:station:" + BaseRequestHandler.getNamingAuthority() + ":";
     private static final String MMI_CF = "http://mmisw.org/ont/cf/parameter/";
     private static final String BLOCK_SEPERATOR = " ";
     private static final String TOKEN_SEPERATOR = ",";
     private static final String DECIMAL_SEPERATOR = ".";
-    
-    private final GetObservationRequestHandler obsHandler;
+    private GetObservationRequestHandler handler = null;
+    private Namespace OM_NS, GML_NS, SWE_NS, XLINK_NS = null;
     
     private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(OosTethysFormatter.class);
     
-    private DOMImplementationLS impl;
-    private ArrayList<DataSlice> infoList;
-    
     public OosTethysFormatter(GetObservationRequestHandler obsHandler) {
-        
+        super();
+        this.OM_NS    = this.getNamespace("om");
+        this.GML_NS   = this.getNamespace("gml");
+        this.XLINK_NS = this.getNamespace("xlink");
+        this.SWE_NS   = this.getNamespace("swe");
+
         if (obsHandler == null) {
             BadInputs();
-            this.obsHandler = null;
+            this.handler = null;
             return;
-        }
-        
-        this.infoList = new ArrayList<DataSlice>();
-        parseTemplateXML();
-        initNamespaces();
-
-        this.obsHandler = obsHandler;
-        
-        try {
-            DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
-            this.impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
-        } catch (Exception ex) {
-            _log.error(ex.getMessage());
-            this.impl = null;
+        } else {
+            this.handler = obsHandler;
         }
     }
-    
+
+
+    public String getTemplateLocation() {
+        return TEMPLATE;
+    }
     private void BadInputs() {
         setupExceptionOutput("Unable to create observation collection - missing or invalid info.");
     }
     
-    private void parseTemplateXML() {
-        InputStream templateInputStream = null;
-        try {
-            templateInputStream = getClass().getClassLoader().getResourceAsStream(TEMPLATE);
-            this.document = XMLDomUtils.getTemplateDom(templateInputStream);
-        } catch (Exception ex) {
-            _log.error(ex.toString());
-        } finally {
-            if (templateInputStream != null) {
-                try {
-                    templateInputStream.close();
-                } catch (IOException e) {
-                    // ignore, closing..
-                    _log.error(e.toString());
-                }
-            }
-        }
-    }
-    
-    //<editor-fold defaultstate="collapsed" desc="Interface Methods">
-    public void addDataFormattedStringToInfoList(String dataFormattedString) {
-//        System.out.println("addDataFormattedStringToInfoList unused by OosTethysFormatter");
-    }
-    
-    public void emtpyInfoList() {
-        infoList = null;
-    }
-    
     public void setupExceptionOutput(String message) {
         _log.debug(message);
+        this.hasError = true;
         document = XMLDomUtils.getExceptionDom(message);
     }
     
-    public void writeOutput(Writer writer) {
-        // create output if we don't already have an exception  
-        if (!document.getFirstChild().getNodeName().equalsIgnoreCase("exceptionreport"))
-            parseObservations(obsHandler.getProcedures());
-        // output our document to the writer
-        LSSerializer xmlSerializer = impl.createLSSerializer();
-        LSOutput xmlOut = impl.createLSOutput();
-        xmlSerializer.getDomConfig().setParameter("format-pretty-print", Boolean.TRUE);
-        xmlOut.setCharacterStream(writer);
-        _log.debug(document.toString());
-        xmlSerializer.write(document, xmlOut);
+    public void writeOutput(Writer writer) throws IOException {
+        // create output if we don't already have an exception
+        if (!hasError) {
+            parseObservations(this.handler.getProcedures());
+        }
+        super.writeOutput(writer);
     }
-    //</editor-fold>
 
     private void parseObservations(String[] procedures) {
         _log.debug(procedures.length + " procedures");
         // set the station observation name, desc and bounds
         setCollectionInfo();
         // iterate through the requested stations
-        for (int index=0; index<procedures.length; index++) {
+        for (int index=0; index < procedures.length; index++) {
             String proc = procedures[index];
-            
             Element parent = addNewObservation();
             setObservationMeta(parent, proc, index);
-            parent.appendChild(getResultNode(index));
+            parent.addContent(getResultElement(index));
         }
     }
     
     
     private Element addNewObservation() {
-        Element member = (Element) document.getElementsByTagNameNS(OM_NS, MEMBER).item(0);
-        Element observation = createElementNS(OM_NS, OBSERVATION);
+        Element member = (Element) this.getRoot().getChild(MEMBER, this.OM_NS);
+        Element observation = new Element(OBSERVATION, OM_NS);
+
+        Element parent = new Element(DESCRIPTION, GML_NS);
+        observation.addContent(parent);
+        parent = new Element(NAME, GML_NS);
+        observation.addContent(parent);
+        parent = new Element(BOUNDED_BY, GML_NS);
+        observation.addContent(parent);
+        parent = new Element(SAMPLING_TIME, OM_NS);
+        observation.addContent(parent);
         
-        Element parent = createElementNS(GML_NS, DESCRIPTION);
-        observation.appendChild(parent);
-        parent = createElementNS(GML_NS, NAME);
-        observation.appendChild(parent);
-        parent = createElementNS(GML_NS, BOUNDED_BY);
-        observation.appendChild(parent);
-        parent = createElementNS(OM_NS, SAMPLING_TIME);
-        observation.appendChild(parent);
-        
-        member.appendChild(observation);
+        member.addContent(observation);
         
         return observation;
     }
@@ -155,110 +105,116 @@ public class OosTethysFormatter extends OutputFormatter {
 //        parent.getElementsByTagName("gml:description").item(0).setTextContent("");
 //        parent.getElementsByTagName("name").item(0).setTextContent("");
         // set bounded by
-        Element bounds = (Element) parent.getElementsByTagNameNS(GML_NS, BOUNDED_BY).item(0);
-        Element envelope = createElementNS(GML_NS, ENVELOPE);
+        Element bounds = (Element) parent.getChild(BOUNDED_BY, GML_NS);
+        Element envelope = new Element(ENVELOPE, GML_NS);
         envelope.setAttribute(SRS_NAME, getSRSName());
-        envelope.appendChild(createNodeWithText(GML_NS, LOWER_CORNER, obsHandler.getStationLowerCorner(index)));
-        envelope.appendChild(createNodeWithText(GML_NS, UPPER_CORNER, obsHandler.getStationUpperCorner(index)));
-        bounds.appendChild(envelope);
+        envelope.addContent(createNodeWithText(GML_NS, LOWER_CORNER, this.handler.getStationLowerCorner(index)));
+        envelope.addContent(createNodeWithText(GML_NS, UPPER_CORNER, this.handler.getStationUpperCorner(index)));
+        bounds.addContent(envelope);
         // sampling time
-        Element samplingTime = (Element) parent.getElementsByTagNameNS(OM_NS, SAMPLING_TIME).item(0);
-        Element timePeriod = createElementNS(GML_NS, TIME_PERIOD);
-        timePeriod.setAttribute("gml:id", "DATA_TIME");
-        timePeriod.appendChild(createNodeWithText(GML_NS, BEGIN_POSITION, obsHandler.getStartTime(index)));
-        timePeriod.appendChild(createNodeWithText(GML_NS, END_POSITION, obsHandler.getEndTime(index)));
-        samplingTime.appendChild(timePeriod);
+        Element samplingTime = (Element) parent.getChild(SAMPLING_TIME, OM_NS);
+        Element timePeriod = new Element(TIME_PERIOD, GML_NS);
+        timePeriod.setAttribute("id", "DATA_TIME", GML_NS);
+        timePeriod.addContent(createNodeWithText(GML_NS, BEGIN_POSITION, this.handler.getStartTime(index)));
+        timePeriod.addContent(createNodeWithText(GML_NS, END_POSITION, this.handler.getEndTime(index)));
+        samplingTime.addContent(timePeriod);
         // procedure
-        parent.appendChild(createNodeWithAttribute(OM_NS, PROCEDURE, XLINK, procName));
+        parent.addContent(createNodeWithAttribute(OM_NS, PROCEDURE, XLINK_NS, "href", procName));
         // add each of the observed properties we are looking for
-        for (String obs : obsHandler.getObservedProperties()) {
+        for (String obs : this.handler.getObservedProperties()) {
             // don't add height/depth vars; lat & lon
             if (!obs.equalsIgnoreCase("alt") && !obs.equalsIgnoreCase("height") && !obs.equalsIgnoreCase("z") &&
                 !obs.equalsIgnoreCase("lat") && !obs.equalsIgnoreCase("lon"))
-                parent.appendChild(createNodeWithAttribute(OM_NS, OBSERVED_PROPERTY, XLINK, obs));
+                parent.addContent(createNodeWithAttribute(OM_NS, OBSERVED_PROPERTY, XLINK_NS, "href", obs));
         }
         // feature of interest
-        parent.appendChild(createNodeWithAttribute(OM_NS, FEATURE_INTEREST, XLINK, procName));
+        parent.addContent(createNodeWithAttribute(OM_NS, FEATURE_INTEREST, XLINK_NS, "href", procName));
     }
     
     private String getSRSName() {
-        if (obsHandler.getCRSSRSAuthorities() != null) {
-            _log.debug(obsHandler.getCRSSRSAuthorities()[0]);
-            return obsHandler.getCRSSRSAuthorities()[0];
+        if (this.handler.getCRSSRSAuthorities() != null) {
+            _log.debug(this.handler.getCRSSRSAuthorities()[0]);
+            return this.handler.getCRSSRSAuthorities()[0];
         } else {
             return "http://www.opengis.net/def/crs/EPSG/0/4326";
         }
     }
     
-    private Element createNodeWithText(String elemNs,String elemName,  String text) {
-        Element retval = createElementNS(elemNs,elemName);
-        retval.setTextContent(text);
+    private Element createNodeWithText(Namespace elemNs, String elemName, String text) {
+        Element retval = new Element(elemName, elemNs);
+        retval.setText(text);
         return retval;
     }
     
-    private Element createNodeWithAttribute(String elemNs,String elemName,  String attrName, String attrValue) {
-        Element retval = createElementNS(elemNs, elemName);
+    private Element createNodeWithAttribute(Namespace elemNs, String elemName, Namespace attrNs, String attrName, String attrValue) {
+        Element retval = new Element(elemName, elemNs);
+        retval.setAttribute(attrName, attrValue, attrNs);
+        return retval;
+    }
+
+    private Element createNodeWithAttribute(Namespace elemNs, String elemName, String attrName, String attrValue) {
+        Element retval = new Element(elemName, elemNs);
         retval.setAttribute(attrName, attrValue);
         return retval;
     }
-    
+
     private Element createField(String name, String code) {
         return createField(name, code, null);
     }
     
     private Element createField(String name, String code, String fillValue) {
-        Element retval = createElementNS(SWE_NS, FIELD);
+        Element retval = new Element(FIELD, SWE_NS);
         retval.setAttribute("name", name);
-        Element quantity =createElementNS(SWE_NS, QUANTITY);
+        Element quantity = new Element(QUANTITY, SWE_NS);
         String definition = MMI_CF + name;
         quantity.setAttribute(DEFINITION, definition);        
         if (fillValue != null) {
-            Element nilValues = createElementNS(SWE_NS, "nilValues");
+            Element nilValues = new Element("nilValues", SWE_NS);
             Element filValues = createNodeWithAttribute(SWE_NS, "nilValue", "reason", "http://www.opengis.net/def/nil/OGC/0/missing");
-            filValues.setTextContent(fillValue);
-            nilValues.appendChild(filValues);
-            quantity.appendChild(nilValues);
+            filValues.setText(fillValue);
+            nilValues.addContent(filValues);
+            quantity.addContent(nilValues);
         }
-        quantity.appendChild(createNodeWithAttribute(SWE_NS, UOM, CODE, code));
-        retval.appendChild(quantity);
+        quantity.addContent(createNodeWithAttribute(SWE_NS, UOM, CODE, code));
+        retval.addContent(quantity);
         return retval;
     }
     
     private Element createTimeField(String name, String def) {
         Element retval = createNodeWithAttribute(SWE_NS, FIELD, NAME, name);
         Element time = createNodeWithAttribute(SWE_NS, TIME, DEFINITION, "http://www.opengis.net/def/property/OGC/0/SamplingTime");
-        time.appendChild(createNodeWithAttribute(SWE_NS, UOM, XLINK, "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"));
-        retval.appendChild(time);
+        time.addContent(createNodeWithAttribute(SWE_NS, UOM, XLINK_NS, "href", "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"));
+        retval.addContent(time);
         return retval;
     }
     
     private Element getEncodingElement() {
-        Element retval = createElementNS(SWE_NS, "encoding");
+        Element retval = new Element("encoding", SWE_NS);
         Element txtBlock = createNodeWithAttribute(SWE_NS, "TextBlock", "blockSeparator", BLOCK_SEPERATOR);
         txtBlock.setAttribute("decimalSeparator", DECIMAL_SEPERATOR);
         txtBlock.setAttribute("tokenSeparator", TOKEN_SEPERATOR);
-        retval.appendChild(txtBlock);
+        retval.addContent(txtBlock);
         return retval;
     }
 
-    private org.w3c.dom.Node getResultNode(int index) {
-        Element parent = createElementNS(OM_NS, "result");
+    private Element getResultElement(int index) {
+        Element parent = new Element("result", OM_NS);
         
-        Element dataArray = createElementNS(SWE_NS, DATA_ARRAY);
+        Element dataArray = new Element(DATA_ARRAY, OM_NS);
         
-        Element elemCount = createElementNS(SWE_NS, ELEMENT_COUNT);
-        Element count = createElementNS(SWE_NS, COUNT);
-        count.appendChild(createNodeWithText(SWE_NS, SML_VALUE, "" + obsHandler.getObservedProperties().length));
-        elemCount.appendChild(count);
-        dataArray.appendChild(elemCount);
+        Element elemCount = new Element(ELEMENT_COUNT, SWE_NS);
+        Element count = new Element(COUNT, SWE_NS);
+        count.addContent(createNodeWithText(SWE_NS, SML_VALUE, "" + this.handler.getObservedProperties().length));
+        elemCount.addContent(count);
+        dataArray.addContent(elemCount);
         
-        Element elemType = createElementNS(SWE_NS, "elementType");
+        Element elemType = new Element("elementType", SWE_NS);
         elemType.setAttribute(NAME, "SimpleDataArray");
-        Element dataRecord = createElementNS(SWE_NS, DATA_RECORD);
+        Element dataRecord = new Element(DATA_RECORD, SWE_NS);
         boolean timeSet = false;
         Element timeField = null;
         ArrayList<Element> opFields = new ArrayList<Element>();
-        for (String obsProp: obsHandler.getObservedProperties()) {
+        for (String obsProp: this.handler.getObservedProperties()) {
             if (obsProp.toLowerCase().contains(TIME) && !timeSet) {
                 timeField = createTimeField(obsProp, "iso8601");
                 timeSet = true;
@@ -266,30 +222,30 @@ public class OosTethysFormatter extends OutputFormatter {
                 // need to set the data record for each observed property which requires the name and source (both of which can be retrieved from the observed property)
                 // and the units the measurement is taken in
                 // source (namespace) is the value before parameter, name is the last value in the split
-                if (obsHandler.hasFillValue(obsProp)) {
-                    opFields.add(createField(obsProp, obsHandler.getUnitsString(obsProp), obsHandler.getFillValue(obsProp)));
+                if (this.handler.hasFillValue(obsProp)) {
+                    opFields.add(createField(obsProp, this.handler.getUnitsString(obsProp), this.handler.getFillValue(obsProp)));
                 } else {
-                    opFields.add(createField(obsProp, obsHandler.getUnitsString(obsProp)));
+                    opFields.add(createField(obsProp, this.handler.getUnitsString(obsProp)));
                 }
             }
         }
         if (!timeSet) {
             timeField = createTimeField("time", "iso8601");
         }
-        dataRecord.appendChild(timeField);
+        dataRecord.addContent(timeField);
         for (Element field : opFields) {
-            dataRecord.appendChild(field);
+            dataRecord.addContent(field);
         }
-        elemType.appendChild(dataRecord);
-        dataArray.appendChild(elemType);
+        elemType.addContent(dataRecord);
+        dataArray.addContent(elemType);
         
-        dataArray.appendChild(getEncodingElement());
+        dataArray.addContent(getEncodingElement());
         
 //        dataArray.appendChild(createNodeWithText("swe:values", obsHandler.getValueBlockForAllObs(BLOCK_SEPERATOR, DECIMAL_SEPERATOR, TOKEN_SEPERATOR, index)));
-        dataArray.appendChild(createNodeWithText(SWE_NS,"values", 
-        		processDataBlock(obsHandler.getValueBlockForAllObs(BLOCK_SEPERATOR, DECIMAL_SEPERATOR, TOKEN_SEPERATOR, index))));
+        dataArray.addContent(createNodeWithText(SWE_NS, "values",
+                processDataBlock(this.handler.getValueBlockForAllObs(BLOCK_SEPERATOR, DECIMAL_SEPERATOR, TOKEN_SEPERATOR, index))));
         
-        parent.appendChild(dataArray);
+        parent.addContent(dataArray);
         
         return parent;
     }
@@ -319,7 +275,7 @@ public class OosTethysFormatter extends OutputFormatter {
     }
     
     private boolean isInRequestObservedProperties(String name) {
-        for (String obsProp : obsHandler.getObservedProperties()) {
+        for (String obsProp : this.handler.getObservedProperties()) {
             if (obsProp.equals(name))
                 return true;
         }
@@ -327,14 +283,14 @@ public class OosTethysFormatter extends OutputFormatter {
     }
 
     private void setCollectionInfo() {
-        NodeList col1 = document.getElementsByTagNameNS(OM_NS, "ObservationCollection");
-        Element coll = (Element) col1.item(0);
-        coll.getElementsByTagNameNS(GML_NS, NAME).item(0).setTextContent(obsHandler.getTitle());
-        coll.getElementsByTagNameNS(GML_NS, DESCRIPTION).item(0).setTextContent(obsHandler.getDescription());
+        Element coll = this.getRoot();
+        coll.getChild(NAME, GML_NS).setText((String)this.handler.getGlobalAttribute("title", "No 'title' global attribute"));
+        coll.getChild(DESCRIPTION, GML_NS).setText((String)this.handler.getGlobalAttribute("summary", "No 'summary' global attribute"));
         
-        Element bounds = (Element) coll.getElementsByTagNameNS(GML_NS, BOUNDED_BY).item(0);
-        ((Element)bounds.getElementsByTagNameNS(GML_NS, ENVELOPE).item(0)).setAttribute(SRS_NAME, getSRSName());
-        bounds.getElementsByTagNameNS(GML_NS, LOWER_CORNER).item(0).setTextContent(obsHandler.getBoundedLowerCorner());
-        bounds.getElementsByTagNameNS(GML_NS, UPPER_CORNER).item(0).setTextContent(obsHandler.getBoundedUpperCorner());
+        Element bounds = (Element) coll.getChild(BOUNDED_BY, GML_NS);
+        Element env = bounds.getChild(ENVELOPE, GML_NS);
+        env.setAttribute(SRS_NAME, getSRSName());
+        env.getChild(LOWER_CORNER, GML_NS).setText(this.handler.getBoundedLowerCorner());
+        env.getChild(UPPER_CORNER, GML_NS).setText(this.handler.getBoundedUpperCorner());
     }
 }

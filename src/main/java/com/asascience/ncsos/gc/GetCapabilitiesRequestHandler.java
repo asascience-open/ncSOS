@@ -50,7 +50,7 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
         super(netCDFDataset);
         this.threddsURI = threddsURI;
         this.sections = sections.toLowerCase();
-        this.output = new GetCapsFormatter();
+        this.output = new GetCapsFormatter(this);
 
         if (getFeatureDataset() == null) {
             // error, couldn't read dataset
@@ -71,7 +71,7 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
         super(emptyDataset);
         this.sections = "";
         this.threddsURI = "";
-        this.output = new GetCapsFormatter();
+        this.output = new GetCapsFormatter(this);
     }
 
     public void resetCapabilitiesSections(String sections) {
@@ -99,7 +99,7 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
 
         // service provider; parse if it is the section identified or 'all'
         if (this.requestedSections.get(Sections.SERVICEPROVIDER.ordinal())) {
-            out.parseServiceDescription(this.global_attributes);
+            out.parseServiceDescription();
         } else {
             // remove service provider from doc
             out.removeServiceProvider();
@@ -110,9 +110,9 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
             // Set the THREDDS URI
             out.setURL(threddsURI);
             // Set the GetObservation Operation
-            out.setOperationsMetadataGetObs(global_attributes, threddsURI, getSensorNames(), getStationNames().values().toArray(new String[getStationNames().values().size()]));
+            out.setOperationsMetadataGetObs(threddsURI, getSensorNames(), getStationNames().values().toArray(new String[getStationNames().values().size()]));
             // Set the DescribeSensor Operation
-            out.setOperationsMetadataDescSen(global_attributes, threddsURI, getSensorNames(), getStationNames().values().toArray(new String[getStationNames().values().size()]));
+            out.setOperationsMetadataDescSen(threddsURI, getSensorNames(), getStationNames().values().toArray(new String[getStationNames().values().size()]));
             // Set the ExtendedCapabilities
             out.setVersionMetadata();
         } else {
@@ -138,10 +138,10 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
                 setTime = CalendarDateRange.of(setStartDate, setEndDate);
             }
 
-            out.setObservationOfferingNetwork(this.global_attributes, setRange, getStationNames().values().toArray(new String[getStationNames().values().size()]), getSensorNames(), setTime, this.getFeatureDataset().getFeatureType());
+            out.setObservationOfferingNetwork(setRange, getStationNames().values().toArray(new String[getStationNames().values().size()]), getSensorNames(), setTime, this.getFeatureDataset().getFeatureType());
             // Add an offering for every station
             for (Integer index : getStationNames().keySet()) {
-                ((GetCapsFormatter) output).setObservationOffering(this.global_attributes, getStationNames().get(index), stationBBox.get(index), getSensorNames(), stationDateRange.get(index), this.getFeatureDataset().getFeatureType());
+                ((GetCapsFormatter) output).setObservationOffering(getStationNames().get(index), stationBBox.get(index), getSensorNames(), stationDateRange.get(index), this.getFeatureDataset().getFeatureType());
             }
         } else {
             // remove Contents node

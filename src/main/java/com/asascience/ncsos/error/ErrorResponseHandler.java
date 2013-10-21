@@ -4,6 +4,7 @@
  */
 package com.asascience.ncsos.error;
 
+import com.asascience.ncsos.gc.GetCapabilitiesRequestHandler;
 import com.asascience.ncsos.outputformatter.gc.GetCapsFormatter;
 import com.asascience.ncsos.service.BaseRequestHandler;
 import java.io.IOException;
@@ -18,7 +19,7 @@ public class ErrorResponseHandler extends BaseRequestHandler {
     public ErrorResponseHandler(NetcdfDataset dataset) throws IOException {
         super(dataset);
         
-        output = new GetCapsFormatter();
+        output = new GetCapsFormatter(new GetCapabilitiesRequestHandler(dataset));
     }
     
     /**

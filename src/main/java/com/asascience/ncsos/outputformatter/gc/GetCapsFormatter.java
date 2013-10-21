@@ -4,6 +4,8 @@
  */
 package com.asascience.ncsos.outputformatter.gc;
 
+import com.asascience.ncsos.gc.GetCapabilitiesRequestHandler;
+import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
 import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.XMLDomUtils;
@@ -23,7 +25,7 @@ import java.util.List;
 /**
  * @author kwilcox
  */
-public class GetCapsFormatter extends OutputFormatter {
+public class GetCapsFormatter extends BaseOutputFormatter {
 
     public static final String CONTENTS = "Contents";
     public static final String EPSG4326 = "EPSG:4326";
@@ -34,8 +36,9 @@ public class GetCapsFormatter extends OutputFormatter {
     private boolean exceptionFlag = false;
     private final static String TEMPLATE = "templates/GC.xml";
 
-    public GetCapsFormatter() {
+    public GetCapsFormatter(GetCapabilitiesRequestHandler handler) {
         super();
+        this.handler = handler;
     }
 
     @Override
@@ -47,41 +50,44 @@ public class GetCapsFormatter extends OutputFormatter {
         return exceptionFlag;
     }
 
-    public void parseServiceIdentification(HashMap<String, String> attrs) {
+    public void parseServiceIdentification(HashMap<String, Object> attrs) {
         Namespace owsns = this.getNamespace("ows");
         Element si = this.getRoot().getChild(SERVICE_IDENTIFICATION, owsns);
         // Name
-        si.getChild("Title", owsns).setText(attrs.get("title"));
+        si.getChild("Title", owsns).setText((String)attrs.get("title"));
         // Title
-        si.getChild("Abstract", owsns).setText(attrs.get("summary"));
+        si.getChild("Abstract", owsns).setText((String)attrs.get("summary"));
         // Access
-        si.getChild("AccessConstraints", owsns).setText(attrs.get("access_constraints"));
+        si.getChild("AccessConstraints", owsns).setText((String)attrs.get("access_constraints"));
         // Keywords
         Element keywords = si.getChild("Keywords", owsns);
-        Element k = null;
-        for (String keyword : attrs.get("keywords").split(",")) {
-            keywords.addContent(new Element("Keyword", owsns).setText(keyword));
+        try {
+            for (String keyword : ((String)attrs.get("keywords")).split(",")) {
+                keywords.addContent(new Element("Keyword", owsns).setText(keyword));
+            }
+        } catch(Exception e) {
+            // No keywords
         }
         // Fees
-        si.getChild("Fees", owsns).setText(attrs.get("fees"));
+        si.getChild("Fees", owsns).setText((String)attrs.get("fees"));
     }
 
     public void removeServiceIdentification() {
         this.getRoot().removeChild(SERVICE_IDENTIFICATION, this.getNamespace("ows"));
     }
 
-    public void parseServiceDescription(HashMap<String, String> attrs) {
+    public void parseServiceDescription() {
         Namespace owsns = this.getNamespace("ows");
         Element si = this.getRoot().getChild(SERVICE_PROVIDER, owsns);
         // ProviderName
-        si.getChild("ProviderName", owsns).setText(attrs.get("publisher_name"));
+        si.getChild("ProviderName", owsns).setText((String)this.handler.getGlobalAttribute("publisher_name", "No global attribute 'publisher_name' found."));
         // ProviderSite
-        si.getChild("ProviderSite", owsns).getAttribute("xhref", this.getNamespace("xlink")).setValue(attrs.get("publisher_url"));
+        si.getChild("ProviderSite", owsns).getAttribute("href", this.getNamespace("xlink")).setValue((String)this.handler.getGlobalAttribute("publisher_url", "No global attribute 'publisher_url' found."));
         // ServiceContact
         Element sc = si.getChild("ServiceContact", owsns);
-        sc.getChild("IndividualName", owsns).setText(attrs.get("publisher_name"));
-        sc.getChild("ContactInfo", owsns).getChild("Phone", owsns).getChild("Voice", owsns).setText(attrs.get("publisher_phone"));
-        sc.getChild("ContactInfo", owsns).getChild("Address", owsns).getChild("ElectronicMailAddress", owsns).setText(attrs.get("publisher_email"));
+        sc.getChild("IndividualName", owsns).setText((String)this.handler.getGlobalAttribute("publisher_name", "No global attribute 'publisher_name' found."));
+        sc.getChild("ContactInfo", owsns).getChild("Phone", owsns).getChild("Voice", owsns).setText((String)this.handler.getGlobalAttribute("publisher_phone", "No global attribute 'publisher_phone' found."));
+        sc.getChild("ContactInfo", owsns).getChild("Address", owsns).getChild("ElectronicMailAddress", owsns).setText((String)this.handler.getGlobalAttribute("publisher_email", "No global attribute 'publisher_email' found."));
     }
 
     public void removeServiceProvider() {
@@ -96,7 +102,7 @@ public class GetCapsFormatter extends OutputFormatter {
         }
     }
 
-    public void setOperationsMetadataGetObs(HashMap<String, String> attrs, String threddsURI, List<String> dataVarShortNames, String[] stationNames) {
+    public void setOperationsMetadataGetObs(String threddsURI, List<String> dataVarShortNames, String[] stationNames) {
         Namespace owsns = this.getNamespace("ows");
         Element si = this.getRoot().getChild(OPERATIONS_METADATA, owsns);
         for (Object e : si.getChildren("Operation", owsns)) {
@@ -120,7 +126,7 @@ public class GetCapsFormatter extends OutputFormatter {
                         p.addContent(allowed);
                     } else if (name.equalsIgnoreCase("procedure")) {
                         for (String s : stationNames) {
-                            allowed.addContent(new Element("Value", owsns).setText(BaseRequestHandler.STATION_URN_BASE + attrs.get("naming_authority") + ":" + s));
+                            allowed.addContent(new Element("Value", owsns).setText(BaseRequestHandler.STATION_URN_BASE + this.handler.getGlobalAttribute("naming_authority", this.handler) + ":" + s));
                         }
                         p.addContent(allowed);
                     }
@@ -151,7 +157,7 @@ public class GetCapsFormatter extends OutputFormatter {
      * @param stationNames
      * @param sensorNames
      */
-    public void setOperationsMetadataDescSen(HashMap<String, String> attrs, String threddsURI, List<String> sensorNames, String[] stationNames) {
+    public void setOperationsMetadataDescSen(String threddsURI, List<String> sensorNames, String[] stationNames) {
         Namespace owsns = this.getNamespace("ows");
         Element si = this.getRoot().getChild(OPERATIONS_METADATA, owsns);
         for (Object e : si.getChildren("Operation", owsns)) {
@@ -163,7 +169,7 @@ public class GetCapsFormatter extends OutputFormatter {
                     Element allowed = new Element("AllowedValues", owsns);
                     if (name.equalsIgnoreCase("procedure")) {
                         for (String s : stationNames) {
-                            allowed.addContent(new Element("Value", owsns).setText(BaseRequestHandler.STATION_URN_BASE + attrs.get("naming_authority") + ":" + s));
+                            allowed.addContent(new Element("Value", owsns).setText(BaseRequestHandler.STATION_URN_BASE + this.handler.getGlobalAttribute("naming_authority", this.handler.DEFAULT_NAMING_AUTHORITY) + ":" + s));
                         }
                         p.addContent(allowed);
                     }
@@ -176,18 +182,19 @@ public class GetCapsFormatter extends OutputFormatter {
         return new Element("ObservationOffering", this.getNamespace("sos"));
     }
 
-    public void setObservationOfferingNetwork(HashMap<String, String> attrs, LatLonRect datasetRect, String[] stations, List<String> sensors, CalendarDateRange dates, FeatureType ftype) {
+    public void setObservationOfferingNetwork(LatLonRect datasetRect, String[] stations, List<String> sensors, CalendarDateRange dates, FeatureType ftype) {
         Namespace owsns = this.getNamespace("ows");
         Namespace gmlns = this.getNamespace("gml");
         Namespace sosns = this.getNamespace("sos");
         Namespace xlinkns = this.getNamespace("xlink");
-        Element ol = this.getRoot().getChild(CONTENTS, owsns).getChild(OBSERVATION_OFFERING_LIST, owsns);
+        Element cnt = this.getRoot().getChild(CONTENTS, sosns);
+        Element ol = cnt.getChild(OBSERVATION_OFFERING_LIST, sosns);
 
         Element offering = this.buildOffering();
         // Id
         offering.setAttribute("id", "network-all", gmlns);
         // Name
-        offering.addContent(new Element("name", gmlns).setText(BaseRequestHandler.NETWORK_URN_BASE + attrs.get("naming_authority") + ":all"));
+        offering.addContent(new Element("name", gmlns).setText(BaseRequestHandler.NETWORK_URN_BASE + this.handler.getGlobalAttribute("naming_authority", this.handler.DEFAULT_NAMING_AUTHORITY) + ":all"));
         // Description
         offering.addContent(new Element("description", gmlns).setText("Network offering containing all features in the dataset"));
         // SRS
@@ -197,9 +204,9 @@ public class GetCapsFormatter extends OutputFormatter {
         // Time
         offering.addContent(this.getTimePeriod(dates));
         // Procedure
-        offering.addContent(new Element("procedure", sosns).setAttribute("href", BaseRequestHandler.NETWORK_URN_BASE + attrs.get("naming_authority") + ":all", xlinkns));
+        offering.addContent(new Element("procedure", sosns).setAttribute("href", BaseRequestHandler.NETWORK_URN_BASE + this.handler.getGlobalAttribute("naming_authority", this.handler.DEFAULT_NAMING_AUTHORITY) + ":all", xlinkns));
         for (String s : stations) {
-            offering.addContent(new Element("procedure", sosns).setAttribute("href", BaseRequestHandler.STATION_URN_BASE + attrs.get("naming_authority") + ":" + s, xlinkns));
+            offering.addContent(new Element("procedure", sosns).setAttribute("href", BaseRequestHandler.STATION_URN_BASE + this.handler.getGlobalAttribute("naming_authority", this.handler.DEFAULT_NAMING_AUTHORITY) + ":" + s, xlinkns));
         }
         // ObservedProperty
         for (String s : sensors) {
@@ -207,7 +214,7 @@ public class GetCapsFormatter extends OutputFormatter {
         }
         // FeatureOfInterest
         for (String s : stations) {
-            offering.addContent(new Element("featureOfInterest", sosns).setAttribute("href", BaseRequestHandler.STATION_URN_BASE + attrs.get("naming_authority") + ":" + s, xlinkns));
+            offering.addContent(new Element("featureOfInterest", sosns).setAttribute("href", BaseRequestHandler.STATION_URN_BASE + this.handler.getGlobalAttribute("naming_authority", this.handler.DEFAULT_NAMING_AUTHORITY) + ":" + s, xlinkns));
         }
         // ResponseFormat
         offering.addContent(new Element("responseFormat", sosns).setText("text/xml; subtype=\"om/1.0.0\""));
@@ -227,18 +234,18 @@ public class GetCapsFormatter extends OutputFormatter {
         ol.addContent(offering);
     }
 
-    public void setObservationOffering(HashMap<String, String> attrs, String stationName, LatLonRect datasetRect, List<String> sensors, CalendarDateRange dates, FeatureType ftype) {
+    public void setObservationOffering(String stationName, LatLonRect datasetRect, List<String> sensors, CalendarDateRange dates, FeatureType ftype) {
         Namespace owsns = this.getNamespace("ows");
         Namespace gmlns = this.getNamespace("gml");
         Namespace sosns = this.getNamespace("sos");
         Namespace xlinkns = this.getNamespace("xlink");
-        Element ol = this.getRoot().getChild(CONTENTS, owsns).getChild(OBSERVATION_OFFERING_LIST, owsns);
+        Element ol = this.getRoot().getChild(CONTENTS, sosns).getChild(OBSERVATION_OFFERING_LIST, sosns);
 
         Element offering = this.buildOffering();
         // Id
         offering.setAttribute("id", stationName, gmlns);
         // Name
-        offering.addContent(new Element("name", gmlns).setText(BaseRequestHandler.STATION_URN_BASE + attrs.get("naming_authority") + ":" + stationName));
+        offering.addContent(new Element("name", gmlns).setText(BaseRequestHandler.STATION_URN_BASE + this.handler.getGlobalAttribute("naming_authority") + ":" + stationName));
         // Description
         // offering.getChild("description", gmlns).setText("Network offering containing all features in the dataset");
         // SRS
@@ -248,13 +255,13 @@ public class GetCapsFormatter extends OutputFormatter {
         // Time
         offering.addContent(this.getTimePeriod(dates));
         // Procedure
-        offering.addContent(new Element("procedure", sosns).setAttribute("href", BaseRequestHandler.STATION_URN_BASE + attrs.get("naming_authority") + ":" + stationName, xlinkns));
+        offering.addContent(new Element("procedure", sosns).setAttribute("href", BaseRequestHandler.STATION_URN_BASE + this.handler.getGlobalAttribute("naming_authority") + ":" + stationName, xlinkns));
         // ObservedProperty
         for (String s : sensors) {
             offering.addContent(new Element("observedProperty", sosns).setAttribute("href", s, xlinkns));
         }
         // FeatureOfInterest
-        offering.addContent(new Element("featureOfInterest", sosns).setAttribute("href", BaseRequestHandler.STATION_URN_BASE + attrs.get("naming_authority") + ":" + stationName, xlinkns));
+        offering.addContent(new Element("featureOfInterest", sosns).setAttribute("href", BaseRequestHandler.STATION_URN_BASE + this.handler.getGlobalAttribute("naming_authority") + ":" + stationName, xlinkns));
         // ResponseFormat
         offering.addContent(new Element("responseFormat", sosns).setText("text/xml; subtype=\"om/1.0.0\""));
         switch (ftype) {
@@ -274,7 +281,7 @@ public class GetCapsFormatter extends OutputFormatter {
     }
 
     public void removeContents() {
-        this.getRoot().removeChild(CONTENTS, this.getNamespace("ows"));
+        this.getRoot().removeChild(CONTENTS, this.getNamespace("sos"));
     }
 
     /*********************/
@@ -310,8 +317,18 @@ public class GetCapsFormatter extends OutputFormatter {
         Element bb = new Element("boundedBy", gmlns);
         Element env = new Element("Envelope", gmlns);
         env.setAttribute("srsName", "http://www.opengis.net/def/crs/EPSG/0/4326");
-        env.getChild("lowerCorner", gmlns).setText(rect.getLowerLeftPoint().getLatitude() + " " + rect.getLowerLeftPoint().getLongitude());
-        env.getChild("upperCorner", gmlns).setText(rect.getUpperRightPoint().getLatitude() + " " + rect.getUpperRightPoint().getLongitude());
+        String lc = null;
+        String uc = null;
+        try {
+            lc = rect.getLowerLeftPoint().getLatitude() + " " + rect.getLowerLeftPoint().getLongitude();
+            uc = rect.getUpperRightPoint().getLatitude() + " " + rect.getUpperRightPoint().getLongitude();
+        } catch(Exception e) {
+            lc = "UNKNOWN";
+            uc = "UNKNOWN";
+        } finally {
+            env.addContent(new Element("lowerCorner", gmlns).setText(lc));
+            env.addContent(new Element("upperCorner", gmlns).setText(uc));
+        }
         bb.addContent(env);
         return bb;
     }
@@ -322,8 +339,18 @@ public class GetCapsFormatter extends OutputFormatter {
         Element tm = new Element("time", sosns);
         Element tp = new Element("TimePeriod", gmlns);
         tm.addContent(tp);
-        tp.getChild("beginPosition", gmlns).setText(dateRange.getStart().toString());
-        tp.getChild("endPosition", gmlns).setText(dateRange.getEnd().toString());
+        String st = null;
+        String et = null;
+        try {
+            st = dateRange.getStart().toString();
+            et = dateRange.getEnd().toString();
+        } catch (Exception e) {
+            st = "UNKNOWN";
+            et = "UNKNOWN";
+        } finally {
+            tp.addContent(new Element("beginPosition", gmlns).setText(st));
+            tp.addContent(new Element("endPosition", gmlns).setText(et));
+        }
         return tm;
     }
 }

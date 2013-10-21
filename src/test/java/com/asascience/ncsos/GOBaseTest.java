@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.w3c.dom.Document;
+import org.jdom.*;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
@@ -26,7 +26,7 @@ public class GOBaseTest {
     private static String base = null;
     private static String exampleOutputDir = null;
     private static final String datasets = "resources/datasets/";
-    private static final String defaultAuthority = "authority";
+    private static final String defaultAuthority = "ncsos";
    
     // final strings
     private static final String baseRequest = "request=GetObservation&version=1.0.0&service=sos&responseFormat=text%2Fxml%3Bsubtype%3D%22om%2F1.0.0%22";
@@ -263,7 +263,7 @@ public class GOBaseTest {
         }
     }
     
-    private static void writeOutput(HashMap<String, Object> outMap, Writer writer) {
+    private static void writeOutput(HashMap<String, Object> outMap, Writer writer) throws IOException {
         OutputFormatter output = (OutputFormatter)outMap.get("outputHandler");
         assertNotNull("got null output", output);
         output.writeOutput(writer);
@@ -1128,7 +1128,7 @@ public class GOBaseTest {
             //check depth was entered auto
             assertFalse(write.toString().contains("Exception"));
             assertTrue("depth not added", write.toString().contains("<swe:field name=\"z\">"));
-            assertTrue("data missing - feature of interest", write.toString().contains("<om:featureOfInterest xlink:href=\"urn:ioos:station:authority:Profile3\"/>"));
+            assertTrue("data missing - feature of interest", write.toString().contains("<om:featureOfInterest xlink:href=\"urn:ioos:station:" + defaultAuthority + ":Profile3\"/>"));
             assertFalse("bad data included - time stamp", write.toString().contains("1990-01-01T01:00:00Z,"));
             assertFalse("bad data included - time stamp", write.toString().contains("1990-01-01T02:00:00Z,"));
             // write as an example
@@ -1157,10 +1157,10 @@ public class GOBaseTest {
             dataAvailableInOutputFile(write);
             //check depth was entered auto
             assertTrue("depth not added", write.toString().contains("<swe:field name=\"z\">"));
-            assertFalse("invalid foi", write.toString().contains("<om:featureOfInterest xlink:href=\"urn:ioos:station:authority:PROFILE_0\"/>"));
-            assertFalse("invalid foi", write.toString().contains("<om:featureOfInterest xlink:href=\"urn:ioos:station:authority:PROFILE_3\"/>"));
-            assertTrue("foi missing", write.toString().contains("<om:featureOfInterest xlink:href=\"urn:ioos:station:authority:Profile1\"/>"));
-            assertTrue("foi missing", write.toString().contains("<om:featureOfInterest xlink:href=\"urn:ioos:station:authority:Profile2\"/>"));
+            assertFalse("invalid foi", write.toString().contains("<om:featureOfInterest xlink:href=\"urn:ioos:station:" + defaultAuthority + ":PROFILE_0\"/>"));
+            assertFalse("invalid foi", write.toString().contains("<om:featureOfInterest xlink:href=\"urn:ioos:station:" + defaultAuthority + ":PROFILE_3\"/>"));
+            assertTrue("foi missing", write.toString().contains("<om:featureOfInterest xlink:href=\"urn:ioos:station:" + defaultAuthority + ":Profile1\"/>"));
+            assertTrue("foi missing", write.toString().contains("<om:featureOfInterest xlink:href=\"urn:ioos:station:" + defaultAuthority + ":Profile2\"/>"));
             assertTrue("data missing", write.toString().contains("1990-01-01T01:00:00Z,"));
             assertTrue("data missing", write.toString().contains("1990-01-01T02:00:00Z,"));
         } catch (IOException ex) {

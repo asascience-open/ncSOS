@@ -34,7 +34,7 @@ public abstract class BaseRequestHandler {
     public static final String STATION_URN_BASE = "urn:ioos:station:";
     public static final String SENSOR_URN_BASE = "urn:ioos:sensor:";
     public static final String NETWORK_URN_BASE = "urn:ioos:network:";
-    protected static final String DEFAULT_NAMING_AUTHORITY = "ncsos";
+    public static final String DEFAULT_NAMING_AUTHORITY = "ncsos";
     private static final NumberFormat FORMAT_DEGREE;
     // list of keywords to filter variables on to remove non-data variables from the list
     private static final String[] NON_DATAVAR_NAMES = { "rowsize", "row_size", PROFILE, "info", "time", "z", "alt", "height", "station_info" };
@@ -43,7 +43,7 @@ public abstract class BaseRequestHandler {
     private GridDataset gridDataSet = null;
     
     // Global Attributes
-    protected HashMap<String, String> global_attributes;
+    protected HashMap<String, Object> global_attributes = new HashMap<String, Object>();
     
     // Variables and other information commonly needed
     protected final NetcdfDataset netCDFDataset;
@@ -154,8 +154,20 @@ public abstract class BaseRequestHandler {
      * Finds commonly used global attributes in the netcdf file.
      */
     private void parseGlobalAttributes() {
+        String name = null;
+        Object value = null;
         for (Attribute a : this.netCDFDataset.getGlobalAttributes()) {
-               this.global_attributes.put(a.getFullName().toLowerCase(), a.getStringValue().trim());
+            name = a.getFullName().toLowerCase();
+            try {
+                value = a.getStringValue().trim();
+            } catch(NullPointerException e) {
+                try {
+                    value = a.getNumericValue();
+                } catch(Exception ex) {
+                    continue;
+                }
+            }
+            this.global_attributes.put(name, value);
         }
         // Fill in required naming authority attribute
         if (!this.global_attributes.containsKey("naming_authority")) {

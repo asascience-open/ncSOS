@@ -35,8 +35,6 @@ public class Ioos10Formatter extends BaseOutputFormatter {
     public static final String XSISCHEMALOCATION = "xsi:schemaLocation";
     // private fields
     private String[] procedures;
-    // private final fields
-    private final GetObservationRequestHandler handler;
     // private static fields
     private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(Ioos10Formatter.class);
     public static final String SENSOR_ID_DEF = "http://mmisw.org/ont/ioos/definition/sensorID";
@@ -55,12 +53,13 @@ public class Ioos10Formatter extends BaseOutputFormatter {
     private static final String SENSOR_OBS_COLLECTION = "http://mmisw.org/ont/ioos/definition/sensorObservations";
     private static final String STATIC_SENSOR_DEF = "http://mmisw.org/ont/ioos/definition/sensor";
     private static final String STATIC_SENSORS_DEF = "http://mmisw.org/ont/ioos/definition/sensors";
-    private boolean hasError;
     private Namespace OM_NS, GML_NS, SWE2_NS, XLINK_NS, SWE_NS = null;
+    private GetObservationRequestHandler handler = null;
 
     //============== Constructor ============================================//
     public Ioos10Formatter(GetObservationRequestHandler handler) {
         super();
+        this.handler = handler;
         this.OM_NS    = this.getNamespace("om");
         this.GML_NS   = this.getNamespace("gml");
         this.XLINK_NS = this.getNamespace("xlink");

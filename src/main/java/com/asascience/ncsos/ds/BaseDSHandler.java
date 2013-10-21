@@ -18,8 +18,6 @@ import ucar.nc2.dataset.NetcdfDataset;
  * Main handler class for Describe Sensor requests. Processes the request to determine
  * what output format is being used as well as determine the feature type of the
  * dataset. Also calls the output handler to prepare the output for the response.
- * @author SCowan
- * @version 1.0.0
  */
 public class BaseDSHandler extends BaseRequestHandler {
     public static final String ALL = "all";
@@ -30,7 +28,7 @@ public class BaseDSHandler extends BaseRequestHandler {
     private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(BaseDSHandler.class);
     private final String procedure;
     private BaseDSInterface describer;
-    
+
     //private final String ACCEPTABLE_RESPONSE_FORMAT = "text/xml;subtype=\"sensorML/1.0.1\"";
     
     /**
@@ -56,7 +54,7 @@ public class BaseDSHandler extends BaseRequestHandler {
             return;
         }
         
-        // make sure that the responseFormat we recieved is acceptable
+        // make sure that the responseFormat we received is acceptable
     /*    if (!responseFormat.equalsIgnoreCase(ACCEPTABLE_RESPONSE_FORMAT)) {
             // return exception
             output = new BaseOutputFormatter();
@@ -80,33 +78,20 @@ public class BaseDSHandler extends BaseRequestHandler {
             setNeededInfoForStation(dataset, uri, query);
             describer.setupOutputDocument(output);
         } else if (this.procedure.contains(SENSOR)) {
-            output = new OosTethysFormatter(uri, query);
-            setNeededInfoForSensor(dataset);
-            describer.setupOutputDocument((OosTethysFormatter)output);
+            output = new BaseOutputFormatter();
+            output.setupExceptionOutput("NcSOS does not currently support DescribeSensor for sensor procedures.");
+            return;
         } else if (this.procedure.contains(NETWORK)) {
             output = new IoosNetwork10Formatter();
             describer = new IoosNetwork10Handler(dataset, procedure, query);
             describer.setupOutputDocument(output);
         } else {
             output = new BaseOutputFormatter();
-            output.setupExceptionOutput("Unknown procedure (not a station, sensor or 'network'): " + this.procedure);
+            output.setupExceptionOutput("Unknown procedure (not a 'station', 'sensor' or 'network'): " + this.procedure);
             return;
         }
     }
 
-    /**
-     * Exception version, used to create skeleton BaseDSHandler that
-     * can throw an exception
-     * @param dataset dataset, mostly unused
-     * @throws IOException 
-     */
-    public BaseDSHandler(NetcdfDataset dataset) throws IOException {
-        super(dataset);
-        
-        output = new OosTethysFormatter();
-        this.procedure = null;
-    }
-    
     /**
      * Procedure was a 'network' urn
      * @param dataset dataset we are doing the request against
@@ -116,11 +101,6 @@ public class BaseDSHandler extends BaseRequestHandler {
         // get our information based on feature type
         output = new IoosPlatform10Formatter();
         describer = new IoosPlatform10Handler(dataset, procedure, uri);
-    }
-    
-    private void setNeededInfoForSensor( NetcdfDataset dataset ) throws IOException {
-        // describe sensor (sensor) is very similar to describe sensor (station)
-        describer = new DescribeSensorHandler(dataset, procedure);
     }
 
     private boolean checkDatasetForProcedure(String procedure) {

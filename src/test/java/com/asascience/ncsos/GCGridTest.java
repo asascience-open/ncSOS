@@ -14,7 +14,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.w3c.dom.Document;
+import org.jdom.*;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
@@ -94,7 +94,7 @@ public class GCGridTest {
         return "could not find test name";
     }
     
-    private void writeOutput(HashMap<String, Object> outMap, Writer write) {
+    private void writeOutput(HashMap<String, Object> outMap, Writer write) throws IOException {
         OutputFormatter output = (OutputFormatter)outMap.get("outputHandler");
         assertNotNull("got null output", output);
         output.writeOutput(write);

@@ -5,11 +5,14 @@
 package com.asascience.ncsos.outputformatter.ds;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.asascience.ncsos.ds.IoosPlatform10Handler;
 import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
+import com.asascience.ncsos.util.XMLDomUtils;
 import org.jdom.*;
 
 /**
@@ -59,7 +62,7 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
      * @param description usually the description attribute value of a netcdf dataset
      */
     public void setDescriptionNode(String description) {
-        this.getRoot().getChild(DESCRIPTION, this.GML_NS).setText(description);
+        XMLDomUtils.getNestedChild(this.getRoot(), DESCRIPTION, this.GML_NS).setText(description);
     }
 
     /**
@@ -67,7 +70,7 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
      * @param name name (urn) of the station
      */
     public void setName(String name) {
-        this.getRoot().getChild(NAME, this.GML_NS).setText(name);
+        XMLDomUtils.getNestedChild(this.getRoot(), "name", this.GML_NS).setText(name);
     }
 
     /**
@@ -168,7 +171,7 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
          *   </swe:SimpleDataRecord>
          * </sml:capabilities>
          */
-        Element parent = ((parentName != null) ? this.getRoot().getChild(parentName,SML_NS) : this.getRoot());
+        Element parent = ((parentName != null) ? XMLDomUtils.getNestedChild(this.getRoot(), parentName, SML_NS) : this.getRoot());
         parent = addNewNode(parent, CAPABILITIES, SML_NS, NAME, name);
         parent = addNewNode(parent, SIMPLEDATARECORD, SWE_NS);
         parent = addNewNode(parent, META_DATA_PROP, GML_NS, TITLE, XLINK_NS, title);
@@ -185,7 +188,7 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
     public void addContactNode(String role, String organizationName, HashMap<String, HashMap<String, String>> contactInfo, String onlineResource) {
         // add sml:member as the head node, in the ContactList
 //        document = XMLDomUtils.addNode(document, "sml:System", "sml:contact", "sml:history");
-        Element contact = getRoot().getChild(CONTACT_LIST, this.SML_NS);
+        Element contact = XMLDomUtils.getNestedChild(this.getRoot(), CONTACT_LIST, this.SML_NS);
         contact = this.addNewNode(contact, MEMBER, this.SML_NS);
         contact.setAttribute(ROLE, role, this.XLINK_NS);
         /* *** */
@@ -235,8 +238,9 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
         Element parent = getRoot();
         List<Element> caps = parent.getChildren(CAPABILITIES, this.SML_NS);
         for (Element e : caps) {
-            if (e.getAttribute(NAME) != null && (e.getAttributeValue(NAME).equalsIgnoreCase("ioosServiceMetadata"))){
-                List<Element> fields = e.getChildren("field", this.SWE_NS);
+            if (e.getAttribute(NAME) != null && (e.getAttributeValue(NAME).equalsIgnoreCase("ioosServiceMetadata"))) {
+                Element sdr = e.getChild("SimpleDataRecord", this.SWE_NS);
+                List<Element> fields = sdr.getChildren("field", this.SWE_NS);
                 for (Element field : fields) {
                     if (field.getAttribute(NAME) != null && field.getAttributeValue(NAME).equalsIgnoreCase("softwareVersion")) {
                         field.getChild("Text", this.SWE_NS).getChild("value", this.SWE_NS).setText(NCSOS_VERSION);

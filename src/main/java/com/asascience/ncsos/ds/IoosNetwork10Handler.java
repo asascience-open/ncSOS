@@ -276,7 +276,7 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
                 String title = this.procedure.substring(0,this.procedure.lastIndexOf(":")+1) + station.getValue() + ":" + name.replaceAll("\\s+", "_");
                 String def = VocabDefinitions.GetDefinitionForParameter(this.checkForRequiredValue(var, "standard_name"));
                 String units = this.checkForRequiredValue(var, "units");
-                network.addComponentOutput(station.getValue(), name, title, def, this.global_attributes.get("featureType"), units);
+                network.addComponentOutput(station.getValue(), name, title, def, (String)this.getGlobalAttribute("featureType"), units);
             }
         }
     }
@@ -326,7 +326,7 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
                 String title = this.procedure.substring(0,this.procedure.lastIndexOf(":")+1) + station.getValue() + ":" + name.replaceAll("\\s+", "_");
                 String def = VocabDefinitions.GetDefinitionForParameter(this.checkForRequiredValue(var, "standard_name"));
                 String units = this.checkForRequiredValue(var, "units");
-                network.addComponentOutput(station.getValue(), name, title, def, this.global_attributes.get("featureType"), units);
+                network.addComponentOutput(station.getValue(), name, title, def, (String)this.getGlobalAttribute("featureType"), units);
             }
         }
     }
