@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.asascience.ncsos.outputformatter.go;
 
 import com.asascience.ncsos.go.GetObservationRequestHandler;
@@ -13,18 +9,13 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import org.jdom.*;
 import org.springframework.util.StringUtils;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import ucar.nc2.Attribute;
 import ucar.nc2.constants.FeatureType;
 
-/**
- *
- * @author SCowan
- */
+
 public class Ioos10Formatter extends BaseOutputFormatter {
 
     public static final String BLOCKSEPARATOR = "blockSeparator";
@@ -45,7 +36,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
     // private fields
     private String[] procedures;
     // private final fields
-    private final GetObservationRequestHandler parent;
+    private final GetObservationRequestHandler handler;
     // private static fields
     private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(Ioos10Formatter.class);
     public static final String SENSOR_ID_DEF = "http://mmisw.org/ont/ioos/definition/sensorID";
@@ -65,23 +56,35 @@ public class Ioos10Formatter extends BaseOutputFormatter {
     private static final String STATIC_SENSOR_DEF = "http://mmisw.org/ont/ioos/definition/sensor";
     private static final String STATIC_SENSORS_DEF = "http://mmisw.org/ont/ioos/definition/sensors";
     private boolean hasError;
+    private Namespace OM_NS, GML_NS, SWE2_NS, XLINK_NS, SWE_NS = null;
 
     //============== Constructor ============================================//
-    public Ioos10Formatter(GetObservationRequestHandler parent) {
+    public Ioos10Formatter(GetObservationRequestHandler handler) {
+        super();
+        this.OM_NS    = this.getNamespace("om");
+        this.GML_NS   = this.getNamespace("gml");
+        this.XLINK_NS = this.getNamespace("xlink");
+        this.SWE_NS   = this.getNamespace("swe");
+        this.SWE2_NS   = this.getNamespace("swe2");
+
         Boolean supported = false;
         for (FeatureType ft : supportedTypes) {
-            if (parent.getDatasetFeatureType() == ft) {
+            if (handler.getDatasetFeatureType() == ft) {
                 supported = true;
             }
         }
 
         if (!supported) {
-            UnsupportedFeatureType(parent.getDatasetFeatureType());
-            this.parent = null;
+            UnsupportedFeatureType(handler.getDatasetFeatureType());
+            this.handler = null;
         } else {
             this.hasError = false;
-            this.parent = parent;
+            this.handler = handler;
         }
+    }
+
+    public String getTemplateLocation() {
+        return TEMPLATE;
     }
 
     //============== Private Methods ========================================//
@@ -95,38 +98,34 @@ public class Ioos10Formatter extends BaseOutputFormatter {
      */
     private void createIoosSosResponse() {
         try {
-            // create the document from template
-            loadTemplateXML(TEMPLATE);
-            // set description
-            Element description = (Element) this.document.getElementsByTagNameNS(GML_NS, DESCRIPTION).item(0);
-            description.setTextContent(this.parent.getGlobalAttribute("description", "none"));
-            // fill out metadata properties
+            // Set NcSOS version
             this.setVersionMetadata();
-            // fill out <om:samplingTime>
-            this.document = XMLDomUtils.addNode(this.document,
-                    SAMPLING_TIME,
-                    OM_NS,
-                    this.createSamplingTimeTree());
-            // fill out <om:procedure>
-            this.document = XMLDomUtils.addNode(this.document,
-                    PROCEDURE,
-                    OM_NS,
-                    this.createProcedureTree());
-            // fill out <om:observedProperty>
-            this.document = XMLDomUtils.addNode(this.document,
-                    OBSERVED_PROPERTY,
-                    OM_NS,
-                    this.createObservedPropertyTree());
-            // fill out <om:featureOfInterest>
-            this.document = XMLDomUtils.addNode(this.document,
-                    FEATURE_INTEREST,
-                    OM_NS,
-                    this.createFeatureOfInterestTree());
-            // fill out <om:result>
-            this.document = XMLDomUtils.addNode(this.document,
-                    RESULT,
-                    OM_NS,
-                    this.createResultTree());
+
+            // Get the om:Observation element
+            Element obsElement = this.getRoot().getChild("member", this.OM_NS).getChild("Observation", this.OM_NS);
+            // Description
+            obsElement.getChild("description", this.GML_NS).setText(this.handler.global_attributes.get("description"));
+
+            Element samplingTime = new Element("samplingTime", this.OM_NS);
+            samplingTime.addContent(this.createTimePeriodTree());
+            obsElement.addContent(samplingTime);
+
+            Element procedure = new Element("procedure", this.OM_NS);
+            procedure.addContent(this.createProcessTree());
+            obsElement.addContent(procedure);
+
+            Element observProp = new Element("observedProperty", this.OM_NS);
+            observProp.addContent(this.createCompositePhenomTree());
+            obsElement.addContent(observProp);
+
+            Element foi = new Element("featureOfInterest", this.OM_NS);
+            foi.addContent(this.createFeatureCollectionTree());
+            obsElement.addContent(foi);
+
+            Element res = new Element("result", this.OM_NS);
+            res.addContent(this.createDataRecordTree());
+            obsElement.addContent(res);
+
         } catch (Exception ex) {
             _log.error(ex.toString());
             ex.printStackTrace();
@@ -140,63 +139,61 @@ public class Ioos10Formatter extends BaseOutputFormatter {
             <gml:version>FILLME</gml:version>
         </gml:metaDataProperty>
          */
-        Element obscollection = (Element) this.document.getElementsByTagNameNS(OM_NS, OBSERVATION_COLLECTION).item(0);
-        NodeList metadataProps = obscollection.getElementsByTagNameNS(GML_NS, "metaDataProperty");
-        for (int i = 0 ; i < metadataProps.getLength() ; i++) {
-            Element md = (Element) metadataProps.item(i);
-            if (md.hasAttributeNS(XLINK_NS, "title") && md.getAttributeNS(XLINK_NS, "title").equalsIgnoreCase("softwareVersion")) {
-                md.getElementsByTagNameNS(GML_NS, "version").item(0).setTextContent(NCSOS_VERSION);
+        List<Element> mdps = this.getRoot().getChildren("metaDataProperty", this.GML_NS);
+        for (Element md : mdps) {
+            if (md.getAttribute("title", this.XLINK_NS) != null && md.getAttributeValue("title", this.XLINK_NS).equalsIgnoreCase("softwareVersion")) {
+                md.getChild("version", this.GML_NS).setText(NCSOS_VERSION);
             }
         }
     }
 
-    //<editor-fold defaultstate="collapsed" desc="om:Observation children">
-    private Node createSamplingTimeTree() {
+    private Element createTimePeriodTree() {
         /*
          * <gml:TimePeriod>
          *   <gml:beginPosition>start_time</gml:beginPosition>
          *   <gml:endPosition>end_time</gml:endPosition>
          * </gml:TimePeriod>
          */
-        Element parent = createElementNS(GML_NS, TIME_PERIOD);
-        // add a begin and end position
-        Element begin = createElementNS(GML_NS, BEGIN_POSITION);
         String startT, endT;
-        if (this.parent.getRequestedEventTimes().size() > 0) {
-            startT = this.parent.getRequestedEventTimes().get(0);
-            endT = this.parent.getRequestedEventTimes().get(this.parent.getRequestedEventTimes().size() - 1);
+        if (this.handler.getRequestedEventTimes().size() > 0) {
+            startT = this.handler.getRequestedEventTimes().get(0);
+            endT = this.handler.getRequestedEventTimes().get(this.handler.getRequestedEventTimes().size() - 1);
         } else {
-            startT = this.parent.getCDMDataset().getBoundTimeBegin();
-            endT = this.parent.getCDMDataset().getBoundTimeEnd();
+            startT = this.handler.getCDMDataset().getBoundTimeBegin();
+            endT = this.handler.getCDMDataset().getBoundTimeEnd();
         }
-        begin.setTextContent(startT);
-        parent.appendChild(begin);
 
-        Element end = createElementNS(GML_NS, END_POSITION);
-        end.setTextContent(endT);
-        parent.appendChild(end);
-        return parent;
+        Element tp = new Element("TimePeriod", this.GML_NS);
+
+        Element starting = new Element("beginPosition", this.GML_NS);
+        starting.setText(startT);
+        tp.addContent(starting);
+
+        Element ending = new Element("endPosition", this.GML_NS);
+        ending.setText(endT);
+        tp.addContent(ending);
+        return tp;
     }
 
-    private org.w3c.dom.Node createProcedureTree() {
+    private Element createProcessTree() {
         /*
          * <om:Process>
          *   <gml:member xlink:href="station-urn" />
          *   <gml:member xlink:href="station-urn" />
          * </om:Process>
          */
-        Element parent = createElementNS(OM_NS, "Process");
-        // add each station to the parent
-        for (int i = 0; i < this.parent.getProcedures().length; i++) {
-            String stName = this.parent.getCDMDataset().getStationName(i);
-            Element member = createElementNS(GML_NS, MEMBER);
-            member.setAttribute("xlink:href", BaseRequestHandler.getGMLName(stName));
-            parent.appendChild(member);
+        Element proc = new Element("Process", this.OM_NS);
+        // Add each station to the parent
+        for (String p : this.handler.getProcedures()) {
+            // This used to query for the station names by index, but that seems silly.
+            // String stName = this.handler.getCDMDataset().getStationName(i);
+            // member.setAttribute("xlink:href", BaseRequestHandler.getGMLName(stName));
+            proc.addContent(new Element("member", this.GML_NS).setAttribute("href", p, this.XLINK_NS));
         }
-        return parent;
+        return proc;
     }
 
-    private org.w3c.dom.Node createObservedPropertyTree() {
+    private Element createCompositePhenomTree() {
         /*
          * <swe:CompositePhenomenon dimension="number_of_obs_props" gml:id="observedProperties">
          *   <gml:name>Response Observed Properties</gml:name>
@@ -204,25 +201,26 @@ public class Ioos10Formatter extends BaseOutputFormatter {
          *   <swe:component xlink:href="cf/ioos parameter def" />
          * </swe:CompositePhenomenon>
          */
-        List<String> obsProps = new ArrayList<String>(this.parent.getRequestedObservedProperties());
-        Element parent = createElementNS(SWE_NS, COMPOSITEPHENOMENON);
-        parent.setAttribute(DIMENSION, obsProps.size() + "");
-        parent.setAttributeNS(GML_NS, ID, OBSERVEDPROPERTIES);
+        List<String> obsProps = new ArrayList<String>(this.handler.getRequestedObservedProperties());
+        Element comp = new Element("CompositePhenomenon", this.SWE_NS);
+        comp.setAttribute("dimension", String.valueOf(obsProps.size()));
+        comp.setAttribute("id", "observedProperties", this.GML_NS);
 
-        Element name = createElementNS(GML_NS, NAME);
-        name.setTextContent(RESPONSE_OBSERVED_PROPERTIES);
-        parent.appendChild(name);
+        Element name = new Element("name", this.GML_NS);
+        name.setText(RESPONSE_OBSERVED_PROPERTIES);
+        comp.addContent(name);
+
         // add a swe:component for each observed property
         for (String op : obsProps) {
-            Element component = createElementNS(SWE_NS, COMPONENT);
-            String stdName = this.parent.getVariableStandardName(op);
-            component.setAttributeNS(XLINK_NS, HREF, VocabDefinitions.GetDefinitionForParameter(stdName));
-            parent.appendChild(component);
+            Element swe = new Element("component", this.SWE_NS);
+            String stdName = this.handler.getVariableStandardName(op);
+            swe.setAttribute("href", VocabDefinitions.GetDefinitionForParameter(stdName), this.XLINK_NS);
+            comp.addContent(swe);
         }
-        return parent;
+        return comp;
     }
 
-    private org.w3c.dom.Node createFeatureOfInterestTree() {
+    private Element createFeatureCollectionTree() {
         /*
          * <gml:FeatureCollection>
          *   <gml:metaDataProperty>
@@ -252,62 +250,57 @@ public class Ioos10Formatter extends BaseOutputFormatter {
          *   </gml:location
          * </gml:FeatureCollection>
          */
-        Element parent = createElementNS(GML_NS, FEATURE_COLLECTION);
-        // metadata property with feature type
-        Element metadata = createElementNS(GML_NS, META_DATA_PROP);
-        Element name = createElementNS(GML_NS, NAME);
-        name.setAttribute(CODE_SPACE, "http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#discrete-sampling-geometries");
-        name.setTextContent(this.parent.getFeatureType());
-        metadata.appendChild(name);
-        parent.appendChild(metadata);
+        Element fc = new Element("FeatureCollection", this.GML_NS);
+
+        // metaDataProperty
+        Element metadata = new Element("metaDataProperty", this.GML_NS);
+        Element name = new Element("name", this.GML_NS);
+        name.setAttribute("codeSpace", "http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#discrete-sampling-geometries");
+        name.setText(this.handler.global_attributes.get("featureType"));
+        metadata.addContent(name);
+        fc.addContent(metadata);
 
         // lat-lon bounding box
-        Element bbox = createElementNS(GML_NS, BOUNDED_BY);
-        Element env = createElementNS(GML_NS, ENVELOPE);
-        env.setAttribute(SRS_NAME, "http://www.opengis.net/def/crs/EPSG/0/4326");
-        Element corner = createElementNS(GML_NS, LOWER_CORNER);
-        corner.setTextContent(this.parent.getBoundedLowerCorner());
-        env.appendChild(corner);
-        corner = createElementNS(GML_NS, UPPER_CORNER);
-        corner.setTextContent(this.parent.getBoundedUpperCorner());
-        env.appendChild(corner);
-        bbox.appendChild(env);
-
-        parent.appendChild(bbox);
+        Element bbox = new Element("boundedBy", this.GML_NS);
+        Element env = new Element("Envelope", this.GML_NS);
+        env.setAttribute("srsName", "http://www.opengis.net/def/crs/EPSG/0/4326");
+        env.addContent(new Element("lowerCorner", this.GML_NS).setText(this.handler.getBoundedLowerCorner()));
+        env.addContent(new Element("upperCorner", this.GML_NS).setText(this.handler.getBoundedUpperCorner()));
+        bbox.addContent(env);
+        fc.addContent(bbox);
 
         // location for each station
-        Element loc = createElementNS(GML_NS, LOCATION);
-        Element mPoint = createElementNS(GML_NS, MULTIPOINT);
-        mPoint.setAttribute(SRSNAME, "http://www.opengis.net/def/crs/EPSG/0/4326");
-        Element pMmbrs = createElementNS(GML_NS, POINTMEMBERS);
-        for (int i = 0; i < this.parent.getProcedures().length; i++) {
-            String stName = BaseRequestHandler.getGMLName(this.parent.getCDMDataset().getStationName(i));
-            Element point = createElementNS(GML_NS, POINT);
-            Element pname = createElementNS(GML_NS, NAME);
-            pname.setTextContent(stName);
-            point.appendChild(pname);
-            Element ppos = createElementNS(GML_NS, POS);
-            ppos.setTextContent(this.parent.getStationLowerCorner(i));
-            point.appendChild(ppos);
+        Element loc = new Element("location", this.GML_NS);
+        Element mPoint = new Element("MultiPoint", this.GML_NS);
+        mPoint.setAttribute("srsName", "http://www.opengis.net/def/crs/EPSG/0/4326");
+        Element ptMembers = new Element("pointMembers", this.GML_NS);
+        for (int i = 0; i < this.handler.getProcedures().length; i++) {
+            String stName = this.handler.getUrnName(this.handler.getCDMDataset().getStationName(i));
+            Element point = new Element("Point", this.GML_NS);
 
-            pMmbrs.appendChild(point);
+            Element pname = new Element("name", this.GML_NS);
+            pname.setText(stName);
+            point.addContent(pname);
+
+            Element ppos = new Element("pos", this.GML_NS);
+            ppos.setText(this.handler.getStationLowerCorner(i));
+            point.addContent(ppos);
+
+            ptMembers.addContent(point);
         }
-        mPoint.appendChild(pMmbrs);
-        loc.appendChild(mPoint);
+        mPoint.addContent(ptMembers);
+        loc.addContent(mPoint);
+        fc.addContent(loc);
 
-        parent.appendChild(loc);
-
-        return parent;
+        return fc;
     }
 
-    //</editor-fold>
-    //<editor-fold defaultstate="collapsed" desc="om:result">
     /**
      * Creates the xml element tree that will fit into the <om:member> element
      * in the ioossos_1_0 template.
      * @return Document root to be added into the template
      */
-    private Node createResultTree() {
+    private Element createDataRecordTree() {
         /*
          * Creates the following:
          * <swe2:DataRecord xsi:schemaLocation=SWE2_SCHEMALOCATION>
@@ -328,52 +321,52 @@ public class Ioos10Formatter extends BaseOutputFormatter {
          * <swe2:DataRecord>
          */
         // create DataRecord Element
-        org.w3c.dom.Element parent = createSwe2Element(DATA_RECORD, XSISCHEMALOCATION, SWE2_SCHEMALOCATION);
-        // create 1st field, the static data field
-        org.w3c.dom.Element static_data = createElementNS(SWE2_NS, FIELD);
-        // set name to 'stations'
-        static_data.setAttribute(NAME, STATIONS);
-        // add static data to data record
-        parent.appendChild(static_data);
-        // create dataRecord for static data
-        Element static_record = createSwe2Element(DATA_RECORD, DEFINITION, STATIC_STATIONS_DEF);
-        // create the static data
-        for (int i = 0; i < this.parent.getProcedures().length; i++) {
-            String stName = this.parent.getCDMDataset().getStationName(i);
-            static_record.appendChild(createStaticStationData(stName, i));
-        }
-        // add record element to static data field element
-        static_data.appendChild(static_record);
-        // create 2nd field, dynamic data (observation data)
-        org.w3c.dom.Element dynamic_data = createElementNS(SWE2_NS, FIELD);
-        dynamic_data.setAttribute(NAME, OBSERVATIONDATA);
+        Element dr = new Element("DataRecord", this.SWE2_NS);
 
-        // create the dynamic data (obwervationData)
-        Element dynamic_array = createSwe2Element(DATA_ARRAY);
-        dynamic_array.setAttribute(DEFINITION, OBS_COLLECTION_DEF);
+        // STATION (STATIC) DATA
+        Element static_data = new Element("field", this.SWE2_NS);
+        static_data.setAttribute("name", "stations");
+
+        Element static_record = new Element("DataRecord", this.SWE2_NS);
+        static_record.setAttribute("definition", STATIC_STATIONS_DEF);
+
+        // create the static data
+        for (int i = 0; i < this.handler.getProcedures().length; i++) {
+            String stName = this.handler.getCDMDataset().getStationName(i);
+            static_record.addContent(createStaticStationData(stName, i));
+        }
+        static_data.addContent(static_record);
+        dr.addContent(static_data);
+
+        // OBSERVATION (DYNAMIC) DATA
+        Element dynamic_data = new Element("field", this.SWE2_NS);
+        dynamic_data.setAttribute("name", "observationData");
+
+        Element dynamic_array = new Element("DataArray", this.SWE2_NS);
+        dynamic_array.setAttribute("definition", OBS_COLLECTION_DEF);
         // get the count of records (total)
         StringBuilder strBuilder = new StringBuilder();
-        for (int p = 0; p < this.parent.getProcedures().length; p++) {
-            strBuilder.append(this.parent.getValueBlockForAllObs(BLOCK_SEPERATOR, DECIMAL_SEPERATOR, TOKEN_SEPERATOR, p));
+        for (int p = 0; p < this.handler.getProcedures().length; p++) {
+            strBuilder.append(this.handler.getValueBlockForAllObs(BLOCK_SEPERATOR, DECIMAL_SEPERATOR, TOKEN_SEPERATOR, p));
         }
         int count = StringUtils.countOccurrencesOf(strBuilder.toString(), BLOCK_SEPERATOR);
         // create count element
-        dynamic_array.appendChild(createElementCount(count));
+        dynamic_array.addContent(this.createElementCount(count));
 
         // create elementType "observations" element
-        dynamic_array.appendChild(createObservationsElement());
+        dynamic_array.addContent(this.createObservationsElement());
 
         // create encoding element
-        dynamic_array.appendChild(createEncodingElement());
+        dynamic_array.addContent(this.createEncodingElement());
 
         // add value block to values
-        dynamic_array.appendChild(createValuesElement(strBuilder));
+        dynamic_array.addContent(this.createValuesElement(strBuilder));
 
-        dynamic_data.appendChild(dynamic_array);
+        dynamic_data.addContent(dynamic_array);
 
         // add dynamic data to data record
-        parent.appendChild(dynamic_data);
-        return parent;
+        dr.addContent(dynamic_data);
+        return dr;
     }
 
     //<editor-fold defaultstate="collapsed" desc="dynamic data">
@@ -395,36 +388,36 @@ public class Ioos10Formatter extends BaseOutputFormatter {
          *   </swe2:DataRecord>
          * </swe2:elementType>
          */
-        Element elementType = createSwe2Element("elementType", NAME, "observations");
-        Element dataRecord = createSwe2Element(DATA_RECORD);
-        dataRecord.setAttribute(DEFINITION, SENSOR_OBS_COLLECTION);
-        Element field = createSwe2Element(FIELD, NAME, "time");
-        Element time = createSwe2Element(TIME, DEFINITION, "http://www.opengis.net/def/property/OGC/0/SamplingTime");
-        time.appendChild(createSwe2Element(UOM, "xlink:href", "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"));
-        field.appendChild(time);
-        dataRecord.appendChild(field);
+        Element elementType = new Element("elementType", this.SWE2_NS).setAttribute("name", "observations");
+        Element dataRecord = new Element("DataRecord", this.SWE2_NS);
+        dataRecord.setAttribute("definition", SENSOR_OBS_COLLECTION);
+        Element field = new Element("field", this.SWE2_NS).setAttribute("name", "time");
+        Element time = new Element("time", this.SWE2_NS).setAttribute("definition", "http://www.opengis.net/def/property/OGC/0/SamplingTime");
+        time.addContent(new Element("uom", this.SWE2_NS).setAttribute("href", "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian", this.XLINK_NS));
+        field.addContent(time);
+        dataRecord.addContent(field);
 
-        field = createSwe2Element(FIELD, NAME, "sensor");
-        Element dataChoice = createSwe2Element("DataChoice");
-        for (int i = 0; i < this.parent.getProcedures().length; i++) {
-            String stName = this.parent.getCDMDataset().getStationName(i);
+        Element sensorField = new Element("field", this.SWE2_NS).setAttribute("name", "sensor");
+        Element dataChoice = new Element("DataChoice", this.SWE2_NS);
+        for (int i = 0; i < this.handler.getProcedures().length; i++) {
+            String stName = this.handler.getCDMDataset().getStationName(i);
             // DataRecord has to have at least 2 fields
-            List<String> sensors = new ArrayList<String>(this.parent.getRequestedObservedProperties());
+            List<String> sensors = new ArrayList<String>(this.handler.getRequestedObservedProperties());
             while (sensors.size() < 2) {
                 sensors.add("dummy_item");
             }
             for (String sensor : sensors) {
-                dataChoice.appendChild(createDataChoiceForSensor(stName, sensor));
+                dataChoice.addContent(createDataChoiceForSensor(stName, sensor));
             }
         }
-        field.appendChild(dataChoice);
-        dataRecord.appendChild(field);
+        field.addContent(dataChoice);
+        dataRecord.addContent(field);
 
-        elementType.appendChild(dataRecord);
+        elementType.addContent(dataRecord);
         return elementType;
     }
 
-    private Node createDataChoiceForSensor(String stName, String sensor) {
+    private Element createDataChoiceForSensor(String stName, String sensor) {
         /*
          * <swe2:item name="sensor_name">
          *   <swe2:DataRecord>
@@ -437,41 +430,40 @@ public class Ioos10Formatter extends BaseOutputFormatter {
          * </swe2:item>
          */
         // create the friendly name
+        Element item = null;
         if (sensor.equalsIgnoreCase("dummy_item")) {
-            Element item = createSwe2Element(ITEM, NAME, sensor);
+            item = new Element("item", this.SWE2_NS).setAttribute("name", sensor);
             return item;
         } else {
-            String fieldName = stationToFieldName(stName);
-            String name = fieldName + "_" + sensor.toLowerCase();
-            Element item = createSwe2Element(ITEM, NAME, name);
+            String name = stationToFieldName(stName) + "_" + sensor.toLowerCase();
+            item = new Element("item", this.SWE2_NS).setAttribute("name", name);
 
-            String sensorDef = this.parent.getVariableStandardName(sensor);
-            String sensorUnits = this.parent.getUnitsString(sensor);
+            String sensorDef = this.handler.getVariableStandardName(sensor);
+            String sensorUnits = this.handler.getUnitsString(sensor);
 
-            Element dataRecord = createSwe2Element(DATA_RECORD);
-            Element field = createSwe2Element(FIELD, NAME, sensor);
-            Element quantity = createSwe2Element(QUANTITY, DEFINITION,
-                    VocabDefinitions.GetDefinitionForParameter(sensorDef));
-            quantity.appendChild(createSwe2Element(UOM, CODE, sensorUnits));
+            Element dataRecord = new Element("DataRecord", this.SWE2_NS);
+            Element field = new Element("field", this.SWE2_NS).setAttribute("name", sensor);
+            Element quantity = new Element("Quantity", this.SWE2_NS).setAttribute("definition", VocabDefinitions.GetDefinitionForParameter(sensorDef));
+            quantity.addContent(new Element("uom", this.SWE2_NS).setAttribute("code", sensorUnits));
 
             // if the variable has a 'fill value' then add it as a nil value
             try {
-                for (Attribute attr : this.parent.getVariableByName(sensor).getAttributes()) {
+                for (Attribute attr : this.handler.getVariableByName(sensor).getAttributes()) {
                     if (attr.getShortName().toLowerCase().contains("fillvalue")) {
-                        Element nilValues = createSwe2Element("nilValues");
-                        Element nvs = createSwe2Element("nilValue", "reason", "Fill Value");
-                        nvs.setTextContent(attr.getValue(0).toString());
-                        nilValues.appendChild(nvs);
-                        quantity.appendChild(nilValues);
+                        Element nilValues = new Element("nilValues", this.SWE2_NS);
+                        Element nvs = new Element("nilValue", this.SWE2_NS).setAttribute("reason", "Fill Value");
+                        nvs.setText(attr.getValue(0).toString());
+                        nilValues.addContent(nvs);
+                        quantity.addContent(nilValues);
                     }
                 }
             } catch (Exception ex) {
             }
 
-            field.appendChild(quantity);
-            dataRecord.appendChild(field);
+            field.addContent(quantity);
+            dataRecord.addContent(field);
 
-            item.appendChild(dataRecord);
+            item.addContent(dataRecord);
             return item;
         }
     }
@@ -486,7 +478,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         //time=1990-01-01T00:00:00Z,station=0,temperature=22.0,alt=5.6375227[BLOCK_SEPERATOR]time=1990-01-01T00:00:00Z,station=1,temperature=14.0,alt=7.396358
         // we need to remove all of the 'keys' (ie time, station, etc) and replace with desired info
         StringBuilder newString = new StringBuilder();
-        List<String> obsProps = this.parent.getRequestedObservedProperties();
+        List<String> obsProps = this.handler.getRequestedObservedProperties();
         for (String block : strBuilder.toString().split(BLOCK_SEPERATOR)) {
             // split on token seperator
             StringBuilder newBlock = new StringBuilder();
@@ -496,7 +488,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
                 } else if (token.contains("station")) {
                     String[] tokenSplit = token.split("=");
                     int stNum = Integer.parseInt(tokenSplit[1]);
-                    newBlock.append(stationToFieldName(this.parent.getProcedures()[stNum])).append("_");
+                    newBlock.append(stationToFieldName(this.handler.getProcedures()[stNum])).append("_");
                 } else {
                     String[] tokenSplit = token.split("=");
                     if (obsProps.contains(tokenSplit[0]) && tokenSplit.length > 1) {
@@ -510,9 +502,8 @@ public class Ioos10Formatter extends BaseOutputFormatter {
             }
         }
         // remove the last block seperator
-        Element values = createSwe2Element(VALUES);
-        // values.setTextContent(newString.substring(0, newString.length() - BLOCK_SEPERATOR.length()));
-        values.setTextContent(newString.substring(0, newString.length() - BLOCK_SEPERATOR.length()));
+        Element values = new Element("values", this.SWE2_NS);
+        values.setText(newString.substring(0, newString.length() - BLOCK_SEPERATOR.length()));
         return values;
     }
 
@@ -525,28 +516,28 @@ public class Ioos10Formatter extends BaseOutputFormatter {
          *   </swe2:Count>
          * </swe2:elementCount>
          */
-        Element elmcount = createSwe2Element(ELEMENT_COUNT);
-        Element ecount = createSwe2Element(COUNT);
-        Element value = createSwe2Element(SML_VALUE);
-        value.setTextContent(Integer.toString(count));
-        ecount.appendChild(value);
-        elmcount.appendChild(ecount);
+        Element elmcount = new Element("elementCount", this.SWE2_NS);
+        Element ecount = new Element("Count", this.SWE2_NS);
+        Element value = new Element("value", this.SWE2_NS);
+        value.setText(String.valueOf(count));
+        ecount.addContent(value);
+        elmcount.addContent(ecount);
         return elmcount;
     }
 
-    private Node createEncodingElement() {
+    private Element createEncodingElement() {
         /*
          * Creates the following:
          * <swe2:encoding>
          *   <swe2:TextEncoding decimalSeparator="DECIMAL_SEPERATOR" tokenSeparator="TOKEN_SEPERATOR" blockSeparator="BLOCK_SEPERATOR" />
          * </swe2:encoding>
          */
-        Element encoding = createSwe2Element("encoding");
-        HashMap<String, String> map = new HashMap<String, String>();
-        map.put(DECIMALSEPARATOR, DECIMAL_SEPERATOR);
-        map.put(TOKENSEPARATOR, TOKEN_SEPERATOR);
-        map.put(BLOCKSEPARATOR, BLOCK_SEPERATOR);
-        encoding.appendChild(createSwe2Element(TEXTENCODING, map));
+        Element encoding = new Element("encoding", this.SWE2_NS);
+        Element txe = new Element("TextEncoding", this.SWE2_NS);
+        txe.setAttribute("decimalSeperator", DECIMAL_SEPERATOR);
+        txe.setAttribute("tokenSeparator", TOKEN_SEPERATOR);
+        txe.setAttribute("blockSeparator", BLOCK_SEPERATOR);
+        encoding.addContent(txe);
         return encoding;
     }
 
@@ -573,42 +564,47 @@ public class Ioos10Formatter extends BaseOutputFormatter {
          *   <swe2:DataRecord>
          * </swe2:field>
          */
-        Element stStation = createElementNS(SWE2_NS, FIELD);
+        Element stStation = new Element("field", this.SWE2_NS);
         // change 'procedure' into the readable format described in the template
         String name = stationToFieldName(stName);
         stStation.setAttribute(NAME, name);
         // DataRecord
-        Element record = createSwe2Element(DATA_RECORD, ID, name);
-        record.setAttribute(DEFINITION, STATIC_STATION_DEF);
+        Element record = new Element("DataRecord", this.SWE2_NS);
+        record.setAttribute("id", name);
+        record.setAttribute("definition", STATIC_STATION_DEF);
         // add field for stationId
-        Element field = createSwe2Element(FIELD, NAME, "stationID");
-        Element text = createSwe2Element("Text", DEFINITION, "http://mmisw.org/ont/ioos/definition/stationID");
-        Element value = createSwe2Element(SML_VALUE);
-        value.setTextContent(BaseRequestHandler.getGMLName(stName));
-        text.appendChild(value);
-        field.appendChild(text);
-        record.appendChild(field);
+        Element field = new Element("field", this.SWE2_NS);
+        field.setAttribute("name", "stationID");
+        Element text = new Element("Text", this.SWE2_NS);
+        text.setAttribute("definition", "http://mmisw.org/ont/ioos/definition/stationID");
+        Element value = new Element("value", this.SWE2_NS);
+        value.setText(this.handler.getUrnName(stName));
+        text.addContent(value);
+        field.addContent(text);
+        record.addContent(field);
 
         // field for platformLocation
-        field = createSwe2Element(FIELD, NAME, "platformLocation");
-        field.appendChild(createSwe2Vector(stNum));
-        record.appendChild(field);
+        field = new Element("field", this.SWE2_NS);
+        field.setAttribute("name", "platformLocation");
+        field.addContent(createSwe2Vector(stNum));
+        record.addContent(field);
 
         //fielf for sensors
-        field = createSwe2Element(FIELD, NAME, "sensors");
-        Element dr = createSwe2Element(DATA_RECORD);
+        field = new Element("field", this.SWE2_NS);
+        field.setAttribute("name", "sensors");
+        Element dr = new Element("DataRecord", this.SWE2_NS);
         dr.setAttribute(DEFINITION, STATIC_SENSORS_DEF);
         // TODO: Need an example netcdf file that contain an explicit set of sensors in order
         // to properly create this field. It will not always be the case that observed
         // properties are also the sensors.
         // create a sensor field for each observed property
-        for (String op : this.parent.getRequestedObservedProperties()) {
-            dr.appendChild(createSwe2Sensors(stName, stNum, op, name));
+        for (String op : this.handler.getRequestedObservedProperties()) {
+            dr.addContent(createSwe2Sensors(stName, stNum, op, name));
         }
-        field.appendChild(dr);
-        record.appendChild(field);
+        field.addContent(dr);
+        record.addContent(field);
 
-        stStation.appendChild(record);
+        stStation.addContent(record);
         return stStation;
     }
 
@@ -632,32 +628,36 @@ public class Ioos10Formatter extends BaseOutputFormatter {
          * </swe2:field>
          */
         String op_name = stFormName + "_" + op.toLowerCase();
-        Element retval = createSwe2Element(FIELD, NAME, op_name);
-        Element dataRecord = createSwe2Element(DATA_RECORD, ID, op_name);
+        Element retval = new Element("field", this.SWE2_NS);
+        retval.setAttribute("name", op_name);
+        Element dataRecord = new Element("DataReocrd", this.SWE2_NS);
+        dataRecord.setAttribute("id", op_name);
         dataRecord.setAttribute(DEFINITION, STATIC_SENSOR_DEF);
         // sensorID field
-        Element field = createSwe2Element(FIELD, NAME, "sensorID");
-        Element text = createSwe2Element("Text", DEFINITION, SENSOR_ID_DEF);
-        Element value = createSwe2Element(SML_VALUE);
-        value.setTextContent(BaseRequestHandler.getSensorGMLName(stName, op));
-        text.appendChild(value);
-        field.appendChild(text);
-        dataRecord.appendChild(field);
+        Element field = new Element("field", this.SWE2_NS);
+        field.setAttribute("name", "sensorID");
+        Element text = new Element("Text", this.SWE2_NS);
+        text.setAttribute("definition", SENSOR_ID_DEF);
+        Element value = new Element("value", this.SWE2_NS);
+        value.setText(this.handler.getSensorUrnName(stName, op));
+        text.addContent(value);
+        field.addContent(text);
+        dataRecord.addContent(field);
 
         // height field
-        field = createSwe2Element(FIELD, NAME, "height");
-        HashMap<String, String> map = new HashMap<String, String>();
-        map.put("definition", "http://mmisw.org/ont/cf/parameter/height");
-        map.put("referenceFrame", "#PlatformFrame");
-        Element quantity = createSwe2Element(QUANTITY, map);
-        quantity.appendChild(createSwe2Element(UOM, "code", "m"));
-        value = createSwe2Element(SML_VALUE);
-        value.setTextContent("0");      // TODO: Need to change this to reflect height of ... something ...
-        quantity.appendChild(value);
-        field.appendChild(quantity);
-        dataRecord.appendChild(field);
+        field = new Element("field", this.SWE2_NS);
+        field.setAttribute("name", "height");
+        Element quantity = new Element("Quantity", this.SWE2_NS);
+        quantity.setAttribute("definintion", "http://mmisw.org/ont/cf/parameter/height");
+        quantity.setAttribute("referenceFrame", "#PlatformFrame");
+        quantity.addContent(new Element("uom", this.SWE2_NS).setAttribute("code", "m"));
+        value = new Element("value", this.SWE2_NS);
+        value.setText("0");      // TODO: Need to change this to reflect height of ... something ...
+        quantity.addContent(value);
+        field.addContent(quantity);
+        dataRecord.addContent(field);
 
-        retval.appendChild(dataRecord);
+        retval.addContent(dataRecord);
         return retval;
     }
 
@@ -671,19 +671,18 @@ public class Ioos10Formatter extends BaseOutputFormatter {
          * </swe2:Vector>
          */
         // vector
-        HashMap<String, String> attributes = new HashMap<String, String>();
-        attributes.put("definition", "http://www.opengis.net/def/property/OGC/0/PlatformLocation");
-        attributes.put("referenceFrame", "https://ioostech.googlecode.com/svn/trunk/IoosCRS/IoosBuoyCRS.xml");
-        attributes.put("localFrame", "#PlatformFrame");
-        Element vector = createSwe2Element("Vector", attributes);
+        Element vector = new Element("Vector", this.SWE2_NS);
+        vector.setAttribute("definition", "http://www.opengis.net/def/property/OGC/0/PlatformLocation");
+        vector.setAttribute("referenceFrame", "https://ioostech.googlecode.com/svn/trunk/IoosCRS/IoosBuoyCRS.xml");
+        vector.setAttribute("localFrame", "#PlatformFrame");
         // coords: lat, lon, z
-        String lat = Double.toString(this.parent.getCDMDataset().getLowerLat(stNum));
-        String lon = Double.toString(this.parent.getCDMDataset().getLowerLon(stNum));
-        String alt = Double.toString(this.parent.getCDMDataset().getLowerAltitude(stNum));
+        String lat = Double.toString(this.handler.getCDMDataset().getLowerLat(stNum));
+        String lon = Double.toString(this.handler.getCDMDataset().getLowerLon(stNum));
+        String alt = Double.toString(this.handler.getCDMDataset().getLowerAltitude(stNum));
         // create and add the swe2:coordinates
-        vector.appendChild(createSwe2Coordinate("latitude", "http://mmisw.org/ont/cf/parameter/latitude", "Lat", "deg", lat));
-        vector.appendChild(createSwe2Coordinate("longitude", "http://mmisw.org/ont/cf/parameter/longitude", "Lon", "deg", lon));
-        vector.appendChild(createSwe2Coordinate("height", "http://mmisw.org/ont/cf/parameter/height", "Z", "m", alt));
+        vector.addContent(createSwe2Coordinate("latitude", "http://mmisw.org/ont/cf/parameter/latitude", "Lat", "deg", lat));
+        vector.addContent(createSwe2Coordinate("longitude", "http://mmisw.org/ont/cf/parameter/longitude", "Lon", "deg", lon));
+        vector.addContent(createSwe2Coordinate("height", "http://mmisw.org/ont/cf/parameter/height", "Z", "m", alt));
         return vector;
     }
 
@@ -697,47 +696,21 @@ public class Ioos10Formatter extends BaseOutputFormatter {
          *   </swe2:Quantity>
          * </swe2:coordinate>
          */
-        Element coord = createSwe2Element(COORDINATE, NAME, name);
-        HashMap<String, String> attrs = new HashMap<String, String>();
-        attrs.put(DEFINITION, definition);
-        attrs.put(AXIS_ID, axisId);
-        Element quant = createSwe2Element(QUANTITY, attrs);
+        Element coord = new Element("coordinate", this.SWE2_NS).setAttribute("name", name);
+        Element quant = new Element("Quantity", this.SWE2_NS);
+        quant.setAttribute("definition", definition);
+        quant.setAttribute("axisID", axisId);
         // uom
-        quant.appendChild(createSwe2Element(UOM, CODE, code));
+        quant.addContent(new Element("uom", this.SWE2_NS).setAttribute("code", code));
         // value
-        attrs.clear();
-        Element val = createSwe2Element(SML_VALUE, attrs);
-        val.setTextContent(value);
-        quant.appendChild(val);
+        Element val = new Element("value", this.SWE2_NS);
+        val.setText(value);
+        quant.addContent(val);
         // quantity -> coordinate
-        coord.appendChild(quant);
+        coord.addContent(quant);
         return coord;
     }
 
-    //</editor-fold>
-    //</editor-fold>
-    //<editor-fold defaultstate="collapsed" desc="createSwe2Element">
-    private Element createSwe2Element(String name) {
-        HashMap<String, String> map = new HashMap<String, String>();
-        return createSwe2Element(name, map);
-    }
-
-    private Element createSwe2Element(String name, String attributeName, String attributeValue) {
-        HashMap<String, String> map = new HashMap<String, String>();
-        map.put(attributeName, attributeValue);
-        return createSwe2Element(name, map);
-    }
-
-    private Element createSwe2Element(String name, HashMap<String, String> attributes) {
-        // create a "swe2:DataRecord" element, add all of the attributes in the hashmap, return
-        Element dataRecord = createElementNS(SWE2_NS, name);
-        for (String attrName : attributes.keySet()) {
-            dataRecord.setAttribute(attrName, attributes.get(attrName));
-        }
-        return dataRecord;
-    }
-
-    //</editor-fold>
     /**
      * Go from urn to readable name (as in swe2:field name)
      * @param stName
@@ -745,7 +718,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
      */
     private String stationToFieldName(String stName) {
         // get the gml urn
-        String urn = BaseRequestHandler.getGMLName(stName);
+        String urn = this.handler.getUrnName(stName);
         // split on station/sensor
         String[] urnSplit = urn.split("(sensor|station):");
         // get the last index of split
@@ -756,7 +729,6 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         return urn.toLowerCase();
     }
 
-    //============== Output Formatter Interface =============================//
     @Override
     public void setupExceptionOutput(String message) {
         _log.debug(message);
@@ -765,12 +737,10 @@ public class Ioos10Formatter extends BaseOutputFormatter {
     }
 
     @Override
-    public void writeOutput(Writer writer) {
+    public void writeOutput(Writer writer) throws IOException {
         if (!hasError) {
             this.createIoosSosResponse();
         }
         super.writeOutput(writer);
     }
-    //</editor-fold>
-    //=======================================================================//
 }

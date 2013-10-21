@@ -68,7 +68,7 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
     private void describeNetwork() {
         network.setVersionMetadata();
         network.setName(this.procedure);
-        network.setDescriptionNode(this.getGlobalAttribute("description", "no description"));
+        network.setDescriptionNode((String)this.getGlobalAttribute("description", "No description found"));
         this.formatSmlIdentification();
         this.formatSmlClassification();
         this.formatSmlValidTime();
@@ -79,8 +79,8 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
     
     private void formatSmlIdentification() {
         network.addSmlIdentifier("networkID", VocabDefinitions.GetIoosDefinition("networkID"), this.procedure);
-        network.addSmlIdentifier("shortName", VocabDefinitions.GetIoosDefinition("shortName"), this.getGlobalAttribute("shortName", "SOS station assets collection of the dataset"));
-        network.addSmlIdentifier("longName", VocabDefinitions.GetIoosDefinition("longName"), this.getGlobalAttribute("longName", this.procedure + " Collaction of all station assets available in dataset"));
+        network.addSmlIdentifier("shortName", VocabDefinitions.GetIoosDefinition("shortName"), (String)this.getGlobalAttribute("shortName", "SOS station assets collection of the dataset"));
+        network.addSmlIdentifier("longName", VocabDefinitions.GetIoosDefinition("longName"), (String)this.getGlobalAttribute("longName", this.procedure + " Collaction of all station assets available in dataset"));
     }
     
     private void formatSmlClassification() {
@@ -88,10 +88,10 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
         network.addSmlClassifier("platformType", VocabDefinitions.GetIoosDefinition("platformType"), "platform", this.checkForRequiredValue("platform_type"));
         network.addSmlClassifier("operatorSector", VocabDefinitions.GetIoosDefinition("operatorSector"), "sector", this.checkForRequiredValue("operator_sector"));
         network.addSmlClassifier("publisher", VocabDefinitions.GetIoosDefinition("publisher"), "organization", this.checkForRequiredValue("publisher"));
-        network.addSmlClassifier("parentNetwork", "http://mmisw.org/ont/ioos/definition/parentNetwork", "organization", this.getGlobalAttribute("parent_network", ""));
+        network.addSmlClassifier("parentNetwork", "http://mmisw.org/ont/ioos/definition/parentNetwork", "organization", (String)this.getGlobalAttribute("parent_network", ""));
         
         // sponsor is optional
-        String value = this.getGlobalAttribute("sponsor", null);
+        String value = (String)this.getGlobalAttribute("sponsor", null);
         if (value != null) {
             network.addSmlClassifier("sponsor", VocabDefinitions.GetIoosDefinition("sponsor"), "organization", value);
         }
@@ -110,11 +110,11 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
         HashMap<String, HashMap<String,String>> contactInfo = new HashMap<String, HashMap<String,String>>();
         String role = "http://mmisw.org/ont/ioos/definition/operator";
         String org = this.checkForRequiredValue("creator_name");
-        String url = this.getGlobalAttribute("creator_url", null);
+        String url = (String)this.getGlobalAttribute("creator_url", null);
         HashMap<String, String> address = createAddressForContact("creator");
         contactInfo.put("sml:address", address);
         HashMap<String, String> phone = new HashMap<String, String>();
-        phone.put("sml:voice", this.getGlobalAttribute("creator_phone", null));
+        phone.put("sml:voice", (String)this.getGlobalAttribute("creator_phone", null));
         contactInfo.put("sml:phone", phone);
         network.addContactNode(role, org, contactInfo, url);
 
@@ -123,20 +123,20 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
 
         role = "http://mmisw.org/on/ioos/definition/publisher";
         org = this.checkForRequiredValue("publisher_name");
-        url = this.getGlobalAttribute("publisher_url", null);
+        url = (String)this.getGlobalAttribute("publisher_url", null);
         address = createAddressForContact("publisher");
         contactInfo.put("sml:address", address);
-        phone.put("sml:voice", this.getGlobalAttribute("publisher_phone", null));
+        phone.put("sml:voice", (String)this.getGlobalAttribute("publisher_phone", null));
         contactInfo.put("sml:phone", phone);
         network.addContactNode(role, org, contactInfo, url);
     }
     
     private HashMap<String,String> createAddressForContact(String contactPrefix) {
         HashMap<String,String> address = new HashMap<String, String>();
-        address.put("sml:deliveryPoint", this.getGlobalAttribute(contactPrefix + "_address", null));
-        address.put("sml:city", this.getGlobalAttribute(contactPrefix + "_city", null));
-        address.put("sml:administrativeArea", this.getGlobalAttribute(contactPrefix + "_state", null));
-        address.put("sml:postalCode", this.getGlobalAttribute(contactPrefix+"_zipcode", null));
+        address.put("sml:deliveryPoint", (String)this.getGlobalAttribute(contactPrefix + "_address", null));
+        address.put("sml:city", (String)this.getGlobalAttribute(contactPrefix + "_city", null));
+        address.put("sml:administrativeArea", (String)this.getGlobalAttribute(contactPrefix + "_state", null));
+        address.put("sml:postalCode", (String)this.getGlobalAttribute(contactPrefix+"_zipcode", null));
         address.put("sml:country", this.checkForRequiredValue(contactPrefix + "_country"));
         address.put("sml:electronicMailAddress", this.checkForRequiredValue(contactPrefix + "_email"));
         return address;
@@ -282,7 +282,7 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
     }
 
     private void formatSingleComponent() {
-        String strPlatform = this.getGlobalAttribute("platform", null);
+        String strPlatform = (String)this.getGlobalAttribute("platform", null);
         ucar.nc2.Variable identVar;
         if (strPlatform != null) {
             identVar = this.getVariableByName(strPlatform);

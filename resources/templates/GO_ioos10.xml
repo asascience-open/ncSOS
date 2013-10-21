@@ -21,13 +21,6 @@
         <gml:version>FILLME</gml:version>
     </gml:metaDataProperty>
     <om:member>
-      <om:Observation>
-        <gml:description />
-        <om:samplingTime></om:samplingTime>
-        <om:procedure></om:procedure>
-        <om:observedProperty></om:observedProperty>
-        <om:featureOfInterest></om:featureOfInterest>
-      <om:result></om:result>
-    </om:Observation>
+      <om:Observation />
   </om:member>
 </om:ObservationCollection>

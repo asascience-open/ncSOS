@@ -63,7 +63,7 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
     private void describePlatform() {
         platform.setVersionMetadata();
         platform.setName(this.procedure);
-        platform.setDescriptionNode(this.getGlobalAttribute("description", "no description"));
+        platform.setDescriptionNode((String)this.getGlobalAttribute("description", "no description"));
         this.formatSmlIdentification();
         this.formatSmlClassification();
         this.formatSmlNetworkProcedures();
@@ -106,7 +106,7 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
     
     private void formatIdentificationSingleStation() {
         // look for a "platform" global attribute which should give us a variable with the station attributes
-        String strPlatform = this.getGlobalAttribute("platform", null);
+        String strPlatform = (String)this.getGlobalAttribute("platform");
         ucar.nc2.Variable identVar;
         if (strPlatform != null) {
             identVar = this.getVariableByName(strPlatform);
@@ -152,10 +152,10 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
         platform.addSmlClassifier("platformType", VocabDefinitions.GetIoosDefinition("platformType"), "platform", this.checkForRequiredValue("platform_type"));
         platform.addSmlClassifier("operatorSector", VocabDefinitions.GetIoosDefinition("operatorSector"), "sector", this.checkForRequiredValue("operator_sector"));
         platform.addSmlClassifier("publisher", VocabDefinitions.GetIoosDefinition("publisher"), "organization", this.checkForRequiredValue("publisher"));
-        platform.addSmlClassifier("parentNetwork", "http://mmisw.org/ont/ioos/definition/parentNetwork", "organization", this.getGlobalAttribute("institution", ""));
+        platform.addSmlClassifier("parentNetwork", "http://mmisw.org/ont/ioos/definition/parentNetwork", "organization", (String)this.getGlobalAttribute("institution", ""));
         
         // sponsor is optional
-        String value = this.getGlobalAttribute("sponsor", null);
+        String value = (String)this.getGlobalAttribute("sponsor");
         if (value != null) {
             platform.addSmlClassifier("sponsor", VocabDefinitions.GetIoosDefinition("sponsor"), "organization", value);
         }
@@ -184,11 +184,11 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
         HashMap<String, HashMap<String,String>> contactInfo = new HashMap<String, HashMap<String,String>>();
         String role = "http://mmisw.org/ont/ioos/definition/operator";
         String org = this.checkForRequiredValue("creator_name");
-        String url = this.getGlobalAttribute("creator_url", null);
+        String url = (String)this.getGlobalAttribute("creator_url");
         HashMap<String, String> address = createAddressForContact("creator");
         contactInfo.put("address", address);
         HashMap<String, String> phone = new HashMap<String, String>();
-        phone.put("voice", this.getGlobalAttribute("creator_phone", null));
+        phone.put("voice", (String)this.getGlobalAttribute("creator_phone"));
         contactInfo.put("phone", phone);
         platform.addContactNode(role, org, contactInfo, url);
 
@@ -197,20 +197,20 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
 
         role = "http://mmisw.org/on/ioos/definition/publisher";
         org = this.checkForRequiredValue("publisher_name");
-        url = this.getGlobalAttribute("publisher_url", null);
+        url = (String)this.getGlobalAttribute("publisher_url");
         address = createAddressForContact("publisher");
         contactInfo.put("address", address);
-        phone.put("voice", this.getGlobalAttribute("publisher_phone", null));
+        phone.put("voice", (String)this.getGlobalAttribute("publisher_phone"));
         contactInfo.put("phone", phone);
         platform.addContactNode(role, org, contactInfo, url);
     }
     
     private HashMap<String,String> createAddressForContact(String contactPrefix) {
         HashMap<String,String> address = new HashMap<String, String>();
-        address.put("deliveryPoint", this.getGlobalAttribute(contactPrefix + "_address", null));
-        address.put("city", this.getGlobalAttribute(contactPrefix + "_city", null));
-        address.put("administrativeArea", this.getGlobalAttribute(contactPrefix + "_state", null));
-        address.put("postalCode", this.getGlobalAttribute(contactPrefix+"_zipcode", null));
+        address.put("deliveryPoint", (String)this.getGlobalAttribute(contactPrefix + "_address"));
+        address.put("city", (String)this.getGlobalAttribute(contactPrefix + "_city"));
+        address.put("administrativeArea", (String)this.getGlobalAttribute(contactPrefix + "_state"));
+        address.put("postalCode", (String)this.getGlobalAttribute(contactPrefix+"_zipcode"));
         address.put("country", this.checkForRequiredValue(contactPrefix + "_country"));
         address.put("electronicMailAddress", this.checkForRequiredValue(contactPrefix + "_email"));
         return address;

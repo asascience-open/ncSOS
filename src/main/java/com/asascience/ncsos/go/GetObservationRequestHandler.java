@@ -120,7 +120,7 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
                 }, new ListComprehension.Func<String, String>() {
 
                     public String apply(String in) {
-                        return BaseRequestHandler.getGMLName(in);
+                        return getUrnName(in);
                     }
                 });
                 this.procedures = naProcs.toArray(new String[naProcs.size()]);
@@ -386,12 +386,12 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
 
     private void checkProcedureValidity() {
         List<String> stProc = new ArrayList<String>();
-        stProc.add(BaseRequestHandler.getGMLNetworkAll());
+        stProc.add(this.getUrnNetworkAll());
         for (String stname : this.getStationNames().values()) {
             for (String senname : this.getSensorNames()) {
-                stProc.add(BaseRequestHandler.getSensorGMLName(stname, senname));
+                stProc.add(this.getSensorUrnName(stname, senname));
             }
-            stProc.add(BaseRequestHandler.getGMLName(stname));
+            stProc.add(this.getUrnName(stname));
         }
 
         for (String proc : this.procedures) {

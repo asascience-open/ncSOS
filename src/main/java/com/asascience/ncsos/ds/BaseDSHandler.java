@@ -139,13 +139,13 @@ public class BaseDSHandler extends BaseRequestHandler {
         }
         // go through each station urn and compare it to procedure
         for (String stationName : stationNames.values()) {
-            if (getGMLName(stationName).equalsIgnoreCase(procedure))
+            if (getUrnName(stationName).equalsIgnoreCase(procedure))
                 return true;
         }
         // go through each sensor urn and compare it to procedure
         for (String sensorName : getSensorNames()) {
             for (String stationName : stationNames.values()) {
-                if (getSensorGMLName(stationName, sensorName).equalsIgnoreCase(procedure))
+                if (getSensorUrnName(stationName, sensorName).equalsIgnoreCase(procedure))
                     return true;
             }
         }

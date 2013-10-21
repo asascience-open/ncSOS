@@ -34,7 +34,7 @@ public abstract class BaseRequestHandler {
     public static final String STATION_URN_BASE = "urn:ioos:station:";
     public static final String SENSOR_URN_BASE = "urn:ioos:sensor:";
     public static final String NETWORK_URN_BASE = "urn:ioos:network:";
-    private static final String DEFAULT_NAMING_AUTHORITY = "ncsos";
+    protected static final String DEFAULT_NAMING_AUTHORITY = "ncsos";
     private static final NumberFormat FORMAT_DEGREE;
     // list of keywords to filter variables on to remove non-data variables from the list
     private static final String[] NON_DATAVAR_NAMES = { "rowsize", "row_size", PROFILE, "info", "time", "z", "alt", "height", "station_info" };
@@ -43,7 +43,7 @@ public abstract class BaseRequestHandler {
     private GridDataset gridDataSet = null;
     
     // Global Attributes
-    protected HashMap<String, String> global_attributes;
+    public HashMap<String, String> global_attributes;
     
     // Variables and other information commonly needed
     protected final NetcdfDataset netCDFDataset;
@@ -530,16 +530,6 @@ public abstract class BaseRequestHandler {
     }
     
     /**
-     * Attempts to find a global attribute in the dataset.
-     * @param attName name of the attribute
-     * @param defVal value to return if attribute is not found
-     * @return the value of the attribute or defVal
-     */
-    public String getGlobalAttribute(String attName, String defVal){
-        return this.netCDFDataset.findAttValueIgnoreCase(null, attName, defVal);
-    }
-    
-    /**
      * Attempts to find a variable in the dataset.
      * @param variableName name of the variable
      * @return either the variable if found or null
@@ -677,7 +667,23 @@ public abstract class BaseRequestHandler {
     public static String formatDegree(double degree) {
         return FORMAT_DEGREE.format(degree);
     }
-    
+
+
+    public Object getGlobalAttribute(String key, Object fillvalue) {
+        if (this.global_attributes.containsKey(key)) {
+            return this.global_attributes.get(key);
+        } else {
+            return fillvalue;
+        }
+    }
+
+    public Object getGlobalAttribute(String key) {
+        if (this.global_attributes.containsKey(key)) {
+            return this.global_attributes.get(key);
+        } else {
+            return null;
+        }
+    }
     /**
      * Attempts to find an attribute from a given variable
      * @param variable variable to look in for the attribute
