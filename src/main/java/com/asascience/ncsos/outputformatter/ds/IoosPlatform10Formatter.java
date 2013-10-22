@@ -317,13 +317,14 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
          * </sml:component>
          */
         // add to the <sml:ComponentList> node
-        Element parent = addNewNode(COMPONENT_LIST, SML_NS, COMPONENT, SML_NS, NAME, compName);
-        parent = addNewNode(parent, SYSTEM, SML_NS, ID, GML_NS, compId);
-        addNewNode(parent, DESCRIPTION, GML_NS, description);
-        addNewNode(parent, IDENTIFICATION, SML_NS, HREF, XLINK_NS, urn);
-        addNewNode(parent, DOCUMENTATION, SML_NS, HREF, XLINK_NS, dsUrl);
-        parent = addNewNode(parent, OUTPUTS, SML_NS);
-        addNewNode(parent, OUTPUT_LIST, SML_NS);
+        Element compList = addNewNode(COMPONENT_LIST, SML_NS, COMPONENT, SML_NS, NAME, compName);
+        Element system = addNewNode(compList, SYSTEM, SML_NS, ID, GML_NS, compId);
+        addNewNode(system, DESCRIPTION, GML_NS, description);
+        addNewNode(system, IDENTIFICATION, SML_NS, HREF, XLINK_NS, urn);
+        addNewNode(system, DOCUMENTATION, SML_NS, HREF, XLINK_NS, dsUrl);
+        Element outputs = new Element(OUTPUTS, this.SML_NS);
+        outputs.addContent(new Element(OUTPUT_LIST, SML_NS));
+        system.addContent(outputs);
     }
 
     /**
@@ -342,11 +343,11 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
          * </sml:output>
          */
         // find a component that has the attribute 'name' with its value same as 'compName'
-        List<Element> ns = this.getRoot().getChildren(COMPONENT, this.SML_NS);
+        Element cl = XMLDomUtils.getNestedChild(this.getRoot(), COMPONENT_LIST, this.SML_NS);
         Element parent = null;
-        for (Element n : ns) {
+        for (Element n : (List<Element>)cl.getChildren(COMPONENT, this.SML_NS)) {
             if (n.getAttribute(NAME) != null && n.getAttributeValue(NAME).equalsIgnoreCase(compName)) {
-                parent = n.getChild(OUTPUT_LIST, this.SML_NS);
+                parent = XMLDomUtils.getNestedChild(n, OUTPUT_LIST, this.SML_NS);
                 parent = addNewNode(parent, OUTPUT, SML_NS, NAME, outName);
                 parent = addNewNode(parent, QUANTITY, SWE_NS, DEFINITION, definition);
                 addNewNode(parent, UOM, SWE_NS, CODE, parseUnitString(uom));

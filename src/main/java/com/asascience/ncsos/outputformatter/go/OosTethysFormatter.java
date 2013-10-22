@@ -182,7 +182,7 @@ public class OosTethysFormatter extends BaseOutputFormatter {
     
     private Element createTimeField(String name, String def) {
         Element retval = createNodeWithAttribute(SWE_NS, FIELD, NAME, name);
-        Element time = createNodeWithAttribute(SWE_NS, TIME, DEFINITION, "http://www.opengis.net/def/property/OGC/0/SamplingTime");
+        Element time = createNodeWithAttribute(SWE_NS, "Time", DEFINITION, "http://www.opengis.net/def/property/OGC/0/SamplingTime");
         time.addContent(createNodeWithAttribute(SWE_NS, UOM, XLINK_NS, "href", "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"));
         retval.addContent(time);
         return retval;

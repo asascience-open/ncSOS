@@ -126,7 +126,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
                         p.addContent(allowed);
                     } else if (name.equalsIgnoreCase("procedure")) {
                         for (String s : stationNames) {
-                            allowed.addContent(new Element("Value", owsns).setText(BaseRequestHandler.STATION_URN_BASE + this.handler.getGlobalAttribute("naming_authority", this.handler) + ":" + s));
+                            allowed.addContent(new Element("Value", owsns).setText(BaseRequestHandler.STATION_URN_BASE + this.handler.getGlobalAttribute("naming_authority", this.handler.DEFAULT_NAMING_AUTHORITY) + ":" + s));
                         }
                         p.addContent(allowed);
                     }
@@ -245,7 +245,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         // Id
         offering.setAttribute("id", stationName, gmlns);
         // Name
-        offering.addContent(new Element("name", gmlns).setText(BaseRequestHandler.STATION_URN_BASE + this.handler.getGlobalAttribute("naming_authority") + ":" + stationName));
+        offering.addContent(new Element("name", gmlns).setText(BaseRequestHandler.STATION_URN_BASE + this.handler.getGlobalAttribute("naming_authority", this.handler.DEFAULT_NAMING_AUTHORITY) + ":" + stationName));
         // Description
         // offering.getChild("description", gmlns).setText("Network offering containing all features in the dataset");
         // SRS
@@ -255,13 +255,13 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         // Time
         offering.addContent(this.getTimePeriod(dates));
         // Procedure
-        offering.addContent(new Element("procedure", sosns).setAttribute("href", BaseRequestHandler.STATION_URN_BASE + this.handler.getGlobalAttribute("naming_authority") + ":" + stationName, xlinkns));
+        offering.addContent(new Element("procedure", sosns).setAttribute("href", BaseRequestHandler.STATION_URN_BASE + this.handler.getGlobalAttribute("naming_authority", this.handler.DEFAULT_NAMING_AUTHORITY) + ":" + stationName, xlinkns));
         // ObservedProperty
         for (String s : sensors) {
             offering.addContent(new Element("observedProperty", sosns).setAttribute("href", s, xlinkns));
         }
         // FeatureOfInterest
-        offering.addContent(new Element("featureOfInterest", sosns).setAttribute("href", BaseRequestHandler.STATION_URN_BASE + this.handler.getGlobalAttribute("naming_authority") + ":" + stationName, xlinkns));
+        offering.addContent(new Element("featureOfInterest", sosns).setAttribute("href", BaseRequestHandler.STATION_URN_BASE + this.handler.getGlobalAttribute("naming_authority", this.handler.DEFAULT_NAMING_AUTHORITY) + ":" + stationName, xlinkns));
         // ResponseFormat
         offering.addContent(new Element("responseFormat", sosns).setText("text/xml; subtype=\"om/1.0.0\""));
         switch (ftype) {

@@ -5,6 +5,8 @@
 package com.asascience.ncsos.outputformatter.ds;
 
 import java.util.List;
+
+import com.asascience.ncsos.util.XMLDomUtils;
 import org.jdom.Element;
 
 /**
@@ -35,7 +37,7 @@ public class IoosNetwork10Formatter extends IoosPlatform10Formatter {
          *   </sml:System>
          * </sml:component>
          */
-        Element parent = (Element) this.getRoot().getChild(COMPONENT_LIST, SML_NS);
+        Element parent = XMLDomUtils.getNestedChild(this.getRoot(), COMPONENT_LIST, SML_NS);
         parent = addNewNode(parent, COMPONENT, SML_NS, NAME, componentName);
         parent = addNewNode(parent, SYSTEM, SML_NS);
         addNewNode(addNewNode(parent, IDENTIFICATION, SML_NS),  IDENTIFIER_LIST, SML_NS);

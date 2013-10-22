@@ -14,6 +14,7 @@ import java.util.HashMap;
 import org.apache.log4j.BasicConfigurator;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -531,6 +532,7 @@ public class DSBaseTest {
         System.out.println("------End testBasicDescribeSensorProfile2------");
     }
 
+    @Ignore
     @Test
     public void testBasicDescribeSensorSensor() throws IOException {
         System.out.println("\n------Start testBasicDescribeSensorSensor------");
@@ -717,12 +719,9 @@ public class DSBaseTest {
             assertFalse("exception in output", writer.toString().contains(EXCEPTION_TEXT));
             // write as an example for TimeSeries
             fileWriter(exampleOutputDir, "DescribeSensor-TimeSeries-sensorML1.0.1.xml", writer, false);
-            assertFalse("contains invalid unit code", writer.toString().contains("<swe:uom code=\"S m-1\"/>"));
-            assertTrue("contains invalid unit code", writer.toString().contains("<swe:uom code=\"Sm-1\"/>"));
-
+            assertFalse("contains invalid unit code", writer.toString().contains("<swe:uom code=\"S m-1\" />"));
+            assertTrue("contains invalid unit code", writer.toString().contains("<swe:uom code=\"Sm-1\" />"));
             writer.close();
-
-
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         } finally {

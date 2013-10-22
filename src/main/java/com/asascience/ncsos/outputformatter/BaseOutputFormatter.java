@@ -124,7 +124,7 @@ public class BaseOutputFormatter extends OutputFormatter {
                                  Namespace parentNS,
                                  String nodeName,
                                  Namespace nodeNS) {
-        Element parent = this.getRoot().getChild(parentName, parentNS);
-        return this.addNewNode(this.getRoot(), nodeName, nodeNS);
+        Element parent = XMLDomUtils.getNestedChild(this.getRoot(), parentName, parentNS);
+        return this.addNewNode(parent, nodeName, nodeNS);
     }
 }

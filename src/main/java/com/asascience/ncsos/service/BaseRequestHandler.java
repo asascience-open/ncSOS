@@ -170,7 +170,11 @@ public abstract class BaseRequestHandler {
             this.global_attributes.put(name, value);
         }
         // Fill in required naming authority attribute
-        if (!this.global_attributes.containsKey("naming_authority")) {
+        if (!this.global_attributes.containsKey("naming_authority") ) {
+            this.global_attributes.put("naming_authority", DEFAULT_NAMING_AUTHORITY);
+        }
+
+        if (this.global_attributes.get("naming_authority").equals("")) {
             this.global_attributes.put("naming_authority", DEFAULT_NAMING_AUTHORITY);
         }
         // Fill in required naming authority attribute

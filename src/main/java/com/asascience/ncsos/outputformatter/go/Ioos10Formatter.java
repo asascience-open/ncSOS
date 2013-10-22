@@ -53,6 +53,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
     private static final String SENSOR_OBS_COLLECTION = "http://mmisw.org/ont/ioos/definition/sensorObservations";
     private static final String STATIC_SENSOR_DEF = "http://mmisw.org/ont/ioos/definition/sensor";
     private static final String STATIC_SENSORS_DEF = "http://mmisw.org/ont/ioos/definition/sensors";
+    private static final String SENSORS_DEF = "http://mmisw.org/ont/ioos/swe_element_type/sensors";
     private Namespace OM_NS, GML_NS, SWE2_NS, XLINK_NS, SWE_NS = null;
     private GetObservationRequestHandler handler = null;
 
@@ -103,7 +104,8 @@ public class Ioos10Formatter extends BaseOutputFormatter {
             // Get the om:Observation element
             Element obsElement = this.getRoot().getChild("member", this.OM_NS).getChild("Observation", this.OM_NS);
             // Description
-            obsElement.getChild("description", this.GML_NS).setText((String)this.handler.getGlobalAttribute("description", "No description"));
+
+            obsElement.addContent(new Element("description", this.GML_NS).setText((String)this.handler.getGlobalAttribute("description", "No description")));
 
             Element samplingTime = new Element("samplingTime", this.OM_NS);
             samplingTime.addContent(this.createTimePeriodTree());
@@ -380,7 +382,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
          *     </swe2:field>
          * 
          *     <swe2:field name="sensor">
-         *       <swe2:DataChoice>
+         *       <swe2:DataChoice definition="http://mmisw.org/ont/ioos/swe_element_type/sensors">
          *         createDataChoiceForSensor()
          *       <swe2:DataChoice>
          *     </swe2:field>
@@ -391,13 +393,13 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         Element dataRecord = new Element("DataRecord", this.SWE2_NS);
         dataRecord.setAttribute("definition", SENSOR_OBS_COLLECTION);
         Element field = new Element("field", this.SWE2_NS).setAttribute("name", "time");
-        Element time = new Element("time", this.SWE2_NS).setAttribute("definition", "http://www.opengis.net/def/property/OGC/0/SamplingTime");
+        Element time = new Element("Time", this.SWE2_NS).setAttribute("definition", "http://www.opengis.net/def/property/OGC/0/SamplingTime");
         time.addContent(new Element("uom", this.SWE2_NS).setAttribute("href", "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian", this.XLINK_NS));
         field.addContent(time);
-        dataRecord.addContent(field);
 
         Element sensorField = new Element("field", this.SWE2_NS).setAttribute("name", "sensor");
         Element dataChoice = new Element("DataChoice", this.SWE2_NS);
+        dataChoice.setAttribute("definition", SENSORS_DEF);
         for (int i = 0; i < this.handler.getProcedures().length; i++) {
             String stName = this.handler.getCDMDataset().getStationName(i);
             // DataRecord has to have at least 2 fields
