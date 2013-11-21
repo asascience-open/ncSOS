@@ -167,6 +167,20 @@ public class XMLDomUtils {
     	return doc;
     }
 
+    public static Element getNestedChild(Element base, String tagname) {
+        if (base.getName().equals(tagname)) {
+            return base;
+        } else {
+            for (Element e : (List<Element>)base.getChildren()) {
+                Element x = XMLDomUtils.getNestedChild(e, tagname);
+                if (x instanceof Element) {
+                    return x;
+                }
+            }
+        }
+        return null;
+    }
+
     public static Element getNestedChild(Element base, String tagname, Namespace namespace) {
         if (base.getName().equals(tagname) && base.getNamespace().equals(namespace)) {
             return base;

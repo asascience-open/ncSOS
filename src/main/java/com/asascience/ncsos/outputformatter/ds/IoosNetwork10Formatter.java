@@ -30,12 +30,14 @@ public class IoosNetwork10Formatter extends IoosPlatform10Formatter {
          * </sml:component>
          */
         Element parent = XMLDomUtils.getNestedChild(this.getRoot(), COMPONENT_LIST, SML_NS);
-        parent = addNewNode(parent, COMPONENT, SML_NS, NAME, componentName);
-        parent = addNewNode(parent, SYSTEM, SML_NS);
-        addNewNode(addNewNode(parent, IDENTIFICATION, SML_NS),  IDENTIFIER_LIST, SML_NS);
-        addNewNode(parent, SML_CAPABILITIES, SML_NS, NAME, "observationTimeRange");
-        addNewNode(parent, LOCATION, SML_NS);
-        addNewNode(addNewNode(parent, OUTPUTS, SML_NS), OUTPUT_LIST, SML_NS);
+        Element comp = new Element(COMPONENT, SML_NS).setAttribute(NAME, componentName);
+        Element sys  = new Element(SYSTEM, SML_NS);
+        sys.addContent(new Element(IDENTIFICATION, SML_NS).addContent(new Element(IDENTIFIER_LIST, SML_NS)));
+        sys.addContent(new Element(SML_CAPABILITIES, SML_NS).setAttribute(NAME, "observationTimeRange").addContent(new Element(DATA_RECORD, SWE_NS)));
+        sys.addContent(new Element(LOCATION, SML_NS));
+        sys.addContent(new Element(OUTPUTS, SML_NS).addContent(new Element(OUTPUT_LIST, SML_NS)));
+        comp.addContent(sys);
+        parent.addContent(comp);
     }
     
     public void addIdentifierToComponent(String componentName, String identName, String identDef, String identVal) {
@@ -47,16 +49,11 @@ public class IoosNetwork10Formatter extends IoosPlatform10Formatter {
          *   </sml:Term>
          * </sml:identifier>
          */
-        // find our component
-        Element parent = getComponent(componentName);
-        if (parent == null) {
-            return;
-        }
-        // create an identifier in the component
-        parent = (Element) parent.getChild(IDENTIFIER_LIST, SML_NS);
-        parent = addNewNode(parent, IDENTIFIER, SML_NS, NAME, identName);
-        parent = addNewNode(parent, TERM, SML_NS, DEFINITION, identDef);
-        addNewNode(parent, SML_VALUE, SML_NS, identVal);
+
+        Element idl = XMLDomUtils.getNestedChild(getComponent(componentName), IDENTIFIER_LIST, SML_NS);
+        Element ident = addNewNode(idl, IDENTIFIER, SML_NS, NAME, identName);
+        Element term  = addNewNode(ident, TERM, SML_NS, DEFINITION, identDef);
+        addNewNode(term, SML_VALUE, SML_NS, identVal);
     }
     
     public void setComponentValidTime(String componentName, String beginPosition, String endPosition) {
@@ -66,17 +63,9 @@ public class IoosNetwork10Formatter extends IoosPlatform10Formatter {
          *   <gml:endPosition>'endPosition'</gml:endPosition>
          * </gml:TimePeriod>
          */
-        // find our component
-        Element parent = getComponent(componentName);
-        if (parent == null)
-            return;
-        //CDM TO_DO
-//        // set valid time
-        parent = (Element) parent.getChild(SML_CAPABILITIES, SML_NS);
-        setValidTime(parent, beginPosition, endPosition);
-        //        parent = addNewNode(parent, TIME_PERIOD, GML_NS);
-//        addNewNode(parent, BEGIN_POSITION, GML_NS, beginPosition);
-//        addNewNode(parent, END_POSITION, GML_NS, endPosition);
+
+        Element cap = XMLDomUtils.getNestedChild(getComponent(componentName), SML_CAPABILITIES, SML_NS);
+        setValidTime(cap.getChild(DATA_RECORD, SWE_NS), beginPosition, endPosition);
     }
     
     public void setComponentLocation(String componentName, String srs, String pos) {
@@ -85,15 +74,10 @@ public class IoosNetwork10Formatter extends IoosPlatform10Formatter {
          *   <gml:pos>'pos'</gml:pos>
          * </gml:Point>
          */
-        // find our component
-        Element parent = getComponent(componentName);
-        if (parent == null)
-            return;
-        
-        // set location
-        parent = (Element) parent.getChild(LOCATION, SML_NS);
-        parent = addNewNode(parent, POINT, GML_NS, SRS_NAME, srs);
-        addNewNode(parent, POS, GML_NS, pos);
+
+        Element loc = XMLDomUtils.getNestedChild(getComponent(componentName), LOCATION, SML_NS);
+        Element pt = addNewNode(loc, POINT, GML_NS, SRS_NAME, srs);
+        addNewNode(pt, POS, GML_NS, pos);
     }
     
     public void setComponentLocation(String componentName, String srs, List<String> pos) {
@@ -104,16 +88,11 @@ public class IoosNetwork10Formatter extends IoosPlatform10Formatter {
          *   ...
          * </gml:LineString>
          */
-        // find our component
-        Element parent = getComponent(componentName);
-        if (parent == null)
-            return;
-        
-        // set location
-        parent = (Element) parent.getChild(LOCATION, SML_NS);
-        parent = addNewNode(parent, LINE_STRING, GML_NS, SRS_NAME, srs);
+
+        Element loc = XMLDomUtils.getNestedChild(getComponent(componentName), LOCATION, SML_NS);
+        Element ls = addNewNode(loc, LINE_STRING, GML_NS, SRS_NAME, srs);
         for (String str : pos) {
-            addNewNode(parent, POS, GML_NS, str);
+            addNewNode(ls, POS, GML_NS, str);
         }
     }
     
@@ -124,16 +103,12 @@ public class IoosNetwork10Formatter extends IoosPlatform10Formatter {
          *   <gml:upperCorner>'upperCorner'</gml:upperCorner>
          * </gml:boundedBy>
          */
-        // find the component
-        Element parent = getComponent(componentName);
-        if (parent == null)
-            return;
-        
-        // set location
-        parent = (Element) parent.getChild(LOCATION, SML_NS);
-        parent = addNewNode(parent, BOUNDED_BY, GML_NS, SRS_NAME, srs);
-        addNewNode(parent, LOWER_CORNER, GML_NS, lowerCorner);
-        addNewNode(parent, UPPER_CORNER, GML_NS, upperCorner);
+
+        Element loc = XMLDomUtils.getNestedChild(getComponent(componentName), LOCATION, SML_NS);
+        Element bb = addNewNode(loc, BOUNDED_BY, GML_NS, SRS_NAME, srs);
+        addNewNode(bb, LOWER_CORNER, GML_NS, lowerCorner);
+        addNewNode(bb, UPPER_CORNER, GML_NS, upperCorner);
+        loc.addContent(bb);
     }
     
     public void addComponentOutput(String componentName, String outName, String outURN, String outDef, String featureType, String units) {
@@ -147,30 +122,26 @@ public class IoosNetwork10Formatter extends IoosPlatform10Formatter {
          *   </sml:Quantity>
          * </sml:output>
          */
-        Element parent = getComponent(componentName);
-        if (parent == null) {
-            return;
-        }
-        // add output
-        parent = (Element) parent.getChild(OUTPUT_LIST, SML_NS);
-        parent = addNewNode(parent, OUTPUT, SML_NS, NAME, outName);
-        parent.setAttribute(TITLE, outURN, XLINK_NS);
-        parent = addNewNode(parent, QUANTITY, SWE_NS, DEFINITION, outDef);
-        addNewNode(addNewNode(parent, META_DATA_PROP, GML_NS), NAME, GML_NS, CODE_SPACE, CF_CONVENTIONS);
-        addNewNode(parent, UOM, SWE_NS, CODE, units);
+
+        Element output_list = XMLDomUtils.getNestedChild(getComponent(componentName), OUTPUT_LIST, SML_NS);
+        Element output   = new Element(OUTPUT, SML_NS).setAttribute(NAME, outName);
+        Element quantity = new Element(QUANTITY, SML_NS).setAttribute(DEFINITION, outDef);
+        Element uom      = new Element(UOM, SML_NS).setAttribute(CODE, units);
+
+        quantity.addContent(uom);
+        output.addContent(quantity);
+        output_list.addContent(output);
     }
-    
-    
+
     private Element getComponent(String componentName) {
-        Element parent = this.getRoot().getChild(COMPONENT_LIST, SML_NS);
+        Element parent = XMLDomUtils.getNestedChild(this.getRoot(), COMPONENT_LIST, SML_NS);
         List<Element> nl = parent.getChildren(COMPONENT, SML_NS);
         for (Element p : nl) {
-            if (p.getAttribute(NAME) == null ? componentName == null : p.getAttribute(NAME).equals(componentName)) {
-                parent = p;
-                break;
+            if (p.getAttributeValue(NAME).equals(componentName)) {
+                return p;
             }
-            parent = null;
         }
-        return parent;
+
+        return null;
     }
 }

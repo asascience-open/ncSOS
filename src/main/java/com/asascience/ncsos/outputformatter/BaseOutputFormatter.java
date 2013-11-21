@@ -62,11 +62,11 @@ public class BaseOutputFormatter extends OutputFormatter {
          * </gml:boundedBy>
          */
         Namespace gmlns = this.getNamespace("gml");
-        Element bb = this.getRoot().getChild("boundedBy", gmlns);
+        Element bb = XMLDomUtils.getNestedChild(this.getRoot(), "boundedBy", gmlns);
         Element env = new Element("Envelope", gmlns);
         env.setAttribute("srsName", srsName);
-        env.getChild("lowerCorner", gmlns).setText(lowerCorner);
-        env.getChild("upperCorner", gmlns).setText(upperCorner);
+        env.addContent(new Element("lowerCorner", gmlns).setText(lowerCorner));
+        env.addContent(new Element("upperCorner", gmlns).setText(upperCorner));
         bb.addContent(env);
     }
 

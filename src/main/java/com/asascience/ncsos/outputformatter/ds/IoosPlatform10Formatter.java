@@ -207,7 +207,7 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
                 HashMap<String, String> vals = (HashMap<String, String>) contactInfo.get(key);
                 for (String vKey : vals.keySet()) {
                     if (vals.get(vKey) != null) {
-                        addNewNode(sparent, vKey, SML_NS, vals.get(vKey).toString());
+                        addNewNode(sparent, vKey, SML_NS, vals.get(vKey));
                     }
                 }
             }
