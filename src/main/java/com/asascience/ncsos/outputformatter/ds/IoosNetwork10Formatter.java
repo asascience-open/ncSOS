@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.asascience.ncsos.outputformatter.ds;
 
 import java.util.List;
@@ -9,10 +5,6 @@ import java.util.List;
 import com.asascience.ncsos.util.XMLDomUtils;
 import org.jdom.Element;
 
-/**
- *
- * @author scowan
- */
 public class IoosNetwork10Formatter extends IoosPlatform10Formatter {
 
     public static final String CF_CONVENTIONS = "http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#discrete-sampling-geometries";

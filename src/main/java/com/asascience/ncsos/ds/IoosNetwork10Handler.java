@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.asascience.ncsos.ds;
 
 import com.asascience.ncsos.cdmclasses.*;
@@ -19,10 +15,6 @@ import ucar.nc2.Attribute;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.NetcdfDataset;
 
-/**
- *
- * @author scowan
- */
 public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterface {
     
     private final String procedure;

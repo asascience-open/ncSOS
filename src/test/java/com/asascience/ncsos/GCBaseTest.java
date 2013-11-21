@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.asascience.ncsos;
 
 import com.asascience.ncsos.gc.GetCapabilitiesRequestHandler;
@@ -22,16 +18,10 @@ import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.ft.FeatureDataset;
 import ucar.nc2.ft.FeatureDatasetFactoryManager;
 
-/**
- * Test suite for Get Capabilities requests.
- * @author abird
- * @author scowan
- */
 public class GCBaseTest {
     
     // base location of resources
     private static String baseLocalDir = null;
-    private static String baseTomcatDir = null;
     private static String exampleOutputDir = null;
     
     private static String baseRequest = "request=GetCapabilities&acceptVersions=1.0.0&service=sos&sections=all";
@@ -101,7 +91,7 @@ public class GCBaseTest {
     @BeforeClass
     public static void SetupEnviron() throws FileNotFoundException {
         // not really a test, just used to set up the various string values
-        if (base != null && baseLocalDir != null && baseTomcatDir != null && exampleOutputDir != null) {
+        if (base != null && baseLocalDir != null && exampleOutputDir != null) {
             // exit early if the environ is already set
             return;
         }
@@ -118,7 +108,6 @@ public class GCBaseTest {
             // add a get_caps for output dir
             base += "get_caps/";
             baseLocalDir = XMLDomUtils.getNodeValue(configDoc, container, "projectDirectory");
-            baseTomcatDir = XMLDomUtils.getNodeValue(configDoc, container, "tomcatLocation");
             exampleOutputDir = XMLDomUtils.getNodeValue(configDoc, container, "outputDirectory");
             // add examples for output dir
             exampleOutputDir += "examples/";
@@ -249,105 +238,6 @@ public class GCBaseTest {
         //traj
         
         System.out.println("------END " + getCurrentMethod() + "------");
-    }
-    
-    // caching doesn't quite work just yet
-    @Ignore
-    @Test
-    public void testCacheReturnsTrueFileDoesNOTExist() throws IOException {
-        System.out.println("\n------" + getCurrentMethod() + "------");
-        
-        NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
-        Parser md = new Parser();
-        Writer write = new CharArrayWriter();
-        writeOutput(md.enhanceGETRequest(dataset, baseRequest + "&useCache=true", tsIncompleteMultiDimensionalMultipleStations, baseTomcatDir + catalinaThredds),write);
-        fileWriter(base, getCurrentMethod() + ".xml", write);
-        assertFalse("Exception in output", write.toString().contains("Exception"));
-        // check that the cache file was correctly made
-        String[] strSplit = tsIncompleteMultiDimensionalMultipleStations.split("/");
-        String filename = strSplit[strSplit.length-1];
-        strSplit = filename.split("\\.");
-        filename = "";
-        for (int i=0;i<strSplit.length-1;i++) {
-            filename += strSplit[i] + ".";
-        }
-        filename += "xml";
-        File file = new File(baseTomcatDir + catalinaThredds + "/" + filename);
-        assertTrue("Cached file not created", file.exists());
-        
-        System.out.println("------END " + getCurrentMethod() + "------");
-    }
-    
-    @Ignore
-    @Test
-    public void testReadInOperationsMeatadataFromCache() throws IOException {
-        System.out.println("\n------" + getCurrentMethod() + "------");
-        
-        NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
-        Parser md = new Parser();
-        Writer write = new CharArrayWriter();
-        writeOutput(md.enhanceGETRequest(dataset, baseRequest + "&useCache=true&sections=OperationsMetadata", tsIncompleteMultiDimensionalMultipleStations, baseTomcatDir + catalinaThredds),write);
-        fileWriter(base, getCurrentMethod() + ".xml", write);
-        assertFalse("Exception in output", write.toString().contains("Exception"));
-        
-        System.out.println("------END " + getCurrentMethod() + "------");
-    }
-
-    @Ignore
-    @Test
-    public void testCacheReturnsTrueFileDoesExist() throws IOException {
-        System.out.println("\n------" + getCurrentMethod() + "------");
-        
-        NetcdfDataset dataset = NetcdfDataset.openDataset(tsIncompleteMultiDimensionalMultipleStations);
-        Parser md = new Parser();
-        Writer write = new CharArrayWriter();
-        writeOutput(md.enhanceGETRequest(dataset, baseRequest + "&useCache=true", tsIncompleteMultiDimensionalMultipleStations, baseTomcatDir + catalinaThredds),write);
-        fileWriter(base, getCurrentMethod() + ".xml", write);
-        assertFalse("Exception in output", write.toString().contains("Exception"));
-        // remove the cache file
-        String[] strSplit = tsIncompleteMultiDimensionalMultipleStations.split("/");
-        String filename = strSplit[strSplit.length-1];
-        strSplit = filename.split("\\.");
-        filename = "";
-        for (int i=0;i<strSplit.length-1;i++) {
-            filename += strSplit[i] + ".";
-        }
-        filename += "xml";
-        File file = new File(baseTomcatDir + catalinaThredds + "/" + filename);
-        assertTrue("Cached file does NOT exist", file.exists());
-        assertTrue("Could not delete the cached file", file.delete());
-        
-        System.out.println("------END " + getCurrentMethod() + "------");
-    }
-
-    @Ignore
-    @Test
-    public void testAddAdditionalParamForCachingDataTRUE() throws IOException {
-        fail("removed - caching temporarily unavailable");
-        
-        NetcdfDataset dataset = NetcdfDataset.openDataset(imeds13);
-        Parser md = new Parser();
-        Writer write = new CharArrayWriter();
-
-        String fileName = baseTomcatDir + catalinaThredds + "/watlev_IKE.xml";
-        //check file exists
-        File f = new File(fileName);
-        f.delete();
-
-        writeOutput(md.enhanceGETRequest(dataset, baseRequest + "&useCache=true", imeds13, baseTomcatDir + catalinaThredds),write);
-//        HashMap<String, Object> outMap = md.enhanceGETRequest(dataset, null, imeds13, baseTomcatDir + catalinaThredds);
-        write.flush();
-        write.close();
-        if (write.toString().contains("Exception")) {
-            System.out.println("have exception - testAddAdditionalParamForCachingDataTRUE");
-            assertFalse(write.toString().contains("Exception"));
-        }
-        f = new File(fileName);
-//        f.createNewFile();
-        if (!f.exists()) {
-            System.out.println("file does not exist - testAddAdditionalParamForCachingDataTRUE");
-            assertTrue(f.exists());
-        }
     }
 
     @Test

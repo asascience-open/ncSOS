@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.asascience.ncsos.ds;
 
 import com.asascience.ncsos.service.BaseRequestHandler;
@@ -11,10 +7,6 @@ import ucar.nc2.Attribute;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.NetcdfDataset;
 
-/**
- *
- * @author SCowan
- */
 public class Ioos10Handler extends BaseRequestHandler {
     
     private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Ioos10Handler.class);

@@ -378,7 +378,7 @@ public class Parser {
             String[] requiredDSParameters = {PROCEDURE, OUTPUT_FORMAT};
             //required GRID Parameters
             String[] requiredGOParameters = {PROCEDURE, OFFERING, OBSERVED_PROPERTY, RESPONSE_FORMAT};
-            System.out.println(queryParameters.toString());
+
             // general parameters expected
             if (queryParameters.containsKey(ERROR)) {
                 retval.put(ERROR, "Error with request - " + queryParameters.get(ERROR).toString());
