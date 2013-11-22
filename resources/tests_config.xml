@@ -610,8 +610,35 @@
 		-->
 
         <!-- GRID -->
-        <file path='grids/global_sst_1.nc' feature="grid" />
-        <file path='grids/nodc-l4-ghrsst.nc' feature="grid" />
+        <file path='grids/global_sst_1.nc' feature="grid">
+            <times>
+                2012-06-26T00:00:00
+            </times>
+            <sensor name="SST" standard="sea_water_temperature" units="degK">
+                <values lat="0" lon="0">
+                    299.03
+                </values>
+                <values lat="-30" lon="-120">
+                    293.75
+                </values>
+                <values lat="0" lon="-90">
+                    298.07001
+                </values>
+            </sensor>
+        </file>
+        <file path='grids/nodc-l4-ghrsst.nc' feature="grid">
+            <times>
+                1995-01-10T20:00:00
+            </times>
+            <sensor name="analysed_sst" standard="sea_surface_skin_temperature" units="kelvin">
+                <values lat="-0.21973141" lon="-89.980003">
+                    273.15
+                </values>
+                <values lat="83.388062" lon="-173.39">
+                    271.35
+                </values>
+            </sensor>
+        </file>
 
 	</TestFiles>
 </testConfiguration>
