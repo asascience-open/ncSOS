@@ -5,21 +5,14 @@ import com.asascience.ncsos.service.Parser;
 import com.asascience.ncsos.util.XMLDomUtils;
 import org.apache.log4j.BasicConfigurator;
 import org.jdom.Document;
+import org.jdom.Element;
+import ucar.nc2.dataset.NetcdfDataset;
 
 import java.io.*;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.jdom.Element;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
-import ucar.nc2.dataset.NetcdfDataset;
-
-import static org.junit.Assert.assertNotNull;
 
 public class NcSOSTest {
 
@@ -32,7 +25,6 @@ public class NcSOSTest {
 
     public static void setUpClass() throws Exception {
         kvp = new HashMap<String, String>();
-        kvp.put("service", "SOS");
 
         BasicConfigurator.resetConfiguration();
         BasicConfigurator.configure();
@@ -54,13 +46,13 @@ public class NcSOSTest {
         }
     }
 
-    protected static Element makeTestRequest(String dataset_path, String output) {
+    protected static Element makeTestRequest(String dataset_path, String output, HashMap<String,String> kvp) {
         try {
             NetcdfDataset dataset = NetcdfDataset.openDataset(dataset_path);
             Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
 
-            OutputFormatter outputFormat = (OutputFormatter) parser.enhanceGETRequest(dataset, getQueryString(), dataset_path).get("outputHandler");
+            OutputFormatter outputFormat = (OutputFormatter) parser.enhanceGETRequest(dataset, getQueryString(kvp), dataset_path).get("outputHandler");
             outputFormat.writeOutput(writer);
 
             // Write to disk
@@ -76,7 +68,7 @@ public class NcSOSTest {
         }
     }
 
-    protected static String getQueryString() {
+    protected static String getQueryString(HashMap<String,String> kvp) {
         StringBuilder queryString = new StringBuilder();
         for (Map.Entry<String,String> entry : kvp.entrySet()) {
             queryString.append(entry.getKey());
@@ -84,7 +76,6 @@ public class NcSOSTest {
             queryString.append(entry.getValue());
             queryString.append("&");
         }
-        System.out.println(queryString.toString());
         return queryString.toString();
     }
 

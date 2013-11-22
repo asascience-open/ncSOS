@@ -1,22 +1,13 @@
 package com.asascience.ncsos;
 
-import com.asascience.ncsos.outputformatter.OutputFormatter;
-import com.asascience.ncsos.service.Parser;
-import com.asascience.ncsos.util.XMLDomUtils;
-import java.io.*;
-import java.util.HashMap;
-import org.apache.log4j.BasicConfigurator;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Before;
+import org.jdom.Element;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.jdom.*;
 import org.junit.rules.TestName;
-import ucar.nc2.dataset.NetcdfDataset;
+
+import java.io.File;
+import java.util.HashMap;
 
 public class GCAdditionalTests extends NcSOSTest {
 
@@ -41,49 +32,54 @@ public class GCAdditionalTests extends NcSOSTest {
         currentFile = fileElements.get(0);
 
         kvp.put("request", "GetCapabilities");
-    }
-
-    @Test
-    public void testBadVersionParameter() throws NoSuchMethodException {
-        kvp.put("version", "99999");
-
-        File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
-        String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
-        Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output);
-    }
-
-    @Test
-    public void testBadAcceptVersionsParameter() throws NoSuchMethodException {
-        kvp.put("acceptVersion", "99999");
-
-        File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
-        String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
-        Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output);
+        kvp.put("service", "SOS");
     }
 
     @Test
     public void testNoParameters() throws NoSuchMethodException {
-        kvp = new HashMap<String, String>();
+        HashMap<String,String> pairs = new HashMap<String, String>();
 
         File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
         String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
-        Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output);
+        Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+    }
+
+    @Test
+    public void testBadVersionParameter() throws NoSuchMethodException {
+        HashMap<String,String> pairs = (HashMap<String,String>) kvp.clone();
+        pairs.put("version","99999");
+
+        File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
+        String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
+        Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+    }
+
+    @Test
+    public void testBadAcceptVersionsParameter() throws NoSuchMethodException {
+        HashMap<String,String> pairs = (HashMap<String,String>) kvp.clone();
+        pairs.put("acceptVersions","99999");
+
+        File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
+        String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
+        Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
     }
 
     @Test
     public void testBadServiceParameter() throws NoSuchMethodException {
-        kvp.put("service", "NOTSOS");
+        HashMap<String,String> pairs = (HashMap<String,String>) kvp.clone();
+        pairs.put("service", "NOTSOS");
 
         File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
         String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
-        Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output);
+        Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
     }
     @Test
     public void testNoServiceParameter() throws NoSuchMethodException {
-        kvp.remove("service");
+        HashMap<String,String> pairs = (HashMap<String,String>) kvp.clone();
+        pairs.remove("service");
 
         File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
         String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
-        Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output);
+        Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
     }
 }

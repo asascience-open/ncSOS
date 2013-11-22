@@ -1,27 +1,13 @@
 package com.asascience.ncsos;
 
-import com.asascience.ncsos.gc.GetCapabilitiesRequestHandler;
-import com.asascience.ncsos.outputformatter.OutputFormatter;
-import com.asascience.ncsos.service.Parser;
-import com.asascience.ncsos.util.XMLDomUtils;
-import java.io.*;
-import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Formatter;
-import java.util.HashMap;
-import org.apache.log4j.BasicConfigurator;
-import static org.junit.Assert.*;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
+import org.jdom.Element;
 import org.junit.Test;
-import org.jdom.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import ucar.nc2.constants.FeatureType;
-import ucar.nc2.dataset.NetcdfDataset;
-import ucar.nc2.ft.FeatureDataset;
-import ucar.nc2.ft.FeatureDatasetFactoryManager;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.Collection;
 
 @RunWith(Parameterized.class)
 public class GCBaseTest extends NcSOSTest {
@@ -43,6 +29,7 @@ public class GCBaseTest extends NcSOSTest {
         new File(exampleDir).mkdirs();
 
         kvp.put("request", "GetCapabilities");
+        kvp.put("service", "SOS");
     }
 
     // Create the parameters for the test constructor
@@ -64,6 +51,6 @@ public class GCBaseTest extends NcSOSTest {
         String feature  = this.currentFile.getAttributeValue("feature");
         String output   = new File(outputDir + systemSeparator + file.getName() + ".xml").getAbsolutePath();
         System.out.println("------ " + file + " (" + feature + ") ------");
-        Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output);
+        Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, kvp);
     }
 }

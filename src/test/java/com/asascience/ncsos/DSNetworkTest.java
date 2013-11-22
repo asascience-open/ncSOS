@@ -1,25 +1,15 @@
 package com.asascience.ncsos;
 
-import com.asascience.ncsos.service.Parser;
-import java.io.*;
-import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-
-import com.asascience.ncsos.outputformatter.OutputFormatter;
-
-import static org.junit.Assert.*;
-
-import com.asascience.ncsos.util.XMLDomUtils;
 import org.jdom.Element;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import ucar.nc2.dataset.NetcdfDataset;
+
+import java.io.File;
+import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.Collection;
 
 @RunWith(Parameterized.class)
 public class DSNetworkTest extends NcSOSTest {
@@ -44,6 +34,7 @@ public class DSNetworkTest extends NcSOSTest {
         kvp.put("request", "DescribeSensor");
         kvp.put("procedure", "urn:ioos:network:ncsos:all");
         kvp.put("version", "1.0.0");
+        kvp.put("service", "SOS");
     }
 
    	// Create the parameters for the test constructor
@@ -65,7 +56,7 @@ public class DSNetworkTest extends NcSOSTest {
         String feature  = this.currentFile.getAttributeValue("feature");
         String output   = new File(outputDir + systemSeparator + file.getName() + ".xml").getAbsolutePath();
         System.out.println("------ " + file + " (" + feature + ") ------");
-        Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output);
+        Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, kvp);
     }
     
 }
