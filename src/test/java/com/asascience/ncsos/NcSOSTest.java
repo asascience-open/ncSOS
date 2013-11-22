@@ -1,6 +1,7 @@
 package com.asascience.ncsos;
 
 import com.asascience.ncsos.outputformatter.OutputFormatter;
+import com.asascience.ncsos.service.Parser;
 import com.asascience.ncsos.util.XMLDomUtils;
 import org.apache.log4j.BasicConfigurator;
 import org.jdom.Document;
@@ -16,14 +17,10 @@ import java.util.Map;
 import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+import ucar.nc2.dataset.NetcdfDataset;
 
 import static org.junit.Assert.assertNotNull;
 
-/**
- * Author: wilcox.kyle@gmail.com
- *   Date: 11/20/13
- *   Time: 1:36 PM
- */
 public class NcSOSTest {
 
     protected URL query = null;
@@ -36,7 +33,6 @@ public class NcSOSTest {
     public static void setUpClass() throws Exception {
         kvp = new HashMap<String, String>();
         kvp.put("service", "SOS");
-        kvp.put("version", "1.0.0");
 
         BasicConfigurator.resetConfiguration();
         BasicConfigurator.configure();
@@ -58,7 +54,29 @@ public class NcSOSTest {
         }
     }
 
-    protected String getQueryString() {
+    protected static Element makeTestRequest(String dataset_path, String output) {
+        try {
+            NetcdfDataset dataset = NetcdfDataset.openDataset(dataset_path);
+            Parser parser = new Parser();
+            Writer writer = new CharArrayWriter();
+
+            OutputFormatter outputFormat = (OutputFormatter) parser.enhanceGETRequest(dataset, getQueryString(), dataset_path).get("outputHandler");
+            outputFormat.writeOutput(writer);
+
+            // Write to disk
+            System.out.println("------ Saving output: " + output +" ------");
+            NcSOSTest.fileWriter(output, writer);
+
+            // Now we need to load the resulting XML and do some actual tests.
+            Element root = XMLDomUtils.loadFile(output).getRootElement();
+            return root;
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+            return null;
+        }
+    }
+
+    protected static String getQueryString() {
         StringBuilder queryString = new StringBuilder();
         for (Map.Entry<String,String> entry : kvp.entrySet()) {
             queryString.append(entry.getKey());

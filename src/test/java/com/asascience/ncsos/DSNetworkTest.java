@@ -43,6 +43,7 @@ public class DSNetworkTest extends NcSOSTest {
         kvp.put("outputFormat", URLEncoder.encode("text/xml;subtype=\"sensorML/1.0.1/profiles/ioos_sos/1.0\"", "UTF-8"));
         kvp.put("request", "DescribeSensor");
         kvp.put("procedure", "urn:ioos:network:ncsos:all");
+        kvp.put("version", "1.0.0");
     }
 
    	// Create the parameters for the test constructor
@@ -59,36 +60,12 @@ public class DSNetworkTest extends NcSOSTest {
     }
 
     @Test
-    public void testNetworkDescribeSensor() {
+    public void testAll() {
         File   file     = new File("resources" + systemSeparator + "datasets" + systemSeparator + this.currentFile.getAttributeValue("path"));
-        String fullPath = file.getAbsolutePath();
         String feature  = this.currentFile.getAttributeValue("feature");
         String output   = new File(outputDir + systemSeparator + file.getName() + ".xml").getAbsolutePath();
-
-        System.out.println();
         System.out.println("------ " + file + " (" + feature + ") ------");
-
-        try {
-            NetcdfDataset dataset = NetcdfDataset.openDataset(file.getAbsolutePath());
-            Parser parser = new Parser();
-            Writer writer = new CharArrayWriter();
-
-            OutputFormatter outputFormat = (OutputFormatter) parser.enhanceGETRequest(dataset, this.getQueryString(), fullPath).get("outputHandler");
-            outputFormat.writeOutput(writer);
-
-            // Write to disk
-            System.out.println("------ Saving output: " + output +" ------");
-            NcSOSTest.fileWriter(output, writer);
-
-            // Now we need to load the resulting XML and do some actual tests.
-            Element root = XMLDomUtils.loadFile(output).getRootElement();
-
-        } catch (IOException ex) {
-            assertTrue(ex.getMessage(), false);
-        } finally {
-            System.out.println("------ END " + file + " END ------");
-        }
-    	
+        Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output);
     }
     
 }

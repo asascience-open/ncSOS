@@ -44,6 +44,7 @@ public class DSStationTest extends NcSOSTest {
 
         kvp.put("outputFormat", URLEncoder.encode("text/xml;subtype=\"sensorML/1.0.1/profiles/ioos_sos/1.0\"", "UTF-8"));
         kvp.put("request", "DescribeSensor");
+        kvp.put("version", "1.0.0");
     }
 
     // Create the parameters for the test constructor
@@ -53,9 +54,12 @@ public class DSStationTest extends NcSOSTest {
         Object[][] data = new Object[fileElements.size()][2];
         int curIndex = 0;
         for (Element e : fileElements) {
-            for (Element p : (List<Element>) e.getChildren("platform")) {
-                data[curIndex][0] = e;
-                data[curIndex][1] = p.getAttributeValue("id");
+            // Ignore GRID datasets
+            if (e.getAttributeValue("feature").toLowerCase() != "grid") {
+                for (Element p : (List<Element>) e.getChildren("platform")) {
+                    data[curIndex][0] = e;
+                    data[curIndex][1] = p.getAttributeValue("id");
+                }
             }
             curIndex++;
         }
@@ -63,37 +67,14 @@ public class DSStationTest extends NcSOSTest {
     }
 
     @Test
-    public void testNetworkDescribeSensor() {
+    public void testAll() {
+        kvp.put("procedure", this.platform);
+
         File   file     = new File("resources" + systemSeparator + "datasets" + systemSeparator + this.currentFile.getAttributeValue("path"));
-        String fullPath = file.getAbsolutePath();
         String feature  = this.currentFile.getAttributeValue("feature");
         String output   = new File(outputDir + systemSeparator + file.getName() + ".xml").getAbsolutePath();
-
-        System.out.println();
         System.out.println("------ " + file + " (" + feature + ") ------");
-
-        try {
-            NetcdfDataset dataset = NetcdfDataset.openDataset(file.getAbsolutePath());
-            Parser parser = new Parser();
-            Writer writer = new CharArrayWriter();
-
-            kvp.put("procedure", this.platform);
-            OutputFormatter outputFormat = (OutputFormatter) parser.enhanceGETRequest(dataset, this.getQueryString(), fullPath).get("outputHandler");
-            outputFormat.writeOutput(writer);
-
-            // Write to disk
-            System.out.println("------ Saving output: " + output +" ------");
-            NcSOSTest.fileWriter(output, writer);
-
-            // Now we need to load the resulting XML and do some actual tests.
-            Element root = XMLDomUtils.loadFile(output).getRootElement();
-
-        } catch (IOException ex) {
-            assertTrue(ex.getMessage(), false);
-        } finally {
-            System.out.println("------ END " + file + " END ------");
-        }
-
+        Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output);
     }
 
 }

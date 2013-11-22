@@ -609,5 +609,9 @@
 		trajectoryProfile-Ragged-MultipleTrajectories-H.6.3\trajectoryProfile-Ragged-MultipleTrajectories-H.6.3.nc
 		-->
 
+        <!-- GRID -->
+        <file path='grids/global_sst_1.nc' feature="grid" />
+        <file path='grids/nodc-l4-ghrsst.nc' feature="grid" />
+
 	</TestFiles>
 </testConfiguration>
