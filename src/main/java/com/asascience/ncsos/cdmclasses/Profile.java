@@ -6,13 +6,6 @@ package com.asascience.ncsos.cdmclasses;
 
 import com.asascience.ncsos.go.ObservationOffering;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import ucar.nc2.ft.PointFeature;
@@ -21,6 +14,14 @@ import ucar.nc2.ft.ProfileFeature;
 import ucar.nc2.ft.ProfileFeatureCollection;
 import ucar.nc2.units.DateFormatter;
 import ucar.unidata.geoloc.Station;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Provides methods to gather information from Profile datasets needed for requests: GetCapabilities, GetObservations

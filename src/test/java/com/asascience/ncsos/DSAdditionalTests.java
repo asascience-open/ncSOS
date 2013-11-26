@@ -1,6 +1,7 @@
 package com.asascience.ncsos;
 
 import org.jdom.Element;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 public class DSAdditionalTests extends NcSOSTest {
 
     private static Element currentFile = null;
+    private static HashMap<String,String> kvp = new HashMap<String, String>();
 
     @Rule
     public TestName testName = new TestName();
@@ -34,7 +36,7 @@ public class DSAdditionalTests extends NcSOSTest {
 
         kvp.put("outputFormat", URLEncoder.encode("text/xml;subtype=\"sensorML/1.0.1/profiles/ioos_sos/1.0\"", "UTF-8"));
         kvp.put("request",      "DescribeSensor");
-        kvp.put("procedure",    "urn:ioos:station:ncsos:Station0");
+        kvp.put("procedure",    "urn:ioos:station:ncsos:Station-0");
         kvp.put("version",      "1.0.0");
         kvp.put("service",      "SOS");
     }
@@ -47,6 +49,9 @@ public class DSAdditionalTests extends NcSOSTest {
         File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
         String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+        Assert.assertTrue(NcSOSTest.isException(result));
+        Assert.assertEquals(NcSOSTest.INVALID_PARAMETER, NcSOSTest.getExceptionCode(result));
+        Assert.assertEquals("procedure", NcSOSTest.getExceptionLocator(result));
     }
     @Test
     public void testNoProcedureParameter() throws NoSuchMethodException {
@@ -56,6 +61,9 @@ public class DSAdditionalTests extends NcSOSTest {
         File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
         String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+        Assert.assertTrue(NcSOSTest.isException(result));
+        Assert.assertEquals(NcSOSTest.MISSING_PARAMETER, NcSOSTest.getExceptionCode(result));
+        Assert.assertEquals("procedure", NcSOSTest.getExceptionLocator(result));
     }
 
     @Test
@@ -66,6 +74,9 @@ public class DSAdditionalTests extends NcSOSTest {
         File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
         String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+        Assert.assertTrue(NcSOSTest.isException(result));
+        Assert.assertEquals(NcSOSTest.INVALID_PARAMETER, NcSOSTest.getExceptionCode(result));
+        Assert.assertEquals("outputFormat", NcSOSTest.getExceptionLocator(result));
     }
     @Test
     public void testNoOutputFormatParameter() throws NoSuchMethodException {
@@ -75,6 +86,9 @@ public class DSAdditionalTests extends NcSOSTest {
         File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
         String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+        Assert.assertTrue(NcSOSTest.isException(result));
+        Assert.assertEquals(NcSOSTest.MISSING_PARAMETER, NcSOSTest.getExceptionCode(result));
+        Assert.assertEquals("outputFormat", NcSOSTest.getExceptionLocator(result));
     }
 
     @Test
@@ -85,6 +99,9 @@ public class DSAdditionalTests extends NcSOSTest {
         File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
         String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+        Assert.assertTrue(NcSOSTest.isException(result));
+        Assert.assertEquals(NcSOSTest.INVALID_PARAMETER, NcSOSTest.getExceptionCode(result));
+        Assert.assertEquals("version", NcSOSTest.getExceptionLocator(result));
     }
     @Test
     public void testNoVersionParameter() throws NoSuchMethodException {
@@ -94,6 +111,9 @@ public class DSAdditionalTests extends NcSOSTest {
         File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
         String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+        Assert.assertTrue(NcSOSTest.isException(result));
+        Assert.assertEquals(NcSOSTest.MISSING_PARAMETER, NcSOSTest.getExceptionCode(result));
+        Assert.assertEquals("version", NcSOSTest.getExceptionLocator(result));
     }
 
     @Test
@@ -104,6 +124,9 @@ public class DSAdditionalTests extends NcSOSTest {
         File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
         String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+        Assert.assertTrue(NcSOSTest.isException(result));
+        Assert.assertEquals(NcSOSTest.OPERATION_NOT_SUPPORTED, NcSOSTest.getExceptionCode(result));
+        Assert.assertEquals("service", NcSOSTest.getExceptionLocator(result));
     }
     @Test
     public void testNoServiceParameter() throws NoSuchMethodException {
@@ -113,5 +136,8 @@ public class DSAdditionalTests extends NcSOSTest {
         File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
         String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+        Assert.assertTrue(NcSOSTest.isException(result));
+        Assert.assertEquals(NcSOSTest.MISSING_PARAMETER, NcSOSTest.getExceptionCode(result));
+        Assert.assertEquals("service", NcSOSTest.getExceptionLocator(result));
     }
 }

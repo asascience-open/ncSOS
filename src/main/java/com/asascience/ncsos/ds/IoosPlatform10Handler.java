@@ -5,19 +5,21 @@
 package com.asascience.ncsos.ds;
 
 import com.asascience.ncsos.cdmclasses.*;
+import com.asascience.ncsos.outputformatter.ErrorFormatter;
 import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.outputformatter.ds.IoosPlatform10Formatter;
 import com.asascience.ncsos.util.LogReporter;
 import com.asascience.ncsos.util.VocabDefinitions;
+import ucar.nc2.Attribute;
+import ucar.nc2.Dimension;
+import ucar.nc2.VariableSimpleIF;
+import ucar.nc2.dataset.NetcdfDataset;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import ucar.nc2.Attribute;
-import ucar.nc2.Dimension;
-import ucar.nc2.VariableSimpleIF;
-import ucar.nc2.dataset.NetcdfDataset;
 
 /**
  *
@@ -46,9 +48,10 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
         this.setStationData();
     }
     
-    public void setupOutputDocument(OutputFormatter output) {
+    public void setupOutputDocument(OutputFormatter output) throws IOException {
         if (errorString != null) {
-            output.setupExceptionOutput(errorString);
+            formatter = new ErrorFormatter();
+            ((ErrorFormatter)formatter).setException(errorString);
         } else {
             try {
                 this.platform = (IoosPlatform10Formatter) output;

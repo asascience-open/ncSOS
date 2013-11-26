@@ -2,10 +2,11 @@ package com.asascience.ncsos.ds;
 
 import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.IFReportMechanism;
-import java.io.IOException;
 import ucar.nc2.Attribute;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.NetcdfDataset;
+
+import java.io.IOException;
 
 public class Ioos10Handler extends BaseRequestHandler {
     

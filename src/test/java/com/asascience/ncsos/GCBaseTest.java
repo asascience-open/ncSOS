@@ -1,5 +1,6 @@
 package com.asascience.ncsos;
 
+import junit.framework.Assert;
 import org.jdom.Element;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,9 +9,12 @@ import org.junit.runners.Parameterized;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 
 @RunWith(Parameterized.class)
 public class GCBaseTest extends NcSOSTest {
+
+    private static HashMap<String,String> kvp = new HashMap<String, String>();
 
     private Element currentFile;
     public GCBaseTest(Element file){
@@ -52,5 +56,6 @@ public class GCBaseTest extends NcSOSTest {
         String output   = new File(outputDir + systemSeparator + file.getName() + ".xml").getAbsolutePath();
         System.out.println("------ " + file + " (" + feature + ") ------");
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, kvp);
+        Assert.assertFalse(NcSOSTest.isException(result));
     }
 }

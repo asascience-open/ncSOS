@@ -6,8 +6,6 @@ package com.asascience.ncsos.cdmclasses;
 
 import com.asascience.ncsos.go.ObservationOffering;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
-import java.io.IOException;
-import java.util.*;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import ucar.nc2.ft.*;
@@ -17,6 +15,9 @@ import ucar.nc2.units.DateFormatter;
 import ucar.unidata.geoloc.LatLonPointImpl;
 import ucar.unidata.geoloc.LatLonRect;
 import ucar.unidata.geoloc.Station;
+
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Provides methods to gather information from Section datasets needed for requests: GetCapabilities, GetObservations

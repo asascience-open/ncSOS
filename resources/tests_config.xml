@@ -6,7 +6,7 @@
         <!-- TIMESERIES -->
         <file path='cf_templates/timeSeries-Orthogonal-Multidimensional-MultipleStations-H.2.1.nc' feature="timeSeries">
             <!-- 10 stations named Station-N, where N is 0-9 -->
-            <platform id="urn:ioos:station:ncsos:Station0" lat="8" lon="146" z="0.8488673">
+            <platform id="urn:ioos:station:ncsos:Station-0" lat="8" lon="146" z="0.8488673">
                 <times>
                     1990-01-01T00:00:00, 1990-01-01T01:00:00, 1990-01-01T02:00:00, 1990-01-01T03:00:00,
                     1990-01-01T04:00:00, 1990-01-01T05:00:00, 1990-01-01T06:00:00, 1990-01-01T07:00:00,
@@ -97,7 +97,7 @@
 
         <file path='cf_templates/timeSeries-Incomplete-MultiDimensional-MultipleStations-H.2.2.nc' feature="timeSeries">
             <!-- 10 stations named Station-N, where N is 0-9 -->
-            <platform id="urn:ioos:station:ncsos:Station0" lat="121" lon="81" z="4.859895">
+            <platform id="urn:ioos:station:ncsos:Station-0" lat="121" lon="81" z="4.859895">
                 <times>
                     1990-01-01T00:00:00, 1990-01-01T01:00:00, 1990-01-01T02:00:00, 1990-01-01T03:00:00,
                     1990-01-01T04:00:00, 1990-01-01T05:00:00, 1990-01-01T06:00:00, 1990-01-01T07:00:00,
@@ -122,7 +122,7 @@
 
         <file path='cf_templates/timeSeries-MultiDimensional-SingleStation-H.2.3.nc' feature="timeSeries">
             <!-- 1 station named Station-0 -->
-            <platform id="urn:ioos:station:ncsos:Station0" lat="13" lon="42" z="6">
+            <platform id="urn:ioos:station:ncsos:Station-0" lat="13" lon="42" z="6">
                 <times>
                     1990-01-01T00:00:00, 1990-01-01T01:00:00, 1990-01-01T02:00:00, 1990-01-01T03:00:00,
                     1990-01-01T04:00:00, 1990-01-01T05:00:00, 1990-01-01T06:00:00, 1990-01-01T07:00:00,
@@ -394,7 +394,9 @@
 
         <file path='cf_templates/trajectory-Incomplete-Multidimensional-SingleTrajectory-H.4.2.nc' feature="trajectory">
             <!-- 1 trajectory named Trajectory0 -->
-            <platform id="urn:ioos:station:ncsos:Trajectory1">
+            <!-- NetCDF-JAva should be pulling out the name "Trajectory1" from the file, but it is not,
+                 so NcSOS is populating the platform with the name "TRAJECTORY-0" (first Trajectory feature type found) -->
+            <platform id="urn:ioos:station:ncsos:TRAJECTORY-0">
                 <lats>
                     42.00339, 8.972063, 25.84197, 35.69975, 11.13223, 14.31806, 17.69424,
                     2.707556, 25.04592, 32.40454, 34.26738, 43.30651, 40.59655, 22.00984,

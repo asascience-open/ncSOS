@@ -1,5 +1,6 @@
 package com.asascience.ncsos;
 
+import junit.framework.Assert;
 import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 import org.junit.Test;
@@ -13,6 +14,8 @@ import java.util.*;
 
 @RunWith(Parameterized.class)
 public class GOBasePlatformTest extends NcSOSTest {
+
+    private static HashMap<String,String> kvp = new HashMap<String, String>();
 
     private Element currentFile;
     private String  procedure;
@@ -53,7 +56,7 @@ public class GOBasePlatformTest extends NcSOSTest {
         // Ignore GRID datasets
         int nonGrids = 0;
         for (Element e : new ArrayList<Element>(fileElements)) {
-            if (e.getAttributeValue("feature").toLowerCase().equals("grid")) {
+            if (!e.getAttributeValue("feature").toLowerCase().equals("timeseries")) {
                 fileElements.remove(e);
             } else {
                 for (Element p : (List<Element>) e.getChildren("platform")) {
@@ -69,7 +72,11 @@ public class GOBasePlatformTest extends NcSOSTest {
         List<String> observedPropertyList = null;
         for (Element e : fileElements) {
             for (Element p : (List<Element>) e.getChildren("platform")) {
+
+                String procedure = p.getAttributeValue("id");
+                String offering  = procedure.split(":")[procedure.split(":").length - 1];
                 observedPropertyList = new ArrayList<String>();
+
                 for (Element s : (List<Element>) p.getChildren("sensor")) {
                     // Keep track of the observedProperties so we can make a request
                     // with all of them outside of this forloop.
@@ -81,21 +88,21 @@ public class GOBasePlatformTest extends NcSOSTest {
 
                     // A request where the offering and procedure are identical
                     data[curIndex][0] = e;
-                    data[curIndex][1] = p.getAttributeValue("id");
-                    data[curIndex][2] = p.getAttributeValue("id");
+                    data[curIndex][1] = offering;
+                    data[curIndex][2] = procedure;
                     data[curIndex][3] = observedProperty;
                     data[curIndex][4] = "platform_offering_platform_procedure";
                     curIndex++;
                     // A request with the offering as network:all
                     data[curIndex][0] = e;
                     data[curIndex][1] = "network-all";
-                    data[curIndex][2] = p.getAttributeValue("id");
+                    data[curIndex][2] = procedure;
                     data[curIndex][3] = observedProperty;
                     data[curIndex][4] = "network_offering_platform_procedure";
                     curIndex++;
                     // A request with only the offering
                     data[curIndex][0] = e;
-                    data[curIndex][1] = p.getAttributeValue("id");
+                    data[curIndex][1] = offering;
                     data[curIndex][2] = null;
                     data[curIndex][3] = observedProperty;
                     data[curIndex][4] = "platform_offering_no_procedure";
@@ -106,7 +113,7 @@ public class GOBasePlatformTest extends NcSOSTest {
 
                 // A request where the offering and procedure are identical
                 data[curIndex][0] = e;
-                data[curIndex][1] = p.getAttributeValue("id");
+                data[curIndex][1] = offering;
                 data[curIndex][2] = null;
                 data[curIndex][3] = StringUtils.join(observedPropertyList, ',');
                 data[curIndex][4] = "platform_offering_no_procedure";
@@ -114,13 +121,13 @@ public class GOBasePlatformTest extends NcSOSTest {
                 // A request with the offering as network:all
                 data[curIndex][0] = e;
                 data[curIndex][1] = "network-all";
-                data[curIndex][2] = p.getAttributeValue("id");
+                data[curIndex][2] = procedure;
                 data[curIndex][3] = StringUtils.join(observedPropertyList, ',');
                 data[curIndex][4] = "network_offering_platform_procedure";
                 curIndex++;
                 // A request with only the offering
                 data[curIndex][0] = e;
-                data[curIndex][1] = p.getAttributeValue("id");
+                data[curIndex][1] = offering;
                 data[curIndex][2] = null;
                 data[curIndex][3] = StringUtils.join(observedPropertyList, ',');
                 data[curIndex][4] = "platform_offering_no_procedure";
@@ -145,8 +152,9 @@ public class GOBasePlatformTest extends NcSOSTest {
         String feature  = this.currentFile.getAttributeValue("feature");
         String output   = new File(outputDir + systemSeparator + file.getName() + "_" + this.observedProperty + "_" +  this.testType + ".xml").getAbsolutePath();
         System.out.println("------ " + file + " (" + feature + ") ------");
-        System.out.println("------ " + this.testType + " ------");
+        System.out.println("------ " + pairs + " ------");
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+        Assert.assertFalse(NcSOSTest.isException(result));
     }
 
 }

@@ -1,9 +1,9 @@
 package com.asascience.ncsos.outputformatter.ds;
 
-import java.util.List;
-
 import com.asascience.ncsos.util.XMLDomUtils;
 import org.jdom.Element;
+
+import java.util.List;
 
 public class IoosNetwork10Formatter extends IoosPlatform10Formatter {
 
@@ -108,7 +108,6 @@ public class IoosNetwork10Formatter extends IoosPlatform10Formatter {
         Element bb = addNewNode(loc, BOUNDED_BY, GML_NS, SRS_NAME, srs);
         addNewNode(bb, LOWER_CORNER, GML_NS, lowerCorner);
         addNewNode(bb, UPPER_CORNER, GML_NS, upperCorner);
-        loc.addContent(bb);
     }
     
     public void addComponentOutput(String componentName, String outName, String outURN, String outDef, String featureType, String units) {

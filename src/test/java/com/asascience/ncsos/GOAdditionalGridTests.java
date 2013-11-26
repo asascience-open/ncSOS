@@ -1,6 +1,7 @@
 package com.asascience.ncsos;
 
 import org.jdom.Element;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -9,9 +10,10 @@ import org.junit.rules.TestName;
 import java.io.File;
 import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.List;
 
 public class GOAdditionalGridTests extends NcSOSTest {
+
+    private static HashMap<String,String> kvp = new HashMap<String, String>();
 
     private static Element currentFile = null;
 
@@ -58,6 +60,9 @@ public class GOAdditionalGridTests extends NcSOSTest {
         File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
         String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+        Assert.assertTrue(NcSOSTest.isException(result));
+        Assert.assertEquals(NcSOSTest.INVALID_PARAMETER, NcSOSTest.getExceptionCode(result));
+        Assert.assertEquals("latitude", NcSOSTest.getExceptionLocator(result));
     }
     @Test
     public void testNoLatitudeParameter() throws NoSuchMethodException {
@@ -67,6 +72,9 @@ public class GOAdditionalGridTests extends NcSOSTest {
         File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
         String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+        Assert.assertTrue(NcSOSTest.isException(result));
+        Assert.assertEquals(NcSOSTest.MISSING_PARAMETER, NcSOSTest.getExceptionCode(result));
+        Assert.assertEquals("latitude", NcSOSTest.getExceptionLocator(result));
     }
 
     @Test
@@ -77,6 +85,9 @@ public class GOAdditionalGridTests extends NcSOSTest {
         File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
         String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+        Assert.assertTrue(NcSOSTest.isException(result));
+        Assert.assertEquals(NcSOSTest.INVALID_PARAMETER, NcSOSTest.getExceptionCode(result));
+        Assert.assertEquals("longitude", NcSOSTest.getExceptionLocator(result));
     }
     @Test
     public void testNoLongitudeParameter() throws NoSuchMethodException {
@@ -86,5 +97,8 @@ public class GOAdditionalGridTests extends NcSOSTest {
         File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
         String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+        Assert.assertTrue(NcSOSTest.isException(result));
+        Assert.assertEquals(NcSOSTest.MISSING_PARAMETER, NcSOSTest.getExceptionCode(result));
+        Assert.assertEquals("longitude", NcSOSTest.getExceptionLocator(result));
     }
 }

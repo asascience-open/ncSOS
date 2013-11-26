@@ -1,18 +1,20 @@
 package com.asascience.ncsos.gc;
 
+import com.asascience.ncsos.outputformatter.ErrorFormatter;
 import com.asascience.ncsos.outputformatter.gc.GetCapsFormatter;
 import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
-import java.io.IOException;
-import java.util.BitSet;
-import java.util.HashMap;
+import ucar.nc2.constants.FeatureType;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.ft.*;
 import ucar.nc2.time.CalendarDate;
 import ucar.nc2.time.CalendarDateRange;
 import ucar.unidata.geoloc.LatLonPointImpl;
 import ucar.unidata.geoloc.LatLonRect;
-import ucar.nc2.constants.FeatureType;
+
+import java.io.IOException;
+import java.util.BitSet;
+import java.util.HashMap;
 
 /**
  * Creates basic Get Capabilites request handler that can read from a netcdf dataset
@@ -50,11 +52,12 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
         super(netCDFDataset);
         this.threddsURI = threddsURI;
         this.sections = sections.toLowerCase();
-        this.output = new GetCapsFormatter(this);
+        this.formatter = new GetCapsFormatter(this);
 
         if (getFeatureDataset() == null) {
             // error, couldn't read dataset
-            output.setupExceptionOutput("Unable to read dataset's feature type. Reported as " + FeatureDatasetFactoryManager.findFeatureType(netCDFDataset).toString() + "; unable to process.");
+            formatter = new ErrorFormatter();
+            ((ErrorFormatter)formatter).setException("Unable to read the dataset's feature type. Reported as " + FeatureDatasetFactoryManager.findFeatureType(netCDFDataset).toString() + "; unable to process.");
             return;
         }
 
@@ -71,10 +74,10 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
         super(emptyDataset);
         this.sections = "";
         this.threddsURI = "";
-        this.output = new GetCapsFormatter(this);
+        this.formatter = new GetCapsFormatter(this);
     }
 
-    public void resetCapabilitiesSections(String sections) {
+    public void resetCapabilitiesSections(String sections) throws IOException {
         this.sections = sections.toLowerCase();
         this.requestedSections = new BitSet(SECTION_COUNT);
         SetSectionBits();
@@ -84,7 +87,7 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
      * Creates the output for the get capabilities response
      */
     public void parseGetCapabilitiesDocument() {
-        GetCapsFormatter out = (GetCapsFormatter) output;
+        GetCapsFormatter out = (GetCapsFormatter) formatter;
         // early exit if we have an exception output
         if (out.hasExceptionOut()) {
             return;
@@ -141,7 +144,7 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
             out.setObservationOfferingNetwork(setRange, getStationNames().values().toArray(new String[getStationNames().values().size()]), getSensorNames(), setTime, this.getFeatureDataset().getFeatureType());
             // Add an offering for every station
             for (Integer index : getStationNames().keySet()) {
-                ((GetCapsFormatter) output).setObservationOffering(getStationNames().get(index), stationBBox.get(index), getSensorNames(), stationDateRange.get(index), this.getFeatureDataset().getFeatureType());
+                ((GetCapsFormatter) formatter).setObservationOffering(getStationNames().get(index), stationBBox.get(index), getSensorNames(), stationDateRange.get(index), this.getFeatureDataset().getFeatureType());
             }
         } else {
             // remove Contents node
@@ -149,7 +152,7 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
         }
     }
 
-    private void CalculateBoundsForFeatureSet() {
+    private void CalculateBoundsForFeatureSet() throws IOException {
         FeatureType featype = this.getDatasetFeatureType();
         if (featype != null) {
             this.stationDateRange = new HashMap<Integer, CalendarDateRange>();
@@ -304,7 +307,8 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
                     break;
                 default:
                     _log.error("Unknown feature type - getDatasetFeatureType is ??");
-                    this.output.setupExceptionOutput("Feature set is currently unsupported.");
+                    formatter = new ErrorFormatter();
+                    ((ErrorFormatter)formatter).setException("NetCDF-Java could not figure out what this dataset was!");
                     return;
             }
             this.setStartDate = start;
@@ -355,7 +359,7 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
         }
     }
 
-    private void SetSectionBits() {
+    private void SetSectionBits() throws IOException {
         this.requestedSections = new BitSet(this.SECTION_COUNT);
         try {
             for (String sect : this.sections.split(",")) {
@@ -368,7 +372,8 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
         } catch (Exception ex) {
             _log.error(ex.toString());
             // assume that an invalid value was passed in the sections parameter, print out exception out
-            this.output.setupExceptionOutput("Invalid value for 'Sections' parameter, please see GetCapabilities for valid values.");
+            formatter = new ErrorFormatter();
+            ((ErrorFormatter)formatter).setException("Invalid value for 'Sections' parameter, please see GetCapabilities for valid values.", INVALID_PARAMETER, "sections");
         }
     }
 }

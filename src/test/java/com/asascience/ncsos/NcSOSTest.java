@@ -6,6 +6,7 @@ import com.asascience.ncsos.util.XMLDomUtils;
 import org.apache.log4j.BasicConfigurator;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.Namespace;
 import ucar.nc2.dataset.NetcdfDataset;
 
 import java.io.*;
@@ -20,11 +21,20 @@ public class NcSOSTest {
     protected static String outputDir = null;
     protected static String exampleDir = null;
     protected static List<Element> fileElements;
-    protected static HashMap<String,String> kvp;
     protected static String systemSeparator = System.getProperty("file.separator");
+    private   static String OUTPUT_FORMATTER = "outputFormatter";
+
+    // Exception codes - Table 25 of OGC 06-121r3 (OWS Common)
+    protected static String INVALID_PARAMETER       = "InvalidParameterValue";
+    protected static String MISSING_PARAMETER       = "MissingParameterValue";
+    protected static String OPTION_NOT_SUPPORTED    = "OptionNotSupported";
+    protected static String OPERATION_NOT_SUPPORTED = "OperationNotSupported";
+    protected static String VERSION_NEGOTIATION    = "VersionNegotiationFailed";
+
+    private static Namespace OWS_NS = Namespace.getNamespace("ows","http://www.opengis.net/ows/1.1");
+
 
     public static void setUpClass() throws Exception {
-        kvp = new HashMap<String, String>();
 
         BasicConfigurator.resetConfiguration();
         BasicConfigurator.configure();
@@ -34,8 +44,8 @@ public class NcSOSTest {
             InputStream templateInputStream = new FileInputStream(configFile);
             Document configDoc = XMLDomUtils.getTemplateDom(templateInputStream);
             // read from the config file
-            outputDir      = XMLDomUtils.getNodeValue(configDoc, "testConfiguration", "outputDirectory");
-            exampleDir     = XMLDomUtils.getNodeValue(configDoc, "testConfiguration", "examplesDirectory");
+            outputDir      = configDoc.getRootElement().getChild("outputDirectory").getValue();
+            exampleDir     = configDoc.getRootElement().getChild("examplesDirectory").getValue();
 
             Element testFilesElement = XMLDomUtils.getNestedChild(configDoc.getRootElement(), "TestFiles");
             fileElements = testFilesElement.getChildren();
@@ -52,7 +62,7 @@ public class NcSOSTest {
             Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
 
-            OutputFormatter outputFormat = (OutputFormatter) parser.enhanceGETRequest(dataset, getQueryString(kvp), dataset_path).get("outputHandler");
+            OutputFormatter outputFormat = (OutputFormatter) parser.enhanceGETRequest(dataset, getQueryString(kvp), dataset_path).get(OUTPUT_FORMATTER);
             outputFormat.writeOutput(writer);
 
             // Write to disk
@@ -66,6 +76,37 @@ public class NcSOSTest {
             System.out.println(ex.getMessage());
             return null;
         }
+    }
+
+    protected static String getExceptionText(Element e) {
+        try {
+            return e.getChild("Exception", OWS_NS).getChild("ExceptionText", OWS_NS).getValue();
+        } catch (NullPointerException n) {
+            return "";
+        }
+    }
+
+    protected static String getExceptionCode(Element e) {
+        try {
+            return e.getChild("Exception", OWS_NS).getAttributeValue("exceptionCode");
+        } catch (NullPointerException n) {
+            return "";
+        }
+    }
+
+    protected static String getExceptionLocator(Element e) {
+        try {
+            return e.getChild("Exception", OWS_NS).getAttributeValue("locator");
+        } catch (NullPointerException n) {
+            return "";
+        }
+    }
+
+    protected static boolean isException(Element e) {
+        if (e.getNamespace() == OWS_NS && e.getName().equals("ExceptionReport")) {
+            return true;
+        }
+        return false;
     }
 
     protected static String getQueryString(HashMap<String,String> kvp) {

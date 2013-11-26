@@ -99,18 +99,14 @@ public abstract class OutputFormatter {
     public static final String CONTACT_LIST = "ContactList";
     public static final String COUNT = "Count";
     public static final String VALUES = "values";
-    protected Document document;
+    protected Document  document;
 
     public OutputFormatter() {
         this.document = XMLDomUtils.loadFile(getClass().getClassLoader().getResourceAsStream(this.getTemplateLocation()));
         this.initNamespaces();
     }
 
-    protected String getTemplateLocation() {
-        return "templates/exception.xml";
-    }
-
-    public Element getRoot() {
+     public Element getRoot() {
         return this.document.getRootElement();
     }
 
@@ -128,19 +124,17 @@ public abstract class OutputFormatter {
     }
 
     /**
+     * Returns the template path to parse
+     */
+    protected abstract String getTemplateLocation();
+
+    /**
      * Adds data from a formatted string to some container defined in the individual formatters.
      *
      * @param dataFormattedString a csv string that usually follows the format of key=value,key1=value1,key2=value2,etc
      *                            'value' can be csvs as well, allowing for multiple values per key
      */
     public abstract void addDataFormattedStringToInfoList(String dataFormattedString);
-
-    /**
-     * Sets up the outputter to write an exception when writeOutput is invoked.
-     *
-     * @param message - message to display to the user
-     */
-    public abstract void setupExceptionOutput(String message);
 
     /**
      * Writes prepared output to the writer (usually will be a response stream from a http request

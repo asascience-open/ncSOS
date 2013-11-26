@@ -1,5 +1,6 @@
 package com.asascience.ncsos;
 
+import junit.framework.Assert;
 import org.jdom.Element;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,17 +9,16 @@ import org.junit.runners.Parameterized.Parameters;
 
 import java.io.File;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @RunWith(Parameterized.class)
-public class DSStationTest extends NcSOSTest {
+public class DSPlatformTest extends NcSOSTest {
+
+    private static HashMap<String,String> kvp = new HashMap<String, String>();
 
     private Element currentFile;
     private String procedure;
-    public DSStationTest(Element file, String procedure) {
+    public DSPlatformTest(Element file, String procedure) {
         this.currentFile    = file;
         this.procedure       = procedure;
     }
@@ -71,14 +71,16 @@ public class DSStationTest extends NcSOSTest {
 
     @Test
     public void testAll() {
-        kvp.put("procedure", this.procedure);
+        HashMap<String,String> pairs = (HashMap<String,String>) kvp.clone();
+        pairs.put("procedure", this.procedure);
 
         File   file     = new File("resources" + systemSeparator + "datasets" + systemSeparator + this.currentFile.getAttributeValue("path"));
         String feature  = this.currentFile.getAttributeValue("feature");
         String output   = new File(outputDir + systemSeparator + file.getName() + "_" + this.procedure + ".xml").getAbsolutePath();
         System.out.println("------ " + file + " (" + feature + ") ------");
         System.out.println("------ " + this.procedure + " ------");
-        Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, kvp);
+        Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+        Assert.assertFalse(NcSOSTest.isException(result));
     }
 
 }

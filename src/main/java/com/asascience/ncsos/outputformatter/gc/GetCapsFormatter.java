@@ -6,9 +6,7 @@ package com.asascience.ncsos.outputformatter.gc;
 
 import com.asascience.ncsos.gc.GetCapabilitiesRequestHandler;
 import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
-import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.service.BaseRequestHandler;
-import com.asascience.ncsos.util.XMLDomUtils;
 import org.jdom.Element;
 import org.jdom.Namespace;
 import org.jdom.output.Format;
@@ -17,8 +15,8 @@ import ucar.nc2.constants.FeatureType;
 import ucar.nc2.time.CalendarDateRange;
 import ucar.unidata.geoloc.LatLonRect;
 
-import java.io.Writer;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
 
@@ -35,6 +33,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
     public static final String SERVICE_PROVIDER = "ServiceProvider";
     private boolean exceptionFlag = false;
     private final static String TEMPLATE = "templates/GC.xml";
+    private GetCapabilitiesRequestHandler handler = null;
 
     public GetCapsFormatter(GetCapabilitiesRequestHandler handler) {
         super();
@@ -292,11 +291,6 @@ public class GetCapsFormatter extends BaseOutputFormatter {
      */
     public void addDataFormattedStringToInfoList(String dataFormattedString) {
         throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void setupExceptionOutput(String message) {
-        document = XMLDomUtils.getExceptionDom(message);
-        exceptionFlag = true;
     }
 
     public void writeOutput(Writer writer) throws IOException {

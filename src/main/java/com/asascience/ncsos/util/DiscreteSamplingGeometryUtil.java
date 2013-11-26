@@ -1,15 +1,16 @@
 package com.asascience.ncsos.util;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import ucar.nc2.*;
 import ucar.nc2.constants.CF;
 import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.dt.GridDataset;
 import ucar.nc2.ft.*;
 import ucar.nc2.ft.point.StationPointFeature;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  *

@@ -1,19 +1,21 @@
 package com.asascience.ncsos.ds;
 
 import com.asascience.ncsos.cdmclasses.*;
+import com.asascience.ncsos.outputformatter.ErrorFormatter;
 import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.outputformatter.ds.IoosNetwork10Formatter;
 import com.asascience.ncsos.util.ListComprehension;
 import com.asascience.ncsos.util.LogReporter;
 import com.asascience.ncsos.util.VocabDefinitions;
+import ucar.nc2.Attribute;
+import ucar.nc2.VariableSimpleIF;
+import ucar.nc2.dataset.NetcdfDataset;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import ucar.nc2.Attribute;
-import ucar.nc2.VariableSimpleIF;
-import ucar.nc2.dataset.NetcdfDataset;
 
 public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterface {
     
@@ -41,14 +43,16 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
         setStationData();
     }
 
-    public void setupOutputDocument(OutputFormatter output) {
+    public void setupOutputDocument(OutputFormatter format) throws IOException {
         if (!checkForProcedure(this.procedure)) {
-          output.setupExceptionOutput("Invalid procedure: " + this.procedure);  
+            formatter = new ErrorFormatter();
+            ((ErrorFormatter)formatter).setException("Invalid procedure: " + this.procedure, INVALID_PARAMETER, "procedure");
         } else if (errorString != null) {
-            output.setupExceptionOutput(errorString);
+            formatter = new ErrorFormatter();
+            ((ErrorFormatter)formatter).setException(errorString);
         } else {
             try {
-                this.network = (IoosNetwork10Formatter) output;
+                this.network = (IoosNetwork10Formatter) format;
                 describeNetwork();
             } catch (Exception ex) {
                 logger.error(ex.toString());
@@ -58,9 +62,9 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
     }
     
     private void describeNetwork() {
-        network.setVersionMetadata();
-        network.setName(this.procedure);
-        network.setDescriptionNode((String)this.getGlobalAttribute("description", "No description found"));
+        this.network.setVersionMetadata();
+        this.network.setName(this.procedure);
+        this.network.setDescriptionNode((String)this.getGlobalAttribute("description", "No description found"));
         this.formatSmlIdentification();
         this.formatSmlClassification();
         this.formatSmlValidTime();
@@ -179,12 +183,6 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 break;
             case GRID:
-                // remove 'Grid' from the station names, since they are arbitrary
-//                stationNames = ListComprehension.map(stationNames, new ListComprehension.Func<String, String>() {
-//                    public String apply(String in) {
-//                        return in.replaceAll("[A-Za-z]+", "");
-//                    }
-//                });
                 List<String> dataVars = new ArrayList<String>();
                 for (VariableSimpleIF var : this.getDataVariables()) {
                     dataVars.add(var.getShortName());
@@ -286,9 +284,9 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
         for (Map.Entry<Integer,String> station : this.getStationNames().entrySet()) {
             network.addSmlComponent(station.getValue());
             // identifiers for station
-            network.addIdentifierToComponent(station.getValue(), "stationID", GetIoosDef("stationID"), this.procedure.substring(0,this.procedure.lastIndexOf(":")) + station.getValue());
+            network.addIdentifierToComponent(station.getValue(), "stationID", GetIoosDef("stationID"), this.getUrnName(station.getValue()));
             network.addIdentifierToComponent(station.getValue(), "shortName", GetIoosDef("shortName"), this.checkForRequiredValue(identVar, "short_name"));
-            network.addIdentifierToComponent(station.getValue(), "longName", GetIoosDef("longName"), this.checkForRequiredValue(identVar, "short_name"));
+            network.addIdentifierToComponent(station.getValue(), "longName", GetIoosDef("longName"), this.checkForRequiredValue(identVar, "long_name"));
             // wmoid, if it exists
             Attribute identAtt = identVar.findAttribute("wmo_code");
             if (identAtt != null) {
@@ -308,8 +306,8 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
                 }
             } else {
                 // GRID data
-                String lowerCorner = this.stationData.getLowerLat(station.getKey()) + " " + this.stationData.getLowerLon(station.getKey());
-                String upperCorner = this.stationData.getUpperLat(station.getKey()) + " " + this.stationData.getUpperLon(station.getKey());
+                String lowerCorner = ((Grid)this.stationData).getLowerLat() + " " + ((Grid)this.stationData).getLowerLon();
+                String upperCorner = ((Grid)this.stationData).getUpperLat() + " " +((Grid)this.stationData).getUpperLon();
                 network.setComponentLocation(station.getValue(), "http://www.opengis.net/def/crs/EPSG/0/4326", lowerCorner, upperCorner);
             }
             // outputs

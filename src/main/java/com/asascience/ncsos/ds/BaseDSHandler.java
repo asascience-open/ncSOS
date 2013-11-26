@@ -4,15 +4,14 @@
  */
 package com.asascience.ncsos.ds;
 
-import com.asascience.ncsos.outputformatter.*;
+import com.asascience.ncsos.outputformatter.ErrorFormatter;
 import com.asascience.ncsos.outputformatter.ds.IoosNetwork10Formatter;
 import com.asascience.ncsos.outputformatter.ds.IoosPlatform10Formatter;
-import com.asascience.ncsos.outputformatter.ds.OosTethysFormatter;
 import com.asascience.ncsos.service.BaseRequestHandler;
+import ucar.nc2.dataset.NetcdfDataset;
 
 import java.io.IOException;
 import java.util.HashMap;
-import ucar.nc2.dataset.NetcdfDataset;
 
 /**
  * Main handler class for Describe Sensor requests. Processes the request to determine
@@ -29,7 +28,7 @@ public class BaseDSHandler extends BaseRequestHandler {
     private final String procedure;
     private BaseDSInterface describer;
 
-    //private final String ACCEPTABLE_RESPONSE_FORMAT = "text/xml;subtype=\"sensorML/1.0.1\"";
+    private final String ACCEPTABLE_RESPONSE_FORMAT = "text/xml;subtype=\"sensorML/1.0.1/profiles/ioos_sos/1.0\"";
     
     /**
      * Creates a DescribeSensorHandler handler that will parse the information and setup
@@ -42,53 +41,48 @@ public class BaseDSHandler extends BaseRequestHandler {
      * @param query entire query string from the request
      * @throws IOException 
      */
-    public BaseDSHandler(NetcdfDataset dataset, String responseFormat, String procedure, String uri, String query) throws IOException {
+    public BaseDSHandler(NetcdfDataset dataset, String outputFormat, String procedure, String uri, String query) throws IOException {
         super(dataset);
         
         this.procedure = procedure;
         
         // test that the dataset can be handled properly
         if (getFeatureDataset() == null && getGridDataset() == null) {
-            output = new BaseOutputFormatter();
-            output.setupExceptionOutput("Unable to handle requested dataset. Make sure that it has a properly defined feature type.");
+            formatter = new ErrorFormatter();
+            ((ErrorFormatter)formatter).setException("NetCDF-Java could not determine a valid FeatureType for this dataset.");
             return;
         }
         
-        // make sure that the responseFormat we received is acceptable
-    /*    if (!responseFormat.equalsIgnoreCase(ACCEPTABLE_RESPONSE_FORMAT)) {
+        // make sure that the outputFormat we received is acceptable
+        if (!outputFormat.equalsIgnoreCase(ACCEPTABLE_RESPONSE_FORMAT)) {
             // return exception
-            output = new BaseOutputFormatter();
-            _log.error("got unhandled response format " + responseFormat + "; printing exception...");
-            output.setupExceptionOutput("Unhandled response format " + responseFormat);
+            formatter = new ErrorFormatter();
+            ((ErrorFormatter)formatter).setException("Unknown outputFormat: " + outputFormat, INVALID_PARAMETER, "outputFormat");
             return;
         }
-      */  
+
         // check our procedure
         if (!checkDatasetForProcedure(procedure)) {
             // the procedure does not match any known procedure
-            output = new BaseOutputFormatter();
-            _log.error("Could not match procedure " + procedure);
-            output.setupExceptionOutput("Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.");
+            formatter = new ErrorFormatter();
+            ((ErrorFormatter)formatter).setException("Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.", INVALID_PARAMETER, "procedure");
             return;
         }
         
         // find out needed info based on whether this is a station or sensor look up
-        
         if (this.procedure.contains(STATION)) {
             setNeededInfoForStation(dataset, uri, query);
-            describer.setupOutputDocument(output);
+            describer.setupOutputDocument(formatter);
         } else if (this.procedure.contains(SENSOR)) {
-            output = new BaseOutputFormatter();
-            output.setupExceptionOutput("NcSOS does not currently support DescribeSensor for sensor procedures.");
-            return;
+            formatter = new ErrorFormatter();
+            ((ErrorFormatter)formatter).setException("NcSOS does not currently support DescribeSensor for sensor procedures.", OPTION_NOT_SUPPORTED, "procedure");
         } else if (this.procedure.contains(NETWORK)) {
-            output = new IoosNetwork10Formatter();
+            formatter = new IoosNetwork10Formatter();
             describer = new IoosNetwork10Handler(dataset, procedure, query);
-            describer.setupOutputDocument(output);
+            describer.setupOutputDocument(formatter);
         } else {
-            output = new BaseOutputFormatter();
-            output.setupExceptionOutput("Unknown procedure (not a 'station', 'sensor' or 'network'): " + this.procedure);
-            return;
+            formatter = new ErrorFormatter();
+            ((ErrorFormatter)formatter).setException("Unknown procedure (not a 'station', 'sensor' or 'network'): " + this.procedure, INVALID_PARAMETER, "procedure");
         }
     }
 
@@ -99,7 +93,7 @@ public class BaseDSHandler extends BaseRequestHandler {
      */
     private void setNeededInfoForStation( NetcdfDataset dataset, String uri, String query ) throws IOException {
         // get our information based on feature type
-        output = new IoosPlatform10Formatter();
+        formatter = new IoosPlatform10Formatter();
         describer = new IoosPlatform10Handler(dataset, procedure, uri);
     }
 

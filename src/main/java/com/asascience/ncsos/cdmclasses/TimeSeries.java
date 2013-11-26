@@ -7,12 +7,6 @@ package com.asascience.ncsos.cdmclasses;
 import com.asascience.ncsos.go.ObservationOffering;
 import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.joda.time.Chronology;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
@@ -23,6 +17,13 @@ import ucar.nc2.ft.StationTimeSeriesFeatureCollection;
 import ucar.nc2.units.DateFormatter;
 import ucar.nc2.units.DateRange;
 import ucar.unidata.geoloc.Station;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Provides methods to gather information from TimeSeries datasets needed for requests: GetCapabilities, GetObservations
@@ -124,8 +125,6 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         StringBuilder builder = new StringBuilder();
         DateFormatter dateFormatter = new DateFormatter();
         List<String> valueList = new ArrayList<String>();
-        //Joiner tokenJoiner = Joiner.on(',');
-        //int count = 0;
 
         while (iterator.hasNext()) {
             PointFeature pointFeature = iterator.next();

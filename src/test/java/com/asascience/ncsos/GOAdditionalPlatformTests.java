@@ -1,6 +1,7 @@
 package com.asascience.ncsos;
 
 import org.jdom.Element;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 
 public class GOAdditionalPlatformTests extends NcSOSTest {
 
+    private static HashMap<String,String> kvp = new HashMap<String, String>();
     private static Element currentFile = null;
 
     @Rule
@@ -55,6 +57,9 @@ public class GOAdditionalPlatformTests extends NcSOSTest {
         File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
         String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+        Assert.assertTrue(NcSOSTest.isException(result));
+        Assert.assertEquals(NcSOSTest.INVALID_PARAMETER, NcSOSTest.getExceptionCode(result));
+        Assert.assertEquals("procedure", NcSOSTest.getExceptionLocator(result));
     }
     @Test
     public void testOnlyProcedureParameter() throws NoSuchMethodException {
@@ -64,6 +69,9 @@ public class GOAdditionalPlatformTests extends NcSOSTest {
         File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
         String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+        Assert.assertTrue(NcSOSTest.isException(result));
+        Assert.assertEquals(NcSOSTest.MISSING_PARAMETER, NcSOSTest.getExceptionCode(result));
+        Assert.assertNotSame("procedure", NcSOSTest.getExceptionLocator(result));
     }
 
     @Test
@@ -74,6 +82,9 @@ public class GOAdditionalPlatformTests extends NcSOSTest {
         File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
         String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+        Assert.assertTrue(NcSOSTest.isException(result));
+        Assert.assertEquals(NcSOSTest.INVALID_PARAMETER, NcSOSTest.getExceptionCode(result));
+        Assert.assertEquals("offering", NcSOSTest.getExceptionLocator(result));
     }
     @Test
     public void testNoOfferingParameter() throws NoSuchMethodException {
@@ -83,6 +94,9 @@ public class GOAdditionalPlatformTests extends NcSOSTest {
         File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
         String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+        Assert.assertTrue(NcSOSTest.isException(result));
+        Assert.assertEquals(NcSOSTest.MISSING_PARAMETER, NcSOSTest.getExceptionCode(result));
+        Assert.assertEquals("offering", NcSOSTest.getExceptionLocator(result));
     }
     @Test
     public void testOnlyOfferingParameter() throws NoSuchMethodException {
@@ -92,6 +106,9 @@ public class GOAdditionalPlatformTests extends NcSOSTest {
         File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
         String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+        Assert.assertTrue(NcSOSTest.isException(result));
+        Assert.assertEquals(NcSOSTest.MISSING_PARAMETER, NcSOSTest.getExceptionCode(result));
+        Assert.assertNotSame("offering", NcSOSTest.getExceptionLocator(result));
     }
 
     @Test
@@ -102,6 +119,9 @@ public class GOAdditionalPlatformTests extends NcSOSTest {
         File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
         String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+        Assert.assertTrue(NcSOSTest.isException(result));
+        Assert.assertEquals(NcSOSTest.INVALID_PARAMETER, NcSOSTest.getExceptionCode(result));
+        Assert.assertEquals("responseFormat", NcSOSTest.getExceptionLocator(result));
     }
     @Test
     public void testNoResponseFormatParameter() throws NoSuchMethodException {
@@ -111,6 +131,9 @@ public class GOAdditionalPlatformTests extends NcSOSTest {
         File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
         String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+        Assert.assertTrue(NcSOSTest.isException(result));
+        Assert.assertEquals(NcSOSTest.MISSING_PARAMETER, NcSOSTest.getExceptionCode(result));
+        Assert.assertEquals("responseFormat", NcSOSTest.getExceptionLocator(result));
     }
 
     @Test
@@ -121,6 +144,9 @@ public class GOAdditionalPlatformTests extends NcSOSTest {
         File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
         String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+        Assert.assertTrue(NcSOSTest.isException(result));
+        Assert.assertEquals(NcSOSTest.INVALID_PARAMETER, NcSOSTest.getExceptionCode(result));
+        Assert.assertEquals("version", NcSOSTest.getExceptionLocator(result));
     }
     @Test
     public void testNoVersionParameter() throws NoSuchMethodException {
@@ -130,6 +156,9 @@ public class GOAdditionalPlatformTests extends NcSOSTest {
         File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
         String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+        Assert.assertTrue(NcSOSTest.isException(result));
+        Assert.assertEquals(NcSOSTest.MISSING_PARAMETER, NcSOSTest.getExceptionCode(result));
+        Assert.assertEquals("version", NcSOSTest.getExceptionLocator(result));
     }
 
     @Test
@@ -140,6 +169,9 @@ public class GOAdditionalPlatformTests extends NcSOSTest {
         File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
         String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+        Assert.assertTrue(NcSOSTest.isException(result));
+        Assert.assertEquals(NcSOSTest.OPERATION_NOT_SUPPORTED, NcSOSTest.getExceptionCode(result));
+        Assert.assertEquals("service", NcSOSTest.getExceptionLocator(result));
     }
     @Test
     public void testNoServiceParameter() throws NoSuchMethodException {
@@ -149,5 +181,8 @@ public class GOAdditionalPlatformTests extends NcSOSTest {
         File file = new File("resources" + systemSeparator + "datasets" + systemSeparator + currentFile.getAttributeValue("path"));
         String output   = new File(outputDir + systemSeparator + testName.getMethodName() + ".xml").getAbsolutePath();
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+        Assert.assertTrue(NcSOSTest.isException(result));
+        Assert.assertEquals(NcSOSTest.MISSING_PARAMETER, NcSOSTest.getExceptionCode(result));
+        Assert.assertEquals("service", NcSOSTest.getExceptionLocator(result));
     }
 }

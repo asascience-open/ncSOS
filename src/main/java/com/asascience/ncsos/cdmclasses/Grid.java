@@ -1,13 +1,7 @@
 package com.asascience.ncsos.cdmclasses;
 
-import com.asascience.ncsos.go.ObservationOffering;
-import java.io.IOException;
-import java.util.*;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
-import org.w3c.dom.Document;
 import ucar.ma2.Array;
+import ucar.nc2.constants.CF;
 import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.dataset.CoordinateAxis1D;
 import ucar.nc2.dataset.CoordinateAxis1DTime;
@@ -15,18 +9,17 @@ import ucar.nc2.dt.GridCoordSystem;
 import ucar.nc2.dt.GridDataset;
 import ucar.nc2.dt.GridDatatype;
 import ucar.nc2.units.DateFormatter;
+import ucar.unidata.geoloc.LatLonRect;
 import ucar.unidata.geoloc.Station;
 
-/**
- * Provides methods to gather information from GRID datasets needed for requests: GetCapabilities, GetObservations
- * @author abird
- * @version 
- */
+import java.io.IOException;
+import java.util.*;
+
 public class Grid extends baseCDMClass implements iStationData {
 
     private static final String DEPTH = "depth";
-    private static final String LAT = "lat";
-    private static final String LON = "lon";
+    private static final String LAT = "latitude";
+    private static final String LON = "longitude";
     private List<String> stationNameList;
     private List<String> stationDescripList;
     private final String[] variableNames;
@@ -103,26 +96,6 @@ public class Grid extends baseCDMClass implements iStationData {
         return retVal;
     }
 
-    /**
-     * Retrieves latitude coordinates from the GridData as a double array
-     * @return an array of latitude coordinates
-     */
-    private double[] getLatCoordData() {
-        CoordinateAxis1D latData = (CoordinateAxis1D) GridData.getDataVariable(LAT);
-        double[] latDbl = latData.getCoordValues();
-        return latDbl;
-    }
-
-    /**
-     * Retrieves longitude information from GridData as an array
-     * @return an array of doubles with longitude information
-     */
-    private double[] getLonCoordData() {
-        CoordinateAxis1D lonData = (CoordinateAxis1D) GridData.getDataVariable(LON);
-        double[] lonDbl = lonData.getCoordValues();
-        return lonDbl;
-    }
-    
     /************************/
     /* iStationData Methods */
     /**************************************************************************/
@@ -137,32 +110,32 @@ public class Grid extends baseCDMClass implements iStationData {
         //check and only add stations that are of interest
         int stCount = 0;
         for (int i = 0; i < GridData.getGrids().size(); i++) {
-            if (!GridData.getGrids().get(i).getFullName().equalsIgnoreCase("cloud_land_mask")) {
-                for (int j = 0; j < variableNames.length; j++) {
-                    if (variableNames[j].equalsIgnoreCase("lat") || variableNames[j].equalsIgnoreCase("lon")) {
-                    } else {
-                        if (variableNames[j].equalsIgnoreCase(GridData.getGrids().get(i).getFullName())) {
-                            stCount++;
-                            stationNameList.add(GridData.getGrids().get(i).getFullName());
-                            stationDescripList.add(GridData.getGrids().get(i).getDescription());
-                        }
-                    }
+            List<String> varList = Arrays.asList(variableNames);
+            if (varList.contains(GridData.getGrids().get(i).getFullName())) {
+                // Does the varname equal?
+                stCount++;
+                stationNameList.add(GridData.getGrids().get(i).getFullName());
+                stationDescripList.add(GridData.getGrids().get(i).getDescription());
+                setBoundingBox(GridData.getGrids().get(i).getCoordinateSystem().getLatLonBoundingBox());
+            } else {
+                // Does the standard_name equal?
+                String snd = GridData.getGrids().get(i).findAttValueIgnoreCase(CF.STANDARD_NAME, "NOPE");
+                if (varList.contains(snd)) {
+                    stCount++;
+                    stationNameList.add(GridData.getGrids().get(i).getFullName());
+                    stationDescripList.add(GridData.getGrids().get(i).getDescription());
+                    setBoundingBox(GridData.getGrids().get(i).getCoordinateSystem().getLatLonBoundingBox());
                 }
             }
         }
-
         setNumberOfStations(stCount);
+    }
 
-        CoordinateAxis1D lonData = (CoordinateAxis1D) GridData.getDataVariable(LON);
-        CoordinateAxis1D latData = (CoordinateAxis1D) GridData.getDataVariable(LAT);
-        double[] lonDbl = lonData.getCoordValues();
-        double[] latDbl = latData.getCoordValues();
-
-        upperLat = (latDbl[latDbl.length - 1]);
-        lowerLat = (latDbl[0]);
-        upperLon = (lonDbl[lonDbl.length - 1]);
-        lowerLon = (lonDbl[0]);
-
+    public void setBoundingBox(LatLonRect llr) {
+        upperLon = llr.getUpperRightPoint().getLongitude();
+        upperLat = llr.getUpperRightPoint().getLatitude();
+        lowerLon = llr.getLowerLeftPoint().getLongitude();
+        lowerLat = llr.getLowerLeftPoint().getLatitude();
     }
 
     @Override
@@ -175,13 +148,25 @@ public class Grid extends baseCDMClass implements iStationData {
         if (GridData != null) {
             StringBuilder builder = new StringBuilder();
             Array data = null;
-            double[] lonDbl = getLonCoordData();
-            double[] latDbl = getLatCoordData();
-            Map<String, Integer[]> latLonDepthHash = findDataIndexs(lonDbl, latDbl, latLonRequest);
 
             GridDatatype grid = GridData.getGrids().get(0);
             GridCoordSystem gcs = grid.getCoordinateSystem();
-            
+            String lat_name   = GridData.getGrids().get(0).getCoordinateSystem().getYHorizAxis().getOriginalVariable().getFullName();
+            String lon_name   = GridData.getGrids().get(0).getCoordinateSystem().getXHorizAxis().getOriginalVariable().getFullName();
+            String depth_name = null;
+
+            double[] lonDbl = ((CoordinateAxis1D)GridData.getDataVariable(lon_name)).getCoordValues();
+            double[] latDbl = ((CoordinateAxis1D)GridData.getDataVariable(lat_name)).getCoordValues();
+            double[] depthDbl = null;
+
+            CoordinateAxis1D depthAxis = GridData.getGrids().get(0).getCoordinateSystem().getVerticalAxis();
+            if (depthAxis != null) {
+                depth_name = depthAxis.getOriginalVariable().getFullName();
+                depthDbl = ((CoordinateAxis1D)GridData.getDataVariable(depth_name)).getCoordValues();
+            }
+
+            Map<String, Integer[]> latLonDepthHash = findDataIndexs(lonDbl, latDbl, latLonRequest);
+
             int[] depthHeights = new int[latLonDepthHash.get(LON).length];
             Boolean zeroDepths = true;
 
@@ -199,12 +184,6 @@ public class Grid extends baseCDMClass implements iStationData {
                 }
             }
             
-            double[] depthDbl = null;
-            CoordinateAxis1D depthAxis = (CoordinateAxis1D) GridData.getDataVariable(DEPTH);
-            if(depthAxis != null) {
-                depthDbl = depthAxis.getCoordValues();
-            }
-            
             for (int k=0; k<latLonDepthHash.get(LAT).length; k++) {
                 java.util.Date[] dates = null;
                 if (gcs.hasTimeAxis1D()) {
@@ -219,11 +198,11 @@ public class Grid extends baseCDMClass implements iStationData {
 
                 // add depth
                 if(depthDbl != null) {
-                    builder.append("depth=").append(depthDbl[depthHeights[k]]).append(",");
+                    builder.append(depth_name).append("=").append(depthDbl[depthHeights[k]]).append(",");
                 }
                 
-                builder.append("lat=").append(latDbl[latLonDepthHash.get(LAT)[k]]).append(",");
-                builder.append("lon=").append(lonDbl[latLonDepthHash.get(LON)[k]]).append(",");
+                builder.append(lat_name).append("=").append(latDbl[latLonDepthHash.get(LAT)[k]]).append(",");
+                builder.append(lon_name).append("=").append(lonDbl[latLonDepthHash.get(LON)[k]]).append(",");
                 // get data slices
                 String dataName;
                 for (int l=0; l<GridData.getGrids().size();l++) {
@@ -321,6 +300,19 @@ public class Grid extends baseCDMClass implements iStationData {
         return retVal;
     }
 
+    public double getUpperLat() {
+        return upperLat;
+    }
+    public double getUpperLon() {
+        return upperLon;
+    }
+    public double getLowerLat() {
+        return lowerLat;
+    }
+    public double getLowerLon() {
+        return lowerLon;
+    }
+
     @Override
     public double getUpperLat(int stNum) {
 //        return Double.parseDouble(latLonRequest.get(LAT));
@@ -383,59 +375,7 @@ public class Grid extends baseCDMClass implements iStationData {
     }
     
     /**************************************************************************/
-  
-    /**
-     * Sets up an xml document with needed information for a Get Capabilities request
-     * @param dataset the GRID dataset
-     * @param document xml document to be returned as the response for Get Capabilites request
-     * @param GMLName GML base name from dataset
-     * @return the formatted xml document for Get Capabilities response
-     */
-    public static Document getCapsResponse(GridDataset dataset, Document document, String GMLName) {
-        List<GridDatatype> gridData = dataset.getGrids();
-        //dataset.getCalendarDateStart();
-        //dataset.getCalendarDateEnd();
 
-        DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
-        DateTime dt;
-
-        for (int i = 0; i < gridData.size(); i++) {
-            //check that it is not a cloud land mask
-            if (!gridData.get(i).getFullName().equalsIgnoreCase("cloud_land_mask")) {
-
-                CoordinateAxis1D lonData = (CoordinateAxis1D) dataset.getDataVariable(LON);
-                CoordinateAxis1D latData = (CoordinateAxis1D) dataset.getDataVariable(LAT);
-                double[] lonDbl = lonData.getCoordValues();
-                double[] latDbl = latData.getCoordValues();
-
-                ObservationOffering newOffering = new ObservationOffering();
-                newOffering.setObservationStationLowerCorner(Double.toString(latDbl[0]), Double.toString(lonDbl[0]));
-                newOffering.setObservationStationUpperCorner(Double.toString(latDbl[latDbl.length - 1]), Double.toString(lonDbl[lonDbl.length - 1]));
-
-                dt = new DateTime(dataset.getCalendarDateStart().toDate());
-                newOffering.setObservationTimeBegin(fmt.print(dt));
-
-                dt = new DateTime(dataset.getCalendarDateEnd().toDate());
-                newOffering.setObservationTimeEnd(fmt.print(dt));
-
-
-                newOffering.setObservationStationDescription(gridData.get(i).getDescription());
-                newOffering.setObservationFeatureOfInterest(gridData.get(i).getFullName());
-                newOffering.setObservationName(GMLName + (gridData.get(i).getName()));
-                newOffering.setObservationStationID((gridData.get(i).getName()));
-                newOffering.setObservationProcedureLink(GMLName + ((gridData.get(i).getName())));
-                newOffering.setObservationSrsName("EPSG:4326");  // TODO?  
-                List<String> obsProperty = new ArrayList<String>();
-                obsProperty.add(gridData.get(i).getDescription());
-
-                newOffering.setObservationObserveredList(obsProperty);
-                
-                document = CDMUtils.addObsOfferingToDoc(newOffering, document);
-            }
-        }
-        return document;
-    }
-   
     /**
      * 
      * @param nameToCheck

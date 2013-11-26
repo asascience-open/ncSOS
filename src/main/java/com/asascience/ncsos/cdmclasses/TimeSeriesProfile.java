@@ -6,6 +6,11 @@ package com.asascience.ncsos.cdmclasses;
 
 import com.asascience.ncsos.go.ObservationOffering;
 import com.asascience.ncsos.service.BaseRequestHandler;
+import org.joda.time.DateTime;
+import org.w3c.dom.Document;
+import ucar.nc2.ft.*;
+import ucar.nc2.units.DateFormatter;
+import ucar.unidata.geoloc.Station;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,11 +19,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.joda.time.DateTime;
-import org.w3c.dom.Document;
-import ucar.nc2.ft.*;
-import ucar.nc2.units.DateFormatter;
-import ucar.unidata.geoloc.Station;
 
 /**
  * Provides methods to gather information from TimeSeriesProfile datasets needed for requests: GetCapabilities, GetObservations

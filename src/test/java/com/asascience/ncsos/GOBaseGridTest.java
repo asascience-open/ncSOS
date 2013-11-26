@@ -1,5 +1,6 @@
 package com.asascience.ncsos;
 
+import junit.framework.Assert;
 import org.jdom.Element;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +13,8 @@ import java.util.*;
 
 @RunWith(Parameterized.class)
 public class GOBaseGridTest extends NcSOSTest {
+
+    private static HashMap<String,String> kvp = new HashMap<String, String>();
 
     private Element currentFile;
     private String  procedure;
@@ -41,7 +44,11 @@ public class GOBaseGridTest extends NcSOSTest {
         new File(outputDir).mkdirs();
         new File(exampleDir).mkdirs();
 
+        // IOOS not supported on GRIDs
         kvp.put("responseFormat", URLEncoder.encode("text/xml;schema=\"om/1.0.0/profiles/ioos_sos/1.0\"", "UTF-8"));
+        // Old OOSTETHYS
+        kvp.put("responseFormat", URLEncoder.encode("text/xml;schema=\"om/1.0.0\"", "UTF-8"));
+
         kvp.put("request",  "GetObservation");
         kvp.put("version", "1.0.0");
         kvp.put("service", "SOS");
@@ -124,6 +131,7 @@ public class GOBaseGridTest extends NcSOSTest {
         System.out.println("------ " + file + " (" + feature + ") ------");
         System.out.println("------ " + this.testType + " ------");
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+        Assert.assertFalse(NcSOSTest.isException(result));
     }
 
 }

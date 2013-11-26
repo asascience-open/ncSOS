@@ -1,12 +1,12 @@
 package com.asascience.ncsos.cdmclasses;
 
 import com.asascience.ncsos.go.ObservationOffering;
-import java.util.ArrayList;
-
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
+import java.util.ArrayList;
 
 /**
  * Class for common util functions that are used across the CDM classes

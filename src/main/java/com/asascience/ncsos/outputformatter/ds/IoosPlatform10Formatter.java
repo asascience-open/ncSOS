@@ -4,16 +4,13 @@
  */
 package com.asascience.ncsos.outputformatter.ds;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import com.asascience.ncsos.ds.IoosPlatform10Handler;
 import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
 import com.asascience.ncsos.util.XMLDomUtils;
-import org.jdom.*;
+import org.jdom.Element;
+import org.jdom.Namespace;
+
+import java.util.HashMap;
+import java.util.List;
 
 /**
  *
