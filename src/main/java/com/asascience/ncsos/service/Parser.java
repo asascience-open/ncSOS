@@ -6,6 +6,7 @@ import com.asascience.ncsos.gc.GetCapabilitiesRequestHandler;
 import com.asascience.ncsos.go.GetObservationRequestHandler;
 import com.asascience.ncsos.outputformatter.CachedFileFormatter;
 import com.asascience.ncsos.outputformatter.OutputFormatter;
+import com.asascience.ncsos.util.LogUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -247,26 +248,27 @@ public class Parser {
                             query);
                     retval.put(OUTPUT_FORMATTER, sensorHandler.getOutputFormatter());
                 } catch (Exception ex) {
-                    _log.debug(ex.getStackTrace().toString());
-                    errorHandler.setException("Internal System Exception in setting up DescribeSensorHandler handler - " + ex.toString());
+                    String message = "Internal System Exception in setting up DescribeSensor response";
+                    _log.error(message, ex);
+                    errorHandler.setException(message + " - " + LogUtils.exceptionAsString(ex));
                     retval.put(OUTPUT_FORMATTER, errorHandler.getOutputFormatter());
                     return retval;
                 }
             } else {
                 // return a 'not supported' error
-                errorHandler.setException(queryParameters.get(REQUEST).toString() + " is not a supported request", OPERATION_NOT_SUPPORTED, "request");
+                String message = queryParameters.get(REQUEST).toString() + " is not a supported request.";
+                _log.error(message);
+                errorHandler.setException(message, OPERATION_NOT_SUPPORTED, "request");
                 retval.put(OUTPUT_FORMATTER, errorHandler.getOutputFormatter());
-                _log.debug("Invalid request parameter: " + queryParameters.get("request").toString() + " is not a supported request");
                 return retval;
             }
         } catch (IllegalArgumentException ex) {
             // create a get caps response with exception
-            _log.debug("Exception encountered " + ex.getMessage());
-            try {
-                errorHandler.setException("Unrecognized request " + queryParameters.get("request").toString(), INVALID_PARAMETER, "request");
-                retval.put(OUTPUT_FORMATTER, errorHandler.getOutputFormatter());
-            } catch (Exception e) {
-            }
+            String message = "Unrecognized request " + queryParameters.get("request").toString();
+            _log.error(message, ex);
+            errorHandler.setException(message, INVALID_PARAMETER, "request");
+            retval.put(OUTPUT_FORMATTER, errorHandler.getOutputFormatter());
+            return retval;
         }
 
         return retval;
@@ -326,8 +328,7 @@ public class Parser {
             String val = URLDecoder.decode(value, "UTF-8");
             queryParameters.put(fieldName, val);
         } catch (Exception e) {
-            _log.debug("Exception in decoding: " + value + " - " + e.getMessage());
-            _log.error("Exception in decoding: " + value + " - " + e.getMessage());
+            _log.warn("Exception in decoding", e);
             queryParameters.put(fieldName, value);
         }
     }

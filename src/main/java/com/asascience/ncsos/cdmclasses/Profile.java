@@ -69,20 +69,11 @@ public class Profile extends baseCDMClass implements iStationData {
      * @throws IOException  
      */
     public static Document getCapsResponse(ProfileFeatureCollection profileCollection, Document document, String featureOfInterestBase, String GMLName, List<String> observedPropertyList) throws IOException {
-        String profileID = null;
-        
-        PointFeatureIterator pp = null;
+        String profileID = profileCollection.getName();
+
         //profiles act like stations at present
         while (profileCollection.hasNext()) {
             ProfileFeature pFeature = profileCollection.next();
-
-            //scan through the data and get the profile id number
-            pp = pFeature.getPointFeatureIterator(-1);
-            while (pp.hasNext()) {
-                PointFeature pointFeature = pp.next();
-                profileID = getProfileIDFromProfile(pointFeature);
-                break;
-            }
 
             //attributes
             ObservationOffering newOffering = new ObservationOffering();
@@ -133,8 +124,8 @@ public class Profile extends baseCDMClass implements iStationData {
      **************************************************************************/
 
     @Override
-    public void setData(Object profilePeatureCollection) throws IOException {
-        this.profileData = (ProfileFeatureCollection) profilePeatureCollection;
+    public void setData(Object profileFeatureCollection) throws IOException {
+        this.profileData = (ProfileFeatureCollection) profileFeatureCollection;
         
         profileList = new HashMap<Integer, ProfileFeature>();
 
@@ -151,14 +142,8 @@ public class Profile extends baseCDMClass implements iStationData {
         while (profileData.hasNext()) {
             ProfileFeature pFeature = profileData.next();
             DatasetHandlerAdapter.calcBounds(pFeature);
-            
-            //scan through the data and get the profile id number
-            PointFeatureIterator pp = pFeature.getPointFeatureIterator(-1);
-            while (pp.hasNext()) {
-                PointFeature pointFeature = pp.next();
-                profileID = getProfileIDFromProfile(pointFeature);
-                break;
-            }
+
+            profileID = pFeature.getName();
             
             DateTime eventStart = (eventTimes.size() >= 1) ? new DateTime(df.getISODate(eventTimes.get(0)), chrono) : null;
             DateTime eventEnd = (eventTimes.size() > 1) ? new DateTime(df.getISODate(eventTimes.get(1)), chrono) : null;
@@ -358,17 +343,18 @@ public class Profile extends baseCDMClass implements iStationData {
     
     /**************************************************************************/
     
-    private void addProfileData(List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, PointFeatureIterator profileIterator, int stNum) {
+    private void addProfileData(List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, ProfileFeature profileFeature, int stNum) {
         //set the iterator the the correct profile
         try {
-            while (profileIterator.hasNext()) {
-                PointFeature pointFeature = profileIterator.next();
+            PointFeatureIterator pointIterator = profileFeature.getPointFeatureIterator(-1);
+            while (pointIterator.hasNext()) {
+                PointFeature pointFeature = pointIterator.next();
 
-                String profileID = getProfileIDFromProfile(pointFeature);
+                String profileID = profileFeature.getName();
                 //if there is a profile id use it against the data that is requested
                 if (profileID != null) {
                     valueList.clear();
-                    valueList.add("time=" + dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
+                    valueList.add("time=" + dateFormatter.toDateTimeStringISO(profileFeature.getTime()));
                     valueList.add("station=" + stNum);
                     addProfileDataToBuilder(valueList, pointFeature, builder);
                 }
@@ -392,28 +378,9 @@ public class Profile extends baseCDMClass implements iStationData {
             }
         }
 
-        //builder.append(tokenJoiner.join(valueList));
-//        builder.append(" ");
-//        builder.append("\n");
         builder.append(";");
     }
 
-    private static String getProfileIDFromProfile(PointFeature pointFeature) {
-        String profileID = null;
-        //Try and get profileID
-        try {
-            profileID = (pointFeature.getData().getScalarObject("profile").toString());
-        } //if it is not there dont USE IT!,,,,,but maybe warn that it is not there?        
-        catch (Exception e) {
-            // this case happend when the 'profile' var is a scalar with no shape/dimensions; other than to catch this and give a default value of "0"
-            // not sure what else can be done (should be a better way of handling it. right?)
-            _log.warn("getProfileIDFromProfile - " + e.toString());
-            _log.warn("using default id of 0");
-            profileID = "0";
-        }
-        return profileID;
-    }
-    
     private String createProfileFeature(int stNum) throws IOException {
         if (profileList != null && profileList.containsKey((Integer)stNum)) {
             StringBuilder builder = new StringBuilder();
@@ -421,7 +388,7 @@ public class Profile extends baseCDMClass implements iStationData {
             List<String> valueList = new ArrayList<String>();
 
             ProfileFeature pFeature = profileList.get(stNum);
-            addProfileData(valueList, dateFormatter, builder, pFeature.getPointFeatureIterator(-1), stNum);
+            addProfileData(valueList, dateFormatter, builder, pFeature, stNum);
 
             return builder.toString();
         }

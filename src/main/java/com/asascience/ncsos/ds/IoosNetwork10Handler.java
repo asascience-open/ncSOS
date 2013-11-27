@@ -154,11 +154,13 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
                 break;
             case PROFILE:
                 // remove 'Profile' from the station names, since they are arbitrary
+                /*
                 stationNames = ListComprehension.map(stationNames, new ListComprehension.Func<String, String>() {
                     public String apply(String in) {
                         return in.replaceAll("[A-Za-z]+", "");
                     }
                 });
+                */
                 this.stationData = new Profile(stationNames.toArray(new String[stationNames.size()]), null, null);
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 break;
