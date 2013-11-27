@@ -3,94 +3,8 @@
     <outputDirectory>target/test_out/</outputDirectory>
     <examplesDirectory>target/examples/</examplesDirectory>
 	<TestFiles>
+
         <!-- TIMESERIES -->
-        <file path="52n/52n_point.nc" feature="point" authority="test">
-            <platform id="urn:ioos:station:test:test_1" lat="-39.496087" lon="177.118689">
-                <times>
-                    2013-11-26T22:00:00
-                </times>
-                <sensor name="air_temperature" standard="air_temperature" units="Cel" z="0">
-                    <values>
-                        14.98
-                    </values>
-                </sensor>
-            </platform>
-        </file>
-        <file path="52n/52n_profile.nc" feature="profile" authority="test">
-            <platform id="urn:ioos:station:test:test_1" lat="-39.496087" lon="177.118689">
-                <sensor name="sea_water_temperature" standard="sea_water_temperature" units="Cel">
-                    <profile time="2013-11-26T22:00:00">
-                        <value depth="0">19.92</value>
-                        <value depth="5">25.88</value>
-                        <value depth="10">20.47</value>
-                        <value depth="15">15.16</value>
-                        <value depth="20">17.29</value>
-                        <value depth="25">26.93</value>
-                        <value depth="30">20.76</value>
-                        <value depth="35">25.22</value>
-                        <value depth="40">23.12</value>
-                        <value depth="45">11.24</value>
-                        <value depth="50">8.19</value>
-                        <value depth="55">9.0</value>
-                        <value depth="60">13.97</value>
-                        <value depth="65">26.61</value>
-                        <value depth="70">21.05</value>
-                        <value depth="75">26.13</value>
-                        <value depth="80">13.94</value>
-                        <value depth="85">22.91</value>
-                        <value depth="90">28.77</value>
-                        <value depth="95">9.82</value>
-                    </profile>
-                </sensor>
-            </platform>
-        </file>
-        <file path="52n/52n_timeseries.nc" feature="timeSeries" authority="test">
-            <platform id="urn:ioos:station:test:test_1" lat="-39.496087" lon="177.118689" z="0">
-                <times>
-                    2013-11-26T03:00:00Z, 2013-11-26T04:00:00Z, 2013-11-26T05:00:00Z, 2013-11-26T06:00:00Z,
-                    2013-11-26T07:00:00Z, 2013-11-26T08:00:00Z, 2013-11-26T09:00:00Z, 2013-11-26T10:00:00Z,
-                    2013-11-26T11:00:00Z, 2013-11-26T12:00:00Z, 2013-11-26T13:00:00Z, 2013-11-26T14:00:00Z,
-                    2013-11-26T15:00:00Z, 2013-11-26T16:00:00Z, 2013-11-26T17:00:00Z, 2013-11-26T18:00:00Z,
-                    2013-11-26T19:00:00Z, 2013-11-26T20:00:00Z, 2013-11-26T21:00:00Z, 2013-11-26T22:00:00Z
-                </times>
-                <sensor name="air_temperature" standard="air_temperature" units="Cel" z="0">
-                    <values>
-                         20.6, 18.24,  20.5, 23.99, 19.25, 31.65,  8.38, 23.76, 14.98, 22.17,
-                        22.53, 17.35, 25.08, 31.55, 29.68, 13.61, 27.09, 26.49, 25.26,  10.9
-                    </values>
-                </sensor>
-            </platform>
-        </file>
-        <file path="52n/52n_timeseriesProfile.nc" feature="timeseriesProfile" authority="test">
-            <platform id="urn:ioos:station:test:test_1" lat="-39.496087" lon="177.118689">
-                <sensor name="sea_water_temperature" standard="sea_water_temperature" units="Cel">
-                    <profile time="2013-11-26T07:00:00">
-                        <value depth="0">5.78</value>
-                        <value depth="5">17.75</value>
-                        <value depth="10">17.91</value>
-                        <value depth="15">20.43</value>
-                        <value depth="20">6.88</value>
-                        <value depth="25">26.23</value>
-                        <value depth="30">13.78</value>
-                        <value depth="35">15.54</value>
-                        <value depth="40">17.48</value>
-                        <value depth="45">14.43</value>
-                        <value depth="50">21.45</value>
-                        <value depth="55">20.41</value>
-                        <value depth="60">24.54</value>
-                        <value depth="65">19.63</value>
-                        <value depth="70">16.06</value>
-                        <value depth="75">9.89</value>
-                        <value depth="80">6.82</value>
-                        <value depth="85">31.07</value>
-                        <value depth="90">7.09</value>
-                        <value depth="95">22.56</value>
-                    </profile>
-                </sensor>
-            </platform>
-        </file>
-
-
         <file path='cf_templates/timeSeries-Orthogonal-Multidimensional-MultipleStations-H.2.1.nc' feature="timeSeries">
             <!-- 10 stations named Station-N, where N is 0-9 -->
             <platform id="urn:ioos:station:ncsos:Station-0" lat="8" lon="146" z="0.8488673">
@@ -727,6 +641,154 @@
                     271.35
                 </values>
             </sensor>
+        </file>
+
+        <!-- 52N Archiver -->
+        <file path="52n/52n_point.nc" feature="point" authority="test">
+            <platform id="urn:ioos:station:test:test_1" lat="-39.496087" lon="177.118689">
+                <times>
+                    2013-11-26T22:00:00
+                </times>
+                <sensor name="air_temperature" standard="air_temperature" units="Cel" z="0">
+                    <values>
+                        14.98
+                    </values>
+                </sensor>
+            </platform>
+        </file>
+        <file path="52n/52n_profile.nc" feature="profile" authority="test">
+            <platform id="urn:ioos:station:test:test_1" lat="-39.496087" lon="177.118689">
+                <sensor name="sea_water_temperature" standard="sea_water_temperature" units="Cel">
+                    <profile time="2013-11-26T22:00:00">
+                        <value depth="0">19.92</value>
+                        <value depth="5">25.88</value>
+                        <value depth="10">20.47</value>
+                        <value depth="15">15.16</value>
+                        <value depth="20">17.29</value>
+                        <value depth="25">26.93</value>
+                        <value depth="30">20.76</value>
+                        <value depth="35">25.22</value>
+                        <value depth="40">23.12</value>
+                        <value depth="45">11.24</value>
+                        <value depth="50">8.19</value>
+                        <value depth="55">9.0</value>
+                        <value depth="60">13.97</value>
+                        <value depth="65">26.61</value>
+                        <value depth="70">21.05</value>
+                        <value depth="75">26.13</value>
+                        <value depth="80">13.94</value>
+                        <value depth="85">22.91</value>
+                        <value depth="90">28.77</value>
+                        <value depth="95">9.82</value>
+                    </profile>
+                </sensor>
+            </platform>
+        </file>
+        <file path="52n/52n_timeseries.nc" feature="timeSeries" authority="test">
+            <platform id="urn:ioos:station:test:test_1" lat="-39.496087" lon="177.118689" z="0">
+                <times>
+                    2013-11-26T03:00:00Z, 2013-11-26T04:00:00Z, 2013-11-26T05:00:00Z, 2013-11-26T06:00:00Z,
+                    2013-11-26T07:00:00Z, 2013-11-26T08:00:00Z, 2013-11-26T09:00:00Z, 2013-11-26T10:00:00Z,
+                    2013-11-26T11:00:00Z, 2013-11-26T12:00:00Z, 2013-11-26T13:00:00Z, 2013-11-26T14:00:00Z,
+                    2013-11-26T15:00:00Z, 2013-11-26T16:00:00Z, 2013-11-26T17:00:00Z, 2013-11-26T18:00:00Z,
+                    2013-11-26T19:00:00Z, 2013-11-26T20:00:00Z, 2013-11-26T21:00:00Z, 2013-11-26T22:00:00Z
+                </times>
+                <sensor name="air_temperature" standard="air_temperature" units="Cel" z="0">
+                    <values>
+                        20.6, 18.24,  20.5, 23.99, 19.25, 31.65,  8.38, 23.76, 14.98, 22.17,
+                        22.53, 17.35, 25.08, 31.55, 29.68, 13.61, 27.09, 26.49, 25.26,  10.9
+                    </values>
+                </sensor>
+            </platform>
+        </file>
+        <file path="52n/52n_timeseriesProfile.nc" feature="timeseriesProfile" authority="test">
+            <platform id="urn:ioos:station:test:test_1" lat="-39.496087" lon="177.118689">
+                <sensor name="sea_water_temperature" standard="sea_water_temperature" units="Cel">
+                    <profile time="2013-11-26T07:00:00">
+                        <value depth="0">5.78</value>
+                        <value depth="5">17.75</value>
+                        <value depth="10">17.91</value>
+                        <value depth="15">20.43</value>
+                        <value depth="20">6.88</value>
+                        <value depth="25">26.23</value>
+                        <value depth="30">13.78</value>
+                        <value depth="35">15.54</value>
+                        <value depth="40">17.48</value>
+                        <value depth="45">14.43</value>
+                        <value depth="50">21.45</value>
+                        <value depth="55">20.41</value>
+                        <value depth="60">24.54</value>
+                        <value depth="65">19.63</value>
+                        <value depth="70">16.06</value>
+                        <value depth="75">9.89</value>
+                        <value depth="80">6.82</value>
+                        <value depth="85">31.07</value>
+                        <value depth="90">7.09</value>
+                        <value depth="95">22.56</value>
+                    </profile>
+                </sensor>
+            </platform>
+        </file>
+
+        <!-- Glider DAC -->
+
+        <file path="glider_dac/timeagg.ncml" feature="trajectory" authority="edu.rutgers.marine">
+            <!-- 1 trajectory named Trajectory0 -->
+            <!-- NetCDF-JAva should be pulling out the name "Trajectory1" from the file, but it is not,
+                 so NcSOS is populating the platform with the name "TRAJECTORY-0" (first Trajectory feature type found) -->
+            <platform id="urn:ioos:station:edu.rutgers.marine:TRAJECTORY-0">
+                <lats>
+                    2.152863, 33.60481, 22.56251, 13.43282, 43.01199, 18.84832, 18.04041,
+                    32.34516, 8.652234, 18.90537, 12.18454, 16.49819, 1.547926, 22.03359,
+                    5.997217, 8.580469, 6.253441, 12.94868, 41.49208, 25.78476, 25.88452,
+                    7.59935, 23.80171, 24.08627, 8.838917, 3.049409, 32.69913, 28.82149,
+                    4.573595, 30.23187, 26.29508, 26.14665, 18.87552, 44.57873, 40.91167,
+                    9.541574
+                </lats>
+                <lons>
+                    -35.07884, -44.12696, -18.11544, -21.77258, -28.6553, -25.41889, -30.46913,
+                    -75.79432, -69.01581, -18.36265, -42.19482, -74.44906, -53.52272,
+                    -28.55742, -35.04316, -45.36442, -9.302229, -20.07699, -19.62831,
+                    -65.65333, -64.92309, -33.58001, -8.210893, -16.37646, -65.32871,
+                    -50.18736, -13.60305, -4.238066, -15.69105, -29.11055, -24.22421,
+                    -35.46175, -11.40916, -29.37942, -31.65526, -57.1067
+                </lons>
+                <zs>
+                    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+                    21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35
+                </zs>
+                <times>
+                    1990-01-01T00:00:00, 1990-01-01T01:00:00, 1990-01-01T02:00:00, 1990-01-01T03:00:00,
+                    1990-01-01T04:00:00, 1990-01-01T05:00:00, 1990-01-01T06:00:00, 1990-01-01T07:00:00,
+                    1990-01-01T08:00:00, 1990-01-01T09:00:00, 1990-01-01T10:00:00, 1990-01-01T11:00:00,
+                    1990-01-01T12:00:00, 1990-01-01T13:00:00, 1990-01-01T14:00:00, 1990-01-01T15:00:00,
+                    1990-01-01T16:00:00, 1990-01-01T17:00:00, 1990-01-01T18:00:00, 1990-01-01T19:00:00,
+                    1990-01-01T20:00:00, 1990-01-01T21:00:00, 1990-01-01T22:00:00, 1990-01-01T23:00:00,
+                    1990-01-02T00:00:00, 1990-01-02T01:00:00, 1990-01-02T02:00:00, 1990-01-02T03:00:00,
+                    1990-01-02T04:00:00, 1990-01-02T05:00:00, 1990-01-02T06:00:00, 1990-01-02T07:00:00,
+                    1990-01-02T08:00:00, 1990-01-02T09:00:00, 1990-01-02T10:00:00, 1990-01-02T11:00:00
+                </times>
+                <sensor name="temperature" standard="air_temperature" units="Celsius">
+                    <values>
+                        13.46698, 23.0503, 15.11207, 22.97767, 21.31809, 27.49671, 30.67893,
+                        12.09643, 12.52374, 22.80555, 17.4118, 27.78355, 11.80989, 13.73055,
+                        6.549969, 11.78927, 24.03656, 17.98071, 0.447393, 13.14721, 21.27815,
+                        14.46509, 17.25027, 36.73325, 21.71499, 17.75554, 21.76445, 4.18221,
+                        36.2303, 10.372, 7.072994, 12.30753, 30.24119, 21.84798, 30.36976,
+                        15.86432
+                    </values>
+                </sensor>
+                <sensor name="humidity" standard="barometric_pressure" units="Percent">
+                    <values>
+                        65.38418, 7.040115, 45.15019, 12.6188, 4.788235, 66.33717, 31.57974,
+                        11.22832, 47.004, 8.789174, 40.25377, 20.71283, 5.615791, 2.829354,
+                        30.4828, 2.303839, 56.80247, 66.24162, 25.76894, 1.428646, 72.43937,
+                        74.04942, 43.4686, 56.15435, 32.32438, 7.760444, 68.36558, 75.26266,
+                        74.15665, 8.03688, 31.46818, 71.35397, 45.14291, 61.77651, 29.81077,
+                        33.90924
+                    </values>
+                </sensor>
+            </platform>
         </file>
 
 	</TestFiles>
