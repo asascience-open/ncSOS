@@ -169,7 +169,7 @@ public class Parser {
                     try {
                         capHandler = new GetCapabilitiesRequestHandler(dataset, threddsURI, sections);
                     } catch (IOException ex) {
-                        _log.error(ex.getMessage());
+                        _log.error(ex.getMessage(), ex);
                         capHandler = null;
                     }
                 }

@@ -240,7 +240,8 @@ public class Trajectory extends baseCDMClass implements iStationData {
     @Override
     public String getStationName(int idNum) {
         if (trajList != null) {
-            return "TRAJECTORY_" + (trajList.get(idNum).getName());
+            //return "TRAJECTORY_" + (trajList.get(idNum).getName());
+            return (trajList.get(idNum).getName());
         } else {
             return Invalid_Station;
         }
@@ -440,19 +441,17 @@ public class Trajectory extends baseCDMClass implements iStationData {
     public List<String> getLocationsString(int stNum) {
         try {
             if (trajList != null) {
-                _log.debug("in getLocationsString - trajList count: " + trajList.size());
                 List<String> retval = new ArrayList<String>();
                 PointFeatureIterator iter = trajList.get(stNum).getPointFeatureIterator(-1);
                 while(iter.hasNext()) {
                     PointFeature pf = iter.next();
-                    _log.debug(pf.getLocation().getLatitude() + " " + pf.getLocation().getLongitude());
                     retval.add(pf.getLocation().getLatitude() + " " + pf.getLocation().getLongitude());
                 }
                 iter.finish();
                 return retval;
             } 
         } catch (Exception ex) {
-            _log.error(ex.toString());
+            _log.error(ex.getMessage(), ex);
         }
         return new ArrayList();
     }

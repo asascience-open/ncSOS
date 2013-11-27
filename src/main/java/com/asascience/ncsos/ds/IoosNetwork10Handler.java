@@ -166,21 +166,25 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
                 break;
             case TRAJECTORY:
                 // remove 'Trajectory' from the station names, since they are arbitrary
+                /*
                 stationNames = ListComprehension.map(stationNames, new ListComprehension.Func<String, String>() {
                     public String apply(String in) {
                         return in.replaceAll("[A-Za-z]+", "");
                     }
                 });
+                */
                 this.stationData = new Trajectory(stationNames.toArray(new String[stationNames.size()]),null,null);
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 break;
             case SECTION:
                 // remove 'Trajectory' from the station names, since they are arbitrary
+                /*
                 stationNames = ListComprehension.map(stationNames, new ListComprehension.Func<String, String>() {
                     public String apply(String in) {
                         return in.replaceAll("[A-Za-z]+", "");
                     }
                 });
+                */
                 this.stationData = new Section(stationNames.toArray(new String[stationNames.size()]), null, null);
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 break;
@@ -195,9 +199,14 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
                 this.stationData = new Grid(stationNames.toArray(new String[stationNames.size()]), null, dataVars.toArray(new String[dataVars.size()]), latLon);
                 this.stationData.setData(this.getGridDataset());
                 break;
+            case POINT:
+                logger.error("NcSOS does not support the Point featureType at this time.");
+                this.errorString = "NcSOS does not support the Point featureType at this time.";
+                break;
             default:
-                logger.error("Unsupported feature type in Describe Network M1_0: " + this.getDatasetFeatureType().toString());
-                this.errorString = "Unsupported feature type for DS response";
+                logger.error("Unsupported feature type: " + this.getDatasetFeatureType().toString());
+                this.errorString = "Unsupported feature type: " + this.getDatasetFeatureType().toString();
+                break;
         }
     }
 

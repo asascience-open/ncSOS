@@ -87,11 +87,13 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
      * Creates the output for the get capabilities response
      */
     public void parseGetCapabilitiesDocument() {
-        GetCapsFormatter out = (GetCapsFormatter) formatter;
         // early exit if we have an exception output
-        if (out.hasExceptionOut()) {
+        if (formatter instanceof ErrorFormatter) {
             return;
         }
+
+        GetCapsFormatter out = (GetCapsFormatter) formatter;
+
         // service identification; parse if it is the section identified or 'all'
         if (this.requestedSections.get(Sections.SERVICEIDENTIFICATION.ordinal())) {
             out.parseServiceIdentification(this.global_attributes);
@@ -181,10 +183,7 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
                             }
                         }
                     } catch (Exception ex) {
-                        _log.error("CalculateDateRangesForFeatureSet - Exception caught inside TRAJECTORY case: " + ex.toString());
-                        for (StackTraceElement elm : ex.getStackTrace()) {
-                            _log.error("\t" + elm.toString());
-                        }
+                        _log.error(ex.getMessage(), ex);
                     }
                     break;
                 case STATION:
@@ -208,10 +207,7 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
                             stationIndex++;
                         }
                     } catch (Exception ex) {
-                        _log.error("CalculateDateRangesForFeatureSet - Exception caught inside STATION case: " + ex.toString());
-                        for (StackTraceElement elm : ex.getStackTrace()) {
-                            _log.error("\t" + elm.toString());
-                        }
+                        _log.error(ex.getMessage(), ex);
                     }
                     break;
                 case PROFILE:
@@ -236,10 +232,7 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
                             }
                         }
                     } catch (Exception ex) {
-                        _log.error("CalculateDateRangesForFeatureSet - Exception caught inside PROFILE case: " + ex.toString());
-                        for (StackTraceElement elm : ex.getStackTrace()) {
-                            _log.error("\t" + elm.toString());
-                        }
+                        _log.error(ex.getMessage(), ex);
                     }
                     break;
                 case GRID:
@@ -270,10 +263,7 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
                             }
                         }
                     } catch (Exception ex) {
-                        _log.error("CalculateDateRangesForFeatureSet - Exception caught inside STATION_PROFILE case: " + ex.toString());
-                        for (StackTraceElement elm : ex.getStackTrace()) {
-                            _log.error("\t" + elm.toString());
-                        }
+                        _log.error(ex.getMessage(), ex);
                     }
                     break;
                 case SECTION:
@@ -299,16 +289,18 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
                             }
                         }
                     } catch (Exception ex) {
-                        _log.error("CalculateDateRangesForFeatureSet - Exception caught inside SECTION case: " + ex.toString());
-                        for (StackTraceElement elm : ex.getStackTrace()) {
-                            _log.error("\t" + elm.toString());
-                        }
+                        _log.error(ex.getMessage(), ex);
                     }
                     break;
-                default:
-                    _log.error("Unknown feature type - getDatasetFeatureType is ??");
+                case POINT:
+                    _log.error("NcSOS does not support the Point featureType at this time.");
                     formatter = new ErrorFormatter();
-                    ((ErrorFormatter)formatter).setException("NetCDF-Java could not figure out what this dataset was!");
+                    ((ErrorFormatter)formatter).setException("NcSOS does not support the Point featureType at this time.");
+                    return;
+                default:
+                    _log.error("Unknown feature type - NetCDF-Java could not figure out what this dataset was!");
+                    formatter = new ErrorFormatter();
+                    ((ErrorFormatter)formatter).setException("Unknown feature type - NetCDF-Java could not figure out what this dataset was!");
                     return;
             }
             this.setStartDate = start;

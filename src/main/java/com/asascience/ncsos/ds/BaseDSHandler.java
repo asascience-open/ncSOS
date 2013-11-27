@@ -34,8 +34,7 @@ public class BaseDSHandler extends BaseRequestHandler {
      * Creates a DescribeSensorHandler handler that will parse the information and setup
      * the output handler
      * @param dataset netcdf dataset being read
-     * @param responseFormat response format from the request query string; only
-     * accepted response format is "text/xml;subtype=\"sensorML/1.0.1\""
+     * @param outputFormat response format from the request query string
      * @param procedure procedure of the request (urn of station or sensor)
      * @param uri entire uri string from the request
      * @param query entire query string from the request
@@ -51,6 +50,12 @@ public class BaseDSHandler extends BaseRequestHandler {
             formatter = new ErrorFormatter();
             ((ErrorFormatter)formatter).setException("NetCDF-Java could not determine a valid FeatureType for this dataset.");
             return;
+        }
+        switch (getDatasetFeatureType()) {
+            case POINT:
+                formatter = new ErrorFormatter();
+                ((ErrorFormatter)formatter).setException("NcSOS does not support the Point featureType at this time.");
+                return;
         }
         
         // make sure that the outputFormat we received is acceptable
