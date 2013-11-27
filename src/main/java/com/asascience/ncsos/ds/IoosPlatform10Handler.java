@@ -273,11 +273,16 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 break;
             case PROFILE:
-                this.stationData = new Profile(new String[] { this.stationName.replaceAll("[A-Za-z]+", "") }, null, null);
+                this.stationData = new Profile(new String[] { this.stationName }, null, null);
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 break;
             case TRAJECTORY:
-                this.stationData = new Trajectory(new String[] { this.stationName.replaceAll("[A-Za-z]+", "") },null,null);
+                this.stationData = new Trajectory(new String[] { this.stationName },null,null);
+                this.stationData.setData(this.getFeatureTypeDataSet());
+                this.locationLineFlag = true;
+                break;
+            case SECTION:
+                this.stationData = new Section(new String[] { this.stationName }, null, null);
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 this.locationLineFlag = true;
                 break;
@@ -291,11 +296,6 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
                 }
                 this.stationData = new Grid(new String[] { this.stationName.replaceAll("[A-Za-z]+", "") }, null, dataVars.toArray(new String[dataVars.size()]), latLon);
                 this.stationData.setData(this.getGridDataset());
-                break;
-            case SECTION:
-                this.stationData = new Section(new String[] { this.stationName.replaceAll("[A-Za-z]+", "") }, null, null);
-                this.stationData.setData(this.getFeatureTypeDataSet());
-                this.locationLineFlag = true;
                 break;
             default:
                 logger.error("Unsupported feature type in Describe Platform M1_0: " + this.getDatasetFeatureType().toString());
