@@ -18,8 +18,8 @@ import java.util.Map;
 public class NcSOSTest {
 
     protected URL query = null;
-    protected static String outputDir = null;
-    protected static String exampleDir = null;
+    protected static String baseOutputDir = null;
+    protected static String baseExampleDir = null;
     protected static List<Element> fileElements;
     protected static String systemSeparator = System.getProperty("file.separator");
     private   static String OUTPUT_FORMATTER = "outputFormatter";
@@ -33,7 +33,6 @@ public class NcSOSTest {
 
     private static Namespace OWS_NS = Namespace.getNamespace("ows","http://www.opengis.net/ows/1.1");
 
-
     public static void setUpClass() throws Exception {
 
         BasicConfigurator.resetConfiguration();
@@ -44,8 +43,8 @@ public class NcSOSTest {
             InputStream templateInputStream = new FileInputStream(configFile);
             Document configDoc = XMLDomUtils.getTemplateDom(templateInputStream);
             // read from the config file
-            outputDir      = configDoc.getRootElement().getChild("outputDirectory").getValue();
-            exampleDir     = configDoc.getRootElement().getChild("examplesDirectory").getValue();
+            baseOutputDir      = configDoc.getRootElement().getChild("outputDirectory").getValue();
+            baseExampleDir     = configDoc.getRootElement().getChild("examplesDirectory").getValue();
 
             Element testFilesElement = XMLDomUtils.getNestedChild(configDoc.getRootElement(), "TestFiles");
             fileElements = testFilesElement.getChildren();

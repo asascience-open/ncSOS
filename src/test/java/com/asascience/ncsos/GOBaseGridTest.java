@@ -15,6 +15,8 @@ import java.util.*;
 public class GOBaseGridTest extends NcSOSTest {
 
     private static HashMap<String,String> kvp = new HashMap<String, String>();
+    private static String outputDir;
+    private static String exampleDir;
 
     private Element currentFile;
     private String  procedure;
@@ -37,8 +39,8 @@ public class GOBaseGridTest extends NcSOSTest {
         NcSOSTest.setUpClass();
 
         // Modify the outputs
-        outputDir  += "GetObservation-Grid" + NcSOSTest.systemSeparator;
-        exampleDir += "GetObservation-Grid" + NcSOSTest.systemSeparator;
+        outputDir  = baseOutputDir  +  NcSOSTest.systemSeparator + "GetObservation-Grid" + NcSOSTest.systemSeparator;
+        exampleDir = baseExampleDir +  NcSOSTest.systemSeparator + "GetObservation-Grid" + NcSOSTest.systemSeparator;
 
         // Create output directories if they don't exist
         new File(outputDir).mkdirs();

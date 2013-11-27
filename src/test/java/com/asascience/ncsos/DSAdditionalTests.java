@@ -14,6 +14,8 @@ import java.util.HashMap;
 public class DSAdditionalTests extends NcSOSTest {
 
     private static Element currentFile = null;
+    private static String outputDir;
+    private static String exampleDir;
     private static HashMap<String,String> kvp = new HashMap<String, String>();
 
     @Rule
@@ -24,8 +26,8 @@ public class DSAdditionalTests extends NcSOSTest {
         NcSOSTest.setUpClass();
 
         // Modify the outputs
-        outputDir += "DescribeSensor" + NcSOSTest.systemSeparator;
-        exampleDir += "DescribeSensor" + NcSOSTest.systemSeparator;
+        outputDir  = baseOutputDir  +  NcSOSTest.systemSeparator + "DescribeSensor" + NcSOSTest.systemSeparator;
+        exampleDir = baseExampleDir +  NcSOSTest.systemSeparator + "DescribeSensor" + NcSOSTest.systemSeparator;
 
         // Create output directories if they don't exist
         new File(outputDir).mkdirs();
@@ -36,7 +38,7 @@ public class DSAdditionalTests extends NcSOSTest {
 
         kvp.put("outputFormat", URLEncoder.encode("text/xml;subtype=\"sensorML/1.0.1/profiles/ioos_sos/1.0\"", "UTF-8"));
         kvp.put("request",      "DescribeSensor");
-        kvp.put("procedure",    "urn:ioos:station:ncsos:Station-0");
+        kvp.put("procedure",    currentFile.getChild("platform").getAttributeValue("id"));
         kvp.put("version",      "1.0.0");
         kvp.put("service",      "SOS");
     }

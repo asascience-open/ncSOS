@@ -16,6 +16,8 @@ import java.util.*;
 public class GOBasePlatformTest extends NcSOSTest {
 
     private static HashMap<String,String> kvp = new HashMap<String, String>();
+    private static String outputDir;
+    private static String exampleDir;
 
     private Element currentFile;
     private String  procedure;
@@ -35,8 +37,8 @@ public class GOBasePlatformTest extends NcSOSTest {
         NcSOSTest.setUpClass();
 
         // Modify the outputs
-        outputDir  += "GetObservation-Platform" + NcSOSTest.systemSeparator;
-        exampleDir += "GetObservation-Platform" + NcSOSTest.systemSeparator;
+        outputDir  = baseOutputDir  +  NcSOSTest.systemSeparator + "GetObservation-Platform" + NcSOSTest.systemSeparator;
+        exampleDir = baseExampleDir +  NcSOSTest.systemSeparator + "GetObservation-Platform" + NcSOSTest.systemSeparator;
 
         // Create output directories if they don't exist
         new File(outputDir).mkdirs();
@@ -154,7 +156,12 @@ public class GOBasePlatformTest extends NcSOSTest {
         System.out.println("------ " + file + " (" + feature + ") ------");
         System.out.println("------ " + pairs + " ------");
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
-        Assert.assertFalse(NcSOSTest.isException(result));
+        if (currentFile.getAttributeValue("feature").equalsIgnoreCase("point")) {
+            // NcSOS does not support POINT features at this time!
+            Assert.assertTrue(NcSOSTest.isException(result));
+        } else {
+            Assert.assertFalse(NcSOSTest.isException(result));
+        }
     }
 
 }

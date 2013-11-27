@@ -17,6 +17,8 @@ import java.util.HashMap;
 @RunWith(Parameterized.class)
 public class DSNetworkTest extends NcSOSTest {
 
+    private static String outputDir;
+    private static String exampleDir;
     private static HashMap<String,String> kvp = new HashMap<String, String>();
 
     private Element currentFile;
@@ -30,8 +32,8 @@ public class DSNetworkTest extends NcSOSTest {
         NcSOSTest.setUpClass();
 
         // Modify the outputs
-        outputDir += "DescribeSensor-Network" + NcSOSTest.systemSeparator;
-        exampleDir += "DescribeSensor-Network" + NcSOSTest.systemSeparator;
+        outputDir  = baseOutputDir  +  NcSOSTest.systemSeparator + "DescribeSensor-Network" + NcSOSTest.systemSeparator;
+        exampleDir = baseExampleDir +  NcSOSTest.systemSeparator + "DescribeSensor-Network" + NcSOSTest.systemSeparator;
 
         // Create output directories if they don't exist
         new File(outputDir).mkdirs();
@@ -69,7 +71,12 @@ public class DSNetworkTest extends NcSOSTest {
         String output   = new File(outputDir + systemSeparator + file.getName() + ".xml").getAbsolutePath();
         System.out.println("------ " + file + " (" + feature + ") ------");
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
-        Assert.assertFalse(NcSOSTest.isException(result));
+        if (currentFile.getAttributeValue("feature").equalsIgnoreCase("point")) {
+            // NcSOS does not support POINT features at this time!
+            Assert.assertTrue(NcSOSTest.isException(result));
+        } else {
+            Assert.assertFalse(NcSOSTest.isException(result));
+        }
     }
     
 }

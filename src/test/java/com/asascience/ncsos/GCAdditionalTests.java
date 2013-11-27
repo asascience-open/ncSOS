@@ -14,6 +14,8 @@ public class GCAdditionalTests extends NcSOSTest {
 
     private static HashMap<String,String> kvp = new HashMap<String, String>();
     private static Element currentFile = null;
+    private static String outputDir;
+    private static String exampleDir;
 
     @Rule
     public TestName testName = new TestName();
@@ -23,8 +25,8 @@ public class GCAdditionalTests extends NcSOSTest {
         NcSOSTest.setUpClass();
 
         // Modify the outputs
-        outputDir += "GetCapabilities" + NcSOSTest.systemSeparator;
-        exampleDir += "GetCapabilities" + NcSOSTest.systemSeparator;
+        outputDir  = baseOutputDir  +  NcSOSTest.systemSeparator + "GetCapabilities" + NcSOSTest.systemSeparator;
+        exampleDir = baseExampleDir +  NcSOSTest.systemSeparator + "GetCapabilities" + NcSOSTest.systemSeparator;
 
         // Create output directories if they don't exist
         new File(outputDir).mkdirs();

@@ -15,6 +15,8 @@ public class GOAdditionalPlatformTests extends NcSOSTest {
 
     private static HashMap<String,String> kvp = new HashMap<String, String>();
     private static Element currentFile = null;
+    private static String outputDir;
+    private static String exampleDir;
 
     @Rule
     public TestName testName = new TestName();
@@ -24,8 +26,8 @@ public class GOAdditionalPlatformTests extends NcSOSTest {
         NcSOSTest.setUpClass();
 
         // Modify the outputs
-        outputDir += "GetObservation-Platform" + NcSOSTest.systemSeparator;
-        exampleDir += "GetObservation-Platform" + NcSOSTest.systemSeparator;
+        outputDir  = baseOutputDir  +  NcSOSTest.systemSeparator + "GetObservation-Platform" + NcSOSTest.systemSeparator;
+        exampleDir = baseExampleDir +  NcSOSTest.systemSeparator + "GetObservation-Platform" + NcSOSTest.systemSeparator;
 
         // Create output directories if they don't exist
         new File(outputDir).mkdirs();

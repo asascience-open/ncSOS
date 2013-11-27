@@ -15,6 +15,8 @@ import java.util.*;
 public class DSPlatformTest extends NcSOSTest {
 
     private static HashMap<String,String> kvp = new HashMap<String, String>();
+    private static String outputDir;
+    private static String exampleDir;
 
     private Element currentFile;
     private String procedure;
@@ -27,8 +29,8 @@ public class DSPlatformTest extends NcSOSTest {
         NcSOSTest.setUpClass();
 
         // Modify the outputs
-        outputDir  += "DescribeSensor-Platform" + NcSOSTest.systemSeparator;
-        exampleDir += "DescribeSensor-Platform" + NcSOSTest.systemSeparator;
+        outputDir  = baseOutputDir  +  NcSOSTest.systemSeparator + "DescribeSensor-Platform" + NcSOSTest.systemSeparator;
+        exampleDir = baseExampleDir +  NcSOSTest.systemSeparator + "DescribeSensor-Platform" + NcSOSTest.systemSeparator;
 
         // Create output directories if they don't exist
         new File(outputDir).mkdirs();
@@ -74,13 +76,19 @@ public class DSPlatformTest extends NcSOSTest {
         HashMap<String,String> pairs = (HashMap<String,String>) kvp.clone();
         pairs.put("procedure", this.procedure);
 
-        File   file     = new File("resources" + systemSeparator + "datasets" + systemSeparator + this.currentFile.getAttributeValue("path"));
-        String feature  = this.currentFile.getAttributeValue("feature");
-        String output   = new File(outputDir + systemSeparator + file.getName() + "_" + this.procedure.split(":")[0] + ".xml").getAbsolutePath();
+        File     file    = new File("resources" + systemSeparator + "datasets" + systemSeparator + this.currentFile.getAttributeValue("path"));
+        String   feature = this.currentFile.getAttributeValue("feature");
+        String[] split   = this.procedure.split(":");
+        String   output  = new File(outputDir + systemSeparator + file.getName() + "_" + split[split.length - 1] + ".xml").getAbsolutePath();
         System.out.println("------ " + file + " (" + feature + ") ------");
         System.out.println("------ " + this.procedure + " ------");
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
-        Assert.assertFalse(NcSOSTest.isException(result));
+        if (currentFile.getAttributeValue("feature").equalsIgnoreCase("point")) {
+            // NcSOS does not support POINT features at this time!
+            Assert.assertTrue(NcSOSTest.isException(result));
+        } else {
+            Assert.assertFalse(NcSOSTest.isException(result));
+        }
     }
 
 }
