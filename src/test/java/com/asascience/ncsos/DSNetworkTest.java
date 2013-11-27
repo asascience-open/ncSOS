@@ -1,5 +1,6 @@
 package com.asascience.ncsos;
 
+import com.asascience.ncsos.util.XMLDomUtils;
 import junit.framework.Assert;
 import org.jdom.Element;
 import org.junit.Test;
@@ -19,8 +20,10 @@ public class DSNetworkTest extends NcSOSTest {
     private static HashMap<String,String> kvp = new HashMap<String, String>();
 
     private Element currentFile;
-    public DSNetworkTest(Element file){
+    private String authority;
+    public DSNetworkTest(Element file, String authority){
     	this.currentFile = file;
+        this.authority   = authority;
     }
 
     public static void setUpClass() throws Exception {
@@ -36,7 +39,6 @@ public class DSNetworkTest extends NcSOSTest {
 
         kvp.put("outputFormat", URLEncoder.encode("text/xml;subtype=\"sensorML/1.0.1/profiles/ioos_sos/1.0\"", "UTF-8"));
         kvp.put("request", "DescribeSensor");
-        kvp.put("procedure", "urn:ioos:network:ncsos:all");
         kvp.put("version", "1.0.0");
         kvp.put("service", "SOS");
     }
@@ -45,10 +47,13 @@ public class DSNetworkTest extends NcSOSTest {
     @Parameters
     public static Collection<Object[]> testCases() throws Exception {
     	setUpClass();
-        Object[][] data = new Object[fileElements.size()][1];
+        Object[][] data = new Object[fileElements.size()][2];
         int curIndex = 0;
+        String authority;
         for (Element e : fileElements) {
             data[curIndex][0] = e;
+            authority = e.getAttributeValue("authority","ncsos"); // "ncsos" is the default authority in NcSOS
+            data[curIndex][1] = authority;
             curIndex++;
         }
     	return Arrays.asList(data);
@@ -56,11 +61,14 @@ public class DSNetworkTest extends NcSOSTest {
 
     @Test
     public void testAll() {
+        HashMap<String,String> pairs = (HashMap<String,String>) kvp.clone();
+        pairs.put("procedure", "urn:ioos:network:" + this.authority + ":all");
+
         File   file     = new File("resources" + systemSeparator + "datasets" + systemSeparator + this.currentFile.getAttributeValue("path"));
         String feature  = this.currentFile.getAttributeValue("feature");
         String output   = new File(outputDir + systemSeparator + file.getName() + ".xml").getAbsolutePath();
         System.out.println("------ " + file + " (" + feature + ") ------");
-        Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, kvp);
+        Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
         Assert.assertFalse(NcSOSTest.isException(result));
     }
     
