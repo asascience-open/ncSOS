@@ -29,7 +29,7 @@ public class NcSOSTest {
     protected static String MISSING_PARAMETER       = "MissingParameterValue";
     protected static String OPTION_NOT_SUPPORTED    = "OptionNotSupported";
     protected static String OPERATION_NOT_SUPPORTED = "OperationNotSupported";
-    protected static String VERSION_NEGOTIATION    = "VersionNegotiationFailed";
+    protected static String VERSION_NEGOTIATION     = "VersionNegotiationFailed";
 
     private static Namespace OWS_NS = Namespace.getNamespace("ows","http://www.opengis.net/ows/1.1");
 
