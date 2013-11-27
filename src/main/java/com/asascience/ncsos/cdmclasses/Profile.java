@@ -237,7 +237,7 @@ public class Profile extends baseCDMClass implements iStationData {
     
     @Override
     public boolean isStationInFinalList(int stNum) {
-        if (profileList != null && profileList.containsKey((Integer)stNum))
+        if (profileList != null && profileList.containsKey(stNum))
             return true;
         return false;
     }
@@ -273,7 +273,7 @@ public class Profile extends baseCDMClass implements iStationData {
 
     @Override
     public double getLowerLat(int stNum) {
-        if (profileData != null && profileList.containsKey((Integer)stNum)) {
+        if (profileData != null && profileList.containsKey(stNum)) {
             return profileList.get(stNum).getLatLon().getLatitude();
         } else {
             return Invalid_Value;
@@ -282,7 +282,7 @@ public class Profile extends baseCDMClass implements iStationData {
 
     @Override
     public double getLowerLon(int stNum) {
-        if (profileData != null && profileList.containsKey((Integer)stNum)) {
+        if (profileData != null && profileList.containsKey(stNum)) {
             return profileList.get(stNum).getLatLon().getLongitude();
         } else {
             return Invalid_Value;
@@ -291,7 +291,7 @@ public class Profile extends baseCDMClass implements iStationData {
 
     @Override
     public double getUpperLat(int stNum) {
-        if (profileData != null && profileList.containsKey((Integer)stNum)) {
+        if (profileData != null && profileList.containsKey(stNum)) {
             return profileList.get(stNum).getLatLon().getLatitude();
         } else {
             return Invalid_Value;
@@ -300,7 +300,7 @@ public class Profile extends baseCDMClass implements iStationData {
 
     @Override
     public double getUpperLon(int stNum) {
-        if (profileData != null && profileList.containsKey((Integer)stNum)) {
+        if (profileData != null && profileList.containsKey(stNum)) {
             return profileList.get(stNum).getLatLon().getLongitude();
         } else {
             return Invalid_Value;
@@ -319,7 +319,7 @@ public class Profile extends baseCDMClass implements iStationData {
 
     @Override
     public String getTimeEnd(int stNum) {
-        if (profileData != null && profileList.containsKey((Integer)stNum)) {
+        if (profileData != null && profileList.containsKey(stNum)) {
             return df.toDateTimeStringISO(profileList.get(stNum).getTime());
         } else {
             return ERROR_NULL_DATE;
@@ -329,7 +329,7 @@ public class Profile extends baseCDMClass implements iStationData {
     @Override
     public String getTimeBegin(int stNum) {
 
-        if (profileData != null && profileList.containsKey((Integer)stNum)) {
+        if (profileData != null && profileList.containsKey(stNum)) {
             return df.toDateTimeStringISO(profileList.get(stNum).getTime());
         } else {
             return ERROR_NULL_DATE;
