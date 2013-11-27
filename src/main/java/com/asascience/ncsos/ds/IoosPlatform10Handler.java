@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.asascience.ncsos.ds;
 
 import com.asascience.ncsos.cdmclasses.*;
@@ -21,10 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- *
- * @author SCowan
- */
 public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterface {
     
     private final String procedure;

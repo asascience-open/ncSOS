@@ -18,12 +18,6 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.*;
 
-/**
- * Provides access to the netcdf dataset wrappers that allow for easier access
- * to information that is specific or needed for specific feature types.
- * @author tkunicki
- * @modified scowan
- */
 public abstract class BaseRequestHandler {
     public static final String CF_ROLE = "cf_role";
     public static final String GRID = "grid";
