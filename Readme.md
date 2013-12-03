@@ -1,6 +1,6 @@
 # NcSOS
 
-Stable version: **RC6**
+Stable version: **RC7**
 
 NcSOS adds an OGC SOS service to datasets in your existing [THREDDS](http://www.unidata.ucar.edu/projects/THREDDS/) server.  It complies with the [IOOS SWE Milestone 1.0](https://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0) templates and requires your datasets be in any of the [CF 1.6 Discrete Sampling Geometries](http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#discrete-sampling-geometries).
 
@@ -36,6 +36,13 @@ _You will need a working THREDDS installation of a least version **4.3.16** to r
 7. Restart Tomcat
 
 ## ChangeLog
+
+### RC7
+* Testing refactor
+* Better class names
+* Lots of cleanup in code and comments
+* Now uses JDOM and XML objects instead of strings
+* Jenkins integration
 
 ### RC6
 * Testing cleanup
