@@ -58,6 +58,9 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
                                         Map<String, String> latLonRequest) throws IOException {
         super(netCDFDataset);
 
+        // Translate back to an URN.  (gml:id fields in XML can't have colons)
+        offering = offering.replace("_-_",":");
+
         if (eventTime != null && eventTime.length > 0) {
             eventTimes = Arrays.asList(eventTime);
         } else {

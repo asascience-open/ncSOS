@@ -238,7 +238,8 @@ public class GetCapsFormatter extends BaseOutputFormatter {
 
         Element offering = this.buildOffering();
         // Id
-        offering.setAttribute("id", stationName, gmlns);
+        // Replace colons with "_-_" (gml:id fields in XML can't have colons)
+        offering.setAttribute("id", stationName.replace(":","_-_"), gmlns);
         // Name
         offering.addContent(new Element("name", gmlns).setText(this.handler.getUrnName(stationName)));
         // Description
