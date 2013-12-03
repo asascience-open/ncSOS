@@ -140,5 +140,4 @@ public abstract class baseCDMClass implements iStationData {
             return 0;
         return upperAlt;
     }
-    
 }

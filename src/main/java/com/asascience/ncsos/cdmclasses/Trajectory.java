@@ -88,29 +88,10 @@ public class Trajectory extends baseCDMClass implements iStationData {
         this.trajectoryData.resetIteration();
 
         trajList = new ArrayList<TrajectoryFeature>();
-
-        DateTime dtSearchStart = null;
-        DateTime dtSearchEnd = null;
-        
         altMax = new ArrayList<Double>();
         altMin = new ArrayList<Double>();
 
         boolean firstSet = true;
-
-        //check first to see if the event times are not null
-        if (eventTimes != null) {
-            //turn event times in to dateTimes to compare
-            if (eventTimes.size() >= 1) {
-                dtSearchStart = new DateTime(df.getISODate(eventTimes.get(0)), chrono);
-            }
-            if (eventTimes.size() == 2) {
-
-                dtSearchEnd = new DateTime(df.getISODate(eventTimes.get(1)), chrono);
-            }
-        } else {
-            // set search start to earliest possible
-            dtSearchStart = new DateTime(0, chrono);
-        }
 
         //temp
         DateTime dtStart = null;
@@ -325,53 +306,6 @@ public class Trajectory extends baseCDMClass implements iStationData {
         } else {
             return ERROR_NULL_DATE;
         }
-    }
-
-    /**
-     * gets the trajectory response for the gc request
-     * @param dataset
-     * @param document
-     * @param featureOfInterest
-     * @param GMLName
-     * @param observedPropertyList
-     * @return
-     * @throws IOException 
-     */
-    public static Document getCapsResponse(FeatureCollection dataset, Document document, String featureOfInterest, String GMLName, List<String> observedPropertyList) throws IOException {
-        //PointFeatureIterator trajIter;
-
-
-        while (((TrajectoryFeatureCollection) dataset).hasNext()) {
-            TrajectoryFeature tFeature = ((TrajectoryFeatureCollection) dataset).next();
-            DatasetHandlerAdapter.calcBounds(tFeature);
-
-            //trajIter = tFeature.getPointFeatureIterator(-1);
-            //attributes
-            ObservationOffering newOffering = new ObservationOffering();
-            newOffering.setObservationStationLowerCorner(Double.toString(tFeature.getBoundingBox().getLatMin()), Double.toString(tFeature.getBoundingBox().getLonMin()));
-            newOffering.setObservationStationUpperCorner(Double.toString(tFeature.getBoundingBox().getLatMax()), Double.toString(tFeature.getBoundingBox().getLonMax()));
-
-            //check the data
-            if (tFeature.getDateRange() != null) {
-                newOffering.setObservationTimeBegin(tFeature.getDateRange().getStart().toDateTimeStringISO());
-                newOffering.setObservationTimeEnd(tFeature.getDateRange().getEnd().toDateTimeStringISO());
-            } //find the dates out!
-            else {
-                System.out.println("no dates yet");
-            }
-
-            newOffering.setObservationStationDescription(tFeature.getCollectionFeatureType().toString());
-            newOffering.setObservationFeatureOfInterest(featureOfInterest + (tFeature.getName()));
-            newOffering.setObservationName(GMLName + (tFeature.getName()));
-            newOffering.setObservationStationID((tFeature.getName()));
-            newOffering.setObservationProcedureLink(GMLName + ((tFeature.getName())));
-            newOffering.setObservationSrsName("EPSG:4326");  // TODO?  
-            newOffering.setObservationObserveredList(observedPropertyList);
-
-            document = CDMUtils.addObsOfferingToDoc(newOffering, document);
-        }
-
-        return document;
     }
 
     @Override

@@ -45,10 +45,6 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         return TEMPLATE;
     }
 
-    public boolean hasExceptionOut() {
-        return exceptionFlag;
-    }
-
     public void parseServiceIdentification(HashMap<String, Object> attrs) {
         Namespace owsns = this.getNamespace("ows");
         Element si = this.getRoot().getChild(SERVICE_IDENTIFICATION, owsns);
@@ -283,12 +279,9 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         this.getRoot().removeChild(CONTENTS, this.getNamespace("sos"));
     }
 
-    /*********************/
-    /* Interface Methods */
-
-    /**
-     * **********************************************************************
-     */
+    /***********************/
+    /** Interface Methods **/
+    /***********************/
     public void addDataFormattedStringToInfoList(String dataFormattedString) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

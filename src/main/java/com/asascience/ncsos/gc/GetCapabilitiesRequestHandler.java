@@ -65,18 +65,6 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
         CalculateBoundsForFeatureSet();
     }
 
-    /**
-     * Used for creating quick exception responses
-     * @param emptyDataset
-     * @throws IOException 
-     */
-    public GetCapabilitiesRequestHandler(NetcdfDataset emptyDataset) throws IOException {
-        super(emptyDataset);
-        this.sections = "";
-        this.threddsURI = "";
-        this.formatter = new GetCapsFormatter(this);
-    }
-
     public void resetCapabilitiesSections(String sections) throws IOException {
         this.sections = sections.toLowerCase();
         this.requestedSections = new BitSet(SECTION_COUNT);

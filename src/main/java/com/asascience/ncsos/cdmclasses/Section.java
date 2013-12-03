@@ -54,71 +54,7 @@ public class Section extends baseCDMClass implements iStationData {
         lowerAlt = Double.POSITIVE_INFINITY;
         upperAlt = Double.NEGATIVE_INFINITY;
     }
-    
-    /**
-     * 
-     * @param dataset
-     * @param document
-     * @param featureOfInterestBase
-     * @param GMLName
-     * @param observedPropertyList
-     * @return
-     */
-    public static Document getCapsResponse(FeatureCollection dataset, Document document, String featureOfInterestBase, String GMLName, List<String> observedPropertyList) {
-        try {
-            String trajectoryID = null;
-            SectionFeatureCollection sectSet = (SectionFeatureCollection) dataset;
-            for (sectSet.resetIteration();sectSet.hasNext();) {
-                SectionFeature sFeature = sectSet.next();
-                trajectoryID = sFeature.getName();
-                for (sFeature.resetIteration();sFeature.hasNext();) {
-                    ProfileFeature pFeature = sFeature.next();
-                    DatasetHandlerAdapter.calcBounds(pFeature);
-                    
-                    pFeature.getCalendarDateRange();
-                }
-                LatLonRect bbox = getBoundingBox(sFeature);
-                CalendarDateRange sectionDateRange = getDateRange(sFeature);
-                DateFormatter formatter = new DateFormatter();
-                
-                ObservationOffering newOffering = new ObservationOffering();
 
-                newOffering.setObservationStationLowerCorner(Double.toString(bbox.getLowerLeftPoint().getLatitude()), Double.toString(bbox.getLowerLeftPoint().getLongitude()));
-                newOffering.setObservationStationUpperCorner(Double.toString(bbox.getUpperRightPoint().getLatitude()), Double.toString(bbox.getUpperRightPoint().getLongitude()));
-
-                //check the data
-                if (sectionDateRange != null) {
-                    newOffering.setObservationTimeBegin(formatter.toDateTimeStringISO(sectionDateRange.getStart().toDate()));
-                    newOffering.setObservationTimeEnd(formatter.toDateTimeStringISO(sectionDateRange.getEnd().toDate()));
-                } //find the dates out!
-                else {
-                    _log.error("no dates yet");
-                }
-
-
-                newOffering.setObservationStationDescription(sFeature.getCollectionFeatureType().toString());
-                if (trajectoryID != null) {
-                    newOffering.setObservationStationID("Trajectory" + trajectoryID);
-                    newOffering.setObservationProcedureLink(GMLName+("Trajectory" + trajectoryID));
-                    newOffering.setObservationName(GMLName+(trajectoryID));
-                    newOffering.setObservationFeatureOfInterest(featureOfInterestBase+("Trajectory" + trajectoryID));
-                } else {
-                    newOffering.setObservationFeatureOfInterest(featureOfInterestBase+(sFeature.getName()));
-                    newOffering.setObservationStationID((sFeature.getName()));
-                    newOffering.setObservationProcedureLink(GMLName+((sFeature.getName())));
-                    newOffering.setObservationFeatureOfInterest(featureOfInterestBase+(sFeature.getName()));
-                }
-                newOffering.setObservationSrsName("EPSG:4326");  // TODO?  
-                newOffering.setObservationObserveredList(observedPropertyList);
-                document = CDMUtils.addObsOfferingToDoc(newOffering,document);
-            }
-        } catch (IOException ex) {
-            _log.error(ex.getMessage());
-        } finally {
-            return document;
-        }
-    }
-    
     /**
      * 
      * @param section
@@ -164,26 +100,9 @@ public class Section extends baseCDMClass implements iStationData {
         this.sectionData = (SectionFeatureCollection) featureCollection;
         
         sectionList = new ArrayList<SectionFeature>();
-
-        DateTime dtSearchStart = null;
-        DateTime dtSearchEnd = null;
         
         altMin = new ArrayList<Double>();
         altMax = new ArrayList<Double>();
-
-        //check first to see if the event times are not null
-        if (eventTimes != null) {
-            //turn event times in to dateTimes to compare
-            if (eventTimes.size() >= 1) {
-                dtSearchStart = new DateTime(df.getISODate(eventTimes.get(0)), chrono);
-            }
-            if (eventTimes.size() == 2) {
-
-                dtSearchEnd = new DateTime(df.getISODate(eventTimes.get(1)), chrono);
-            }
-        } else {
-            dtSearchStart = new DateTime(0, chrono);
-        }
 
         //temp
         DateTime dtStart = new DateTime();

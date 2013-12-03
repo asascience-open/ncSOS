@@ -57,67 +57,6 @@ public class Profile extends baseCDMClass implements iStationData {
         lowerAlt = Double.POSITIVE_INFINITY;
         upperAlt = Double.NEGATIVE_INFINITY;
     }
-    
-    /**
-     * gets the Profile response for the gc request
-     * @param profileCollection
-     * @param document
-     * @param featureOfInterestBase
-     * @param GMLName
-     * @param observedPropertyList
-     * @return
-     * @throws IOException  
-     */
-    public static Document getCapsResponse(ProfileFeatureCollection profileCollection, Document document, String featureOfInterestBase, String GMLName, List<String> observedPropertyList) throws IOException {
-        String profileID = profileCollection.getName();
-
-        //profiles act like stations at present
-        while (profileCollection.hasNext()) {
-            ProfileFeature pFeature = profileCollection.next();
-
-            //attributes
-            ObservationOffering newOffering = new ObservationOffering();
-
-            newOffering.setObservationStationLowerCorner(Double.toString(pFeature.getLatLon().getLatitude()), Double.toString(pFeature.getLatLon().getLongitude()));
-            newOffering.setObservationStationUpperCorner(Double.toString(pFeature.getLatLon().getLatitude()), Double.toString(pFeature.getLatLon().getLongitude()));
-
-            DatasetHandlerAdapter.calcBounds(pFeature);
-
-            //check the data
-            if (pFeature.getDateRange() != null) {
-                newOffering.setObservationTimeBegin(pFeature.getDateRange().getStart().toDateTimeStringISO());
-                newOffering.setObservationTimeEnd(pFeature.getDateRange().getEnd().toDateTimeStringISO());
-            } //find the dates out!
-            else {
-                _log.error("no dates yet");
-            }
-
-
-            newOffering.setObservationStationDescription(pFeature.getCollectionFeatureType().toString());
-            if (profileID != null) {
-                newOffering.setObservationStationID("PROFILE_" + profileID);
-                newOffering.setObservationProcedureLink(GMLName+("PROFILE_" + profileID));
-                newOffering.setObservationName(GMLName+(profileID));
-                newOffering.setObservationFeatureOfInterest(featureOfInterestBase+("PROFILE_" + profileID));
-            } else {
-                newOffering.setObservationFeatureOfInterest(featureOfInterestBase+(pFeature.getName()));
-                newOffering.setObservationStationID((pFeature.getName()));
-                newOffering.setObservationProcedureLink(GMLName+((pFeature.getName())));
-                newOffering.setObservationFeatureOfInterest(featureOfInterestBase+(pFeature.getName()));
-            }
-            newOffering.setObservationSrsName("EPSG:4326");  // TODO?  
-            newOffering.setObservationObserveredList(observedPropertyList);
-            document = CDMUtils.addObsOfferingToDoc(newOffering,document);
-        }
-        
-         return document;
-    }
-    
-    public boolean isStationInFinalCollection(int stNum) {
-        if (profileList != null && profileList.containsKey(stNum))
-            return true;
-        return false;
-    }
 
     /************************
      * iStationData Methods *
