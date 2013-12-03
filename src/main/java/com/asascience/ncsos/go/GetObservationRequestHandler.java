@@ -155,6 +155,7 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
 
     private void setCDMDatasetForStations(NetcdfDataset netCDFDataset, String[] eventTime, Map<String, String> latLonRequest) throws IOException {
         // strip out text if the station is defined by indices
+        /*
         if (isStationDefinedByIndices()) {
             String[] editedStationNames = new String[requestedStationNames.length];
             for (int i = 0; i < requestedStationNames.length; i++) {
@@ -167,6 +168,7 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
             // copy array
             requestedStationNames = editedStationNames.clone();
         }
+        */
         //grid operation
         if (getDatasetFeatureType() == FeatureType.GRID) {
 
