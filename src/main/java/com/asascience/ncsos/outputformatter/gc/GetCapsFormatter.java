@@ -141,7 +141,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
                 .getChild("ExtendedCapabilities", owsns)
                 .getChildren("metaDataProperty", gmlns);
         for (Element e : md) {
-            if (e.getAttributeValue("href", this.getNamespace("xlink")).equalsIgnoreCase("softwareVersion")) {
+            if (e.getAttributeValue("title", this.getNamespace("xlink")).equalsIgnoreCase("softwareVersion")) {
                 e.getChild("version", gmlns).setText(NCSOS_VERSION);
             }
         }
