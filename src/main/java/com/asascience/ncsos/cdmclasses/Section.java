@@ -205,7 +205,10 @@ public class Section extends baseCDMClass implements iStationData {
             //scan through the stationname for a match of id
             for (Iterator<String> it = reqStationNames.iterator(); it.hasNext();) {
                 String stName = it.next();
-                if (stName.equalsIgnoreCase(trajName)) {
+                String[] urns = stName.split(":");
+                String  nourn = urns[urns.length - 1];
+
+                if (stName.equalsIgnoreCase(trajName) || nourn.equalsIgnoreCase(trajName)) {
                     sectionList.add(sectFeature);
 
                     double altmin = Double.POSITIVE_INFINITY;

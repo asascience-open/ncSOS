@@ -163,9 +163,12 @@ public class Profile extends baseCDMClass implements iStationData {
                 }
                 // get the index of the station we are adding
                 Integer stNum = 0;
-                for (int sti =0; sti < reqStationNames.size(); sti++) {
-                    if (reqStationNames.get(sti).equalsIgnoreCase(profileID))
+                for (int sti=0; sti < reqStationNames.size(); sti++) {
+                    String[] urns = reqStationNames.get(sti).split(":");
+                    String  nourn = urns[urns.length - 1];
+                    if (reqStationNames.get(sti).equalsIgnoreCase(profileID) || nourn.equalsIgnoreCase(profileID)) {
                         stNum = sti;
+                    }
                 }
                 profileList.put(stNum, pFeature);
 

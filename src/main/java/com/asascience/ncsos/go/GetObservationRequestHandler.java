@@ -140,7 +140,7 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
             this.procedures = naProcs.toArray(new String[naProcs.size()]);
         } catch (Exception ex) {
             _log.error(ex.toString());
-            requestedProcedures = null;
+            this.procedures = null;
         }
 
         // check that the procedures are valid
@@ -150,10 +150,10 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
             checkProceduresAgainstOffering(offering);
         }
 
-        setCDMDatasetForStations(netCDFDataset, requestedProcedures, eventTime, latLonRequest);
+        setCDMDatasetForStations(netCDFDataset, eventTime, latLonRequest);
     }
 
-    private void setCDMDatasetForStations(NetcdfDataset netCDFDataset, String[] requestedStationNames, String[] eventTime, Map<String, String> latLonRequest) throws IOException {
+    private void setCDMDatasetForStations(NetcdfDataset netCDFDataset, String[] eventTime, Map<String, String> latLonRequest) throws IOException {
         // strip out text if the station is defined by indices
         if (isStationDefinedByIndices()) {
             String[] editedStationNames = new String[requestedStationNames.length];
@@ -217,21 +217,21 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
                 this.obsProperties = checkNetcdfFileForAxis(netCDFDataset.findCoordinateAxis(AxisType.Lat), this.obsProperties);
                 this.obsProperties = checkNetcdfFileForAxis(netCDFDataset.findCoordinateAxis(AxisType.Lon), this.obsProperties);
 
-                CDMDataSet = new Grid(requestedStationNames, eventTime, this.obsProperties, latLonRequest);
+                CDMDataSet = new Grid(this.procedures, eventTime, this.obsProperties, latLonRequest);
                 CDMDataSet.setData(getGridDataset());
             }
         } //if the stations are not of cdm type grid then check to see and set cdm data type        
         else {
             if (getDatasetFeatureType() == FeatureType.TRAJECTORY) {
-                CDMDataSet = new Trajectory(requestedStationNames, eventTime, this.obsProperties);
+                CDMDataSet = new Trajectory(this.procedures, eventTime, this.obsProperties);
             } else if (getDatasetFeatureType() == FeatureType.STATION) {
-                CDMDataSet = new TimeSeries(requestedStationNames, eventTime, this.obsProperties);
+                CDMDataSet = new TimeSeries(this.procedures, eventTime, this.obsProperties);
             } else if (getDatasetFeatureType() == FeatureType.STATION_PROFILE) {
-                CDMDataSet = new TimeSeriesProfile(requestedStationNames, eventTime, this.obsProperties);
+                CDMDataSet = new TimeSeriesProfile(this.procedures, eventTime, this.obsProperties);
             } else if (getDatasetFeatureType() == FeatureType.PROFILE) {
-                CDMDataSet = new Profile(requestedStationNames, eventTime, this.obsProperties);
+                CDMDataSet = new Profile(this.procedures, eventTime, this.obsProperties);
             } else if (getDatasetFeatureType() == FeatureType.SECTION) {
-                CDMDataSet = new Section(requestedStationNames, eventTime, this.obsProperties);
+                CDMDataSet = new Section(this.procedures, eventTime, this.obsProperties);
             } else {
                 formatter = new ErrorFormatter();
                 ((ErrorFormatter)formatter).setException("NetCDF-Java could not recognize the dataset's FeatureType");

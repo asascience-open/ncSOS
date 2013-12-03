@@ -34,7 +34,7 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
     public IoosPlatform10Handler(NetcdfDataset dataset, String procedure, String serverURL) throws IOException {
         super(dataset, new LogReporter());
         this.procedure = procedure;
-        this.stationName = procedure.substring(procedure.lastIndexOf(":")+1);
+        this.stationName = procedure; //.substring(procedure.lastIndexOf(":")+1);
         this.urlBase = serverURL;
         this.locationLineFlag = false;
         this.setStationData();

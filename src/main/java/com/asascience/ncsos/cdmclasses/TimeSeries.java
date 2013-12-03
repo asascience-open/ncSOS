@@ -227,7 +227,17 @@ public class TimeSeries extends baseCDMClass implements iStationData {
     public void setData(Object featureCollection) throws IOException {
         try {
             this.tsData = (StationTimeSeriesFeatureCollection) featureCollection;
+
+            // Try to get stations by name, both with URN procedure and without
             tsStationList = tsData.getStations(reqStationNames);
+            for (String s : reqStationNames) {
+                String[] urns = s.split(":");
+                Station st = tsData.getStation(urns[urns.length - 1]);
+                if (st != null) {
+                    tsStationList.add(st);
+                }
+            }
+
             setNumberOfStations(tsStationList.size());
 
             if (tsStationList.size() > 0) {

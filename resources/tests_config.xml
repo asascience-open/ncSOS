@@ -645,7 +645,7 @@
 
         <!-- 52N Archiver -->
         <file path="52n/52n_point.nc" feature="point" authority="test">
-            <platform id="urn:ioos:station:test:test_1" lat="-39.496087" lon="177.118689">
+            <platform id="urn:ioos:station:test:1" lat="-39.496087" lon="177.118689">
                 <times>
                     2013-11-26T22:00:00
                 </times>
@@ -657,7 +657,7 @@
             </platform>
         </file>
         <file path="52n/52n_profile.nc" feature="profile" authority="test">
-            <platform id="urn:ioos:station:test:test_1" lat="-39.496087" lon="177.118689">
+            <platform id="urn:ioos:station:test:1" lat="-39.496087" lon="177.118689">
                 <sensor name="sea_water_temperature" standard="sea_water_temperature" units="Cel">
                     <profile time="2013-11-26T22:00:00">
                         <value depth="0">19.92</value>
@@ -685,7 +685,7 @@
             </platform>
         </file>
         <file path="52n/52n_timeseries.nc" feature="timeSeries" authority="test">
-            <platform id="urn:ioos:station:test:test_1" lat="-39.496087" lon="177.118689" z="0">
+            <platform id="urn:ioos:station:test:1" lat="-39.496087" lon="177.118689" z="0">
                 <times>
                     2013-11-26T03:00:00Z, 2013-11-26T04:00:00Z, 2013-11-26T05:00:00Z, 2013-11-26T06:00:00Z,
                     2013-11-26T07:00:00Z, 2013-11-26T08:00:00Z, 2013-11-26T09:00:00Z, 2013-11-26T10:00:00Z,
@@ -702,7 +702,7 @@
             </platform>
         </file>
         <file path="52n/52n_timeseriesProfile.nc" feature="timeseriesProfile" authority="test">
-            <platform id="urn:ioos:station:test:test_1" lat="-39.496087" lon="177.118689">
+            <platform id="urn:ioos:station:test:1" lat="-39.496087" lon="177.118689">
                 <sensor name="sea_water_temperature" standard="sea_water_temperature" units="Cel">
                     <profile time="2013-11-26T07:00:00">
                         <value depth="0">5.78</value>

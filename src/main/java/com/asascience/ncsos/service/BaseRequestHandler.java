@@ -404,6 +404,19 @@ public abstract class BaseRequestHandler {
     protected List<String> getSensorNames() {
         return this.sensorNames;
     }
+
+    /**
+     * Return the list of sensor names
+     * @return string list of sensor names
+     */
+    protected List<String> getSensorUrns(String stationName) {
+        List<String> urnNames = new ArrayList<String>(this.sensorNames.size());
+        for (String s : this.sensorNames) {
+            urnNames.add(this.getSensorUrnName(stationName, s));
+        }
+        return urnNames;
+
+    }
     
     /**
      * 
@@ -535,7 +548,13 @@ public abstract class BaseRequestHandler {
      * @return
      */
     public String getUrnName(String stationName) {
-        return STATION_URN_BASE + this.global_attributes.get("naming_authority") + ":" + stationName;
+        String[] feature_name = stationName.split(":");
+        if (feature_name.length > 1 && feature_name[0].equalsIgnoreCase("urn")) {
+            // We already have a URN, so just return it.
+            return stationName;
+        } else {
+            return STATION_URN_BASE + this.global_attributes.get("naming_authority") + ":" + stationName;
+        }
     }
     
     public String getUrnNetworkAll() {
@@ -550,6 +569,11 @@ public abstract class BaseRequestHandler {
      * @return urn of the station/sensor combo
      */
     public String getSensorUrnName(String stationName, String sensorName) {
+        String[] feature_name = stationName.split(":");
+        if (feature_name.length > 1 && feature_name[0].equalsIgnoreCase("urn")) {
+            // We have a station URN, so strip out the name
+            stationName = feature_name[feature_name.length - 1];
+        }
         return SENSOR_URN_BASE + this.global_attributes.get("naming_authority") + ":" + stationName + ":" + sensorName;
     }
 

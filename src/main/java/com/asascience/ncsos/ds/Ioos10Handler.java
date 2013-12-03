@@ -45,7 +45,7 @@ public class Ioos10Handler extends BaseRequestHandler {
                 }
             }
         } else if (procedure.contains("network")) {
-            validProcedure = URN_BASE + "network:" + this.getGlobalAttribute("naming_authority", this.DEFAULT_NAMING_AUTHORITY) + ":all";
+            validProcedure = this.getUrnNetworkAll();
             logger.debug("Comparing " + procedure + " to " + validProcedure);
             if (procedure.equalsIgnoreCase(validProcedure))
                 return true;

@@ -205,7 +205,18 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
     @Override
     public void setData(Object featureProfileCollection) throws IOException {
         this.tsProfileData = (StationProfileFeatureCollection) featureProfileCollection;
+
         tsStationList = tsProfileData.getStations(reqStationNames);
+
+        // Try to get stations by name, both with URN procedure and without
+        tsStationList = tsProfileData.getStations(reqStationNames);
+        for (String s : reqStationNames) {
+            String[] urns = s.split(":");
+            Station st = tsProfileData.getStation(urns[urns.length - 1]);
+            if (st != null) {
+                tsStationList.add(st);
+            }
+        }
 
         setNumberOfStations(tsStationList.size());
         

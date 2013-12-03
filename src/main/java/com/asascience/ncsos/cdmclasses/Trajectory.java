@@ -132,8 +132,11 @@ public class Trajectory extends baseCDMClass implements iStationData {
 
             // find a better solution for getting features from the collection - TODO
             //scan through the stationname for a match of id
-            for (String stName : reqStationNames) {
-                if (stName.equalsIgnoreCase(n)) {
+            for (String s : reqStationNames) {
+                String[] urns = s.split(":");
+                String  nourn = urns[urns.length - 1];
+
+                if (s.equalsIgnoreCase(n) || nourn.equalsIgnoreCase(n)) {
                     if (!trajList.contains(trajFeature))
                         trajList.add(trajFeature);
                     break;

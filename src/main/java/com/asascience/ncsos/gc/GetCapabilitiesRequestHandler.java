@@ -146,7 +146,7 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
             out.setObservationOfferingNetwork(setRange, getStationNames().values().toArray(new String[getStationNames().values().size()]), getSensorNames(), setTime, this.getFeatureDataset().getFeatureType());
             // Add an offering for every station
             for (Integer index : getStationNames().keySet()) {
-                ((GetCapsFormatter) formatter).setObservationOffering(getStationNames().get(index), stationBBox.get(index), getSensorNames(), stationDateRange.get(index), this.getFeatureDataset().getFeatureType());
+                ((GetCapsFormatter) formatter).setObservationOffering(this.getUrnName(getStationNames().get(index)), stationBBox.get(index), getSensorNames(), stationDateRange.get(index), this.getFeatureDataset().getFeatureType());
             }
         } else {
             // remove Contents node
