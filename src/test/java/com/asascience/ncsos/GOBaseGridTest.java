@@ -76,38 +76,48 @@ public class GOBaseGridTest extends NcSOSTest {
         Object[][] data = new Object[grids*3][7];
         int curIndex = 0;
         for (Element e : fileElements) {
+
+            String authority = e.getAttributeValue("authority","ncsos");
+            String networkOffering = "urn:ioos:network:" + authority + ":all";
+
             for (Element s : (List<Element>) e.getChildren("sensor")) {
+
+                String standard = s.getAttributeValue("standard");
+
                 for (Element v : (List<Element>) s.getChildren("values")) {
 
                     // Make 3 requests for each individual sensors
                     // They should all return the same thing
 
+                    String lat = v.getAttributeValue("lat");
+                    String lon = v.getAttributeValue("lon");
+
                     // A request where the offering and procedure are both Grid0
                     data[curIndex][0] = e;
-                    data[curIndex][1] = "Grid0";
-                    data[curIndex][2] = "urn:ioos:station:ncsos:Grid0";
-                    data[curIndex][3] = s.getAttributeValue("standard");
-                    data[curIndex][4] = v.getAttributeValue("lat");
-                    data[curIndex][5] = v.getAttributeValue("lon");
-                    data[curIndex][6] = "grid0_offering_grid0_procedure";
+                    data[curIndex][1] = "urn:ioos:station:" + authority + ":Grid0";;
+                    data[curIndex][2] = "urn:ioos:station:" + authority + ":Grid0";
+                    data[curIndex][3] = standard;
+                    data[curIndex][4] = lat;
+                    data[curIndex][5] = lon;
+                    data[curIndex][6] = "grid0_offering_grid0_procedure" + lat + lon;
                     curIndex++;
                     // A request with the offering as network:all
                     data[curIndex][0] = e;
-                    data[curIndex][1] = "network-all";
-                    data[curIndex][2] = "urn:ioos:station:ncsos:Grid0";
-                    data[curIndex][3] = s.getAttributeValue("standard");
-                    data[curIndex][4] = v.getAttributeValue("lat");
-                    data[curIndex][5] = v.getAttributeValue("lon");
-                    data[curIndex][6] = "network_offering_grid0_procedure";
+                    data[curIndex][1] = networkOffering;
+                    data[curIndex][2] = "urn:ioos:station:" + authority + ":Grid0";
+                    data[curIndex][3] = standard;
+                    data[curIndex][4] = lat;
+                    data[curIndex][5] = lon;
+                    data[curIndex][6] = "network_offering_grid0_procedure" + lat + lon;
                     curIndex++;
                     // A request with only the offering
                     data[curIndex][0] = e;
-                    data[curIndex][1] = "Grid0";
+                    data[curIndex][1] = "urn:ioos:station:" + authority + ":Grid0";
                     data[curIndex][2] = null;
-                    data[curIndex][3] = s.getAttributeValue("standard");
-                    data[curIndex][4] = v.getAttributeValue("lat");
-                    data[curIndex][5] = v.getAttributeValue("lon");
-                    data[curIndex][6] = "grid0_offering_no_procedure";
+                    data[curIndex][3] = standard;
+                    data[curIndex][4] = lat;
+                    data[curIndex][5] = lon;
+                    data[curIndex][6] = "grid0_offering_no_procedure" + lat + lon;
                     curIndex++;
                 }
             }

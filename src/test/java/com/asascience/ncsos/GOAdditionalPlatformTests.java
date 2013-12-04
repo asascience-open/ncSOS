@@ -47,7 +47,7 @@ public class GOAdditionalPlatformTests extends NcSOSTest {
         kvp.put("version",          "1.0.0");
         kvp.put("service",          "SOS");
         kvp.put("procedure",        currentFile.getChild("platform").getAttributeValue("id"));
-        kvp.put("offering",         "network-all");
+        kvp.put("offering",         "urn:ioos:network:ncsos:all");
         kvp.put("observedProperty", currentFile.getChild("platform").getChild("sensor").getAttributeValue("standard"));
     }
 

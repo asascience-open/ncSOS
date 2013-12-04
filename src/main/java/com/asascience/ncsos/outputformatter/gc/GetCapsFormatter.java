@@ -109,10 +109,10 @@ public class GetCapsFormatter extends BaseOutputFormatter {
                     Element allowed = new Element("AllowedValues", owsns);
                     if (name.equalsIgnoreCase("offering")) {
                         for (String s : stationNames) {
-                            allowed.addContent(new Element("Value", owsns).setText(s));
+                            allowed.addContent(new Element("Value", owsns).setText(this.handler.getUrnName(s)));
                         }
-                        // Always add a 'network-all' offering
-                        allowed.addContent(new Element("Value", owsns).setText("network-all"));
+                        // Always add a 'network-all' offering as a URN
+                        allowed.addContent(new Element("Value", owsns).setText(this.handler.getUrnNetworkAll()));
                         p.addContent(allowed);
                     } else if (name.equalsIgnoreCase("observedProperty")) {
                         for (String s : dataVarShortNames) {
@@ -178,7 +178,6 @@ public class GetCapsFormatter extends BaseOutputFormatter {
     }
 
     public void setObservationOfferingNetwork(LatLonRect datasetRect, String[] stations, List<String> sensors, CalendarDateRange dates, FeatureType ftype) {
-        Namespace owsns = this.getNamespace("ows");
         Namespace gmlns = this.getNamespace("gml");
         Namespace sosns = this.getNamespace("sos");
         Namespace xlinkns = this.getNamespace("xlink");
@@ -238,12 +237,12 @@ public class GetCapsFormatter extends BaseOutputFormatter {
 
         Element offering = this.buildOffering();
         // Id
-        // Replace colons with "_-_" (gml:id fields in XML can't have colons)
-        offering.setAttribute("id", stationName.replace(":","_-_"), gmlns);
+        // Replace ":" with "_" (gml:id fields in XML can't have colons)
+        offering.setAttribute("id", stationName.replace(":","_"), gmlns);
         // Name
         offering.addContent(new Element("name", gmlns).setText(this.handler.getUrnName(stationName)));
         // Description
-        // offering.getChild("description", gmlns).setText("Network offering containing all features in the dataset");
+        // Nowhere to get this?
         // SRS
         offering.addContent(new Element("srsName", gmlns).setText(EPSG4326));
         // Bounded By

@@ -161,13 +161,8 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
     }
     
     private void formatSmlNetworkProcedures() {
-        // create the network urn
-        String networkUrn = this.procedure.substring(0, this.procedure.lastIndexOf(":") +1);
-        networkUrn = networkUrn.replaceAll(":station:|:sensor:", ":network:");
-        networkUrn += "all";
-        
         platform.addSmlCapabilitiesGmlMetadata( OutputFormatter.SYSTEM, "networkProcedures",
-        		"network-all", networkUrn);
+        		"network-all", this.getUrnNetworkAll());
     }
     
     private void formatSmlContacts() {

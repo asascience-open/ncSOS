@@ -71,12 +71,15 @@ public class GOBasePlatformTest extends NcSOSTest {
 
         Object[][] data = new Object[nonGrids][5];
         int curIndex = 0;
-        List<String> observedPropertyList = null;
+        List<String> observedPropertyList;
         for (Element e : fileElements) {
+
+            String networkOffering = "urn:ioos:network:" + e.getAttributeValue("authority","ncsos") + ":all";
+
             for (Element p : (List<Element>) e.getChildren("platform")) {
 
                 String procedure = p.getAttributeValue("id");
-                String offering  = procedure.split(":")[procedure.split(":").length - 1];
+                String offering  = procedure;
                 observedPropertyList = new ArrayList<String>();
 
                 for (Element s : (List<Element>) p.getChildren("sensor")) {
@@ -97,7 +100,7 @@ public class GOBasePlatformTest extends NcSOSTest {
                     curIndex++;
                     // A request with the offering as network:all
                     data[curIndex][0] = e;
-                    data[curIndex][1] = "network-all";
+                    data[curIndex][1] = networkOffering;
                     data[curIndex][2] = procedure;
                     data[curIndex][3] = observedProperty;
                     data[curIndex][4] = "network_offering_platform_procedure";
@@ -116,13 +119,13 @@ public class GOBasePlatformTest extends NcSOSTest {
                 // A request where the offering and procedure are identical
                 data[curIndex][0] = e;
                 data[curIndex][1] = offering;
-                data[curIndex][2] = null;
+                data[curIndex][2] = procedure;
                 data[curIndex][3] = StringUtils.join(observedPropertyList, ',');
-                data[curIndex][4] = "platform_offering_no_procedure";
+                data[curIndex][4] = "platform_offering_platform_procedure";
                 curIndex++;
                 // A request with the offering as network:all
                 data[curIndex][0] = e;
-                data[curIndex][1] = "network-all";
+                data[curIndex][1] = networkOffering;
                 data[curIndex][2] = procedure;
                 data[curIndex][3] = StringUtils.join(observedPropertyList, ',');
                 data[curIndex][4] = "network_offering_platform_procedure";

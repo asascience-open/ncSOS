@@ -48,7 +48,7 @@ public class GOAdditionalGridTests extends NcSOSTest {
         kvp.put("version",          "1.0.0");
         kvp.put("service",          "SOS");
         kvp.put("procedure",        "urn:ioos:station:ncsos:Grid0");
-        kvp.put("offering",         "network-all");
+        kvp.put("offering",         "urn:ioos:network:ncsos:all");
         kvp.put("observedProperty", currentFile.getChild("sensor").getAttributeValue("standard"));
         kvp.put("latitude",         "0");
         kvp.put("longitude",        "0");

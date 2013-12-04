@@ -629,7 +629,7 @@
                 </values>
             </sensor>
         </file>
-        <file path='grids/nodc-l4-ghrsst.nc' feature="grid">
+        <file path='grids/nodc-l4-ghrsst.nc' feature="grid" authority="org.ghrsst">
             <times>
                 1995-01-10T20:00:00
             </times>

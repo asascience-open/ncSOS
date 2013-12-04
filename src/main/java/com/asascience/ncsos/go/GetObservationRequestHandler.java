@@ -115,7 +115,7 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
         // Figure out what procedures to use...
         try {
             if (requestedProcedures == null) {
-                if (offering.equalsIgnoreCase("network-all")) {
+                if (offering.equalsIgnoreCase(this.getUrnNetworkAll())) {
                     // All procedures
                     requestedProcedures = getStationNames().values().toArray(new String[getStationNames().values().size()]);
                 } else {
@@ -446,7 +446,7 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
 
     private void checkProceduresAgainstOffering(String offering) throws IOException {
         // if the offering is 'network-all' no error (network-all should have all procedures)
-        if (offering.equalsIgnoreCase("network-all")) {
+        if (offering.equalsIgnoreCase(this.getUrnNetworkAll())) {
             return;
         }
         // currently in ncSOS the only offerings that exist are network-all and each of the stations
