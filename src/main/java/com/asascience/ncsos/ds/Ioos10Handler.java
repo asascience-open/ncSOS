@@ -1,20 +1,13 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.asascience.ncsos.ds;
 
 import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.IFReportMechanism;
-import java.io.IOException;
 import ucar.nc2.Attribute;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.NetcdfDataset;
 
-/**
- *
- * @author SCowan
- */
+import java.io.IOException;
+
 public class Ioos10Handler extends BaseRequestHandler {
     
     private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Ioos10Handler.class);
@@ -52,7 +45,7 @@ public class Ioos10Handler extends BaseRequestHandler {
                 }
             }
         } else if (procedure.contains("network")) {
-            validProcedure = URN_BASE + "network:" + this.getGlobalAttribute("naming_authority", this.DEFAULT_NAMING_AUTHORITY) + ":all";
+            validProcedure = this.getUrnNetworkAll();
             logger.debug("Comparing " + procedure + " to " + validProcedure);
             if (procedure.equalsIgnoreCase(validProcedure))
                 return true;

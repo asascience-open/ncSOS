@@ -2,37 +2,23 @@ package com.asascience.ncsos.outputformatter.go;
 
 import com.asascience.ncsos.go.GetObservationRequestHandler;
 import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
-import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.VocabDefinitions;
-import com.asascience.ncsos.util.XMLDomUtils;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import org.jdom.*;
+import org.jdom.Element;
+import org.jdom.Namespace;
 import org.springframework.util.StringUtils;
 import ucar.nc2.Attribute;
 import ucar.nc2.constants.FeatureType;
 
+import java.io.IOException;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class Ioos10Formatter extends BaseOutputFormatter {
 
-    public static final String BLOCKSEPARATOR = "blockSeparator";
-    public static final String COMPOSITEPHENOMENON = "CompositePhenomenon";
-    public static final String DECIMALSEPARATOR = "decimalSeparator";
-    public static final String DIMENSION = "dimension";
-    public static final String DISCLAIMER = "disclaimer";
-    public static final String MULTIPOINT = "MultiPoint";
-    public static final String OBSERVATIONDATA = "observationData";
-    public static final String OBSERVEDPROPERTIES = "observedProperties";
-    public static final String POINTMEMBERS = "pointMembers";
     public static final String RESPONSE_OBSERVED_PROPERTIES = "Response Observed Properties";
-    public static final String SRSNAME = "srsName";
-    public static final String STATIONS = "stations";
-    public static final String TEXTENCODING = "TextEncoding";
-    public static final String TOKENSEPARATOR = "tokenSeparator";
-    public static final String XSISCHEMALOCATION = "xsi:schemaLocation";
+
     // private fields
     private String[] procedures;
     // private static fields
@@ -41,8 +27,6 @@ public class Ioos10Formatter extends BaseOutputFormatter {
     // private constant fields
     private static final String TEMPLATE = "templates/GO_ioos10.xml";
     private static final String RESPONSE_FORMAT = "text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0\"";
-    private static final String SWE2_SCHEMALOCATION = "http://www.opengis.net/swe/2.0 http://schemas.opengis.net/sweCommon/2.0/swe.xsd";
-    private static final String ioosTemplateURL = "http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0";
     private static final FeatureType[] supportedTypes = {FeatureType.POINT, FeatureType.STATION};
     private static final String BLOCK_SEPERATOR = "\n";
     private static final String TOKEN_SEPERATOR = ",";
@@ -75,8 +59,8 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         }
 
         if (!supported) {
-            UnsupportedFeatureType(handler.getDatasetFeatureType());
-            this.handler = null;
+            this.hasError = true;
+            this.setupException("Unsupported feature type for the " + RESPONSE_FORMAT + " response format! FeatureType: " + (handler.getDatasetFeatureType().toString()));
         } else {
             this.hasError = false;
             this.handler = handler;
@@ -85,11 +69,6 @@ public class Ioos10Formatter extends BaseOutputFormatter {
 
     public String getTemplateLocation() {
         return TEMPLATE;
-    }
-
-    //============== Private Methods ========================================//
-    private void UnsupportedFeatureType(FeatureType ft) {
-        this.setupExceptionOutput("Unsupported feature type for the " + RESPONSE_FORMAT + " response format! FeatureType: " + ft.toString());
     }
 
     /**
@@ -129,8 +108,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
 
         } catch (Exception ex) {
             _log.error(ex.toString());
-            ex.printStackTrace();
-            this.setupExceptionOutput("Unable to correctly create response for request.");
+            this.setupException("Unable to correctly create response for request: " + ex.toString());
         }
     }
 
@@ -350,6 +328,13 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         for (int p = 0; p < this.handler.getProcedures().length; p++) {
             strBuilder.append(this.handler.getValueBlockForAllObs(BLOCK_SEPERATOR, DECIMAL_SEPERATOR, TOKEN_SEPERATOR, p));
         }
+
+        if (StringUtils.countOccurrencesOf(strBuilder.toString(), "ERROR") > 0) {
+            this.hasError = true;
+            this.setupException(strBuilder.toString());
+            return dr;
+        }
+
         int count = StringUtils.countOccurrencesOf(strBuilder.toString(), BLOCK_SEPERATOR);
         // create count element
         dynamic_array.addContent(this.createElementCount(count));
@@ -728,13 +713,6 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         String underScorePattern = "[\\+\\-\\s:]+";
         urn = urn.replaceAll(underScorePattern, "_");
         return urn.toLowerCase();
-    }
-
-    @Override
-    public void setupExceptionOutput(String message) {
-        _log.debug(message);
-        this.hasError = true;
-        this.document = XMLDomUtils.getExceptionDom(message);
     }
 
     @Override

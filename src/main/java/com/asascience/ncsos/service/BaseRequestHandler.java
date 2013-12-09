@@ -3,9 +3,6 @@ package com.asascience.ncsos.service;
 import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.util.DiscreteSamplingGeometryUtil;
 import com.asascience.ncsos.util.ListComprehension;
-import java.io.IOException;
-import java.text.NumberFormat;
-import java.util.*;
 import ucar.ma2.DataType;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
@@ -17,12 +14,10 @@ import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dt.GridDataset;
 import ucar.nc2.ft.*;
 
-/**
- * Provides access to the netcdf dataset wrappers that allow for easier access
- * to information that is specific or needed for specific feature types.
- * @author tkunicki
- * @modified scowan
- */
+import java.io.IOException;
+import java.text.NumberFormat;
+import java.util.*;
+
 public abstract class BaseRequestHandler {
     public static final String CF_ROLE = "cf_role";
     public static final String GRID = "grid";
@@ -30,6 +25,8 @@ public abstract class BaseRequestHandler {
     public static final String NAME = "name";
     public static final String PROFILE = "profile";
     public static final String TRAJECTORY = "trajectory";
+    public static final String PROFILE_ID = "profile_id";
+    public static final String TRAJECTORY_ID = "trajectory_id";
 
     public static final String STATION_URN_BASE = "urn:ioos:station:";
     public static final String SENSOR_URN_BASE = "urn:ioos:sensor:";
@@ -51,7 +48,15 @@ public abstract class BaseRequestHandler {
     protected Variable stationVariable;
     private HashMap<Integer, String> stationNames;
     private List<String> sensorNames;
-    
+
+
+    // Exception codes - Table 25 of OGC 06-121r3 (OWS Common)
+    protected static String INVALID_PARAMETER       = "InvalidParameterValue";
+    protected static String MISSING_PARAMETER       = "MissingParameterValue";
+    protected static String OPTION_NOT_SUPPORTED    = "OptionNotSupported";
+    protected static String OPERATION_NOT_SUPPORTED = "OperationNotSupported";
+
+
     private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(BaseRequestHandler.class);
 
     static {
@@ -60,7 +65,7 @@ public abstract class BaseRequestHandler {
         FORMAT_DEGREE.setMaximumFractionDigits(14);
     }
     private FeatureType dataFeatureType;
-    protected OutputFormatter output;
+    protected OutputFormatter formatter;
 
     /**
      * Takes in a dataset and wraps it based on its feature type.
@@ -181,28 +186,6 @@ public abstract class BaseRequestHandler {
         if (!this.global_attributes.containsKey("featureType")) {
             this.global_attributes.put("featureType", "UNKNOWN");
         }
-
-        /*
-        dataset_attributes.put("title",netCDFDataset.findAttValueIgnoreCase(null, "title", "No global attribute 'title'").trim());
-        summary = netCDFDataset.findAttValueIgnoreCase(null, "summary","No global attribute 'summary'").trim();
-        access_constraints = netCDFDataset.findAttValueIgnoreCase(null, "license", "NONE").trim();
-        PublisherEmail = netCDFDataset.findAttValueIgnoreCase(null, "publisher_email", "").trim();
-        PublisherName = netCDFDataset.findAttValueIgnoreCase(null, "publisher_name", "").trim();
-        PublisherPhone = netCDFDataset.findAttValueIgnoreCase(null, "publisher_phone", "").trim();
-        CreatorEmail = netCDFDataset.findAttValueIgnoreCase(null, "creator_email","").trim();
-        CreatorName = netCDFDataset.findAttValueIgnoreCase(null,"creator_name","".trim());
-        CreatorPhone = netCDFDataset.findAttValueIgnoreCase(null,"creator_phone","").trim();
-        PrimaryOwnership = netCDFDataset.findAttValueIgnoreCase(null, "source", "").trim();
-        Region = netCDFDataset.findAttValueIgnoreCase(null, "institution", "").trim();
-        // old attributes, still looking up for now
-
-        history = netCDFDataset.findAttValueIgnoreCase(null, "history", "").trim();
-        description = netCDFDataset.findAttValueIgnoreCase(null, "description", "").trim();
-        featureOfInterestBaseQueryURL = netCDFDataset.findAttValueIgnoreCase(null, "featureOfInterestBaseQueryURL", "").trim();
-        StandardNameVocabulary = netCDFDataset.findAttValueIgnoreCase(null, "standard_name_vocabulary", "none").trim();
-        featureType = netCDFDataset.findAttValueIgnoreCase(null, "featureType", "unknown").trim();
-        namingAuthority = netCDFDataset.findAttValueIgnoreCase(null, "naming_authority", DEF_NAMING_AUTHORITY).trim();
-        */
     }
 
     /**
@@ -223,14 +206,9 @@ public abstract class BaseRequestHandler {
                 for (Attribute attr : var.getAttributes()) {
                     if(attr.getFullName().equalsIgnoreCase(CF_ROLE)) {
                         this.stationVariable = var;
-                        String attrValue = attr.getStringValue().toLowerCase();
+                        String attrValue = attr.getStringValue();
                         // parse name based on role
-                        if (attrValue.contains(TRAJECTORY) && stationVariable.getDataType() == DataType.INT)
-                            parseTrajectoryIdsToNames();
-                        else if (attrValue.contains(PROFILE) && stationVariable.getDataType() == DataType.INT)
-                            parseProfileIdsToNames();
-                        else
-                            parseStationNames();
+                        parsePlatformNames();
                         break;
                     }
                 }
@@ -248,7 +226,7 @@ public abstract class BaseRequestHandler {
         
         if (this.stationVariable == null && getGridDataset() == null) {
             // there is no station variable ... add a single station with index 0?
-            parseStationNames();
+            parsePlatformNames();
         } else if (this.stationVariable == null) {
             parseGridIdsToName();
         }
@@ -276,6 +254,17 @@ public abstract class BaseRequestHandler {
         }
     }
 
+
+    private String getPlatformName(FeatureCollection fc, int index) {
+        // If NCJ can't pull out the FC name, we need to populate it with something
+        // like TRAJECTORY-0, STATION-0, PROFILE-0
+        if (fc.getName() != null && !fc.getName().equalsIgnoreCase("unknown")) {
+            return fc.getName();
+        } else {
+            return fc.getCollectionFeatureType().name() + "-" + index;
+        }
+    }
+
     /**
      * Add station names to hashmap, indexed.
      * @param npfc The nested point feature collection we're iterating through
@@ -287,16 +276,16 @@ public abstract class BaseRequestHandler {
         if (npfc.isMultipleNested()) {
             NestedPointFeatureCollectionIterator npfci = npfc.getNestedPointFeatureCollectionIterator(-1);
             while (npfci.hasNext()) {
-                NestedPointFeatureCollection nnpfc = npfci.next();
-//                String name = nnpfc.getName().replaceAll("[\\s]+", "");
-                String name = nnpfc.getName();
-                stationNames.put(stationIndex, name);
+                NestedPointFeatureCollection n = npfci.next();
+                stationNames.put(stationIndex, this.getPlatformName(n, stationIndex));
                 stationIndex += 1;
             }
         } else {
             PointFeatureCollectionIterator pfci = npfc.getPointFeatureCollectionIterator(-1);
             while (pfci.hasNext()) {
-                stationIndex = parsePointFeatureCollectionNames(pfci.next(), stationIndex);
+                PointFeatureCollection n = pfci.next();
+                stationNames.put(stationIndex, this.getPlatformName(n, stationIndex));
+                stationIndex += 1;
             }
         }
         
@@ -311,7 +300,6 @@ public abstract class BaseRequestHandler {
      * @throws IOException 
      */
     private int parsePointFeatureCollectionNames(PointFeatureCollection pfc, int stationIndex) throws IOException {
-//        String name = pfc.getName().replaceAll("[\\s]+", "");
         String name = pfc.getName();
         stationNames.put(stationIndex, name);
         return stationIndex+1;
@@ -321,88 +309,16 @@ public abstract class BaseRequestHandler {
      * Go through the point feature collection to get the station names.
      * @throws IOException 
      */
-    private void parseStationNames() throws IOException {
+    private void parsePlatformNames() throws IOException {
         this.stationNames = new HashMap<Integer, String>();
         int stationIndex = 0;
         if (CDMPointFeatureCollection instanceof PointFeatureCollection) {
             PointFeatureCollection pfc = (PointFeatureCollection) CDMPointFeatureCollection;
-            stationIndex = parsePointFeatureCollectionNames(pfc, stationIndex);
+            parsePointFeatureCollectionNames(pfc, stationIndex);
         } else if (CDMPointFeatureCollection instanceof NestedPointFeatureCollection) {
             NestedPointFeatureCollection npfc = (NestedPointFeatureCollection) CDMPointFeatureCollection;
-            stationIndex = parseNestedCollection(npfc, stationIndex);
+            parseNestedCollection(npfc, stationIndex);
         }
-    }
-    
-    /**
-     * Gets the numbers from the station var (which has type of INT).
-     * Uses "Trajectory" and the station number for naming.
-     * @throws IOException 
-     */
-    private void parseTrajectoryIdsToNames() throws IOException {
-        this.stationNames = new HashMap<Integer, String>();
-        int stationindex = 0;
-        // neseted feature collection
-        NestedPointFeatureCollection npfc = (NestedPointFeatureCollection) CDMPointFeatureCollection;
-        if (npfc.isMultipleNested()) {
-            // iterate through it
-            NestedPointFeatureCollectionIterator npfci = npfc.getNestedPointFeatureCollectionIterator(-1);
-            for (;npfci.hasNext();) {
-                NestedPointFeatureCollection n = npfci.next();
-//                String name = n.getName().replaceAll("[\\s]+", "");
-                String name = n.getName();
-                this.stationNames.put(stationindex++, "Trajectory"+name);
-            }
-        } else {
-            // iterate through it
-            PointFeatureCollectionIterator pfci = npfc.getPointFeatureCollectionIterator(-1);
-            for (;pfci.hasNext();) {
-                PointFeatureCollection n = pfci.next();
-//                String name = n.getName().replaceAll("[\\s]+", "");
-                String name = n.getName();
-                this.stationNames.put(stationindex++, "Trajectory"+name);
-            }
-        }
-    }
-    
-    /**
-     * Gets the numbers from the station var (which has type of INT).
-     * Uses "Profile" and the station number for naming.
-     * @throws IOException 
-     */
-    private void parseProfileIdsToNames() throws IOException {
-        this.stationNames = new HashMap<Integer, String>();
-        int stationindex = 0;
-        if (CDMPointFeatureCollection instanceof PointFeatureCollection) {
-            // point feature collection; iterate
-            PointFeatureCollection pfc = (PointFeatureCollection) CDMPointFeatureCollection;
-            PointFeatureIterator pfi = pfc.getPointFeatureIterator(-1);
-            for (;pfi.hasNext();) {
-                PointFeature pf = pfi.next();
-                this.stationNames.put(stationindex, "Profile" + stationindex);
-                stationindex++;
-            }
-        } else {
-            // nested feature collection
-            NestedPointFeatureCollection npfc = (NestedPointFeatureCollection) CDMPointFeatureCollection;
-            if (npfc.isMultipleNested()) {
-                // iterate through collection of nested point feature collections (usually Section data type)
-                NestedPointFeatureCollectionIterator npfci = npfc.getNestedPointFeatureCollectionIterator(-1);
-                for (;npfci.hasNext();) {
-                    NestedPointFeatureCollection n = npfci.next();
-                    this.stationNames.put(stationindex, "Profile" + stationindex);
-                    stationindex++;
-                }
-            } else {
-                // iterate through collection of point feature collections
-                PointFeatureCollectionIterator pfci = npfc.getPointFeatureCollectionIterator(-1);
-                for (;pfci.hasNext();) {
-                    PointFeatureCollection n = pfci.next();
-                    this.stationNames.put(stationindex, "Profile" + stationindex);
-                    stationindex++;
-                }
-            }
-        }
-        
     }
     
     /**
@@ -487,6 +403,19 @@ public abstract class BaseRequestHandler {
      */
     protected List<String> getSensorNames() {
         return this.sensorNames;
+    }
+
+    /**
+     * Return the list of sensor names
+     * @return string list of sensor names
+     */
+    protected List<String> getSensorUrns(String stationName) {
+        List<String> urnNames = new ArrayList<String>(this.sensorNames.size());
+        for (String s : this.sensorNames) {
+            urnNames.add(this.getSensorUrnName(stationName, s));
+        }
+        return urnNames;
+
     }
     
     /**
@@ -574,8 +503,8 @@ public abstract class BaseRequestHandler {
      * Returns the OutputFormatter being used by the request.
      * @return OutputFormatter
      */
-    public OutputFormatter getOutputHandler() {
-        return output;
+    public OutputFormatter getOutputFormatter() {
+        return formatter;
     }
 
     /**
@@ -619,7 +548,13 @@ public abstract class BaseRequestHandler {
      * @return
      */
     public String getUrnName(String stationName) {
-        return STATION_URN_BASE + this.global_attributes.get("naming_authority") + ":" + stationName;
+        String[] feature_name = stationName.split(":");
+        if (feature_name.length > 1 && feature_name[0].equalsIgnoreCase("urn")) {
+            // We already have a URN, so just return it.
+            return stationName;
+        } else {
+            return STATION_URN_BASE + this.global_attributes.get("naming_authority") + ":" + stationName;
+        }
     }
     
     public String getUrnNetworkAll() {
@@ -634,6 +569,11 @@ public abstract class BaseRequestHandler {
      * @return urn of the station/sensor combo
      */
     public String getSensorUrnName(String stationName, String sensorName) {
+        String[] feature_name = stationName.split(":");
+        if (feature_name.length > 1 && feature_name[0].equalsIgnoreCase("urn")) {
+            // We have a station URN, so strip out the name
+            stationName = feature_name[feature_name.length - 1];
+        }
         return SENSOR_URN_BASE + this.global_attributes.get("naming_authority") + ":" + stationName + ":" + sensorName;
     }
 

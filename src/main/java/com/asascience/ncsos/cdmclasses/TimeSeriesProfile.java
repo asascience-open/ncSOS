@@ -6,6 +6,11 @@ package com.asascience.ncsos.cdmclasses;
 
 import com.asascience.ncsos.go.ObservationOffering;
 import com.asascience.ncsos.service.BaseRequestHandler;
+import org.joda.time.DateTime;
+import org.w3c.dom.Document;
+import ucar.nc2.ft.*;
+import ucar.nc2.units.DateFormatter;
+import ucar.unidata.geoloc.Station;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,11 +19,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.joda.time.DateTime;
-import org.w3c.dom.Document;
-import ucar.nc2.ft.*;
-import ucar.nc2.units.DateFormatter;
-import ucar.unidata.geoloc.Station;
 
 /**
  * Provides methods to gather information from TimeSeriesProfile datasets needed for requests: GetCapabilities, GetObservations
@@ -27,7 +27,7 @@ import ucar.unidata.geoloc.Station;
  */
 public class TimeSeriesProfile extends baseCDMClass implements iStationData {
 
-     private StationProfileFeatureCollection tsProfileData;
+    private StationProfileFeatureCollection tsProfileData;
     private List<Station> tsStationList;
     private final ArrayList<String> eventTimes;
     private final String[] variableNames;
@@ -55,47 +55,6 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
         lowerAlt = Double.POSITIVE_INFINITY;
         upperAlt = Double.NEGATIVE_INFINITY;
     }
-    
-    /**
-     * gets the timeseriesprofile response for the gc request
-     * @param featureCollection1
-     * @param document
-     * @param featureOfInterestBase
-     * @param GMLBase
-     * @param observedPropertyList
-     * @return
-     * @throws IOException 
-     */
-    public static Document getCapsResponse(StationProfileFeatureCollection featureCollection1, Document document, String featureOfInterestBase, String GMLBase, List<String> observedPropertyList) throws IOException {
-        StationProfileFeature stationProfileFeature = null;
-        ObservationOffering newOffering = null;
-        DateFormatter timePeriodFormatter = new DateFormatter();
-        for (Station station : featureCollection1.getStations()) {
-            String stationName = station.getName();
-            String stationLat = BaseRequestHandler.formatDegree(station.getLatitude());
-            String stationLon = BaseRequestHandler.formatDegree(station.getLongitude());
-            newOffering = new ObservationOffering();
-            newOffering.setObservationStationID(stationName);
-            newOffering.setObservationStationLowerCorner(stationLat, stationLon);
-            newOffering.setObservationStationUpperCorner(stationLat, stationLon);
-            StationProfileFeature feature = featureCollection1.getStationProfileFeature(station);
-            //feature.calcBounds();
-            stationProfileFeature = featureCollection1.getStationProfileFeature(station);
-            List<Date> times = stationProfileFeature.getTimes();
-            newOffering.setObservationTimeBegin(timePeriodFormatter.toDateTimeStringISO(times.get(0)));
-            newOffering.setObservationTimeEnd(timePeriodFormatter.toDateTimeStringISO(times.get(times.size() - 1)));
-            newOffering.setObservationStationDescription(feature.getDescription());
-            newOffering.setObservationName(GMLBase + stationName);
-            newOffering.setObservationSrsName("EPSG:4326");
-            newOffering.setObservationProcedureLink(GMLBase + stationName);
-            newOffering.setObservationObserveredList(observedPropertyList);
-            newOffering.setObservationFeatureOfInterest(featureOfInterestBase + stationName);
-            document = CDMUtils.addObsOfferingToDoc(newOffering, document);
-        }
-
-        return document;
-    }
-   
 
     /****************TIMESERIESPROFILE*******************/
     private String createStationProfileFeature(int stNum) throws IOException {
@@ -103,15 +62,11 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
         DateFormatter dateFormatter = new DateFormatter();
         List<String> valueList = new ArrayList<String>();
 
-
         StationProfileFeature stationProfileFeature = tsProfileData.getStationProfileFeature(tsStationList.get(stNum));
         List<Date> z = stationProfileFeature.getTimes();
 
-
         ProfileFeature pf = null;
-        
 
-        //count = 0;
         //if not event time is specified get all the data
         if (eventTimes == null) {
             //test getting items by date(index(0))
@@ -165,8 +120,6 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
         try {
             PointFeatureIterator it = pf.getPointFeatureIterator(-1);
 
-            //int num = 0;
-
             while (it.hasNext()) {
                 PointFeature pointFeature = it.next();
                 valueList.clear();
@@ -205,7 +158,18 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
     @Override
     public void setData(Object featureProfileCollection) throws IOException {
         this.tsProfileData = (StationProfileFeatureCollection) featureProfileCollection;
+
         tsStationList = tsProfileData.getStations(reqStationNames);
+
+        // Try to get stations by name, both with URN procedure and without
+        tsStationList = tsProfileData.getStations(reqStationNames);
+        for (String s : reqStationNames) {
+            String[] urns = s.split(":");
+            Station st = tsProfileData.getStation(urns[urns.length - 1]);
+            if (st != null) {
+                tsStationList.add(st);
+            }
+        }
 
         setNumberOfStations(tsStationList.size());
         

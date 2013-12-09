@@ -7,17 +7,17 @@ package com.asascience.ncsos.controller;
 import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.service.Parser;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.HashMap;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.BasicConfigurator;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import ucar.nc2.dataset.NetcdfDataset;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.HashMap;
 
 
 /**
@@ -81,7 +81,7 @@ public class SosController implements ISosContoller {
             res.setContentType(respMap.get("responseContentType").toString());
             
             // tell our handler to write out the response
-            OutputFormatter output = (OutputFormatter)respMap.get("outputHandler");
+            OutputFormatter output = (OutputFormatter)respMap.get("outputFormatter");
             output.writeOutput(writer);
             
             // log and flush writer

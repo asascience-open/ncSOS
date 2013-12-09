@@ -1,49 +1,43 @@
 package com.asascience.ncsos.outputformatter;
 
-import com.asascience.ncsos.go.GetObservationRequestHandler;
-import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.XMLDomUtils;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.jdom.Namespace;
 import org.jdom.Element;
+import org.jdom.Namespace;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
+import java.io.IOException;
+import java.io.Writer;
+
 public class BaseOutputFormatter extends OutputFormatter {
 
-    protected class SubElement {
-
-        public HashMap<String, String> attributes;
-        public String tag;
-        public String tagNS;
-        public String textContent;
-
-        public SubElement(String tag, String tagNS) {
-            this.attributes = new HashMap<String, String>();
-            this.textContent = null;
-            this.tag = tag;
-            this.tagNS = tagNS;
-        }
-    }
-    protected BaseRequestHandler handler = null;
     protected boolean hasError;
-    protected String DEFAULT_VALUE = "UNKNOWN";
-    private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BaseOutputFormatter.class);
 
     public BaseOutputFormatter() {
         super();
     }
 
+    protected String getTemplateLocation() {
+        return "";
+    }
+
     public void addDataFormattedStringToInfoList(String dataFormattedString) {
     }
 
-    public void setupExceptionOutput(String message) {
-        this.document = XMLDomUtils.getExceptionDom(message);
+    protected void setupException(String message) {
+        ErrorFormatter ef = new ErrorFormatter();
+        ef.setException(message);
+        this.document = ef.document;
+    }
+    protected void setupException(String message, String exceptionCode) {
+        ErrorFormatter ef = new ErrorFormatter();
+        ef.setException(message, exceptionCode);
+        this.document = ef.document;
+    }
+    protected void setupException(String message, String exceptionCode, String locator) {
+        ErrorFormatter ef = new ErrorFormatter();
+        ef.setException(message, exceptionCode, locator);
+        this.document = ef.document;
     }
 
     public void writeOutput(Writer writer) throws IOException {
@@ -62,11 +56,11 @@ public class BaseOutputFormatter extends OutputFormatter {
          * </gml:boundedBy>
          */
         Namespace gmlns = this.getNamespace("gml");
-        Element bb = this.getRoot().getChild("boundedBy", gmlns);
+        Element bb = XMLDomUtils.getNestedChild(this.getRoot(), "boundedBy", gmlns);
         Element env = new Element("Envelope", gmlns);
         env.setAttribute("srsName", srsName);
-        env.getChild("lowerCorner", gmlns).setText(lowerCorner);
-        env.getChild("upperCorner", gmlns).setText(upperCorner);
+        env.addContent(new Element("lowerCorner", gmlns).setText(lowerCorner));
+        env.addContent(new Element("upperCorner", gmlns).setText(upperCorner));
         bb.addContent(env);
     }
 

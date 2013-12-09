@@ -4,11 +4,12 @@
  */
 package com.asascience.ncsos.cdmclasses;
 
-import java.util.List;
 import org.joda.time.Chronology;
 import org.joda.time.chrono.ISOChronology;
 import ucar.nc2.units.DateFormatter;
 import ucar.unidata.geoloc.Station;
+
+import java.util.List;
 
 /**
  * @author abird
@@ -139,5 +140,4 @@ public abstract class baseCDMClass implements iStationData {
             return 0;
         return upperAlt;
     }
-    
 }

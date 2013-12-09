@@ -1,28 +1,22 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.asascience.ncsos.ds;
 
 import com.asascience.ncsos.cdmclasses.*;
+import com.asascience.ncsos.outputformatter.ErrorFormatter;
 import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.outputformatter.ds.IoosPlatform10Formatter;
 import com.asascience.ncsos.util.LogReporter;
 import com.asascience.ncsos.util.VocabDefinitions;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.NetcdfDataset;
 
-/**
- *
- * @author SCowan
- */
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterface {
     
     private final String procedure;
@@ -33,22 +27,23 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
     private boolean locationLineFlag;
 
     private final static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(IoosPlatform10Handler.class);
-    private final static String QUERY = "?service=SOS&request=DescribeSensorHandler&version=1.0.0&outputFormat=text/xml;subtype=\"sensorML/1.0.1\"&procedure=";
+    private final static String QUERY = "?service=SOS&request=DescribeSensor&version=1.0.0&outputFormat=text/xml;subtype=\"sensorML/1.0.1\"&procedure=";
     
     private IoosPlatform10Formatter platform;
     
     public IoosPlatform10Handler(NetcdfDataset dataset, String procedure, String serverURL) throws IOException {
         super(dataset, new LogReporter());
         this.procedure = procedure;
-        this.stationName = procedure.substring(procedure.lastIndexOf(":")+1);
+        this.stationName = procedure; //.substring(procedure.lastIndexOf(":")+1);
         this.urlBase = serverURL;
         this.locationLineFlag = false;
         this.setStationData();
     }
     
-    public void setupOutputDocument(OutputFormatter output) {
+    public void setupOutputDocument(OutputFormatter output) throws IOException {
         if (errorString != null) {
-            output.setupExceptionOutput(errorString);
+            formatter = new ErrorFormatter();
+            ((ErrorFormatter)formatter).setException(errorString);
         } else {
             try {
                 this.platform = (IoosPlatform10Formatter) output;
@@ -166,13 +161,8 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
     }
     
     private void formatSmlNetworkProcedures() {
-        // create the network urn
-        String networkUrn = this.procedure.substring(0, this.procedure.lastIndexOf(":") +1);
-        networkUrn = networkUrn.replaceAll(":station:|:sensor:", ":network:");
-        networkUrn += "all";
-        
         platform.addSmlCapabilitiesGmlMetadata( OutputFormatter.SYSTEM, "networkProcedures",
-        		"network-all", networkUrn);
+        		"network-all", this.getUrnNetworkAll());
     }
     
     private void formatSmlContacts() {
@@ -278,11 +268,16 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 break;
             case PROFILE:
-                this.stationData = new Profile(new String[] { this.stationName.replaceAll("[A-Za-z]+", "") }, null, null);
+                this.stationData = new Profile(new String[] { this.stationName }, null, null);
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 break;
             case TRAJECTORY:
-                this.stationData = new Trajectory(new String[] { this.stationName.replaceAll("[A-Za-z]+", "") },null,null);
+                this.stationData = new Trajectory(new String[] { this.stationName },null,null);
+                this.stationData.setData(this.getFeatureTypeDataSet());
+                this.locationLineFlag = true;
+                break;
+            case SECTION:
+                this.stationData = new Section(new String[] { this.stationName }, null, null);
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 this.locationLineFlag = true;
                 break;
@@ -296,11 +291,6 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
                 }
                 this.stationData = new Grid(new String[] { this.stationName.replaceAll("[A-Za-z]+", "") }, null, dataVars.toArray(new String[dataVars.size()]), latLon);
                 this.stationData.setData(this.getGridDataset());
-                break;
-            case SECTION:
-                this.stationData = new Section(new String[] { this.stationName.replaceAll("[A-Za-z]+", "") }, null, null);
-                this.stationData.setData(this.getFeatureTypeDataSet());
-                this.locationLineFlag = true;
                 break;
             default:
                 logger.error("Unsupported feature type in Describe Platform M1_0: " + this.getDatasetFeatureType().toString());

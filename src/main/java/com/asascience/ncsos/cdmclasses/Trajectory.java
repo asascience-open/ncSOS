@@ -2,6 +2,12 @@ package com.asascience.ncsos.cdmclasses;
 
 import com.asascience.ncsos.go.ObservationOffering;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
+import org.joda.time.DateTime;
+import org.w3c.dom.Document;
+import ucar.nc2.ft.*;
+import ucar.nc2.units.DateFormatter;
+import ucar.unidata.geoloc.Station;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,11 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.joda.time.DateTime;
-import org.w3c.dom.Document;
-import ucar.nc2.ft.*;
-import ucar.nc2.units.DateFormatter;
-import ucar.unidata.geoloc.Station;
 
 /**
  * Provides methods to gather information from Trajectory datasets needed for requests: GetCapabilities, GetObservations
@@ -87,29 +88,10 @@ public class Trajectory extends baseCDMClass implements iStationData {
         this.trajectoryData.resetIteration();
 
         trajList = new ArrayList<TrajectoryFeature>();
-
-        DateTime dtSearchStart = null;
-        DateTime dtSearchEnd = null;
-        
         altMax = new ArrayList<Double>();
         altMin = new ArrayList<Double>();
 
         boolean firstSet = true;
-
-        //check first to see if the event times are not null
-        if (eventTimes != null) {
-            //turn event times in to dateTimes to compare
-            if (eventTimes.size() >= 1) {
-                dtSearchStart = new DateTime(df.getISODate(eventTimes.get(0)), chrono);
-            }
-            if (eventTimes.size() == 2) {
-
-                dtSearchEnd = new DateTime(df.getISODate(eventTimes.get(1)), chrono);
-            }
-        } else {
-            // set search start to earliest possible
-            dtSearchStart = new DateTime(0, chrono);
-        }
 
         //temp
         DateTime dtStart = null;
@@ -131,8 +113,11 @@ public class Trajectory extends baseCDMClass implements iStationData {
 
             // find a better solution for getting features from the collection - TODO
             //scan through the stationname for a match of id
-            for (String stName : reqStationNames) {
-                if (stName.equalsIgnoreCase(n)) {
+            for (String s : reqStationNames) {
+                String[] urns = s.split(":");
+                String  nourn = urns[urns.length - 1];
+
+                if (s.equalsIgnoreCase(n) || nourn.equalsIgnoreCase(n)) {
                     if (!trajList.contains(trajFeature))
                         trajList.add(trajFeature);
                     break;
@@ -239,7 +224,8 @@ public class Trajectory extends baseCDMClass implements iStationData {
     @Override
     public String getStationName(int idNum) {
         if (trajList != null) {
-            return "TRAJECTORY_" + (trajList.get(idNum).getName());
+            //return "TRAJECTORY_" + (trajList.get(idNum).getName());
+            return (trajList.get(idNum).getName());
         } else {
             return Invalid_Station;
         }
@@ -322,53 +308,6 @@ public class Trajectory extends baseCDMClass implements iStationData {
         }
     }
 
-    /**
-     * gets the trajectory response for the gc request
-     * @param dataset
-     * @param document
-     * @param featureOfInterest
-     * @param GMLName
-     * @param observedPropertyList
-     * @return
-     * @throws IOException 
-     */
-    public static Document getCapsResponse(FeatureCollection dataset, Document document, String featureOfInterest, String GMLName, List<String> observedPropertyList) throws IOException {
-        //PointFeatureIterator trajIter;
-
-
-        while (((TrajectoryFeatureCollection) dataset).hasNext()) {
-            TrajectoryFeature tFeature = ((TrajectoryFeatureCollection) dataset).next();
-            DatasetHandlerAdapter.calcBounds(tFeature);
-
-            //trajIter = tFeature.getPointFeatureIterator(-1);
-            //attributes
-            ObservationOffering newOffering = new ObservationOffering();
-            newOffering.setObservationStationLowerCorner(Double.toString(tFeature.getBoundingBox().getLatMin()), Double.toString(tFeature.getBoundingBox().getLonMin()));
-            newOffering.setObservationStationUpperCorner(Double.toString(tFeature.getBoundingBox().getLatMax()), Double.toString(tFeature.getBoundingBox().getLonMax()));
-
-            //check the data
-            if (tFeature.getDateRange() != null) {
-                newOffering.setObservationTimeBegin(tFeature.getDateRange().getStart().toDateTimeStringISO());
-                newOffering.setObservationTimeEnd(tFeature.getDateRange().getEnd().toDateTimeStringISO());
-            } //find the dates out!
-            else {
-                System.out.println("no dates yet");
-            }
-
-            newOffering.setObservationStationDescription(tFeature.getCollectionFeatureType().toString());
-            newOffering.setObservationFeatureOfInterest(featureOfInterest + (tFeature.getName()));
-            newOffering.setObservationName(GMLName + (tFeature.getName()));
-            newOffering.setObservationStationID((tFeature.getName()));
-            newOffering.setObservationProcedureLink(GMLName + ((tFeature.getName())));
-            newOffering.setObservationSrsName("EPSG:4326");  // TODO?  
-            newOffering.setObservationObserveredList(observedPropertyList);
-
-            document = CDMUtils.addObsOfferingToDoc(newOffering, document);
-        }
-
-        return document;
-    }
-
     @Override
     public String getDescription(int stNum) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -439,19 +378,17 @@ public class Trajectory extends baseCDMClass implements iStationData {
     public List<String> getLocationsString(int stNum) {
         try {
             if (trajList != null) {
-                _log.debug("in getLocationsString - trajList count: " + trajList.size());
                 List<String> retval = new ArrayList<String>();
                 PointFeatureIterator iter = trajList.get(stNum).getPointFeatureIterator(-1);
                 while(iter.hasNext()) {
                     PointFeature pf = iter.next();
-                    _log.debug(pf.getLocation().getLatitude() + " " + pf.getLocation().getLongitude());
                     retval.add(pf.getLocation().getLatitude() + " " + pf.getLocation().getLongitude());
                 }
                 iter.finish();
                 return retval;
             } 
         } catch (Exception ex) {
-            _log.error(ex.toString());
+            _log.error(ex.getMessage(), ex);
         }
         return new ArrayList();
     }

@@ -1,12 +1,11 @@
 package com.asascience.ncsos.util;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
-import ucar.nc2.units.DateFormatter;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class TimeUtils
 {

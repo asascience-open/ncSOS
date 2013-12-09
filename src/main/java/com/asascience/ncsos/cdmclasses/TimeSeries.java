@@ -7,12 +7,6 @@ package com.asascience.ncsos.cdmclasses;
 import com.asascience.ncsos.go.ObservationOffering;
 import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.joda.time.Chronology;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
@@ -23,6 +17,13 @@ import ucar.nc2.ft.StationTimeSeriesFeatureCollection;
 import ucar.nc2.units.DateFormatter;
 import ucar.nc2.units.DateRange;
 import ucar.unidata.geoloc.Station;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Provides methods to gather information from TimeSeries datasets needed for requests: GetCapabilities, GetObservations
@@ -56,65 +57,6 @@ public class TimeSeries extends baseCDMClass implements iStationData {
             this.eventTimes = null;
     }
 
-    /**
-     * gets the timeseries response for the gc request
-     * @param featureCollection
-     * @param document
-     * @param featureOfInterest
-     * @param GMLName
-     * @param observedPropertyList
-     * @return
-     * @throws IOException 
-     */
-    public static Document getCapsResponse(StationTimeSeriesFeatureCollection featureCollection, Document document, String featureOfInterest, String GMLName, List<String> observedPropertyList) throws IOException {
-        String stationName = null;
-        String stationLat = null;
-        String stationLon = null;
-        ObservationOffering newOffering = null;
-        StationTimeSeriesFeature feature = null;
-
-        List<Station> stationList = featureCollection.getStations();
-        for (int i = 0; i < stationList.size(); i++) {
-            feature = featureCollection.getStationFeature(stationList.get(i));
-            stationName = stationList.get(i).getName();
-            stationLat = BaseRequestHandler.formatDegree(stationList.get(i).getLatitude());
-            stationLon = BaseRequestHandler.formatDegree(stationList.get(i).getLongitude());
-            newOffering = new ObservationOffering();
-            newOffering.setObservationStationID(stationName);
-            newOffering.setObservationStationLowerCorner(stationLat, stationLon);
-            newOffering.setObservationStationUpperCorner(stationLat, stationLon);
-
-            // Code that causes slow issues
-            /*
-            if (stationList.size() < 75) {
-            feature.calcBounds();
-            newOffering.setObservationTimeBegin(feature.getDateRange().getStart().toDateTimeStringISO());
-            newOffering.setObservationTimeEnd(feature.getDateRange().getEnd().toDateTimeStringISO());
-            }
-             * 
-             */
-
-            try {
-                DatasetHandlerAdapter.calcBounds(feature);
-                newOffering.setObservationTimeBegin(feature.getDateRange().getStart().toDateTimeStringISO());
-                newOffering.setObservationTimeEnd(feature.getDateRange().getEnd().toDateTimeStringISO());
-            } catch (Exception e) {
-            }
-            //END of slow issue code
-
-            newOffering.setObservationStationDescription(feature.getDescription());
-            newOffering.setObservationName(GMLName + stationName);
-            newOffering.setObservationSrsName("EPSG:4326");  // TODO? 
-            newOffering.setObservationProcedureLink(GMLName + stationName);
-            newOffering.setObservationObserveredList(observedPropertyList);
-            newOffering.setObservationFeatureOfInterest(featureOfInterest + stationName);
-
-            document = CDMUtils.addObsOfferingToDoc(newOffering, document);
-        }
-
-        return document;
-    }
-
     /*******************TIMSERIES*************************/
     private String createTimeSeriesData(int stNum) throws IOException {
         //create the iterator for the feature
@@ -124,8 +66,6 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         StringBuilder builder = new StringBuilder();
         DateFormatter dateFormatter = new DateFormatter();
         List<String> valueList = new ArrayList<String>();
-        //Joiner tokenJoiner = Joiner.on(',');
-        //int count = 0;
 
         while (iterator.hasNext()) {
             PointFeature pointFeature = iterator.next();
@@ -228,7 +168,17 @@ public class TimeSeries extends baseCDMClass implements iStationData {
     public void setData(Object featureCollection) throws IOException {
         try {
             this.tsData = (StationTimeSeriesFeatureCollection) featureCollection;
+
+            // Try to get stations by name, both with URN procedure and without
             tsStationList = tsData.getStations(reqStationNames);
+            for (String s : reqStationNames) {
+                String[] urns = s.split(":");
+                Station st = tsData.getStation(urns[urns.length - 1]);
+                if (st != null) {
+                    tsStationList.add(st);
+                }
+            }
+
             setNumberOfStations(tsStationList.size());
 
             if (tsStationList.size() > 0) {

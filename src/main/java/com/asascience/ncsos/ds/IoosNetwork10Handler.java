@@ -1,28 +1,22 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.asascience.ncsos.ds;
 
 import com.asascience.ncsos.cdmclasses.*;
+import com.asascience.ncsos.outputformatter.ErrorFormatter;
 import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.outputformatter.ds.IoosNetwork10Formatter;
 import com.asascience.ncsos.util.ListComprehension;
 import com.asascience.ncsos.util.LogReporter;
 import com.asascience.ncsos.util.VocabDefinitions;
+import ucar.nc2.Attribute;
+import ucar.nc2.VariableSimpleIF;
+import ucar.nc2.dataset.NetcdfDataset;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import ucar.nc2.Attribute;
-import ucar.nc2.VariableSimpleIF;
-import ucar.nc2.dataset.NetcdfDataset;
 
-/**
- *
- * @author scowan
- */
 public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterface {
     
     private final String procedure;
@@ -49,14 +43,16 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
         setStationData();
     }
 
-    public void setupOutputDocument(OutputFormatter output) {
+    public void setupOutputDocument(OutputFormatter format) throws IOException {
         if (!checkForProcedure(this.procedure)) {
-          output.setupExceptionOutput("Invalid procedure: " + this.procedure);  
+            formatter = new ErrorFormatter();
+            ((ErrorFormatter)formatter).setException("Invalid procedure: " + this.procedure, INVALID_PARAMETER, "procedure");
         } else if (errorString != null) {
-            output.setupExceptionOutput(errorString);
+            formatter = new ErrorFormatter();
+            ((ErrorFormatter)formatter).setException(errorString);
         } else {
             try {
-                this.network = (IoosNetwork10Formatter) output;
+                this.network = (IoosNetwork10Formatter) format;
                 describeNetwork();
             } catch (Exception ex) {
                 logger.error(ex.toString());
@@ -66,9 +62,9 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
     }
     
     private void describeNetwork() {
-        network.setVersionMetadata();
-        network.setName(this.procedure);
-        network.setDescriptionNode((String)this.getGlobalAttribute("description", "No description found"));
+        this.network.setVersionMetadata();
+        this.network.setName(this.procedure);
+        this.network.setDescriptionNode((String)this.getGlobalAttribute("description", "No description found"));
         this.formatSmlIdentification();
         this.formatSmlClassification();
         this.formatSmlValidTime();
@@ -112,10 +108,10 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
         String org = this.checkForRequiredValue("creator_name");
         String url = (String)this.getGlobalAttribute("creator_url", null);
         HashMap<String, String> address = createAddressForContact("creator");
-        contactInfo.put("sml:address", address);
+        contactInfo.put("address", address);
         HashMap<String, String> phone = new HashMap<String, String>();
-        phone.put("sml:voice", (String)this.getGlobalAttribute("creator_phone", null));
-        contactInfo.put("sml:phone", phone);
+        phone.put("voice", (String)this.getGlobalAttribute("creator_phone", null));
+        contactInfo.put("phone", phone);
         network.addContactNode(role, org, contactInfo, url);
 
         contactInfo.clear();
@@ -125,20 +121,20 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
         org = this.checkForRequiredValue("publisher_name");
         url = (String)this.getGlobalAttribute("publisher_url", null);
         address = createAddressForContact("publisher");
-        contactInfo.put("sml:address", address);
-        phone.put("sml:voice", (String)this.getGlobalAttribute("publisher_phone", null));
-        contactInfo.put("sml:phone", phone);
+        contactInfo.put("address", address);
+        phone.put("voice", (String)this.getGlobalAttribute("publisher_phone", null));
+        contactInfo.put("phone", phone);
         network.addContactNode(role, org, contactInfo, url);
     }
     
     private HashMap<String,String> createAddressForContact(String contactPrefix) {
         HashMap<String,String> address = new HashMap<String, String>();
-        address.put("sml:deliveryPoint", (String)this.getGlobalAttribute(contactPrefix + "_address", null));
-        address.put("sml:city", (String)this.getGlobalAttribute(contactPrefix + "_city", null));
-        address.put("sml:administrativeArea", (String)this.getGlobalAttribute(contactPrefix + "_state", null));
-        address.put("sml:postalCode", (String)this.getGlobalAttribute(contactPrefix+"_zipcode", null));
-        address.put("sml:country", this.checkForRequiredValue(contactPrefix + "_country"));
-        address.put("sml:electronicMailAddress", this.checkForRequiredValue(contactPrefix + "_email"));
+        address.put("deliveryPoint", (String)this.getGlobalAttribute(contactPrefix + "_address", null));
+        address.put("city", (String)this.getGlobalAttribute(contactPrefix + "_city", null));
+        address.put("administrativeArea", (String)this.getGlobalAttribute(contactPrefix + "_state", null));
+        address.put("postalCode", (String)this.getGlobalAttribute(contactPrefix+"_zipcode", null));
+        address.put("country", this.checkForRequiredValue(contactPrefix + "_country"));
+        address.put("electronicMailAddress", this.checkForRequiredValue(contactPrefix + "_email"));
         return address;
     }
     
@@ -158,41 +154,41 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
                 break;
             case PROFILE:
                 // remove 'Profile' from the station names, since they are arbitrary
+                /*
                 stationNames = ListComprehension.map(stationNames, new ListComprehension.Func<String, String>() {
                     public String apply(String in) {
                         return in.replaceAll("[A-Za-z]+", "");
                     }
                 });
+                */
                 this.stationData = new Profile(stationNames.toArray(new String[stationNames.size()]), null, null);
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 break;
             case TRAJECTORY:
                 // remove 'Trajectory' from the station names, since they are arbitrary
+                /*
                 stationNames = ListComprehension.map(stationNames, new ListComprehension.Func<String, String>() {
                     public String apply(String in) {
                         return in.replaceAll("[A-Za-z]+", "");
                     }
                 });
+                */
                 this.stationData = new Trajectory(stationNames.toArray(new String[stationNames.size()]),null,null);
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 break;
             case SECTION:
                 // remove 'Trajectory' from the station names, since they are arbitrary
+                /*
                 stationNames = ListComprehension.map(stationNames, new ListComprehension.Func<String, String>() {
                     public String apply(String in) {
                         return in.replaceAll("[A-Za-z]+", "");
                     }
                 });
+                */
                 this.stationData = new Section(stationNames.toArray(new String[stationNames.size()]), null, null);
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 break;
             case GRID:
-                // remove 'Grid' from the station names, since they are arbitrary
-//                stationNames = ListComprehension.map(stationNames, new ListComprehension.Func<String, String>() {
-//                    public String apply(String in) {
-//                        return in.replaceAll("[A-Za-z]+", "");
-//                    }
-//                });
                 List<String> dataVars = new ArrayList<String>();
                 for (VariableSimpleIF var : this.getDataVariables()) {
                     dataVars.add(var.getShortName());
@@ -203,9 +199,14 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
                 this.stationData = new Grid(stationNames.toArray(new String[stationNames.size()]), null, dataVars.toArray(new String[dataVars.size()]), latLon);
                 this.stationData.setData(this.getGridDataset());
                 break;
+            case POINT:
+                logger.error("NcSOS does not support the Point featureType at this time.");
+                this.errorString = "NcSOS does not support the Point featureType at this time.";
+                break;
             default:
-                logger.error("Unsupported feature type in Describe Network M1_0: " + this.getDatasetFeatureType().toString());
-                this.errorString = "Unsupported feature type for DS response";
+                logger.error("Unsupported feature type: " + this.getDatasetFeatureType().toString());
+                this.errorString = "Unsupported feature type: " + this.getDatasetFeatureType().toString();
+                break;
         }
     }
 
@@ -232,8 +233,8 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
             String stationNameFixed = station.getValue().replaceAll("[Pp]rofile|[Tt]rajectory", "");
             // stationID
             network.addIdentifierToComponent(station.getValue(), "stationID", 
-            		VocabDefinitions.GetIoosDefinition("stationID"), 
-            		this.procedure.substring(0,this.procedure.lastIndexOf(":")) + station.getValue());
+            		VocabDefinitions.GetIoosDefinition("stationID"),
+                    this.getUrnName(station.getValue()));
             // shortName
             VariableSimpleIF pVar = this.checkForRequiredVariable("platform_short_name");
             network.addIdentifierToComponent(station.getValue(), "shortName", 
@@ -294,9 +295,9 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
         for (Map.Entry<Integer,String> station : this.getStationNames().entrySet()) {
             network.addSmlComponent(station.getValue());
             // identifiers for station
-            network.addIdentifierToComponent(station.getValue(), "stationID", GetIoosDef("stationID"), this.procedure.substring(0,this.procedure.lastIndexOf(":")) + station.getValue());
+            network.addIdentifierToComponent(station.getValue(), "stationID", GetIoosDef("stationID"), this.getUrnName(station.getValue()));
             network.addIdentifierToComponent(station.getValue(), "shortName", GetIoosDef("shortName"), this.checkForRequiredValue(identVar, "short_name"));
-            network.addIdentifierToComponent(station.getValue(), "longName", GetIoosDef("longName"), this.checkForRequiredValue(identVar, "short_name"));
+            network.addIdentifierToComponent(station.getValue(), "longName", GetIoosDef("longName"), this.checkForRequiredValue(identVar, "long_name"));
             // wmoid, if it exists
             Attribute identAtt = identVar.findAttribute("wmo_code");
             if (identAtt != null) {
@@ -316,8 +317,8 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
                 }
             } else {
                 // GRID data
-                String lowerCorner = this.stationData.getLowerLat(station.getKey()) + " " + this.stationData.getLowerLon(station.getKey());
-                String upperCorner = this.stationData.getUpperLat(station.getKey()) + " " + this.stationData.getUpperLon(station.getKey());
+                String lowerCorner = ((Grid)this.stationData).getLowerLat() + " " + ((Grid)this.stationData).getLowerLon();
+                String upperCorner = ((Grid)this.stationData).getUpperLat() + " " +((Grid)this.stationData).getUpperLon();
                 network.setComponentLocation(station.getValue(), "http://www.opengis.net/def/crs/EPSG/0/4326", lowerCorner, upperCorner);
             }
             // outputs

@@ -6,9 +6,7 @@ package com.asascience.ncsos.outputformatter.gc;
 
 import com.asascience.ncsos.gc.GetCapabilitiesRequestHandler;
 import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
-import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.service.BaseRequestHandler;
-import com.asascience.ncsos.util.XMLDomUtils;
 import org.jdom.Element;
 import org.jdom.Namespace;
 import org.jdom.output.Format;
@@ -17,8 +15,8 @@ import ucar.nc2.constants.FeatureType;
 import ucar.nc2.time.CalendarDateRange;
 import ucar.unidata.geoloc.LatLonRect;
 
-import java.io.Writer;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
 
@@ -35,6 +33,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
     public static final String SERVICE_PROVIDER = "ServiceProvider";
     private boolean exceptionFlag = false;
     private final static String TEMPLATE = "templates/GC.xml";
+    private GetCapabilitiesRequestHandler handler = null;
 
     public GetCapsFormatter(GetCapabilitiesRequestHandler handler) {
         super();
@@ -44,10 +43,6 @@ public class GetCapsFormatter extends BaseOutputFormatter {
     @Override
     protected String getTemplateLocation() {
         return TEMPLATE;
-    }
-
-    public boolean hasExceptionOut() {
-        return exceptionFlag;
     }
 
     public void parseServiceIdentification(HashMap<String, Object> attrs) {
@@ -114,10 +109,10 @@ public class GetCapsFormatter extends BaseOutputFormatter {
                     Element allowed = new Element("AllowedValues", owsns);
                     if (name.equalsIgnoreCase("offering")) {
                         for (String s : stationNames) {
-                            allowed.addContent(new Element("Value", owsns).setText(s));
+                            allowed.addContent(new Element("Value", owsns).setText(this.handler.getUrnName(s)));
                         }
-                        // Always add a 'network-all' offering
-                        allowed.addContent(new Element("Value", owsns).setText("network-all"));
+                        // Always add a 'network-all' offering as a URN
+                        allowed.addContent(new Element("Value", owsns).setText(this.handler.getUrnNetworkAll()));
                         p.addContent(allowed);
                     } else if (name.equalsIgnoreCase("observedProperty")) {
                         for (String s : dataVarShortNames) {
@@ -126,7 +121,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
                         p.addContent(allowed);
                     } else if (name.equalsIgnoreCase("procedure")) {
                         for (String s : stationNames) {
-                            allowed.addContent(new Element("Value", owsns).setText(BaseRequestHandler.STATION_URN_BASE + this.handler.getGlobalAttribute("naming_authority", this.handler.DEFAULT_NAMING_AUTHORITY) + ":" + s));
+                            allowed.addContent(new Element("Value", owsns).setText(this.handler.getUrnName(s)));
                         }
                         p.addContent(allowed);
                     }
@@ -146,7 +141,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
                 .getChild("ExtendedCapabilities", owsns)
                 .getChildren("metaDataProperty", gmlns);
         for (Element e : md) {
-            if (e.getAttributeValue("href", this.getNamespace("xlink")).equalsIgnoreCase("softwareVersion")) {
+            if (e.getAttributeValue("title", this.getNamespace("xlink")).equalsIgnoreCase("softwareVersion")) {
                 e.getChild("version", gmlns).setText(NCSOS_VERSION);
             }
         }
@@ -169,7 +164,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
                     Element allowed = new Element("AllowedValues", owsns);
                     if (name.equalsIgnoreCase("procedure")) {
                         for (String s : stationNames) {
-                            allowed.addContent(new Element("Value", owsns).setText(BaseRequestHandler.STATION_URN_BASE + this.handler.getGlobalAttribute("naming_authority", this.handler.DEFAULT_NAMING_AUTHORITY) + ":" + s));
+                            allowed.addContent(new Element("Value", owsns).setText(this.handler.getUrnName(s)));
                         }
                         p.addContent(allowed);
                     }
@@ -183,7 +178,6 @@ public class GetCapsFormatter extends BaseOutputFormatter {
     }
 
     public void setObservationOfferingNetwork(LatLonRect datasetRect, String[] stations, List<String> sensors, CalendarDateRange dates, FeatureType ftype) {
-        Namespace owsns = this.getNamespace("ows");
         Namespace gmlns = this.getNamespace("gml");
         Namespace sosns = this.getNamespace("sos");
         Namespace xlinkns = this.getNamespace("xlink");
@@ -194,7 +188,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         // Id
         offering.setAttribute("id", "network-all", gmlns);
         // Name
-        offering.addContent(new Element("name", gmlns).setText(BaseRequestHandler.NETWORK_URN_BASE + this.handler.getGlobalAttribute("naming_authority", this.handler.DEFAULT_NAMING_AUTHORITY) + ":all"));
+        offering.addContent(new Element("name", gmlns).setText(this.handler.getUrnNetworkAll()));
         // Description
         offering.addContent(new Element("description", gmlns).setText("Network offering containing all features in the dataset"));
         // SRS
@@ -204,9 +198,9 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         // Time
         offering.addContent(this.getTimePeriod(dates));
         // Procedure
-        offering.addContent(new Element("procedure", sosns).setAttribute("href", BaseRequestHandler.NETWORK_URN_BASE + this.handler.getGlobalAttribute("naming_authority", this.handler.DEFAULT_NAMING_AUTHORITY) + ":all", xlinkns));
+        offering.addContent(new Element("procedure", sosns).setAttribute("href", this.handler.getUrnNetworkAll(), xlinkns));
         for (String s : stations) {
-            offering.addContent(new Element("procedure", sosns).setAttribute("href", BaseRequestHandler.STATION_URN_BASE + this.handler.getGlobalAttribute("naming_authority", this.handler.DEFAULT_NAMING_AUTHORITY) + ":" + s, xlinkns));
+            offering.addContent(new Element("procedure", sosns).setAttribute("href", this.handler.getUrnName(s), xlinkns));
         }
         // ObservedProperty
         for (String s : sensors) {
@@ -214,7 +208,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         }
         // FeatureOfInterest
         for (String s : stations) {
-            offering.addContent(new Element("featureOfInterest", sosns).setAttribute("href", BaseRequestHandler.STATION_URN_BASE + this.handler.getGlobalAttribute("naming_authority", this.handler.DEFAULT_NAMING_AUTHORITY) + ":" + s, xlinkns));
+            offering.addContent(new Element("featureOfInterest", sosns).setAttribute("href", this.handler.getUrnName(s), xlinkns));
         }
         // ResponseFormat
         offering.addContent(new Element("responseFormat", sosns).setText("text/xml; subtype=\"om/1.0.0\""));
@@ -243,11 +237,12 @@ public class GetCapsFormatter extends BaseOutputFormatter {
 
         Element offering = this.buildOffering();
         // Id
-        offering.setAttribute("id", stationName, gmlns);
+        // Replace ":" with "_" (gml:id fields in XML can't have colons)
+        offering.setAttribute("id", stationName.replace(":","_"), gmlns);
         // Name
-        offering.addContent(new Element("name", gmlns).setText(BaseRequestHandler.STATION_URN_BASE + this.handler.getGlobalAttribute("naming_authority", this.handler.DEFAULT_NAMING_AUTHORITY) + ":" + stationName));
+        offering.addContent(new Element("name", gmlns).setText(this.handler.getUrnName(stationName)));
         // Description
-        // offering.getChild("description", gmlns).setText("Network offering containing all features in the dataset");
+        // Nowhere to get this?
         // SRS
         offering.addContent(new Element("srsName", gmlns).setText(EPSG4326));
         // Bounded By
@@ -255,13 +250,13 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         // Time
         offering.addContent(this.getTimePeriod(dates));
         // Procedure
-        offering.addContent(new Element("procedure", sosns).setAttribute("href", BaseRequestHandler.STATION_URN_BASE + this.handler.getGlobalAttribute("naming_authority", this.handler.DEFAULT_NAMING_AUTHORITY) + ":" + stationName, xlinkns));
+        offering.addContent(new Element("procedure", sosns).setAttribute("href", this.handler.getUrnName(stationName), xlinkns));
         // ObservedProperty
         for (String s : sensors) {
-            offering.addContent(new Element("observedProperty", sosns).setAttribute("href", s, xlinkns));
+            offering.addContent(new Element("observedProperty", sosns).setAttribute("href", this.handler.getSensorUrnName(stationName, s), xlinkns));
         }
         // FeatureOfInterest
-        offering.addContent(new Element("featureOfInterest", sosns).setAttribute("href", BaseRequestHandler.STATION_URN_BASE + this.handler.getGlobalAttribute("naming_authority", this.handler.DEFAULT_NAMING_AUTHORITY) + ":" + stationName, xlinkns));
+        offering.addContent(new Element("featureOfInterest", sosns).setAttribute("href", this.handler.getUrnName(stationName), xlinkns));
         // ResponseFormat
         offering.addContent(new Element("responseFormat", sosns).setText("text/xml; subtype=\"om/1.0.0\""));
         switch (ftype) {
@@ -284,19 +279,11 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         this.getRoot().removeChild(CONTENTS, this.getNamespace("sos"));
     }
 
-    /*********************/
-    /* Interface Methods */
-
-    /**
-     * **********************************************************************
-     */
+    /***********************/
+    /** Interface Methods **/
+    /***********************/
     public void addDataFormattedStringToInfoList(String dataFormattedString) {
         throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void setupExceptionOutput(String message) {
-        document = XMLDomUtils.getExceptionDom(message);
-        exceptionFlag = true;
     }
 
     public void writeOutput(Writer writer) throws IOException {

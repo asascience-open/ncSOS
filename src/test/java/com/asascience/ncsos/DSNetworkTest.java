@@ -1,177 +1,82 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.asascience.ncsos;
 
-import com.asascience.ncsos.outputformatter.OutputFormatter;
-import com.asascience.ncsos.service.Parser;
 import com.asascience.ncsos.util.XMLDomUtils;
-import java.io.*;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-
-import org.apache.log4j.BasicConfigurator;
-import org.junit.AfterClass;
-import static org.junit.Assert.*;
-
+import junit.framework.Assert;
+import org.jdom.Element;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.jdom.*;
-import ucar.nc2.dataset.NetcdfDataset;
 
-/**
- *
- * @author SCowan
- */
-@RunWith(Parameterized.class) 
-public class DSNetworkTest {
-    private static String outputDir = null;
-    private static String exampleOutputDir = null;
-    private static List<String> stationTests;
-    private final static String systemSeparator = System.getProperty("file.separator").toString();
-    private static String query = "request=DescribeSensor&service=sos&version=1.0.0&procedure=urn:ioos:network:ncsos:all&outputFormat=";
-    
-    private static  String dataSourceDirectory;
- 
-    private String currentTest;
-    private String testOutFile;
-    public DSNetworkTest(String currentTest, String testOut){
-    	this.currentTest = currentTest;
-    	this.testOutFile = testOut;
+import java.io.File;
+import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+
+@RunWith(Parameterized.class)
+public class DSNetworkTest extends NcSOSTest {
+
+    private static String outputDir;
+    private static String exampleDir;
+    private static HashMap<String,String> kvp = new HashMap<String, String>();
+
+    private Element currentFile;
+    private String authority;
+    public DSNetworkTest(Element file, String authority){
+    	this.currentFile = file;
+        this.authority   = authority;
     }
 
     public static void setUpClass() throws Exception {
-        // not really a test, just used to set up the various string values
-        if (outputDir != null ) {
-            // exit early if the environ is already set
-            return;
-        }
-        BasicConfigurator.resetConfiguration();
-        BasicConfigurator.configure();
-        String container = "testConfiguration";
-        InputStream templateInputStream = null;
-        stationTests = new ArrayList<String>();
-        try {
-            File configFile = new File("resources/tests_config.xml");
-            templateInputStream = new FileInputStream(configFile);
-            Document configDoc = XMLDomUtils.getTemplateDom(templateInputStream);
-            // read from the config file
-            outputDir = XMLDomUtils.getNodeValue(configDoc, container, "outputDirectory");
-            outputDir += "desc_sen" + systemSeparator;
-            exampleOutputDir = XMLDomUtils.getNodeValue(configDoc, container, "outputDirectory");
-            exampleOutputDir += "examples" + systemSeparator;
-            dataSourceDirectory = XMLDomUtils.getNodeValue(configDoc, container, "dataSourceDirectory");
-            dataSourceDirectory = new File(dataSourceDirectory).getCanonicalPath();
-            System.out.println("source +++++++" + dataSourceDirectory);
-            String testStr =  XMLDomUtils.getNodeValue(configDoc, container, "TestFiles");
-            System.out.println(testStr);
-            String [] testFiles = testStr.trim().split("\n");
-            for(String file : testFiles)
-                stationTests.add(file);
-            
-        } finally {
-            if (templateInputStream != null) {
-                try {
-                    templateInputStream.close();
-                } catch (IOException e) {
-                    // ignore, closing..
-                }
-            }
-        }
+        NcSOSTest.setUpClass();
 
-        File file = new File(outputDir);
-        file.mkdirs();
-        
-        file = new File(exampleOutputDir);
-        file.mkdirs();
-        
-        query += URLEncoder.encode("text/xml;subtype=\"sensorML/1.0.1\"", "UTF-8") + "&";
+        // Modify the outputs
+        outputDir  = baseOutputDir  +  NcSOSTest.systemSeparator + "DescribeSensor-Network" + NcSOSTest.systemSeparator;
+        exampleDir = baseExampleDir +  NcSOSTest.systemSeparator + "DescribeSensor-Network" + NcSOSTest.systemSeparator;
+
+        // Create output directories if they don't exist
+        new File(outputDir).mkdirs();
+        new File(exampleDir).mkdirs();
+
+        kvp.put("outputFormat", URLEncoder.encode("text/xml;subtype=\"sensorML/1.0.1/profiles/ioos_sos/1.0\"", "UTF-8"));
+        kvp.put("request", "DescribeSensor");
+        kvp.put("version", "1.0.0");
+        kvp.put("service", "SOS");
     }
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-    
-    private static String getCurrentMethod() {
-        final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
-        for (int i=0; i<ste.length; i++) {
-            if (ste[i].getMethodName().contains(("test")))
-                return ste[i].getMethodName();
-        }
-        return "could not find test name";
-    }
-     
-    private void writeOutput(HashMap<String, Object> outMap, Writer write) throws IOException {
-        OutputFormatter output = (OutputFormatter)outMap.get("outputHandler");
-        assertNotNull("got null output", output);
-        output.writeOutput(write);
-    }
-    
-    private static void fileWriter(String base, String fileName, Writer writer) throws IOException {
-        fileWriter(base, fileName, writer, false);
-    }
-    
-    private static void fileWriter(String base, String fileName, Writer write, boolean append) throws IOException {
-        File file = new File(base + fileName);
-        Writer output = new BufferedWriter(new FileWriter(file, append));
-        output.write("\n");
-        output.write(write.toString());
-        output.close();
-    }
-    
-
-   	// Create the parameters for the tests
+   	// Create the parameters for the test constructor
     @Parameters
     public static Collection<Object[]> testCases() throws Exception {
     	setUpClass();
-
-    	Object[] [] data = new Object[stationTests.size()][2];
-    	int curIndex = 0;
-    	for(String file : stationTests) {
-    		data[curIndex][0] = file.trim();
-    		data[curIndex][1] = "TestCase_" + curIndex+"_Results.xml";
-    		curIndex++;
-    	}
-    		
+        Object[][] data = new Object[fileElements.size()][2];
+        int curIndex = 0;
+        String authority;
+        for (Element e : fileElements) {
+            data[curIndex][0] = e;
+            authority = e.getAttributeValue("authority","ncsos"); // "ncsos" is the default authority in NcSOS
+            data[curIndex][1] = authority;
+            curIndex++;
+        }
     	return Arrays.asList(data);
     }
 
-		
-
     @Test
-    public void testTimeSeriesSet1() {
-  
-    		System.out.println("\n------" + currentTest + "------");
-    		System.out.println("------outputFolder: " +testOutFile);
-    		String fullPathTestFile= System.getProperty("user.dir")+"\\resources\\datasets\\aggregationBug\\wqb.ncml";//dataSourceDirectory + systemSeparator + currentTest;
-    		try {
-    			NetcdfDataset dataset = NetcdfDataset.openDataset(fullPathTestFile);
-    			Parser parser = new Parser();
-    			Writer writer = new CharArrayWriter();
-//    			writeOutput(parser.enhanceGETRequest(dataset, query, fullPathTestFile), writer);
-//    			System.out.println("calling again");
-//    			writeOutput(parser.enhanceGETRequest(dataset, query, fullPathTestFile), writer);
+    public void testAll() {
+        HashMap<String,String> pairs = (HashMap<String,String>) kvp.clone();
+        pairs.put("procedure", "urn:ioos:network:" + this.authority + ":all");
 
-    			writeOutput(parser.enhanceGETRequest(dataset, null, fullPathTestFile), writer);
-    			System.out.println("calling again");
-    			writeOutput(parser.enhanceGETRequest(dataset, null, fullPathTestFile), writer);
-    			fileWriter(outputDir, testOutFile, writer);
-    			// assert(s)
-    			assertFalse("exception in output", writer.toString().contains("Exception"));
-    	
-    		} catch (IOException ex) {
-    			assertTrue(ex.getMessage(), false);
-    		} finally {
-    			System.out.println("------END " + currentTest + "------");
-    		}
-    	
+        File   file     = new File("resources" + systemSeparator + "datasets" + systemSeparator + this.currentFile.getAttributeValue("path"));
+        String feature  = this.currentFile.getAttributeValue("feature");
+        String output   = new File(outputDir + systemSeparator + file.getName() + ".xml").getAbsolutePath();
+        System.out.println("------ " + file + " (" + feature + ") ------");
+        Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+        if (currentFile.getAttributeValue("feature").equalsIgnoreCase("point")) {
+            // NcSOS does not support POINT features at this time!
+            Assert.assertTrue(NcSOSTest.isException(result));
+        } else {
+            Assert.assertFalse(NcSOSTest.isException(result));
+        }
     }
     
 }

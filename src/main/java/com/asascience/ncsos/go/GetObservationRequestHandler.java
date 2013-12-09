@@ -1,32 +1,31 @@
 package com.asascience.ncsos.go;
 
 import com.asascience.ncsos.cdmclasses.*;
-import com.asascience.ncsos.gc.GetCapabilitiesRequestHandler;
-import com.asascience.ncsos.outputformatter.gc.GetCapsFormatter;
+import com.asascience.ncsos.outputformatter.ErrorFormatter;
 import com.asascience.ncsos.outputformatter.go.Ioos10Formatter;
 import com.asascience.ncsos.outputformatter.go.OosTethysFormatter;
 import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.ListComprehension;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
 import ucar.nc2.constants.AxisType;
+import ucar.nc2.constants.CF;
 import ucar.nc2.constants.FeatureType;
 import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.dataset.CoordinateAxis1D;
 import ucar.nc2.dataset.NetcdfDataset;
 
-/**
- * Get Observation Parser
- * @author abird
- */
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 public class GetObservationRequestHandler extends BaseRequestHandler {
     public static final String DEPTH = "depth";
     public static final String STANDARD_NAME = "standard_name";
+    private static final String LAT = "latitude";
+    private static final String LON = "longitude";
 
     public static final String TEXTXML = "text/xml";
     public static final String UNKNOWN = "unknown";
@@ -36,8 +35,8 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
     private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(GetObservationRequestHandler.class);
     private String contentType;
     private static final String FILL_VALUE_NAME = "_FillValue";
-    private static final String IOOS10_RESPONSE_FORMAT = "text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0\"";
-    private static final String OOSTETHYS_RESPONSE_FORMAT = "text/xml;subtype=\"om/1.0.0\"";
+    private static final String IOOS10_RESPONSE_FORMAT = "text/xml;schema=\"om/1.0.0/profiles/ioos_sos/1.0\"";
+    private static final String OOSTETHYS_RESPONSE_FORMAT = "text/xml;schema=\"om/1.0.0\"";
     private final List<String> eventTimes;
 
     /**
@@ -51,13 +50,16 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
      * @throws IOException 
      */
     public GetObservationRequestHandler(NetcdfDataset netCDFDataset,
-                                        String[] requestedStationNames,
+                                        String[] requestedProcedures,
                                         String offering,
                                         String[] variableNames,
                                         String[] eventTime,
                                         String responseFormat,
                                         Map<String, String> latLonRequest) throws IOException {
         super(netCDFDataset);
+
+        // Translate back to an URN.  (gml:id fields in XML can't have colons)
+        offering = offering.replace("_-_",":");
 
         if (eventTime != null && eventTime.length > 0) {
             eventTimes = Arrays.asList(eventTime);
@@ -68,83 +70,95 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
         // set up our formatter
         if (responseFormat.equalsIgnoreCase(OOSTETHYS_RESPONSE_FORMAT)) {
             contentType = TEXTXML;
-            output = new OosTethysFormatter(this);
+            formatter = new OosTethysFormatter(this);
         } else if (responseFormat.equalsIgnoreCase(IOOS10_RESPONSE_FORMAT)) {
             contentType = TEXTXML;
-            output = new Ioos10Formatter(this);
+            formatter = new Ioos10Formatter(this);
         } else {
-            _log.error("Unknown/Unhandled responseFormat: " + responseFormat);
-            output = new GetCapsFormatter(new GetCapabilitiesRequestHandler(netCDFDataset));
-            output.setupExceptionOutput("Could not recognize response format: " + responseFormat);
+            formatter = new ErrorFormatter();
+            ((ErrorFormatter)formatter).setException("Could not recognize response format: " + responseFormat, INVALID_PARAMETER, "responseFormat");
         }
 
+        // Since the obsevedProperties can be standard_name attributes, map everything to an actual variable name here.
+
+        String[] actualVariableNames = variableNames.clone();
+
         // make sure that all of the requested variable names are in the dataset
-        for (String vars : variableNames) {
+        for (int i = 0 ; i < variableNames.length ; i++) {
+            String vars = variableNames[i];
             boolean isInDataset = false;
             for (Variable dVar : netCDFDataset.getVariables()) {
                 if (dVar.getFullName().equalsIgnoreCase(vars)) {
                     isInDataset = true;
                     break;
+                } else {
+                    Attribute std = dVar.findAttributeIgnoreCase(CF.STANDARD_NAME);
+                    if (std != null && std.getStringValue().equalsIgnoreCase(vars)) {
+                        isInDataset = true;
+                        // Replace standard_name with the variable name
+                        actualVariableNames[i] = dVar.getFullName();
+                    }
                 }
             }
             if (!isInDataset) {
-                // make output an exception
-                _log.error("observed property - " + vars + " - was not found in the dataset");
-                // print exception and then return the doc
-                output = new GetCapsFormatter(new GetCapabilitiesRequestHandler(netCDFDataset));
-                output.setupExceptionOutput("observed property - " + vars + " - was not found in the dataset");
+                formatter = new ErrorFormatter();
+                ((ErrorFormatter)formatter).setException("observed property - " + vars + " - was not found in the dataset", INVALID_PARAMETER, "observedProperty");
                 CDMDataSet = null;
                 return;
             }
         }
 
-        //this.stationName = stationName[0];        
         CoordinateAxis heightAxis = netCDFDataset.findCoordinateAxis(AxisType.Height);
 
-        this.obsProperties = checkNetcdfFileForAxis(heightAxis, variableNames);
+        this.obsProperties = checkNetcdfFileForAxis(heightAxis, actualVariableNames);
 
-
-        // strip out each of the station names
-
-        // unaltered procedures
-        this.procedures = Arrays.copyOf(requestedStationNames, requestedStationNames.length);
-        for (int i = 0; i < requestedStationNames.length; i++) {
-            requestedStationNames[i] = requestedStationNames[i].substring(requestedStationNames[i].lastIndexOf(":") + 1);
-        }
-
-        // get all station names if 'network-all'
+        // Figure out what procedures to use...
         try {
-            if (requestedStationNames.length == 1 && requestedStationNames[0].equalsIgnoreCase("all")) {
-                requestedStationNames = getStationNames().values().toArray(new String[getStationNames().values().size()]);
-                // need to set the procedures to this new set
-                List<String> naProcs = ListComprehension.map(new ArrayList<String>(getStationNames().values()) {
-                }, new ListComprehension.Func<String, String>() {
-
-                    public String apply(String in) {
-                        return getUrnName(in);
+            if (requestedProcedures == null) {
+                if (offering.equalsIgnoreCase(this.getUrnNetworkAll())) {
+                    // All procedures
+                    requestedProcedures = getStationNames().values().toArray(new String[getStationNames().values().size()]);
+                } else {
+                    // Just the single procedure supplied by the offering
+                    requestedProcedures = new String[1];
+                    requestedProcedures[0] = offering;
+                }
+            } else {
+                if (requestedProcedures.length == 1 && requestedProcedures[0].equalsIgnoreCase(getUrnNetworkAll())) {
+                    requestedProcedures = getStationNames().values().toArray(new String[getStationNames().values().size()]);
+                } else {
+                    for (int i = 0; i < requestedProcedures.length; i++) {
+                        requestedProcedures[i] = requestedProcedures[i].substring(requestedProcedures[i].lastIndexOf(":") + 1);
                     }
-                });
-                this.procedures = naProcs.toArray(new String[naProcs.size()]);
+                }
             }
+            // Now map them all to the station URN
+            List<String> naProcs = ListComprehension.map(Arrays.asList(requestedProcedures),
+                 new ListComprehension.Func<String, String>() {
+                     public String apply(String in) {
+                         return getUrnName(in);
+                     }
+                 }
+            );
+            this.procedures = naProcs.toArray(new String[naProcs.size()]);
         } catch (Exception ex) {
             _log.error(ex.toString());
-            requestedStationNames = null;
+            this.procedures = null;
         }
-
 
         // check that the procedures are valid
         checkProcedureValidity();
         // and are a part of the offering
-
         if (offering != null) {
             checkProceduresAgainstOffering(offering);
         }
 
-        setCDMDatasetForStations(netCDFDataset, requestedStationNames, eventTime, latLonRequest);
+        setCDMDatasetForStations(netCDFDataset, eventTime, latLonRequest);
     }
 
-    private void setCDMDatasetForStations(NetcdfDataset netCDFDataset, String[] requestedStationNames, String[] eventTime, Map<String, String> latLonRequest) throws IOException {
+    private void setCDMDatasetForStations(NetcdfDataset netCDFDataset, String[] eventTime, Map<String, String> latLonRequest) throws IOException {
         // strip out text if the station is defined by indices
+        /*
         if (isStationDefinedByIndices()) {
             String[] editedStationNames = new String[requestedStationNames.length];
             for (int i = 0; i < requestedStationNames.length; i++) {
@@ -157,8 +171,48 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
             // copy array
             requestedStationNames = editedStationNames.clone();
         }
+        */
         //grid operation
         if (getDatasetFeatureType() == FeatureType.GRID) {
+
+            // Make sure latitude and longitude are specified
+            if (!latLonRequest.containsKey(LON)) {
+                formatter = new ErrorFormatter();
+                ((ErrorFormatter)formatter).setException("No longitude point specified", MISSING_PARAMETER, "longitude");
+                CDMDataSet = null;
+                return;
+            }
+            if (!latLonRequest.containsKey(LAT)) {
+                formatter = new ErrorFormatter();
+                ((ErrorFormatter)formatter).setException("No latitude point specified", MISSING_PARAMETER, "latitude");
+                CDMDataSet = null;
+                return;
+            }
+
+            List<String> lats = Arrays.asList(latLonRequest.get(LAT).split(","));
+            for (String s : lats) {
+                try {
+                    Double.parseDouble(s);
+                } catch (NumberFormatException e) {
+                    formatter = new ErrorFormatter();
+                    ((ErrorFormatter)formatter).setException("Invalid latitude specified", INVALID_PARAMETER, "latitude");
+                    CDMDataSet = null;
+                    return;
+                }
+            }
+            List<String> lons = Arrays.asList(latLonRequest.get(LON).split(","));
+            for (String s : lons) {
+                try {
+                    Double.parseDouble(s);
+                } catch (NumberFormatException e) {
+                    formatter = new ErrorFormatter();
+                    ((ErrorFormatter)formatter).setException("Invalid longitude specified", INVALID_PARAMETER, "longitude");
+                    CDMDataSet = null;
+                    return;
+                }
+            }
+
+
             Variable depthAxis;
             if (!latLonRequest.isEmpty()) {
                 depthAxis = (netCDFDataset.findVariable(DEPTH));
@@ -168,34 +222,29 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
                 this.obsProperties = checkNetcdfFileForAxis(netCDFDataset.findCoordinateAxis(AxisType.Lat), this.obsProperties);
                 this.obsProperties = checkNetcdfFileForAxis(netCDFDataset.findCoordinateAxis(AxisType.Lon), this.obsProperties);
 
-                CDMDataSet = new Grid(requestedStationNames, eventTime, this.obsProperties, latLonRequest);
+                CDMDataSet = new Grid(this.procedures, eventTime, this.obsProperties, latLonRequest);
                 CDMDataSet.setData(getGridDataset());
             }
         } //if the stations are not of cdm type grid then check to see and set cdm data type        
         else {
-
             if (getDatasetFeatureType() == FeatureType.TRAJECTORY) {
-                CDMDataSet = new Trajectory(requestedStationNames, eventTime, this.obsProperties);
+                CDMDataSet = new Trajectory(this.procedures, eventTime, this.obsProperties);
             } else if (getDatasetFeatureType() == FeatureType.STATION) {
-                CDMDataSet = new TimeSeries(requestedStationNames, eventTime, this.obsProperties);
+                CDMDataSet = new TimeSeries(this.procedures, eventTime, this.obsProperties);
             } else if (getDatasetFeatureType() == FeatureType.STATION_PROFILE) {
-                CDMDataSet = new TimeSeriesProfile(requestedStationNames, eventTime, this.obsProperties);
+                CDMDataSet = new TimeSeriesProfile(this.procedures, eventTime, this.obsProperties);
             } else if (getDatasetFeatureType() == FeatureType.PROFILE) {
-                CDMDataSet = new Profile(requestedStationNames, eventTime, this.obsProperties);
+                CDMDataSet = new Profile(this.procedures, eventTime, this.obsProperties);
             } else if (getDatasetFeatureType() == FeatureType.SECTION) {
-                CDMDataSet = new Section(requestedStationNames, eventTime, this.obsProperties);
+                CDMDataSet = new Section(this.procedures, eventTime, this.obsProperties);
             } else {
-                _log.error("Have a null CDMDataSet, this will cause a null reference exception!");
-                // print exception and then return the doc
-                output = new GetCapsFormatter(new GetCapabilitiesRequestHandler(netCDFDataset));
-                output.setupExceptionOutput("Null Dataset; could not recognize feature type");
+                formatter = new ErrorFormatter();
+                ((ErrorFormatter)formatter).setException("NetCDF-Java could not recognize the dataset's FeatureType");
                 CDMDataSet = null;
                 return;
             }
             //only set the data is it is valid
-            if (CDMDataSet != null) {
-                CDMDataSet.setData(getFeatureTypeDataSet());
-            }
+            CDMDataSet.setData(getFeatureTypeDataSet());
         }
     }
 
@@ -232,15 +281,7 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
         return variableNames1;
     }
 
-    /**
-     * sets the output to display an exception message
-     * @param exceptionMessage the exception message to display in the return
-     */
-    public void setException(String exceptionMessage) {
-        output.setupExceptionOutput(exceptionMessage);
-    }
-
-    /**
+     /**
      * Create the observation data for go, passing it to our formatter
      */
     public void parseObservations() {
@@ -248,7 +289,7 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
             String dataString = CDMDataSet.getDataResponse(s);
             for (String dataPoint : dataString.split(";")) {
                 if (!dataPoint.equals("")) {
-                    output.addDataFormattedStringToInfoList(dataPoint);
+                    formatter.addDataFormattedStringToInfoList(dataPoint);
                 }
             }
         }
@@ -357,7 +398,6 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
         _log.info("Getting data for index: " + relIndex);
         String retval = CDMDataSet.getDataResponse(relIndex);
         return retval.replaceAll("\\.", decimal).replaceAll(",", token).replaceAll(";", block);
-//        return retval;
     }
     //</editor-fold>
 
@@ -385,7 +425,7 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
 
     }
 
-    private void checkProcedureValidity() {
+    private void checkProcedureValidity() throws IOException {
         List<String> stProc = new ArrayList<String>();
         stProc.add(this.getUrnNetworkAll());
         for (String stname : this.getStationNames().values()) {
@@ -397,16 +437,16 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
 
         for (String proc : this.procedures) {
             if (ListComprehension.filter(stProc, proc).size() < 1) {
-                _log.error("Invalid procedure: " + proc);
-                output.setupExceptionOutput("Invalid procedure " + proc + ". Check GetCapabilities document for valid procedures.");
+                formatter = new ErrorFormatter();
+                ((ErrorFormatter)formatter).setException("Invalid procedure " + proc + ". Check GetCapabilities document for valid procedures.", INVALID_PARAMETER, "procedure");
             }
         }
 
     }
 
-    private void checkProceduresAgainstOffering(String offering) {
+    private void checkProceduresAgainstOffering(String offering) throws IOException {
         // if the offering is 'network-all' no error (network-all should have all procedures)
-        if (offering.equalsIgnoreCase("network-all")) {
+        if (offering.equalsIgnoreCase(this.getUrnNetworkAll())) {
             return;
         }
         // currently in ncSOS the only offerings that exist are network-all and each of the stations
@@ -414,8 +454,8 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
         // in each of the procedures requested.
         for (String proc : this.procedures) {
             if (!proc.toLowerCase().contains(offering.toLowerCase())) {
-                _log.error("Invalid procedure " + proc + " for offering " + offering);
-                output.setupExceptionOutput("Procedure " + proc + " does not exist in the offering " + offering + ". Check GetCapabilities document for valid procedures for this offering.");
+                formatter = new ErrorFormatter();
+                ((ErrorFormatter)formatter).setException("Offering: " + proc + " does not exist in the dataset.  Check GetCapabilities document for valid offerings.", INVALID_PARAMETER, "offering");
             }
         }
 

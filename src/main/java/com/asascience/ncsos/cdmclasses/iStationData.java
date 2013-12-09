@@ -1,8 +1,9 @@
 package com.asascience.ncsos.cdmclasses;
 
+import ucar.unidata.geoloc.Station;
+
 import java.io.IOException;
 import java.util.List;
-import ucar.unidata.geoloc.Station;
 
 /**
  * Interface used for the CDM Feature Types

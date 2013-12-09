@@ -1,22 +1,14 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.asascience.ncsos.outputformatter.go;
 
 import com.asascience.ncsos.go.GetObservationRequestHandler;
 import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
-import com.asascience.ncsos.util.XMLDomUtils;
+import org.jdom.Element;
+import org.jdom.Namespace;
+
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Writer;
 import java.util.ArrayList;
-import org.jdom.*;
 
-/**
- *
- * @author SCowan
- */
 public class OosTethysFormatter extends BaseOutputFormatter {
 
     private static final String TEMPLATE = "templates/GO_oostethys.xml";
@@ -38,28 +30,17 @@ public class OosTethysFormatter extends BaseOutputFormatter {
         this.SWE_NS   = this.getNamespace("swe");
 
         if (obsHandler == null) {
-            BadInputs();
-            this.handler = null;
-            return;
+            this.hasError = true;
+            this.setupException("Unable to create observation collection - missing or invalid info.");
         } else {
             this.handler = obsHandler;
         }
     }
 
-
     public String getTemplateLocation() {
         return TEMPLATE;
     }
-    private void BadInputs() {
-        setupExceptionOutput("Unable to create observation collection - missing or invalid info.");
-    }
-    
-    public void setupExceptionOutput(String message) {
-        _log.debug(message);
-        this.hasError = true;
-        document = XMLDomUtils.getExceptionDom(message);
-    }
-    
+
     public void writeOutput(Writer writer) throws IOException {
         // create output if we don't already have an exception
         if (!hasError) {

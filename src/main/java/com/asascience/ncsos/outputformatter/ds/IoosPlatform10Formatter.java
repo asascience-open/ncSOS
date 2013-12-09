@@ -4,16 +4,13 @@
  */
 package com.asascience.ncsos.outputformatter.ds;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import com.asascience.ncsos.ds.IoosPlatform10Handler;
 import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
 import com.asascience.ncsos.util.XMLDomUtils;
-import org.jdom.*;
+import org.jdom.Element;
+import org.jdom.Namespace;
+
+import java.util.HashMap;
+import java.util.List;
 
 /**
  *
@@ -207,7 +204,7 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
                 HashMap<String, String> vals = (HashMap<String, String>) contactInfo.get(key);
                 for (String vKey : vals.keySet()) {
                     if (vals.get(vKey) != null) {
-                        addNewNode(sparent, vKey, SML_NS, vals.get(vKey).toString());
+                        addNewNode(sparent, vKey, SML_NS, vals.get(vKey));
                     }
                 }
             }

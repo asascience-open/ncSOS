@@ -5,15 +5,16 @@
 package com.asascience.ncsos.outputformatter;
 
 import com.asascience.ncsos.util.XMLDomUtils;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.Namespace;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.BitSet;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import org.jdom.*;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
 
 /**
  *
@@ -31,13 +32,19 @@ public class CachedFileFormatter extends OutputFormatter {
     private static final int SECTION_COUNT = 4;
     private BitSet requestedSections;
     private String TEMPLATE;
+    private String fileToRead;
     
     private final static String capabilitiesElement = "Capabilities";
     
     public CachedFileFormatter(File fileToRead) {
-        this.document = XMLDomUtils.loadFile(getClass().getClassLoader().getResourceAsStream(fileToRead.getAbsolutePath()));
+        this.fileToRead = fileToRead.getAbsolutePath();
+        this.document = XMLDomUtils.loadFile(getClass().getClassLoader().getResourceAsStream(this.fileToRead));
         this.initNamespaces();
         requestedSections = new BitSet(SECTION_COUNT);
+    }
+
+    protected String getTemplateLocation() {
+        return this.fileToRead;
     }
 
     public void setSections(String sections) {
@@ -75,11 +82,6 @@ public class CachedFileFormatter extends OutputFormatter {
     
     public void addDataFormattedStringToInfoList(String dataFormattedString) {
         throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void setupExceptionOutput(String message) {
-        document = XMLDomUtils.getExceptionDom(message);
-        exceptionFlag = true;
     }
 
     public void writeOutput(Writer writer) throws IOException {

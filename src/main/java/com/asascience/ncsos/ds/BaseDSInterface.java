@@ -6,6 +6,8 @@ package com.asascience.ncsos.ds;
 
 import com.asascience.ncsos.outputformatter.OutputFormatter;
 
+import java.io.IOException;
+
 /**
  * Provides common methods for Describe Sensor request handling classes.
  * @author SCowan
@@ -18,5 +20,5 @@ public interface BaseDSInterface {
      * assembly is available.
      * @param output the formatter to be used for the response
      */
-    public void setupOutputDocument(OutputFormatter output);
+    public void setupOutputDocument(OutputFormatter output) throws IOException;
 }

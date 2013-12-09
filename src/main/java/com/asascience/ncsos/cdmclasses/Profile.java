@@ -6,13 +6,6 @@ package com.asascience.ncsos.cdmclasses;
 
 import com.asascience.ncsos.go.ObservationOffering;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import ucar.nc2.ft.PointFeature;
@@ -21,6 +14,14 @@ import ucar.nc2.ft.ProfileFeature;
 import ucar.nc2.ft.ProfileFeatureCollection;
 import ucar.nc2.units.DateFormatter;
 import ucar.unidata.geoloc.Station;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Provides methods to gather information from Profile datasets needed for requests: GetCapabilities, GetObservations
@@ -56,84 +57,14 @@ public class Profile extends baseCDMClass implements iStationData {
         lowerAlt = Double.POSITIVE_INFINITY;
         upperAlt = Double.NEGATIVE_INFINITY;
     }
-    
-    /**
-     * gets the Profile response for the gc request
-     * @param profileCollection
-     * @param document
-     * @param featureOfInterestBase
-     * @param GMLName
-     * @param observedPropertyList
-     * @return
-     * @throws IOException  
-     */
-    public static Document getCapsResponse(ProfileFeatureCollection profileCollection, Document document, String featureOfInterestBase, String GMLName, List<String> observedPropertyList) throws IOException {
-        String profileID = null;
-        
-        PointFeatureIterator pp = null;
-        //profiles act like stations at present
-        while (profileCollection.hasNext()) {
-            ProfileFeature pFeature = profileCollection.next();
-
-            //scan through the data and get the profile id number
-            pp = pFeature.getPointFeatureIterator(-1);
-            while (pp.hasNext()) {
-                PointFeature pointFeature = pp.next();
-                profileID = getProfileIDFromProfile(pointFeature);
-                break;
-            }
-
-            //attributes
-            ObservationOffering newOffering = new ObservationOffering();
-
-            newOffering.setObservationStationLowerCorner(Double.toString(pFeature.getLatLon().getLatitude()), Double.toString(pFeature.getLatLon().getLongitude()));
-            newOffering.setObservationStationUpperCorner(Double.toString(pFeature.getLatLon().getLatitude()), Double.toString(pFeature.getLatLon().getLongitude()));
-
-            DatasetHandlerAdapter.calcBounds(pFeature);
-
-            //check the data
-            if (pFeature.getDateRange() != null) {
-                newOffering.setObservationTimeBegin(pFeature.getDateRange().getStart().toDateTimeStringISO());
-                newOffering.setObservationTimeEnd(pFeature.getDateRange().getEnd().toDateTimeStringISO());
-            } //find the dates out!
-            else {
-                _log.error("no dates yet");
-            }
-
-
-            newOffering.setObservationStationDescription(pFeature.getCollectionFeatureType().toString());
-            if (profileID != null) {
-                newOffering.setObservationStationID("PROFILE_" + profileID);
-                newOffering.setObservationProcedureLink(GMLName+("PROFILE_" + profileID));
-                newOffering.setObservationName(GMLName+(profileID));
-                newOffering.setObservationFeatureOfInterest(featureOfInterestBase+("PROFILE_" + profileID));
-            } else {
-                newOffering.setObservationFeatureOfInterest(featureOfInterestBase+(pFeature.getName()));
-                newOffering.setObservationStationID((pFeature.getName()));
-                newOffering.setObservationProcedureLink(GMLName+((pFeature.getName())));
-                newOffering.setObservationFeatureOfInterest(featureOfInterestBase+(pFeature.getName()));
-            }
-            newOffering.setObservationSrsName("EPSG:4326");  // TODO?  
-            newOffering.setObservationObserveredList(observedPropertyList);
-            document = CDMUtils.addObsOfferingToDoc(newOffering,document);
-        }
-        
-         return document;
-    }
-    
-    public boolean isStationInFinalCollection(int stNum) {
-        if (profileList != null && profileList.containsKey(stNum))
-            return true;
-        return false;
-    }
 
     /************************
      * iStationData Methods *
      **************************************************************************/
 
     @Override
-    public void setData(Object profilePeatureCollection) throws IOException {
-        this.profileData = (ProfileFeatureCollection) profilePeatureCollection;
+    public void setData(Object profileFeatureCollection) throws IOException {
+        this.profileData = (ProfileFeatureCollection) profileFeatureCollection;
         
         profileList = new HashMap<Integer, ProfileFeature>();
 
@@ -150,14 +81,8 @@ public class Profile extends baseCDMClass implements iStationData {
         while (profileData.hasNext()) {
             ProfileFeature pFeature = profileData.next();
             DatasetHandlerAdapter.calcBounds(pFeature);
-            
-            //scan through the data and get the profile id number
-            PointFeatureIterator pp = pFeature.getPointFeatureIterator(-1);
-            while (pp.hasNext()) {
-                PointFeature pointFeature = pp.next();
-                profileID = getProfileIDFromProfile(pointFeature);
-                break;
-            }
+
+            profileID = pFeature.getName();
             
             DateTime eventStart = (eventTimes.size() >= 1) ? new DateTime(df.getISODate(eventTimes.get(0)), chrono) : null;
             DateTime eventEnd = (eventTimes.size() > 1) ? new DateTime(df.getISODate(eventTimes.get(1)), chrono) : null;
@@ -177,9 +102,12 @@ public class Profile extends baseCDMClass implements iStationData {
                 }
                 // get the index of the station we are adding
                 Integer stNum = 0;
-                for (int sti =0; sti < reqStationNames.size(); sti++) {
-                    if (reqStationNames.get(sti).equalsIgnoreCase(profileID))
+                for (int sti=0; sti < reqStationNames.size(); sti++) {
+                    String[] urns = reqStationNames.get(sti).split(":");
+                    String  nourn = urns[urns.length - 1];
+                    if (reqStationNames.get(sti).equalsIgnoreCase(profileID) || nourn.equalsIgnoreCase(profileID)) {
                         stNum = sti;
+                    }
                 }
                 profileList.put(stNum, pFeature);
 
@@ -251,7 +179,7 @@ public class Profile extends baseCDMClass implements iStationData {
     
     @Override
     public boolean isStationInFinalList(int stNum) {
-        if (profileList != null && profileList.containsKey((Integer)stNum))
+        if (profileList != null && profileList.containsKey(stNum))
             return true;
         return false;
     }
@@ -287,7 +215,7 @@ public class Profile extends baseCDMClass implements iStationData {
 
     @Override
     public double getLowerLat(int stNum) {
-        if (profileData != null && profileList.containsKey((Integer)stNum)) {
+        if (profileData != null && profileList.containsKey(stNum)) {
             return profileList.get(stNum).getLatLon().getLatitude();
         } else {
             return Invalid_Value;
@@ -296,7 +224,7 @@ public class Profile extends baseCDMClass implements iStationData {
 
     @Override
     public double getLowerLon(int stNum) {
-        if (profileData != null && profileList.containsKey((Integer)stNum)) {
+        if (profileData != null && profileList.containsKey(stNum)) {
             return profileList.get(stNum).getLatLon().getLongitude();
         } else {
             return Invalid_Value;
@@ -305,7 +233,7 @@ public class Profile extends baseCDMClass implements iStationData {
 
     @Override
     public double getUpperLat(int stNum) {
-        if (profileData != null && profileList.containsKey((Integer)stNum)) {
+        if (profileData != null && profileList.containsKey(stNum)) {
             return profileList.get(stNum).getLatLon().getLatitude();
         } else {
             return Invalid_Value;
@@ -314,7 +242,7 @@ public class Profile extends baseCDMClass implements iStationData {
 
     @Override
     public double getUpperLon(int stNum) {
-        if (profileData != null && profileList.containsKey((Integer)stNum)) {
+        if (profileData != null && profileList.containsKey(stNum)) {
             return profileList.get(stNum).getLatLon().getLongitude();
         } else {
             return Invalid_Value;
@@ -333,7 +261,7 @@ public class Profile extends baseCDMClass implements iStationData {
 
     @Override
     public String getTimeEnd(int stNum) {
-        if (profileData != null && profileList.containsKey((Integer)stNum)) {
+        if (profileData != null && profileList.containsKey(stNum)) {
             return df.toDateTimeStringISO(profileList.get(stNum).getTime());
         } else {
             return ERROR_NULL_DATE;
@@ -343,7 +271,7 @@ public class Profile extends baseCDMClass implements iStationData {
     @Override
     public String getTimeBegin(int stNum) {
 
-        if (profileData != null && profileList.containsKey((Integer)stNum)) {
+        if (profileData != null && profileList.containsKey(stNum)) {
             return df.toDateTimeStringISO(profileList.get(stNum).getTime());
         } else {
             return ERROR_NULL_DATE;
@@ -357,17 +285,18 @@ public class Profile extends baseCDMClass implements iStationData {
     
     /**************************************************************************/
     
-    private void addProfileData(List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, PointFeatureIterator profileIterator, int stNum) {
+    private void addProfileData(List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, ProfileFeature profileFeature, int stNum) {
         //set the iterator the the correct profile
         try {
-            while (profileIterator.hasNext()) {
-                PointFeature pointFeature = profileIterator.next();
+            PointFeatureIterator pointIterator = profileFeature.getPointFeatureIterator(-1);
+            while (pointIterator.hasNext()) {
+                PointFeature pointFeature = pointIterator.next();
 
-                String profileID = getProfileIDFromProfile(pointFeature);
+                String profileID = profileFeature.getName();
                 //if there is a profile id use it against the data that is requested
                 if (profileID != null) {
                     valueList.clear();
-                    valueList.add("time=" + dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
+                    valueList.add("time=" + dateFormatter.toDateTimeStringISO(profileFeature.getTime()));
                     valueList.add("station=" + stNum);
                     addProfileDataToBuilder(valueList, pointFeature, builder);
                 }
@@ -391,28 +320,9 @@ public class Profile extends baseCDMClass implements iStationData {
             }
         }
 
-        //builder.append(tokenJoiner.join(valueList));
-//        builder.append(" ");
-//        builder.append("\n");
         builder.append(";");
     }
 
-    private static String getProfileIDFromProfile(PointFeature pointFeature) {
-        String profileID = null;
-        //Try and get profileID
-        try {
-            profileID = (pointFeature.getData().getScalarObject("profile").toString());
-        } //if it is not there dont USE IT!,,,,,but maybe warn that it is not there?        
-        catch (Exception e) {
-            // this case happend when the 'profile' var is a scalar with no shape/dimensions; other than to catch this and give a default value of "0"
-            // not sure what else can be done (should be a better way of handling it. right?)
-            _log.warn("getProfileIDFromProfile - " + e.toString());
-            _log.warn("using default id of 0");
-            profileID = "0";
-        }
-        return profileID;
-    }
-    
     private String createProfileFeature(int stNum) throws IOException {
         if (profileList != null && profileList.containsKey((Integer)stNum)) {
             StringBuilder builder = new StringBuilder();
@@ -420,7 +330,7 @@ public class Profile extends baseCDMClass implements iStationData {
             List<String> valueList = new ArrayList<String>();
 
             ProfileFeature pFeature = profileList.get(stNum);
-            addProfileData(valueList, dateFormatter, builder, pFeature.getPointFeatureIterator(-1), stNum);
+            addProfileData(valueList, dateFormatter, builder, pFeature, stNum);
 
             return builder.toString();
         }
