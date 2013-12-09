@@ -1,5 +1,5 @@
 language: java
 before_script:
-  - cd resources && unzip datasets.zip
+  - cd resources && unzip datasets.zip && cd ..
 script: mvn test
 
