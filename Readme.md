@@ -48,7 +48,8 @@ Unidata also offers a Basic NCML tutorial [here](http://www.unidata.ucar.edu/sof
 
 A simple example aggregation, using a simple union can be seen below. The example implemention outlines some of the steps you should take.
 
-1) identify how you are going to aggregate your netcdf data (in this example taken from unidate's NCML aggregation page we are using an aggregation on an existing dimension named "time", this might be a typical approach for aggregation timeseries files.
+1) identify how you are going to aggregate your netcdf data (in this example taken from unidate's NCML aggregation page we are using an aggregation on an existing dimension named "time", this might be a typical approach for the aggregation of time series files.
+
 
 2) generate an NCML file using a text editior, something like this...
 
@@ -64,7 +65,7 @@ A simple example aggregation, using a simple union can be seen below. The exampl
  In the NCML file we can see the dimension we what to join on ("time"), and the netcdf files we are aggregating together ("jan.nc", "feb.nc"). We could now open this NCML files in something like toolsui (toolsui.jar is a java application available from unidata's website, great for viewing netcdf files)
 
 
-3) With the NCML file generated we need to add it to the THREDDS catalog, this can be done the same as any other netcdf dataset.
+3) With the NCML file generated we just need to add it to the THREDDS catalog, this can be done the same as any other netcdf dataset.
 
 ## ChangeLog
 
