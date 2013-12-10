@@ -26,9 +26,7 @@ public class Parser {
     public static final String GETOBSERVATION = "GetObservation";
     public static final String DESCRIBESENSOR = "DescribeSensor";
     public static final String OUTPUT_FORMATTER = "outputFormatter";
-    public static final String RESPONSECONTENTTYPE = "responseContentType";
     public static final String SECTIONS = "sections";
-    public static final String TEXTXML = "text/xml";
     public static final String USECACHE = "usecache";
     public static final String XML = "xml";
     private HashMap<String, Object> queryParameters;
@@ -124,8 +122,6 @@ public class Parser {
 
             if (request.equalsIgnoreCase(GETCAPABILITIES)) {
                 GetCapabilitiesRequestHandler capHandler = null;
-                // indicate that our response will be in xml
-                retval.put(RESPONSECONTENTTYPE, TEXTXML);
                 String sections = "all";
                 if (queryParameters.containsKey(SECTIONS)) {
                     sections = queryParameters.get(SECTIONS).toString();
@@ -213,8 +209,6 @@ public class Parser {
                             queryParameters.get(RESPONSE_FORMAT).toString(),
                             coordsHash);
 
-                    // set our content type for the response
-                    retval.put(RESPONSECONTENTTYPE, obsHandler.getContentType());
                     if (obsHandler.getFeatureDataset() == null) {
                         errorHandler.setException("NetCDF-Java can not determine the FeatureType of the dataset.");
                         retval.put(OUTPUT_FORMATTER, errorHandler.getOutputFormatter());
@@ -235,8 +229,6 @@ public class Parser {
                 }
             } else if (request.equalsIgnoreCase(DESCRIBESENSOR)) {
                 try {
-                    // response will always be text/xml
-                    retval.put(RESPONSECONTENTTYPE, TEXTXML);
                     BaseDSHandler sensorHandler;
                     // get the first procedure
                     String procedure = ((String[]) queryParameters.get(PROCEDURE))[0];

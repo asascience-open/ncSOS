@@ -89,5 +89,9 @@ public class CachedFileFormatter extends OutputFormatter {
         xmlOutput.setFormat(Format.getPrettyFormat());
         xmlOutput.output(this.document, writer);
     }
+    
+    public String getContentType() {
+        return "text/xml";
+    }
 
 }
