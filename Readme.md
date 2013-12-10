@@ -37,6 +37,35 @@ _You will need a working THREDDS installation of a least version **4.3.16** to r
 ``` 
 7. Restart Tomcat
 
+## NC Aggregation 
+
+see the known issues section for a note on NCML aggregation...
+
+Aggregated netcdf files can be served through the catalog by using NCML. NcML is an XML representation of netCDF metadata, more information on NCML can be found at the unidata website [here](http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/ncml/). In short NCML aggregation offers a seemless view and data access across multiple netcdf files.
+
+Unidata also offers a Basic NCML tutorial [here](http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/ncml/v2.2/Tutorial.html), with a tutorial geared towards NCML aggregation [here](http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/ncml/v2.2/Aggregation.html). There are a number of different methods for agreegating Netcdf data through NCML, it is suggest that you read the above tutorials, particually the NCML agreegation one, and decide the best method for aggregating your data.
+
+
+A simple example aggregation, using a simple union can be seen below. The example implemention outlines some of the steps you should take.
+
+1) identify how you are going to aggregate your netcdf data (in this example taken from unidate's NCML aggregation page we are using an aggregation on an existing dimension named "time", this might be a typical approach for aggregation timeseries files.
+
+2) generate an NCML file using a text editior, something like this...
+
+ ```xml
+<netcdf xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2">
+  <aggregation dimName="time" type="joinExisting">
+    <netcdf location="jan.nc" />
+    <netcdf location="feb.nc" />
+  </aggregation>
+</netcdf>
+ ```
+ 
+ In the NCML file we can see the dimension we what to join on ("time"), and the netcdf files we are aggregating together ("jan.nc", "feb.nc"). We could now open this NCML files in something like toolsui (toolsui.jar is a java application available from unidata's website, great for viewing netcdf files)
+
+
+3) With the NCML file generated we need to add it to the THREDDS catalog, this can be done the same as any other netcdf dataset.
+
 ## ChangeLog
 
 ### RC7
