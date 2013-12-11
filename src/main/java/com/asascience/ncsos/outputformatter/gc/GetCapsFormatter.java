@@ -286,12 +286,6 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void writeOutput(Writer writer) throws IOException {
-        XMLOutputter xmlOutput = new XMLOutputter();
-        xmlOutput.setFormat(Format.getPrettyFormat());
-        xmlOutput.output(this.document, writer);
-    }
-
     private void setHTTPMethods(Element parent, String threddsURI) {
         Namespace owsns = this.getNamespace("ows");
         // GET

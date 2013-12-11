@@ -117,71 +117,110 @@
   </dependencies>
   
   <build>
-	<resources>
-    <resource>
-      <targetPath>resources/</targetPath>
-      <directory>${basedir}/resources</directory>
-      <includes>
-        <include>cf_parameters.txt</include>
-      </includes>
-    </resource>
-    <resource>
-      <targetPath>templates/</targetPath>
-      <directory>${basedir}/resources/templates</directory>
-      <includes>
-        <include>*</include>
-      </includes>
-    </resource>
-    <resource>
-      <targetPath>dev/</targetPath>
-      <directory>${basedir}/resources/dev</directory>
-      <includes>
-        <include>*</include>
-      </includes>
-    </resource>
-    <resource>
-      <targetPath>prod/</targetPath>
-      <directory>${basedir}/resources/prod</directory>
-      <includes>
-        <include>*</include>
-      </includes>
-    </resource>
-    <resource>
-      <targetPath>spring/</targetPath>
-      <directory>${basedir}/resources/spring</directory>
-      <includes>
-        <include>*</include>
-      </includes>
-    </resource>
-  </resources>
+    <resources>
+      <resource>
+        <targetPath>resources/</targetPath>
+        <directory>${basedir}/resources</directory>
+        <includes>
+          <include>cf_parameters.txt</include>
+        </includes>
+      </resource>
+      <resource>
+        <targetPath>templates/</targetPath>
+        <directory>${basedir}/resources/templates</directory>
+        <includes>
+          <include>*</include>
+        </includes>
+      </resource>
+      <resource>
+        <targetPath>dev/</targetPath>
+        <directory>${basedir}/resources/dev</directory>
+        <includes>
+          <include>*</include>
+        </includes>
+      </resource>
+      <resource>
+        <targetPath>prod/</targetPath>
+        <directory>${basedir}/resources/prod</directory>
+        <includes>
+          <include>*</include>
+        </includes>
+      </resource>
+      <resource>
+        <targetPath>spring/</targetPath>
+        <directory>${basedir}/resources/spring</directory>
+        <includes>
+          <include>*</include>
+        </includes>
+      </resource>
+    </resources>
   
-	<plugins>
-	  <plugin>
-		<artifactId>maven-antrun-plugin</artifactId>
-		<version>1.7</version>
-		<executions>
-		  <execution>
-			<phase>package</phase>
-			<configuration>
-			  <target>
-				<copy file="resources/sos-servlet.xml" todir="target/" /> 
-				<copy file="Readme.md" todir="target/" />
-				<zip destfile="target/ncSOS-${project.version}.zip" basedir="target/" includes="*xml *.txt *.jar" />
+    <plugins>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.7</version>
+        <executions>
+            
+          <execution>
+            <id>package></id> 
+            <phase>package</phase>
+            <configuration>
+              <target>
+                <taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="maven.plugin.classpath" />
+                  
+                <copy file="resources/sos-servlet.xml" todir="target/" /> 
+                <copy file="Readme.md" todir="target/" />
+                <zip destfile="target/ncSOS-${project.version}.zip" basedir="target/" includes="*xml *.txt *.jar" />
                 <copy file="target/ncSOS-${project.version}.zip" todir="jar/" />
                 <copy file="target/ncSOS-${project.version}.zip" tofile="jar/ncSOS.zip" />
-			  </target>
-			</configuration>
-			<goals>
-			  <goal>run</goal>
-			</goals>
-		  </execution>
-		</executions>
-	  </plugin>
-	</plugins>
+                
+                <!-- Put a path to Tomcat directory here to deploy on build -->
+                <!--<property name="tomcat.path" value="/srv/tomcat/apache-tomcat-7.0.47" />-->
+                <property name="tomcat.path" value="" />
+                <if>   
+                    <and>
+                        <isreference refid="tomcat.path" />
+                        <not>
+                            <equals arg1="${tomcat.path}" arg2="" />
+                        </not>                           
+                    </and>
+                    <then>
+                        <copy file="target/ncsos-${project.version}.jar" todir="${tomcat.path}/webapps/thredds/WEB-INF/lib/" />             
+                        <exec executable="${tomcat.path}/bin/shutdown.sh" />
+                        <exec executable="${tomcat.path}/bin/startup.sh" />
+                    </then>
+                </if>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>ant-contrib</groupId>
+            <artifactId>ant-contrib</artifactId>
+            <version>1.0b3</version>
+            <exclusions>
+              <exclusion>
+                <groupId>ant</groupId>
+                <artifactId>ant</artifactId>
+              </exclusion>
+            </exclusions>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant-nodeps</artifactId>
+            <version>1.8.1</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+    </plugins>
   </build>
   
   <scm>
-	<connection>scm:git:git://github.com/asascience-open/ncSOS.git</connection>
+    <connection>scm:git:git://github.com/asascience-open/ncSOS.git</connection>
     <developerConnection>scm:git:git://github.com/asascience-open/ncSOS.git</developerConnection>
     <url>git://github.com/asascience-open/ncSOS.git</url>
   </scm>
@@ -191,11 +230,12 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.3.2</version>
         <configuration>
           <source>1.7</source>
           <target>1.7</target>
         </configuration>
-      </plugin>
+      </plugin>    
     </plugins>
   </reporting> 
   

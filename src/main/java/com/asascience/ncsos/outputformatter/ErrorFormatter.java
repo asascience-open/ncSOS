@@ -15,7 +15,7 @@ public class ErrorFormatter extends BaseOutputFormatter {
     protected String getTemplateLocation() {
         return TEMPLATE;
     }
-
+    
     public void setException(String exceptionMessage) {
         Element root = this.getRoot();
         Namespace ns = this.getNamespace("ows");

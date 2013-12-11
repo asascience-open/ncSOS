@@ -142,4 +142,9 @@ public abstract class OutputFormatter {
      * @param writer the stream where the output will be written to.
      */
     public abstract void writeOutput(Writer writer) throws IOException;
+    
+    /**
+     * The Content-type of this response
+     */
+    public abstract String getContentType();
 }
