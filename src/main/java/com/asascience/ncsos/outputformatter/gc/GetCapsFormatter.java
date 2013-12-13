@@ -5,6 +5,7 @@
 package com.asascience.ncsos.outputformatter.gc;
 
 import com.asascience.ncsos.gc.GetCapabilitiesRequestHandler;
+import com.asascience.ncsos.go.GetObservationRequestHandler;
 import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
 import com.asascience.ncsos.service.BaseRequestHandler;
 import org.jdom.Element;
@@ -211,10 +212,10 @@ public class GetCapsFormatter extends BaseOutputFormatter {
             offering.addContent(new Element("featureOfInterest", sosns).setAttribute("href", this.handler.getUrnName(s), xlinkns));
         }
         // ResponseFormat
-        offering.addContent(new Element("responseFormat", sosns).setText("text/xml; subtype=\"om/1.0.0\""));
+        offering.addContent(new Element("responseFormat", sosns).setText(GetObservationRequestHandler.OOSTETHYS_RESPONSE_FORMAT));
         switch (ftype) {
             case STATION:
-                offering.addContent(new Element("responseFormat", sosns).setText("text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0\""));
+                offering.addContent(new Element("responseFormat", sosns).setText(GetObservationRequestHandler.IOOS10_RESPONSE_FORMAT));
                 break;
             default:
                 break;
@@ -258,10 +259,10 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         // FeatureOfInterest
         offering.addContent(new Element("featureOfInterest", sosns).setAttribute("href", this.handler.getUrnName(stationName), xlinkns));
         // ResponseFormat
-        offering.addContent(new Element("responseFormat", sosns).setText("text/xml; subtype=\"om/1.0.0\""));
+        offering.addContent(new Element("responseFormat", sosns).setText(GetObservationRequestHandler.OOSTETHYS_RESPONSE_FORMAT));
         switch (ftype) {
             case STATION:
-                offering.addContent(new Element("responseFormat", sosns).setText("text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0\""));
+                offering.addContent(new Element("responseFormat", sosns).setText(GetObservationRequestHandler.IOOS10_RESPONSE_FORMAT));
                 break;
             default:
                 break;

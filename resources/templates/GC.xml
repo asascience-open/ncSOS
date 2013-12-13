@@ -70,7 +70,7 @@
                     <ows:Value>text/xml;subtype="sensorML/1.0.1/profiles/ioos_sos/1.0"</ows:Value>
                 </ows:AllowedValues>
             </ows:Parameter>
-            <ows:Parameter name="procedure" use="required"/>
+            <ows:Parameter name="procedure"/>
         </ows:Operation>
         <ows:Parameter name="service">
             <ows:AllowedValues>

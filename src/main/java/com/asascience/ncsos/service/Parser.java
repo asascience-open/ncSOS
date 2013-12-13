@@ -281,8 +281,9 @@ public class Parser {
                     queryParameters.put(keyVal[0].toLowerCase(), howManyStation);
                 } else if (keyVal[0].equalsIgnoreCase(RESPONSE_FORMAT)) {                    
                     parseOutputFormat(RESPONSE_FORMAT,keyVal[1]);
-                } else if (keyVal[0].equalsIgnoreCase(OUTPUT_FORMAT)) {                    
-                    parseOutputFormat(OUTPUT_FORMAT,keyVal[1]);                    
+                } else if (keyVal[0].equalsIgnoreCase(OUTPUT_FORMAT)) {     
+                	int firstEqual = arg.indexOf("=");
+                    parseOutputFormat(OUTPUT_FORMAT,arg.substring(firstEqual+1));                    
                 } else if (keyVal[0].equalsIgnoreCase(EVENT_TIME)) {
                     String[] eventtime;
                     if (keyVal[1].contains("/")) {
@@ -317,7 +318,7 @@ public class Parser {
 
     public void parseOutputFormat(String fieldName,String value) {
         try {
-            String val = URLDecoder.decode(value, "UTF-8");
+            String val = URLDecoder.decode(value, "UTF-8").trim();
             queryParameters.put(fieldName, val);
         } catch (Exception e) {
             _log.warn("Exception in decoding", e);

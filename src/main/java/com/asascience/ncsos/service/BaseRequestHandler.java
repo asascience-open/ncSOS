@@ -162,7 +162,7 @@ public abstract class BaseRequestHandler {
         String name = null;
         Object value = null;
         for (Attribute a : this.netCDFDataset.getGlobalAttributes()) {
-            name = a.getFullName().toLowerCase();
+            name = a.getFullName();
             try {
                 value = a.getStringValue().trim();
             } catch(NullPointerException e) {

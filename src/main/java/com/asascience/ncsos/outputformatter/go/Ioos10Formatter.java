@@ -31,13 +31,13 @@ public class Ioos10Formatter extends BaseOutputFormatter {
     private static final String BLOCK_SEPERATOR = "\n";
     private static final String TOKEN_SEPERATOR = ",";
     private static final String DECIMAL_SEPERATOR = ".";
-    private static final String STATIC_STATIONS_DEF = "http://mmisw.org/ont/ioos/definition/stations";
-    private static final String STATIC_STATION_DEF = "http://mmisw.org/ont/ioos/definition/station";
-    private static final String OBS_COLLECTION_DEF = "http://mmisw.org/ont/ioos/definition/sensorObservationCollection";
-    private static final String SENSOR_OBS_COLLECTION = "http://mmisw.org/ont/ioos/definition/sensorObservations";
-    private static final String STATIC_SENSOR_DEF = "http://mmisw.org/ont/ioos/definition/sensor";
-    private static final String STATIC_SENSORS_DEF = "http://mmisw.org/ont/ioos/definition/sensors";
-    private static final String SENSORS_DEF = "http://mmisw.org/ont/ioos/swe_element_type/sensors";
+    private static final String STATIC_STATIONS_DEF = "http://mmisw.org/ont/ioos/swe_element_type/stations";
+    private static final String STATIC_STATION_DEF = "http://mmisw.org/ont/ioos/swe_element_type/station";
+    private static final String OBS_COLLECTION_DEF = "http://mmisw.org/ont/ioos/swe_element_type/sensorObservationCollection";
+    private static final String SENSOR_OBS_COLLECTION = "http://mmisw.org/ont/ioos/swe_element_type/sensorObservations";
+    private static final String STATIC_SENSOR_DEF = "http://mmisw.org/ont/ioos/swe_element_type/sensor";
+    private static final String STATIC_SENSORS_DEF = "http://mmisw.org/ont/ioos/swe_element_type/sensors";
+    private static final String MISSING_REASON = "http://www.opengis.net/def/nil/OGC/0/missing";
     private Namespace OM_NS, GML_NS, SWE2_NS, XLINK_NS, SWE_NS = null;
     private GetObservationRequestHandler handler = null;
 
@@ -381,10 +381,11 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         Element time = new Element("Time", this.SWE2_NS).setAttribute("definition", "http://www.opengis.net/def/property/OGC/0/SamplingTime");
         time.addContent(new Element("uom", this.SWE2_NS).setAttribute("href", "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian", this.XLINK_NS));
         field.addContent(time);
-
+        dataRecord.addContent(field);
+        
         Element sensorField = new Element("field", this.SWE2_NS).setAttribute("name", "sensor");
         Element dataChoice = new Element("DataChoice", this.SWE2_NS);
-        dataChoice.setAttribute("definition", SENSORS_DEF);
+        dataChoice.setAttribute("definition", STATIC_SENSORS_DEF);
         for (int i = 0; i < this.handler.getProcedures().length; i++) {
             String stName = this.handler.getCDMDataset().getStationName(i);
             // DataRecord has to have at least 2 fields
@@ -396,8 +397,8 @@ public class Ioos10Formatter extends BaseOutputFormatter {
                 dataChoice.addContent(createDataChoiceForSensor(stName, sensor));
             }
         }
-        field.addContent(dataChoice);
-        dataRecord.addContent(field);
+        sensorField.addContent(dataChoice);
+        dataRecord.addContent(sensorField);
 
         elementType.addContent(dataRecord);
         return elementType;
@@ -437,9 +438,12 @@ public class Ioos10Formatter extends BaseOutputFormatter {
                 for (Attribute attr : this.handler.getVariableByName(sensor).getAttributes()) {
                     if (attr.getShortName().toLowerCase().contains("fillvalue")) {
                         Element nilValues = new Element("nilValues", this.SWE2_NS);
-                        Element nvs = new Element("nilValue", this.SWE2_NS).setAttribute("reason", "Fill Value");
+                        Element nnilValues = new Element("NilValues", this.SWE2_NS);
+
+                        Element nvs = new Element("nilValue", this.SWE2_NS).setAttribute("reason", MISSING_REASON);
                         nvs.setText(attr.getValue(0).toString());
-                        nilValues.addContent(nvs);
+                        nnilValues.addContent(nvs);
+                        nilValues.addContent(nnilValues);
                         quantity.addContent(nilValues);
                     }
                 }
@@ -520,7 +524,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
          */
         Element encoding = new Element("encoding", this.SWE2_NS);
         Element txe = new Element("TextEncoding", this.SWE2_NS);
-        txe.setAttribute("decimalSeperator", DECIMAL_SEPERATOR);
+        txe.setAttribute("decimalSeparator", DECIMAL_SEPERATOR);
         txe.setAttribute("tokenSeparator", TOKEN_SEPERATOR);
         txe.setAttribute("blockSeparator", BLOCK_SEPERATOR);
         encoding.addContent(txe);

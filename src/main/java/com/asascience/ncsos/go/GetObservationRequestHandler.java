@@ -16,6 +16,7 @@ import ucar.nc2.dataset.CoordinateAxis1D;
 import ucar.nc2.dataset.NetcdfDataset;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,8 +35,8 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
     private iStationData CDMDataSet;
     private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(GetObservationRequestHandler.class);
     private static final String FILL_VALUE_NAME = "_FillValue";
-    private static final String IOOS10_RESPONSE_FORMAT = "text/xml;schema=\"om/1.0.0/profiles/ioos_sos/1.0\"";
-    private static final String OOSTETHYS_RESPONSE_FORMAT = "text/xml;schema=\"om/1.0.0\"";
+    public static final String IOOS10_RESPONSE_FORMAT = "text/xml;schema=\"om/1.0.0/profiles/ioos_sos/1.0\"";
+    public static final String OOSTETHYS_RESPONSE_FORMAT = "text/xml;schema=\"om/1.0.0\"";
     private final List<String> eventTimes;
 
     /**
@@ -59,7 +60,8 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
 
         // Translate back to an URN.  (gml:id fields in XML can't have colons)
         offering = offering.replace("_-_",":");
-
+        offering = URLDecoder.decode(offering,"UTF-8");
+        responseFormat = URLDecoder.decode(responseFormat,"UTF-8");
         if (eventTime != null && eventTime.length > 0) {
             eventTimes = Arrays.asList(eventTime);
         } else {

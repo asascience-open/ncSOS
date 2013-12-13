@@ -37,6 +37,7 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
     private static final String TEMPLATE_LOCATION = "templates/DS_ioos10.xml";
     private final static String IOOSURL = "http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0";
     private final static String OBSERVATION_TIME_RANGE = "observationTimeRange";
+    public static final String MEMBER = "member";
     private final static String OBS_TR_DEF = "http://mmisw.org/ont/ioos/definition/observationTimeRange";
     protected Namespace GML_NS,SML_NS,XLINK_NS,SWE_NS = null;
 
@@ -142,11 +143,18 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
         </sml:capabilities>     
         
          */
-        Element parentNode = this.getRoot().getChild(SML_CAPABILITIES, this.SML_NS);
-        parentNode.setAttribute(NAME, OBSERVATION_TIME_RANGE);
-        Element parent = addNewNode(SML_CAPABILITIES, this.SML_NS, DATA_RECORD, this.SWE_NS);
-        setValidTime(parent, timeBegin, timeEnd);
-    }
+        Element memberNode = this.getRoot().getChild(MEMBER, this.SML_NS);
+        if(memberNode != null) {
+        	Element systemNode = memberNode.getChild(SYSTEM, this.SML_NS);
+        	if(systemNode != null){
+        		Element parentNode = systemNode.getChild(SML_CAPABILITIES, SML_NS);
+        			parentNode.setAttribute(NAME, OBSERVATION_TIME_RANGE);
+        			Element parent = addNewNode(parentNode, DATA_RECORD, this.SWE_NS);
+        			setValidTime(parent, timeBegin, timeEnd);
+        		}
+        	}
+        }
+    
 
     public void setValidTime(Element parent, String timeBegin, String timeEnd) {
         parent = addNewNode(parent, FIELD, SWE_NS, NAME, OBSERVATION_TIME_RANGE);
@@ -314,7 +322,7 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
          * </sml:component>
          */
         // add to the <sml:ComponentList> node
-        Element compList = addNewNode(COMPONENT_LIST, SML_NS, COMPONENT, SML_NS, NAME, compName);
+        Element compList = addNewNode( COMPONENT_LIST, SML_NS, COMPONENT, SML_NS, NAME, compName);
         Element system = addNewNode(compList, SYSTEM, SML_NS, ID, GML_NS, compId);
         addNewNode(system, DESCRIPTION, GML_NS, description);
         addNewNode(system, IDENTIFICATION, SML_NS, HREF, XLINK_NS, urn);

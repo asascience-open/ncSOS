@@ -70,7 +70,7 @@ public class BaseOutputFormatter extends OutputFormatter {
 
     protected Element addNewNode(Element parent, String nodeName, Namespace nodeNS) {
         Element child = new Element(nodeName, nodeNS);
-        parent.addContent(new Element(nodeName, nodeNS));
+        parent.addContent(child);
         return child;
     }
 
