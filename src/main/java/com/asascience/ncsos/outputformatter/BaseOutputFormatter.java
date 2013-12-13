@@ -40,6 +40,10 @@ public class BaseOutputFormatter extends OutputFormatter {
         this.document = ef.document;
     }
 
+    public String getContentType() {
+        return "text/xml";
+    }
+    
     public void writeOutput(Writer writer) throws IOException {
         XMLOutputter xmlOutput = new XMLOutputter();
         xmlOutput.setFormat(Format.getPrettyFormat());

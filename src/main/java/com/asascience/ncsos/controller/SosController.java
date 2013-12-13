@@ -1,7 +1,3 @@
-/*
-based on iso controller NOAA - ASA
- * @author abird
- */
 package com.asascience.ncsos.controller;
 
 import com.asascience.ncsos.outputformatter.OutputFormatter;
@@ -19,13 +15,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
 
-
-/**
- * Controller for SOS service
- * Author: abird Date: feb 8, 2011
- * <p/>
- */
-//@Deprecated
 @Controller
 @RequestMapping("/sos")
 public class SosController implements ISosContoller {
@@ -60,7 +49,6 @@ public class SosController implements ISosContoller {
     @RequestMapping(params = {})
     @Override
     public void handleSOSRequest(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
-        _log.info("Handling SOS metadata request.");
 
         NetcdfDataset dataset = null;
         
@@ -69,39 +57,30 @@ public class SosController implements ISosContoller {
         try {
             //see http://tomcat.apache.org/tomcat-5.5-doc/config/context.html ----- workdir    
             String tempdir = System.getProperty("java.io.tmpdir");
-            
          
-            //return netcdf dataset
             dataset = DatasetHandlerAdapter.openDataset(req, res);
-            //set the response type
-            Writer writer = res.getWriter();
-            //TODO create new service???
+         
             Parser md = new Parser();
-            respMap = md.enhanceGETRequest(dataset, req.getQueryString(), req.getRequestURL().toString(),tempdir);
-            res.setContentType(respMap.get("responseContentType").toString());
+            respMap = md.enhanceGETRequest(dataset, req.getQueryString(), req.getRequestURL().toString(),tempdir);            
             
-            // tell our handler to write out the response
+            Writer writer = res.getWriter();
             OutputFormatter output = (OutputFormatter)respMap.get("outputFormatter");
-            output.writeOutput(writer);
-            
-            // log and flush writer
-//            _log.info(req.getRequestURL().toString()+"?"+req.getQueryString().toString());
+            res.setContentType(output.getContentType().toString());            
+            output.writeOutput(writer);            
             writer.flush();
             writer.close();
 
         } catch (Exception e) {
-            _log.error(e.getMessage());
+            _log.error("Something went wrong", e);
             //close the dataset remove memory hang
-        } finally {
-        	
-        
-        	// This is a workaround for a bug in thredds. On the second request 
-        	// for a ncml object the request will fail due to an error
-        	// with the cached object. In order to get around this, the
-        	// cache for the ncml files must be cleared.
-        	if(dataset.getReferencedFile().getLocation().toLowerCase().endsWith("xml") ||
-        		dataset.getReferencedFile().getLocation().toLowerCase().endsWith("ncml"))
-                dataset.getReferencedFile().setFileCache(null);
+        } finally {  
+            // This is a workaround for a bug in thredds. On the second request 
+            // for a ncml object the request will fail due to an error
+            // with the cached object. In order to get around this, the
+            // cache for the ncml files must be cleared.
+            if(dataset.getReferencedFile().getLocation().toLowerCase().endsWith("xml") ||
+                    dataset.getReferencedFile().getLocation().toLowerCase().endsWith("ncml"))
+            dataset.getReferencedFile().setFileCache(null);
            DatasetHandlerAdapter.closeDataset(dataset);
             
         }

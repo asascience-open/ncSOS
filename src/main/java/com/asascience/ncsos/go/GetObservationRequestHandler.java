@@ -33,7 +33,6 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
     private String[] procedures;
     private iStationData CDMDataSet;
     private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(GetObservationRequestHandler.class);
-    private String contentType;
     private static final String FILL_VALUE_NAME = "_FillValue";
     private static final String IOOS10_RESPONSE_FORMAT = "text/xml;schema=\"om/1.0.0/profiles/ioos_sos/1.0\"";
     private static final String OOSTETHYS_RESPONSE_FORMAT = "text/xml;schema=\"om/1.0.0\"";
@@ -69,10 +68,8 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
 
         // set up our formatter
         if (responseFormat.equalsIgnoreCase(OOSTETHYS_RESPONSE_FORMAT)) {
-            contentType = TEXTXML;
             formatter = new OosTethysFormatter(this);
         } else if (responseFormat.equalsIgnoreCase(IOOS10_RESPONSE_FORMAT)) {
-            contentType = TEXTXML;
             formatter = new Ioos10Formatter(this);
         } else {
             formatter = new ErrorFormatter();
@@ -326,14 +323,6 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
      */
     public iStationData getCDMDataset() {
         return CDMDataSet;
-    }
-
-    /**
-     * The content type header for the response
-     * @return the content type of the response (text/xml)
-     */
-    public String getContentType() {
-        return contentType;
     }
 
     //<editor-fold defaultstate="collapsed" desc="Helper functions for building GetObs XML">
