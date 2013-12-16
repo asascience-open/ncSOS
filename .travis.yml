@@ -2,4 +2,5 @@ language: java
 before_script:
   - cd resources && unzip datasets.zip && cd ..
 script: mvn test
-
+notifications:
+    flowdock: 2dd835dfbdbc64986ba043fffa654836
