@@ -78,10 +78,13 @@ public class SosController implements ISosContoller {
             // for a ncml object the request will fail due to an error
             // with the cached object. In order to get around this, the
             // cache for the ncml files must be cleared.
-            if(dataset.getReferencedFile().getLocation().toLowerCase().endsWith("xml") ||
-                    dataset.getReferencedFile().getLocation().toLowerCase().endsWith("ncml"))
-            dataset.getReferencedFile().setFileCache(null);
-           DatasetHandlerAdapter.closeDataset(dataset);
+            String location = dataset.getReferencedFile().getLocation().toLowerCase();
+            if(location.endsWith("xml") ||
+                    location.endsWith("ncml") ||
+                    location.endsWith("nc")) {
+                dataset.getReferencedFile().setFileCache(null);
+            }
+            DatasetHandlerAdapter.closeDataset(dataset);
             
         }
 

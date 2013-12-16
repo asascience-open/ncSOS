@@ -57,7 +57,14 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
         if (getFeatureDataset() == null) {
             // error, couldn't read dataset
             formatter = new ErrorFormatter();
-            ((ErrorFormatter)formatter).setException("Unable to read the dataset's feature type. Reported as " + FeatureDatasetFactoryManager.findFeatureType(netCDFDataset).toString() + "; unable to process.");
+            StringBuffer sb = new StringBuffer();
+            if(netCDFDataset == null) {
+              ((ErrorFormatter)formatter).setException("Unable to read the dataset's feature type. NULL dataset.");
+            } else if(FeatureDatasetFactoryManager.findFeatureType(netCDFDataset) == null) {
+              ((ErrorFormatter)formatter).setException("Unable to read the dataset's feature type. Null feature type reported by netCDF");
+            } else {
+              ((ErrorFormatter)formatter).setException("Unable to read the dataset's feature type. Reported as " + FeatureDatasetFactoryManager.findFeatureType(netCDFDataset).toString() + "; unable to process.");
+            }
             return;
         }
 
