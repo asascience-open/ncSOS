@@ -188,10 +188,10 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         Element offering = this.buildOffering();
         // Id
         offering.setAttribute("id", "network-all", gmlns);
-        // Name
-        offering.addContent(new Element("name", gmlns).setText(this.handler.getUrnNetworkAll()));
         // Description
         offering.addContent(new Element("description", gmlns).setText("Network offering containing all features in the dataset"));
+        // Name
+        offering.addContent(new Element("name", gmlns).setText(this.handler.getUrnNetworkAll()));
         // SRS
         offering.addContent(new Element("srsName", gmlns).setText(EPSG4326));
         // Bounded By
