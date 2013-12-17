@@ -280,7 +280,8 @@ public class Parser {
                     String[] howManyStation = keyVal[1].replace("%3A", ":").split(",");
                     queryParameters.put(keyVal[0].toLowerCase(), howManyStation);
                 } else if (keyVal[0].equalsIgnoreCase(RESPONSE_FORMAT)) {                    
-                    parseOutputFormat(RESPONSE_FORMAT,keyVal[1]);
+                	int firstEqual = arg.indexOf("=");
+                    parseOutputFormat(RESPONSE_FORMAT,arg.substring(firstEqual+1));
                 } else if (keyVal[0].equalsIgnoreCase(OUTPUT_FORMAT)) {     
                 	int firstEqual = arg.indexOf("=");
                     parseOutputFormat(OUTPUT_FORMAT,arg.substring(firstEqual+1));                    
