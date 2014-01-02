@@ -59,7 +59,7 @@ public class SosController implements ISosContoller {
             String tempdir = System.getProperty("java.io.tmpdir");
          
             dataset = DatasetHandlerAdapter.openDataset(req, res);
-         
+
             Parser md = new Parser();
             respMap = md.enhanceGETRequest(dataset, req.getQueryString(), req.getRequestURL().toString(),tempdir);            
             
@@ -79,12 +79,19 @@ public class SosController implements ISosContoller {
             // with the cached object. In order to get around this, the
             // cache for the ncml files must be cleared.
             String location = dataset.getReferencedFile().getLocation().toLowerCase();
-            if(location.endsWith("xml") ||
-                    location.endsWith("ncml") ||
-                    location.endsWith("nc")) {
-                dataset.getReferencedFile().setFileCache(null);
+            try{
+            	NetcdfDataset dset =  ((NetcdfDataset)dataset.getReferencedFile());
+
+            	if(location.endsWith("xml") ||
+            			location.endsWith("ncml") ||
+            			dset.getAggregation() != null) {
+            		dataset.getReferencedFile().setFileCache(null);
+            	}
             }
+            catch(Exception e){}
             DatasetHandlerAdapter.closeDataset(dataset);
+            
+            
             
         }
 
