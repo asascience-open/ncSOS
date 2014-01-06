@@ -14,6 +14,9 @@ To install thredds go to the following link [THREDDS INSTALL](http://www.unidata
 
 but when told to download the THREDDS a version use the following link for [THREDDS version 4.4.1](ftp://ftp.unidata.ucar.edu/pub/thredds/4.4/current/thredds.war)
 
+## Updating from a previous version of THREDDS (less than 4.4.1)
+Suggest doing a clean install for now...
+
 
 ## Installation
 1. [Download](https://github.com/asascience-open/ncSOS/raw/master/jar/ncSOS.zip) the latest release of ncSOS
