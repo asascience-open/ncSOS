@@ -1,6 +1,15 @@
 # NcSOS
 
-** Still Working on integration of THREDDS 4.4.1 with NCSOS, at present does not work....
+** Still Working on the integration of THREDDS 4.4.1 with NCSOS, at present does not work without the following....
+
+there is currently a dependancy on a log4j lib that is not available in the new version of thredds, if you manually copy the log4j-1.2.17.jar library in to the webapps\thredds\WEB-INF\lib ncsos will work and you wont get class def error
+```
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.17</version>
+    </dependency>
+```
 
 [![Build Status](https://travis-ci.org/asascience-open/ncSOS.png?branch=master)](https://travis-ci.org/asascience-open/ncSOS)
 
