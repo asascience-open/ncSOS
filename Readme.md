@@ -12,7 +12,7 @@ _You will need a working THREDDS installation of a least version **4.4.1** to ru
 
 To install thredds go to the following link [THREDDS INSTALL](http://www.unidata.ucar.edu/software/thredds/current/tds/tds4.3/tutorial/GettingStarted.html#deploying)
 
-but when told to download the THREDDS version use the following link 9for 4.4.1 [THREDDS 4.4.1](ftp://ftp.unidata.ucar.edu/pub/thredds/4.4/current/thredds.war)
+but when told to download the THREDDS a version use the following link for [THREDDS version 4.4.1](ftp://ftp.unidata.ucar.edu/pub/thredds/4.4/current/thredds.war)
 
 
 # Quick Links
