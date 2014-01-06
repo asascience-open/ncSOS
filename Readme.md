@@ -15,7 +15,7 @@ To install thredds go to the following link [THREDDS INSTALL](http://www.unidata
 but when told to download the THREDDS a version use the following link for [THREDDS version 4.4.1](ftp://ftp.unidata.ucar.edu/pub/thredds/4.4/current/thredds.war)
 
 ## Updating from a previous version of THREDDS (less than 4.4.1)
-Suggest doing a clean install for now...
+Suggest doing a clean install of tomcat and THREDDS for now as the directory structure is different...
 
 
 ## Installation
@@ -47,6 +47,11 @@ Suggest doing a clean install for now...
 on a new install the catalog.xml can be found here.
 ```
 \{Tomcat Path}\webapps\thredds\share\testdata\cdmUnitTest\it\content\thredds
+```
+
+the sample catalog relates to data sets here.
+```
+\{Tomcat Path}\webapps\thredds\share\testdata\cdmUnitTest\it\content\thredds\public\testdata
 ```
 
 
