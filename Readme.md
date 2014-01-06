@@ -1,5 +1,16 @@
 # NcSOS
 
+** Still Working on the integration of THREDDS 4.4.1 with NCSOS, at present does not work without the following....
+
+there is currently a dependancy on a log4j lib that is not available in the new version of thredds, if you manually copy the log4j-1.2.17.jar library in to the webapps\thredds\WEB-INF\lib ncsos will work and you wont get class def error
+```
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.17</version>
+    </dependency>
+```
+
 [![Build Status](https://travis-ci.org/asascience-open/ncSOS.png?branch=master)](https://travis-ci.org/asascience-open/ncSOS)
 
 Stable version: **RC7**
@@ -8,7 +19,19 @@ NcSOS adds an OGC SOS service to datasets in your existing [THREDDS](http://www.
 
 NcSOS acts like other THREDDS services (such an OPeNDAP and WMS) where as there are individual service endpoints for each dataset.  It is best to aggregate your files and enable the NcSOS service on top of the aggregation.  i.e. The NcML aggregate of hourly files from an individual station would be a good candidate to serve with NcSOS.  Serving the individual hourly files with NcSOS would not be as beneficial.
 
-_You will need a working THREDDS installation of a least version **4.3.16** to run NcSOS_.
+
+_You will need a working THREDDS installation of a least version **4.4** to run NcSOS_
+
+_These Instructions were tested in Apache Tomcat 7_
+
+
+To install thredds go to the following link [THREDDS INSTALL](http://www.unidata.ucar.edu/software/thredds/current/tds/tds4.3/tutorial/GettingStarted.html#deploying)
+
+When told to download the THREDDS WAR file use the following link to download the [THREDDS version 4.4](ftp://ftp.unidata.ucar.edu/pub/thredds/4.4/current/thredds.war)
+
+## Updating from a previous version of THREDDS (less than 4.4)
+Suggest doing a clean install of tomcat and THREDDS for now as the directory structure is different...
+
 
 ## Installation
 1. [Download](https://github.com/asascience-open/ncSOS/raw/master/jar/ncSOS.zip) the latest release of ncSOS
@@ -35,6 +58,18 @@ _You will need a working THREDDS installation of a least version **4.3.16** to r
 ```xml
 <service name="sos" serviceType="SOS" base="/thredds/sos/" />
 ``` 
+
+on a new install the catalog.xml can be found here.
+```
+\{Tomcat Path}\webapps\thredds\share\testdata\cdmUnitTest\it\content\thredds
+```
+
+the sample catalog relates to data sets here.
+```
+\{Tomcat Path}\webapps\thredds\share\testdata\cdmUnitTest\it\content\thredds\public\testdata
+```
+
+
 7. Restart Tomcat
 
 ## NC Aggregation 
