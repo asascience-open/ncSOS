@@ -40,6 +40,13 @@ but when told to download the THREDDS a version use the following link for [THRE
 ```xml
 <service name="sos" serviceType="SOS" base="/thredds/sos/" />
 ``` 
+
+on a new install the catalog.xml can be found here.
+```
+\{Tomcat Path}\webapps\thredds\WEB-INF\altContent\startup
+```
+
+
 7. Restart Tomcat
 
 ## NC Aggregation 
