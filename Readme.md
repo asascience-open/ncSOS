@@ -8,7 +8,10 @@ NcSOS adds an OGC SOS service to datasets in your existing [THREDDS](http://www.
 
 NcSOS acts like other THREDDS services (such an OPeNDAP and WMS) where as there are individual service endpoints for each dataset.  It is best to aggregate your files and enable the NcSOS service on top of the aggregation.  i.e. The NcML aggregate of hourly files from an individual station would be a good candidate to serve with NcSOS.  Serving the individual hourly files with NcSOS would not be as beneficial.
 
-_You will need a working THREDDS installation of a least version **4.4.1** to run NcSOS_.
+
+_You will need a working THREDDS installation of a least version **4.4** to run NcSOS_
+_These Instructions were tested in Apache Tomcat 7_
+
 
 To install thredds go to the following link [THREDDS INSTALL](http://www.unidata.ucar.edu/software/thredds/current/tds/tds4.3/tutorial/GettingStarted.html#deploying)
 
