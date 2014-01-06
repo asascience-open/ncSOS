@@ -15,6 +15,7 @@ To install thredds go to the following link [THREDDS INSTALL](http://www.unidata
 but when told to download the THREDDS a version use the following link for [THREDDS version 4.4.1](ftp://ftp.unidata.ucar.edu/pub/thredds/4.4/current/thredds.war)
 
 
+<<<<<<< HEAD
 # Quick Links
 1. *Mailing list*: https://groups.google.com/forum/#!forum/ncsos
 2. *Documentation wiki*: https://github.com/asascience-open/ncSOS/wiki
@@ -28,6 +29,40 @@ but when told to download the THREDDS a version use the following link for [THRE
 | [RC8](https://github.com/asascience-open/ncSOS/releases/tag/RC8-2)           | 4.3.20 (20131125.1409) | http://sos.maracoos.org/stable/catalog.html     |
 | [master](https://github.com/asascience-open/ncSOS/tree/master)        | 4.3.20 (20131125.1409) | http://sos.maracoos.org/pre/catalog.html        |
 | [tds_4.4.1](https://github.com/asascience-open/ncSOS/tree/tds_4.4.1)     | 4.4.1 (20131220.1427)  | http://sos.maracoos.org/dev/catalog.html        |
+
+## Installation
+1. [Download](https://github.com/asascience-open/ncSOS/raw/master/jar/ncSOS.zip) the latest release of ncSOS
+2. Extract `ncSOS.zip` into a local directory
+3. Copy the `ncSOS.jar` into your `$TOMCAT_HOME/webapps/thredds/WEB-INF/lib` directory.
+4. Copy the `sos-servlet.xml` configuration file into the `$TOMCAT_HOME/webapps/thredds/WEB-INF` directory.
+5. Add two new servlet mappings to your `$TOMCAT_HOME/webapps/thredds/WEB-INF/web.xml` file:
+    ```xml
+    <servlet>
+        <servlet-name>sos</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    ```
+    
+    ```xml
+    <servlet-mapping>
+        <servlet-name>sos</servlet-name>
+        <url-pattern>/sos/*</url-pattern>
+    </servlet-mapping>
+    ```
+
+6. Add the following service definition to enable SOS in your THREDDS catalog XML files:
+```xml
+<service name="sos" serviceType="SOS" base="/thredds/sos/" />
+``` 
+
+on a new install the catalog.xml can be found here.
+```
+\{Tomcat Path}\webapps\thredds\share\testdata\cdmUnitTest\it\content\thredds
+```
+
+
+7. Restart Tomcat
 
 ## NC Aggregation 
 
