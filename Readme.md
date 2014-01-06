@@ -43,7 +43,7 @@ but when told to download the THREDDS a version use the following link for [THRE
 
 on a new install the catalog.xml can be found here.
 ```
-\{Tomcat Path}\webapps\thredds\WEB-INF\altContent\startup
+\{Tomcat Path}\webapps\thredds\share\testdata\cdmUnitTest\it\content\thredds
 ```
 
 
