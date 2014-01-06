@@ -10,6 +10,7 @@ NcSOS acts like other THREDDS services (such an OPeNDAP and WMS) where as there 
 
 
 _You will need a working THREDDS installation of a least version **4.4** to run NcSOS_
+
 _These Instructions were tested in Apache Tomcat 7_
 
 
