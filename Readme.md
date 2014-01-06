@@ -16,7 +16,7 @@ _These Instructions were tested in Apache Tomcat 7_
 
 To install thredds go to the following link [THREDDS INSTALL](http://www.unidata.ucar.edu/software/thredds/current/tds/tds4.3/tutorial/GettingStarted.html#deploying)
 
-but when told to download the THREDDS a version use the following link for [THREDDS version 4.4.1](ftp://ftp.unidata.ucar.edu/pub/thredds/4.4/current/thredds.war)
+When told to download the THREDDS WAR file use the following link to download the [THREDDS version 4.4](ftp://ftp.unidata.ucar.edu/pub/thredds/4.4/current/thredds.war)
 
 ## Updating from a previous version of THREDDS (less than 4.4)
 Suggest doing a clean install of tomcat and THREDDS for now as the directory structure is different...
