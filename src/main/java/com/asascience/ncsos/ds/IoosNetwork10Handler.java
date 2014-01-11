@@ -22,7 +22,7 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
     
     private final String procedure;
     private final String server;
-    private final static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(IoosNetwork10Handler.class);
+    private final static org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger();
     
     private IoosNetwork10Formatter network;
     private String errorString;

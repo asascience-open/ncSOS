@@ -1,6 +1,7 @@
 package com.asascience.ncsos.util;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import thredds.servlet.DatasetHandler;
 import thredds.servlet.ServletUtil;
 import ucar.nc2.NetcdfFile;
@@ -14,7 +15,7 @@ import java.io.IOException;
 
 public class DatasetHandlerAdapter {
 
-    private static final Logger _log = Logger.getLogger(DatasetHandlerAdapter.class);
+    private static final Logger _log = LogManager.getLogger();
 
     /** 
      * Open a NetcdfDataset based on the incoming url request.

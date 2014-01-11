@@ -57,7 +57,7 @@ public abstract class BaseRequestHandler {
     protected static String OPERATION_NOT_SUPPORTED = "OperationNotSupported";
 
 
-    private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(BaseRequestHandler.class);
+    private org.apache.logging.log4j.Logger _log = org.apache.logging.log4j.LogManager.getLogger();
 
     static {
         FORMAT_DEGREE = NumberFormat.getNumberInstance();

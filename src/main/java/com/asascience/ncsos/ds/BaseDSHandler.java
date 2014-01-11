@@ -24,7 +24,7 @@ public class BaseDSHandler extends BaseRequestHandler {
     public static final String SENSOR = "sensor";
     public static final String STATION = "station";
     
-    private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(BaseDSHandler.class);
+    private org.apache.logging.log4j.Logger _log = org.apache.logging.log4j.LogManager.getLogger();
     private final String procedure;
     private BaseDSInterface describer;
 

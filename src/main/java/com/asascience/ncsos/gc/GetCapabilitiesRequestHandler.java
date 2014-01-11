@@ -37,7 +37,7 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
     private static CalendarDate setEndDate;
     private static HashMap<Integer, CalendarDateRange> stationDateRange;
     private static HashMap<Integer, LatLonRect> stationBBox;
-    private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(GetCapabilitiesRequestHandler.class);
+    private static org.apache.logging.log4j.Logger _log = org.apache.logging.log4j.LogManager.getLogger();
 
     /**
      * Creates an instance of GetCapabilitiesRequestHandler to handle the dataset
