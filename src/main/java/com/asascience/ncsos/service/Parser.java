@@ -223,7 +223,7 @@ public class Parser {
                     // add our handler to the return value
                     retval.put(OUTPUT_FORMATTER, obsHandler.getOutputFormatter());
                 } catch (Exception ex) {
-                    _log.debug(ex.getMessage());
+                    _log.error("Internal Error in creating output for GetObservation request:", ex);
                     errorHandler.setException("Internal Error in creating output for GetObservation request - " + ex.toString());
                     retval.put(OUTPUT_FORMATTER, errorHandler.getOutputFormatter());
                 }
