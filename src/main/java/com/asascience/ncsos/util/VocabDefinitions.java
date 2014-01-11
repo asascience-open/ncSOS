@@ -9,7 +9,7 @@ public final class VocabDefinitions {
     private static final String CF_PARAMETERS = "resources/cf_parameters.txt";
     private static HashSet<String> cfSet;
     private static HashSet<String> ioosDefs;
-    private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(VocabDefinitions.class);
+    private static org.apache.logging.log4j.Logger _log = org.apache.logging.log4j.LogManager.getLogger(VocabDefinitions.class);
     
     private VocabDefinitions() {}
     

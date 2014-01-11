@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class Ioos10Handler extends BaseRequestHandler {
     
-    private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Ioos10Handler.class);
+    private static org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger();
     
     protected final IFReportMechanism reporter;
     protected final static String DEFAULT_STRING = "UNKNOWN";

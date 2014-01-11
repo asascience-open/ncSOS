@@ -1,20 +1,5 @@
 # NcSOS
 
-** Still Working on the integration of THREDDS 4.4.1 with NCSOS, at present it wont work without the following library existing the the thredds lib directory.
-
-There is currently a dependancy on a log4j lib that is not available in the new version of thredds, if you manually copy the log4j-1.2.17.jar library located in the /jar directory, in to the webapps\thredds\WEB-INF\lib ncsos will work and you wont get class def error
-
-below is the pom dependancy used during the build that will be removed eventually 
-```
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.17</version>
-    </dependency>
-```
-
-* There is a current build of ncSOS-R7 in the /jar directory as well incase you dont want to build it yourself...
-
 [![Build Status](https://travis-ci.org/asascience-open/ncSOS.png?branch=master)](https://travis-ci.org/asascience-open/ncSOS)
 
 Stable version: **RC7**
@@ -63,18 +48,13 @@ Suggest doing a clean install of tomcat and THREDDS for now as the directory str
 <service name="sos" serviceType="SOS" base="/thredds/sos/" />
 ``` 
 
-on a new install the catalog.xml can be found here.
+7. Add the following line for logging configuration to `$TOMCAT_HOME/webapps/thredds/WEB-INF/classes/log4j2.xml`:
+```xml
+<logger name="com.asascience" level="info" additivity="false">
+  <appender-ref ref="threddsServlet" />
+</logger>
 ```
-\{Tomcat Path}\webapps\thredds\share\testdata\cdmUnitTest\it\content\thredds
-```
-
-the sample catalog relates to data sets here.
-```
-\{Tomcat Path}\webapps\thredds\share\testdata\cdmUnitTest\it\content\thredds\public\testdata
-```
-
-
-7. Restart Tomcat
+8. Restart Tomcat
 
 ## NC Aggregation 
 

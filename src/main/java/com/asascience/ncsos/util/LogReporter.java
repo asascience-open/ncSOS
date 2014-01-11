@@ -2,7 +2,7 @@ package com.asascience.ncsos.util;
 
 public class LogReporter implements IFReportMechanism {
 
-    private final static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(LogReporter.class);
+    private final static org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger(LogReporter.class);
     
     public void ReportInvalid(String valueName, String invalidValue) {
         logger.warn("Recieved and invalid value for " + valueName + ": " + invalidValue);

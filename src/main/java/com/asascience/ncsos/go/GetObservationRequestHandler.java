@@ -33,7 +33,7 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
     private String[] obsProperties;
     private String[] procedures;
     private iStationData CDMDataSet;
-    private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(GetObservationRequestHandler.class);
+    private org.apache.logging.log4j.Logger _log = org.apache.logging.log4j.LogManager.getLogger();
     private static final String FILL_VALUE_NAME = "_FillValue";
     public static final String IOOS10_RESPONSE_FORMAT = "text/xml;schema=\"om/1.0.0/profiles/ioos_sos/1.0\"";
     public static final String OOSTETHYS_RESPONSE_FORMAT = "text/xml;schema=\"om/1.0.0\"";

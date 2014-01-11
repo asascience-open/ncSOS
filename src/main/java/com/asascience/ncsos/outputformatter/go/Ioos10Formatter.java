@@ -22,7 +22,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
     // private fields
     private String[] procedures;
     // private static fields
-    private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(Ioos10Formatter.class);
+    private static org.apache.logging.log4j.Logger _log = org.apache.logging.log4j.LogManager.getLogger();
     public static final String SENSOR_ID_DEF = "http://mmisw.org/ont/ioos/definition/sensorID";
     // private constant fields
     private static final String TEMPLATE = "templates/GO_ioos10.xml";

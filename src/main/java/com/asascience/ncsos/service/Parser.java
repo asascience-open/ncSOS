@@ -7,8 +7,8 @@ import com.asascience.ncsos.go.GetObservationRequestHandler;
 import com.asascience.ncsos.outputformatter.CachedFileFormatter;
 import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.util.LogUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.xml.sax.SAXException;
 import ucar.nc2.dataset.NetcdfDataset;
 
@@ -65,7 +65,7 @@ public class Parser {
      * Sets the logger for error output using the Parser class.
      */
     public Parser() throws IOException {
-        _log = LoggerFactory.getLogger(Parser.class);
+        _log = LogManager.getLogger();
         errorHandler = new ExceptionResponseHandler();
     }
 
