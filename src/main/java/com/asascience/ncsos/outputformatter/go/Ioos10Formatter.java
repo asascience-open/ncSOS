@@ -620,7 +620,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         String op_name = stFormName + "_" + op.toLowerCase();
         Element retval = new Element("field", this.SWE2_NS);
         retval.setAttribute("name", op_name);
-        Element dataRecord = new Element("DataReocrd", this.SWE2_NS);
+        Element dataRecord = new Element("DataRecord", this.SWE2_NS);
         dataRecord.setAttribute("id", op_name);
         dataRecord.setAttribute(DEFINITION, STATIC_SENSOR_DEF);
         // sensorID field
@@ -638,7 +638,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         field = new Element("field", this.SWE2_NS);
         field.setAttribute("name", "height");
         Element quantity = new Element("Quantity", this.SWE2_NS);
-        quantity.setAttribute("definintion", "http://mmisw.org/ont/cf/parameter/height");
+        quantity.setAttribute("definition", "http://mmisw.org/ont/cf/parameter/height");
         quantity.setAttribute("referenceFrame", "#PlatformFrame");
         quantity.addContent(new Element("uom", this.SWE2_NS).setAttribute("code", "m"));
         value = new Element("value", this.SWE2_NS);
