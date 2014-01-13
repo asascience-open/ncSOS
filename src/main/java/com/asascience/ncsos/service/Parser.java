@@ -100,7 +100,7 @@ public class Parser {
 
         if (query != null) {
             // parse the query string
-            ParseQuery(query);
+            queryParameters.putAll(parseQuery(query));
         } else {
             // we are assuming that a request made here w/o a query string is a 'GetCapabilities' request
             // add the request to our query parameters, as well as some other default values
@@ -271,60 +271,67 @@ public class Parser {
         capHandler.parseGetCapabilitiesDocument();
     }
 
-    private void ParseQuery(String query) {
+    private HashMap<String, Object> parseQuery(String query) {
+        // @TODO: this needs to be rewritten using apache commons URLEncodedUtils sadly not available until 4.0
+
+        HashMap<String, Object> queryMap = new HashMap<String, Object>();
+        
         String[] queryArguments = query.split("&");
         for (String arg : queryArguments) {
             String[] keyVal = arg.split("=");
-            try {
-                if (keyVal[0].equalsIgnoreCase(PROCEDURE)) {
-                    String[] howManyStation = keyVal[1].replace("%3A", ":").split(",");
-                    queryParameters.put(keyVal[0].toLowerCase(), howManyStation);
-                } else if (keyVal[0].equalsIgnoreCase(RESPONSE_FORMAT)) {                    
-                	int firstEqual = arg.indexOf("=");
-                    parseOutputFormat(RESPONSE_FORMAT,arg.substring(firstEqual+1));
-                } else if (keyVal[0].equalsIgnoreCase(OUTPUT_FORMAT)) {     
-                	int firstEqual = arg.indexOf("=");
-                    parseOutputFormat(OUTPUT_FORMAT,arg.substring(firstEqual+1));                    
-                } else if (keyVal[0].equalsIgnoreCase(EVENT_TIME)) {
-                    String[] eventtime;
-                    if (keyVal[1].contains("/")) {
-                        eventtime = keyVal[1].split("/");
-                    } else {
-                        eventtime = new String[]{keyVal[1]};
-                    }
-                    queryParameters.put(keyVal[0], eventtime);
-                } else if (keyVal[0].equalsIgnoreCase(OBSERVED_PROPERTY)) {
-                    String[] param;
-                    if (keyVal[1].contains(",")) {
-                        param = keyVal[1].split(",");
-                    } else {
-                        param = new String[]{keyVal[1]};
-                    }
-                    queryParameters.put(keyVal[0], param);
-                } else if (keyVal[0].equalsIgnoreCase(ACCEPT_VERSIONS)) {
-                    String[] param;
-                    if (keyVal[1].contains(",")) {
-                        param = keyVal[1].split(",");
-                    } else {
-                        param = new String[]{keyVal[1]};
-                    }
-                    queryParameters.put(ACCEPT_VERSIONS, param);
+            String key;
+            String value;
 
+            try {
+                key = URLDecoder.decode(keyVal[0], "UTF-8");
+                value = URLDecoder.decode(keyVal[1], "UTF-8").trim();
+            } catch (UnsupportedEncodingException e) {
+                _log.info("Unsupported Encoding exception, continuing", e);
+                continue;
+            }
+
+            if (key.equalsIgnoreCase(PROCEDURE)) {
+                String[] howManyStation = value.split(",");
+                queryMap.put(key.toLowerCase(), howManyStation);
+            } else if (key.equalsIgnoreCase(RESPONSE_FORMAT)) {
+                parseOutputFormat(RESPONSE_FORMAT, value);
+            } else if (key.equalsIgnoreCase(OUTPUT_FORMAT)) {
+                parseOutputFormat(OUTPUT_FORMAT, value);
+            } else if (key.equalsIgnoreCase(EVENT_TIME)) {
+                String[] eventtime;
+                if (value.contains("/")) {
+                    eventtime = value.split("/");
                 } else {
-                    queryParameters.put(keyVal[0], keyVal[1]);
+                    eventtime = new String[]{value};
                 }
-            } catch (IndexOutOfBoundsException e) {}
+                queryMap.put(key, eventtime);
+            } else if (key.equalsIgnoreCase(OBSERVED_PROPERTY)) {
+                String[] param;
+                if (value.contains(",")) {
+                    param = value.split(",");
+                } else {
+                    param = new String[]{value};
+                }
+                queryMap.put(key, param);
+            } else if (key.equalsIgnoreCase(ACCEPT_VERSIONS)) {
+                String[] param;
+                if (value.contains(",")) {
+                    param = value.split(",");
+                } else {
+                    param = new String[]{value};
+                }
+                queryMap.put(ACCEPT_VERSIONS, param);
+
+            } else {
+                queryMap.put(key, value);
+            }
         }
+
+        return queryMap;
     }
 
-    public void parseOutputFormat(String fieldName,String value) {
-        try {
-            String val = URLDecoder.decode(value, "UTF-8").trim();
-            queryParameters.put(fieldName, val);
-        } catch (Exception e) {
-            _log.warn("Exception in decoding", e);
-            queryParameters.put(fieldName, value);
-        }
+    public void parseOutputFormat(String fieldName, String value) {
+        queryParameters.put(fieldName, value);
     }
 
     private String getCacheXmlFileName(String threddsURI) {
