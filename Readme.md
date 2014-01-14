@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/asascience-open/ncSOS.png?branch=master)](https://travis-ci.org/asascience-open/ncSOS)
 
-Stable version: **RC7**
+Stable version: **RC8**
 
 NcSOS adds an OGC SOS service to datasets in your existing [THREDDS](http://www.unidata.ucar.edu/projects/THREDDS/) server.  It complies with the [IOOS SWE Milestone 1.0](https://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0) templates and requires your datasets be in any of the [CF 1.6 Discrete Sampling Geometries](http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#discrete-sampling-geometries).
 
@@ -69,6 +69,10 @@ A simple example aggregation, using a simple union can be seen below. The exampl
 
 ## ChangeLog
 
+### RC8
+* Better/automatic workaround for aggregation caching problem
+* Bug fixes
+
 ### RC7
 * Testing refactor
 * Better class names
@@ -106,4 +110,4 @@ A simple example aggregation, using a simple union can be seen below. The exampl
 * Supports CF 1.6 convention files including: TimeSeries, TimeSeriesProfile, Trajectory, Profile, TrajectoryProfile (Section) and Grid datasets.
 
 ##Known Issues
-* Aggregating files using NcML does not work with the built in THREDDS caching system.  This is an issue on Unidata's side.  A temporary workaround is to set all of the `urlPath` attributes on your NcML aggregations to use the suffix `.ncml`.  NcSOS explicity disabled caching for datasets that end with `.ncml`.
+* Aggregating files using NcML does not work with the built in THREDDS caching system.  This is an issue on Unidata's side.  NcSOS has a built-in workaround that will disable caching when an aggregated dataset is detected.
