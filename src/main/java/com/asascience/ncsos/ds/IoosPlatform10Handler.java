@@ -185,7 +185,7 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
         contactInfo.clear();
         phone.clear();
 
-        role = "http://mmisw.org/on/ioos/definition/publisher";
+        role = "http://mmisw.org/ont/ioos/definition/publisher";
         org = this.checkForRequiredValue("publisher_name");
         url = (String)this.getGlobalAttribute("publisher_url", "No global attribute 'publisher_url' found.");
         address = createAddressForContact("publisher");
