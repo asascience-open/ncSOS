@@ -18,7 +18,7 @@ import java.util.List;
 public abstract class OutputFormatter {
 
     private HashMap<String, Namespace> namespaces;
-    public static final String NCSOS_VERSION = "RC8";
+    public static final String NCSOS_VERSION = "RC9";
     public static final String OBSERVATION = "Observation";
     public static final String OBSERVATION_COLLECTION = "ObservationCollection";
     public static final String MEMBER = "member";
