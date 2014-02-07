@@ -47,9 +47,9 @@ public class GOBaseGridTest extends NcSOSTest {
         new File(exampleDir).mkdirs();
 
         // IOOS not supported on GRIDs
-        kvp.put("responseFormat", URLEncoder.encode("text/xml;schema=\"om/1.0.0/profiles/ioos_sos/1.0\"", "UTF-8"));
+        kvp.put("responseFormat", URLEncoder.encode("text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0\"", "UTF-8"));
         // Old OOSTETHYS
-        kvp.put("responseFormat", URLEncoder.encode("text/xml;schema=\"om/1.0.0\"", "UTF-8"));
+        kvp.put("responseFormat", URLEncoder.encode("text/xml;subtype=\"om/1.0.0\"", "UTF-8"));
 
         kvp.put("request",  "GetObservation");
         kvp.put("version", "1.0.0");

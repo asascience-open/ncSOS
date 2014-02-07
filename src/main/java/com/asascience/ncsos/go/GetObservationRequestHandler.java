@@ -35,8 +35,8 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
     private iStationData CDMDataSet;
     private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(GetObservationRequestHandler.class);
     private static final String FILL_VALUE_NAME = "_FillValue";
-    public static final String IOOS10_RESPONSE_FORMAT = "text/xml;schema=\"om/1.0.0/profiles/ioos_sos/1.0\"";
-    public static final String OOSTETHYS_RESPONSE_FORMAT = "text/xml;schema=\"om/1.0.0\"";
+    public static final String IOOS10_RESPONSE_FORMAT = "text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0\"";
+    public static final String OOSTETHYS_RESPONSE_FORMAT = "text/xml;subtype=\"om/1.0.0\"";
     private final List<String> eventTimes;
 
     /**

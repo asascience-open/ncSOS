@@ -44,7 +44,7 @@ public class GOBasePlatformTest extends NcSOSTest {
         new File(outputDir).mkdirs();
         new File(exampleDir).mkdirs();
 
-        kvp.put("responseFormat", URLEncoder.encode("text/xml;schema=\"om/1.0.0/profiles/ioos_sos/1.0\"", "UTF-8"));
+        kvp.put("responseFormat", URLEncoder.encode("text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0\"", "UTF-8"));
         kvp.put("request",  "GetObservation");
         kvp.put("version", "1.0.0");
         kvp.put("service", "SOS");
