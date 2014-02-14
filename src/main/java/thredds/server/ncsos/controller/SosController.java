@@ -1,4 +1,4 @@
-package com.asascience.ncsos.controller;
+package thredds.server.ncsos.controller;
 
 import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.service.Parser;
@@ -46,7 +46,7 @@ public class SosController implements ISosContoller {
      * @throws ServletException if ServletException occurred
      * @throws IOException if IOException occurred 
      */
-    @RequestMapping(params = {})
+    @RequestMapping(value="/**", params = {})
     @Override
     public void handleSOSRequest(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
 
