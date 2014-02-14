@@ -10,62 +10,12 @@ NcSOS acts like other THREDDS services (such an OPeNDAP and WMS) where as there 
 
 _You will need a working THREDDS installation of a least version **4.3.16** to run NcSOS_.
 
-## Installation
-1. [Download](https://github.com/asascience-open/ncSOS/raw/master/jar/ncSOS.zip) the latest release of ncSOS
-2. Extract `ncSOS.zip` into a local directory
-3. Copy the `ncSOS.jar` into your `$TOMCAT_HOME/webapps/thredds/WEB-INF/lib` directory.
-4. Copy the `sos-servlet.xml` configuration file into the `$TOMCAT_HOME/webapps/thredds/WEB-INF` directory.
-5. Add two new servlet mappings to your `$TOMCAT_HOME/webapps/thredds/WEB-INF/web.xml` file:
-    ```xml
-    <servlet>
-        <servlet-name>sos</servlet-name>
-        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-    ```
-    
-    ```xml
-    <servlet-mapping>
-        <servlet-name>sos</servlet-name>
-        <url-pattern>/sos/*</url-pattern>
-    </servlet-mapping>
-    ```
-
-6. Add the following service definition to enable SOS in your THREDDS catalog XML files:
-```xml
-<service name="sos" serviceType="SOS" base="/thredds/sos/" />
-``` 
-7. Restart Tomcat
-
-## NC Aggregation 
-
-see the known issues section for a note on NCML aggregation...
-
-Aggregated netcdf files can be served through the catalog by using NCML. NcML is an XML representation of netCDF metadata, more information on NCML can be found at the unidata website [here](http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/ncml/). In short NCML aggregation offers a seemless view and data access across multiple netcdf files.
-
-Unidata also offers a Basic NCML tutorial [here](http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/ncml/v2.2/Tutorial.html), with a tutorial geared towards NCML aggregation [here](http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/ncml/v2.2/Aggregation.html). There are a number of different methods for agreegating Netcdf data through NCML, it is suggest that you read the above tutorials, particually the NCML agreegation one, and decide the best method for aggregating your data.
-
-
-A simple example aggregation, using a simple union can be seen below. The example implemention outlines some of the steps you should take.
-
-1) identify how you are going to aggregate your netcdf data (in this example taken from unidate's NCML aggregation page we are using an aggregation on an existing dimension named "time", this might be a typical approach for the aggregation of time series files.
-
-
-2) generate an NCML file using a text editior, something like this...
-
- ```xml
-<netcdf xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2">
-  <aggregation dimName="time" type="joinExisting">
-    <netcdf location="jan.nc" />
-    <netcdf location="feb.nc" />
-  </aggregation>
-</netcdf>
- ```
- 
- In the NCML file we can see the dimension we what to join on ("time"), and the netcdf files we are aggregating together ("jan.nc", "feb.nc"). We could now open this NCML files in something like toolsui (toolsui.jar is a java application available from unidata's website, great for viewing netcdf files)
-
-
-3) With the NCML file generated we just need to add it to the THREDDS catalog, this can be done the same as any other netcdf dataset.
+# Quick Links
+1. *Mailing list*: https://groups.google.com/forum/#!forum/ncsos
+2. *Documentation wiki*: https://github.com/asascience-open/ncSOS/wiki
+3. *Source repository*: https://github.com/asascience-open/ncSOS/
+4. *Issues and Ideas*: https://github.com/asascience-open/ncSOS/issues?state=open
+5. *Get source/installers*: https://github.com/asascience-open/ncSOS/releases
 
 ## ChangeLog
 
