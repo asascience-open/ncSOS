@@ -16,11 +16,13 @@ import ucar.nc2.ft.StationTimeSeriesFeature;
 import ucar.nc2.ft.StationTimeSeriesFeatureCollection;
 import ucar.nc2.units.DateFormatter;
 import ucar.nc2.units.DateRange;
+import ucar.nc2.units.DateUnit;
 import ucar.unidata.geoloc.Station;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -79,7 +81,8 @@ public class TimeSeries extends baseCDMClass implements iStationData {
                 parseMultiTimeEventTimeSeries(df, chrono, pointFeature, valueList, dateFormatter, builder, stNum);
             } //if single event time        
             else {
-                if (eventTimes.get(0).contentEquals(dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()))) {
+                if (eventTimes.get(0).contentEquals(dateFormatter.toDateTimeStringISO(
+                		getDateForTime(pointFeature.getObservationTime(), pointFeature.getTimeUnit())))) {
                     createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, stNum);
                 }
             }
@@ -89,10 +92,14 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         return builder.toString();
     }
 
-    private void createTimeSeriesData(List<String> valueList, DateFormatter dateFormatter, PointFeature pointFeature, StringBuilder builder, int stNum) {
+
+    private void createTimeSeriesData(List<String> valueList, DateFormatter dateFormatter, 
+    								  PointFeature pointFeature, StringBuilder builder, int stNum) {
         //count++;
         valueList.clear();
-        valueList.add("time=" + dateFormatter.toDateTimeStringISO(pointFeature.getObservationTimeAsDate()));
+        
+        Date valDate = getDateForTime(pointFeature.getObservationTime(), pointFeature.getTimeUnit());
+        valueList.add("time=" + dateFormatter.toDateTimeStringISO(valDate));
         valueList.add("station=" + stNum);
         try {
             for (String variableName : variableNames) {
@@ -101,7 +108,8 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         } catch (Exception ex) {
             // couldn't find a data var
             builder.delete(0, builder.length());
-            builder.append("ERROR =reading data from dataset: ").append(ex.getLocalizedMessage()).append(". Most likely this property does not exist or is improperly stored in the dataset.");
+            builder.append("ERROR =reading data from dataset: ").append(ex.getLocalizedMessage()).append(
+            			". Most likely this property does not exist or is improperly stored in the dataset.");
             return;
         }
 
@@ -134,13 +142,15 @@ public class TimeSeries extends baseCDMClass implements iStationData {
      * @param stNum
      * @throws IOException
      */
-    public void parseMultiTimeEventTimeSeries(DateFormatter df, Chronology chrono, PointFeature pointFeature, List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, int stNum) throws IOException {
+    public void parseMultiTimeEventTimeSeries(DateFormatter df, Chronology chrono, PointFeature pointFeature, 
+    										  List<String> valueList, DateFormatter dateFormatter, 
+    										  StringBuilder builder, int stNum) throws IOException {
         //get start/end date based on iso date format date        
 
         DateTime dtStart = new DateTime(df.getISODate(eventTimes.get(0)), chrono);
         DateTime dtEnd = new DateTime(df.getISODate(eventTimes.get(1)), chrono);
-        DateTime tsDt = new DateTime(pointFeature.getObservationTimeAsDate(), chrono);
-
+        DateTime tsDt = new DateTime(getDateForTime(pointFeature.getObservationTime(), pointFeature.getTimeUnit()), chrono);
+     
         //find out if current time(searchtime) is one or after startTime
         //same as start
         if (tsDt.isEqual(dtStart)) {

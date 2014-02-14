@@ -9,6 +9,8 @@ import com.asascience.ncsos.util.XMLDomUtils;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 
@@ -208,7 +210,7 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
         if (contactInfo != null) {
             for (String key : contactInfo.keySet()) {
                 // add key as node
-                Element sparent = addNewNode(parent, key, null);
+                Element sparent = addNewNode(parent, key, SML_NS, null);
                 HashMap<String, String> vals = (HashMap<String, String>) contactInfo.get(key);
                 for (String vKey : vals.keySet()) {
                     if (vals.get(vKey) != null) {
@@ -321,12 +323,19 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
          *   </sml:System>
          * </sml:component>
          */
+    	String dsUrlEncoded = dsUrl;
+    	try {
+			dsUrlEncoded = URLEncoder.encode(dsUrl, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         // add to the <sml:ComponentList> node
         Element compList = addNewNode( COMPONENT_LIST, SML_NS, COMPONENT, SML_NS, NAME, compName);
         Element system = addNewNode(compList, SYSTEM, SML_NS, ID, GML_NS, compId);
         addNewNode(system, DESCRIPTION, GML_NS, description);
         addNewNode(system, IDENTIFICATION, SML_NS, HREF, XLINK_NS, urn);
-        addNewNode(system, DOCUMENTATION, SML_NS, HREF, XLINK_NS, dsUrl);
+        addNewNode(system, DOCUMENTATION, SML_NS, HREF, XLINK_NS, dsUrlEncoded);
         Element outputs = new Element(OUTPUTS, this.SML_NS);
         outputs.addContent(new Element(OUTPUT_LIST, SML_NS));
         system.addContent(outputs);

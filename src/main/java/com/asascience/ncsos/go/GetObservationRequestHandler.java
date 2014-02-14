@@ -284,14 +284,16 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
      * Create the observation data for go, passing it to our formatter
      */
     public void parseObservations() {
-        for (int s = 0; s < CDMDataSet.getNumberOfStations(); s++) {
-            String dataString = CDMDataSet.getDataResponse(s);
-            for (String dataPoint : dataString.split(";")) {
-                if (!dataPoint.equals("")) {
-                    formatter.addDataFormattedStringToInfoList(dataPoint);
-                }
-            }
-        }
+    	if(CDMDataSet != null){
+    		for (int s = 0; s < CDMDataSet.getNumberOfStations(); s++) {
+    			String dataString = CDMDataSet.getDataResponse(s);
+    			for (String dataPoint : dataString.split(";")) {
+    				if (!dataPoint.equals("")) {
+    					formatter.addDataFormattedStringToInfoList(dataPoint);
+    				}
+    			}
+    		}
+    	}
     }
 
     /**

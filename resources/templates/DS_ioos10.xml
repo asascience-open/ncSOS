@@ -22,8 +22,8 @@
     </sml:capabilities>
     <sml:member>
         <sml:System>
-            <gml:name />
             <gml:description />
+            <gml:name />
             <gml:boundedBy />
             <sml:identification>
                 <sml:IdentifierList></sml:IdentifierList>

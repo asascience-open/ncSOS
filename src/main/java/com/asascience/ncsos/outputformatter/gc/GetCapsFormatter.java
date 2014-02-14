@@ -27,7 +27,7 @@ import java.util.List;
 public class GetCapsFormatter extends BaseOutputFormatter {
 
     public static final String CONTENTS = "Contents";
-    public static final String EPSG4326 = "EPSG:4326";
+    public static final String EPSG4326 = "EPSG::4326";
     public static final String HTTP = "HTTP";
     public static final String OPERATIONS_METADATA = "OperationsMetadata";
     public static final String SERVICE_IDENTIFICATION = "ServiceIdentification";
@@ -200,9 +200,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         offering.addContent(this.getTimePeriod(dates));
         // Procedure
         offering.addContent(new Element("procedure", sosns).setAttribute("href", this.handler.getUrnNetworkAll(), xlinkns));
-        for (String s : stations) {
-            offering.addContent(new Element("procedure", sosns).setAttribute("href", this.handler.getUrnName(s), xlinkns));
-        }
+   
         // ObservedProperty
         for (String s : sensors) {
             offering.addContent(new Element("observedProperty", sosns).setAttribute("href", s, xlinkns));
@@ -215,6 +213,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         offering.addContent(new Element("responseFormat", sosns).setText(GetObservationRequestHandler.OOSTETHYS_RESPONSE_FORMAT));
         switch (ftype) {
             case STATION:
+            case STATION_PROFILE:
                 offering.addContent(new Element("responseFormat", sosns).setText(GetObservationRequestHandler.IOOS10_RESPONSE_FORMAT));
                 break;
             default:
@@ -262,6 +261,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         offering.addContent(new Element("responseFormat", sosns).setText(GetObservationRequestHandler.OOSTETHYS_RESPONSE_FORMAT));
         switch (ftype) {
             case STATION:
+            case STATION_PROFILE:
                 offering.addContent(new Element("responseFormat", sosns).setText(GetObservationRequestHandler.IOOS10_RESPONSE_FORMAT));
                 break;
             default:

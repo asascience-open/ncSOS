@@ -7,8 +7,10 @@ package com.asascience.ncsos.cdmclasses;
 import org.joda.time.Chronology;
 import org.joda.time.chrono.ISOChronology;
 import ucar.nc2.units.DateFormatter;
+import ucar.nc2.units.DateUnit;
 import ucar.unidata.geoloc.Station;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -58,6 +60,13 @@ public abstract class baseCDMClass implements iStationData {
         }
     }
 
+    protected Date getDateForTime(double timeVal, DateUnit dateUnit){
+    	if (Double.isNaN(timeVal)) return null;
+    	double secs = dateUnit.getTimeUnit().getValueInSeconds(timeVal); //
+    	return new Date(Math.round( ((double) dateUnit.getDateOrigin().getTime()+ (1000.0*secs))));
+    }
+    
+    
     @Override
     public List<String> getStationNames() {
         return reqStationNames;

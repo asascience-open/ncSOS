@@ -124,8 +124,8 @@ public class IoosNetwork10Formatter extends IoosPlatform10Formatter {
 
         Element output_list = XMLDomUtils.getNestedChild(getComponent(componentName), OUTPUT_LIST, SML_NS);
         Element output   = new Element(OUTPUT, SML_NS).setAttribute(NAME, outName);
-        Element quantity = new Element(QUANTITY, SML_NS).setAttribute(DEFINITION, outDef);
-        Element uom      = new Element(UOM, SML_NS).setAttribute(CODE, units);
+        Element quantity = new Element(QUANTITY, SWE_NS).setAttribute(DEFINITION, outDef);
+        Element uom      = new Element(UOM, SWE_NS).setAttribute(CODE, units);
 
         quantity.addContent(uom);
         output.addContent(quantity);

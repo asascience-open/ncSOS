@@ -61,7 +61,7 @@ public class Trajectory extends baseCDMClass implements iStationData {
     }
 
     private void addDataLine(List<String> valueList, DateFormatter dateFormatter, PointFeature trajFeature, StringBuilder builder) {
-        valueList.add("time=" + dateFormatter.toDateTimeStringISO(trajFeature.getObservationTimeAsDate()));
+        valueList.add("time=" + dateFormatter.toDateTimeStringISO(getDateForTime(trajFeature.getObservationTime(), trajFeature.getTimeUnit())));
 
         try {
             for (int i = 0; i < variableNames.length; i++) {
@@ -343,7 +343,7 @@ public class Trajectory extends baseCDMClass implements iStationData {
                 PointFeature trajFeature = trajFeatureIterator.next();
                 valueList.clear();
 
-                trajTime = new DateTime(trajFeature.getObservationTimeAsDate(), chrono);
+                trajTime = new DateTime(getDateForTime(trajFeature.getObservationTime(), trajFeature.getTimeUnit()), chrono);
 
                 if (trajTime.isEqual(dtStart)) {
                     addDataLine(valueList, dateFormatter, trajFeature, builder);
@@ -361,7 +361,7 @@ public class Trajectory extends baseCDMClass implements iStationData {
             while (trajFeatureIterator.hasNext()) {
                 PointFeature trajFeature = trajFeatureIterator.next();
                 valueList.clear();
-                trajTime = new DateTime(trajFeature.getObservationTimeAsDate(), chrono);
+                trajTime = new DateTime(getDateForTime(trajFeature.getObservationTime(), trajFeature.getTimeUnit()), chrono);
 
                 if (trajTime.isEqual(dtStart)) {
                     addDataLine(valueList, dateFormatter, trajFeature, builder);

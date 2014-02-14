@@ -61,7 +61,7 @@ public class SosController implements ISosContoller {
             dataset = DatasetHandlerAdapter.openDataset(req, res);
 
             Parser md = new Parser();
-            respMap = md.enhanceGETRequest(dataset, req.getQueryString(), req.getRequestURL().toString(),tempdir);            
+            respMap = md.enhanceGETRequest(dataset, req.getQueryString(), req.getRequestURL()+"?".toString(),tempdir);            
             
             Writer writer = res.getWriter();
             OutputFormatter output = (OutputFormatter)respMap.get("outputFormatter");

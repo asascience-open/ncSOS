@@ -63,8 +63,8 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
     
     private void describeNetwork() {
         this.network.setVersionMetadata();
-        this.network.setName(this.procedure);
         this.network.setDescriptionNode((String)this.getGlobalAttribute("description", "No description found"));
+        this.network.setName(this.procedure);
         this.formatSmlIdentification();
         this.formatSmlClassification();
         this.formatSmlValidTime();

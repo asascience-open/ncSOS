@@ -14,6 +14,7 @@ import ucar.nc2.dataset.NetcdfDataset;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,8 +58,8 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
     //<editor-fold defaultstate="collapsed" desc="Describe Platform">
     private void describePlatform() {
         platform.setVersionMetadata();
-        platform.setName(this.procedure);
         platform.setDescriptionNode((String)this.getGlobalAttribute("description", "no description"));
+        platform.setName(this.procedure);
         this.formatSmlIdentification();
         this.formatSmlClassification();
         this.formatSmlNetworkProcedures();
@@ -175,7 +176,7 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
         String role = "http://mmisw.org/ont/ioos/definition/operator";
         String org = this.checkForRequiredValue("creator_name");
         String url = (String)this.getGlobalAttribute("creator_url", "No global attribute 'creator_url' found.");
-        HashMap<String, String> address = createAddressForContact("creator");
+        LinkedHashMap<String, String> address = createAddressForContact("creator");
         contactInfo.put("address", address);
         HashMap<String, String> phone = new HashMap<String, String>();
         phone.put("voice", (String)this.getGlobalAttribute("creator_phone", "No global attribute 'creator_phone' found."));
@@ -195,8 +196,8 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
         platform.addContactNode(role, org, contactInfo, url);
     }
     
-    private HashMap<String,String> createAddressForContact(String contactPrefix) {
-        HashMap<String,String> address = new HashMap<String, String>();
+    private LinkedHashMap<String,String> createAddressForContact(String contactPrefix) {
+        LinkedHashMap<String,String> address = new LinkedHashMap<String, String>();
         address.put("deliveryPoint", (String)this.getGlobalAttribute(contactPrefix + "_address"));
         address.put("city", (String)this.getGlobalAttribute(contactPrefix + "_city"));
         address.put("administrativeArea", (String)this.getGlobalAttribute(contactPrefix + "_state"));

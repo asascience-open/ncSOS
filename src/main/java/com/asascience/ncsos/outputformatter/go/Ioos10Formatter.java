@@ -27,7 +27,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
     // private constant fields
     private static final String TEMPLATE = "templates/GO_ioos10.xml";
     private static final String RESPONSE_FORMAT = "text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0\"";
-    private static final FeatureType[] supportedTypes = {FeatureType.POINT, FeatureType.STATION};
+    private static final FeatureType[] supportedTypes = {FeatureType.STATION_PROFILE, FeatureType.STATION};
     private static final String BLOCK_SEPERATOR = "\n";
     private static final String TOKEN_SEPERATOR = ",";
     private static final String DECIMAL_SEPERATOR = ".";
@@ -36,8 +36,13 @@ public class Ioos10Formatter extends BaseOutputFormatter {
     private static final String OBS_COLLECTION_DEF = "http://mmisw.org/ont/ioos/swe_element_type/sensorObservationCollection";
     private static final String SENSOR_OBS_COLLECTION = "http://mmisw.org/ont/ioos/swe_element_type/sensorObservations";
     private static final String STATIC_SENSOR_DEF = "http://mmisw.org/ont/ioos/swe_element_type/sensor";
+    private static final String OBSERVATION_RECORD_DEF = "http://mmisw.org/ont/ioos/swe_element_type/observationRecord";
     private static final String STATIC_SENSORS_DEF = "http://mmisw.org/ont/ioos/swe_element_type/sensors";
     private static final String MISSING_REASON = "http://www.opengis.net/def/nil/OGC/0/missing";
+    private static final String REFERENCE_FRAME_DEF = "http://www.opengis.net/def/crs-compound?1="+
+    												   "http://www.opengis.net/def/crs/EPSG/0/4326&amp;2="+
+    												   "http://www.opengis.net/def/crs/EPSG/0/5829";
+    private static final String DEFINITION = "definition";
     private Namespace OM_NS, GML_NS, SWE2_NS, XLINK_NS, SWE_NS = null;
     private GetObservationRequestHandler handler = null;
 
@@ -301,13 +306,13 @@ public class Ioos10Formatter extends BaseOutputFormatter {
          */
         // create DataRecord Element
         Element dr = new Element("DataRecord", this.SWE2_NS);
-
+        dr.setAttribute(DEFINITION, OBSERVATION_RECORD_DEF);
         // STATION (STATIC) DATA
         Element static_data = new Element("field", this.SWE2_NS);
         static_data.setAttribute("name", "stations");
 
         Element static_record = new Element("DataRecord", this.SWE2_NS);
-        static_record.setAttribute("definition", STATIC_STATIONS_DEF);
+        static_record.setAttribute(DEFINITION, STATIC_STATIONS_DEF);
 
         // create the static data
         for (int i = 0; i < this.handler.getProcedures().length; i++) {
@@ -322,7 +327,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         dynamic_data.setAttribute("name", "observationData");
 
         Element dynamic_array = new Element("DataArray", this.SWE2_NS);
-        dynamic_array.setAttribute("definition", OBS_COLLECTION_DEF);
+        dynamic_array.setAttribute(DEFINITION, OBS_COLLECTION_DEF);
         // get the count of records (total)
         StringBuilder strBuilder = new StringBuilder();
         for (int p = 0; p < this.handler.getProcedures().length; p++) {
@@ -376,9 +381,9 @@ public class Ioos10Formatter extends BaseOutputFormatter {
          */
         Element elementType = new Element("elementType", this.SWE2_NS).setAttribute("name", "observations");
         Element dataRecord = new Element("DataRecord", this.SWE2_NS);
-        dataRecord.setAttribute("definition", SENSOR_OBS_COLLECTION);
+        dataRecord.setAttribute(DEFINITION, SENSOR_OBS_COLLECTION);
         Element field = new Element("field", this.SWE2_NS).setAttribute("name", "time");
-        Element time = new Element("Time", this.SWE2_NS).setAttribute("definition", "http://www.opengis.net/def/property/OGC/0/SamplingTime");
+        Element time = new Element("Time", this.SWE2_NS).setAttribute(DEFINITION, "http://www.opengis.net/def/property/OGC/0/SamplingTime");
         time.addContent(new Element("uom", this.SWE2_NS).setAttribute("href", "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian", this.XLINK_NS));
         field.addContent(time);
         dataRecord.addContent(field);
@@ -430,7 +435,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
 
             Element dataRecord = new Element("DataRecord", this.SWE2_NS);
             Element field = new Element("field", this.SWE2_NS).setAttribute("name", sensor);
-            Element quantity = new Element("Quantity", this.SWE2_NS).setAttribute("definition", VocabDefinitions.GetDefinitionForParameter(sensorDef));
+            Element quantity = new Element("Quantity", this.SWE2_NS).setAttribute(DEFINITION, VocabDefinitions.GetDefinitionForParameter(sensorDef));
             quantity.addContent(new Element("uom", this.SWE2_NS).setAttribute("code", sensorUnits));
 
             // if the variable has a 'fill value' then add it as a nil value
@@ -561,12 +566,12 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         // DataRecord
         Element record = new Element("DataRecord", this.SWE2_NS);
         record.setAttribute("id", name);
-        record.setAttribute("definition", STATIC_STATION_DEF);
+        record.setAttribute(DEFINITION, STATIC_STATION_DEF);
         // add field for stationId
         Element field = new Element("field", this.SWE2_NS);
         field.setAttribute("name", "stationID");
         Element text = new Element("Text", this.SWE2_NS);
-        text.setAttribute("definition", "http://mmisw.org/ont/ioos/definition/stationID");
+        text.setAttribute(DEFINITION, "http://mmisw.org/ont/ioos/definition/stationID");
         Element value = new Element("value", this.SWE2_NS);
         value.setText(this.handler.getUrnName(stName));
         text.addContent(value);
@@ -627,7 +632,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         Element field = new Element("field", this.SWE2_NS);
         field.setAttribute("name", "sensorID");
         Element text = new Element("Text", this.SWE2_NS);
-        text.setAttribute("definition", SENSOR_ID_DEF);
+        text.setAttribute(DEFINITION, SENSOR_ID_DEF);
         Element value = new Element("value", this.SWE2_NS);
         value.setText(this.handler.getSensorUrnName(stName, op));
         text.addContent(value);
@@ -638,7 +643,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         field = new Element("field", this.SWE2_NS);
         field.setAttribute("name", "height");
         Element quantity = new Element("Quantity", this.SWE2_NS);
-        quantity.setAttribute("definition", "http://mmisw.org/ont/cf/parameter/height");
+        quantity.setAttribute(DEFINITION, "http://mmisw.org/ont/cf/parameter/height");
         quantity.setAttribute("referenceFrame", "#PlatformFrame");
         quantity.addContent(new Element("uom", this.SWE2_NS).setAttribute("code", "m"));
         value = new Element("value", this.SWE2_NS);
@@ -662,8 +667,8 @@ public class Ioos10Formatter extends BaseOutputFormatter {
          */
         // vector
         Element vector = new Element("Vector", this.SWE2_NS);
-        vector.setAttribute("definition", "http://www.opengis.net/def/property/OGC/0/PlatformLocation");
-        vector.setAttribute("referenceFrame", "https://ioostech.googlecode.com/svn/trunk/IoosCRS/IoosBuoyCRS.xml");
+        vector.setAttribute(DEFINITION, "http://www.opengis.net/def/property/OGC/0/PlatformLocation");
+        vector.setAttribute("referenceFrame", REFERENCE_FRAME_DEF);
         vector.setAttribute("localFrame", "#PlatformFrame");
         // coords: lat, lon, z
         String lat = Double.toString(this.handler.getCDMDataset().getLowerLat(stNum));
@@ -688,7 +693,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
          */
         Element coord = new Element("coordinate", this.SWE2_NS).setAttribute("name", name);
         Element quant = new Element("Quantity", this.SWE2_NS);
-        quant.setAttribute("definition", definition);
+        quant.setAttribute(DEFINITION, definition);
         quant.setAttribute("axisID", axisId);
         // uom
         quant.addContent(new Element("uom", this.SWE2_NS).setAttribute("code", code));

@@ -7,6 +7,8 @@ import com.asascience.ncsos.go.GetObservationRequestHandler;
 import com.asascience.ncsos.outputformatter.CachedFileFormatter;
 import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.util.LogUtils;
+import com.asascience.ncsos.util.LowerCaseStringMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -29,7 +31,7 @@ public class Parser {
     public static final String SECTIONS = "sections";
     public static final String USECACHE = "usecache";
     public static final String XML = "xml";
-    private HashMap<String, Object> queryParameters;
+    private LowerCaseStringMap queryParameters;
     private Logger _log;
     private Map<String, String> coordsHash;
     private final String defService = "sos";
@@ -95,7 +97,7 @@ public class Parser {
 
     public HashMap<String, Object> enhanceGETRequest(final NetcdfDataset dataset, final String query, String threddsURI, String savePath) throws IOException {
         // clear anything that can cause issue if we were to use the same parser for multiple requests
-        queryParameters = new HashMap<String, Object>();
+        queryParameters = new LowerCaseStringMap();
         coordsHash = new HashMap<String, String>();
 
         if (query != null) {
@@ -369,10 +371,16 @@ public class Parser {
     private HashMap<String, Object> checkQueryParameters() {
         try {
             HashMap<String, Object> retval = new HashMap<String, Object>();
-            String[] requiredGlobalParameters = {REQUEST, SERVICE};
-            String[] requiredDSParameters = {PROCEDURE, OUTPUT_FORMAT, VERSION};
+            String[] requiredGlobalParameters = {REQUEST, 
+            									 SERVICE};
+            String[] requiredDSParameters = {PROCEDURE, 
+            								 OUTPUT_FORMAT, 
+            								 VERSION};
             //required GRID Parameters
-            String[] requiredGOParameters = {OFFERING, OBSERVED_PROPERTY, RESPONSE_FORMAT, VERSION};
+            String[] requiredGOParameters = {OFFERING, 
+            								OBSERVED_PROPERTY, 
+            								RESPONSE_FORMAT, 
+            								VERSION};
 
             // general parameters expected
             if (queryParameters.containsKey(ERROR)) {
@@ -381,7 +389,7 @@ public class Parser {
                 return retval;
             } else {
                 for (String req : requiredGlobalParameters) {
-                    if (!queryParameters.containsKey(req)) {
+                    if (!queryParameters.containsKey(req.toLowerCase())) {
                         errorHandler.setException("Required parameter '" + req + "' not found. Check GetCapabilities document for required parameters.", MISSING_PARAMETER, req);
                         retval.put(ERROR, true);
                         return retval;
@@ -420,7 +428,7 @@ public class Parser {
                 }
             } else if (request.equalsIgnoreCase(DESCRIBESENSOR)) {
                 for (String req : requiredDSParameters) {
-                    if (!queryParameters.containsKey(req)) {
+                    if (!queryParameters.containsKey(req.toLowerCase())) {
                         errorHandler.setException("Required parameter '" + req + "' not found. Check GetCapabilities document for required parameters of DescribeSensor requests.", MISSING_PARAMETER, req);
                         retval.put(ERROR, true);
                         return retval;
