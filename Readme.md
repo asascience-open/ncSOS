@@ -27,8 +27,8 @@ _You will need a working THREDDS installation of a least version **4.3.16** to r
 ## ChangeLog
 
 ### RC8
-* Better/automatic workaround for aggregation caching problem
-* Bug fixes
+* Better/automatic workaround for aggregation caching problem (software will automatically detect aggregations and disable caching support.  This is only necessary until the problem is fixed in THREDDS, hopefully in 4.4.1)
+* Bug fixes for bugs deteected during OGC and IOOS validation tests.
 
 ### RC7
 * Testing refactor
