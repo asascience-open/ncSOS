@@ -3,7 +3,8 @@ package thredds.server.ncsos.controller;
 import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.service.Parser;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
-import org.apache.log4j.BasicConfigurator;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -19,8 +20,8 @@ import java.util.HashMap;
 @RequestMapping("/sos")
 public class SosController implements ISosContoller {
 
-    private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(SosController.class);
-    private static org.slf4j.Logger _logServerStartup = org.slf4j.LoggerFactory.getLogger("serverStartup");
+    private static Logger _log = LogManager.getLogger();
+    private static Logger _logServerStartup = LogManager.getLogger("serverStartup");
     
     private HashMap<String, Object> respMap;
 
@@ -29,7 +30,6 @@ public class SosController implements ISosContoller {
     }
 
     public void init() throws ServletException {
-        BasicConfigurator.configure();
         _logServerStartup.info("SOS Service - initialization start");
     }
 

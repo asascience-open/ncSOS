@@ -20,7 +20,7 @@ public class OosTethysFormatter extends BaseOutputFormatter {
     private GetObservationRequestHandler handler = null;
     private Namespace OM_NS, GML_NS, SWE_NS, XLINK_NS = null;
     
-    private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(OosTethysFormatter.class);
+    private static org.apache.logging.log4j.Logger _log = org.apache.logging.log4j.LogManager.getLogger();
     
     public OosTethysFormatter(GetObservationRequestHandler obsHandler) {
         super();

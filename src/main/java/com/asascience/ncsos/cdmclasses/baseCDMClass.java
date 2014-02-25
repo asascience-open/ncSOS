@@ -9,6 +9,8 @@ import org.joda.time.chrono.ISOChronology;
 import ucar.nc2.units.DateFormatter;
 import ucar.nc2.units.DateUnit;
 import ucar.unidata.geoloc.Station;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.Date;
 import java.util.List;
@@ -31,7 +33,7 @@ public abstract class baseCDMClass implements iStationData {
     protected Chronology chrono = ISOChronology.getInstance();
     protected DateFormatter df = new DateFormatter();
     
-    protected static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(baseCDMClass.class);
+    protected static Logger _log = LogManager.getLogger();
     
     
     @Override

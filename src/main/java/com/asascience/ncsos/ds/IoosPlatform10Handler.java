@@ -27,7 +27,7 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
     private String errorString;
     private boolean locationLineFlag;
 
-    private final static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(IoosPlatform10Handler.class);
+    private final static org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger();
     private final static String QUERY = "?service=SOS&request=DescribeSensor&version=1.0.0&outputFormat=text/xml;subtype=\"sensorML/1.0.1\"&procedure=";
     
     private IoosPlatform10Formatter platform;
