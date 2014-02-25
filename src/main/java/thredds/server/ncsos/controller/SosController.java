@@ -78,6 +78,7 @@ public class SosController implements ISosContoller {
             // for a ncml object the request will fail due to an error
             // with the cached object. In order to get around this, the
             // cache for the ncml files must be cleared.
+            /*
             String location = dataset.getReferencedFile().getLocation().toLowerCase();
             try{
             	NetcdfDataset dset =  ((NetcdfDataset)dataset.getReferencedFile());
@@ -89,6 +90,7 @@ public class SosController implements ISosContoller {
             	}
             }
             catch(Exception e){}
+            */
             DatasetHandlerAdapter.closeDataset(dataset);
             
             
