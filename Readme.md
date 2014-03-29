@@ -16,12 +16,19 @@ _You will need a working THREDDS installation of a least version **4.3.16** to r
 3. *Source repository*: https://github.com/asascience-open/ncSOS/
 4. *Issues and Ideas*: https://github.com/asascience-open/ncSOS/issues?state=open
 5. *Get source/installers*: https://github.com/asascience-open/ncSOS/releases
+6. *Deployed Servers*:
+
+| ncSOS version | THREDDS version        | Catalog URL                                     |
+| ------------- | ---------------------- | ----------------------------------------------- |
+| [RC8](https://github.com/asascience-open/ncSOS/releases/tag/RC8-2)           | 4.3.20 (20131125.1409) | http://sos.maracoos.org/stable/catalog.html     |
+| [master](https://github.com/asascience-open/ncSOS/tree/master)        | 4.3.20 (20131125.1409) | http://sos.maracoos.org/pre/catalog.html        |
+| [tds_4.4.1](https://github.com/asascience-open/ncSOS/tree/tds_4.4.1)     | 4.4.1 (20131220.1427)  | http://sos.maracoos.org/dev/catalog.html        |
 
 ## ChangeLog
 
 ### RC8
-* Better/automatic workaround for aggregation caching problem
-* Bug fixes
+* Better/automatic workaround for aggregation caching problem (software will automatically detect aggregations and disable caching support.  This is only necessary until the problem is fixed in THREDDS, hopefully in 4.4.1)
+* Bug fixes for bugs deteected during OGC and IOOS validation tests.
 
 ### RC7
 * Testing refactor
