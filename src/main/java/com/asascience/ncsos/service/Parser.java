@@ -284,6 +284,11 @@ public class Parser {
             String key;
             String value;
 
+            if (keyVal.length < 2) {
+                _log.info("Could not detect key-value pair, continuing");
+                continue;
+            }
+
             try {
                 key = URLDecoder.decode(keyVal[0], "UTF-8");
                 value = URLDecoder.decode(keyVal[1], "UTF-8").trim();
@@ -371,8 +376,8 @@ public class Parser {
     private HashMap<String, Object> checkQueryParameters() {
         try {
             HashMap<String, Object> retval = new HashMap<String, Object>();
-            String[] requiredGlobalParameters = {REQUEST, 
-            									 SERVICE};
+            String[] requiredGlobalParameters = {SERVICE,
+                                                 REQUEST};
             String[] requiredDSParameters = {PROCEDURE, 
             								 OUTPUT_FORMAT, 
             								 VERSION};
