@@ -397,7 +397,7 @@ public class Parser {
                 }
 
                 if (!queryParameters.get(SERVICE).toString().equalsIgnoreCase(defService)) {
-                    errorHandler.setException("Currently the only supported service is SOS.", OPERATION_NOT_SUPPORTED, "service");
+                    errorHandler.setException("Currently the only supported service is SOS.", INVALID_PARAMETER, "service");
                     retval.put(ERROR, true);
                     return retval;
                 }
