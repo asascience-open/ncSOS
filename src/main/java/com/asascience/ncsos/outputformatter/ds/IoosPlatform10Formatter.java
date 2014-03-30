@@ -165,24 +165,29 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
     }
 
     /**
-     * Adds a sml:capabilities node that defines a metadata property for the sensor
-     * @param name name of the capability
-     * @param title name of the metadata
-     * @param href reference to the metadata
+     * Adds a sml:capabilities node that defines a networkProcedures section
+     *
+     * @param urn the network's urn
      */
-    public void addSmlCapabilitiesGmlMetadata(String parentName, String name, String title, String href) {
+    public void addSmlCapabilitiesNetwork(String parentName, String urn) {
         /*
          * <sml:capabilities name='name'>
          *   <swe:SimpleDataRecord>
-         *     <gml:metaDataProperty xlink:title='title' xlink:href='href' />
+         *     <swe:field name="network">
+         *       <swe:Text definition="http://mmisw.org/ont/ioos/definition/networkID">
+         *          <swe:value>{{ urn }}</swe:value>
+         *       </swe:Text>
+         *     </swe:field>
          *   </swe:SimpleDataRecord>
          * </sml:capabilities>
          */
         Element parent = ((parentName != null) ? XMLDomUtils.getNestedChild(this.getRoot(), parentName, SML_NS) : this.getRoot());
-        parent = addNewNode(parent, CAPABILITIES, SML_NS, NAME, name);
+        parent = addNewNode(parent, CAPABILITIES, SML_NS, NAME, "networkProcedures");
         parent = addNewNode(parent, SIMPLEDATARECORD, SWE_NS);
-        parent = addNewNode(parent, META_DATA_PROP, GML_NS, TITLE, XLINK_NS, title);
-        parent.setAttribute(HREF, href, this.XLINK_NS);
+
+        Element field = addNewNode(parent, FIELD, SWE_NS, NAME, "network");
+        Element textNode = addNewNode(field, TEXT, SWE_NS, DEFINITION, "http://mmisw.org/ont/ioos/definition/networkID");
+        addNewNode(textNode, VALUE, SWE_NS, urn);
     }
 
     /**

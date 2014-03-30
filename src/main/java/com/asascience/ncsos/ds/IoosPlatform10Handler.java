@@ -162,8 +162,7 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
     }
     
     private void formatSmlNetworkProcedures() {
-        platform.addSmlCapabilitiesGmlMetadata( OutputFormatter.SYSTEM, "networkProcedures",
-        		"network-all", this.getUrnNetworkAll());
+        platform.addSmlCapabilitiesNetwork(OutputFormatter.SYSTEM, this.getUrnNetworkAll());
     }
     
     private void formatSmlContacts() {
