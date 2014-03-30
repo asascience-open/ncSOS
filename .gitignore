@@ -32,3 +32,4 @@ ncsos.iml
 /lib
 *.db
 /tests
+.*.swp
