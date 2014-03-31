@@ -393,8 +393,15 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         dataChoice.setAttribute("definition", STATIC_SENSORS_DEF);
         for (int i = 0; i < this.handler.getProcedures().length; i++) {
             String stName = this.handler.getCDMDataset().getStationName(i);
+
+            // ****************************************
             // DataRecord has to have at least 2 fields
+            // ****************************************
             List<String> sensors = new ArrayList<String>(this.handler.getRequestedObservedProperties());
+            while (sensors.size() < 2) {
+                sensors.add("dummy_item");
+            }
+
             for (String sensor : sensors) {
                 dataChoice.addContent(createDataChoiceForSensor(stName, sensor));
             }
@@ -420,39 +427,44 @@ public class Ioos10Formatter extends BaseOutputFormatter {
          */
         // create the friendly name
         Element item = null;
-        String name = stationToFieldName(stName) + "_" + sensor.toLowerCase();
-        item = new Element("item", this.SWE2_NS).setAttribute("name", name);
+        if (sensor.equalsIgnoreCase("dummy_item")) {
+            item = new Element("item", this.SWE2_NS).setAttribute("name", sensor);
+            return item;
+        } else {
+            String name = stationToFieldName(stName) + "_" + sensor.toLowerCase();
+            item = new Element("item", this.SWE2_NS).setAttribute("name", name);
 
-        String sensorDef = this.handler.getVariableStandardName(sensor);
-        String sensorUnits = this.handler.getUnitsString(sensor);
+            String sensorDef = this.handler.getVariableStandardName(sensor);
+            String sensorUnits = this.handler.getUnitsString(sensor);
 
-        Element dataRecord = new Element("DataRecord", this.SWE2_NS).setAttribute(DEFINITION, STATIC_SENSOR_DEF);
-        Element field = new Element("field", this.SWE2_NS).setAttribute("name", sensor);
-        Element quantity = new Element("Quantity", this.SWE2_NS).setAttribute(DEFINITION, VocabDefinitions.GetDefinitionForParameter(sensorDef));
-        quantity.addContent(new Element("uom", this.SWE2_NS).setAttribute("code", sensorUnits));
+            Element dataRecord = new Element("DataRecord", this.SWE2_NS).setAttribute(DEFINITION, STATIC_SENSOR_DEF);
+            Element field = new Element("field", this.SWE2_NS).setAttribute("name", sensor);
+            Element quantity = new Element("Quantity", this.SWE2_NS).setAttribute(DEFINITION, VocabDefinitions.GetDefinitionForParameter(sensorDef));
+            quantity.addContent(new Element("uom", this.SWE2_NS).setAttribute("code", sensorUnits));
 
-        // if the variable has a 'fill value' then add it as a nil value
-        try {
-            for (Attribute attr : this.handler.getVariableByName(sensor).getAttributes()) {
-                if (attr.getShortName().toLowerCase().contains("fillvalue")) {
-                    Element nilValues = new Element("nilValues", this.SWE2_NS);
-                    Element nnilValues = new Element("NilValues", this.SWE2_NS);
+            // if the variable has a 'fill value' then add it as a nil value
+            try {
+                for (Attribute attr : this.handler.getVariableByName(sensor).getAttributes()) {
+                    if (attr.getShortName().toLowerCase().contains("fillvalue")) {
+                        Element nilValues = new Element("nilValues", this.SWE2_NS);
+                        Element nnilValues = new Element("NilValues", this.SWE2_NS);
 
-                    Element nvs = new Element("nilValue", this.SWE2_NS).setAttribute("reason", MISSING_REASON);
-                    nvs.setText(attr.getValue(0).toString());
-                    nnilValues.addContent(nvs);
-                    nilValues.addContent(nnilValues);
-                    quantity.addContent(nilValues);
+                        Element nvs = new Element("nilValue", this.SWE2_NS).setAttribute("reason", MISSING_REASON);
+                        nvs.setText(attr.getValue(0).toString());
+                        nnilValues.addContent(nvs);
+                        nilValues.addContent(nnilValues);
+                        quantity.addContent(nilValues);
+                    }
                 }
+            } catch (Exception ex) {
             }
-        } catch (Exception ex) {
+
+            field.addContent(quantity);
+            dataRecord.addContent(field);
+
+            item.addContent(dataRecord);
+            return item;
         }
-
-        field.addContent(quantity);
-        dataRecord.addContent(field);
-
-        item.addContent(dataRecord);
-        return item;
     }
 
     private Element createValuesElement(StringBuilder strBuilder) {
