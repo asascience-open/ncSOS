@@ -14,6 +14,7 @@ import ucar.nc2.dataset.NetcdfDataset;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -127,8 +128,8 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
         network.addContactNode(role, org, contactInfo, url);
     }
     
-    private HashMap<String,String> createAddressForContact(String contactPrefix) {
-        HashMap<String,String> address = new HashMap<String, String>();
+    private LinkedHashMap<String,String> createAddressForContact(String contactPrefix) {
+        LinkedHashMap<String,String> address = new LinkedHashMap<String, String>();
         address.put("deliveryPoint", (String)this.getGlobalAttribute(contactPrefix + "_address", null));
         address.put("city", (String)this.getGlobalAttribute(contactPrefix + "_city", null));
         address.put("administrativeArea", (String)this.getGlobalAttribute(contactPrefix + "_state", null));
