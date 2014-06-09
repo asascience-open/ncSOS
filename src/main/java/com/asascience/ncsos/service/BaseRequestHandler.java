@@ -238,9 +238,7 @@ public abstract class BaseRequestHandler {
     private void parseSensorNames() {
         // find all variables who's not a coordinate axis and does not have 'station' in the name
         this.sensorNames = new ArrayList<String>();
-//        getFeatureDataset().getDataVariables();
-        for (Iterator<VariableSimpleIF> it = getFeatureDataset().getDataVariables().iterator(); it.hasNext();) {
-            VariableSimpleIF var = it.next();
+        for (VariableSimpleIF var : featureDataset.getDataVariables()) {
             String name = var.getShortName();
             if (name.equalsIgnoreCase(PROFILE) || name.toLowerCase().contains("info") || name.toLowerCase().contains("time") ||
                 name.toLowerCase().contains("row") || name.equalsIgnoreCase("z") || name.equalsIgnoreCase("alt") ||
