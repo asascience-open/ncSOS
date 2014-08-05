@@ -48,7 +48,7 @@ public abstract class BaseRequestHandler {
     protected Variable stationVariable;
     private HashMap<Integer, String> stationNames;
     private List<String> sensorNames;
-
+    protected boolean isInitialized;
 
     // Exception codes - Table 25 of OGC 06-121r3 (OWS Common)
     protected static String INVALID_PARAMETER       = "InvalidParameterValue";
@@ -73,6 +73,10 @@ public abstract class BaseRequestHandler {
      * @throws IOException
      */
     public BaseRequestHandler(NetcdfDataset netCDFDataset) throws IOException {
+    	this(netCDFDataset, true);
+    }
+    
+    public BaseRequestHandler(NetcdfDataset netCDFDataset, boolean initialize) throws IOException{
         // check for non-null dataset
         if(netCDFDataset == null) {
 //            _log.error("received null dataset -- probably exception output");
@@ -80,6 +84,13 @@ public abstract class BaseRequestHandler {
             return;
         }
         this.netCDFDataset = netCDFDataset;
+        isInitialized = false;
+        if(initialize){
+        	initializeDataset();
+        }
+    }
+    
+    protected void initializeDataset() throws IOException{
         // get the feature dataset (wraps the dataset in variety of accessor methods)
         findFeatureDataset(FeatureDatasetFactoryManager.findFeatureType(netCDFDataset));
         // verify we could get a dataset (make sure the dataset is CF 1.6 compliant or whatever)
@@ -103,8 +114,8 @@ public abstract class BaseRequestHandler {
         lonVariable = netCDFDataset.findCoordinateAxis(AxisType.Lon);
         timeVariable = netCDFDataset.findCoordinateAxis(AxisType.Time);
         depthVariable = netCDFDataset.findCoordinateAxis(AxisType.Height);
+        isInitialized = true;
     }
-    
     /**
      * Attempts to set the feature dataset based on the dataset's FeatureType
      * @param datasetFT The FeatureType of the netcdf dataset, found with the factory manager
@@ -158,7 +169,7 @@ public abstract class BaseRequestHandler {
     /**
      * Finds commonly used global attributes in the netcdf file.
      */
-    private void parseGlobalAttributes() {
+    protected void parseGlobalAttributes() {
         String name = null;
         Object value = null;
         for (Attribute a : this.netCDFDataset.getGlobalAttributes()) {
