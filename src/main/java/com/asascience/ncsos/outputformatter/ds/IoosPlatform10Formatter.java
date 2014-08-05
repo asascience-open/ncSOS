@@ -185,7 +185,7 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
         parent = addNewNode(parent, CAPABILITIES, SML_NS, NAME, "networkProcedures");
         parent = addNewNode(parent, SIMPLEDATARECORD, SWE_NS);
 
-        Element field = addNewNode(parent, FIELD, SWE_NS, NAME, "network");
+        Element field = addNewNode(parent, FIELD, SWE_NS, NAME, "network-all");
         Element textNode = addNewNode(field, TEXT, SWE_NS, DEFINITION, "http://mmisw.org/ont/ioos/definition/networkID");
         addNewNode(textNode, VALUE, SWE_NS, urn);
     }
