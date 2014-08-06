@@ -67,7 +67,7 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
         this.formatSmlContacts();
         this.formatSmlHistory();
         this.formatSmlDocumentation();
-        
+        this.formatGmlBoundedBy();
         if (this.getGridDataset() != null) {
             this.formatSmlLocationBbox();
         } else if (locationLineFlag) {
@@ -76,6 +76,14 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
             this.formatSmlLocationPoint();
         }
         this.formatSmlComponents();
+    }
+    
+    
+    
+    private void formatGmlBoundedBy() {
+        platform.setBoundedBy(OPEN_GIS_DEF_EPSG_4326, 
+                this.stationData.getBoundLowerLat() + " " + this.stationData.getBoundLowerLon(), 
+                this.stationData.getBoundUpperLat() + " " + this.stationData.getBoundUpperLon());
     }
     
     private void formatSmlIdentification() {
@@ -214,7 +222,7 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
     private void formatSmlDocumentation() {
         // need to get documentation from the dataset
     }
-    
+  
     private void formatSmlLocationPoint() {
         // get the lat/lon of the station
         // position
