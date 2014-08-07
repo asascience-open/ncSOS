@@ -195,8 +195,6 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         offering.addContent(new Element("description", gmlns).setText("Network offering containing all features in the dataset"));
         // Name
         offering.addContent(new Element("name", gmlns).setText(this.handler.getUrnNetworkAll()));
-        // SRS
-        offering.addContent(new Element("srsName", gmlns).setText(EPSG4326));
         // Bounded By
         offering.addContent(this.getBoundedBy(datasetRect));
         // Time
@@ -248,8 +246,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         offering.addContent(new Element("name", gmlns).setText(this.handler.getUrnName(stationName)));
         // Description
         // Nowhere to get this?
-        // SRS
-        offering.addContent(new Element("srsName", gmlns).setText(EPSG4326));
+
         // Bounded By
         offering.addContent(this.getBoundedBy(datasetRect));
         // Time
