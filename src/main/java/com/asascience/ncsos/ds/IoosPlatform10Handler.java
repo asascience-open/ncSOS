@@ -158,11 +158,13 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
         platform.addSmlClassifier("publisher", VocabDefinitions.GetIoosDefinition("publisher"), "organization", this.checkForRequiredValue("publisher"));
         platform.addSmlClassifier("parentNetwork", "http://mmisw.org/ont/ioos/definition/parentNetwork", "organization", (String)this.getGlobalAttribute("institution", "UNKNOWN"));
         
-        // sponsor is optional
+       
         String value = (String)this.getGlobalAttribute("sponsor");
-        if (value != null) {
-            platform.addSmlClassifier("sponsor", VocabDefinitions.GetIoosDefinition("sponsor"), "organization", value);
+        if (value == null) {
+            value = MISSING_VALUE;
         }
+        platform.addSmlClassifier("sponsor", VocabDefinitions.GetIoosDefinition("sponsor"), "organization", value);
+        
     }
     
     private void formatSmlValidTime() {
