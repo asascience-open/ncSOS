@@ -8,10 +8,13 @@ import com.asascience.ncsos.gc.GetCapabilitiesRequestHandler;
 import com.asascience.ncsos.go.GetObservationRequestHandler;
 import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
 import com.asascience.ncsos.service.BaseRequestHandler;
+import com.asascience.ncsos.util.VocabDefinitions;
+
 import org.jdom.Element;
 import org.jdom.Namespace;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+
 import ucar.nc2.constants.FeatureType;
 import ucar.nc2.time.CalendarDateRange;
 import ucar.unidata.geoloc.LatLonRect;
@@ -203,7 +206,9 @@ public class GetCapsFormatter extends BaseOutputFormatter {
    
         // ObservedProperty
         for (String s : sensors) {
-            offering.addContent(new Element("observedProperty", sosns).setAttribute("href", s, xlinkns));
+            String sensorDef = this.handler.getVariableStandardName(s);
+            offering.addContent(new Element("observedProperty", sosns).setAttribute("href", 
+                    VocabDefinitions.GetDefinitionForParameter(sensorDef), xlinkns));
         }
         // FeatureOfInterest
         for (String s : stations) {
@@ -253,7 +258,8 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         offering.addContent(new Element("procedure", sosns).setAttribute("href", this.handler.getUrnName(stationName), xlinkns));
         // ObservedProperty
         for (String s : sensors) {
-            offering.addContent(new Element("observedProperty", sosns).setAttribute("href", this.handler.getSensorUrnName(stationName, s), xlinkns));
+            String sensorDef = this.handler.getVariableStandardName(s);
+            offering.addContent(new Element("observedProperty", sosns).setAttribute("href",  VocabDefinitions.GetDefinitionForParameter(sensorDef), xlinkns));
         }
         // FeatureOfInterest
         offering.addContent(new Element("featureOfInterest", sosns).setAttribute("href", this.handler.getUrnName(stationName), xlinkns));

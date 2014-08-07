@@ -3,6 +3,7 @@ package com.asascience.ncsos.service;
 import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.util.DiscreteSamplingGeometryUtil;
 import com.asascience.ncsos.util.ListComprehension;
+
 import ucar.ma2.DataType;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
@@ -27,6 +28,8 @@ public abstract class BaseRequestHandler {
     public static final String TRAJECTORY = "trajectory";
     public static final String PROFILE_ID = "profile_id";
     public static final String TRAJECTORY_ID = "trajectory_id";
+    public static final String UNKNOWN = "unknown";
+    public static final String STANDARD_NAME = "standard_name";
 
     public static final String STATION_URN_BASE = "urn:ioos:station:";
     public static final String SENSOR_URN_BASE = "urn:ioos:sensor:";
@@ -90,6 +93,26 @@ public abstract class BaseRequestHandler {
         }
     }
     
+    
+    /**
+     * Returns the 'standard_name' attribute of a variable, if it exists
+     * @param varName the name of the variable
+     * @return the 'standard_name' if it exists, otherwise ""
+     */
+    public String getVariableStandardName(String varName) {
+        String retval = UNKNOWN;
+
+        for (Variable var : netCDFDataset.getVariables()) {
+            if (varName.equalsIgnoreCase(var.getFullName())) {
+                Attribute attr = var.findAttribute(STANDARD_NAME);
+                if (attr != null) {
+                    retval = attr.getStringValue();
+                }
+            }
+        }
+
+        return retval;
+    }
     protected void initializeDataset() throws IOException{
         // get the feature dataset (wraps the dataset in variety of accessor methods)
         findFeatureDataset(FeatureDatasetFactoryManager.findFeatureType(netCDFDataset));

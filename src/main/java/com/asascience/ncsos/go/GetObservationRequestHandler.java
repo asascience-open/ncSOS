@@ -6,6 +6,7 @@ import com.asascience.ncsos.outputformatter.go.Ioos10Formatter;
 import com.asascience.ncsos.outputformatter.go.OosTethysFormatter;
 import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.ListComprehension;
+import com.asascience.ncsos.util.VocabDefinitions;
 
 import ucar.ma2.Array;
 import ucar.nc2.Attribute;
@@ -27,12 +28,11 @@ import java.util.Map;
 
 public class GetObservationRequestHandler extends BaseRequestHandler {
     public static final String DEPTH = "depth";
-    public static final String STANDARD_NAME = "standard_name";
     private static final String LAT = "latitude";
     private static final String LON = "longitude";
 
     public static final String TEXTXML = "text/xml";
-    public static final String UNKNOWN = "unknown";
+
     private String[] obsProperties;
     private String[] procedures;
     private iStationData CDMDataSet;
@@ -89,15 +89,19 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
             String vars = variableNames[i];
             boolean isInDataset = false;
             for (Variable dVar : netCDFDataset.getVariables()) {
-                if (dVar.getFullName().equalsIgnoreCase(vars)) {
-                    isInDataset = true;
+                String dVarFullName = dVar.getFullName();
+                if (dVarFullName.equalsIgnoreCase(vars)) {
+                    isInDataset = true;                
                     break;
                 } else {
                     Attribute std = dVar.findAttributeIgnoreCase(CF.STANDARD_NAME);
-                    if (std != null && std.getStringValue().equalsIgnoreCase(vars)) {
+                   
+                    if (std != null && (std.getStringValue().equalsIgnoreCase(vars) ||
+                        VocabDefinitions.GetDefinitionForParameter(std.getStringValue()).equalsIgnoreCase(vars))) {
                         isInDataset = true;
                         // Replace standard_name with the variable name
-                        actualVariableNames[i] = dVar.getFullName();
+                        actualVariableNames[i] = dVarFullName;
+                        break;
                     }
                 }
             }
@@ -337,25 +341,7 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
     	}
     }
 
-    /**
-     * Returns the 'standard_name' attribute of a variable, if it exists
-     * @param varName the name of the variable
-     * @return the 'standard_name' if it exists, otherwise ""
-     */
-    public String getVariableStandardName(String varName) {
-        String retval = UNKNOWN;
 
-        for (Variable var : netCDFDataset.getVariables()) {
-            if (varName.equalsIgnoreCase(var.getFullName())) {
-                Attribute attr = var.findAttribute(STANDARD_NAME);
-                if (attr != null) {
-                    retval = attr.getStringValue();
-                }
-            }
-        }
-
-        return retval;
-    }
 
     public List<String> getRequestedEventTimes() {
         return this.eventTimes;

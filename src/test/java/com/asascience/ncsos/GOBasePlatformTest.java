@@ -1,12 +1,15 @@
 package com.asascience.ncsos;
 
 import junit.framework.Assert;
+
 import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+
+import com.asascience.ncsos.util.VocabDefinitions;
 
 import java.io.File;
 import java.net.URLEncoder;
@@ -62,7 +65,7 @@ public class GOBasePlatformTest extends NcSOSTest {
                 fileElements.remove(e);
             } else {
                 for (Element p : (List<Element>) e.getChildren("platform")) {
-                    nonGrids = nonGrids + (p.getChildren("sensor").size() * 3);
+                    nonGrids = nonGrids + (p.getChildren("sensor").size() * 4);
                     // Three tests using all observedProperties
                     nonGrids = nonGrids + 3;
                 }
@@ -88,7 +91,7 @@ public class GOBasePlatformTest extends NcSOSTest {
                     String observedProperty = s.getAttributeValue("standard");
                     observedPropertyList.add(observedProperty);
 
-                    // Make 3 requests for each individual sensors
+                    // Make 4 requests for each individual sensors
                     // They should all return the same thing
 
                     // A request where the offering and procedure are identical
@@ -112,8 +115,21 @@ public class GOBasePlatformTest extends NcSOSTest {
                     data[curIndex][3] = observedProperty;
                     data[curIndex][4] = "platform_offering_no_procedure";
                     curIndex++;
+                    
+                    
+//                    // A request with the observedProperty set to the URL of an IOOS vocabluary
+                    
+                    data[curIndex][0] = e;
+                    data[curIndex][1] = offering;
+                    data[curIndex][2] = procedure;
+                    data[curIndex][3] =  VocabDefinitions.GetDefinitionForParameter(observedProperty);
+                    data[curIndex][4] = "platform_offering_platform_procedure_ioos_vocab";
+                    curIndex++;
+             
+                    
                 }
 
+                
                 // Now 3 requests with all observedProperties
 
                 // A request where the offering and procedure are identical
@@ -155,15 +171,23 @@ public class GOBasePlatformTest extends NcSOSTest {
 
         File   file     = new File("resources" + systemSeparator + "datasets" + systemSeparator + this.currentFile.getAttributeValue("path"));
         String feature  = this.currentFile.getAttributeValue("feature");
-        String output   = new File(outputDir + systemSeparator + file.getName() + "_" + this.observedProperty + "_" +  this.testType + ".xml").getAbsolutePath();
+        String output;
+        if(this.observedProperty.contains("http")){
+            int lastSlash = observedProperty.lastIndexOf("/");
+            output = new File(outputDir + systemSeparator + file.getName() + "_URL" + this.observedProperty.substring(lastSlash+1) + "_" +  this.testType + ".xml").getAbsolutePath();
+        }
+        else
+            output   = new File(outputDir + systemSeparator + file.getName() + "_" + this.observedProperty + "_" +  this.testType + ".xml").getAbsolutePath();
         System.out.println("------ " + file + " (" + feature + ") ------");
         System.out.println("------ " + pairs + " ------");
+        System.out.println("output: " + output);
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
         if (currentFile.getAttributeValue("feature").equalsIgnoreCase("point")) {
             // NcSOS does not support POINT features at this time!
             Assert.assertTrue(NcSOSTest.isException(result));
         } else {
             Assert.assertFalse(NcSOSTest.isException(result));
+            
         }
     }
 
