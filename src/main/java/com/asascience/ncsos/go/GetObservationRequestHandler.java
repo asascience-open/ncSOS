@@ -67,8 +67,8 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
         offering = URLDecoder.decode(offering,"UTF-8");
         responseFormat = URLDecoder.decode(responseFormat,"UTF-8");
         
-        
-       
+        //Remove any spaces between ";" and subtype
+       responseFormat = responseFormat.replaceAll(";\\s+subtype",";subtype");
 
         // set up our formatter
         if (responseFormat.equalsIgnoreCase(OOSTETHYS_RESPONSE_FORMAT)) {
