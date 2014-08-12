@@ -59,7 +59,7 @@ public class BaseDSHandler extends BaseRequestHandler {
         }
         
         // make sure that the outputFormat we received is acceptable
-        if (!outputFormat.equalsIgnoreCase(ACCEPTABLE_RESPONSE_FORMAT)) {
+        if (!outputFormat.replaceAll(";\\s+subtype",";subtype").equalsIgnoreCase(ACCEPTABLE_RESPONSE_FORMAT)) {
             // return exception
             formatter = new ErrorFormatter();
             ((ErrorFormatter)formatter).setException("Unknown outputFormat: " + outputFormat, INVALID_PARAMETER, "outputFormat");

@@ -49,29 +49,40 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
      * @throws IOException
      */
     public GetCapabilitiesRequestHandler(NetcdfDataset netCDFDataset, String threddsURI, String sections) throws IOException {
-        super(netCDFDataset);
+        super(netCDFDataset, false);
         this.threddsURI = threddsURI;
         this.sections = sections.toLowerCase();
         this.formatter = new GetCapsFormatter(this);
 
-        if (getFeatureDataset() == null) {
-            // error, couldn't read dataset
-            formatter = new ErrorFormatter();
-            StringBuffer sb = new StringBuffer();
-            if(netCDFDataset == null) {
-              ((ErrorFormatter)formatter).setException("Unable to read the dataset's feature type. NULL dataset.");
-            } else if(FeatureDatasetFactoryManager.findFeatureType(netCDFDataset) == null) {
-              ((ErrorFormatter)formatter).setException("Unable to read the dataset's feature type. Null feature type reported by netCDF");
-            } else {
-              ((ErrorFormatter)formatter).setException("Unable to read the dataset's feature type. Reported as " + FeatureDatasetFactoryManager.findFeatureType(netCDFDataset).toString() + "; unable to process.");
-            }
-            return;
-        }
+        
 
         SetSectionBits();
-        CalculateBoundsForFeatureSet();
     }
 
+    
+    private void initializeDataParams() throws IOException{
+    	if(!this.isInitialized){
+    		this.initializeDataset();
+    		if (getFeatureDataset() == null) {
+                // error, couldn't read dataset
+                formatter = new ErrorFormatter();
+                StringBuffer sb = new StringBuffer();
+                if(netCDFDataset == null) {
+                  ((ErrorFormatter)formatter).setException("Unable to read the dataset's feature type. NULL dataset.");
+                } else if(FeatureDatasetFactoryManager.findFeatureType(netCDFDataset) == null) {
+                  ((ErrorFormatter)formatter).setException("Unable to read the dataset's feature type. Null feature type reported by netCDF");
+                } else {
+                  ((ErrorFormatter)formatter).setException("Unable to read the dataset's feature type. Reported as " + FeatureDatasetFactoryManager.findFeatureType(netCDFDataset).toString() + "; unable to process.");
+                }
+                return;
+            }
+            CalculateBoundsForFeatureSet();
+            
+
+    		
+    	}
+    	
+    }
     public void resetCapabilitiesSections(String sections) throws IOException {
         this.sections = sections.toLowerCase();
         this.requestedSections = new BitSet(SECTION_COUNT);
@@ -80,13 +91,20 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
 
     /**
      * Creates the output for the get capabilities response
+     * @throws IOException 
      */
-    public void parseGetCapabilitiesDocument() {
-        // early exit if we have an exception output
-        if (formatter instanceof ErrorFormatter) {
+    public void parseGetCapabilitiesDocument() throws IOException {
+
+
+    	if (!(this.requestedSections.get(Sections.SERVICEIDENTIFICATION.ordinal()) &&
+    			this.requestedSections.cardinality() == 1)) 
+    		this.initializeDataParams();
+    	else
+    		   parseGlobalAttributes();
+        // early exit if we have an exception output    	
+    	if (formatter instanceof ErrorFormatter) {
             return;
         }
-
         GetCapsFormatter out = (GetCapsFormatter) formatter;
 
         // service identification; parse if it is the section identified or 'all'
@@ -96,9 +114,14 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
             // remove identification from doc
             out.removeServiceIdentification();
         }
-
+//// check here to see if we need to initialize the data
+//        if(this.requestedSections.get(Sections.SERVICEIDENTIFICATION.ordinal()) &&
+//        		this.requestedSections.cardinality() == 1)){
+//        	
+//        }
         // service provider; parse if it is the section identified or 'all'
         if (this.requestedSections.get(Sections.SERVICEPROVIDER.ordinal())) {
+        	
             out.parseServiceDescription();
         } else {
             // remove service provider from doc
@@ -107,6 +130,7 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
 
         // operations metadata; parse if it is the section identified or 'all'
         if (this.requestedSections.get(Sections.OPERATIONSMETADATA.ordinal())) {
+        	
             // Set the THREDDS URI
             out.setURL(threddsURI);
             // Set the GetObservation Operation
@@ -125,6 +149,8 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
             // observation offering list
             // network-all
             // get the bounds
+        	// early exit if we have an exception output
+        
             Double latMin = Double.MAX_VALUE, latMax = Double.NEGATIVE_INFINITY, lonMin = Double.MAX_VALUE, lonMax = Double.NEGATIVE_INFINITY;
             for (LatLonRect rect : stationBBox.values()) {
                 latMin = (latMin > rect.getLatMin()) ? rect.getLatMin() : latMin;

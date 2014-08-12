@@ -8,10 +8,13 @@ import com.asascience.ncsos.gc.GetCapabilitiesRequestHandler;
 import com.asascience.ncsos.go.GetObservationRequestHandler;
 import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
 import com.asascience.ncsos.service.BaseRequestHandler;
+import com.asascience.ncsos.util.VocabDefinitions;
+
 import org.jdom.Element;
 import org.jdom.Namespace;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+
 import ucar.nc2.constants.FeatureType;
 import ucar.nc2.time.CalendarDateRange;
 import ucar.unidata.geoloc.LatLonRect;
@@ -32,6 +35,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
     public static final String OPERATIONS_METADATA = "OperationsMetadata";
     public static final String SERVICE_IDENTIFICATION = "ServiceIdentification";
     public static final String SERVICE_PROVIDER = "ServiceProvider";
+    
     private boolean exceptionFlag = false;
     private final static String TEMPLATE = "templates/GC.xml";
     private GetCapabilitiesRequestHandler handler = null;
@@ -192,8 +196,6 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         offering.addContent(new Element("description", gmlns).setText("Network offering containing all features in the dataset"));
         // Name
         offering.addContent(new Element("name", gmlns).setText(this.handler.getUrnNetworkAll()));
-        // SRS
-        offering.addContent(new Element("srsName", gmlns).setText(EPSG4326));
         // Bounded By
         offering.addContent(this.getBoundedBy(datasetRect));
         // Time
@@ -203,7 +205,8 @@ public class GetCapsFormatter extends BaseOutputFormatter {
    
         // ObservedProperty
         for (String s : sensors) {
-            offering.addContent(new Element("observedProperty", sosns).setAttribute("href", s, xlinkns));
+            this.setObservedPropertyForOffering(s, offering, xlinkns, sosns);
+
         }
         // FeatureOfInterest
         for (String s : stations) {
@@ -243,8 +246,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         offering.addContent(new Element("name", gmlns).setText(this.handler.getUrnName(stationName)));
         // Description
         // Nowhere to get this?
-        // SRS
-        offering.addContent(new Element("srsName", gmlns).setText(EPSG4326));
+
         // Bounded By
         offering.addContent(this.getBoundedBy(datasetRect));
         // Time
@@ -253,7 +255,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         offering.addContent(new Element("procedure", sosns).setAttribute("href", this.handler.getUrnName(stationName), xlinkns));
         // ObservedProperty
         for (String s : sensors) {
-            offering.addContent(new Element("observedProperty", sosns).setAttribute("href", this.handler.getSensorUrnName(stationName, s), xlinkns));
+            this.setObservedPropertyForOffering(s, offering, xlinkns, sosns);
         }
         // FeatureOfInterest
         offering.addContent(new Element("featureOfInterest", sosns).setAttribute("href", this.handler.getUrnName(stationName), xlinkns));
@@ -276,6 +278,20 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         ol.addContent(offering);
     }
 
+    
+    protected void setObservedPropertyForOffering(String sensor, Element offering,  
+                                Namespace xlinkns,  Namespace sosns){
+        String sensorDef = this.handler.getVariableStandardName(sensor);
+        String hrefUrl = null;
+        if(sensorDef.equals(BaseRequestHandler.UNKNOWN)){
+            hrefUrl = BaseRequestHandler.HREF_NO_STANDARD_NAME_URL + sensor;
+        }
+        else {
+            hrefUrl =  VocabDefinitions.GetDefinitionForParameter(sensorDef);
+        }
+        offering.addContent(new Element("observedProperty", sosns).setAttribute("href", hrefUrl, xlinkns));
+    }
+    
     public void removeContents() {
         this.getRoot().removeChild(CONTENTS, this.getNamespace("sos"));
     }
@@ -298,7 +314,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         Namespace gmlns = this.getNamespace("gml");
         Element bb = new Element("boundedBy", gmlns);
         Element env = new Element("Envelope", gmlns);
-        env.setAttribute("srsName", "http://www.opengis.net/def/crs/EPSG/0/4326");
+        env.setAttribute("srsName", getSRSName(handler));
         String lc = null;
         String uc = null;
         try {

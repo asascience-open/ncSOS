@@ -6,6 +6,9 @@ import com.asascience.ncsos.outputformatter.go.Ioos10Formatter;
 import com.asascience.ncsos.outputformatter.go.OosTethysFormatter;
 import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.ListComprehension;
+import com.asascience.ncsos.util.VocabDefinitions;
+
+import ucar.ma2.Array;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
 import ucar.nc2.constants.AxisType;
@@ -14,6 +17,7 @@ import ucar.nc2.constants.FeatureType;
 import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.dataset.CoordinateAxis1D;
 import ucar.nc2.dataset.NetcdfDataset;
+import ucar.nc2.units.DateUnit;
 
 import java.io.IOException;
 import java.net.URLDecoder;
@@ -24,12 +28,11 @@ import java.util.Map;
 
 public class GetObservationRequestHandler extends BaseRequestHandler {
     public static final String DEPTH = "depth";
-    public static final String STANDARD_NAME = "standard_name";
     private static final String LAT = "latitude";
     private static final String LON = "longitude";
 
     public static final String TEXTXML = "text/xml";
-    public static final String UNKNOWN = "unknown";
+
     private String[] obsProperties;
     private String[] procedures;
     private iStationData CDMDataSet;
@@ -38,7 +41,8 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
     public static final String IOOS10_RESPONSE_FORMAT = "text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0\"";
     public static final String OOSTETHYS_RESPONSE_FORMAT = "text/xml;subtype=\"om/1.0.0\"";
     private final List<String> eventTimes;
-
+    private static final String LATEST_TIME = "latest";
+    private static final String FIRST_TIME = "first";
     /**
      * SOS get obs request handler
      * @param netCDFDataset dataset for which the get observation request is being made
@@ -47,7 +51,7 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
      * @param eventTime event time range from the request
      * @param responseFormat response format from the request
      * @param latLonRequest map of the latitudes and longitude (points or ranges) from the request
-     * @throws IOException 
+     * @throws Exception 
      */
     public GetObservationRequestHandler(NetcdfDataset netCDFDataset,
                                         String[] requestedProcedures,
@@ -55,18 +59,16 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
                                         String[] variableNames,
                                         String[] eventTime,
                                         String responseFormat,
-                                        Map<String, String> latLonRequest) throws IOException {
+                                        Map<String, String> latLonRequest) throws Exception {
         super(netCDFDataset);
 
         // Translate back to an URN.  (gml:id fields in XML can't have colons)
         offering = offering.replace("_-_",":");
         offering = URLDecoder.decode(offering,"UTF-8");
         responseFormat = URLDecoder.decode(responseFormat,"UTF-8");
-        if (eventTime != null && eventTime.length > 0) {
-            eventTimes = Arrays.asList(eventTime);
-        } else {
-            eventTimes = new ArrayList<String>();
-        }
+        
+        //Remove any spaces between ";" and subtype
+       responseFormat = responseFormat.replaceAll(";\\s+subtype",";subtype");
 
         // set up our formatter
         if (responseFormat.equalsIgnoreCase(OOSTETHYS_RESPONSE_FORMAT)) {
@@ -87,15 +89,19 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
             String vars = variableNames[i];
             boolean isInDataset = false;
             for (Variable dVar : netCDFDataset.getVariables()) {
-                if (dVar.getFullName().equalsIgnoreCase(vars)) {
-                    isInDataset = true;
+                String dVarFullName = dVar.getFullName();
+                if (dVarFullName.equalsIgnoreCase(vars)) {
+                    isInDataset = true;                
                     break;
                 } else {
                     Attribute std = dVar.findAttributeIgnoreCase(CF.STANDARD_NAME);
-                    if (std != null && std.getStringValue().equalsIgnoreCase(vars)) {
+                   
+                    if (std != null && (std.getStringValue().equalsIgnoreCase(vars) ||
+                        VocabDefinitions.GetDefinitionForParameter(std.getStringValue()).equalsIgnoreCase(vars))) {
                         isInDataset = true;
                         // Replace standard_name with the variable name
-                        actualVariableNames[i] = dVar.getFullName();
+                        actualVariableNames[i] = dVarFullName;
+                        break;
                     }
                 }
             }
@@ -103,6 +109,8 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
                 formatter = new ErrorFormatter();
                 ((ErrorFormatter)formatter).setException("observed property - " + vars + " - was not found in the dataset", INVALID_PARAMETER, "observedProperty");
                 CDMDataSet = null;
+                eventTimes = new ArrayList<String>();
+
                 return;
             }
         }
@@ -152,6 +160,43 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
             checkProceduresAgainstOffering(offering);
         }
 
+        if (eventTime != null && eventTime.length > 0) {
+            Array timeVals = null;
+            DateUnit dateUnit = null;
+            for(int eventTimeI = 0; eventTimeI < eventTime.length; eventTimeI++){
+                if(eventTime[eventTimeI].equals(LATEST_TIME) ||
+                        eventTime[eventTimeI].equals(FIRST_TIME)){
+                    int timeIndex = 0;
+                    if(timeVals == null)
+                        timeVals = this.timeVariable.read();
+                    if(dateUnit == null)
+                        dateUnit = new DateUnit(timeVariable.getUnitsString());
+
+                    if(eventTime[eventTimeI].equals(LATEST_TIME))
+                        timeIndex = (int)timeVals.getSize() - 1;
+
+                    double lastT = timeVals.getDouble(timeIndex);
+                    eventTime[eventTimeI] = dateUnit.makeStandardDateString(lastT);
+                }
+
+            }
+
+
+
+            if(eventTime.length == 1){
+                String currEntry = eventTime[0];
+                eventTime = new String[2];
+                eventTime[0] = currEntry;
+                eventTime[1] = currEntry;
+            }
+            eventTimes = Arrays.asList(eventTime);
+
+        } 
+        else {
+            eventTimes = new ArrayList<String>();
+        }
+        
+        
         setCDMDatasetForStations(netCDFDataset, eventTime, latLonRequest);
     }
 
@@ -296,25 +341,7 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
     	}
     }
 
-    /**
-     * Returns the 'standard_name' attribute of a variable, if it exists
-     * @param varName the name of the variable
-     * @return the 'standard_name' if it exists, otherwise ""
-     */
-    public String getVariableStandardName(String varName) {
-        String retval = UNKNOWN;
 
-        for (Variable var : netCDFDataset.getVariables()) {
-            if (varName.equalsIgnoreCase(var.getFullName())) {
-                Attribute attr = var.findAttribute(STANDARD_NAME);
-                if (attr != null) {
-                    retval = attr.getStringValue();
-                }
-            }
-        }
-
-        return retval;
-    }
 
     public List<String> getRequestedEventTimes() {
         return this.eventTimes;

@@ -14,8 +14,9 @@ public class Ioos10Handler extends BaseRequestHandler {
     
     protected final IFReportMechanism reporter;
     protected final static String DEFAULT_STRING = "UNKNOWN";
+    protected final static String MISSING_VALUE = "Missing Value";
     protected final static String URN_BASE = "urn:ioos:";
-    
+    protected final static String OPEN_GIS_DEF_EPSG_4326 = "http://www.opengis.net/def/crs/EPSG/0/4326";
     public Ioos10Handler(NetcdfDataset dataset) throws IOException {
         super(dataset);
         reporter = null;

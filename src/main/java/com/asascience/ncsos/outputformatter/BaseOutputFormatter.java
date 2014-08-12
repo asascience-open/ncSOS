@@ -1,6 +1,8 @@
 package com.asascience.ncsos.outputformatter;
 
+import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.XMLDomUtils;
+
 import org.jdom.Element;
 import org.jdom.Namespace;
 import org.jdom.output.Format;
@@ -39,7 +41,15 @@ public class BaseOutputFormatter extends OutputFormatter {
         ef.setException(message, exceptionCode, locator);
         this.document = ef.document;
     }
-
+    
+    protected String getSRSName( BaseRequestHandler handler) {
+        if (handler.getCRSSRSAuthorities() != null) {
+            return handler.getCRSSRSAuthorities()[0];
+        } else {
+            return "http://www.opengis.net/def/crs/EPSG/0/4326";
+        }
+    }
+    
     public String getContentType() {
         return "text/xml";
     }

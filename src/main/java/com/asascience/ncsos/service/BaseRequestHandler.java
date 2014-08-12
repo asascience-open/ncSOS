@@ -3,6 +3,7 @@ package com.asascience.ncsos.service;
 import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.util.DiscreteSamplingGeometryUtil;
 import com.asascience.ncsos.util.ListComprehension;
+
 import ucar.ma2.DataType;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
@@ -27,7 +28,9 @@ public abstract class BaseRequestHandler {
     public static final String TRAJECTORY = "trajectory";
     public static final String PROFILE_ID = "profile_id";
     public static final String TRAJECTORY_ID = "trajectory_id";
-
+    public static final String UNKNOWN = "unknown";
+    public static final String STANDARD_NAME = "standard_name";
+    public static final String HREF_NO_STANDARD_NAME_URL = "http://mmisw.org/ont/fake/parameter/";
     public static final String STATION_URN_BASE = "urn:ioos:station:";
     public static final String SENSOR_URN_BASE = "urn:ioos:sensor:";
     public static final String NETWORK_URN_BASE = "urn:ioos:network:";
@@ -48,7 +51,7 @@ public abstract class BaseRequestHandler {
     protected Variable stationVariable;
     private HashMap<Integer, String> stationNames;
     private List<String> sensorNames;
-
+    protected boolean isInitialized;
 
     // Exception codes - Table 25 of OGC 06-121r3 (OWS Common)
     protected static String INVALID_PARAMETER       = "InvalidParameterValue";
@@ -73,6 +76,10 @@ public abstract class BaseRequestHandler {
      * @throws IOException
      */
     public BaseRequestHandler(NetcdfDataset netCDFDataset) throws IOException {
+    	this(netCDFDataset, true);
+    }
+    
+    public BaseRequestHandler(NetcdfDataset netCDFDataset, boolean initialize) throws IOException{
         // check for non-null dataset
         if(netCDFDataset == null) {
 //            _log.error("received null dataset -- probably exception output");
@@ -80,6 +87,33 @@ public abstract class BaseRequestHandler {
             return;
         }
         this.netCDFDataset = netCDFDataset;
+        isInitialized = false;
+        if(initialize){
+        	initializeDataset();
+        }
+    }
+    
+    
+    /**
+     * Returns the 'standard_name' attribute of a variable, if it exists
+     * @param varName the name of the variable
+     * @return the 'standard_name' if it exists, otherwise ""
+     */
+    public String getVariableStandardName(String varName) {
+        String retval = UNKNOWN;
+
+        for (Variable var : netCDFDataset.getVariables()) {
+            if (varName.equalsIgnoreCase(var.getFullName())) {
+                Attribute attr = var.findAttribute(STANDARD_NAME);
+                if (attr != null) {
+                    retval = attr.getStringValue();
+                }
+            }
+        }
+
+        return retval;
+    }
+    protected void initializeDataset() throws IOException{
         // get the feature dataset (wraps the dataset in variety of accessor methods)
         findFeatureDataset(FeatureDatasetFactoryManager.findFeatureType(netCDFDataset));
         // verify we could get a dataset (make sure the dataset is CF 1.6 compliant or whatever)
@@ -103,8 +137,8 @@ public abstract class BaseRequestHandler {
         lonVariable = netCDFDataset.findCoordinateAxis(AxisType.Lon);
         timeVariable = netCDFDataset.findCoordinateAxis(AxisType.Time);
         depthVariable = netCDFDataset.findCoordinateAxis(AxisType.Height);
+        isInitialized = true;
     }
-    
     /**
      * Attempts to set the feature dataset based on the dataset's FeatureType
      * @param datasetFT The FeatureType of the netcdf dataset, found with the factory manager
@@ -158,7 +192,7 @@ public abstract class BaseRequestHandler {
     /**
      * Finds commonly used global attributes in the netcdf file.
      */
-    private void parseGlobalAttributes() {
+    protected void parseGlobalAttributes() {
         String name = null;
         Object value = null;
         for (Attribute a : this.netCDFDataset.getGlobalAttributes()) {
