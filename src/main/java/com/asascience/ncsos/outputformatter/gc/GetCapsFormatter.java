@@ -35,6 +35,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
     public static final String OPERATIONS_METADATA = "OperationsMetadata";
     public static final String SERVICE_IDENTIFICATION = "ServiceIdentification";
     public static final String SERVICE_PROVIDER = "ServiceProvider";
+    
     private boolean exceptionFlag = false;
     private final static String TEMPLATE = "templates/GC.xml";
     private GetCapabilitiesRequestHandler handler = null;
@@ -204,9 +205,8 @@ public class GetCapsFormatter extends BaseOutputFormatter {
    
         // ObservedProperty
         for (String s : sensors) {
-            String sensorDef = this.handler.getVariableStandardName(s);
-            offering.addContent(new Element("observedProperty", sosns).setAttribute("href", 
-                    VocabDefinitions.GetDefinitionForParameter(sensorDef), xlinkns));
+            this.setObservedPropertyForOffering(s, offering, xlinkns, sosns);
+
         }
         // FeatureOfInterest
         for (String s : stations) {
@@ -255,8 +255,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         offering.addContent(new Element("procedure", sosns).setAttribute("href", this.handler.getUrnName(stationName), xlinkns));
         // ObservedProperty
         for (String s : sensors) {
-            String sensorDef = this.handler.getVariableStandardName(s);
-            offering.addContent(new Element("observedProperty", sosns).setAttribute("href",  VocabDefinitions.GetDefinitionForParameter(sensorDef), xlinkns));
+            this.setObservedPropertyForOffering(s, offering, xlinkns, sosns);
         }
         // FeatureOfInterest
         offering.addContent(new Element("featureOfInterest", sosns).setAttribute("href", this.handler.getUrnName(stationName), xlinkns));
@@ -279,6 +278,20 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         ol.addContent(offering);
     }
 
+    
+    protected void setObservedPropertyForOffering(String sensor, Element offering,  
+                                Namespace xlinkns,  Namespace sosns){
+        String sensorDef = this.handler.getVariableStandardName(sensor);
+        String hrefUrl = null;
+        if(sensorDef.equals(BaseRequestHandler.UNKNOWN)){
+            hrefUrl = BaseRequestHandler.HREF_NO_STANDARD_NAME_URL + sensor;
+        }
+        else {
+            hrefUrl =  VocabDefinitions.GetDefinitionForParameter(sensorDef);
+        }
+        offering.addContent(new Element("observedProperty", sosns).setAttribute("href", hrefUrl, xlinkns));
+    }
+    
     public void removeContents() {
         this.getRoot().removeChild(CONTENTS, this.getNamespace("sos"));
     }

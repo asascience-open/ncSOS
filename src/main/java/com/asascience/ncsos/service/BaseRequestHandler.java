@@ -30,7 +30,7 @@ public abstract class BaseRequestHandler {
     public static final String TRAJECTORY_ID = "trajectory_id";
     public static final String UNKNOWN = "unknown";
     public static final String STANDARD_NAME = "standard_name";
-
+    public static final String HREF_NO_STANDARD_NAME_URL = "http://mmisw.org/ont/fake/parameter/";
     public static final String STATION_URN_BASE = "urn:ioos:station:";
     public static final String SENSOR_URN_BASE = "urn:ioos:sensor:";
     public static final String NETWORK_URN_BASE = "urn:ioos:network:";
