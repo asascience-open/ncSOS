@@ -314,7 +314,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         Namespace gmlns = this.getNamespace("gml");
         Element bb = new Element("boundedBy", gmlns);
         Element env = new Element("Envelope", gmlns);
-        env.setAttribute("srsName", "http://www.opengis.net/def/crs/EPSG/0/4326");
+        env.setAttribute("srsName", getSRSName(handler));
         String lc = null;
         String uc = null;
         try {

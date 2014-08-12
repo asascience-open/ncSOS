@@ -88,7 +88,7 @@ public class OosTethysFormatter extends BaseOutputFormatter {
         // set bounded by
         Element bounds = (Element) parent.getChild(BOUNDED_BY, GML_NS);
         Element envelope = new Element(ENVELOPE, GML_NS);
-        envelope.setAttribute(SRS_NAME, getSRSName());
+        envelope.setAttribute(SRS_NAME, getSRSName(this.handler));
         envelope.addContent(createNodeWithText(GML_NS, LOWER_CORNER, this.handler.getStationLowerCorner(index)));
         envelope.addContent(createNodeWithText(GML_NS, UPPER_CORNER, this.handler.getStationUpperCorner(index)));
         bounds.addContent(envelope);
@@ -112,15 +112,7 @@ public class OosTethysFormatter extends BaseOutputFormatter {
         parent.addContent(createNodeWithAttribute(OM_NS, FEATURE_INTEREST, XLINK_NS, "href", procName));
     }
     
-    private String getSRSName() {
-        if (this.handler.getCRSSRSAuthorities() != null) {
-            _log.debug(this.handler.getCRSSRSAuthorities()[0]);
-            return this.handler.getCRSSRSAuthorities()[0];
-        } else {
-            return "http://www.opengis.net/def/crs/EPSG/0/4326";
-        }
-    }
-    
+
     private Element createNodeWithText(Namespace elemNs, String elemName, String text) {
         Element retval = new Element(elemName, elemNs);
         retval.setText(text);
@@ -270,7 +262,7 @@ public class OosTethysFormatter extends BaseOutputFormatter {
         
         Element bounds = (Element) coll.getChild(BOUNDED_BY, GML_NS);
         Element env = bounds.getChild(ENVELOPE, GML_NS);
-        env.setAttribute(SRS_NAME, getSRSName());
+        env.setAttribute(SRS_NAME, getSRSName(handler));
         env.getChild(LOWER_CORNER, GML_NS).setText(this.handler.getBoundedLowerCorner());
         env.getChild(UPPER_CORNER, GML_NS).setText(this.handler.getBoundedUpperCorner());
     }
