@@ -95,12 +95,13 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
      */
     public void parseGetCapabilitiesDocument() throws IOException {
 
-
-    	if (!(this.requestedSections.get(Sections.SERVICEIDENTIFICATION.ordinal()) &&
-    			this.requestedSections.cardinality() == 1)) 
-    		this.initializeDataParams();
-    	else
-    		   parseGlobalAttributes();
+        if(this.requestedSections.cardinality() > 0){
+            if (!(this.requestedSections.get(Sections.SERVICEIDENTIFICATION.ordinal()) &&
+                    this.requestedSections.cardinality() == 1)) 
+                this.initializeDataParams();
+            else
+                parseGlobalAttributes();
+        }
         // early exit if we have an exception output    	
     	if (formatter instanceof ErrorFormatter) {
             return;
@@ -378,7 +379,11 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
             for (String sect : this.sections.split(",")) {
                 if (sect.equals("all")) {
                     this.requestedSections.set(0, this.SECTION_COUNT);
-                } else {
+                }
+                else if(sect.equals("")){
+                    continue;
+                }
+                else {
                     this.requestedSections.set(Sections.valueOf(sect.toUpperCase()).ordinal());
                 }
             }

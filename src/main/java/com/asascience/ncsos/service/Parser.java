@@ -283,12 +283,16 @@ public class Parser {
             String[] keyVal = arg.split("=");
             String key;
             String value;
-
+       
+            if(keyVal.length == 1 && keyVal[0].equalsIgnoreCase(SECTIONS)){
+                queryMap.put(SECTIONS, "");
+                continue;
+            }
             if (keyVal.length < 2) {
                 _log.info("Could not detect key-value pair, continuing");
                 continue;
             }
-
+       
             try {
                 key = URLDecoder.decode(keyVal[0], "UTF-8");
                 value = URLDecoder.decode(keyVal[1], "UTF-8").trim();
