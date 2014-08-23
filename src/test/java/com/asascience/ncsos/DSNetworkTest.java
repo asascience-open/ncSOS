@@ -46,8 +46,7 @@ public class DSNetworkTest extends NcSOSTest {
         kvp.put("service", "SOS");
     }
 
-   	// Create the parameters for the test constructor
-//    @Parameters(name = "{index}: {2}")
+  	// Create the parameters for the test constructor
     @Parameters(name = "{index}: {2}")
     public static Collection<Object[]> testCases() throws Exception {
     	setUpClass();
