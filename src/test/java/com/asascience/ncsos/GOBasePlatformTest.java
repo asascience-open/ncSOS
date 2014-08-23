@@ -1,6 +1,6 @@
 package com.asascience.ncsos;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
@@ -27,13 +27,14 @@ public class GOBasePlatformTest extends NcSOSTest {
     private String  offering;
     private String  testType;
     private String  observedProperty;
-    public GOBasePlatformTest(Element file, String offering, String procedure, String observedProperty, String testType) {
+    public GOBasePlatformTest(Element file, String offering, String procedure, String observedProperty,
+            String testType, String testLabel) {
         this.currentFile      = file;
         this.procedure        = procedure;
         this.offering         = offering;
         this.observedProperty = observedProperty;
         this.testType         = testType;
-
+        //discard testLabel
     }
 
     public static void setUpClass() throws Exception {
@@ -54,7 +55,7 @@ public class GOBasePlatformTest extends NcSOSTest {
     }
 
     // Create the parameters for the test constructor
-    @Parameters
+    @Parameters(name = "{index}: {5}")
     public static Collection<Object[]> testCases() throws Exception {
         setUpClass();
 
@@ -72,9 +73,10 @@ public class GOBasePlatformTest extends NcSOSTest {
             }
         }
 
-        Object[][] data = new Object[nonGrids][5];
+        Object[][] data = new Object[nonGrids][6];
         int curIndex = 0;
         List<String> observedPropertyList;
+
         for (Element e : fileElements) {
 
             String networkOffering = "urn:ioos:network:" + e.getAttributeValue("authority","ncsos") + ":all";
@@ -84,7 +86,7 @@ public class GOBasePlatformTest extends NcSOSTest {
                 String procedure = p.getAttributeValue("id");
                 String offering  = procedure;
                 observedPropertyList = new ArrayList<String>();
-
+                String testType;                
                 for (Element s : (List<Element>) p.getChildren("sensor")) {
                     // Keep track of the observedProperties so we can make a request
                     // with all of them outside of this forloop.
@@ -99,21 +101,27 @@ public class GOBasePlatformTest extends NcSOSTest {
                     data[curIndex][1] = offering;
                     data[curIndex][2] = procedure;
                     data[curIndex][3] = observedProperty;
-                    data[curIndex][4] = "platform_offering_platform_procedure";
+                    testType = "platform_offering_platform_procedure";
+                    data[curIndex][4] = testType;
+                    data[curIndex][5] = getTestLabel(e, testType);
                     curIndex++;
                     // A request with the offering as network:all
                     data[curIndex][0] = e;
                     data[curIndex][1] = networkOffering;
                     data[curIndex][2] = procedure;
                     data[curIndex][3] = observedProperty;
-                    data[curIndex][4] = "network_offering_platform_procedure";
+                    testType = "network_offering_platform_procedure";
+                    data[curIndex][4] = testType;
+                    data[curIndex][5] = getTestLabel(e, testType);
                     curIndex++;
                     // A request with only the offering
                     data[curIndex][0] = e;
                     data[curIndex][1] = offering;
                     data[curIndex][2] = null;
                     data[curIndex][3] = observedProperty;
-                    data[curIndex][4] = "platform_offering_no_procedure";
+                    testType = "platform_offering_no_procedure";
+                    data[curIndex][4] = testType;
+                    data[curIndex][5] = getTestLabel(e, testType);
                     curIndex++;
                     
                     
@@ -123,7 +131,9 @@ public class GOBasePlatformTest extends NcSOSTest {
                     data[curIndex][1] = offering;
                     data[curIndex][2] = procedure;
                     data[curIndex][3] =  VocabDefinitions.GetDefinitionForParameter(observedProperty);
-                    data[curIndex][4] = "platform_offering_platform_procedure_ioos_vocab";
+                    testType = "platform_offering_platform_procedure_ioos_vocab";
+                    data[curIndex][4] = testType;
+                    data[curIndex][5] = getTestLabel(e, testType);
                     curIndex++;
              
                     
@@ -137,21 +147,27 @@ public class GOBasePlatformTest extends NcSOSTest {
                 data[curIndex][1] = offering;
                 data[curIndex][2] = procedure;
                 data[curIndex][3] = StringUtils.join(observedPropertyList, ',');
-                data[curIndex][4] = "platform_offering_platform_procedure";
+                testType = "platform_offering_platform_procedure";
+                data[curIndex][4] = testType;
+                data[curIndex][5] = getTestLabel(e, testType);
                 curIndex++;
                 // A request with the offering as network:all
                 data[curIndex][0] = e;
                 data[curIndex][1] = networkOffering;
                 data[curIndex][2] = procedure;
                 data[curIndex][3] = StringUtils.join(observedPropertyList, ',');
-                data[curIndex][4] = "network_offering_platform_procedure";
+                testType = "network_offering_platform_procedure";
+                data[curIndex][4] = testType;
+                data[curIndex][5] = getTestLabel(e, testType);
                 curIndex++;
                 // A request with only the offering
                 data[curIndex][0] = e;
                 data[curIndex][1] = offering;
                 data[curIndex][2] = null;
                 data[curIndex][3] = StringUtils.join(observedPropertyList, ',');
-                data[curIndex][4] = "platform_offering_no_procedure";
+                testType = "platform_offering_no_procedure";
+                data[curIndex][4] = testType;
+                data[curIndex][5] = getTestLabel(e, testType);
                 curIndex++;
 
             }

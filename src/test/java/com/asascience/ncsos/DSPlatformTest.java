@@ -1,6 +1,6 @@
 package com.asascience.ncsos;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.jdom.Element;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,9 +20,10 @@ public class DSPlatformTest extends NcSOSTest {
 
     private Element currentFile;
     private String procedure;
-    public DSPlatformTest(Element file, String procedure) {
+    public DSPlatformTest(Element file, String procedure, String testLabel) {
         this.currentFile    = file;
         this.procedure       = procedure;
+        //discard testLabel
     }
 
     public static void setUpClass() throws Exception {
@@ -43,7 +44,7 @@ public class DSPlatformTest extends NcSOSTest {
     }
 
     // Create the parameters for the test constructor
-    @Parameters
+    @Parameters(name = "{index}: {2}")
     public static Collection<Object[]> testCases() throws Exception {
         setUpClass();
 
@@ -58,12 +59,13 @@ public class DSPlatformTest extends NcSOSTest {
             }
         }
 
-        Object[][] data = new Object[nonGrids][2];
+        Object[][] data = new Object[nonGrids][3];
         int curIndex = 0;
         for (Element e : fileElements) {
             for (Element p : (List<Element>) e.getChildren("platform")) {
                 data[curIndex][0] = e;
                 data[curIndex][1] = p.getAttributeValue("id");
+                data[curIndex][2] = getTestLabel(e);
                 curIndex++;
             }
         }

@@ -129,4 +129,16 @@ public class NcSOSTest {
         output.write(writer.toString());
         output.close();
     }
+
+    protected static String getTestLabel(Element e, String... extraLabels) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(e.getAttributeValue("path", "[no path]"));
+        sb.append(" - ");
+        sb.append(e.getAttributeValue("feature", "[no feature]"));
+        for (String extraLabel : extraLabels) {
+            sb.append(" - ");
+            sb.append(extraLabel);
+        }
+        return sb.toString();
+    }
 }

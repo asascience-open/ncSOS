@@ -1,10 +1,11 @@
 package com.asascience.ncsos;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.jdom.Element;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 import java.io.File;
 import java.util.Arrays;
@@ -19,8 +20,9 @@ public class GCBaseTest extends NcSOSTest {
     private static String exampleDir;
 
     private Element currentFile;
-    public GCBaseTest(Element file){
+    public GCBaseTest(Element file, String testLabel){
         this.currentFile = file;
+        //discard testLabel
     }
 
     public static void setUpClass() throws Exception {
@@ -39,13 +41,15 @@ public class GCBaseTest extends NcSOSTest {
     }
 
     // Create the parameters for the test constructor
-    @Parameterized.Parameters
+    @Parameters(name = "{index}: {1}")
     public static Collection<Object[]> testCases() throws Exception {
         setUpClass();
-        Object[][] data = new Object[fileElements.size()][1];
+        Object[][] data = new Object[fileElements.size()][2];
         int curIndex = 0;
         for (Element e : fileElements) {
             data[curIndex][0] = e;
+            //include test label
+            data[curIndex][1] = getTestLabel(e);
             curIndex++;
         }
         return Arrays.asList(data);
