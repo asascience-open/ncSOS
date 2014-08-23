@@ -34,6 +34,7 @@ public class GOBaseGridTest extends NcSOSTest {
         this.latitude         = latitude;
         this.longitude        = longitude;
         this.testType         = testType;
+	//discard testLabel
     }
 
     public static void setUpClass() throws Exception {
