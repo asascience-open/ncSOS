@@ -1,18 +1,17 @@
 package com.asascience.ncsos;
 
-import com.asascience.ncsos.util.XMLDomUtils;
-import junit.framework.Assert;
-import org.jdom.Element;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
 import java.io.File;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+
+import org.jdom.Element;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
 public class DSNetworkTest extends NcSOSTest {
@@ -23,9 +22,11 @@ public class DSNetworkTest extends NcSOSTest {
 
     private Element currentFile;
     private String authority;
-    public DSNetworkTest(Element file, String authority){
+
+    public DSNetworkTest(Element file, String authority, String testLabel){
     	this.currentFile = file;
         this.authority   = authority;
+        //discard testLabel
     }
 
     public static void setUpClass() throws Exception {
@@ -46,16 +47,19 @@ public class DSNetworkTest extends NcSOSTest {
     }
 
    	// Create the parameters for the test constructor
-    @Parameters
+//    @Parameters(name = "{index}: {2}")
+    @Parameters(name = "{index}: {2}")
     public static Collection<Object[]> testCases() throws Exception {
     	setUpClass();
-        Object[][] data = new Object[fileElements.size()][2];
+        Object[][] data = new Object[fileElements.size()][3];
         int curIndex = 0;
         String authority;
         for (Element e : fileElements) {
             data[curIndex][0] = e;
             authority = e.getAttributeValue("authority","ncsos"); // "ncsos" is the default authority in NcSOS
             data[curIndex][1] = authority;
+            //label for parameterized test
+            data[curIndex][2] = getTestLabel(e);
             curIndex++;
         }
     	return Arrays.asList(data);

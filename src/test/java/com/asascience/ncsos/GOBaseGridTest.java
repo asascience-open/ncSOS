@@ -1,6 +1,6 @@
 package com.asascience.ncsos;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.jdom.Element;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +25,8 @@ public class GOBaseGridTest extends NcSOSTest {
     private String  latitude;
     private String  longitude;
     private String  observedProperty;
-    public GOBaseGridTest(Element file, String offering, String procedure, String observedProperty, String latitude, String longitude, String testType) {
+    public GOBaseGridTest(Element file, String offering, String procedure, String observedProperty,
+            String latitude, String longitude, String testType, String testLabel) {
         this.currentFile      = file;
         this.offering         = offering;
         this.procedure        = procedure;
@@ -57,7 +58,7 @@ public class GOBaseGridTest extends NcSOSTest {
     }
 
     // Create the parameters for the test constructor
-    @Parameters
+    @Parameters(name = "{index}: {7}")
     public static Collection<Object[]> testCases() throws Exception {
         setUpClass();
 
@@ -73,13 +74,13 @@ public class GOBaseGridTest extends NcSOSTest {
             }
         }
 
-        Object[][] data = new Object[grids*3][7];
+        Object[][] data = new Object[grids*3][8];
         int curIndex = 0;
         for (Element e : fileElements) {
 
             String authority = e.getAttributeValue("authority","ncsos");
             String networkOffering = "urn:ioos:network:" + authority + ":all";
-
+            String testType;
             for (Element s : (List<Element>) e.getChildren("sensor")) {
 
                 String standard = s.getAttributeValue("standard");
@@ -99,7 +100,11 @@ public class GOBaseGridTest extends NcSOSTest {
                     data[curIndex][3] = standard;
                     data[curIndex][4] = lat;
                     data[curIndex][5] = lon;
-                    data[curIndex][6] = "grid0_offering_grid0_procedure" + lat + lon;
+                    testType = "grid0_offering_grid0_procedure" + lat + lon;
+                    data[curIndex][6] = testType; 
+                    //include test label
+                    data[curIndex][7] = getTestLabel(e, testType);
+                    
                     curIndex++;
                     // A request with the offering as network:all
                     data[curIndex][0] = e;
@@ -108,8 +113,12 @@ public class GOBaseGridTest extends NcSOSTest {
                     data[curIndex][3] = standard;
                     data[curIndex][4] = lat;
                     data[curIndex][5] = lon;
-                    data[curIndex][6] = "network_offering_grid0_procedure" + lat + lon;
+                    testType = "network_offering_grid0_procedure" + lat + lon;
+                    data[curIndex][6] = testType;
+                    //include test label
+                    data[curIndex][7] = getTestLabel(e, testType);                    
                     curIndex++;
+
                     // A request with only the offering
                     data[curIndex][0] = e;
                     data[curIndex][1] = "urn:ioos:station:" + authority + ":Grid0";
@@ -117,7 +126,11 @@ public class GOBaseGridTest extends NcSOSTest {
                     data[curIndex][3] = standard;
                     data[curIndex][4] = lat;
                     data[curIndex][5] = lon;
-                    data[curIndex][6] = "grid0_offering_no_procedure" + lat + lon;
+                    testType = "grid0_offering_no_procedure" + lat + lon;
+                    data[curIndex][6] = testType;
+                    //include test label
+                    data[curIndex][7] = getTestLabel(e, testType);
+
                     curIndex++;
                 }
             }
