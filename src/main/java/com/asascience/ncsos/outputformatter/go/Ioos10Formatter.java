@@ -39,9 +39,8 @@ public class Ioos10Formatter extends BaseOutputFormatter {
     private static final String OBSERVATION_RECORD_DEF = "http://mmisw.org/ont/ioos/swe_element_type/observationRecord";
     private static final String STATIC_SENSORS_DEF = "http://mmisw.org/ont/ioos/swe_element_type/sensors";
     private static final String MISSING_REASON = "http://www.opengis.net/def/nil/OGC/0/missing";
-    private static final String REFERENCE_FRAME_DEF = "http://www.opengis.net/def/crs-compound?1="+
-    												   "http://www.opengis.net/def/crs/EPSG/0/4326&amp;2="+
-    												   "http://www.opengis.net/def/crs/EPSG/0/5829";
+    private static final String REFERENCE_FRAME_COMPOUND1 = "http://www.opengis.net/def/crs-compound?1=";
+    private static final String REFERENCE_FRAME_COMPOUND2 =	"&amp;2=http://www.opengis.net/def/crs/EPSG/0/5829";
     private static final String DEFINITION = "definition";
     private Namespace OM_NS, GML_NS, SWE2_NS, XLINK_NS, SWE_NS = null;
     private GetObservationRequestHandler handler = null;
@@ -247,7 +246,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         // lat-lon bounding box
         Element bbox = new Element("boundedBy", this.GML_NS);
         Element env = new Element("Envelope", this.GML_NS);
-        env.setAttribute("srsName", "http://www.opengis.net/def/crs/EPSG/0/4326");
+        env.setAttribute("srsName", this.handler.getCrsName());
         env.addContent(new Element("lowerCorner", this.GML_NS).setText(this.handler.getBoundedLowerCorner()));
         env.addContent(new Element("upperCorner", this.GML_NS).setText(this.handler.getBoundedUpperCorner()));
         bbox.addContent(env);
@@ -256,7 +255,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         // location for each station
         Element loc = new Element("location", this.GML_NS);
         Element mPoint = new Element("MultiPoint", this.GML_NS);
-        mPoint.setAttribute("srsName", "http://www.opengis.net/def/crs/EPSG/0/4326");
+        mPoint.setAttribute("srsName", this.handler.getCrsName());
         Element ptMembers = new Element("pointMembers", this.GML_NS);
         for (int i = 0; i < this.handler.getProcedures().length; i++) {
             String stName = this.handler.getUrnName(this.handler.getCDMDataset().getStationName(i));
@@ -675,7 +674,8 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         // vector
         Element vector = new Element("Vector", this.SWE2_NS);
         vector.setAttribute(DEFINITION, "http://www.opengis.net/def/property/OGC/0/PlatformLocation");
-        vector.setAttribute("referenceFrame", REFERENCE_FRAME_DEF);
+        // Use the horizontal crs that was defined by the grid_mapping attribute
+        vector.setAttribute("referenceFrame", REFERENCE_FRAME_COMPOUND1 + this.handler.getCrsName() + REFERENCE_FRAME_COMPOUND2);
         vector.setAttribute("localFrame", "#PlatformFrame");
         // coords: lat, lon, z
         String lat = Double.toString(this.handler.getCDMDataset().getLowerLat(stNum));

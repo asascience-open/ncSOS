@@ -313,7 +313,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         Namespace gmlns = this.getNamespace("gml");
         Element bb = new Element("boundedBy", gmlns);
         Element env = new Element("Envelope", gmlns);
-        env.setAttribute("srsName", getSRSName(handler));
+        env.setAttribute("srsName", handler.getCrsName());
         String lc = null;
         String uc = null;
         try {

@@ -52,7 +52,8 @@ public abstract class BaseRequestHandler {
     private HashMap<Integer, String> stationNames;
     private List<String> sensorNames;
     protected boolean isInitialized;
-
+    protected String crsName;
+    private boolean crsInitialized;
     // Exception codes - Table 25 of OGC 06-121r3 (OWS Common)
     protected static String INVALID_PARAMETER       = "InvalidParameterValue";
     protected static String MISSING_PARAMETER       = "MissingParameterValue";
@@ -87,6 +88,8 @@ public abstract class BaseRequestHandler {
             this.netCDFDataset = null;
             return;
         }
+        this.crsInitialized = false;
+        this.crsName = null;
         this.netCDFDataset = netCDFDataset;
         isInitialized = false;
         if(initialize){
@@ -640,6 +643,20 @@ public abstract class BaseRequestHandler {
             return null;
     }
     
+    public String getCrsName()  {
+        if(!this.crsInitialized) {
+            String[] crsArray = getCRSSRSAuthorities();
+            if (crsArray != null && crsArray[0] != null) {
+                crsName = "foo " + crsArray[0].replace("EPSG:", "http://www.opengis.net/def/crs/EPSG/0/");
+            } else {
+                crsName = "http://www.opengis.net/def/crs/EPSG/0/4326";
+            }
+            this.crsInitialized = true;
+        }
+        return crsName;
+    }
+
+  
     /**
      * 
      * @return 
@@ -741,5 +758,7 @@ public abstract class BaseRequestHandler {
         });
         return ListComprehension.filterOut(retval, null);
     }
+
+   
 
 }

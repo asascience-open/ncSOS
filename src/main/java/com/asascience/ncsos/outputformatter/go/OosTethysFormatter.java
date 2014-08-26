@@ -88,7 +88,7 @@ public class OosTethysFormatter extends BaseOutputFormatter {
         // set bounded by
         Element bounds = (Element) parent.getChild(BOUNDED_BY, GML_NS);
         Element envelope = new Element(ENVELOPE, GML_NS);
-        envelope.setAttribute(SRS_NAME, getSRSName(this.handler));
+        envelope.setAttribute(SRS_NAME, handler.getCrsName());
         envelope.addContent(createNodeWithText(GML_NS, LOWER_CORNER, this.handler.getStationLowerCorner(index)));
         envelope.addContent(createNodeWithText(GML_NS, UPPER_CORNER, this.handler.getStationUpperCorner(index)));
         bounds.addContent(envelope);
@@ -262,7 +262,7 @@ public class OosTethysFormatter extends BaseOutputFormatter {
         
         Element bounds = (Element) coll.getChild(BOUNDED_BY, GML_NS);
         Element env = bounds.getChild(ENVELOPE, GML_NS);
-        env.setAttribute(SRS_NAME, getSRSName(handler));
+        env.setAttribute(SRS_NAME, handler.getCrsName());
         env.getChild(LOWER_CORNER, GML_NS).setText(this.handler.getBoundedLowerCorner());
         env.getChild(UPPER_CORNER, GML_NS).setText(this.handler.getBoundedUpperCorner());
     }
