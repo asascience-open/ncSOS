@@ -647,7 +647,7 @@ public abstract class BaseRequestHandler {
         if(!this.crsInitialized) {
             String[] crsArray = getCRSSRSAuthorities();
             if (crsArray != null && crsArray[0] != null) {
-                crsName = "foo " + crsArray[0].replace("EPSG:", "http://www.opengis.net/def/crs/EPSG/0/");
+                crsName = crsArray[0].replace("EPSG:", "http://www.opengis.net/def/crs/EPSG/0/");
             } else {
                 crsName = "http://www.opengis.net/def/crs/EPSG/0/4326";
             }
