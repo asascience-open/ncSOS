@@ -155,9 +155,8 @@ public class GetCapsFormatter extends BaseOutputFormatter {
     /**
      * @param threddsURI
      * @param stationNames
-     * @param sensorNames
      */
-    public void setOperationsMetadataDescSen(String threddsURI, List<String> sensorNames, String[] stationNames) {
+    public void setOperationsMetadataDescSen(String threddsURI, String[] stationNames) {
         Namespace owsns = this.getNamespace("ows");
         Element si = this.getRoot().getChild(OPERATIONS_METADATA, owsns);
         for (Object e : si.getChildren("Operation", owsns)) {

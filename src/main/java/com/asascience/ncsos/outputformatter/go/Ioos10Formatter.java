@@ -84,12 +84,12 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         try {
             // Set NcSOS version
             this.setVersionMetadata();
-
+            
             // Get the om:Observation element
             Element obsElement = this.getRoot().getChild("member", this.OM_NS).getChild("Observation", this.OM_NS);
             // Description
-
-            obsElement.addContent(new Element("description", this.GML_NS).setText((String)this.handler.getGlobalAttribute("description", "No description")));
+            obsElement.addContent(new Element("description", this.GML_NS).setText(
+                                (String)this.handler.getGlobalAttribute("description", "No description")));
 
             Element samplingTime = new Element("samplingTime", this.OM_NS);
             samplingTime.addContent(this.createTimePeriodTree());
@@ -502,7 +502,10 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         }
         // remove the last block seperator
         Element values = new Element("values", this.SWE2_NS);
-        values.setText(newString.substring(0, newString.length() - BLOCK_SEPERATOR.length()));
+        int endIndex = newString.length() - BLOCK_SEPERATOR.length();
+        if(endIndex < 0)
+            endIndex = 0;
+        values.setText(newString.substring(0, endIndex));
         return values;
     }
 

@@ -54,12 +54,7 @@ public class Parser {
     // millisecs per sec * secs per hour * hour per day * day limit (1 week)
     private final long CACHE_AGE_LIMIT = 1000 * 3600 * 24 * numDays;
 
-    // Exception codes - Table 25 of OGC 06-121r3 (OWS Common)
-    protected static String INVALID_PARAMETER       = "InvalidParameterValue";
-    protected static String MISSING_PARAMETER       = "MissingParameterValue";
-    protected static String OPTION_NOT_SUPPORTED    = "OptionNotSupported";
-    protected static String OPERATION_NOT_SUPPORTED = "OperationNotSupported";
-    protected static String VERSION_NEGOTIATION    = "VersionNegotiationFailed";
+
 
     ExceptionResponseHandler errorHandler = null;
 
@@ -252,7 +247,7 @@ public class Parser {
                 // return a 'not supported' error
                 String message = queryParameters.get(REQUEST).toString() + " is not a supported request.";
                 _log.error(message);
-                errorHandler.setException(message, OPERATION_NOT_SUPPORTED, "request");
+                errorHandler.setException(message, BaseRequestHandler.OPERATION_NOT_SUPPORTED, "request");
                 retval.put(OUTPUT_FORMATTER, errorHandler.getOutputFormatter());
                 return retval;
             }
@@ -260,7 +255,7 @@ public class Parser {
             // create a get caps response with exception
             String message = "Unrecognized request " + queryParameters.get("request").toString();
             _log.error(message, ex);
-            errorHandler.setException(message, INVALID_PARAMETER, "request");
+            errorHandler.setException(message, BaseRequestHandler.INVALID_PARAMETER, "request");
             retval.put(OUTPUT_FORMATTER, errorHandler.getOutputFormatter());
             return retval;
         }
@@ -399,14 +394,17 @@ public class Parser {
             } else {
                 for (String req : requiredGlobalParameters) {
                     if (!queryParameters.containsKey(req.toLowerCase())) {
-                        errorHandler.setException("Required parameter '" + req + "' not found. Check GetCapabilities document for required parameters.", MISSING_PARAMETER, req);
+                        errorHandler.setException("Required parameter '" + req + 
+                                "' not found. Check GetCapabilities document for required parameters.", 
+                                BaseRequestHandler.MISSING_PARAMETER, req);
                         retval.put(ERROR, true);
                         return retval;
                     }
                 }
 
                 if (!queryParameters.get(SERVICE).toString().equalsIgnoreCase(defService)) {
-                    errorHandler.setException("Currently the only supported service is SOS.", INVALID_PARAMETER, "service");
+                    errorHandler.setException("Currently the only supported service is SOS.", 
+                            BaseRequestHandler.INVALID_PARAMETER, "service");
                     retval.put(ERROR, true);
                     return retval;
                 }
@@ -425,12 +423,14 @@ public class Parser {
                     }
                     if (versions != null && versions.length == 1) {
                         if (!versions[0].equalsIgnoreCase(defVersion)) {
-                            errorHandler.setException("Currently only SOS version " + defVersion + " is supported.", VERSION_NEGOTIATION);
+                            errorHandler.setException("Currently only SOS version " + 
+                                    defVersion + " is supported.", BaseRequestHandler.VERSION_NEGOTIATION);
                             retval.put(ERROR, true);
                             return retval;
                         }
                     } else {
-                        errorHandler.setException("Currently only SOS version " + defVersion + " is supported.", VERSION_NEGOTIATION);
+                        errorHandler.setException("Currently only SOS version " + defVersion + " is supported.", 
+                                BaseRequestHandler.VERSION_NEGOTIATION);
                         retval.put(ERROR, true);
                         return retval;
                     }
@@ -438,28 +438,34 @@ public class Parser {
             } else if (request.equalsIgnoreCase(DESCRIBESENSOR)) {
                 for (String req : requiredDSParameters) {
                     if (!queryParameters.containsKey(req.toLowerCase())) {
-                        errorHandler.setException("Required parameter '" + req + "' not found. Check GetCapabilities document for required parameters of DescribeSensor requests.", MISSING_PARAMETER, req);
+                        errorHandler.setException("Required parameter '" + req + "' not found. " + 
+                                "Check GetCapabilities document for required parameters of DescribeSensor requests.", 
+                                BaseRequestHandler.MISSING_PARAMETER, req);
                         retval.put(ERROR, true);
                         return retval;
                     }
                 }
                 // Check version
                 if (!queryParameters.get(VERSION).equals(defVersion)) {
-                    errorHandler.setException("Currently only SOS version " + defVersion + " is supported", INVALID_PARAMETER, "version");
+                    errorHandler.setException("Currently only SOS version " + defVersion + " is supported", 
+                            BaseRequestHandler.INVALID_PARAMETER, "version");
                     retval.put(ERROR, true);
                     return retval;
                 }
             } else if (request.equalsIgnoreCase(GETOBSERVATION)) {
                 for (String req : requiredGOParameters) {
                     if (!queryParameters.containsKey(req)) {
-                        errorHandler.setException("Required parameter '" + req + "' not found. Check GetCapabilities document for required parameters of GetObservation requests.", MISSING_PARAMETER, req);
+                        errorHandler.setException("Required parameter '" + req + "' not found. " +
+                                "Check GetCapabilities document for required parameters of GetObservation requests.", 
+                                BaseRequestHandler.MISSING_PARAMETER, req);
                         retval.put(ERROR, true);
                         return retval;
                     }
                 }
                 // Check version
                 if (!queryParameters.get(VERSION).equals(defVersion)) {
-                    errorHandler.setException("Currently only SOS version " + defVersion + " is supported", INVALID_PARAMETER, "version");
+                    errorHandler.setException("Currently only SOS version " + defVersion + " is supported", 
+                            BaseRequestHandler.INVALID_PARAMETER, "version");
                     retval.put(ERROR, true);
                     return retval;
                 }

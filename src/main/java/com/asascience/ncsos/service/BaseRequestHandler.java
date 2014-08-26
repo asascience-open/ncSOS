@@ -58,6 +58,7 @@ public abstract class BaseRequestHandler {
     protected static String MISSING_PARAMETER       = "MissingParameterValue";
     protected static String OPTION_NOT_SUPPORTED    = "OptionNotSupported";
     protected static String OPERATION_NOT_SUPPORTED = "OperationNotSupported";
+    protected static String VERSION_NEGOTIATION    = "VersionNegotiationFailed";
 
 
     private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(BaseRequestHandler.class);
@@ -451,6 +452,8 @@ public abstract class BaseRequestHandler {
         return urnNames;
 
     }
+    
+ 
     
     /**
      * 
