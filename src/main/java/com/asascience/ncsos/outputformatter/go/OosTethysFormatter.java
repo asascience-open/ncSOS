@@ -13,7 +13,6 @@ public class OosTethysFormatter extends BaseOutputFormatter {
 
     private static final String TEMPLATE = "templates/GO_oostethys.xml";
     private static final String OBSERVATION = "Observation";
-    private static final String MMI_CF = "http://mmisw.org/ont/cf/parameter/";
     private static final String BLOCK_SEPERATOR = " ";
     private static final String TOKEN_SEPERATOR = ",";
     private static final String DECIMAL_SEPERATOR = ".";
@@ -139,7 +138,7 @@ public class OosTethysFormatter extends BaseOutputFormatter {
         Element retval = new Element(FIELD, SWE_NS);
         retval.setAttribute("name", name);
         Element quantity = new Element(QUANTITY, SWE_NS);
-        String definition = MMI_CF + name;
+        String definition = this.handler.getObservedOfferingUrl(name);
         quantity.setAttribute(DEFINITION, definition);        
         if (fillValue != null) {
             Element nilValues = new Element("nilValues", SWE_NS);

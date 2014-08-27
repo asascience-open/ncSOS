@@ -123,8 +123,8 @@ public abstract class BaseRequestHandler {
         String sensorDef = getVariableStandardName(variable);   
         String hrefUrl = null;
 
-        if(sensorDef.equals(BaseRequestHandler.UNKNOWN)){
-            hrefUrl = BaseRequestHandler.HREF_NO_STANDARD_NAME_URL + variable;
+        if(sensorDef.equals(UNKNOWN)){
+            hrefUrl = HREF_NO_STANDARD_NAME_URL + variable;
         }
         else {
             hrefUrl =  VocabDefinitions.GetDefinitionForParameter(sensorDef);
