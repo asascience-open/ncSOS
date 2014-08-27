@@ -3,6 +3,7 @@ package com.asascience.ncsos.service;
 import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.util.DiscreteSamplingGeometryUtil;
 import com.asascience.ncsos.util.ListComprehension;
+import com.asascience.ncsos.util.VocabDefinitions;
 
 import ucar.ma2.DataType;
 import ucar.nc2.Attribute;
@@ -117,6 +118,20 @@ public abstract class BaseRequestHandler {
 
         return retval;
     }
+    
+    public String getObservedOfferingUrl(String variable){
+        String sensorDef = getVariableStandardName(variable);   
+        String hrefUrl = null;
+
+        if(sensorDef.equals(BaseRequestHandler.UNKNOWN)){
+            hrefUrl = BaseRequestHandler.HREF_NO_STANDARD_NAME_URL + variable;
+        }
+        else {
+            hrefUrl =  VocabDefinitions.GetDefinitionForParameter(sensorDef);
+        }
+        return hrefUrl;
+    }
+    
     protected void initializeDataset() throws IOException{
         // get the feature dataset (wraps the dataset in variety of accessor methods)
         findFeatureDataset(FeatureDatasetFactoryManager.findFeatureType(netCDFDataset));

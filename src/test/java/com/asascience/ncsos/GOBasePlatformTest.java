@@ -88,7 +88,7 @@ public class GOBasePlatformTest extends NcSOSTest {
                 for (Element s : (List<Element>) p.getChildren("sensor")) {
                     // Keep track of the observedProperties so we can make a request
                     // with all of them outside of this forloop.
-                    String observedProperty = s.getAttributeValue("standard");
+                    String observedProperty = VocabDefinitions.GetDefinitionForParameter(s.getAttributeValue("standard"));
                     observedPropertyList.add(observedProperty);
 
                     // Make 4 requests for each individual sensors
@@ -122,7 +122,7 @@ public class GOBasePlatformTest extends NcSOSTest {
                     data[curIndex][0] = e;
                     data[curIndex][1] = offering;
                     data[curIndex][2] = procedure;
-                    data[curIndex][3] =  VocabDefinitions.GetDefinitionForParameter(observedProperty);
+                    data[curIndex][3] =  observedProperty;
                     data[curIndex][4] = "platform_offering_platform_procedure_ioos_vocab";
                     curIndex++;
              

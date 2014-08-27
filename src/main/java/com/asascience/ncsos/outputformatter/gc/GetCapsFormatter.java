@@ -121,7 +121,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
                         p.addContent(allowed);
                     } else if (name.equalsIgnoreCase("observedProperty")) {
                         for (String s : dataVarShortNames) {
-                            allowed.addContent(new Element("Value", owsns).setText(s));
+                            allowed.addContent(new Element("Value", owsns).setText(handler.getObservedOfferingUrl(s)));
                         }
                         p.addContent(allowed);
                     } else if (name.equalsIgnoreCase("procedure")) {
@@ -277,17 +277,12 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         ol.addContent(offering);
     }
 
+   
+    
     
     protected void setObservedPropertyForOffering(String sensor, Element offering,  
                                 Namespace xlinkns,  Namespace sosns){
-        String sensorDef = this.handler.getVariableStandardName(sensor);
-        String hrefUrl = null;
-        if(sensorDef.equals(BaseRequestHandler.UNKNOWN)){
-            hrefUrl = BaseRequestHandler.HREF_NO_STANDARD_NAME_URL + sensor;
-        }
-        else {
-            hrefUrl =  VocabDefinitions.GetDefinitionForParameter(sensorDef);
-        }
+        String hrefUrl = handler.getObservedOfferingUrl(sensor);
         offering.addContent(new Element("observedProperty", sosns).setAttribute("href", hrefUrl, xlinkns));
     }
     

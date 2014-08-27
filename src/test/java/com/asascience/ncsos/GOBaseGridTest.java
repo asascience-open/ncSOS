@@ -1,11 +1,14 @@
 package com.asascience.ncsos;
 
 import junit.framework.Assert;
+
 import org.jdom.Element;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+
+import com.asascience.ncsos.util.VocabDefinitions;
 
 import java.io.File;
 import java.net.URLEncoder;
@@ -82,7 +85,7 @@ public class GOBaseGridTest extends NcSOSTest {
 
             for (Element s : (List<Element>) e.getChildren("sensor")) {
 
-                String standard = s.getAttributeValue("standard");
+                String standard = VocabDefinitions.GetDefinitionForParameter(s.getAttributeValue("standard"));
 
                 for (Element v : (List<Element>) s.getChildren("values")) {
 
@@ -136,10 +139,17 @@ public class GOBaseGridTest extends NcSOSTest {
         pairs.put("offering",  this.offering);
         pairs.put("latitude",  this.latitude);
         pairs.put("longitude", this.longitude);
-
+      
         File   file     = new File("resources" + systemSeparator + "datasets" + systemSeparator + this.currentFile.getAttributeValue("path"));
         String feature  = this.currentFile.getAttributeValue("feature");
-        String output   = new File(outputDir + systemSeparator + file.getName() + "_" + this.observedProperty + "_" + this.testType + ".xml").getAbsolutePath();
+        String output = null;
+        if(this.observedProperty.contains("http")){
+            int lastSlash = observedProperty.lastIndexOf("/");
+            output = new File(outputDir + systemSeparator + file.getName() + "_URL" + this.observedProperty.substring(lastSlash+1) + "_" +  this.testType + ".xml").getAbsolutePath();
+        }
+        else
+            output   = new File(outputDir + systemSeparator + file.getName() + "_" + this.observedProperty + "_" +  this.testType + ".xml").getAbsolutePath();
+
         System.out.println("------ " + file + " (" + feature + ") ------");
         System.out.println("------ " + this.testType + " ------");
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);

@@ -113,20 +113,15 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
             boolean isInDataset = false;
             for (Variable dVar : netCDFDataset.getVariables()) {
                 String dVarFullName = dVar.getFullName();
-                if (dVarFullName.equalsIgnoreCase(vars)) {
-                    isInDataset = true;                
+                String obsUrl = this.getObservedOfferingUrl(dVarFullName);
+              
+                if (obsUrl != null && obsUrl.equalsIgnoreCase(vars) ) {
+                    isInDataset = true;
+                    // Replace standard_name with the variable name
+                    actualVariableNames[i] = dVarFullName;
                     break;
-                } else {
-                    Attribute std = dVar.findAttributeIgnoreCase(CF.STANDARD_NAME);
-
-                    if (std != null && (std.getStringValue().equalsIgnoreCase(vars) ||
-                            VocabDefinitions.GetDefinitionForParameter(std.getStringValue()).equalsIgnoreCase(vars))) {
-                        isInDataset = true;
-                        // Replace standard_name with the variable name
-                        actualVariableNames[i] = dVarFullName;
-                        break;
-                    }
                 }
+
             }
             if (!isInDataset) {
                 formatter = new ErrorFormatter();
