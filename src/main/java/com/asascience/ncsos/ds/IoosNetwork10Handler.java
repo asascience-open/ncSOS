@@ -195,8 +195,8 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
                     dataVars.add(var.getShortName());
                 }
                 HashMap<String,String> latLon = new HashMap<String, String>();
-                latLon.put("lat", this.getGridDataset().getBoundingBox().getLatMin() + "_" + this.getGridDataset().getBoundingBox().getLatMax());
-                latLon.put("lon", this.getGridDataset().getBoundingBox().getLonMin() + "_" + this.getGridDataset().getBoundingBox().getLonMax());
+                latLon.put(Grid.LAT, this.getGridDataset().getBoundingBox().getLatMin() + "_" + this.getGridDataset().getBoundingBox().getLatMax());
+                latLon.put(Grid.LON, this.getGridDataset().getBoundingBox().getLonMin() + "_" + this.getGridDataset().getBoundingBox().getLonMax());
                 this.stationData = new Grid(stationNames.toArray(new String[stationNames.size()]), null, dataVars.toArray(new String[dataVars.size()]), latLon);
                 this.stationData.setData(this.getGridDataset());
                 break;

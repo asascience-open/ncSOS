@@ -239,9 +239,14 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
 
     private void formatSmlLocationBbox() {
         for (Map.Entry<Integer,String> station : this.getStationNames().entrySet()) {
-            if (station.getValue().equalsIgnoreCase(this.stationName)) {
-                String lc = this.stationData.getLowerLat(station.getKey()) + " " + this.stationData.getLowerLon(station.getKey());
-                String uc = this.stationData.getUpperLat(station.getKey()) + " " + this.stationData.getUpperLon(station.getKey());
+            String stationName = station.getValue();
+            Integer stationKey = station.getKey();
+            if (stationName.equalsIgnoreCase(this.stationName) ||
+                this.getUrnName(stationName).equalsIgnoreCase(this.stationName)) {
+                String lc = this.stationData.getLowerLat(stationKey) + " " + 
+                             this.stationData.getLowerLon(stationKey);
+                String uc = this.stationData.getUpperLat(stationKey) + " " + 
+                             this.stationData.getUpperLon(stationKey);
                 platform.setSmlPosLocationBbox(this.getCrsName(), lc, uc);
             }
         }
@@ -293,8 +298,8 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
                 break;
             case GRID:
                 HashMap<String,String> latLon = new HashMap<String, String>();
-                latLon.put("lat", this.getGridDataset().getBoundingBox().getLatMin() + "_" + this.getGridDataset().getBoundingBox().getLatMax());
-                latLon.put("lon", this.getGridDataset().getBoundingBox().getLonMin() + "_" + this.getGridDataset().getBoundingBox().getLonMax());
+                latLon.put(Grid.LAT, this.getGridDataset().getBoundingBox().getLatMin() + "_" + this.getGridDataset().getBoundingBox().getLatMax());
+                latLon.put(Grid.LON, this.getGridDataset().getBoundingBox().getLonMin() + "_" + this.getGridDataset().getBoundingBox().getLonMax());
                 List<String> dataVars = new ArrayList<String>();
                 for (VariableSimpleIF var : this.getDataVariables()) {
                     dataVars.add(var.getShortName());
