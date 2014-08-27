@@ -13,7 +13,6 @@ public class OosTethysFormatter extends BaseOutputFormatter {
 
     private static final String TEMPLATE = "templates/GO_oostethys.xml";
     private static final String OBSERVATION = "Observation";
-    private static final String MMI_CF = "http://mmisw.org/ont/cf/parameter/";
     private static final String BLOCK_SEPERATOR = " ";
     private static final String TOKEN_SEPERATOR = ",";
     private static final String DECIMAL_SEPERATOR = ".";
@@ -88,7 +87,7 @@ public class OosTethysFormatter extends BaseOutputFormatter {
         // set bounded by
         Element bounds = (Element) parent.getChild(BOUNDED_BY, GML_NS);
         Element envelope = new Element(ENVELOPE, GML_NS);
-        envelope.setAttribute(SRS_NAME, getSRSName(this.handler));
+        envelope.setAttribute(SRS_NAME, handler.getCrsName());
         envelope.addContent(createNodeWithText(GML_NS, LOWER_CORNER, this.handler.getStationLowerCorner(index)));
         envelope.addContent(createNodeWithText(GML_NS, UPPER_CORNER, this.handler.getStationUpperCorner(index)));
         bounds.addContent(envelope);
@@ -139,7 +138,7 @@ public class OosTethysFormatter extends BaseOutputFormatter {
         Element retval = new Element(FIELD, SWE_NS);
         retval.setAttribute("name", name);
         Element quantity = new Element(QUANTITY, SWE_NS);
-        String definition = MMI_CF + name;
+        String definition = this.handler.getObservedOfferingUrl(name);
         quantity.setAttribute(DEFINITION, definition);        
         if (fillValue != null) {
             Element nilValues = new Element("nilValues", SWE_NS);
@@ -262,7 +261,7 @@ public class OosTethysFormatter extends BaseOutputFormatter {
         
         Element bounds = (Element) coll.getChild(BOUNDED_BY, GML_NS);
         Element env = bounds.getChild(ENVELOPE, GML_NS);
-        env.setAttribute(SRS_NAME, getSRSName(handler));
+        env.setAttribute(SRS_NAME, handler.getCrsName());
         env.getChild(LOWER_CORNER, GML_NS).setText(this.handler.getBoundedLowerCorner());
         env.getChild(UPPER_CORNER, GML_NS).setText(this.handler.getBoundedUpperCorner());
     }

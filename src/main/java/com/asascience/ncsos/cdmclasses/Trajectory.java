@@ -71,8 +71,8 @@ public class Trajectory extends baseCDMClass implements iStationData {
             for (String str : valueList) {
                 builder.append(str).append(",");
             }
-
-            builder.deleteCharAt(builder.length() - 1).append(";");
+            if(builder.length() > 0)
+                builder.deleteCharAt(builder.length() - 1).append(";");
         } catch (Exception ex) {
             // print error
             builder.delete(0, builder.length());

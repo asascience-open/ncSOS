@@ -20,6 +20,7 @@ import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.units.DateUnit;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,15 +62,33 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
                                         String responseFormat,
                                         Map<String, String> latLonRequest) throws Exception {
         super(netCDFDataset);
+        eventTimes = setupGetObservation(netCDFDataset,
+                                        requestedProcedures,
+                                        offering,
+                                        variableNames,
+                                        eventTime,
+                                        responseFormat,
+                                        latLonRequest);
+        
+    }
 
+    
+    private List<String> setupGetObservation(NetcdfDataset netCDFDataset,
+            String[] requestedProcedures,
+            String offering,
+            String[] variableNames,
+            String[] eventTime,
+            String responseFormat,
+            Map<String, String> latLonRequest) throws Exception{
+        List<String> localEventTime = new ArrayList<String>();
         // Translate back to an URN.  (gml:id fields in XML can't have colons)
         offering = offering.replace("_-_",":");
         offering = URLDecoder.decode(offering,"UTF-8");
         responseFormat = URLDecoder.decode(responseFormat,"UTF-8");
-        
-        //Remove any spaces between ";" and subtype
-       responseFormat = responseFormat.replaceAll(";\\s+subtype",";subtype");
 
+        //Remove any spaces between ";" and subtype
+        responseFormat = responseFormat.replaceAll(";\\s+subtype",";subtype");
+        boolean setProcedureFromOffering = false;
         // set up our formatter
         if (responseFormat.equalsIgnoreCase(OOSTETHYS_RESPONSE_FORMAT)) {
             formatter = new OosTethysFormatter(this);
@@ -77,7 +96,11 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
             formatter = new Ioos10Formatter(this);
         } else {
             formatter = new ErrorFormatter();
-            ((ErrorFormatter)formatter).setException("Could not recognize response format: " + responseFormat, INVALID_PARAMETER, "responseFormat");
+            ((ErrorFormatter)formatter).setException("Could not recognize response format: " + responseFormat, 
+                    INVALID_PARAMETER, "responseFormat");
+
+            return localEventTime;
+
         }
 
         // Since the obsevedProperties can be standard_name attributes, map everything to an actual variable name here.
@@ -90,28 +113,22 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
             boolean isInDataset = false;
             for (Variable dVar : netCDFDataset.getVariables()) {
                 String dVarFullName = dVar.getFullName();
-                if (dVarFullName.equalsIgnoreCase(vars)) {
-                    isInDataset = true;                
+                String obsUrl = this.getObservedOfferingUrl(dVarFullName);
+              
+                if (obsUrl != null && obsUrl.equalsIgnoreCase(vars) ) {
+                    isInDataset = true;
+                    // Replace standard_name with the variable name
+                    actualVariableNames[i] = dVarFullName;
                     break;
-                } else {
-                    Attribute std = dVar.findAttributeIgnoreCase(CF.STANDARD_NAME);
-                   
-                    if (std != null && (std.getStringValue().equalsIgnoreCase(vars) ||
-                        VocabDefinitions.GetDefinitionForParameter(std.getStringValue()).equalsIgnoreCase(vars))) {
-                        isInDataset = true;
-                        // Replace standard_name with the variable name
-                        actualVariableNames[i] = dVarFullName;
-                        break;
-                    }
                 }
+
             }
             if (!isInDataset) {
                 formatter = new ErrorFormatter();
-                ((ErrorFormatter)formatter).setException("observed property - " + vars + " - was not found in the dataset", INVALID_PARAMETER, "observedProperty");
+                ((ErrorFormatter)formatter).setException("observed property - " + vars + 
+                        " - was not found in the dataset", INVALID_PARAMETER, "observedProperty");
                 CDMDataSet = null;
-                eventTimes = new ArrayList<String>();
-
-                return;
+                return localEventTime;
             }
         }
 
@@ -130,6 +147,7 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
                     requestedProcedures = new String[1];
                     requestedProcedures[0] = offering;
                 }
+                setProcedureFromOffering = true;
             } else {
                 if (requestedProcedures.length == 1 && requestedProcedures[0].equalsIgnoreCase(getUrnNetworkAll())) {
                     requestedProcedures = getStationNames().values().toArray(new String[getStationNames().values().size()]);
@@ -141,12 +159,12 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
             }
             // Now map them all to the station URN
             List<String> naProcs = ListComprehension.map(Arrays.asList(requestedProcedures),
-                 new ListComprehension.Func<String, String>() {
-                     public String apply(String in) {
-                         return getUrnName(in);
-                     }
-                 }
-            );
+                    new ListComprehension.Func<String, String>() {
+                public String apply(String in) {
+                    return getUrnName(in);
+                }
+            }
+                    );
             this.procedures = naProcs.toArray(new String[naProcs.size()]);
         } catch (Exception ex) {
             _log.error(ex.toString());
@@ -154,7 +172,9 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
         }
 
         // check that the procedures are valid
-        checkProcedureValidity();
+        boolean procedureError = checkProcedureValidity(setProcedureFromOffering);
+        if(procedureError)
+            return localEventTime;
         // and are a part of the offering
         if (offering != null) {
             checkProceduresAgainstOffering(offering);
@@ -189,17 +209,14 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
                 eventTime[0] = currEntry;
                 eventTime[1] = currEntry;
             }
-            eventTimes = Arrays.asList(eventTime);
+            localEventTime = Arrays.asList(eventTime);
 
         } 
-        else {
-            eventTimes = new ArrayList<String>();
-        }
-        
-        
         setCDMDatasetForStations(netCDFDataset, eventTime, latLonRequest);
-    }
 
+        return localEventTime;
+
+    }
     private void setCDMDatasetForStations(NetcdfDataset netCDFDataset, String[] eventTime, Map<String, String> latLonRequest) throws IOException {
         // strip out text if the station is defined by indices
         /*
@@ -445,8 +462,9 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
 
     }
 
-    private void checkProcedureValidity() throws IOException {
+    private boolean checkProcedureValidity(boolean procedureSetFromOffering) throws IOException {
         List<String> stProc = new ArrayList<String>();
+        boolean errorFound = false;
         stProc.add(this.getUrnNetworkAll());
         for (String stname : this.getStationNames().values()) {
             for (String senname : this.getSensorNames()) {
@@ -457,13 +475,29 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
 
         for (String proc : this.procedures) {
             if (ListComprehension.filter(stProc, proc).size() < 1) {
-                formatter = new ErrorFormatter();
-                ((ErrorFormatter)formatter).setException("Invalid procedure " + proc + ". Check GetCapabilities document for valid procedures.", INVALID_PARAMETER, "procedure");
+                if(procedureSetFromOffering)
+                    setOfferingException(proc);
+                else 
+                    setProcedureException(proc);
+                errorFound = true;
             }
         }
-
+        return errorFound;
     }
 
+    private void setProcedureException(String proc){
+        formatter = new ErrorFormatter();
+        ((ErrorFormatter)formatter).setException("Invalid procedure " + proc + 
+                ". Check GetCapabilities document for valid procedures.", INVALID_PARAMETER, "procedure");
+    }
+    
+    private void setOfferingException(String offering){
+        formatter = new ErrorFormatter();
+        ((ErrorFormatter)formatter).setException("Offering: " + offering +
+                " does not exist in the dataset.  Check GetCapabilities document for valid offerings.", 
+                INVALID_PARAMETER, "offering");   
+    }
+    
     private void checkProceduresAgainstOffering(String offering) throws IOException {
         // if the offering is 'network-all' no error (network-all should have all procedures)
         if (offering.equalsIgnoreCase(this.getUrnNetworkAll())) {
@@ -474,8 +508,7 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
         // in each of the procedures requested.
         for (String proc : this.procedures) {
             if (!proc.toLowerCase().contains(offering.toLowerCase())) {
-                formatter = new ErrorFormatter();
-                ((ErrorFormatter)formatter).setException("Offering: " + proc + " does not exist in the dataset.  Check GetCapabilities document for valid offerings.", INVALID_PARAMETER, "offering");
+                setOfferingException(offering);
             }
         }
 

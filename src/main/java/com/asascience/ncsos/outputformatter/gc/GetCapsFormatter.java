@@ -121,7 +121,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
                         p.addContent(allowed);
                     } else if (name.equalsIgnoreCase("observedProperty")) {
                         for (String s : dataVarShortNames) {
-                            allowed.addContent(new Element("Value", owsns).setText(s));
+                            allowed.addContent(new Element("Value", owsns).setText(handler.getObservedOfferingUrl(s)));
                         }
                         p.addContent(allowed);
                     } else if (name.equalsIgnoreCase("procedure")) {
@@ -155,9 +155,8 @@ public class GetCapsFormatter extends BaseOutputFormatter {
     /**
      * @param threddsURI
      * @param stationNames
-     * @param sensorNames
      */
-    public void setOperationsMetadataDescSen(String threddsURI, List<String> sensorNames, String[] stationNames) {
+    public void setOperationsMetadataDescSen(String threddsURI, String[] stationNames) {
         Namespace owsns = this.getNamespace("ows");
         Element si = this.getRoot().getChild(OPERATIONS_METADATA, owsns);
         for (Object e : si.getChildren("Operation", owsns)) {
@@ -278,17 +277,12 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         ol.addContent(offering);
     }
 
+   
+    
     
     protected void setObservedPropertyForOffering(String sensor, Element offering,  
                                 Namespace xlinkns,  Namespace sosns){
-        String sensorDef = this.handler.getVariableStandardName(sensor);
-        String hrefUrl = null;
-        if(sensorDef.equals(BaseRequestHandler.UNKNOWN)){
-            hrefUrl = BaseRequestHandler.HREF_NO_STANDARD_NAME_URL + sensor;
-        }
-        else {
-            hrefUrl =  VocabDefinitions.GetDefinitionForParameter(sensorDef);
-        }
+        String hrefUrl = handler.getObservedOfferingUrl(sensor);
         offering.addContent(new Element("observedProperty", sosns).setAttribute("href", hrefUrl, xlinkns));
     }
     
@@ -314,7 +308,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         Namespace gmlns = this.getNamespace("gml");
         Element bb = new Element("boundedBy", gmlns);
         Element env = new Element("Envelope", gmlns);
-        env.setAttribute("srsName", getSRSName(handler));
+        env.setAttribute("srsName", handler.getCrsName());
         String lc = null;
         String uc = null;
         try {

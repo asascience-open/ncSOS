@@ -3,6 +3,7 @@ package com.asascience.ncsos.service;
 import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.util.DiscreteSamplingGeometryUtil;
 import com.asascience.ncsos.util.ListComprehension;
+import com.asascience.ncsos.util.VocabDefinitions;
 
 import ucar.ma2.DataType;
 import ucar.nc2.Attribute;
@@ -52,12 +53,14 @@ public abstract class BaseRequestHandler {
     private HashMap<Integer, String> stationNames;
     private List<String> sensorNames;
     protected boolean isInitialized;
-
+    protected String crsName;
+    private boolean crsInitialized;
     // Exception codes - Table 25 of OGC 06-121r3 (OWS Common)
     protected static String INVALID_PARAMETER       = "InvalidParameterValue";
     protected static String MISSING_PARAMETER       = "MissingParameterValue";
     protected static String OPTION_NOT_SUPPORTED    = "OptionNotSupported";
     protected static String OPERATION_NOT_SUPPORTED = "OperationNotSupported";
+    protected static String VERSION_NEGOTIATION    = "VersionNegotiationFailed";
 
 
     private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(BaseRequestHandler.class);
@@ -86,6 +89,8 @@ public abstract class BaseRequestHandler {
             this.netCDFDataset = null;
             return;
         }
+        this.crsInitialized = false;
+        this.crsName = null;
         this.netCDFDataset = netCDFDataset;
         isInitialized = false;
         if(initialize){
@@ -113,6 +118,20 @@ public abstract class BaseRequestHandler {
 
         return retval;
     }
+    
+    public String getObservedOfferingUrl(String variable){
+        String sensorDef = getVariableStandardName(variable);   
+        String hrefUrl = null;
+
+        if(sensorDef.equals(UNKNOWN)){
+            hrefUrl = HREF_NO_STANDARD_NAME_URL + variable;
+        }
+        else {
+            hrefUrl =  VocabDefinitions.GetDefinitionForParameter(sensorDef);
+        }
+        return hrefUrl;
+    }
+    
     protected void initializeDataset() throws IOException{
         // get the feature dataset (wraps the dataset in variety of accessor methods)
         findFeatureDataset(FeatureDatasetFactoryManager.findFeatureType(netCDFDataset));
@@ -452,6 +471,8 @@ public abstract class BaseRequestHandler {
 
     }
     
+ 
+    
     /**
      * 
      * @param stationIndex
@@ -637,6 +658,20 @@ public abstract class BaseRequestHandler {
             return null;
     }
     
+    public String getCrsName()  {
+        if(!this.crsInitialized) {
+            String[] crsArray = getCRSSRSAuthorities();
+            if (crsArray != null && crsArray[0] != null) {
+                crsName = crsArray[0].replace("EPSG:", "http://www.opengis.net/def/crs/EPSG/0/");
+            } else {
+                crsName = "http://www.opengis.net/def/crs/EPSG/0/4326";
+            }
+            this.crsInitialized = true;
+        }
+        return crsName;
+    }
+
+  
     /**
      * 
      * @return 
@@ -738,5 +773,7 @@ public abstract class BaseRequestHandler {
         });
         return ListComprehension.filterOut(retval, null);
     }
+
+   
 
 }

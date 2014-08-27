@@ -81,7 +81,7 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
     
     
     private void formatGmlBoundedBy() {
-        platform.setBoundedBy(OPEN_GIS_DEF_EPSG_4326, 
+        platform.setBoundedBy(this.getCrsName(), 
                 this.stationData.getBoundLowerLat() + " " + this.stationData.getBoundLowerLon(), 
                 this.stationData.getBoundUpperLat() + " " + this.stationData.getBoundUpperLon());
     }
@@ -229,12 +229,12 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
         // get the lat/lon of the station
         // position
         String pos = this.stationData.getBoundLowerLat() + " " + this.stationData.getBoundLowerLon();
-        platform.setSmlPosLocationPoint("http://www.opengis.net/def/crs/EPSG/0/4326", pos);
+        platform.setSmlPosLocationPoint(this.getCrsName(), pos);
     }
     
     private void formatSmlLocationLine() {
         // get the lat/lon pairs for the station
-        platform.setSmlPosLocationLine("http://www.opengis.net/def/crs/EPSG/0/4326", this.stationData.getLocationsString(0));
+        platform.setSmlPosLocationLine(this.getCrsName(), this.stationData.getLocationsString(0));
     }
 
     private void formatSmlLocationBbox() {
@@ -242,7 +242,7 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
             if (station.getValue().equalsIgnoreCase(this.stationName)) {
                 String lc = this.stationData.getLowerLat(station.getKey()) + " " + this.stationData.getLowerLon(station.getKey());
                 String uc = this.stationData.getUpperLat(station.getKey()) + " " + this.stationData.getUpperLon(station.getKey());
-                platform.setSmlPosLocationBbox("http://www.opengis.net/def/crs/EPSG/0/4326", lc, uc);
+                platform.setSmlPosLocationBbox(this.getCrsName(), lc, uc);
             }
         }
     }

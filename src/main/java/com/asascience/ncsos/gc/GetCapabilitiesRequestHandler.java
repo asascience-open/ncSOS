@@ -137,7 +137,7 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
             // Set the GetObservation Operation
             out.setOperationsMetadataGetObs(threddsURI, getSensorNames(), getStationNames().values().toArray(new String[getStationNames().values().size()]));
             // Set the DescribeSensor Operation
-            out.setOperationsMetadataDescSen(threddsURI, getSensorNames(), getStationNames().values().toArray(new String[getStationNames().values().size()]));
+            out.setOperationsMetadataDescSen(threddsURI, getStationNames().values().toArray(new String[getStationNames().values().size()]));
             // Set the ExtendedCapabilities
             out.setVersionMetadata();
         } else {

@@ -62,7 +62,8 @@ public class BaseDSHandler extends BaseRequestHandler {
         if (!outputFormat.replaceAll(";\\s+subtype",";subtype").equalsIgnoreCase(ACCEPTABLE_RESPONSE_FORMAT)) {
             // return exception
             formatter = new ErrorFormatter();
-            ((ErrorFormatter)formatter).setException("Unknown outputFormat: " + outputFormat, INVALID_PARAMETER, "outputFormat");
+            ((ErrorFormatter)formatter).setException("Unknown outputFormat: " + outputFormat, 
+                                                     INVALID_PARAMETER, "outputFormat");
             return;
         }
 
@@ -70,7 +71,10 @@ public class BaseDSHandler extends BaseRequestHandler {
         if (!checkDatasetForProcedure(procedure)) {
             // the procedure does not match any known procedure
             formatter = new ErrorFormatter();
-            ((ErrorFormatter)formatter).setException("Procedure parameter does not match any known procedure. Please check the capabilities response document for valid procedures.", INVALID_PARAMETER, "procedure");
+            ((ErrorFormatter)formatter).setException("Procedure parameter does not match any known procedure. "+
+                                            "Please check the capabilities response document for valid procedures.", 
+                                            INVALID_PARAMETER, 
+                                            "procedure");
             return;
         }
         
@@ -80,14 +84,16 @@ public class BaseDSHandler extends BaseRequestHandler {
             describer.setupOutputDocument(formatter);
         } else if (this.procedure.contains(SENSOR)) {
             formatter = new ErrorFormatter();
-            ((ErrorFormatter)formatter).setException("NcSOS does not currently support DescribeSensor for sensor procedures.", OPTION_NOT_SUPPORTED, "procedure");
+            ((ErrorFormatter)formatter).setException("NcSOS does not currently support DescribeSensor for sensor procedures.",
+                                                      OPTION_NOT_SUPPORTED, "procedure");
         } else if (this.procedure.contains(NETWORK)) {
             formatter = new IoosNetwork10Formatter();
             describer = new IoosNetwork10Handler(dataset, procedure, query);
             describer.setupOutputDocument(formatter);
         } else {
             formatter = new ErrorFormatter();
-            ((ErrorFormatter)formatter).setException("Unknown procedure (not a 'station', 'sensor' or 'network'): " + this.procedure, INVALID_PARAMETER, "procedure");
+            ((ErrorFormatter)formatter).setException("Unknown procedure (not a 'station', 'sensor' or 'network'): " + 
+                                                    this.procedure, INVALID_PARAMETER, "procedure");
         }
     }
 

@@ -28,9 +28,10 @@ public class DatasetHandlerAdapter {
 
         NetcdfFile netcdfFile = null;
         NetcdfDataset dataset = null;
-        //String datasetPath = req.getPathInfo();
+        String datasetPath = null;
         String servletPath = req.getServletPath();
-        String datasetPath = servletPath.substring("/sos".length()  , servletPath.length());
+        if(servletPath !=  null)
+            datasetPath = servletPath.substring("/sos".length()  , servletPath.length());
         if (datasetPath == null) { // passing in a dataset URL, presumably
             // opendap
             datasetPath = ServletUtil.getParameterIgnoreCase(req, "dataset");

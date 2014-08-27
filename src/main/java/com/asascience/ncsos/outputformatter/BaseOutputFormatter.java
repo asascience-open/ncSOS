@@ -42,13 +42,7 @@ public class BaseOutputFormatter extends OutputFormatter {
         this.document = ef.document;
     }
     
-    protected String getSRSName( BaseRequestHandler handler) {
-        if (handler.getCRSSRSAuthorities() != null) {
-            return handler.getCRSSRSAuthorities()[0];
-        } else {
-            return "http://www.opengis.net/def/crs/EPSG/0/4326";
-        }
-    }
+   
     
     public String getContentType() {
         return "text/xml";

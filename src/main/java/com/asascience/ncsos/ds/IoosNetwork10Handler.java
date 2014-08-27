@@ -212,7 +212,9 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
     }
 
     private void formatGmlBoundedBy() {
-        network.setBoundedBy("http://www.opengis.net/def/crs/EPSG/0/4326", this.stationData.getBoundLowerLat() + " " + this.stationData.getBoundLowerLon(), this.stationData.getBoundUpperLat() + " " + this.stationData.getBoundUpperLon());
+        network.setBoundedBy(this.getCrsName(), 
+                             this.stationData.getBoundLowerLat() + " " + this.stationData.getBoundLowerLon(), 
+                             this.stationData.getBoundUpperLat() + " " + this.stationData.getBoundUpperLon());
     }
 
     private void foramtSmlComponents() {
@@ -260,9 +262,9 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
             if (this.getGridDataset() == null) {
                 List<String> locations = this.stationData.getLocationsString(station.getKey());
                 if (locations.size() > 1) {
-                    network.setComponentLocation(station.getValue(), "http://www.opengis.net/def/crs/EPSG/0/4326", locations);
+                    network.setComponentLocation(station.getValue(), this.getCrsName(), locations);
                 } else if (locations.size() > 0) {
-                    network.setComponentLocation(station.getValue(), "http://www.opengis.net/def/crs/EPSG/0/4326", locations.get(0));
+                    network.setComponentLocation(station.getValue(), this.getCrsName(), locations.get(0));
                 } else {
                     logger.error("Did not get locations for station data");
                 }
@@ -270,7 +272,7 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
                 // GRID dataset
                 String lowerCorner = this.stationData.getLowerLat(station.getKey()) + " " + this.stationData.getLowerLon(station.getKey());
                 String upperCorner = this.stationData.getUpperLat(station.getKey()) + " " + this.stationData.getUpperLon(station.getKey());
-                network.setComponentLocation(station.getValue(), "http://www.opengis.net/def/crs/EPSG/0/4326", lowerCorner, upperCorner);
+                network.setComponentLocation(station.getValue(), this.getCrsName(), lowerCorner, upperCorner);
             }
             // outputs
             for (VariableSimpleIF var : this.getDataVariables()) {
@@ -310,9 +312,9 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
             if (this.getGridDataset() == null) {
                 List<String> locations = this.stationData.getLocationsString(station.getKey());
                 if (locations.size() > 1) {
-                    network.setComponentLocation(station.getValue(), "http://www.opengis.net/def/crs/EPSG/0/4326", locations);
+                    network.setComponentLocation(station.getValue(), this.getCrsName(), locations);
                 } else if (locations.size() > 0) {
-                    network.setComponentLocation(station.getValue(), "http://www.opengis.net/def/crs/EPSG/0/4326", locations.get(0));
+                    network.setComponentLocation(station.getValue(), this.getCrsName(), locations.get(0));
                 } else {
                     logger.error("Did not get locations for station data");
                 }
@@ -320,7 +322,7 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
                 // GRID data
                 String lowerCorner = ((Grid)this.stationData).getLowerLat() + " " + ((Grid)this.stationData).getLowerLon();
                 String upperCorner = ((Grid)this.stationData).getUpperLat() + " " +((Grid)this.stationData).getUpperLon();
-                network.setComponentLocation(station.getValue(), "http://www.opengis.net/def/crs/EPSG/0/4326", lowerCorner, upperCorner);
+                network.setComponentLocation(station.getValue(), this.getCrsName(), lowerCorner, upperCorner);
             }
             // outputs
             for (VariableSimpleIF var : this.getDataVariables()) {
