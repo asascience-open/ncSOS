@@ -80,6 +80,8 @@ public class Ioos10Formatter extends BaseOutputFormatter {
      * of text/xml;subtype="om/1.0.0/profiles/ioos_sos/1.0"
      */
     private void createIoosSosResponse() {
+        String processingStr = "metaDataProperty";
+
         try {
             // Set NcSOS version
             this.setVersionMetadata();
@@ -87,32 +89,38 @@ public class Ioos10Formatter extends BaseOutputFormatter {
             // Get the om:Observation element
             Element obsElement = this.getRoot().getChild("member", this.OM_NS).getChild("Observation", this.OM_NS);
             // Description
+            processingStr = "description";
             obsElement.addContent(new Element("description", this.GML_NS).setText(
                                 (String)this.handler.getGlobalAttribute("description", "No description")));
-
+            processingStr = "samplingTime";
             Element samplingTime = new Element("samplingTime", this.OM_NS);
             samplingTime.addContent(this.createTimePeriodTree());
             obsElement.addContent(samplingTime);
 
+            processingStr = "procedure";
             Element procedure = new Element("procedure", this.OM_NS);
             procedure.addContent(this.createProcessTree());
             obsElement.addContent(procedure);
 
+            processingStr = "observedProperty";
             Element observProp = new Element("observedProperty", this.OM_NS);
             observProp.addContent(this.createCompositePhenomTree());
             obsElement.addContent(observProp);
 
+            processingStr = "featureOfInterest";
             Element foi = new Element("featureOfInterest", this.OM_NS);
             foi.addContent(this.createFeatureCollectionTree());
             obsElement.addContent(foi);
 
+            processingStr = "result";
             Element res = new Element("result", this.OM_NS);
             res.addContent(this.createDataRecordTree());
             obsElement.addContent(res);
 
         } catch (Exception ex) {
             _log.error(ex.toString());
-            this.setupException("Unable to correctly create response for request: " + ex.toString());
+            this.setupException("Unable to correctly create response for request: " + ex.toString()+
+                    "\n Error when creating the following response block: " + processingStr);
         }
     }
 
