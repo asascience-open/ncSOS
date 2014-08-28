@@ -18,8 +18,8 @@ import java.util.*;
 public class Grid extends baseCDMClass implements iStationData {
 
     private static final String DEPTH = "depth";
-    private static final String LAT = "latitude";
-    private static final String LON = "longitude";
+    public static final String LAT = "latitude";
+    public static final String LON = "longitude";
     private List<String> stationNameList;
     private List<String> stationDescripList;
     private final String[] variableNames;

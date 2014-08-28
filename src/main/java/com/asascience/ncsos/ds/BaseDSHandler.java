@@ -113,7 +113,7 @@ public class BaseDSHandler extends BaseRequestHandler {
             _log.error("procedure is null");
             return false;
         }
-        if (procedure.toLowerCase().contains(NETWORK) && procedure.toLowerCase().contains(ALL))
+        if (procedure.equals(this.getUrnNetworkAll()))
             return true;
         // get a list of procedures from dataset and compare it to the passed-in procedure
         // get list of station names
