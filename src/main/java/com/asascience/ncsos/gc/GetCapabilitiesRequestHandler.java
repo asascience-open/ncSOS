@@ -115,11 +115,7 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
             // remove identification from doc
             out.removeServiceIdentification();
         }
-//// check here to see if we need to initialize the data
-//        if(this.requestedSections.get(Sections.SERVICEIDENTIFICATION.ordinal()) &&
-//        		this.requestedSections.cardinality() == 1)){
-//        	
-//        }
+
         // service provider; parse if it is the section identified or 'all'
         if (this.requestedSections.get(Sections.SERVICEPROVIDER.ordinal())) {
         	
