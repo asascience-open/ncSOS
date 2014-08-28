@@ -110,6 +110,11 @@ public class IoosNetwork10Formatter extends IoosPlatform10Formatter {
         addNewNode(bb, UPPER_CORNER, GML_NS, upperCorner);
     }
     
+    public void removeSmlLocation(){
+        Element parent = XMLDomUtils.getNestedChild(this.getRoot(), SYSTEM, SML_NS);
+        parent.removeChildren(LOCATION, SML_NS);
+    }
+
     public void addComponentOutput(String componentName, String outName, String outURN, String outDef, String featureType, String units) {
         /*
          * <sml:output name='outName' xlink:title='outURN'>

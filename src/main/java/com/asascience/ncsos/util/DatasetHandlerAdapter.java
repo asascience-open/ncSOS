@@ -39,7 +39,7 @@ public class DatasetHandlerAdapter {
             try {
                 dataset = NetcdfDataset.openDataset(datasetPath);
             } catch (IOException e) {
-                _log.error("Failed to open dataset <" + datasetPath + ">: "
+                throw new Exception("Failed to open dataset <" + datasetPath + ">: "
                         + e.getMessage());
             }
             
@@ -51,9 +51,8 @@ public class DatasetHandlerAdapter {
                dataset = new NetcdfDataset(netcdfFile);
             
             } catch (IOException e) {
-                _log.error("Failed to open dataset <" + datasetPath + ">: "
+               throw new Exception("Failed to open dataset <" + datasetPath + ">: "
                         + e.getMessage());
-                e.printStackTrace();
             }
         }
         return dataset;

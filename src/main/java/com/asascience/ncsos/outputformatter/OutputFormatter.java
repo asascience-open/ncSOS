@@ -78,8 +78,7 @@ public abstract class OutputFormatter {
     public static final String FEATURE_COLLECTION = "FeatureCollection";
     public static final String USE = "use";
     public static final String REQUIRED = "required";
-    public static final String LAT = "lat";
-    public static final String LON = "lon";
+ 
     public static final String HISTORY = "history";
     public static final String IDENTIFIER = "identifier";
     public static final String SML_VALUE = "value";
