@@ -6,8 +6,10 @@ package com.asascience.ncsos.cdmclasses;
 
 import com.asascience.ncsos.go.ObservationOffering;
 import com.asascience.ncsos.service.BaseRequestHandler;
+
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
+
 import ucar.nc2.ft.*;
 import ucar.nc2.units.DateFormatter;
 import ucar.unidata.geoloc.Station;
@@ -16,7 +18,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,6 +36,8 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
     private final ArrayList<String> eventTimes;
     private final String[] variableNames;
     private ArrayList<Double> altMin, altMax;
+    private Map<String, List<Double>> numberHeightsForStation;
+    public final static String BIN_STR = "BIN=";
 
     /**
      * 
@@ -51,7 +57,6 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
             this.eventTimes.addAll(Arrays.asList(eventTime));
         } else
             this.eventTimes = null;
-
         lowerAlt = Double.POSITIVE_INFINITY;
         upperAlt = Double.NEGATIVE_INFINITY;
     }
@@ -115,17 +120,43 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
         return builder.toString();
     }
 
-    private void createStationProfileData(ProfileFeature pf, List<String> valueList, DateFormatter dateFormatter, StringBuilder builder, int stNum) {
+    public int getNumberProfilesForStation(String station){
+        int numProfiles = 0;
+        if(this.numberHeightsForStation.containsKey(station)){
+            numProfiles = this.numberHeightsForStation.get(station).size();
+        }
+        return numProfiles;
+    }
+    
+    
+    public List<Double> getProfileHeightsForStation(String station){
+        List<Double> profHeights;
+        if(this.numberHeightsForStation.containsKey(station)){
+            profHeights = this.numberHeightsForStation.get(station);
+        }
+        else{
+            profHeights = new ArrayList<Double>();
+        }
+        return profHeights;
+    }
+    
+    private void createStationProfileData(ProfileFeature pf, List<String> valueList, 
+                                           DateFormatter dateFormatter, StringBuilder builder, int stNum) {
 
         try {
             PointFeatureIterator it = pf.getPointFeatureIterator(-1);
-
+            List<Double> binAlts = this.getProfileHeightsForStation(tsStationList.get(stNum).getName());
             while (it.hasNext()) {
                 PointFeature pointFeature = it.next();
                 valueList.clear();
-                valueList.add("time=" + dateFormatter.toDateTimeStringISO(
+                valueList.add(TIME_STR + dateFormatter.toDateTimeStringISO(
                 		getDateForTime(pointFeature.getObservationTime(), pointFeature.getTimeUnit())));
+                valueList.add(STATION_STR + stNum);
 
+                double alt = pointFeature.getLocation().getAltitude();                
+                if(binAlts != null && binAlts.contains(alt)){
+                    valueList.add(BIN_STR + binAlts.indexOf(alt));
+                }
                 for (String variableName : variableNames) {
                     valueList.add(variableName + "=" + pointFeature.getData().getScalarObject(variableName).toString());
                 }
@@ -176,7 +207,7 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
         
         altMin = new ArrayList<Double>();
         altMax = new ArrayList<Double>();
-
+        numberHeightsForStation = new HashMap<String, List<Double>>();
         DateTime curTime;
         DateTime dtStart = null;
         DateTime dtEnd = null;
@@ -214,6 +245,7 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
                 StationProfileFeature profile = tsProfileData.getStationProfileFeature(tsStationList.get(j));
                 double altmin = Double.POSITIVE_INFINITY;
                 double altmax = Double.NEGATIVE_INFINITY;
+                List<Double> altVals = new ArrayList<Double>();
                 for (profile.resetIteration();profile.hasNext();) {
                     ProfileFeature nProfile = profile.next();
                     for (nProfile.resetIteration();nProfile.hasNext();) {
@@ -229,8 +261,10 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
                             if (alt < lowerAlt)
                                 lowerAlt = alt;
                         }
+                       altVals.add(alt);
                     }
                 }
+                this.numberHeightsForStation.put(tsStationList.get(j).getName(), altVals);
                 altMin.add(altmin);
                 altMax.add(altmax);
             }

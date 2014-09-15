@@ -100,7 +100,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         
         Date valDate = getDateForTime(pointFeature.getObservationTime(), pointFeature.getTimeUnit());
         valueList.add("time=" + dateFormatter.toDateTimeStringISO(valDate));
-        valueList.add("station=" + stNum);
+        valueList.add(STATION_STR + stNum);
         try {
             for (String variableName : variableNames) {
                 valueList.add(variableName + "=" + pointFeature.getData().getScalarObject(variableName).toString());
