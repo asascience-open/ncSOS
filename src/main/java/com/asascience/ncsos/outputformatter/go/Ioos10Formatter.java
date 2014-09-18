@@ -51,6 +51,8 @@ public class Ioos10Formatter extends BaseOutputFormatter {
     private static final String ELEMENT_TYPE = "elementType";
     private static final String PROFILE_INDEX = "profileIndex";
     private static final String PROFILE_OBS = "profileObservation";
+    private static final String SENSOR_LOCATION_DEF = "http://www.opengis.net/def/property/OGC/0/SensorLocation";
+    private static final String SENSOR_LOCATION = "sensorLocation";
     private static final String PROFILE_DEF = "http://mmisw.org/ont/ioos/swe_element_type/profile";
     private static final String PROFILE_OBS_DEF = "http://mmisw.org/ont/ioos/swe_element_type/profileObservation";
     private static final String PROFILE_INDEX_DEF = "http://mmisw.org/ont/ioos/swe_element_type/profileIndex";
@@ -503,6 +505,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
             profileDataArray.addContent(descriptionElem);
             profileDataArray.addContent(this.createElementCount(null));
             Element profileObElem = new Element(ELEMENT_TYPE, SWE2_NS);
+            profileObElem.setAttribute(NAME, PROFILE_OBS);
             Element profileObDataRecord = new Element(DATA_RECORD, SWE2_NS).setAttribute(DEFINITION, PROFILE_OBS_DEF);
             Element profileIndexField = new Element(FIELD, SWE2_NS).setAttribute(NAME, PROFILE_INDEX);
             
@@ -868,6 +871,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
 
         
         if(this.handler.getCDMDataset() instanceof TimeSeriesProfile){
+            addLocationVector(stNum, op_name, retval);
             addProfileHeights(retval, stName);
         }
         else {
@@ -937,11 +941,30 @@ public class Ioos10Formatter extends BaseOutputFormatter {
          * </swe2:Vector>
          */
         // vector
-        Element vector = new Element("Vector", this.SWE2_NS);
+        Element vector =  getLocVectorForStation(stNum);
         vector.setAttribute(DEFINITION, "http://www.opengis.net/def/property/OGC/0/PlatformLocation");
         // Use the horizontal crs that was defined by the grid_mapping attribute
         vector.setAttribute("referenceFrame", REFERENCE_FRAME_COMPOUND1 + this.handler.getCrsName() + REFERENCE_FRAME_COMPOUND2);
         vector.setAttribute("localFrame", "#PlatformFrame");
+        return vector;
+    }
+
+    private void addLocationVector(int stNum, String sensorName, Element sensorElem) {
+       
+        Element vector = getLocVectorForStation(stNum);
+        vector.setAttribute(DEFINITION, SENSOR_LOCATION_DEF);
+        // Use the horizontal crs that was defined by the grid_mapping attribute
+        vector.setAttribute("referenceFrame", REFERENCE_FRAME_COMPOUND1 + this.handler.getCrsName() + REFERENCE_FRAME_COMPOUND2);
+        vector.setAttribute("localFrame", "#" + sensorName + "_frame");
+       
+        Element fieldSensorLoc = new Element(FIELD, SWE2_NS);
+        fieldSensorLoc.setAttribute(NAME, SENSOR_LOCATION);
+        fieldSensorLoc.addContent(vector);
+        sensorElem.addContent(fieldSensorLoc);
+    }
+    
+    private Element getLocVectorForStation(int stNum){
+        Element vector = new Element("Vector", this.SWE2_NS);
         // coords: lat, lon, z
         String lat = Double.toString(this.handler.getCDMDataset().getLowerLat(stNum));
         String lon = Double.toString(this.handler.getCDMDataset().getLowerLon(stNum));
@@ -951,8 +974,8 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         vector.addContent(createSwe2Coordinate("longitude", "http://mmisw.org/ont/cf/parameter/longitude", "Lon", "deg", lon));
         vector.addContent(createSwe2Coordinate("height", "http://mmisw.org/ont/cf/parameter/height", "Z", "m", alt));
         return vector;
+        
     }
-
     private Element createSwe2Coordinate(String name, String definition, String axisId, String code, String value) {
         /*
          * Creates the following:
