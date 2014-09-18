@@ -368,21 +368,22 @@ public class Ioos10Formatter extends BaseOutputFormatter {
             return dr;
         }
 
-        int count = StringUtils.countOccurrencesOf(strBuilder.toString(), BLOCK_SEPERATOR);
-        // create count element
-        dynamic_array.addContent(this.createElementCount(count));
-
-
-        // create elementType "observations" element
-        dynamic_array.addContent(this.createObservationsElement());
-
-        // create encoding element
-        dynamic_array.addContent(this.createEncodingElement());
+      
 
         if(this.handler.getCDMDataset() instanceof TimeSeriesProfile){
-            dynamic_array.addContent(this.createValuesElementTimeSeriesProfile(strBuilder));
+            this.createValuesElementTimeSeriesProfile(strBuilder, dynamic_array);
         }
         else {
+            int count = StringUtils.countOccurrencesOf(strBuilder.toString(), BLOCK_SEPERATOR);
+            // create count element
+            dynamic_array.addContent(this.createElementCount(count));
+
+
+            // create elementType "observations" element
+            dynamic_array.addContent(this.createObservationsElement());
+
+            // create encoding element
+            dynamic_array.addContent(this.createEncodingElement());
             // add value block to values
             dynamic_array.addContent(this.createValuesElement(strBuilder));
         }
@@ -612,7 +613,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         }
     }
 
-    private Element createValuesElementTimeSeriesProfile(StringBuilder strBuilder) {
+    private void createValuesElementTimeSeriesProfile(StringBuilder strBuilder, Element dynamicArray) {
         /*
          * Creates:
          * <swe2:valuse>data_blocks</swe2:values>
@@ -624,6 +625,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         StringBuilder newString = new StringBuilder();
         List<String> obsProps = this.handler.getRequestedObservedProperties();
         String previousTime = null;
+        int countElems = 0;
         for(String obsProp : obsProps){
             for (String block : strBuilder.toString().split(BLOCK_SEPERATOR)) {
                 // split on token seperator
@@ -663,6 +665,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
                             // add name of measurement to match the data choice 
                             if(!inPrevBlock){
                                 newString.append(newBlock.toString()).append(tokenSplit[0]);
+                                countElems++;
                             }
 
                             newString.append(TOKEN_SEPERATOR);
@@ -683,7 +686,18 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         if(endIndex < 0)
             endIndex = 0;
         values.setText(newString.substring(0, endIndex));
-        return values;
+        
+        // create count element
+        dynamicArray.addContent(this.createElementCount(countElems));
+
+
+        // create elementType "observations" element
+        dynamicArray.addContent(this.createObservationsElement());
+
+        // create encoding element
+        dynamicArray.addContent(this.createEncodingElement());
+        
+        dynamicArray.addContent(values);
     }
     private Element createValuesElement(StringBuilder strBuilder) {
         /*

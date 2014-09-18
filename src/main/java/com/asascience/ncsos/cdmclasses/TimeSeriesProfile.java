@@ -11,6 +11,7 @@ import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 
 import ucar.nc2.ft.*;
+import ucar.nc2.time.CalendarDateFormatter;
 import ucar.nc2.units.DateFormatter;
 import ucar.unidata.geoloc.Station;
 
@@ -75,34 +76,40 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
         //if not event time is specified get all the data
         if (eventTimes == null) {
             //test getting items by date(index(0))
-            for (int i = 0; i < z.size(); i++) {
-                pf = stationProfileFeature.getProfileByDate(z.get(i));
+            stationProfileFeature.resetIteration();
+            while(stationProfileFeature.hasNext()){
+                pf = stationProfileFeature.next();
                 createStationProfileData(pf, valueList, dateFormatter, builder, stNum);
                 if (builder.toString().contains("ERROR"))
                     break;
             }
         } else if (eventTimes.size() > 1) {
+            Date startDate = CalendarDateFormatter.isoStringToDate( eventTimes.get(0));
+            Date endDate = CalendarDateFormatter.isoStringToDate( eventTimes.get(1));
             for (int i = 0; i < z.size(); i++) {
 
-                pf = stationProfileFeature.getProfileByDate(z.get(i));
+                // check to make sure the data is within the start/stop
+                if(z.get(i).compareTo(startDate) >= 0 &&  z.get(i).compareTo(endDate)  <= 0){
+                    pf = stationProfileFeature.getProfileByDate(z.get(i));
 
-                DateTime dtStart = new DateTime(df.getISODate(eventTimes.get(0)), chrono);
-                DateTime dtEnd = new DateTime(df.getISODate(eventTimes.get(1)), chrono);
-                DateTime tsDt = new DateTime(pf.getTime(), chrono);
+                    DateTime dtStart = new DateTime(startDate, chrono);
+                    DateTime dtEnd = new DateTime(endDate, chrono);
+                    DateTime tsDt = new DateTime(pf.getTime(), chrono);
 
-                //find out if current time(searchtime) is one or after startTime
-                //same as start
-                if (tsDt.isEqual(dtStart)) {
-                    createStationProfileData(pf, valueList, dateFormatter, builder, stNum);
-                } //equal end
-                else if (tsDt.isEqual(dtEnd)) {
-                    createStationProfileData(pf, valueList, dateFormatter, builder, stNum);
-                } //afterStart and before end       
-                else if (tsDt.isAfter(dtStart) && (tsDt.isBefore(dtEnd))) {
-                    createStationProfileData(pf, valueList, dateFormatter, builder, stNum);
+                    //find out if current time(searchtime) is one or after startTime
+                    //same as start
+                    if (tsDt.isEqual(dtStart)) {
+                        createStationProfileData(pf, valueList, dateFormatter, builder, stNum);
+                    } //equal end
+                    else if (tsDt.isEqual(dtEnd)) {
+                        createStationProfileData(pf, valueList, dateFormatter, builder, stNum);
+                    } //afterStart and before end       
+                    else if (tsDt.isAfter(dtStart) && (tsDt.isBefore(dtEnd))) {
+                        createStationProfileData(pf, valueList, dateFormatter, builder, stNum);
+                    }
+                    if (builder.toString().contains("ERROR"))
+                        break;
                 }
-                if (builder.toString().contains("ERROR"))
-                    break;
             }
         } //if the event time is specified get the correct data        
         else {
@@ -153,7 +160,8 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
                 		getDateForTime(pointFeature.getObservationTime(), pointFeature.getTimeUnit())));
                 valueList.add(STATION_STR + stNum);
 
-                double alt = pointFeature.getLocation().getAltitude();                
+                double alt = pointFeature.getLocation().getAltitude();      
+                
                 if(binAlts != null && binAlts.contains(alt)){
                     valueList.add(BIN_STR + binAlts.indexOf(alt));
                 }
@@ -250,6 +258,7 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
                     ProfileFeature nProfile = profile.next();
                     for (nProfile.resetIteration();nProfile.hasNext();) {
                         PointFeature point = nProfile.next();
+                        
                         double alt = point.getLocation().getAltitude();
                         if (!Double.toString(alt).equalsIgnoreCase("nan")) {
                             if (alt > altmax) 
