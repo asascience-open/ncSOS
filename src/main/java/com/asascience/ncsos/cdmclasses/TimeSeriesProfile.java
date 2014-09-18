@@ -261,7 +261,8 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
                             if (alt < lowerAlt)
                                 lowerAlt = alt;
                         }
-                       altVals.add(alt);
+                       if(!altVals.contains(alt))
+                           altVals.add(alt);
                     }
                 }
                 this.numberHeightsForStation.put(tsStationList.get(j).getName(), altVals);
