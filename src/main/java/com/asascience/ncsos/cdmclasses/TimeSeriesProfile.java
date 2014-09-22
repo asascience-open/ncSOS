@@ -10,6 +10,8 @@ import com.asascience.ncsos.service.BaseRequestHandler;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 
+import ucar.nc2.Variable;
+import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.ft.*;
 import ucar.nc2.time.CalendarDateFormatter;
 import ucar.nc2.units.DateFormatter;
@@ -20,8 +22,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,19 +43,29 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
     private ArrayList<Double> altMin, altMax;
     private Map<String, List<Double>> numberHeightsForStation;
     public final static String BIN_STR = "BIN=";
-
+    private boolean requestedFirst;
+    private boolean requestedLast;
+    private boolean multDimTimVar;
+    CoordinateAxis heightAxis;
     /**
      * 
      * @param stationName
      * @param eventTime
      * @param variableNames
      */
-    public TimeSeriesProfile(String[] stationName, String[] eventTime, String[] variableNames) {
+    public TimeSeriesProfile(String[] stationName, String[] eventTime, 
+                             String[] variableNames, boolean requestedFirst,
+                             boolean requestedLast, boolean multDimTimeVar,
+                             CoordinateAxis heightAxis) {
 
         startDate = null;
         endDate = null;
         this.variableNames = variableNames;
+        this.multDimTimVar = multDimTimeVar;
         this.reqStationNames = new ArrayList<String>();
+        this.requestedFirst = requestedFirst;
+        this.requestedLast = requestedLast;
+        this.heightAxis = heightAxis;
         reqStationNames.addAll(Arrays.asList(stationName));
         if (eventTime != null) {
             this.eventTimes = new ArrayList<String>();
@@ -72,24 +86,51 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
         List<Date> z = stationProfileFeature.getTimes();
 
         ProfileFeature pf = null;
-
+        Set<Date> processedDates = new HashSet<Date>();
+      
         //if not event time is specified get all the data
         if (eventTimes == null) {
             //test getting items by date(index(0))
             stationProfileFeature.resetIteration();
+//            for (int i = 0; i < z.size(); i++) {
             while(stationProfileFeature.hasNext()){
+               // pf = stationProfileFeature.getProfileByDate(z.get(i));
                 pf = stationProfileFeature.next();
-                createStationProfileData(pf, valueList, dateFormatter, builder, stNum);
-                if (builder.toString().contains("ERROR"))
-                    break;
+                if(this.multDimTimVar || !processedDates.contains(pf.getTime()) ){
+                    createStationProfileData(pf, valueList, dateFormatter, builder, stNum);
+                    if (builder.toString().contains("ERROR"))
+                        break;
+                    processedDates.add(pf.getTime());
+                }
+             
             }
         } else if (eventTimes.size() > 1) {
-            Date startDate = CalendarDateFormatter.isoStringToDate( eventTimes.get(0));
-            Date endDate = CalendarDateFormatter.isoStringToDate( eventTimes.get(1));
+            Date startDate = null;
+            Date endDate = null;
+            if(this.requestedFirst){
+                startDate = z.get(0);
+                if(!requestedLast && eventTimes.get(0).equals(eventTimes.get(1))){
+                    endDate = startDate;
+                }
+            }
+       
+            if(this.requestedLast){
+                endDate = z.get(z.size() - 1);
+                if(!requestedFirst && eventTimes.get(0).equals(eventTimes.get(1))){
+                    startDate = endDate;
+                }
+            }
+            if(endDate == null) {
+                endDate = CalendarDateFormatter.isoStringToDate( eventTimes.get(1));
+            }
+            if(startDate == null) {
+                startDate = CalendarDateFormatter.isoStringToDate( eventTimes.get(0));
+            }
             for (int i = 0; i < z.size(); i++) {
 
                 // check to make sure the data is within the start/stop
                 if(z.get(i).compareTo(startDate) >= 0 &&  z.get(i).compareTo(endDate)  <= 0){
+                    if(this.multDimTimVar || !processedDates.contains(z.get(i)) ){
                     pf = stationProfileFeature.getProfileByDate(z.get(i));
 
                     DateTime dtStart = new DateTime(startDate, chrono);
@@ -109,6 +150,8 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
                     }
                     if (builder.toString().contains("ERROR"))
                         break;
+                    processedDates.add(z.get(i));
+                    }
                 }
             }
         } //if the event time is specified get the correct data        
@@ -159,8 +202,15 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
                 valueList.add(TIME_STR + dateFormatter.toDateTimeStringISO(
                 		getDateForTime(pointFeature.getObservationTime(), pointFeature.getTimeUnit())));
                 valueList.add(STATION_STR + stNum);
-
-                double alt = pointFeature.getLocation().getAltitude();      
+                Object heightOb = null;
+                if(this.heightAxis != null)
+                    heightOb = pointFeature.getData().getScalarObject(this.heightAxis.getShortName());
+               
+                double alt;
+                if(heightOb != null)
+                    alt = Double.valueOf(heightOb.toString());
+                else
+                    alt = pointFeature.getLocation().getAltitude();
                 
                 if(binAlts != null && binAlts.contains(alt)){
                     valueList.add(BIN_STR + binAlts.indexOf(alt));
@@ -191,6 +241,9 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
         }
     }
 
+    
+    
+    
     /**
      * sets the time series profile data
      * @param featureProfileCollection 
@@ -258,8 +311,15 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
                     ProfileFeature nProfile = profile.next();
                     for (nProfile.resetIteration();nProfile.hasNext();) {
                         PointFeature point = nProfile.next();
-                        
-                        double alt = point.getLocation().getAltitude();
+                        Object heightOb = null;
+                        if(this.heightAxis != null)
+                            heightOb = point.getData().getScalarObject(this.heightAxis.getShortName());
+                       
+                        double alt;
+                        if(heightOb != null)
+                            alt = Double.valueOf(heightOb.toString());
+                        else
+                            alt = point.getLocation().getAltitude();
                         if (!Double.toString(alt).equalsIgnoreCase("nan")) {
                             if (alt > altmax) 
                                 altmax = alt;
@@ -273,7 +333,9 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
                        if(!altVals.contains(alt))
                            altVals.add(alt);
                     }
-                }
+                    if(!this.multDimTimVar)
+                        break;
+               }
                 this.numberHeightsForStation.put(tsStationList.get(j).getName(), altVals);
                 altMin.add(altmin);
                 altMax.add(altmax);
@@ -281,6 +343,9 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
         }
     }
 
+    
+  
+    
     @Override
     public void setInitialLatLonBoundaries(List<Station> tsStationList) {
         upperLat = tsStationList.get(0).getLatitude();

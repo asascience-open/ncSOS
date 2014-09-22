@@ -279,7 +279,8 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 break;
             case STATION_PROFILE:
-                this.stationData = new TimeSeriesProfile(new String[] { this.stationName }, null, null);
+                this.stationData = new TimeSeriesProfile(new String[] { this.stationName }, null, 
+                                                         null, false, false, false, null);
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 break;
             case PROFILE:

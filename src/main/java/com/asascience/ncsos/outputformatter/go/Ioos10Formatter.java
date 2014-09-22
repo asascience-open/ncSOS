@@ -626,17 +626,21 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         List<String> obsProps = this.handler.getRequestedObservedProperties();
         String previousTime = null;
         int countElems = 0;
+        boolean firstProp = true;
         for(String obsProp : obsProps){
+            previousTime = null;
             for (String block : strBuilder.toString().split(BLOCK_SEPERATOR)) {
                 // split on token seperator
                 StringBuilder newBlock = new StringBuilder();
                 String binDef = null;
-
+                
                 boolean inPrevBlock = false;
+             
                 for (String token : block.split(TOKEN_SEPERATOR)) {
                     if (token.contains(baseCDMClass.TIME_STR)) {
                         String currTime = token.replaceAll("time=", "");
-                        if(previousTime != null && !previousTime.equals(currTime)){
+                        if((previousTime != null && !previousTime.equals(currTime)) ||
+                            (previousTime == null && !firstProp)){
                             newBlock.append(BLOCK_SEPERATOR);
 
                             inPrevBlock = false;
@@ -679,6 +683,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
                     }
                 }
             }
+            firstProp = false;
         }
         // remove the last block seperator
         Element values = new Element("values", this.SWE2_NS);
