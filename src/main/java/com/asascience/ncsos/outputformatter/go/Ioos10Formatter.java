@@ -1,11 +1,15 @@
 package com.asascience.ncsos.outputformatter.go;
 
+import com.asascience.ncsos.cdmclasses.TimeSeriesProfile;
+import com.asascience.ncsos.cdmclasses.baseCDMClass;
 import com.asascience.ncsos.go.GetObservationRequestHandler;
 import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
 import com.asascience.ncsos.util.VocabDefinitions;
+
 import org.jdom.Element;
 import org.jdom.Namespace;
 import org.springframework.util.StringUtils;
+
 import ucar.nc2.Attribute;
 import ucar.nc2.constants.FeatureType;
 
@@ -41,7 +45,21 @@ public class Ioos10Formatter extends BaseOutputFormatter {
     private static final String MISSING_REASON = "http://www.opengis.net/def/nil/OGC/0/missing";
     private static final String REFERENCE_FRAME_COMPOUND1 = "http://www.opengis.net/def/crs-compound?1=";
     private static final String REFERENCE_FRAME_COMPOUND2 =	"&amp;2=http://www.opengis.net/def/crs/EPSG/0/5829";
-    private static final String DEFINITION = "definition";
+    private static final String PROFILE = "profile";
+    private static final String CONSTRAINT = "constraint";
+    private static final String INTERVAL = "interval";
+    private static final String ELEMENT_TYPE = "elementType";
+    private static final String PROFILE_INDEX = "profileIndex";
+    private static final String PROFILE_OBS = "profileObservation";
+    private static final String SENSOR_LOCATION_DEF = "http://www.opengis.net/def/property/OGC/0/SensorLocation";
+    private static final String SENSOR_LOCATION = "sensorLocation";
+    private static final String PROFILE_DEF = "http://mmisw.org/ont/ioos/swe_element_type/profile";
+    private static final String PROFILE_OBS_DEF = "http://mmisw.org/ont/ioos/swe_element_type/profileObservation";
+    private static final String PROFILE_INDEX_DEF = "http://mmisw.org/ont/ioos/swe_element_type/profileIndex";
+    private static final String PROFILE_HEIGHTS_DEF="http://mmisw.org/ont/ioos/swe_element_type/profileHeights";
+    private static final String PROFILE_HEIGHT_DEF = "http://mmisw.org/ont/ioos/swe_element_type/profileHeight";
+    private static final String HEIGHT_DEF = "http://mmisw.org/ont/cf/parameter/height";
+    private static final String PROFILE_DEFINITION = "profileDefinition";
     private Namespace OM_NS, GML_NS, SWE2_NS, XLINK_NS, SWE_NS = null;
     private GetObservationRequestHandler handler = null;
 
@@ -112,10 +130,13 @@ public class Ioos10Formatter extends BaseOutputFormatter {
             foi.addContent(this.createFeatureCollectionTree());
             obsElement.addContent(foi);
 
+            
             processingStr = "result";
+           
             Element res = new Element("result", this.OM_NS);
             res.addContent(this.createDataRecordTree());
             obsElement.addContent(res);
+            
 
         } catch (Exception ex) {
             _log.error(ex.toString());
@@ -347,18 +368,25 @@ public class Ioos10Formatter extends BaseOutputFormatter {
             return dr;
         }
 
-        int count = StringUtils.countOccurrencesOf(strBuilder.toString(), BLOCK_SEPERATOR);
-        // create count element
-        dynamic_array.addContent(this.createElementCount(count));
+      
 
-        // create elementType "observations" element
-        dynamic_array.addContent(this.createObservationsElement());
+        if(this.handler.getCDMDataset() instanceof TimeSeriesProfile){
+            this.createValuesElementTimeSeriesProfile(strBuilder, dynamic_array);
+        }
+        else {
+            int count = StringUtils.countOccurrencesOf(strBuilder.toString(), BLOCK_SEPERATOR);
+            // create count element
+            dynamic_array.addContent(this.createElementCount(count));
 
-        // create encoding element
-        dynamic_array.addContent(this.createEncodingElement());
 
-        // add value block to values
-        dynamic_array.addContent(this.createValuesElement(strBuilder));
+            // create elementType "observations" element
+            dynamic_array.addContent(this.createObservationsElement());
+
+            // create encoding element
+            dynamic_array.addContent(this.createEncodingElement());
+            // add value block to values
+            dynamic_array.addContent(this.createValuesElement(strBuilder));
+        }
 
         dynamic_data.addContent(dynamic_array);
 
@@ -410,7 +438,13 @@ public class Ioos10Formatter extends BaseOutputFormatter {
             }
 
             for (String sensor : sensors) {
-                dataChoice.addContent(createDataChoiceForSensor(stName, sensor));
+                if(this.handler.getCDMDataset() instanceof TimeSeriesProfile){
+                    dataChoice.addContent(createDataChoiceForSensorTimeSeriesProfile(stName, sensor,
+                           ((TimeSeriesProfile) this.handler.getCDMDataset()).getNumberProfilesForStation(stName)));
+                }
+                else {
+                    dataChoice.addContent(createDataChoiceForSensorTimeSeries(stName, sensor));
+                }
             }
         }
         sensorField.addContent(dataChoice);
@@ -420,7 +454,113 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         return elementType;
     }
 
-    private Element createDataChoiceForSensor(String stName, String sensor) {
+    private Element createDataChoiceForSensorTimeSeriesProfile(String stName, String sensor, int numProfiles) {
+        /*
+         * <swe2:item name="sensor_name">
+         *   <swe2:DataRecord>
+         *     <swe2:field name="sensor">
+         *       <swe2:field name="profile">
+         *       <swe2:DataArray definition ="cf/ioos definition">
+         *          <swe2:elementCount>
+         *              <swe2:Count/>
+         *          </swe2:elementCount
+         *          <swe2:elementType name="profileObservation">
+         *              <swe2:DataRecord definition="cf/ioos definition">
+         *                  <swe2:field name="proifleIndex">
+         *                      <swe2:Count definition="cf/ioos definition">
+         *                          <swe2:constraint>
+         *                              <swe2:AllowedValues>
+         *                                  <swe2:interval> </swe2:interval>
+         *                              </swe2:AllowedValues>
+         *                           </swe2:constraint>
+         *                       </swe2:Count>
+         *                  </swe2:field>
+         *                  <swe2:field name="someProperty">
+         *                       <swe2:Quantity definition="cf/ioos definition">
+         *                          <swe2:uom code="units" />
+         *                      </swe2:Quantity>
+         *                  </swe2:field>
+         *               </swe2:DataRecord>
+         *            </swe2:elementType>
+         *       </swe2:DataArray>
+         * </swe2:item>
+         */
+        // create the friendly name
+        Element item = null;
+        if (sensor.equalsIgnoreCase("dummy_item")) {
+            item = new Element("item", this.SWE2_NS).setAttribute("name", sensor);
+            return item;
+        } 
+        else {
+            String name = stationToFieldName(stName) + "_" + sensor.toLowerCase();
+            item = new Element("item", this.SWE2_NS).setAttribute("name", name);
+
+            String sensorDef = this.handler.getVariableStandardName(sensor);
+            String sensorUnits = this.handler.getUnitsString(sensor);
+            if(sensorUnits == null)
+                sensorUnits = "none";
+            Element dataRecord = new Element(DATA_RECORD, this.SWE2_NS).setAttribute(DEFINITION, STATIC_SENSOR_DEF);
+            
+            Element profileField = new Element(FIELD, this.SWE2_NS).setAttribute(NAME, PROFILE);
+            Element profileDataArray = new Element(DATA_ARRAY, this.SWE2_NS).setAttribute(DEFINITION, PROFILE_DEF);
+            Element descriptionElem = new Element(DESCRIPTION, SWE2_NS);
+            profileDataArray.addContent(descriptionElem);
+            profileDataArray.addContent(this.createElementCount(null));
+            Element profileObElem = new Element(ELEMENT_TYPE, SWE2_NS);
+            profileObElem.setAttribute(NAME, PROFILE_OBS);
+            Element profileObDataRecord = new Element(DATA_RECORD, SWE2_NS).setAttribute(DEFINITION, PROFILE_OBS_DEF);
+            Element profileIndexField = new Element(FIELD, SWE2_NS).setAttribute(NAME, PROFILE_INDEX);
+            
+            Element profileIndexDef = new Element(COUNT, SWE2_NS).setAttribute(NAME, PROFILE_INDEX_DEF);
+            Element constraintElem = new Element(CONSTRAINT, SWE2_NS);
+            Element allowedValues = new Element(ALLOWED_VALUES, SWE2_NS);
+            Element intervalElem = new Element(INTERVAL, SWE2_NS);
+            intervalElem.setText("0 " + (numProfiles - 1));
+            allowedValues.addContent(intervalElem);
+            constraintElem.addContent(allowedValues);
+            profileIndexDef.addContent(constraintElem);
+            profileIndexField.addContent(profileIndexDef);
+           
+            
+            Element field = new Element("field", this.SWE2_NS).setAttribute("name", sensor);
+            
+            //Add the DataArray item with the profile definition
+            
+            Element quantity = new Element("Quantity", this.SWE2_NS).setAttribute(DEFINITION, 
+                                            VocabDefinitions.GetDefinitionForParameter(sensorDef));
+            quantity.addContent(new Element("uom", this.SWE2_NS).setAttribute("code", sensorUnits));
+
+            // if the variable has a 'fill value' then add it as a nil value
+            try {
+                for (Attribute attr : this.handler.getVariableByName(sensor).getAttributes()) {
+                    if (attr.getShortName().toLowerCase().contains("fillvalue")) {
+                        Element nilValues = new Element("nilValues", this.SWE2_NS);
+                        Element nnilValues = new Element("NilValues", this.SWE2_NS);
+
+                        Element nvs = new Element("nilValue", this.SWE2_NS).setAttribute("reason", MISSING_REASON);
+                        nvs.setText(attr.getValue(0).toString());
+                        nnilValues.addContent(nvs);
+                        nilValues.addContent(nnilValues);
+                        quantity.addContent(nilValues);
+                    }
+                }
+            } catch (Exception ex) {
+            }
+
+            field.addContent(quantity);
+            
+            profileObDataRecord.addContent(profileIndexField);
+            profileObDataRecord.addContent(field);
+            profileObElem.addContent(profileObDataRecord);
+            profileDataArray.addContent(profileObElem);
+            profileField.addContent(profileDataArray);
+            dataRecord.addContent(profileField);
+            item.addContent(dataRecord);
+            return item;
+        }
+    }
+    
+    private Element createDataChoiceForSensorTimeSeries(String stName, String sensor) {
         /*
          * <swe2:item name="sensor_name">
          *   <swe2:DataRecord>
@@ -474,6 +614,97 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         }
     }
 
+    private void createValuesElementTimeSeriesProfile(StringBuilder strBuilder, Element dynamicArray) {
+        /*
+         * Creates:
+         * <swe2:valuse>data_blocks</swe2:values>
+         */
+        // need to operate to pull out the unwanted information from the data string
+        // here is what it looks like from the observation handler:
+        //time=1990-01-01T00:00:00Z,station=0,temperature=22.0,alt=5.6375227[BLOCK_SEPERATOR]time=1990-01-01T00:00:00Z,station=1,temperature=14.0,alt=7.396358
+        // we need to remove all of the 'keys' (ie time, station, etc) and replace with desired info
+        StringBuilder newString = new StringBuilder();
+        List<String> obsProps = this.handler.getRequestedObservedProperties();
+        String previousTime = null;
+        int countElems = 0;
+        boolean firstProp = true;
+        for(String obsProp : obsProps){
+            previousTime = null;
+            for (String block : strBuilder.toString().split(BLOCK_SEPERATOR)) {
+                // split on token seperator
+                StringBuilder newBlock = new StringBuilder();
+                String binDef = null;
+                
+                boolean inPrevBlock = false;
+             
+                for (String token : block.split(TOKEN_SEPERATOR)) {
+                    if (token.contains(baseCDMClass.TIME_STR)) {
+                        String currTime = token.replaceAll("time=", "");
+                        if((previousTime != null && !previousTime.equals(currTime)) ||
+                            (previousTime == null && !firstProp)){
+                            newBlock.append(BLOCK_SEPERATOR);
+
+                            inPrevBlock = false;
+                        }
+                        else if(previousTime != null) {
+                            inPrevBlock = true;
+                        }
+                        newBlock.append(currTime).append(TOKEN_SEPERATOR);
+                        previousTime = currTime;
+                    } 
+                    else if(token.startsWith(TimeSeriesProfile.BIN_STR)){
+                        binDef = token.replaceAll(TimeSeriesProfile.BIN_STR, "");
+
+                    }
+                    else if (token.contains(baseCDMClass.STATION_STR)) {
+                        if(!inPrevBlock){
+                            String[] tokenSplit = token.split("=");
+                            int stNum = Integer.parseInt(tokenSplit[1]);
+                            newBlock.append(stationToFieldName(this.handler.getProcedures()[stNum])).append("_");
+                        }
+                    } 
+                    else {
+                        String[] tokenSplit = token.split("=");
+                        if (obsProp.equals(tokenSplit[0]) && tokenSplit.length > 1) {
+                            // create a new block for each measurement
+                            // add name of measurement to match the data choice 
+                            if(!inPrevBlock){
+                                newString.append(newBlock.toString()).append(tokenSplit[0]);
+                                countElems++;
+                            }
+
+                            newString.append(TOKEN_SEPERATOR);
+
+                            if(binDef != null){
+                                newString.append(binDef).append(TOKEN_SEPERATOR);
+                            }
+                            newString.append(tokenSplit[1]);
+
+                        }
+                    }
+                }
+            }
+            firstProp = false;
+        }
+        // remove the last block seperator
+        Element values = new Element("values", this.SWE2_NS);
+        int endIndex = newString.length() - BLOCK_SEPERATOR.length();
+        if(endIndex < 0)
+            endIndex = 0;
+        values.setText(newString.substring(0, endIndex));
+        
+        // create count element
+        dynamicArray.addContent(this.createElementCount(countElems));
+
+
+        // create elementType "observations" element
+        dynamicArray.addContent(this.createObservationsElement());
+
+        // create encoding element
+        dynamicArray.addContent(this.createEncodingElement());
+        
+        dynamicArray.addContent(values);
+    }
     private Element createValuesElement(StringBuilder strBuilder) {
         /*
          * Creates:
@@ -488,10 +719,13 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         for (String block : strBuilder.toString().split(BLOCK_SEPERATOR)) {
             // split on token seperator
             StringBuilder newBlock = new StringBuilder();
+     
             for (String token : block.split(TOKEN_SEPERATOR)) {
-                if (token.contains("time")) {
+                if (token.contains(baseCDMClass.TIME_STR)) {
                     newBlock.append(token.replaceAll("time=", "")).append(TOKEN_SEPERATOR);
-                } else if (token.contains("station")) {
+                } 
+ 
+                else if (token.contains(baseCDMClass.STATION_STR)) {
                     String[] tokenSplit = token.split("=");
                     int stNum = Integer.parseInt(tokenSplit[1]);
                     newBlock.append(stationToFieldName(this.handler.getProcedures()[stNum])).append("_");
@@ -516,7 +750,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         return values;
     }
 
-    private Element createElementCount(int count) {
+    private Element createElementCount(Integer count) {
         /*
          * Creates the following:
          * <swe2:elementCount>
@@ -527,9 +761,11 @@ public class Ioos10Formatter extends BaseOutputFormatter {
          */
         Element elmcount = new Element("elementCount", this.SWE2_NS);
         Element ecount = new Element("Count", this.SWE2_NS);
-        Element value = new Element("value", this.SWE2_NS);
-        value.setText(String.valueOf(count));
-        ecount.addContent(value);
+        if(count != null){
+            Element value = new Element("value", this.SWE2_NS);
+            value.setText(String.valueOf(count));
+            ecount.addContent(value);
+        }
         elmcount.addContent(ecount);
         return elmcount;
     }
@@ -653,23 +889,68 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         field.addContent(text);
         dataRecord.addContent(field);
 
-        // height field
-        field = new Element("field", this.SWE2_NS);
-        field.setAttribute("name", "height");
-        Element quantity = new Element("Quantity", this.SWE2_NS);
-        quantity.setAttribute(DEFINITION, "http://mmisw.org/ont/cf/parameter/height");
-        quantity.setAttribute("referenceFrame", "#PlatformFrame");
-        quantity.addContent(new Element("uom", this.SWE2_NS).setAttribute("code", "m"));
-        value = new Element("value", this.SWE2_NS);
-        value.setText("0");      // TODO: Need to change this to reflect height of ... something ...
-        quantity.addContent(value);
-        field.addContent(quantity);
-        dataRecord.addContent(field);
+        
+        if(this.handler.getCDMDataset() instanceof TimeSeriesProfile){
+            addLocationVector(stNum, op_name, retval);
+            addProfileHeights(retval, stName);
+        }
+        else {
+            // height field
+            field = new Element("field", this.SWE2_NS);
+            field.setAttribute("name", "height");
+         
+            field.addContent( getHeightQuantityElement());
+            dataRecord.addContent(field);
 
-        retval.addContent(dataRecord);
+            retval.addContent(dataRecord);
+        }
         return retval;
     }
 
+    private Element getHeightQuantityElement(){
+        Element quantity = new Element("Quantity", this.SWE2_NS);
+        quantity.setAttribute(DEFINITION, HEIGHT_DEF);
+        quantity.setAttribute("referenceFrame", "#PlatformFrame");
+        quantity.setAttribute(AXIS_ID, "Z");
+        quantity.addContent(new Element("uom", this.SWE2_NS).setAttribute("code", "m"));
+        Element value = new Element("value", this.SWE2_NS);
+        value.setText("0");      // TODO: Need to change this to reflect height of ... something ...
+        quantity.addContent(value);
+        return quantity;
+    }
+    
+    
+    private void addProfileHeights(Element sensorElem, String stationName){
+        if(!(this.handler.getCDMDataset() instanceof TimeSeriesProfile)) return;
+        
+        TimeSeriesProfile timeSeriesProfile = ((TimeSeriesProfile) this.handler.getCDMDataset());
+        List<Double> heights = timeSeriesProfile.getProfileHeightsForStation(stationName);
+        Element field = new Element(FIELD, this.SWE2_NS);
+        field.setAttribute(NAME, "profileHeights");
+        Element profileHeightsDataArray =  new Element(DATA_ARRAY, SWE2_NS).setAttribute(DEFINITION, PROFILE_HEIGHTS_DEF);
+        profileHeightsDataArray.addContent(createElementCount(timeSeriesProfile.getNumberProfilesForStation(stationName)));
+        Element profileDef = new Element(ELEMENT_TYPE, SWE2_NS).setAttribute(NAME, PROFILE_DEFINITION);
+        Element profileDataRec = new Element(DATA_RECORD, SWE2_NS).setAttribute(DEFINITION, PROFILE_HEIGHT_DEF);
+        Element heightField = new Element(FIELD, SWE2_NS).setAttribute(NAME, "height");
+        Element zAxis =  getHeightQuantityElement();
+        heightField.addContent(zAxis);
+        profileDataRec.addContent(heightField);
+        profileDef.addContent(profileDataRec);
+        profileHeightsDataArray.addContent(profileDef);
+        profileHeightsDataArray.addContent(createEncodingElement());
+        
+        Element values = new Element(VALUES, SWE2_NS);
+        String valueStr = "";
+        for(Double currH : heights){
+            valueStr += currH + BLOCK_SEPERATOR;
+        }
+        values.setText(valueStr);
+        profileHeightsDataArray.addContent(values);
+        field.addContent(profileHeightsDataArray);
+        sensorElem.addContent(field);
+    }
+    
+    
     private Element createSwe2Vector(int stNum) {
         /*
          * Creates the following:
@@ -680,11 +961,30 @@ public class Ioos10Formatter extends BaseOutputFormatter {
          * </swe2:Vector>
          */
         // vector
-        Element vector = new Element("Vector", this.SWE2_NS);
+        Element vector =  getLocVectorForStation(stNum);
         vector.setAttribute(DEFINITION, "http://www.opengis.net/def/property/OGC/0/PlatformLocation");
         // Use the horizontal crs that was defined by the grid_mapping attribute
         vector.setAttribute("referenceFrame", REFERENCE_FRAME_COMPOUND1 + this.handler.getCrsName() + REFERENCE_FRAME_COMPOUND2);
         vector.setAttribute("localFrame", "#PlatformFrame");
+        return vector;
+    }
+
+    private void addLocationVector(int stNum, String sensorName, Element sensorElem) {
+       
+        Element vector = getLocVectorForStation(stNum);
+        vector.setAttribute(DEFINITION, SENSOR_LOCATION_DEF);
+        // Use the horizontal crs that was defined by the grid_mapping attribute
+        vector.setAttribute("referenceFrame", REFERENCE_FRAME_COMPOUND1 + this.handler.getCrsName() + REFERENCE_FRAME_COMPOUND2);
+        vector.setAttribute("localFrame", "#" + sensorName + "_frame");
+       
+        Element fieldSensorLoc = new Element(FIELD, SWE2_NS);
+        fieldSensorLoc.setAttribute(NAME, SENSOR_LOCATION);
+        fieldSensorLoc.addContent(vector);
+        sensorElem.addContent(fieldSensorLoc);
+    }
+    
+    private Element getLocVectorForStation(int stNum){
+        Element vector = new Element("Vector", this.SWE2_NS);
         // coords: lat, lon, z
         String lat = Double.toString(this.handler.getCDMDataset().getLowerLat(stNum));
         String lon = Double.toString(this.handler.getCDMDataset().getLowerLon(stNum));
@@ -694,8 +994,8 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         vector.addContent(createSwe2Coordinate("longitude", "http://mmisw.org/ont/cf/parameter/longitude", "Lon", "deg", lon));
         vector.addContent(createSwe2Coordinate("height", "http://mmisw.org/ont/cf/parameter/height", "Z", "m", alt));
         return vector;
+        
     }
-
     private Element createSwe2Coordinate(String name, String definition, String axisId, String code, String value) {
         /*
          * Creates the following:

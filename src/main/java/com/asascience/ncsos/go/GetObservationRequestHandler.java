@@ -42,6 +42,8 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
     public static final String IOOS10_RESPONSE_FORMAT = "text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0\"";
     public static final String OOSTETHYS_RESPONSE_FORMAT = "text/xml;subtype=\"om/1.0.0\"";
     private final List<String> eventTimes;
+    private boolean requestFirstTime;
+    private boolean requestLastTime;
     private static final String LATEST_TIME = "latest";
     private static final String FIRST_TIME = "first";
     /**
@@ -62,6 +64,8 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
                                         String responseFormat,
                                         Map<String, String> latLonRequest) throws Exception {
         super(netCDFDataset);
+        this.requestFirstTime = false;
+        this.requestLastTime = false;
         eventTimes = setupGetObservation(netCDFDataset,
                                         requestedProcedures,
                                         offering,
@@ -191,10 +195,14 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
                         timeVals = this.timeVariable.read();
                     if(dateUnit == null)
                         dateUnit = new DateUnit(timeVariable.getUnitsString());
-
-                    if(eventTime[eventTimeI].equals(LATEST_TIME))
+                    if(eventTime[eventTimeI].equals(FIRST_TIME)){
+                        this.requestFirstTime = true;
+                    }
+                    
+                    if(eventTime[eventTimeI].equals(LATEST_TIME)) {
                         timeIndex = (int)timeVals.getSize() - 1;
-
+                        this.requestLastTime = true;
+                    }
                     double lastT = timeVals.getDouble(timeIndex);
                     eventTime[eventTimeI] = dateUnit.makeStandardDateString(lastT);
                 }
@@ -212,12 +220,13 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
             localEventTime = Arrays.asList(eventTime);
 
         } 
-        setCDMDatasetForStations(netCDFDataset, eventTime, latLonRequest);
+        setCDMDatasetForStations(netCDFDataset, eventTime, latLonRequest, heightAxis);
 
         return localEventTime;
 
     }
-    private void setCDMDatasetForStations(NetcdfDataset netCDFDataset, String[] eventTime, Map<String, String> latLonRequest) throws IOException {
+    private void setCDMDatasetForStations(NetcdfDataset netCDFDataset, String[] eventTime, 
+            Map<String, String> latLonRequest,  CoordinateAxis heightAxis) throws IOException {
         // strip out text if the station is defined by indices
         /*
         if (isStationDefinedByIndices()) {
@@ -288,15 +297,20 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
             }
         } //if the stations are not of cdm type grid then check to see and set cdm data type        
         else {
-            if (getDatasetFeatureType() == FeatureType.TRAJECTORY) {
+            FeatureType currType = getDatasetFeatureType();
+            if (currType == FeatureType.TRAJECTORY) {
                 CDMDataSet = new Trajectory(this.procedures, eventTime, this.obsProperties);
-            } else if (getDatasetFeatureType() == FeatureType.STATION) {
+            } else if (currType  == FeatureType.STATION) {
                 CDMDataSet = new TimeSeries(this.procedures, eventTime, this.obsProperties);
-            } else if (getDatasetFeatureType() == FeatureType.STATION_PROFILE) {
-                CDMDataSet = new TimeSeriesProfile(this.procedures, eventTime, this.obsProperties);
-            } else if (getDatasetFeatureType() == FeatureType.PROFILE) {
+            } else if (currType  == FeatureType.STATION_PROFILE) {
+                
+                CDMDataSet = new TimeSeriesProfile(this.procedures, eventTime, 
+                                                   this.obsProperties, this.requestFirstTime, this.requestLastTime,
+                                                   this.timeVariable.getRank() > 1,
+                                                   heightAxis);
+            } else if (currType == FeatureType.PROFILE) {
                 CDMDataSet = new Profile(this.procedures, eventTime, this.obsProperties);
-            } else if (getDatasetFeatureType() == FeatureType.SECTION) {
+            } else if (currType  == FeatureType.SECTION) {
                 CDMDataSet = new Section(this.procedures, eventTime, this.obsProperties);
             } else {
                 formatter = new ErrorFormatter();

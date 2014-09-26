@@ -151,7 +151,8 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 break;
             case STATION_PROFILE:
-                this.stationData = new TimeSeriesProfile(stationNames.toArray(new String[stationNames.size()]), null, null);
+                this.stationData = new TimeSeriesProfile(stationNames.toArray(new String[stationNames.size()]), null, null,
+                                    false, false, false, null);
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 break;
             case PROFILE:

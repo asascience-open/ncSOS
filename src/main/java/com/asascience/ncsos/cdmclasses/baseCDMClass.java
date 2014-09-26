@@ -27,6 +27,8 @@ public abstract class baseCDMClass implements iStationData {
     protected static final String DATA_RESPONSE_ERROR = "Data Response IO Error: ";
     protected static final String ERROR_NULL_DATE = "ERROR NULL Date!!!!";
     protected static final int Invalid_Value = -9999999;
+    public static final String STATION_STR = "station=";
+    public static final String TIME_STR = "time=";
     protected static final String Invalid_Station = "INVALID_ST";
     protected Chronology chrono = ISOChronology.getInstance();
     protected DateFormatter df = new DateFormatter();
