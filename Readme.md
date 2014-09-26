@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/asascience-open/ncSOS.png?branch=master)](https://travis-ci.org/asascience-open/ncSOS)
 
-Stable version: **RC9**
+Stable version: **v1.0**
 
 NcSOS adds an OGC SOS service to datasets in your existing [THREDDS](http://www.unidata.ucar.edu/projects/THREDDS/) server.  It complies with the [IOOS SWE Milestone 1.0](https://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0) templates and requires your datasets be in any of the [CF 1.6 Discrete Sampling Geometries](http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#discrete-sampling-geometries).
 
@@ -20,11 +20,14 @@ _You will need a working THREDDS installation of a least version **4.3.16** to r
 
 | ncSOS version | THREDDS version        | Catalog URL                                     |
 | ------------- | ---------------------- | ----------------------------------------------- |
-| [RC9](https://github.com/asascience-open/ncSOS/releases/tag/RC9)           | 4.3.20 (20131125.1409) | http://sos.maracoos.org/stable/catalog.html     |
+| [v1.0](https://github.com/asascience-open/ncSOS/releases/tag/v1.0)           | 4.3.20 (20131125.1409) | http://sos.maracoos.org/stable/catalog.html     |
 | [master](https://github.com/asascience-open/ncSOS/tree/master)        | 4.3.20 (20131125.1409) | http://sos.maracoos.org/pre/catalog.html        |
 | [tds_4.4.1](https://github.com/asascience-open/ncSOS/tree/tds_4.4.1)     | 4.4.1 (20131220.1427)  | http://sos.maracoos.org/dev/catalog.html        |
 
 ## ChangeLog
+
+### v1.0
+* Added support for GetObservation requests on TimeSeriesProfile datasets.
 
 ### RC9
 * Makes use of THREDDS Spring implementation. Modifications to the web.xml and sos-servlet.xml files are no longer needed.
