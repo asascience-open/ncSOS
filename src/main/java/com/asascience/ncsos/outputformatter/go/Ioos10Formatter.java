@@ -497,7 +497,8 @@ public class Ioos10Formatter extends BaseOutputFormatter {
 
             String sensorDef = this.handler.getVariableStandardName(sensor);
             String sensorUnits = this.handler.getUnitsString(sensor);
-
+            if(sensorUnits == null)
+                sensorUnits = "none";
             Element dataRecord = new Element(DATA_RECORD, this.SWE2_NS).setAttribute(DEFINITION, STATIC_SENSOR_DEF);
             
             Element profileField = new Element(FIELD, this.SWE2_NS).setAttribute(NAME, PROFILE);

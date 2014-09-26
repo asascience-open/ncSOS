@@ -96,6 +96,7 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
             while(stationProfileFeature.hasNext()){
                // pf = stationProfileFeature.getProfileByDate(z.get(i));
                 pf = stationProfileFeature.next();
+                System.out.println(pf.getTime().toGMTString());
                 if(this.multDimTimVar || !processedDates.contains(pf.getTime()) ){
                     createStationProfileData(pf, valueList, dateFormatter, builder, stNum);
                     if (builder.toString().contains("ERROR"))
@@ -131,26 +132,26 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
                 // check to make sure the data is within the start/stop
                 if(z.get(i).compareTo(startDate) >= 0 &&  z.get(i).compareTo(endDate)  <= 0){
                     if(this.multDimTimVar || !processedDates.contains(z.get(i)) ){
-                    pf = stationProfileFeature.getProfileByDate(z.get(i));
+                        pf = stationProfileFeature.getProfileByDate(z.get(i));
 
-                    DateTime dtStart = new DateTime(startDate, chrono);
-                    DateTime dtEnd = new DateTime(endDate, chrono);
-                    DateTime tsDt = new DateTime(pf.getTime(), chrono);
+                        DateTime dtStart = new DateTime(startDate, chrono);
+                        DateTime dtEnd = new DateTime(endDate, chrono);
+                        DateTime tsDt = new DateTime(pf.getTime(), chrono);
 
-                    //find out if current time(searchtime) is one or after startTime
-                    //same as start
-                    if (tsDt.isEqual(dtStart)) {
-                        createStationProfileData(pf, valueList, dateFormatter, builder, stNum);
-                    } //equal end
-                    else if (tsDt.isEqual(dtEnd)) {
-                        createStationProfileData(pf, valueList, dateFormatter, builder, stNum);
-                    } //afterStart and before end       
-                    else if (tsDt.isAfter(dtStart) && (tsDt.isBefore(dtEnd))) {
-                        createStationProfileData(pf, valueList, dateFormatter, builder, stNum);
-                    }
-                    if (builder.toString().contains("ERROR"))
-                        break;
-                    processedDates.add(z.get(i));
+                        //find out if current time(searchtime) is one or after startTime
+                        //same as start
+                        if (tsDt.isEqual(dtStart)) {
+                            createStationProfileData(pf, valueList, dateFormatter, builder, stNum);
+                        } //equal end
+                        else if (tsDt.isEqual(dtEnd)) {
+                            createStationProfileData(pf, valueList, dateFormatter, builder, stNum);
+                        } //afterStart and before end       
+                        else if (tsDt.isAfter(dtStart) && (tsDt.isBefore(dtEnd))) {
+                            createStationProfileData(pf, valueList, dateFormatter, builder, stNum);
+                        }
+                        if (builder.toString().contains("ERROR"))
+                            break;
+                        processedDates.add(z.get(i));
                     }
                 }
             }
