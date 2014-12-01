@@ -2,6 +2,7 @@ package com.asascience.ncsos.ds;
 
 import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.IFReportMechanism;
+
 import ucar.nc2.Attribute;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -13,9 +14,11 @@ public class Ioos10Handler extends BaseRequestHandler {
     private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Ioos10Handler.class);
     
     protected final IFReportMechanism reporter;
-    protected final static String DEFAULT_STRING = "UNKNOWN";
-    protected final static String MISSING_VALUE = "Missing Value";
     protected final static String URN_BASE = "urn:ioos:";
+    protected final static String ATTRIBUTE_MISSING = "Attribute not present in source data";
+    protected final static String ATTRIBUTE_VALUE_MISSING = "Attribute value not defined in source data";
+    protected final static String INSTITUTION = "institution";
+
     public Ioos10Handler(NetcdfDataset dataset) throws IOException {
         super(dataset);
         reporter = null;
@@ -60,10 +63,10 @@ public class Ioos10Handler extends BaseRequestHandler {
         try {
             if (retval == null) {
                 reporter.ReportMissing(globalName);
-                return DEFAULT_STRING;
+                return ATTRIBUTE_MISSING;
             } else if (retval.equalsIgnoreCase("")) {
                 reporter.ReportInvalid(globalName, "");
-                return DEFAULT_STRING;
+                return ATTRIBUTE_VALUE_MISSING;
             }
         } catch (Exception ex) { }
         
@@ -86,7 +89,7 @@ public class Ioos10Handler extends BaseRequestHandler {
             reporter.ReportMissing(attribueName + " from variable " + var.getShortName());
         } catch (Exception ex) { }
         
-        return DEFAULT_STRING;
+        return ATTRIBUTE_MISSING;
     }
     
     protected VariableSimpleIF checkForRequiredVariable(String varName) {

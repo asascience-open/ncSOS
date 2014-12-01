@@ -83,10 +83,12 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
     
     private void formatSmlClassification() {
         // add platformType, operatorSector and publisher classifications (assuming they are global variables
-        network.addSmlClassifier("platformType", VocabDefinitions.GetIoosDefinition("platformType"), "platform", this.checkForRequiredValue("platform_type"));
+        network.addSmlClassifier("platformType", VocabDefinitions.GetIoosDefinition("platformType"), 
+                "platform", this.checkForRequiredValue("platform_type"));
         network.addSmlClassifier("operatorSector", VocabDefinitions.GetIoosDefinition("operatorSector"), "sector", this.checkForRequiredValue("operator_sector"));
         network.addSmlClassifier("publisher", VocabDefinitions.GetIoosDefinition("publisher"), "organization", this.checkForRequiredValue("publisher"));
-        network.addSmlClassifier("parentNetwork", "http://mmisw.org/ont/ioos/definition/parentNetwork", "organization", (String)this.getGlobalAttribute("parent_network", ""));
+        network.addSmlClassifier("parentNetwork", "http://mmisw.org/ont/ioos/definition/parentNetwork", 
+                "organization", (String)this.getGlobalAttribute(INSTITUTION, ATTRIBUTE_MISSING ));
         
         // sponsor is optional
         String value = (String)this.getGlobalAttribute("sponsor", null);
@@ -300,9 +302,12 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
         for (Map.Entry<Integer,String> station : this.getStationNames().entrySet()) {
             network.addSmlComponent(station.getValue());
             // identifiers for station
-            network.addIdentifierToComponent(station.getValue(), "stationID", GetIoosDef("stationID"), this.getUrnName(station.getValue()));
-            network.addIdentifierToComponent(station.getValue(), "shortName", GetIoosDef("shortName"), this.checkForRequiredValue(identVar, "short_name"));
-            network.addIdentifierToComponent(station.getValue(), "longName", GetIoosDef("longName"), this.checkForRequiredValue(identVar, "long_name"));
+            network.addIdentifierToComponent(station.getValue(), "stationID", GetIoosDef("stationID"), 
+                    this.getUrnName(station.getValue()));
+            network.addIdentifierToComponent(station.getValue(), "shortName", GetIoosDef("shortName"), 
+                    this.checkForRequiredValue(identVar, "short_name"));
+            network.addIdentifierToComponent(station.getValue(), "longName", GetIoosDef("longName"), 
+                    this.checkForRequiredValue(identVar, "long_name"));
             // wmoid, if it exists
             Attribute identAtt = identVar.findAttribute("wmo_code");
             if (identAtt != null) {

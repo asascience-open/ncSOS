@@ -4,7 +4,7 @@
 
   <groupId>com.asascience</groupId>
   <artifactId>ncsos</artifactId>
-  <version>1.0</version>
+  <version>1.1</version>
   <packaging>jar</packaging>
 
   <name>ncsos</name>
@@ -156,6 +156,17 @@
     </resources>
   
     <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-jar-plugin</artifactId>
+      <configuration>
+        <archive>
+          <manifest>
+            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+          </manifest>
+        </archive>
+      </configuration>
+    </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>

@@ -18,7 +18,7 @@ import java.util.List;
 public abstract class OutputFormatter {
 
     private HashMap<String, Namespace> namespaces;
-    public static final String NCSOS_VERSION = "RC9";
+    public static final String NCSOS_VERSION = OutputFormatter.class.getPackage().getImplementationVersion();
     public static final String OBSERVATION = "Observation";
     public static final String OBSERVATION_COLLECTION = "ObservationCollection";
     public static final String MEMBER = "member";
@@ -78,7 +78,6 @@ public abstract class OutputFormatter {
     public static final String FEATURE_COLLECTION = "FeatureCollection";
     public static final String USE = "use";
     public static final String REQUIRED = "required";
- 
     public static final String HISTORY = "history";
     public static final String IDENTIFIER = "identifier";
     public static final String SML_VALUE = "value";

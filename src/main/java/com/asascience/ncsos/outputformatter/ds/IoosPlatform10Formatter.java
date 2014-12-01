@@ -133,7 +133,7 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
      */
     public void setValidTime(String timeBegin, String timeEnd) {
         /*
-        
+
         <sml:capabilities name="observationTimeRange">
         <swe:DataRecord>
         <swe:field name="observationTimeRange">
@@ -143,20 +143,20 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
         </swe:field>
         </swe:DataRecord>
         </sml:capabilities>     
-        
+
          */
+
         Element memberNode = this.getRoot().getChild(MEMBER, this.SML_NS);
         if(memberNode != null) {
-        	Element systemNode = memberNode.getChild(SYSTEM, this.SML_NS);
-        	if(systemNode != null){
-        		Element parentNode = systemNode.getChild(SML_CAPABILITIES, SML_NS);
-        			parentNode.setAttribute(NAME, OBSERVATION_TIME_RANGE);
-        			Element parent = addNewNode(parentNode, DATA_RECORD, this.SWE_NS);
-        			setValidTime(parent, timeBegin, timeEnd);
-        		}
-        	}
+            Element systemNode = memberNode.getChild(SYSTEM, this.SML_NS);
+            if(systemNode != null){
+                Element parentNode = systemNode.getChild(SML_CAPABILITIES, SML_NS);
+                    parentNode.setAttribute(NAME, OBSERVATION_TIME_RANGE);
+                    Element parent = addNewNode(parentNode, DATA_RECORD, this.SWE_NS);
+                    setValidTime(parent, timeBegin, timeEnd);
+                }
+            }
         }
-    
 
     public void setValidTime(Element parent, String timeBegin, String timeEnd) {
         parent = addNewNode(parent, FIELD, SWE_NS, NAME, OBSERVATION_TIME_RANGE);
@@ -181,13 +181,27 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
          *   </swe:SimpleDataRecord>
          * </sml:capabilities>
          */
-        Element parent = ((parentName != null) ? XMLDomUtils.getNestedChild(this.getRoot(), parentName, SML_NS) : this.getRoot());
-        parent = addNewNode(parent, CAPABILITIES, SML_NS, NAME, "networkProcedures");
-        parent = addNewNode(parent, SIMPLEDATARECORD, SWE_NS);
+        
+        Element memberNode = this.getRoot().getChild(MEMBER, this.SML_NS);
+        if(memberNode != null) {
+            Element systemNode = memberNode.getChild(SYSTEM, this.SML_NS);
+            if(systemNode != null){
+                Element prevSmlCap = systemNode.getChild(SML_CAPABILITIES, SML_NS);
+                int currCapIndex =  systemNode.getContent().indexOf(prevSmlCap);
+                if(currCapIndex >= 0)
+                    currCapIndex++;
+                Element parentNode = addNewNode(systemNode, SML_CAPABILITIES, SML_NS, currCapIndex);
 
-        Element field = addNewNode(parent, FIELD, SWE_NS, NAME, "network-all");
-        Element textNode = addNewNode(field, TEXT, SWE_NS, DEFINITION, "http://mmisw.org/ont/ioos/definition/networkID");
-        addNewNode(textNode, VALUE, SWE_NS, urn);
+                
+                parentNode.setAttribute( NAME, "networkProcedures");
+
+                parentNode = addNewNode(parentNode, SIMPLEDATARECORD, SWE_NS);
+  
+                Element field = addNewNode(parentNode, FIELD, SWE_NS, NAME, "network-all");
+                Element textNode = addNewNode(field, TEXT, SWE_NS, DEFINITION, "http://mmisw.org/ont/ioos/definition/networkID");
+                addNewNode(textNode, VALUE, SWE_NS, urn);
+            }
+        }
     }
 
     /**

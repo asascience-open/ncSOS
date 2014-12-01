@@ -78,6 +78,15 @@ public class BaseOutputFormatter extends OutputFormatter {
         return child;
     }
 
+    protected Element addNewNode(Element parent, String nodeName, Namespace nodeNS, int childIndex) {
+        Element child = new Element(nodeName, nodeNS);
+        if(childIndex >= 0)
+            parent.addContent(childIndex, child);
+        else 
+            parent.addContent(child);
+        return child;
+    }
+    
     protected Element addNewNode(Element parent,
             String nodeName,
             Namespace nodeNS,

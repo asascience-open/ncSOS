@@ -26,7 +26,6 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
     private iStationData stationData;
     private String errorString;
     private boolean locationLineFlag;
-
     private final static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(IoosPlatform10Handler.class);
     private final static String QUERY = "?service=SOS&request=DescribeSensor&version=1.0.0&outputFormat=text/xml;subtype=\"sensorML/1.0.1\"&procedure=";
     
@@ -62,8 +61,9 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
         platform.setName(this.procedure);
         this.formatSmlIdentification();
         this.formatSmlClassification();
-        this.formatSmlNetworkProcedures();
         this.formatSmlValidTime();
+        this.formatSmlNetworkProcedures();
+
         this.formatSmlContacts();
         this.formatSmlHistory();
         this.formatSmlDocumentation();
@@ -156,12 +156,13 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
         platform.addSmlClassifier("platformType", VocabDefinitions.GetIoosDefinition("platformType"), "platform", this.checkForRequiredValue("platform_type"));
         platform.addSmlClassifier("operatorSector", VocabDefinitions.GetIoosDefinition("operatorSector"), "sector", this.checkForRequiredValue("operator_sector"));
         platform.addSmlClassifier("publisher", VocabDefinitions.GetIoosDefinition("publisher"), "organization", this.checkForRequiredValue("publisher"));
-        platform.addSmlClassifier("parentNetwork", "http://mmisw.org/ont/ioos/definition/parentNetwork", "organization", (String)this.getGlobalAttribute("institution", "UNKNOWN"));
+        platform.addSmlClassifier("parentNetwork", "http://mmisw.org/ont/ioos/definition/parentNetwork", 
+                "organization", (String)this.getGlobalAttribute(INSTITUTION, ATTRIBUTE_MISSING ));
         
        
         String value = (String)this.getGlobalAttribute("sponsor");
         if (value == null) {
-            value = MISSING_VALUE;
+            value = ATTRIBUTE_MISSING;
         }
         platform.addSmlClassifier("sponsor", VocabDefinitions.GetIoosDefinition("sponsor"), "organization", value);
         
