@@ -128,6 +128,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
                         for (String s : stationNames) {
                             allowed.addContent(new Element("Value", owsns).setText(this.handler.getUrnName(s)));
                         }
+                        allowed.addContent(new Element("Value", owsns).setText(this.handler.getUrnNetworkAll()));
                         p.addContent(allowed);
                     }
                 }
@@ -170,6 +171,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
                         for (String s : stationNames) {
                             allowed.addContent(new Element("Value", owsns).setText(this.handler.getUrnName(s)));
                         }
+                        allowed.addContent(new Element("Value", owsns).setText(this.handler.getUrnNetworkAll()));
                         p.addContent(allowed);
                     }
                 }
