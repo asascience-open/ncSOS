@@ -3,7 +3,7 @@ package com.asascience.ncsos;
 import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.service.Parser;
 import com.asascience.ncsos.util.XMLDomUtils;
-import org.apache.log4j.BasicConfigurator;
+//import org.apache.log4j.BasicConfigurator;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -34,9 +34,6 @@ public class NcSOSTest {
     private static Namespace OWS_NS = Namespace.getNamespace("ows","http://www.opengis.net/ows/1.1");
 
     public static void setUpClass() throws Exception {
-
-        BasicConfigurator.resetConfiguration();
-        BasicConfigurator.configure();
 
         try {
             File configFile = new File("resources/tests_config.xml");

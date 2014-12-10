@@ -2,8 +2,10 @@ package com.asascience.ncsos.cdmclasses;
 
 import com.asascience.ncsos.go.ObservationOffering;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
+
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
+
 import ucar.nc2.ft.*;
 import ucar.nc2.units.DateFormatter;
 import ucar.unidata.geoloc.Station;
@@ -11,6 +13,7 @@ import ucar.unidata.geoloc.Station;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -61,7 +64,8 @@ public class Trajectory extends baseCDMClass implements iStationData {
     }
 
     private void addDataLine(List<String> valueList, DateFormatter dateFormatter, PointFeature trajFeature, StringBuilder builder) {
-        valueList.add("time=" + dateFormatter.toDateTimeStringISO(getDateForTime(trajFeature.getObservationTime(), trajFeature.getTimeUnit())));
+        valueList.add("time=" + dateFormatter.toDateTimeStringISO(
+        		new Date(trajFeature.getObservationTimeAsCalendarDate().getMillis())));
 
         try {
             for (int i = 0; i < variableNames.length; i++) {
@@ -343,7 +347,7 @@ public class Trajectory extends baseCDMClass implements iStationData {
                 PointFeature trajFeature = trajFeatureIterator.next();
                 valueList.clear();
 
-                trajTime = new DateTime(getDateForTime(trajFeature.getObservationTime(), trajFeature.getTimeUnit()), chrono);
+                trajTime = new DateTime(new Date(trajFeature.getObservationTimeAsCalendarDate().getMillis()));
 
                 if (trajTime.isEqual(dtStart)) {
                     addDataLine(valueList, dateFormatter, trajFeature, builder);
@@ -361,7 +365,7 @@ public class Trajectory extends baseCDMClass implements iStationData {
             while (trajFeatureIterator.hasNext()) {
                 PointFeature trajFeature = trajFeatureIterator.next();
                 valueList.clear();
-                trajTime = new DateTime(getDateForTime(trajFeature.getObservationTime(), trajFeature.getTimeUnit()), chrono);
+                trajTime = new DateTime(new Date(trajFeature.getObservationTimeAsCalendarDate().getMillis()));
 
                 if (trajTime.isEqual(dtStart)) {
                     addDataLine(valueList, dateFormatter, trajFeature, builder);

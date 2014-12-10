@@ -201,7 +201,7 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
                 PointFeature pointFeature = it.next();
                 valueList.clear();
                 valueList.add(TIME_STR + dateFormatter.toDateTimeStringISO(
-                		getDateForTime(pointFeature.getObservationTime(), pointFeature.getTimeUnit())));
+                		new Date(pointFeature.getObservationTimeAsCalendarDate().getMillis())));
                 valueList.add(STATION_STR + stNum);
                 Object heightOb = null;
                 if(this.heightAxis != null)

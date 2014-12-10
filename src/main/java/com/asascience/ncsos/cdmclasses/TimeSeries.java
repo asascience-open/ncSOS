@@ -82,7 +82,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
             } //if single event time        
             else {
                 if (eventTimes.get(0).contentEquals(dateFormatter.toDateTimeStringISO(
-                		getDateForTime(pointFeature.getObservationTime(), pointFeature.getTimeUnit())))) {
+                		new Date(pointFeature.getObservationTimeAsCalendarDate().getMillis())))){
                     createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, stNum);
                 }
             }
@@ -98,7 +98,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         //count++;
         valueList.clear();
         
-        Date valDate = getDateForTime(pointFeature.getObservationTime(), pointFeature.getTimeUnit());
+        Date valDate = new Date(pointFeature.getObservationTimeAsCalendarDate().getMillis());
         valueList.add("time=" + dateFormatter.toDateTimeStringISO(valDate));
         valueList.add(STATION_STR + stNum);
         try {
@@ -149,7 +149,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
 
         DateTime dtStart = new DateTime(df.getISODate(eventTimes.get(0)), chrono);
         DateTime dtEnd = new DateTime(df.getISODate(eventTimes.get(1)), chrono);
-        DateTime tsDt = new DateTime(getDateForTime(pointFeature.getObservationTime(), pointFeature.getTimeUnit()), chrono);
+        DateTime tsDt = new DateTime(new Date(pointFeature.getObservationTimeAsCalendarDate().getMillis()));
      
         //find out if current time(searchtime) is one or after startTime
         //same as start
