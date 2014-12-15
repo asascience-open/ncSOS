@@ -3,7 +3,6 @@ package com.asascience.ncsos;
 import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.service.Parser;
 import com.asascience.ncsos.util.XMLDomUtils;
-//import org.apache.log4j.BasicConfigurator;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -54,6 +53,7 @@ public class NcSOSTest {
 
     protected static Element makeTestRequest(String dataset_path, String output, HashMap<String,String> kvp) {
         try {
+        	System.out.println(dataset_path + " "+kvp);
             NetcdfDataset dataset = NetcdfDataset.openDataset(dataset_path);
             Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
@@ -72,6 +72,7 @@ public class NcSOSTest {
             System.out.println(ex.getMessage());
             return null;
         }
+
     }
 
     protected static String getExceptionText(Element e) {

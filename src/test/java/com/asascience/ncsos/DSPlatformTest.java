@@ -79,6 +79,7 @@ public class DSPlatformTest extends NcSOSTest {
         File     file    = new File("resources" + systemSeparator + "datasets" + systemSeparator + this.currentFile.getAttributeValue("path"));
         String   feature = this.currentFile.getAttributeValue("feature");
         String[] split   = this.procedure.split(":");
+
         String   output  = new File(outputDir + systemSeparator + file.getName() + "_" + split[split.length - 1] + ".xml").getAbsolutePath();
         System.out.println("------ " + file + " (" + feature + ") ------");
         System.out.println("------ " + this.procedure + " ------");

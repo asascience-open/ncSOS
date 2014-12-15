@@ -140,6 +140,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
 
         } catch (Exception ex) {
             _log.error(ex.toString());
+         ex.printStackTrace();
             this.setupException("Unable to correctly create response for request: " + ex.toString()+
                     "\n Error when creating the following response block: " + processingStr);
         }

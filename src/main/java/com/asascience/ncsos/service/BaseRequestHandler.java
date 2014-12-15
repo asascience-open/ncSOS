@@ -504,16 +504,20 @@ public abstract class BaseRequestHandler {
      * @return the units string or "none" if the variable could not be found
      */
     protected String getUnitsOfVariable(String varName) {
-        Variable var;
+        String units = "none";
         if (featureDataset != null) {
-            var = (Variable) featureDataset.getDataVariable(varName);
+           VariableSimpleIF ivar = featureDataset.getDataVariable(varName);
+           if(ivar != null){
+        	   units = ivar.getUnitsString();
+           }
         } else {
-            var = netCDFDataset.findVariable(varName);
+            Variable var = netCDFDataset.findVariable(varName);
+            if (var != null) {
+            	units = var.getUnitsString();
+            }
         }
-        if (var != null) {
-            return var.getUnitsString();
-        }
-        return "none";
+       
+        return units;
     }
     
     protected Attribute[] getAttributesOfVariable(String varName) {

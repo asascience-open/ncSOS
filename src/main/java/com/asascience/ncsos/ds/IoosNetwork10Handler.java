@@ -309,9 +309,11 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
             network.addIdentifierToComponent(station.getValue(), "longName", GetIoosDef("longName"), 
                     this.checkForRequiredValue(identVar, "long_name"));
             // wmoid, if it exists
-            Attribute identAtt = identVar.findAttribute("wmo_code");
-            if (identAtt != null) {
-                network.addIdentifierToComponent(station.getValue(), "wmoID", VocabDefinitions.GetIoosDefinition("wmoID"), identAtt.getStringValue());
+            if(identVar != null){
+            	Attribute identAtt = identVar.findAttribute("wmo_code");
+            	if (identAtt != null) {
+            		network.addIdentifierToComponent(station.getValue(), "wmoID", VocabDefinitions.GetIoosDefinition("wmoID"), identAtt.getStringValue());
+            	}
             }
             // valid time
             network.setComponentValidTime(station.getValue(), this.stationData.getTimeBegin(station.getKey()), this.stationData.getTimeEnd(station.getKey()));
