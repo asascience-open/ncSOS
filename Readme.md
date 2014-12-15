@@ -20,11 +20,14 @@ _You will need a working THREDDS installation of a least version **4.3.16** to r
 
 | ncSOS version | THREDDS version        | Catalog URL                                     |
 | ------------- | ---------------------- | ----------------------------------------------- |
-| [v1.0](https://github.com/asascience-open/ncSOS/releases/tag/v1.0)           | 4.3.20 (20131125.1409) | http://sos.maracoos.org/stable/catalog.html     |
+| [v1.1](https://github.com/asascience-open/ncSOS/releases/tag/v1.1)           | 4.3.20 (20131125.1409) | http://sos.maracoos.org/stable/catalog.html     |
 | [master](https://github.com/asascience-open/ncSOS/tree/master)        | 4.3.20 (20131125.1409) | http://sos.maracoos.org/pre/catalog.html        |
-| [tds_4.4.1](https://github.com/asascience-open/ncSOS/tree/tds_4.4.1)     | 4.4.1 (20131220.1427)  | http://sos.maracoos.org/dev/catalog.html        |
+| [tds-4.5](https://github.com/asascience-open/ncSOS/tree/tds-4.5)     | 4.5.3 (20141008.1804) | http://sos.maracoos.org/dev/catalog.html        |
 
 ## ChangeLog
+
+### v1.1
+* Addressed defects identified in the November 2014 test report (#156).
 
 ### v1.0
 * Added support for GetObservation requests on TimeSeriesProfile datasets.
