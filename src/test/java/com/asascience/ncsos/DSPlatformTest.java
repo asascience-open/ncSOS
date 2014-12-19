@@ -75,15 +75,15 @@ public class DSPlatformTest extends NcSOSTest {
     public void testAll() {
         HashMap<String,String> pairs = (HashMap<String,String>) kvp.clone();
         pairs.put("procedure", this.procedure);
-
-        File     file    = new File("resources" + systemSeparator + "datasets" + systemSeparator + this.currentFile.getAttributeValue("path"));
+        String relPath = "resources" + systemSeparator + "datasets" + systemSeparator + this.currentFile.getAttributeValue("path");
+        File     file    = new File(relPath);
         String   feature = this.currentFile.getAttributeValue("feature");
         String[] split   = this.procedure.split(":");
 
         String   output  = new File(outputDir + systemSeparator + file.getName() + "_" + split[split.length - 1] + ".xml").getAbsolutePath();
         System.out.println("------ " + file + " (" + feature + ") ------");
-        System.out.println("------ " + this.procedure + " ------");
-        Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+
+        Element result = NcSOSTest.makeTestRequest(relPath, output, pairs);
         if (currentFile.getAttributeValue("feature").equalsIgnoreCase("point")) {
             // NcSOS does not support POINT features at this time!
             Assert.assertTrue(NcSOSTest.isException(result));
