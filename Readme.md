@@ -20,9 +20,9 @@ _You will need a working THREDDS installation of a least version **4.3.16** to r
 
 | ncSOS version/ branch | THREDDS version        | Catalog URL                                     |
 | ------------- | ---------------------- | ----------------------------------------------- |
-| [v1.1](https://github.com/asascience-open/ncSOS/releases/tag/v1.1) (release)          | 4.3.20 (20131125.1409) | http://sos.maracoos.org/stable/catalog.html     |
-| [master](https://github.com/asascience-open/ncSOS/tree/master) (branch)        | 4.3.20 (20131125.1409) | http://sos.maracoos.org/pre/catalog.html        |
-| [tds-4.5](https://github.com/asascience-open/ncSOS/tree/tds-4.5) (branch)   | 4.5.3 (20141008.1804) | http://sos.maracoos.org/dev/catalog.html        |
+| [v1.1](https://github.com/asascience-open/ncSOS/releases/tag/v1.1) (release)           | 4.3.20 (20131125.1409) | http://sos.maracoos.org/stable/catalog.html     |
+| [master](https://github.com/asascience-open/ncSOS/tree/master)  (branch)      | 4.3.20 (20131125.1409) | http://sos.maracoos.org/pre/catalog.html        |
+| [tds-4.5](https://github.com/asascience-open/ncSOS/tree/tds-4.5)  (branch)   | 4.5.3 (20141008.1804) | http://sos.maracoos.org/dev/catalog.html        |
 
 ## ChangeLog
 
