@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/asascience-open/ncSOS.png?branch=master)](https://travis-ci.org/asascience-open/ncSOS)
 
-Stable version: **v1.0**
+Stable version: **v1.1**
 
 NcSOS adds an OGC SOS service to datasets in your existing [THREDDS](http://www.unidata.ucar.edu/projects/THREDDS/) server.  It complies with the [IOOS SWE Milestone 1.0](https://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0) templates and requires your datasets be in any of the [CF 1.6 Discrete Sampling Geometries](http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#discrete-sampling-geometries).
 
@@ -18,11 +18,11 @@ _You will need a working THREDDS installation of a least version **4.3.16** to r
 5. *Get source/installers*: https://github.com/asascience-open/ncSOS/releases
 6. *Deployed Servers*:
 
-| ncSOS version | THREDDS version        | Catalog URL                                     |
+| ncSOS version/ branch | THREDDS version        | Catalog URL                                     |
 | ------------- | ---------------------- | ----------------------------------------------- |
-| [v1.1](https://github.com/asascience-open/ncSOS/releases/tag/v1.1)           | 4.3.20 (20131125.1409) | http://sos.maracoos.org/stable/catalog.html     |
-| [master](https://github.com/asascience-open/ncSOS/tree/master)        | 4.3.20 (20131125.1409) | http://sos.maracoos.org/pre/catalog.html        |
-| [tds-4.5](https://github.com/asascience-open/ncSOS/tree/tds-4.5)     | 4.5.3 (20141008.1804) | http://sos.maracoos.org/dev/catalog.html        |
+| [v1.1](https://github.com/asascience-open/ncSOS/releases/tag/v1.1) (release)          | 4.3.20 (20131125.1409) | http://sos.maracoos.org/stable/catalog.html     |
+| [master](https://github.com/asascience-open/ncSOS/tree/master) (branch)        | 4.3.20 (20131125.1409) | http://sos.maracoos.org/pre/catalog.html        |
+| [tds-4.5](https://github.com/asascience-open/ncSOS/tree/tds-4.5) (branch)   | 4.5.3 (20141008.1804) | http://sos.maracoos.org/dev/catalog.html        |
 
 ## ChangeLog
 
