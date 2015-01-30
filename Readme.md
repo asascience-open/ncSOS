@@ -2,13 +2,16 @@
 
 [![Build Status](https://travis-ci.org/asascience-open/ncSOS.png?branch=master)](https://travis-ci.org/asascience-open/ncSOS)
 
-Stable version: **v1.1**
+Stable version: **v1.2** for THREDDS version 4.5
+
+Stable version: **v1.1** for all other THREDDS versions
 
 NcSOS adds an OGC SOS service to datasets in your existing [THREDDS](http://www.unidata.ucar.edu/projects/THREDDS/) server.  It complies with the [IOOS SWE Milestone 1.0](https://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0) templates and requires your datasets be in any of the [CF 1.6 Discrete Sampling Geometries](http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#discrete-sampling-geometries).
 
 NcSOS acts like other THREDDS services (such an OPeNDAP and WMS) where as there are individual service endpoints for each dataset.  It is best to aggregate your files and enable the NcSOS service on top of the aggregation.  i.e. The NcML aggregate of hourly files from an individual station would be a good candidate to serve with NcSOS.  Serving the individual hourly files with NcSOS would not be as beneficial.
 
-_You will need a working THREDDS installation of a least version **4.3.16** to run NcSOS_.
+_You will need a working THREDDS installation of at least version **4.3.16** to run NcSOS v1.1 or ealrier_
+_You will need a working THREDDS installation of at lease version **4.5** to run NcSOS v1.2_
 
 # Quick Links
 1. *Mailing list*: https://groups.google.com/forum/#!forum/ncsos
@@ -22,9 +25,12 @@ _You will need a working THREDDS installation of a least version **4.3.16** to r
 | ------------- | ---------------------- | ----------------------------------------------- |
 | [v1.1](https://github.com/asascience-open/ncSOS/releases/tag/v1.1) (release)           | 4.3.20 (20131125.1409) | http://sos.maracoos.org/stable/catalog.html     |
 | [master](https://github.com/asascience-open/ncSOS/tree/master)  (branch)      | 4.3.20 (20131125.1409) | http://sos.maracoos.org/pre/catalog.html        |
-| [tds-4.5](https://github.com/asascience-open/ncSOS/tree/tds-4.5)  (branch)   | 4.5.3 (20141008.1804) | http://sos.maracoos.org/dev/catalog.html        |
+| [v1.2](https://github.com/asascience-open/ncSOS/releases/tag/v1.2)  (release)   | 4.5.4 (20141008.1804) | http://sos.maracoos.org/dev/catalog.html        |
 
 ## ChangeLog
+
+### v1.2
+* Version that works with version 4.5 of the THREDDS data server. Please note that this version contains all of the same functionality as v1.1 and is not backwards compatible with previous versions of the THREDDS data server.
 
 ### v1.1
 * Addressed defects identified in the November 2014 test report (#156).
