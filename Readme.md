@@ -11,7 +11,7 @@ NcSOS adds an OGC SOS service to datasets in your existing [THREDDS](http://www.
 NcSOS acts like other THREDDS services (such an OPeNDAP and WMS) where as there are individual service endpoints for each dataset.  It is best to aggregate your files and enable the NcSOS service on top of the aggregation.  i.e. The NcML aggregate of hourly files from an individual station would be a good candidate to serve with NcSOS.  Serving the individual hourly files with NcSOS would not be as beneficial.
 
 _You will need a working THREDDS installation of at least version **4.3.16** to run NcSOS v1.1 or ealrier_
-_You will need a working THREDDS installation of at lease version **4.5** to run NcSOS v1.2_
+_You will need a working THREDDS installation of at least version **4.5** to run NcSOS v1.2_
 
 # Quick Links
 1. *Mailing list*: https://groups.google.com/forum/#!forum/ncsos
@@ -30,7 +30,7 @@ _You will need a working THREDDS installation of at lease version **4.5** to run
 ## ChangeLog
 
 ### v1.2
-* Version that works with version 4.5 of the THREDDS data server. Please note that this version contains all of the same functionality as v1.1 and is not backwards compatible with previous versions of the THREDDS data server.
+* Works with version 4.5 of the THREDDS data server. Please note that this version contains all of the same functionality as v1.1 and that it is not backwards compatible with previous versions of the THREDDS data server.
 
 ### v1.1
 * Addressed defects identified in the November 2014 test report (#156).
