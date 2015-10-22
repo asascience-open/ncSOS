@@ -2,16 +2,16 @@
 
 [![Build Status](https://travis-ci.org/asascience-open/ncSOS.png?branch=master)](https://travis-ci.org/asascience-open/ncSOS)
 
-Stable version: **v1.2** for THREDDS version 4.5
+Stable version: **v1.2.1** for THREDDS version 4.5
 
-Stable version: **v1.1** for all other THREDDS versions
+Stable version: **v1.1.1** for all other THREDDS versions
 
 NcSOS adds an OGC SOS service to datasets in your existing [THREDDS](http://www.unidata.ucar.edu/projects/THREDDS/) server.  It complies with the [IOOS SWE Milestone 1.0](https://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0) templates and requires your datasets be in any of the [CF 1.6 Discrete Sampling Geometries](http://cfconventions.org/Data/cf-conventions/cf-conventions-1.6/build/cf-conventions.html#discrete-sampling-geometries).
 
 NcSOS acts like other THREDDS services (such an OPeNDAP and WMS) where as there are individual service endpoints for each dataset.  It is best to aggregate your files and enable the NcSOS service on top of the aggregation.  i.e. The NcML aggregate of hourly files from an individual station would be a good candidate to serve with NcSOS.  Serving the individual hourly files with NcSOS would not be as beneficial.
 
-_You will need a working THREDDS installation of at least version **4.3.16** to run NcSOS v1.1 or ealrier_
-_You will need a working THREDDS installation of at least version **4.5** to run NcSOS v1.2_
+_You will need a working THREDDS installation of at least version **4.3.16** to run NcSOS v1.1.1 or ealrier_
+_You will need a working THREDDS installation of at least version **4.5** to run NcSOS v1.2.1_
 
 # Quick Links
 1. *Mailing list*: https://groups.google.com/forum/#!forum/ncsos
