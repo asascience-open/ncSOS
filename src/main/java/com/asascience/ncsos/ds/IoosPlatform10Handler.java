@@ -6,6 +6,8 @@ import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.outputformatter.ds.IoosPlatform10Formatter;
 import com.asascience.ncsos.util.LogReporter;
 import com.asascience.ncsos.util.VocabDefinitions;
+
+import ucar.ma2.DataType;
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
 import ucar.nc2.VariableSimpleIF;
@@ -93,8 +95,8 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
         try {
             if (this.stationVariable.getDimensions().size() == 1) {
                 Dimension dim = this.stationVariable.getDimension(0);
-                if (this.stationVariable.getEnumTypedef().getBaseType() == ucar.ma2.DataType.CHAR ||
-                        this.stationVariable.getEnumTypedef().getBaseType() == ucar.ma2.DataType.STRING ||
+                DataType type = this.stationVariable.getDataType();
+                if (type == ucar.ma2.DataType.CHAR || type == ucar.ma2.DataType.STRING ||
                         dim.getLength() < 2) {
                     // single station if the dataType is a char or string or the length of the dimension is 1
                     formatIdentificationSingleStation();
