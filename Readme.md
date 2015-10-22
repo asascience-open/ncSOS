@@ -23,11 +23,13 @@ _You will need a working THREDDS installation of at least version **4.5** to run
 
 | ncSOS version/ branch | THREDDS version        | Catalog URL                                     |
 | ------------- | ---------------------- | ----------------------------------------------- |
-| [v1.1](https://github.com/asascience-open/ncSOS/releases/tag/v1.1) (release)           | 4.3.20 (20131125.1409) | http://sos.maracoos.org/stable/catalog.html     |
+| [v1.1.1](https://github.com/asascience-open/ncSOS/releases/tag/v1.1) (release)           | 4.3.20 (20131125.1409) | http://sos.maracoos.org/stable/catalog.html     |
 | [master](https://github.com/asascience-open/ncSOS/tree/master)  (branch)      | 4.3.20 (20131125.1409) | http://sos.maracoos.org/pre/catalog.html        |
-| [v1.2](https://github.com/asascience-open/ncSOS/releases/tag/v1.2)  (release)   | 4.5.4 (20141008.1804) | http://sos.maracoos.org/dev/catalog.html        |
+| [v1.2.1](https://github.com/asascience-open/ncSOS/releases/tag/v1.2)  (release)   | 4.5.4 (20141008.1804) | http://sos.maracoos.org/dev/catalog.html        |
 
 ## ChangeLog
+### v1.2.1 / v1.1.1
+* Fixes an issue with attributes not being set correctly in the Describe Sensor response - see issue #171
 
 ### v1.2
 * Works with version 4.5 of the THREDDS data server. Please note that this version contains all of the same functionality as v1.1 and that it is not backwards compatible with previous versions of the THREDDS data server.
