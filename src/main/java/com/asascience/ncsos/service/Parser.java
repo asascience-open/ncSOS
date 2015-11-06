@@ -271,7 +271,7 @@ public class Parser {
     private HashMap<String, Object> parseQuery(String query) {
         // @TODO: this needs to be rewritten using apache commons URLEncodedUtils sadly not available until 4.0
 
-        HashMap<String, Object> queryMap = new HashMap<String, Object>();
+        LowerCaseStringMap queryMap = new LowerCaseStringMap();
         
         String[] queryArguments = query.split("&");
         for (String arg : queryArguments) {
