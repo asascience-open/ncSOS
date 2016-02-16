@@ -112,10 +112,12 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
         String org = this.checkForRequiredValue("creator_name");
         String url = (String)this.getGlobalAttribute("creator_url", null);
         HashMap<String, String> address = createAddressForContact("creator");
-        contactInfo.put("address", address);
         HashMap<String, String> phone = new HashMap<String, String>();
         phone.put("voice", (String)this.getGlobalAttribute("creator_phone", null));
         contactInfo.put("phone", phone);
+
+        contactInfo.put("address", address);
+     
         network.addContactNode(role, org, contactInfo, url);
 
         contactInfo.clear();
@@ -125,9 +127,10 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
         org = this.checkForRequiredValue("publisher_name");
         url = (String)this.getGlobalAttribute("publisher_url", null);
         address = createAddressForContact("publisher");
-        contactInfo.put("address", address);
         phone.put("voice", (String)this.getGlobalAttribute("publisher_phone", null));
+
         contactInfo.put("phone", phone);
+        contactInfo.put("address", address);
         network.addContactNode(role, org, contactInfo, url);
     }
     
