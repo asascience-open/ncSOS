@@ -40,7 +40,7 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
     private final static String IOOSURL = "http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0";
     private final static String OBSERVATION_TIME_RANGE = "observationTimeRange";
     public static final String MEMBER = "member";
-    private final static String OBS_TR_DEF = "http://mmisw.org/ont/ioos/definition/observationTimeRange";
+    private final static String OBS_TR_DEF = "http://mmisw.org/ont/ioos/swe_element_type/observationTimeRange";
     protected Namespace GML_NS,SML_NS,XLINK_NS,SWE_NS = null;
 
     public IoosPlatform10Formatter() {
