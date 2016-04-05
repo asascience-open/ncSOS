@@ -388,11 +388,18 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
         }
     }
 
-    public static String parseUnitString(String units){        
-        String unitStr =units.replaceAll("[\\s+]", BLANK);
-        unitStr =unitStr.replaceAll("\\:\\.", BLANK);
-        //keeps
-        unitStr = unitStr.replaceAll("[^A-Za-z0-9-]", BLANK);
+    public static String parseUnitString(String units){   
+    	String unitStr;
+    	try {
+			unitStr = URLEncoder.encode(units, "UTF-8").replaceAll("\\%2D", "-");
+			unitStr = unitStr.replaceAll("\\%2F","/").replaceAll("\\+", "%20");
+			
+		} catch (UnsupportedEncodingException e) {
+	        unitStr =units.replaceAll("[\\s+]", BLANK);
+	        unitStr =unitStr.replaceAll("\\:\\.", BLANK);
+	        //keeps
+	        unitStr = unitStr.replaceAll("[^A-Za-z0-9-]", BLANK);
+		}
         return unitStr;
     }
     
