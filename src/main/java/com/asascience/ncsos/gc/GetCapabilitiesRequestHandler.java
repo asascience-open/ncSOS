@@ -4,8 +4,10 @@ import com.asascience.ncsos.outputformatter.ErrorFormatter;
 import com.asascience.ncsos.outputformatter.gc.GetCapsFormatter;
 import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
+
 import ucar.nc2.constants.FeatureType;
 import ucar.nc2.dataset.NetcdfDataset;
+import ucar.nc2.dt.GridDataset;
 import ucar.nc2.ft.*;
 import ucar.nc2.time.CalendarDate;
 import ucar.nc2.time.CalendarDateRange;
@@ -254,9 +256,11 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
                     }
                     break;
                 case GRID:
-                    start = getGridDataset().getCalendarDateStart();
-                    end = getGridDataset().getCalendarDateEnd();
+                	GridDataset gridData = getGridDataset();
+                    start = gridData.getCalendarDateStart();
+                    end = gridData.getCalendarDateEnd();
                     this.stationDateRange.put(0, CalendarDateRange.of(start, end));
+                    this.stationBBox.put(0, gridData.getBoundingBox());
                     break;
                 case STATION_PROFILE:
                     try {
