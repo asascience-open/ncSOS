@@ -62,11 +62,13 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         // Keywords
         Element keywords = si.getChild("Keywords", owsns);
         try {
+   
             for (String keyword : ((String)attrs.get("keywords")).split(",")) {
                 keywords.addContent(new Element("Keyword", owsns).setText(keyword));
             }
         } catch(Exception e) {
             // No keywords
+        	 keywords.addContent(new Element("Keyword", owsns));
         }
         // Fees
         si.getChild("Fees", owsns).setText((String)attrs.get("fees"));
