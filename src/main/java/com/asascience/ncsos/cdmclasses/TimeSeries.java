@@ -178,14 +178,28 @@ public class TimeSeries extends baseCDMClass implements iStationData {
     public void setData(Object featureCollection) throws IOException {
         try {
             this.tsData = (StationTimeSeriesFeatureCollection) featureCollection;
-
+            String genericName = this.tsData.getCollectionFeatureType().name()+"-";
             // Try to get stations by name, both with URN procedure and without
             tsStationList = tsData.getStations(reqStationNames);
             for (String s : reqStationNames) {
                 String[] urns = s.split(":");
-                Station st = tsData.getStation(urns[urns.length - 1]);
+                String statUrn = urns[urns.length - 1];
+                Station st = tsData.getStation(statUrn);
                 if (st != null) {
                     tsStationList.add(st);
+                }
+                else if (statUrn.startsWith(genericName)){
+                	// check to see if generic name (ie: STATION-0)
+                	try {
+                		Integer sIndex = Integer.valueOf(statUrn.substring(genericName.length()));
+                		st = tsData.getStations().get(sIndex);
+                		if(st != null){
+                			tsStationList.add(st);
+                		}
+                	}
+                	catch(Exception n){
+                		n.printStackTrace();
+                	}
                 }
             }
 
@@ -246,7 +260,12 @@ public class TimeSeries extends baseCDMClass implements iStationData {
     @Override
     public String getStationName(int idNum) {
         if (tsData != null && getNumberOfStations() > idNum) {
-            return (tsStationList.get(idNum).getName());
+        	String statName = tsStationList.get(idNum).getName();
+        	if (statName.isEmpty()){
+        		// return generic
+        		statName = this.tsData.getCollectionFeatureType().name()+"-"+idNum;
+        	}
+            return statName;
         } else {
             return Invalid_Station;
         }

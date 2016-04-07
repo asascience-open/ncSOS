@@ -252,6 +252,7 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
     @Override
     public void setData(Object featureProfileCollection) throws IOException {
         this.tsProfileData = (StationProfileFeatureCollection) featureProfileCollection;
+        String genericName = this.tsProfileData.getCollectionFeatureType().name()+"-";
 
         tsStationList = tsProfileData.getStations(reqStationNames);
 
@@ -259,9 +260,24 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
         tsStationList = tsProfileData.getStations(reqStationNames);
         for (String s : reqStationNames) {
             String[] urns = s.split(":");
+            String statUrn = urns[urns.length - 1];
+
             Station st = tsProfileData.getStation(urns[urns.length - 1]);
             if (st != null) {
                 tsStationList.add(st);
+            }
+            else if (statUrn.startsWith(genericName)){
+            	// check to see if generic name (ie: STATION-0)
+            	try {
+            		Integer sIndex = Integer.valueOf(statUrn.substring(genericName.length()));
+            		st = tsProfileData.getStations().get(sIndex);
+            		if(st != null){
+            			tsStationList.add(st);
+            		}
+            	}
+            	catch(Exception n){
+            		n.printStackTrace();
+            	}
             }
         }
 
@@ -370,9 +386,15 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
 
     @Override
     public String getStationName(int idNum) {
-        if (tsProfileData != null) {
-            return (tsStationList.get(idNum).getName());
-        } else {
+        if (tsProfileData != null && getNumberOfStations() > idNum) {
+        	String statName = tsStationList.get(idNum).getName();
+        	if (statName.isEmpty()){
+        		// return generic
+        		statName = this.tsProfileData.getCollectionFeatureType().name()+"-"+idNum;
+        	}
+            return statName;
+        } 
+        else {
             return Invalid_Station;
         }
     }

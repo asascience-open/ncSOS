@@ -311,7 +311,8 @@ public abstract class BaseRequestHandler {
     private String getPlatformName(FeatureCollection fc, int index) {
         // If NCJ can't pull out the FC name, we need to populate it with something
         // like TRAJECTORY-0, STATION-0, PROFILE-0
-        if (fc.getName() != null && !fc.getName().equalsIgnoreCase("unknown")) {
+    	String fcName = fc.getName();
+        if (fcName != null && !fcName.equalsIgnoreCase("unknown") && !fcName.isEmpty()) {
             return fc.getName();
         } else {
             return fc.getCollectionFeatureType().name() + "-" + index;
