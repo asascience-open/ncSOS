@@ -72,7 +72,8 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
         this.formatSmlDocumentation();
         this.formatGmlBoundedBy();
         if (this.getGridDataset() != null) {
-            this.formatSmlLocationBbox();
+        	// leave location blank for gridded data sets to avoid schema violation
+            // this.formatSmlLocationBbox();
         } else if (locationLineFlag) {
             this.formatSmlLocationLine();
         } else {
