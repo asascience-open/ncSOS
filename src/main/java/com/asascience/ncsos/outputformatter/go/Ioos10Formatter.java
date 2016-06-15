@@ -594,9 +594,10 @@ public class Ioos10Formatter extends BaseOutputFormatter {
             Element quantity = new Element("Quantity", this.SWE2_NS).setAttribute(DEFINITION, 
             		handler.getHrefForParameter(sensorDef));
             quantity.addContent(new Element("uom", this.SWE2_NS).setAttribute("code", sensorUnits));
-
+            
             // if the variable has a 'fill value' then add it as a nil value
             try {
+            	
                 for (Attribute attr : sensorVar.getAttributes()) {
                     if (attr.getShortName().equalsIgnoreCase(GetObservationRequestHandler.FILL_VALUE_NAME)) {
                         Element nilValues = new Element("nilValues", this.SWE2_NS);

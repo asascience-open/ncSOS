@@ -305,7 +305,10 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
             }
             // outputs
             for (VariableSimpleIF var : this.getDataVariables()) {
-                String name = var.getShortName();
+                String name = this.checkForRequiredValue(var, STANDARD_NAME);
+                if(name.equals(ATTRIBUTE_MISSING)){
+                	name = var.getShortName();
+                }
                 String title = this.procedure.substring(0,this.procedure.lastIndexOf(":")+1) + station.getValue() + ":" + name.replaceAll("\\s+", "_");
                 String def = this.checkForRequiredValue(this.checkForRequiredValue(var, STANDARD_NAME));
               
@@ -363,7 +366,11 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
             }
             // outputs
             for (VariableSimpleIF var : this.getDataVariables()) {
-                String name = var.getShortName();
+               
+                String name = this.checkForRequiredValue(var, STANDARD_NAME);
+                if(name.equals(ATTRIBUTE_MISSING)){
+                	name = var.getShortName();
+                }
                 String title = this.procedure.substring(0,this.procedure.lastIndexOf(":")+1) + 
                 		station.getValue() + ":" + name.replaceAll("\\s+", "_");
                 String def = getHrefForParameter(this.checkForRequiredValue(var, STANDARD_NAME));  
