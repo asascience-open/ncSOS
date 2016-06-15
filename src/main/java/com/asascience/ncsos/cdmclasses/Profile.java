@@ -6,8 +6,10 @@ package com.asascience.ncsos.cdmclasses;
 
 import com.asascience.ncsos.go.ObservationOffering;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
+
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
+
 import ucar.nc2.ft.PointFeature;
 import ucar.nc2.ft.PointFeatureIterator;
 import ucar.nc2.ft.ProfileFeature;
@@ -77,18 +79,21 @@ public class Profile extends baseCDMClass implements iStationData {
         DateTime dtStartt = null;
         DateTime dtEndt = null;
         String profileID = null;
-        
+        String genericName = this.profileData.getCollectionFeatureType().name()+"-";
+        int profIndex = 0;
         while (profileData.hasNext()) {
             ProfileFeature pFeature = profileData.next();
             DatasetHandlerAdapter.calcBounds(pFeature);
 
             profileID = pFeature.getName();
-            
+            if(profileID == null || profileID.isEmpty()){
+            	profileID = genericName + profIndex;
+            }
             DateTime eventStart = (eventTimes.size() >= 1) ? new DateTime(df.getISODate(eventTimes.get(0)), chrono) : null;
             DateTime eventEnd = (eventTimes.size() > 1) ? new DateTime(df.getISODate(eventTimes.get(1)), chrono) : null;
             
             //scan through the stationname for a match of id
-            if (profileID != null && reqStationNames.contains(profileID)) {
+            if (profileID != null) {
                 // check to make sure the profile falls into the event time
                 if (eventStart != null) {
                     // does it lie after or at start?
@@ -101,7 +106,7 @@ public class Profile extends baseCDMClass implements iStationData {
                     }
                 }
                 // get the index of the station we are adding
-                Integer stNum = 0;
+                Integer stNum = -1;
                 for (int sti=0; sti < reqStationNames.size(); sti++) {
                     String[] urns = reqStationNames.get(sti).split(":");
                     String  nourn = urns[urns.length - 1];
@@ -109,6 +114,8 @@ public class Profile extends baseCDMClass implements iStationData {
                         stNum = sti;
                     }
                 }
+                if(stNum < 0) continue;
+                
                 profileList.put(stNum, pFeature);
 
                 // check local altitude
@@ -166,9 +173,8 @@ public class Profile extends baseCDMClass implements iStationData {
                         lowerLon = pFeature.getLatLon().getLongitude();
                     }
                 }
-            } else {
-                // null profile id... shouldn't happen (defaults to "0")
-            }
+            } 
+            profIndex++;
         }
         setStartDate(df.toDateTimeStringISO(dtStart.toDate()));
         setEndDate(df.toDateTimeStringISO(dtEnd.toDate()));
@@ -206,6 +212,7 @@ public class Profile extends baseCDMClass implements iStationData {
 
     @Override
     public String getStationName(int idNum) {
+
         if (profileData != null) {
             return "PROFILE_" + (reqStationNames.get(idNum));
         } else {

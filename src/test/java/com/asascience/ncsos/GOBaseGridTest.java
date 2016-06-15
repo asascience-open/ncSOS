@@ -85,7 +85,10 @@ public class GOBaseGridTest extends NcSOSTest {
 
             for (Element s : (List<Element>) e.getChildren("sensor")) {
 
-                String standard = VocabDefinitions.GetDefinitionForParameter(s.getAttributeValue("standard"));
+                String standard = VocabDefinitions.GetDefinitionForParameter(
+                		s.getAttributeValue("standard"),
+                		"http://mmisw.org/ont/cf/parameter/",
+                		true);
 
                 for (Element v : (List<Element>) s.getChildren("values")) {
 

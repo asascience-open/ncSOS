@@ -4,7 +4,7 @@
 
   <groupId>com.asascience</groupId>
   <artifactId>ncsos</artifactId>
-  <version>1.2.2</version>
+  <version>1.2.3</version>
   <packaging>jar</packaging>
 
   <name>ncsos</name>
@@ -114,7 +114,7 @@
         </exclusion>
       </exclusions> 
     </dependency>
-    <dependency>
+   <dependency>
       <groupId>json-taglib</groupId>
       <artifactId>json-taglib</artifactId>
       <scope>runtime</scope>
@@ -198,7 +198,7 @@
                 <zip destfile="target/ncSOS-${project.version}.zip" basedir="target/" includes="*xml *.txt *.jar" />
                 <copy file="target/ncSOS-${project.version}.zip" todir="jar/" />
                 <copy file="target/ncSOS-${project.version}.zip" tofile="jar/ncSOS.zip" />
-                <copy file="target/ncSOS-${project.version}.jar" tofile="C:\tomcat\webapps\thredds\WEB-INF\lib\ncSOS-${project.version}.jar"/>
+                <copy file="target/ncSOS-${project.version}.jar" tofile="/Users/cheryl.morse/apache-tomcat-8.0.21/webapps/thredds/WEB-INF/lib/ncSOS-${project.version}.jar"/>
                 <!-- Put a path to Tomcat directory here to deploy on build -->
                 <!--<property name="tomcat.path" value="/srv/tomcat/apache-tomcat-7.0.47" />-->
                 <property name="tomcat.path" value="" />

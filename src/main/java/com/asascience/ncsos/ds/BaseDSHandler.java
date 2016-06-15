@@ -8,6 +8,8 @@ import com.asascience.ncsos.outputformatter.ErrorFormatter;
 import com.asascience.ncsos.outputformatter.ds.IoosNetwork10Formatter;
 import com.asascience.ncsos.outputformatter.ds.IoosPlatform10Formatter;
 import com.asascience.ncsos.service.BaseRequestHandler;
+
+import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.NetcdfDataset;
 
 import java.io.IOException;
@@ -128,9 +130,9 @@ public class BaseDSHandler extends BaseRequestHandler {
                 return true;
         }
         // go through each sensor urn and compare it to procedure
-        for (String sensorName : getSensorNames()) {
+        for (VariableSimpleIF sensorVar : getSensorNames().values()) {
             for (String stationName : stationNames.values()) {
-                if (getSensorUrnName(stationName, sensorName).equalsIgnoreCase(procedure))
+                if (getSensorUrnName(stationName, sensorVar).equalsIgnoreCase(procedure))
                     return true;
             }
         }

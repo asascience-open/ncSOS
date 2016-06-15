@@ -36,6 +36,19 @@ public abstract class BaseRequestHandler {
     public static final String SENSOR_URN_BASE = "urn:ioos:sensor:";
     public static final String NETWORK_URN_BASE = "urn:ioos:network:";
     public static final String DEFAULT_NAMING_AUTHORITY = "ncsos";
+    public static final String STANDARD_NAME_VOCAB ="standard_name_vocabulary";
+    public static final String PLATFORM_VOCAB = "platform_vocabulary";
+    public static final String TYPE = "type";
+    public static final String NETWORK_ALL = "network-all";
+    public static final String NAMING_AUTHORITY= "naming_authority";
+    public static final String DISCRIMINANT = "discriminant";
+    public static final String CELL_METHOD = "cell_methods";
+    public static final String INTERVAL = "interval";
+    public static final String VERTICAL_DATUM = "vertical_datum";
+    public static final String PLATFORM = "platform";
+    public static final String SHORT_NAME = "short_name";
+    public static final String IOOS_CODE = "ioos_code";
+
     private static final NumberFormat FORMAT_DEGREE;
     // list of keywords to filter variables on to remove non-data variables from the list
     private static final String[] NON_DATAVAR_NAMES = { "rowsize", "row_size", PROFILE, "info", "time", "z", "alt", "height", "station_info" };
@@ -51,7 +64,9 @@ public abstract class BaseRequestHandler {
     protected Variable latVariable, lonVariable, timeVariable, depthVariable;
     protected Variable stationVariable;
     private HashMap<Integer, String> stationNames;
-    private List<String> sensorNames;
+    private HashMap<String, String> urnToStationName;
+    private HashMap<String, VariableSimpleIF> sensorNames;
+    private HashMap<String, Variable> platformVariableMap;
     protected boolean isInitialized;
     protected String crsName;
     private boolean crsInitialized;
@@ -105,11 +120,23 @@ public abstract class BaseRequestHandler {
      * @return the 'standard_name' if it exists, otherwise ""
      */
     public String getVariableStandardName(String varName) {
+        return getVariableAttribute(varName, STANDARD_NAME);
+    }
+    
+    
+  
+    
+    /**
+     * Returns the 'standard_name' attribute of a variable, if it exists
+     * @param varName the name of the variable
+     * @return the 'standard_name' if it exists, otherwise ""
+     */
+    public String getVariableAttribute(String varName, String attributeName) {
         String retval = UNKNOWN;
 
         for (Variable var : netCDFDataset.getVariables()) {
             if (varName.equalsIgnoreCase(var.getFullName())) {
-                Attribute attr = var.findAttribute(STANDARD_NAME);
+                Attribute attr = var.findAttribute(attributeName);
                 if (attr != null) {
                     retval = attr.getStringValue();
                 }
@@ -127,10 +154,28 @@ public abstract class BaseRequestHandler {
             hrefUrl = HREF_NO_STANDARD_NAME_URL + variable;
         }
         else {
-            hrefUrl =  VocabDefinitions.GetDefinitionForParameter(sensorDef);
+            hrefUrl =  getHrefForParameter(sensorDef);
         }
         return hrefUrl;
     }
+    
+    
+    public  String getHrefForParameter(String standardName) {
+
+    	  String globalStandVocab = this.getGlobalAttributeStr(STANDARD_NAME_VOCAB);
+    	  Boolean cfConventions = null;
+    	  if(globalStandVocab != null){
+    		  String cfConv = this.getGlobalAttributeStr("Convention");
+    		  if(cfConv != null && cfConv.toUpperCase().contains("CF")){
+    			  cfConventions = true;
+    		  }
+    	  }
+    	  
+    	  return VocabDefinitions.GetDefinitionForParameter(standardName, globalStandVocab, cfConventions);
+
+    }
+    
+    
     
     protected void initializeDataset() throws IOException{
         // get the feature dataset (wraps the dataset in variety of accessor methods)
@@ -144,6 +189,7 @@ public abstract class BaseRequestHandler {
         if (dataFeatureType == null || dataFeatureType == FeatureType.NONE) {
             CDMPointFeatureCollection = DiscreteSamplingGeometryUtil.extractFeatureDatasetCollection(featureDataset);
             dataFeatureType = CDMPointFeatureCollection.getCollectionFeatureType();
+
         }
         // find the global attributes
         parseGlobalAttributes();
@@ -253,16 +299,27 @@ public abstract class BaseRequestHandler {
     private void findAndParseStationVariable() throws IOException {
         // get station var
         // check for station, trajectory, profile and grid station info
+    	Variable cfRole = null;
+    	List<String> platformVars = new ArrayList<String>();
+        this.urnToStationName = new HashMap<String, String>();
+        this.platformVariableMap = new HashMap<String, Variable>();
         for (Variable var : netCDFDataset.getVariables()) {
             // look for cf_role attr
             if (this.stationVariable == null) {
+            	
                 for (Attribute attr : var.getAttributes()) {
+                	if(attr.getFullName().equalsIgnoreCase(PLATFORM)) {
+                		String platName = attr.getStringValue();
+                		if(platName != null){
+                			for (String platVarName : platName.split(",")){
+                				if(!platformVars.contains(platVarName))
+                					platformVars.add(platVarName);
+                			}
+                		}
+                		
+                	}
                     if(attr.getFullName().equalsIgnoreCase(CF_ROLE)) {
-                        this.stationVariable = var;
-                        String attrValue = attr.getStringValue();
-                        // parse name based on role
-                        parsePlatformNames();
-                        break;
+                        cfRole = var;
                     }
                 }
             }
@@ -276,12 +333,55 @@ public abstract class BaseRequestHandler {
             if (this.stationVariable != null)
                 break;
         }
+        boolean addedStat = false;
+        if(!platformVars.isEmpty()){
+        	//
+        	int stationIndex = 0;
         
-        if (this.stationVariable == null && getGridDataset() == null) {
-            // there is no station variable ... add a single station with index 0?
-            parsePlatformNames();
-        } else if (this.stationVariable == null) {
-            parseGridIdsToName();
+        	Map<Integer, String> stationNamesForURNMap = new HashMap<Integer, String>();
+        	parsePlatformNames(stationNamesForURNMap);
+            this.stationNames = new HashMap<Integer, String>();
+        
+        	for (String platformVariableName : platformVars){
+        		Variable var = getVariableByName(platformVariableName);
+        		String station = null;
+        		for(Attribute sname : var.getAttributes()){
+        			if(sname.getFullName().equalsIgnoreCase(SHORT_NAME)){
+        				station = sname.getStringValue();
+        				break;
+        			}
+        		}
+        		
+        		if (station == null)
+        			station = var.getShortName();
+        		stationNames.put(stationIndex, station);
+        	
+				platformVariableMap.put(station, var);
+				addedStat = true;
+		
+				this.urnToStationName.put( this.getUrnName(station), stationNamesForURNMap.get(stationIndex));
+				stationIndex++;
+        		}
+        	}
+        	
+        	
+        
+        if(!addedStat){
+            this.stationNames = new HashMap<Integer, String>();
+
+        	if(cfRole != null){
+        		this.stationVariable = cfRole;
+        		parsePlatformNames(stationNames);
+        		for(String sName : this.stationNames.values()){
+            		this.urnToStationName.put(this.getUrnName(sName), sName);
+        		}
+        	}
+        	else if (this.stationVariable == null && getGridDataset() == null) {
+        		// there is no station variable ... add a single station with index 0?
+        		parsePlatformNames(stationNames);
+        	} else if (this.stationVariable == null) {
+        		parseGridIdsToName();
+        	}
         }
     }
     
@@ -290,7 +390,7 @@ public abstract class BaseRequestHandler {
      */
     private void parseSensorNames() {
         // find all variables who's not a coordinate axis and does not have 'station' in the name
-        this.sensorNames = new ArrayList<String>();
+        this.sensorNames = new HashMap<String, VariableSimpleIF>();
 //        getFeatureDataset().getDataVariables();
         for (Iterator<VariableSimpleIF> it = getFeatureDataset().getDataVariables().iterator(); it.hasNext();) {
             VariableSimpleIF var = it.next();
@@ -298,9 +398,9 @@ public abstract class BaseRequestHandler {
             if (name.equalsIgnoreCase(PROFILE) || name.toLowerCase().contains("info") || name.toLowerCase().contains("time") ||
                 name.toLowerCase().contains("row") || name.equalsIgnoreCase("z") || name.equalsIgnoreCase("alt") ||
                 name.equalsIgnoreCase("height"))
-                name.toLowerCase(); // no-op
+            	continue;
             else
-                this.sensorNames.add(name);
+                this.sensorNames.put(name, var);
         }
         if (this.sensorNames.size() < 1) {
             System.err.println("Do not have any sensor names!");
@@ -326,19 +426,21 @@ public abstract class BaseRequestHandler {
      * @return Next station index
      * @throws IOException 
      */
-    private int parseNestedCollection(NestedPointFeatureCollection npfc, int stationIndex) throws IOException { 
+    private int parseNestedCollection(NestedPointFeatureCollection npfc, int stationIndex,
+    		Map<Integer,String> stationMap) throws IOException { 
         if (npfc.isMultipleNested()) {
             NestedPointFeatureCollectionIterator npfci = npfc.getNestedPointFeatureCollectionIterator(-1);
             while (npfci.hasNext()) {
                 NestedPointFeatureCollection n = npfci.next();
-                stationNames.put(stationIndex, this.getPlatformName(n, stationIndex));
+                
+                stationMap.put(stationIndex, this.getPlatformName(n, stationIndex));
                 stationIndex += 1;
             }
         } else {
             PointFeatureCollectionIterator pfci = npfc.getPointFeatureCollectionIterator(-1);
             while (pfci.hasNext()) {
                 PointFeatureCollection n = pfci.next();
-                stationNames.put(stationIndex, this.getPlatformName(n, stationIndex));
+                stationMap.put(stationIndex, this.getPlatformName(n, stationIndex));
                 stationIndex += 1;
             }
         }
@@ -353,9 +455,10 @@ public abstract class BaseRequestHandler {
      * @return next station index
      * @throws IOException 
      */
-    private int parsePointFeatureCollectionNames(PointFeatureCollection pfc, int stationIndex) throws IOException {
+    private int parsePointFeatureCollectionNames(PointFeatureCollection pfc, 
+    		int stationIndex, Map<Integer,String> stationMap) throws IOException {
         String name = pfc.getName();
-        stationNames.put(stationIndex, name);
+        stationMap.put(stationIndex, name);
         return stationIndex+1;
     }
     
@@ -363,15 +466,14 @@ public abstract class BaseRequestHandler {
      * Go through the point feature collection to get the station names.
      * @throws IOException 
      */
-    private void parsePlatformNames() throws IOException {
-        this.stationNames = new HashMap<Integer, String>();
+    private void parsePlatformNames(Map<Integer,String> stationMap) throws IOException {
         int stationIndex = 0;
         if (CDMPointFeatureCollection instanceof PointFeatureCollection) {
             PointFeatureCollection pfc = (PointFeatureCollection) CDMPointFeatureCollection;
-            parsePointFeatureCollectionNames(pfc, stationIndex);
+            parsePointFeatureCollectionNames(pfc, stationIndex,stationMap);
         } else if (CDMPointFeatureCollection instanceof NestedPointFeatureCollection) {
             NestedPointFeatureCollection npfc = (NestedPointFeatureCollection) CDMPointFeatureCollection;
-            parseNestedCollection(npfc, stationIndex);
+            parseNestedCollection(npfc, stationIndex,stationMap);
         }
     }
     
@@ -451,28 +553,36 @@ public abstract class BaseRequestHandler {
         return this.stationNames;
     }
     
+    protected HashMap<String, Variable> getPlatformMap(){
+    	return this.platformVariableMap;
+    }
     /**
      * Return the list of sensor names
      * @return string list of sensor names
      */
-    protected List<String> getSensorNames() {
+    protected HashMap<String, VariableSimpleIF> getSensorNames() {
         return this.sensorNames;
     }
 
+    public VariableSimpleIF getSensorVariable(String sensorName) {
+        return this.sensorNames.get(sensorName);
+    }
+
+    
     /**
      * Return the list of sensor names
      * @return string list of sensor names
      */
     protected List<String> getSensorUrns(String stationName) {
         List<String> urnNames = new ArrayList<String>(this.sensorNames.size());
-        for (String s : this.sensorNames) {
-            urnNames.add(this.getSensorUrnName(stationName, s));
+        for (VariableSimpleIF sensorVar : this.sensorNames.values()) {
+            urnNames.add(this.getSensorUrnName(stationName, sensorVar));
         }
         return urnNames;
 
     }
     
- 
+    
     
     /**
      * 
@@ -521,7 +631,11 @@ public abstract class BaseRequestHandler {
         return units;
     }
     
-    protected Attribute[] getAttributesOfVariable(String varName) {
+    public HashMap<String, String> getUrnToStationName() {
+		return urnToStationName;
+	}
+
+	protected Attribute[] getAttributesOfVariable(String varName) {
         Variable var;
         if (featureDataset != null) {
             var = (Variable) featureDataset.getDataVariable(varName);
@@ -608,18 +722,36 @@ public abstract class BaseRequestHandler {
      * @return
      */
     public String getUrnName(String stationName) {
+    	// mapping from station to platform.
+    	Map<String,String> urnMap = getUrnToStationName();
+    	for(String cName : urnMap.keySet()){
+    		if(urnMap.get(cName).equals(stationName)){
+    			stationName = cName;
+    		}
+    	}
+    	
         String[] feature_name = stationName.split(":");
+        if(this.platformVariableMap != null && this.platformVariableMap.containsKey(stationName) ){
+        	Variable platformVar = this.platformVariableMap.get(stationName);
+        	if(platformVar != null){
+        		for(Attribute att : platformVar.getAttributes()){
+        			if(att.getFullName().equalsIgnoreCase(IOOS_CODE)){
+        				return att.getStringValue();
+        			}
+        		}
+        	}
+        }
         if (feature_name.length > 1 && feature_name[0].equalsIgnoreCase("urn")) {
             // We already have a URN, so just return it.
             return stationName;
         } else {
-            return STATION_URN_BASE + this.global_attributes.get("naming_authority") + ":" + stationName;
+            return STATION_URN_BASE + this.global_attributes.get(NAMING_AUTHORITY) + ":" + stationName;
         }
     }
     
     public String getUrnNetworkAll() {
         // returns the network-all urn of the authority
-        return NETWORK_URN_BASE + this.global_attributes.get("naming_authority") + ":all";
+        return NETWORK_URN_BASE + this.global_attributes.get(NAMING_AUTHORITY) + ":all";
     }
     
     /**
@@ -628,13 +760,46 @@ public abstract class BaseRequestHandler {
      * @param sensorName name of the sensor
      * @return urn of the station/sensor combo
      */
-    public String getSensorUrnName(String stationName, String sensorName) {
+    public String getSensorUrnName(String stationName, VariableSimpleIF sensorVar) {
+    	// mapping from station to platform.
+    	Map<String,String> urnMap = getUrnToStationName();
+    	for(String cName : urnMap.keySet()){
+    		if(urnMap.get(cName).equals(stationName)){
+    			stationName = cName;
+    		}
+    	}
+    	
         String[] feature_name = stationName.split(":");
-        if (feature_name.length > 1 && feature_name[0].equalsIgnoreCase("urn")) {
+        String authority = (String) this.global_attributes.get(NAMING_AUTHORITY);
+        if (feature_name.length > 2 && feature_name[0].equalsIgnoreCase("urn")) {
             // We have a station URN, so strip out the name
             stationName = feature_name[feature_name.length - 1];
+            authority = feature_name[feature_name.length - 2];
         }
-        return SENSOR_URN_BASE + this.global_attributes.get("naming_authority") + ":" + stationName + ":" + sensorName;
+
+        List<Attribute> sensorAtts= sensorVar.getAttributes();
+        String stadName = sensorVar.getShortName();
+        String discriminant = "";
+        String optionalArgs = "";
+        for(Attribute att : sensorAtts){
+        	String attName = att.getShortName();
+        	String attVal = att.getStringValue();
+        	if(attName.equalsIgnoreCase(STANDARD_NAME)){
+        		stadName = att.getStringValue();
+        	}
+        	else if(attName.equalsIgnoreCase(DISCRIMINANT)){
+        		discriminant = ":" + attVal;
+        	}
+          	else if(attName.equalsIgnoreCase(VERTICAL_DATUM)){
+        		optionalArgs += optionalArgs.equals("") ? "#" : ";";
+        		optionalArgs += VERTICAL_DATUM + "=" + attVal;
+        	}
+        	else if(attName.equalsIgnoreCase(CELL_METHOD)){
+        		optionalArgs += optionalArgs.equals("") ? "#" : ";";
+        		optionalArgs += CELL_METHOD + "=" + attVal;
+        	} 
+        }
+        return SENSOR_URN_BASE + authority + ":" + stationName + ":" + stadName + discriminant + optionalArgs;
     }
 
     /**
@@ -713,6 +878,15 @@ public abstract class BaseRequestHandler {
         } else {
             return null;
         }
+    }
+    
+    public String getGlobalAttributeStr(String key) {
+    	Object ob = getGlobalAttribute(key);
+    	String retVal = null;
+    	if (ob != null){
+    		retVal = String.valueOf(ob);
+    	}
+    	return retVal;
     }
     /**
      * Attempts to find an attribute from a given variable

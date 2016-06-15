@@ -7,9 +7,12 @@ package com.asascience.ncsos.cdmclasses;
 import com.asascience.ncsos.go.ObservationOffering;
 import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
+
 import org.joda.time.Chronology;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
+
+import ucar.nc2.Variable;
 import ucar.nc2.ft.PointFeature;
 import ucar.nc2.ft.PointFeatureIterator;
 import ucar.nc2.ft.StationTimeSeriesFeature;
@@ -24,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -181,6 +185,9 @@ public class TimeSeries extends baseCDMClass implements iStationData {
             String genericName = this.tsData.getCollectionFeatureType().name()+"-";
             // Try to get stations by name, both with URN procedure and without
             tsStationList = tsData.getStations(reqStationNames);
+            
+            
+            // based on files with cf_role 
             for (String s : reqStationNames) {
                 String[] urns = s.split(":");
                 String statUrn = urns[urns.length - 1];

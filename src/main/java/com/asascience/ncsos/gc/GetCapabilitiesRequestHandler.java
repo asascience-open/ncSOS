@@ -126,16 +126,18 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
             // remove service provider from doc
             out.removeServiceProvider();
         }
-
+        HashMap<Integer, String> stationNames = getStationNames();
+        int stationNameSize = stationNames.values().size();
         // operations metadata; parse if it is the section identified or 'all'
         if (this.requestedSections.get(Sections.OPERATIONSMETADATA.ordinal())) {
         	
             // Set the THREDDS URI
             out.setURL(threddsURI);
             // Set the GetObservation Operation
-            out.setOperationsMetadataGetObs(threddsURI, getSensorNames(), getStationNames().values().toArray(new String[getStationNames().values().size()]));
+            out.setOperationsMetadataGetObs(threddsURI, getSensorNames().keySet(), stationNames.values().toArray(
+            		new String[stationNameSize]));
             // Set the DescribeSensor Operation
-            out.setOperationsMetadataDescSen(threddsURI, getStationNames().values().toArray(new String[getStationNames().values().size()]));
+            out.setOperationsMetadataDescSen(threddsURI, stationNames.values().toArray(new String[stationNameSize]));
             // Set the ExtendedCapabilities
             out.setVersionMetadata();
         } else {
@@ -163,14 +165,14 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
                 setTime = CalendarDateRange.of(setStartDate, setEndDate);
             }
 
-            out.setObservationOfferingNetwork(setRange, getStationNames().values().toArray(
-            		new String[getStationNames().values().size()]), getSensorNames(), 
+            out.setObservationOfferingNetwork(setRange, stationNames.values().toArray(
+            		new String[stationNames.values().size()]), getSensorNames().keySet(), 
             		setTime, this.getFeatureDataset().getFeatureType());
             // Add an offering for every station
-            for (Integer index : getStationNames().keySet()) {
+            for (Integer index : stationNames.keySet()) {
                 ((GetCapsFormatter) formatter).setObservationOffering(
-                		this.getUrnName(getStationNames().get(index)), 
-                		stationBBox.get(index), getSensorNames(), 
+                		this.getUrnName(stationNames.get(index)), 
+                		stationBBox.get(index), getSensorNames().keySet(), 
                 		stationDateRange.get(index), this.getFeatureDataset().getFeatureType());
             }
         } else {

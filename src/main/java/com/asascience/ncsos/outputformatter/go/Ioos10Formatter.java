@@ -4,19 +4,20 @@ import com.asascience.ncsos.cdmclasses.TimeSeriesProfile;
 import com.asascience.ncsos.cdmclasses.baseCDMClass;
 import com.asascience.ncsos.go.GetObservationRequestHandler;
 import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
-import com.asascience.ncsos.util.VocabDefinitions;
 
 import org.jdom.Element;
 import org.jdom.Namespace;
 import org.springframework.util.StringUtils;
 
 import ucar.nc2.Attribute;
+import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.constants.FeatureType;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 public class Ioos10Formatter extends BaseOutputFormatter {
@@ -109,7 +110,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
             // Description
             processingStr = "description";
             obsElement.addContent(new Element("description", this.GML_NS).setText(
-                                (String)this.handler.getGlobalAttribute("description", "No description")));
+                                (String)this.handler.getGlobalAttribute("summary", "No description")));
             processingStr = "samplingTime";
             Element samplingTime = new Element("samplingTime", this.OM_NS);
             samplingTime.addContent(this.createTimePeriodTree());
@@ -227,7 +228,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         for (String op : obsProps) {
             Element swe = new Element("component", this.SWE_NS);
             String stdName = this.handler.getVariableStandardName(op);
-            swe.setAttribute("href", VocabDefinitions.GetDefinitionForParameter(stdName), this.XLINK_NS);
+            swe.setAttribute("href", handler.getHrefForParameter(stdName), this.XLINK_NS);
             comp.addContent(swe);
         }
         return comp;
@@ -288,6 +289,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         mPoint.setAttribute("srsName", this.handler.getCrsName());
         Element ptMembers = new Element("pointMembers", this.GML_NS);
         for (int i = 0; i < this.handler.getProcedures().length; i++) {
+   
             String stName = this.handler.getUrnName(this.handler.getCDMDataset().getStationName(i));
             Element point = new Element("Point", this.GML_NS);
 
@@ -527,14 +529,14 @@ public class Ioos10Formatter extends BaseOutputFormatter {
             
             //Add the DataArray item with the profile definition
             
-            Element quantity = new Element("Quantity", this.SWE2_NS).setAttribute(DEFINITION, 
-                                            VocabDefinitions.GetDefinitionForParameter(sensorDef));
+            Element quantity = new Element("Quantity", this.SWE2_NS).setAttribute(DEFINITION,
+            								handler.getHrefForParameter(sensorDef));
             quantity.addContent(new Element("uom", this.SWE2_NS).setAttribute("code", sensorUnits));
 
             // if the variable has a 'fill value' then add it as a nil value
             try {
                 for (Attribute attr : this.handler.getVariableByName(sensor).getAttributes()) {
-                    if (attr.getShortName().toLowerCase().contains("fillvalue")) {
+                    if (attr.getShortName().equalsIgnoreCase(GetObservationRequestHandler.FILL_VALUE_NAME)) {
                         Element nilValues = new Element("nilValues", this.SWE2_NS);
                         Element nnilValues = new Element("NilValues", this.SWE2_NS);
 
@@ -587,13 +589,14 @@ public class Ioos10Formatter extends BaseOutputFormatter {
 
             Element dataRecord = new Element("DataRecord", this.SWE2_NS).setAttribute(DEFINITION, STATIC_SENSOR_DEF);
             Element field = new Element("field", this.SWE2_NS).setAttribute("name", sensor);
-            Element quantity = new Element("Quantity", this.SWE2_NS).setAttribute(DEFINITION, VocabDefinitions.GetDefinitionForParameter(sensorDef));
+            Element quantity = new Element("Quantity", this.SWE2_NS).setAttribute(DEFINITION, 
+            		handler.getHrefForParameter(sensorDef));
             quantity.addContent(new Element("uom", this.SWE2_NS).setAttribute("code", sensorUnits));
 
             // if the variable has a 'fill value' then add it as a nil value
             try {
                 for (Attribute attr : this.handler.getVariableByName(sensor).getAttributes()) {
-                    if (attr.getShortName().toLowerCase().contains("fillvalue")) {
+                    if (attr.getShortName().equalsIgnoreCase(GetObservationRequestHandler.FILL_VALUE_NAME)) {
                         Element nilValues = new Element("nilValues", this.SWE2_NS);
                         Element nnilValues = new Element("NilValues", this.SWE2_NS);
 
@@ -885,7 +888,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         Element text = new Element("Text", this.SWE2_NS);
         text.setAttribute(DEFINITION, SENSOR_ID_DEF);
         Element value = new Element("value", this.SWE2_NS);
-        value.setText(this.handler.getSensorUrnName(stName, op));
+        value.setText(this.handler.getSensorUrnName(stName, handler.getSensorVariable(op)));
         text.addContent(value);
         field.addContent(text);
         dataRecord.addContent(field);

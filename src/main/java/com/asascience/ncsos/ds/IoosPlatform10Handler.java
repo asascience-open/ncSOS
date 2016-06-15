@@ -85,6 +85,7 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
     
     
     private void formatGmlBoundedBy() {
+   
         platform.setBoundedBy(this.getCrsName(), 
                 this.stationData.getBoundLowerLat() + " " + this.stationData.getBoundLowerLon(), 
                 this.stationData.getBoundUpperLat() + " " + this.stationData.getBoundUpperLon());
@@ -157,16 +158,25 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
     
     private void formatSmlClassification() {
         // add platformType, operatorSector and publisher classifications (assuming they are global variables
-        platform.addSmlClassifier("platformType", VocabDefinitions.GetIoosDefinition("platformType"), "platform", this.checkForRequiredValue("platform_type"));
-        platform.addSmlClassifier("operatorSector", VocabDefinitions.GetIoosDefinition("operatorSector"), "sector", this.checkForRequiredValue("operator_sector"));
-        platform.addSmlClassifier("publisher", VocabDefinitions.GetIoosDefinition("publisher"), "organization", this.checkForRequiredValue("publisher"));
+        platform.addSmlClassifier("platformType", VocabDefinitions.GetIoosDefinition("platformType"), 
+        		"platform", this.checkForRequiredValue("platform_type"));
+        platform.addSmlClassifier("operatorSector", VocabDefinitions.GetIoosDefinition("operatorSector"),
+        		"sector", this.checkForRequiredValue("creator_sector"));
+        platform.addSmlClassifier("publisher", VocabDefinitions.GetIoosDefinition("publisher"), 
+        		"organization", this.checkForRequiredValue("publisher_name"));
         platform.addSmlClassifier("parentNetwork", "http://mmisw.org/ont/ioos/definition/parentNetwork", 
                 "organization", (String)this.getGlobalAttribute(INSTITUTION, ATTRIBUTE_MISSING ));
         
        
-        String value = (String)this.getGlobalAttribute("sponsor");
-        if (value == null) {
+        String value;
+        // sponsor is optional
+        String contribRole = (String)this.getGlobalAttribute("contributor_role", null);
+        String contribName = (String)this.getGlobalAttribute("contributor_name", null);
+        if (contribRole == null || contribName == null) {
             value = ATTRIBUTE_MISSING;
+        }
+        else {
+        	value = contribName + " - "+ contribRole;
         }
         platform.addSmlClassifier("sponsor", VocabDefinitions.GetIoosDefinition("sponsor"), "organization", value);
         
@@ -263,14 +273,15 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
         for (ucar.nc2.VariableSimpleIF var : this.getDataVariables()) {
             name = "Sensor " + var.getShortName();
             id = "sensor-" + var.getShortName();
-            sensorUrn = this.procedure.replaceAll(":station:", ":sensor:") + ":" + var.getShortName();
+            sensorUrn = this.getSensorUrnName(this.stationName, var);
             // describe sensor url
             url = this.urlBase + QUERY + sensorUrn;
             description = var.getDescription();
             platform.addSmlComponent(name, id, description, sensorUrn, url);
             // set the poutput for the component
             outputName = this.checkForRequiredValue(var, "long_name");
-            definition = VocabDefinitions.GetDefinitionForParameter(this.checkForRequiredValue(var, "standard_name"));
+            
+            definition = getHrefForParameter(this.checkForRequiredValue(var, STANDARD_NAME));
             uom = this.checkForRequiredValue(var, "units");
             platform.addSmlOuptutToComponent(name, outputName, definition, uom);
         }
@@ -278,27 +289,31 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
     //</editor-fold>
     
     private void setStationData() throws IOException {
+        String cStationName = this.stationName;
+        if(this.getUrnToStationName().containsKey(this.stationName)){
+        	cStationName = this.getUrnToStationName().get(this.stationName);
+        }
         switch(this.getDatasetFeatureType()) {
             case STATION:
-                this.stationData = new TimeSeries(new String[] {this.stationName}, null, null);
+                this.stationData = new TimeSeries(new String[] {cStationName}, null, null);
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 break;
             case STATION_PROFILE:
-                this.stationData = new TimeSeriesProfile(new String[] { this.stationName }, null, 
+                this.stationData = new TimeSeriesProfile(new String[] {cStationName }, null, 
                                                          null, false, false, false, null);
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 break;
             case PROFILE:
-                this.stationData = new Profile(new String[] { this.stationName }, null, null);
+                this.stationData = new Profile(new String[] {cStationName }, null, null);
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 break;
             case TRAJECTORY:
-                this.stationData = new Trajectory(new String[] { this.stationName },null,null);
+                this.stationData = new Trajectory(new String[] {cStationName },null,null);
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 this.locationLineFlag = true;
                 break;
             case SECTION:
-                this.stationData = new Section(new String[] { this.stationName }, null, null);
+                this.stationData = new Section(new String[] {cStationName }, null, null);
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 this.locationLineFlag = true;
                 break;
@@ -310,7 +325,7 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
                 for (VariableSimpleIF var : this.getDataVariables()) {
                     dataVars.add(var.getShortName());
                 }
-                this.stationData = new Grid(new String[] { this.stationName.replaceAll("[A-Za-z]+", "") }, null, dataVars.toArray(new String[dataVars.size()]), latLon);
+                this.stationData = new Grid(new String[] {cStationName.replaceAll("[A-Za-z]+", "") }, null, dataVars.toArray(new String[dataVars.size()]), latLon);
                 this.stationData.setData(this.getGridDataset());
                 break;
             default:

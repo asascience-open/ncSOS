@@ -11,6 +11,7 @@ import com.asascience.ncsos.util.VocabDefinitions;
 import ucar.ma2.Array;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
+import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.constants.AxisType;
 import ucar.nc2.constants.CF;
 import ucar.nc2.constants.FeatureType;
@@ -38,7 +39,7 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
     private String[] procedures;
     private iStationData CDMDataSet;
     private org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(GetObservationRequestHandler.class);
-    private static final String FILL_VALUE_NAME = "_FillValue";
+    public static final String FILL_VALUE_NAME = "_FillValue";
     public static final String IOOS10_RESPONSE_FORMAT = "text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0\"";
     public static final String OOSTETHYS_RESPONSE_FORMAT = "text/xml;subtype=\"om/1.0.0\"";
     private final List<String> eventTimes;
@@ -298,26 +299,34 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
         } //if the stations are not of cdm type grid then check to see and set cdm data type        
         else {
             FeatureType currType = getDatasetFeatureType();
+            String stationsNamesFromUrn[] = new String[this.procedures.length];
+            Map<String,String> urnMap =  this.getUrnToStationName();
+            for(int statI = 0; statI < this.procedures.length; statI++){
+            		stationsNamesFromUrn[statI]  = urnMap.get(procedures[statI]);
+            }
+            
+            
             if (currType == FeatureType.TRAJECTORY) {
-                CDMDataSet = new Trajectory(this.procedures, eventTime, this.obsProperties);
+                CDMDataSet = new Trajectory(stationsNamesFromUrn, eventTime, this.obsProperties);
             } else if (currType  == FeatureType.STATION) {
-                CDMDataSet = new TimeSeries(this.procedures, eventTime, this.obsProperties);
+                CDMDataSet = new TimeSeries(stationsNamesFromUrn, eventTime, this.obsProperties);
             } else if (currType  == FeatureType.STATION_PROFILE) {
                 
-                CDMDataSet = new TimeSeriesProfile(this.procedures, eventTime, 
+                CDMDataSet = new TimeSeriesProfile(stationsNamesFromUrn, eventTime, 
                                                    this.obsProperties, this.requestFirstTime, this.requestLastTime,
                                                    this.timeVariable.getRank() > 1,
                                                    heightAxis);
             } else if (currType == FeatureType.PROFILE) {
-                CDMDataSet = new Profile(this.procedures, eventTime, this.obsProperties);
+                CDMDataSet = new Profile(stationsNamesFromUrn, eventTime, this.obsProperties);
             } else if (currType  == FeatureType.SECTION) {
-                CDMDataSet = new Section(this.procedures, eventTime, this.obsProperties);
+                CDMDataSet = new Section(stationsNamesFromUrn, eventTime, this.obsProperties);
             } else {
                 formatter = new ErrorFormatter();
                 ((ErrorFormatter)formatter).setException("NetCDF-Java could not recognize the dataset's FeatureType");
                 CDMDataSet = null;
                 return;
             }
+            
             //only set the data is it is valid
             CDMDataSet.setData(getFeatureTypeDataSet());
         }
@@ -481,10 +490,11 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
         boolean errorFound = false;
         stProc.add(this.getUrnNetworkAll());
         for (String stname : this.getStationNames().values()) {
-            for (String senname : this.getSensorNames()) {
-                stProc.add(this.getSensorUrnName(stname, senname));
+        	String stationUrn = this.getUrnName(stname);
+            for (VariableSimpleIF senVar : this.getSensorNames().values()) {
+                stProc.add(this.getSensorUrnName(stationUrn, senVar));
             }
-            stProc.add(this.getUrnName(stname));
+            stProc.add(stationUrn);
         }
 
         for (String proc : this.procedures) {
