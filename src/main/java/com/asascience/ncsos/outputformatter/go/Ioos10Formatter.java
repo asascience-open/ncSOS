@@ -10,6 +10,7 @@ import org.jdom.Namespace;
 import org.springframework.util.StringUtils;
 
 import ucar.nc2.Attribute;
+import ucar.nc2.Variable;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.constants.FeatureType;
 
@@ -586,7 +587,8 @@ public class Ioos10Formatter extends BaseOutputFormatter {
 
             String sensorDef = this.handler.getVariableStandardName(sensor);
             String sensorUnits = this.handler.getUnitsString(sensor);
-
+            Variable sensorVar = this.handler.getVariableByName(sensor);
+            String fieldname = this.handler.getSensorUrnName(stName, sensorVar);
             Element dataRecord = new Element("DataRecord", this.SWE2_NS).setAttribute(DEFINITION, STATIC_SENSOR_DEF);
             Element field = new Element("field", this.SWE2_NS).setAttribute("name", sensor);
             Element quantity = new Element("Quantity", this.SWE2_NS).setAttribute(DEFINITION, 
@@ -595,7 +597,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
 
             // if the variable has a 'fill value' then add it as a nil value
             try {
-                for (Attribute attr : this.handler.getVariableByName(sensor).getAttributes()) {
+                for (Attribute attr : sensorVar.getAttributes()) {
                     if (attr.getShortName().equalsIgnoreCase(GetObservationRequestHandler.FILL_VALUE_NAME)) {
                         Element nilValues = new Element("nilValues", this.SWE2_NS);
                         Element nnilValues = new Element("NilValues", this.SWE2_NS);
@@ -877,8 +879,9 @@ public class Ioos10Formatter extends BaseOutputFormatter {
          * </swe2:field>
          */
         String op_name = stFormName + "_" + op.toLowerCase();
+        String sensorUrn = this.handler.getSensorUrnName(stName, this.handler.getVariableByName(op));
         Element retval = new Element("field", this.SWE2_NS);
-        retval.setAttribute("name", op_name);
+        retval.setAttribute("name", sensorUrn);
         Element dataRecord = new Element("DataRecord", this.SWE2_NS);
         dataRecord.setAttribute("id", op_name);
         dataRecord.setAttribute(DEFINITION, STATIC_SENSOR_DEF);

@@ -730,7 +730,7 @@
         <!-- Glider DAC -->
 
         <file path="glider_dac/timeagg.ncml" feature="trajectory" authority="edu.rutgers.marine">     
-            <platform id="urn:ioos:station:edu.rutgers.marine:1">
+            <platform id="urn:ioos:station:edu.rutgers.marine:platform">
                 <lats>
                     2.152863, 33.60481, 22.56251, 13.43282, 43.01199, 18.84832, 18.04041,
                     32.34516, 8.652234, 18.90537, 12.18454, 16.49819, 1.547926, 22.03359,

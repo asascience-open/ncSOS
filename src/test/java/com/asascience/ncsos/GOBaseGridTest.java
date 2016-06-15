@@ -155,6 +155,7 @@ public class GOBaseGridTest extends NcSOSTest {
 
         System.out.println("------ " + file + " (" + feature + ") ------");
         System.out.println("------ " + this.testType + " ------");
+        System.out.println("-------" + pairs);
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
         Assert.assertFalse(NcSOSTest.isException(result));
     }

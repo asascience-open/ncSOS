@@ -9,6 +9,7 @@ import com.asascience.ncsos.outputformatter.ds.IoosNetwork10Formatter;
 import com.asascience.ncsos.outputformatter.ds.IoosPlatform10Formatter;
 import com.asascience.ncsos.service.BaseRequestHandler;
 
+import ucar.nc2.Variable;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.NetcdfDataset;
 
@@ -110,6 +111,8 @@ public class BaseDSHandler extends BaseRequestHandler {
         describer = new IoosPlatform10Handler(dataset, procedure, uri);
     }
 
+    
+  
     private boolean checkDatasetForProcedure(String procedure) {
         if (procedure == null) {
             _log.error("procedure is null");

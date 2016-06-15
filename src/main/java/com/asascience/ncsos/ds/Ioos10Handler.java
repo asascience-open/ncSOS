@@ -1,14 +1,17 @@
 package com.asascience.ncsos.ds;
 
+import com.asascience.ncsos.cdmclasses.iStationData;
 import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.IFReportMechanism;
 
 import ucar.nc2.Attribute;
+import ucar.nc2.Variable;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.NetcdfDataset;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public class Ioos10Handler extends BaseRequestHandler {
     
@@ -58,20 +61,32 @@ public class Ioos10Handler extends BaseRequestHandler {
     }
     
     
-    public String getPlatformType(){
+    public String getPlatformType(String procedure){
     	String platformRetVal = null;
      	String platformType = null;
     	String platformVocab = this.getGlobalAttributeStr(PLATFORM_VOCAB);
     	if(platformVocab != null){
-    		List<Attribute> platformAtts = stationVariable.getAttributes();
-    		for(Attribute cAtt : platformAtts){
-    			if(cAtt.getShortName().equalsIgnoreCase(TYPE)){
-    				platformType = cAtt.getStringValue();
-    				break;
-    			}
-    		}
+    		Map<String, Variable> platformMap = this.getPlatformVariableMap();
+    		String foundStationName = null;
+    		 for (String stationName : this.getStationNames().values()) {
+    	            if (getUrnName(stationName).equalsIgnoreCase(procedure) || getUrnNetworkAll().equalsIgnoreCase(procedure)){
+    	            	foundStationName = stationName;
+    	            	break;
+    	            }
+    		 }
+    		 if (foundStationName != null){
+    			 Variable stationVar = platformMap.get(foundStationName);
+    			 if(stationVar != null){
+    				 List<Attribute> platformAtts = stationVar.getAttributes();
+    				 for(Attribute cAtt : platformAtts){
+    					 if(cAtt.getShortName().equalsIgnoreCase(TYPE)){
+    						 platformType = cAtt.getStringValue();
+    						 break;
+    					 }
+    				 }
+    			 }
+    		 }
     	}
-    	
     	if(platformVocab != null && platformType != null)
     		platformRetVal = platformVocab + platformType;
     	else 
@@ -99,6 +114,7 @@ public class Ioos10Handler extends BaseRequestHandler {
     }
     
     protected String checkForRequiredValue(VariableSimpleIF var, String attribueName) {
+    	if(var != null){
         try {
             for (Attribute attr : var.getAttributes()) {
                 if (attr.getShortName().equalsIgnoreCase(attribueName))
@@ -113,6 +129,7 @@ public class Ioos10Handler extends BaseRequestHandler {
         try {
             reporter.ReportMissing(attribueName + " from variable " + var.getShortName());
         } catch (Exception ex) { }
+    	}
         
         return ATTRIBUTE_MISSING;
     }

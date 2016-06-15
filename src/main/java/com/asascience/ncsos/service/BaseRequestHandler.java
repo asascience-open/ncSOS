@@ -48,7 +48,8 @@ public abstract class BaseRequestHandler {
     public static final String PLATFORM = "platform";
     public static final String SHORT_NAME = "short_name";
     public static final String IOOS_CODE = "ioos_code";
-
+    public static final String INSTRUMENT = "instrument";
+    public static final String LONG_NAME = "long_name";
     private static final NumberFormat FORMAT_DEGREE;
     // list of keywords to filter variables on to remove non-data variables from the list
     private static final String[] NON_DATAVAR_NAMES = { "rowsize", "row_size", PROFILE, "info", "time", "z", "alt", "height", "station_info" };
@@ -303,6 +304,7 @@ public abstract class BaseRequestHandler {
     	List<String> platformVars = new ArrayList<String>();
         this.urnToStationName = new HashMap<String, String>();
         this.platformVariableMap = new HashMap<String, Variable>();
+        this.stationNames = new HashMap<Integer, String>();
         for (Variable var : netCDFDataset.getVariables()) {
             // look for cf_role attr
             if (this.stationVariable == null) {
@@ -334,54 +336,68 @@ public abstract class BaseRequestHandler {
                 break;
         }
         boolean addedStat = false;
+        if(platformVars.isEmpty()){
+        	Object plat = this.getGlobalAttribute(PLATFORM);
+    		if(plat != null){
+    			for (String platVarName : String.valueOf(plat).split(",")){
+    				if(!platformVars.contains(platVarName))
+    					platformVars.add(platVarName);
+    			}
+    		}
+        }
         if(!platformVars.isEmpty()){
         	//
         	int stationIndex = 0;
         
         	Map<Integer, String> stationNamesForURNMap = new HashMap<Integer, String>();
         	parsePlatformNames(stationNamesForURNMap);
-            this.stationNames = new HashMap<Integer, String>();
         
         	for (String platformVariableName : platformVars){
         		Variable var = getVariableByName(platformVariableName);
         		String station = null;
-        		for(Attribute sname : var.getAttributes()){
-        			if(sname.getFullName().equalsIgnoreCase(SHORT_NAME)){
-        				station = sname.getStringValue();
-        				break;
+        		if(var != null){
+        			for(Attribute sname : var.getAttributes()){
+        				if(sname.getFullName().equalsIgnoreCase(SHORT_NAME)){
+        					station = sname.getStringValue();
+        					break;
+        				}
         			}
         		}
         		
-        		if (station == null)
+        		if (var != null && station == null) {
         			station = var.getShortName();
-        		stationNames.put(stationIndex, station);
-        	
-				platformVariableMap.put(station, var);
-				addedStat = true;
-		
-				this.urnToStationName.put( this.getUrnName(station), stationNamesForURNMap.get(stationIndex));
-				stationIndex++;
+
+
+        			stationNames.put(stationIndex, station);
+
+        			platformVariableMap.put(station, var);
+        			addedStat = true;
+
+        			this.urnToStationName.put( this.getUrnName(station), stationNamesForURNMap.get(stationIndex));
+        			stationIndex++;
+        		}
         		}
         	}
         	
         	
         
         if(!addedStat){
-            this.stationNames = new HashMap<Integer, String>();
-
-        	if(cfRole != null){
-        		this.stationVariable = cfRole;
-        		parsePlatformNames(stationNames);
-        		for(String sName : this.stationNames.values()){
-            		this.urnToStationName.put(this.getUrnName(sName), sName);
-        		}
-        	}
-        	else if (this.stationVariable == null && getGridDataset() == null) {
-        		// there is no station variable ... add a single station with index 0?
-        		parsePlatformNames(stationNames);
-        	} else if (this.stationVariable == null) {
-        		parseGridIdsToName();
-        	}
+            if(this.stationVariable == null){
+            	if(cfRole != null){
+            		this.stationVariable = cfRole;
+            		parsePlatformNames(stationNames);
+            	}
+            	else if (getGridDataset() == null) {
+            		// there is no station variable ... add a single station with index 0?
+            		parsePlatformNames(stationNames);
+            	}
+            	else {
+            		parseGridIdsToName();
+            	}
+            }
+    		for(String sName : this.stationNames.values()){
+        		this.urnToStationName.put(this.getUrnName(sName), sName);
+    		}
         }
     }
     
@@ -569,7 +585,11 @@ public abstract class BaseRequestHandler {
     }
 
     
-    /**
+    protected HashMap<String, Variable> getPlatformVariableMap() {
+		return platformVariableMap;
+	}
+
+	/**
      * Return the list of sensor names
      * @return string list of sensor names
      */
@@ -722,33 +742,50 @@ public abstract class BaseRequestHandler {
      * @return
      */
     public String getUrnName(String stationName) {
-    	// mapping from station to platform.
-    	Map<String,String> urnMap = getUrnToStationName();
-    	for(String cName : urnMap.keySet()){
-    		if(urnMap.get(cName).equals(stationName)){
-    			stationName = cName;
-    		}
-    	}
+    
     	
-        String[] feature_name = stationName.split(":");
-        if(this.platformVariableMap != null && this.platformVariableMap.containsKey(stationName) ){
-        	Variable platformVar = this.platformVariableMap.get(stationName);
-        	if(platformVar != null){
-        		for(Attribute att : platformVar.getAttributes()){
-        			if(att.getFullName().equalsIgnoreCase(IOOS_CODE)){
-        				return att.getStringValue();
-        			}
+    	if(stationName != null) {
+    		// mapping from station to platform.
+        	Map<String,String> urnMap = getUrnToStationName();
+        	for(String cName : urnMap.keySet()){
+        		String val = urnMap.get(cName);
+        		if(val != null && val.equals(stationName)){
+        			stationName = cName;
         		}
         	}
-        }
-        if (feature_name.length > 1 && feature_name[0].equalsIgnoreCase("urn")) {
-            // We already have a URN, so just return it.
-            return stationName;
-        } else {
-            return STATION_URN_BASE + this.global_attributes.get(NAMING_AUTHORITY) + ":" + stationName;
-        }
+    		String[] feature_name = stationName.split(":");
+    		if(this.platformVariableMap != null && this.platformVariableMap.containsKey(stationName) ){
+    			Variable platformVar = this.platformVariableMap.get(stationName);
+    			if(platformVar != null){
+    				for(Attribute att : platformVar.getAttributes()){
+    					if(att.getFullName().equalsIgnoreCase(IOOS_CODE)){
+    						return att.getStringValue();
+    					}
+    				}
+    			}
+    		}
+    		if (feature_name.length > 1 && feature_name[0].equalsIgnoreCase("urn")) {
+    			// We already have a URN, so just return it.
+    			return stationName;
+    		} 
+    	}
+    	return STATION_URN_BASE + this.global_attributes.get(NAMING_AUTHORITY) + ":" + stationName;
     }
     
+    protected Variable getPlatformVariableFromURN(String stationURN){
+    	Variable platformVar = null;
+    	Map<String, Variable> platformMap = this.getPlatformVariableMap();
+		String foundStationName = null;
+		 for (String stationName : this.getStationNames().values()) {
+	            if (getUrnName(stationName).equalsIgnoreCase(stationURN) || getUrnNetworkAll().equalsIgnoreCase(stationURN)){
+	            	foundStationName = stationName;
+	            	break;
+	            }
+		 }
+		 if (foundStationName != null)
+			 platformVar = platformMap.get(foundStationName);
+    	return platformVar;
+    }
     public String getUrnNetworkAll() {
         // returns the network-all urn of the authority
         return NETWORK_URN_BASE + this.global_attributes.get(NAMING_AUTHORITY) + ":all";
@@ -764,7 +801,8 @@ public abstract class BaseRequestHandler {
     	// mapping from station to platform.
     	Map<String,String> urnMap = getUrnToStationName();
     	for(String cName : urnMap.keySet()){
-    		if(urnMap.get(cName).equals(stationName)){
+    		String val = urnMap.get(cName);
+    		if(val != null && val.equals(stationName)){
     			stationName = cName;
     		}
     	}

@@ -11,6 +11,7 @@ import ucar.ma2.DataType;
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
 import ucar.nc2.EnumTypedef;
+import ucar.nc2.Variable;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.NetcdfDataset;
 
@@ -60,7 +61,7 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
     //<editor-fold defaultstate="collapsed" desc="Describe Platform">
     private void describePlatform() {
         platform.setVersionMetadata();
-        platform.setDescriptionNode((String)this.getGlobalAttribute("description", "no description"));
+        platform.setDescriptionNode((String)this.getGlobalAttribute("summary", "no description"));
         platform.setName(this.procedure);
         this.formatSmlIdentification();
         this.formatSmlClassification();
@@ -92,74 +93,38 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
     }
     
     private void formatSmlIdentification() {
-        // depending on the number of stations in the dataset, we need to look up the
-        // identifiers differently
-        // first identify one or multiple stations:
-        try {
-            if (this.stationVariable.getDimensions().size() == 1) {
-                Dimension dim = this.stationVariable.getDimension(0);
-                if (this.stationVariable.getDataType() == ucar.ma2.DataType.CHAR ||
-                        this.stationVariable.getDataType() == ucar.ma2.DataType.STRING ||
-                        dim.getLength() < 2) {
-                    // single station if the dataType is a char or string or the length of the dimension is 1
-                    formatIdentificationSingleStation();
-                    return;
-                }
-            }
-        } catch (Exception ex) {
-            logger.warn(ex.toString());
-        }
-        // multiple stations
-        formatIdentificationMultiStation();
+    	  for (Map.Entry<Integer,String> station : this.getStationNames().entrySet()) {
+  
+              Variable platformVar = this.getPlatformVariableMap().get(station.getValue());
+              String stationUrn =  this.getUrnName(station.getValue());
+              String stationLabel = ATTRIBUTE_MISSING;
+              String [] splitUrn = stationUrn.split(":");
+              if(splitUrn.length > 1)
+              	stationLabel = splitUrn[splitUrn.length -1];
+              // identifiers for station
+              platform.addSmlIdentifier("stationID", VocabDefinitions.GetIoosDefinition("stationID"), 
+                      stationUrn);
+              platform.addSmlIdentifier("shortName", VocabDefinitions.GetIoosDefinition("shortName"), 
+                      stationLabel);
+              platform.addSmlIdentifier("longName", VocabDefinitions.GetIoosDefinition("longName"), 
+                      this.checkForRequiredValue(platformVar, "long_name"));
+              // wmoid, if it exists
+              if(platformVar != null){
+              	Attribute identAtt = platformVar.findAttribute("wmo_code");
+              	if (identAtt != null) {
+              		platform.addSmlIdentifier("wmoID", VocabDefinitions.GetIoosDefinition("wmoID"), identAtt.getStringValue());
+              	}
+              }
+    	  }
+
     }
     
-    private void formatIdentificationSingleStation() {
-        // look for a "platform" global attribute which should give us a variable with the station attributes
-        String strPlatform = (String)this.getGlobalAttribute("platform");
-        ucar.nc2.Variable identVar;
-        if (strPlatform != null) {
-            identVar = this.getVariableByName(strPlatform);
-        } else { 
-            // use the station variable
-            identVar = this.stationVariable;
-        }
-        // create each of the identities
-        // stationID
-        platform.addSmlIdentifier("stationID", VocabDefinitions.GetIoosDefinition("stationID"), this.procedure);
-        // shortName
-        platform.addSmlIdentifier("shortName", VocabDefinitions.GetIoosDefinition("shortName"), this.checkForRequiredValue(identVar, "short_name"));
-        // longName
-        platform.addSmlIdentifier("longName", VocabDefinitions.GetIoosDefinition("longName"), this.checkForRequiredValue(identVar, "long_name"));
-        // wmoid, if it exists
-        Attribute identAtt = identVar.findAttribute("wmo_code");
-        if (identAtt != null) {
-            platform.addSmlIdentifier("wmoID", VocabDefinitions.GetIoosDefinition("wmoID"), identAtt.getStringValue());
-        }
-    }
-    
-    private void formatIdentificationMultiStation() {
-        String stationNameFixed = this.stationName.replaceAll("[Pp]rofile|[Tt]rajectory", "");
-        // stationID
-        platform.addSmlIdentifier("stationID", VocabDefinitions.GetIoosDefinition("stationID"), this.procedure);
-        // shortName
-        VariableSimpleIF pVar = this.checkForRequiredVariable("platform_short_name");
-        platform.addSmlIdentifier("shortName", VocabDefinitions.GetIoosDefinition("shortName"), this.checkForRequiredValue(pVar, stationNameFixed));
-        
-        // longName
-        pVar = this.checkForRequiredVariable("platform_long_name");
-        platform.addSmlIdentifier("longName", VocabDefinitions.GetIoosDefinition("longName"), this.checkForRequiredValue(pVar, stationNameFixed));
-        
-        // wmoid if it exists
-        pVar = this.getVariableByName("platform_wmo_code");
-        if (pVar != null) {
-            platform.addSmlIdentifier("wmoId", VocabDefinitions.GetIoosDefinition("wmoId"), this.checkForRequiredValue(pVar, stationNameFixed));
-        }
-    }
+   
     
     private void formatSmlClassification() {
         // add platformType, operatorSector and publisher classifications (assuming they are global variables
         platform.addSmlClassifier("platformType", VocabDefinitions.GetIoosDefinition("platformType"), 
-        		"platform", this.checkForRequiredValue("platform_type"));
+        		"platform", this.getPlatformType(this.stationName));
         platform.addSmlClassifier("operatorSector", VocabDefinitions.GetIoosDefinition("operatorSector"),
         		"sector", this.checkForRequiredValue("creator_sector"));
         platform.addSmlClassifier("publisher", VocabDefinitions.GetIoosDefinition("publisher"), 
@@ -274,13 +239,31 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
             name = "Sensor " + var.getShortName();
             id = "sensor-" + var.getShortName();
             sensorUrn = this.getSensorUrnName(this.stationName, var);
+            description = null;
+            Attribute insAtt = var.findAttributeIgnoreCase(INSTRUMENT);
+            if(insAtt != null){
+            	Variable instrument = this.getVariableByName(insAtt.getStringValue());
+            	if(instrument != null){
+            		Attribute instLongName = instrument.findAttributeIgnoreCase(LONG_NAME);
+            		if(instLongName != null){
+            			description = instLongName.getStringValue();
+            		}
+            	}
+            }
+            if(description == null){
+            	Attribute instLongName = var.findAttributeIgnoreCase(LONG_NAME);
+        		if(instLongName != null){
+        			description = instLongName.getStringValue();
+        		}
+        		else 
+        			description = ATTRIBUTE_MISSING;
+            }
             // describe sensor url
             url = this.urlBase + QUERY + sensorUrn;
-            description = var.getDescription();
+          
             platform.addSmlComponent(name, id, description, sensorUrn, url);
             // set the poutput for the component
-            outputName = this.checkForRequiredValue(var, "long_name");
-            
+            outputName = this.getVariableStandardName(var.getShortName());
             definition = getHrefForParameter(this.checkForRequiredValue(var, STANDARD_NAME));
             uom = this.checkForRequiredValue(var, "units");
             platform.addSmlOuptutToComponent(name, outputName, definition, uom);

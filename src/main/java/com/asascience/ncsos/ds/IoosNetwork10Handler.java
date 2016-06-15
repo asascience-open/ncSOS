@@ -9,6 +9,7 @@ import com.asascience.ncsos.util.LogReporter;
 import com.asascience.ncsos.util.VocabDefinitions;
 
 import ucar.nc2.Attribute;
+import ucar.nc2.Variable;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.NetcdfDataset;
 
@@ -87,7 +88,7 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
     private void formatSmlClassification() {
         // add platformType, operatorSector and publisher classifications (assuming they are global variables
         network.addSmlClassifier("platformType", VocabDefinitions.GetIoosDefinition("platformType"), 
-                "platform", this.getPlatformType());
+                "platform", this.getPlatformType(this.procedure));
         network.addSmlClassifier("operatorSector", VocabDefinitions.GetIoosDefinition("operatorSector"), 
         		"sector", this.checkForRequiredValue("creator_sector"));
         network.addSmlClassifier("publisher", VocabDefinitions.GetIoosDefinition("publisher"), "organization", 
@@ -257,28 +258,32 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
         for (Map.Entry<Integer,String> station : this.getStationNames().entrySet()) {
             network.addSmlComponent(station.getValue());
             // identifiers for station
-            String stationNameFixed = station.getValue().replaceAll("[Pp]rofile|[Tt]rajectory", "");
+            String stationURN = this.getUrnName(station.getValue());
             // stationID
             network.addIdentifierToComponent(station.getValue(), "stationID", 
-            		VocabDefinitions.GetIoosDefinition("stationID"),
-                    this.getUrnName(station.getValue()));
+            		VocabDefinitions.GetIoosDefinition("stationID"), stationURN);
+           
+            Variable platformVar = this.getPlatformVariableMap().get(station.getValue());
+
             // shortName
-            VariableSimpleIF pVar = this.checkForRequiredVariable("platform_short_name");
+            String stationLabel = ATTRIBUTE_MISSING;
+            String [] splitUrn = stationURN.split(":");
+            if(splitUrn.length > 1)
+            	stationLabel = splitUrn[splitUrn.length -1];
             network.addIdentifierToComponent(station.getValue(), "shortName", 
-            		VocabDefinitions.GetIoosDefinition("shortName"),
-            		this.checkForRequiredValue(pVar, stationNameFixed));
+            		VocabDefinitions.GetIoosDefinition("shortName"), stationLabel);
 
             // longName
-            pVar = this.checkForRequiredVariable("platform_long_name");
+           
             network.addIdentifierToComponent(station.getValue(), "longName", 
             		VocabDefinitions.GetIoosDefinition("longName"), 
-            		this.checkForRequiredValue(pVar, stationNameFixed));
+            		this.checkForRequiredValue(platformVar, "long_name"));
 
             // wmoid if it exists
-            pVar = this.getVariableByName("platform_wmo_code");
-            if (pVar != null) {
+    
+            if (platformVar != null) {
                 network.addIdentifierToComponent(station.getValue(), "wmoId", 
-                		VocabDefinitions.GetIoosDefinition("wmoId"), this.checkForRequiredValue(pVar, stationNameFixed));
+                		VocabDefinitions.GetIoosDefinition("wmoId"), this.checkForRequiredValue(platformVar, "wmo_code"));
             }
             // valid time
             network.setComponentValidTime(station.getValue(), this.stationData.getTimeBegin(station.getKey()), this.stationData.getTimeEnd(station.getKey()));
@@ -311,27 +316,29 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
     }
 
     private void formatSingleComponent() {
-        String strPlatform = (String)this.getGlobalAttribute("platform", null);
-        ucar.nc2.Variable identVar;
-        if (strPlatform != null) {
-            identVar = this.getVariableByName(strPlatform);
-        } else { 
-            // use the station variable
-            identVar = this.stationVariable;
-        }
+    
         
         for (Map.Entry<Integer,String> station : this.getStationNames().entrySet()) {
+        	
+        	
             network.addSmlComponent(station.getValue());
+            Variable platformVar = this.getPlatformVariableMap().get(station.getValue());
+   
+            String stationUrn =  this.getUrnName(station.getValue());
+            String stationLabel = ATTRIBUTE_MISSING;
+            String [] splitUrn = stationUrn.split(":");
+            if(splitUrn.length > 1)
+            	stationLabel = splitUrn[splitUrn.length -1];
             // identifiers for station
             network.addIdentifierToComponent(station.getValue(), "stationID", GetIoosDef("stationID"), 
-                    this.getUrnName(station.getValue()));
+                    stationUrn);
             network.addIdentifierToComponent(station.getValue(), "shortName", GetIoosDef("shortName"), 
-                    this.checkForRequiredValue(identVar, "short_name"));
+                    stationLabel);
             network.addIdentifierToComponent(station.getValue(), "longName", GetIoosDef("longName"), 
-                    this.checkForRequiredValue(identVar, "long_name"));
+                    this.checkForRequiredValue(platformVar, "long_name"));
             // wmoid, if it exists
-            if(identVar != null){
-            	Attribute identAtt = identVar.findAttribute("wmo_code");
+            if(platformVar != null){
+            	Attribute identAtt = platformVar.findAttribute("wmo_code");
             	if (identAtt != null) {
             		network.addIdentifierToComponent(station.getValue(), "wmoID", VocabDefinitions.GetIoosDefinition("wmoID"), identAtt.getStringValue());
             	}
