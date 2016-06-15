@@ -129,7 +129,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
                         p.addContent(allowed);
                     } else if (name.equalsIgnoreCase("observedProperty")) {
                         for (String s : dataVarShortNames) {
-                            allowed.addContent(new Element("Value", owsns).setText(handler.getObservedOfferingUrl(s)));
+                            allowed.addContent(new Element("Value", owsns).setText(this.handler.getVariableStandardName(s)));
                         }
                         p.addContent(allowed);
                     } else if (name.equalsIgnoreCase("procedure")) {

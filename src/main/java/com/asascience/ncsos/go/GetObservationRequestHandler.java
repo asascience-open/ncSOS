@@ -119,12 +119,18 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
             for (Variable dVar : netCDFDataset.getVariables()) {
                 String dVarFullName = dVar.getFullName();
                 String obsUrl = this.getObservedOfferingUrl(dVarFullName);
-              
+                Attribute standardAtt = dVar.findAttribute((STANDARD_NAME));
                 if (obsUrl != null && obsUrl.equalsIgnoreCase(vars) ) {
                     isInDataset = true;
                     // Replace standard_name with the variable name
                     actualVariableNames[i] = dVarFullName;
                     break;
+                }
+                else if(standardAtt != null && standardAtt.getStringValue().equals(vars)){
+                	   isInDataset = true;
+                       // Replace standard_name with the variable name
+                       actualVariableNames[i] = dVarFullName;
+                       break;
                 }
 
             }
