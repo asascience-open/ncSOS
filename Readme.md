@@ -24,7 +24,7 @@ _You will need a working THREDDS installation of at least version **4.5** to run
 | ncSOS version/ branch | THREDDS version        | Catalog URL                                     |
 | ------------- | ---------------------- | ----------------------------------------------- |
 | [v1.1.1](https://github.com/asascience-open/ncSOS/releases/tag/v1.1.1) (release)           | 4.3.20 (20131125.1409) | http://sos.maracoos.org/stable/catalog.html     |
-| [master](https://github.com/asascience-open/ncSOS/tree/master)  (branch)      | 4.3.20 (20131125.1409) | http://sos.maracoos.org/pre/catalog.html        |
+| [milestone 1.3](https://github.com/asascience-open/ncSOS/tree/milestone_1.3)  (branch)      | 4.6.3 | http://sos.maracoos.org/pre/catalog.html        |
 | [v1.2.1](https://github.com/asascience-open/ncSOS/releases/tag/v1.2.1)  (release)   | 4.5.4 (20141008.1804) | http://sos.maracoos.org/dev/catalog.html        |
 
 ## ChangeLog
