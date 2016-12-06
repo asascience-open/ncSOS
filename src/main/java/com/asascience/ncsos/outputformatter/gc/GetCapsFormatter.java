@@ -346,12 +346,11 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         try {
             st = dateRange.getStart().toString();
             et = dateRange.getEnd().toString();
-        } catch (Exception e) {
-            st = "UNKNOWN";
-            et = "UNKNOWN";
-        } finally {
             tp.addContent(new Element("beginPosition", gmlns).setText(st));
             tp.addContent(new Element("endPosition", gmlns).setText(et));
+        } catch (Exception e) {
+            tp.addContent(new Element("beginPosition", gmlns).setAttribute("indeterminatePosition", "unknown"));
+            tp.addContent(new Element("endPosition", gmlns).setAttribute("indeterminatePosition", "unknown"));
         }
         return tm;
     }
