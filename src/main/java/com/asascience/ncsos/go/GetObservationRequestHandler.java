@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class GetObservationRequestHandler extends BaseRequestHandler {
     public static final String DEPTH = "depth";
@@ -47,6 +48,7 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
     private boolean requestLastTime;
     private static final String LATEST_TIME = "latest";
     private static final String FIRST_TIME = "first";
+    private static final String ALL_OBS = "all";
     /**
      * SOS get obs request handler
      * @param netCDFDataset dataset for which the get observation request is being made
@@ -112,37 +114,43 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
 
         String[] actualVariableNames = variableNames.clone();
 
-        // make sure that all of the requested variable names are in the dataset
-        for (int i = 0 ; i < variableNames.length ; i++) {
-            String vars = variableNames[i];
-            boolean isInDataset = false;
-            for (Variable dVar : netCDFDataset.getVariables()) {
-                String dVarFullName = dVar.getFullName();
-                String obsUrl = this.getObservedOfferingUrl(dVarFullName);
-                Attribute standardAtt = dVar.findAttribute((STANDARD_NAME));
-                if (obsUrl != null && obsUrl.equalsIgnoreCase(vars) ) {
-                    isInDataset = true;
-                    // Replace standard_name with the variable name
-                    actualVariableNames[i] = dVarFullName;
-                    break;
-                }
-                else if(standardAtt != null && standardAtt.getStringValue().equals(vars)){
-                	   isInDataset = true;
-                       // Replace standard_name with the variable name
-                       actualVariableNames[i] = dVarFullName;
-                       break;
-                }
-
-            }
-            if (!isInDataset) {
-                formatter = new ErrorFormatter();
-                ((ErrorFormatter)formatter).setException("observed property - " + vars + 
-                        " - was not found in the dataset", INVALID_PARAMETER, "observedProperty");
-                CDMDataSet = null;
-                return localEventTime;
-            }
+        
+        if (variableNames.length == 1 && variableNames[0].equalsIgnoreCase(ALL_OBS)){
+        	Set<String> sensorVar = getSensorNames().keySet();
+        	actualVariableNames = sensorVar.toArray(new String[sensorVar.size()]);     	
         }
+        else{
+        	// make sure that all of the requested variable names are in the dataset
+        	for (int i = 0 ; i < variableNames.length ; i++) {
+        		String vars = variableNames[i];
+        		boolean isInDataset = false;
+        		for (Variable dVar : netCDFDataset.getVariables()) {
+        			String dVarFullName = dVar.getFullName();
+        			String obsUrl = this.getObservedOfferingUrl(dVarFullName);
+        			Attribute standardAtt = dVar.findAttribute((STANDARD_NAME));
+        			if (obsUrl != null && obsUrl.equalsIgnoreCase(vars) ) {
+        				isInDataset = true;
+        				// Replace standard_name with the variable name
+        				actualVariableNames[i] = dVarFullName;
+        				break;
+        			}
+        			else if(standardAtt != null && standardAtt.getStringValue().equals(vars)){
+        				isInDataset = true;
+        				// Replace standard_name with the variable name
+        				actualVariableNames[i] = dVarFullName;
+        				break;
+        			}
 
+        		}
+        		if (!isInDataset) {
+        			formatter = new ErrorFormatter();
+        			((ErrorFormatter)formatter).setException("observed property - " + vars + 
+        					" - was not found in the dataset", INVALID_PARAMETER, "observedProperty");
+        			CDMDataSet = null;
+        			return localEventTime;
+        		}
+        	}
+        }
         CoordinateAxis heightAxis = netCDFDataset.findCoordinateAxis(AxisType.Height);
 
         this.obsProperties = checkNetcdfFileForAxis(heightAxis, actualVariableNames);
