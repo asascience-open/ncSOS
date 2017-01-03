@@ -42,7 +42,19 @@ public class BaseOutputFormatter extends OutputFormatter {
         this.document = ef.document;
     }
     
-   
+    
+    protected String getNcsosVersion(){
+    	String ncVer = NCSOS_VERSION;
+    	// Workaround for issue with tomcat 8.0.24 and accessing the manifest file of the libraries
+    	if(ncVer == null){
+    		try {
+    			String temp = BaseOutputFormatter.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+    			ncVer = temp.substring(temp.lastIndexOf("ncsos-") + 6, temp.indexOf(".jar"));
+    		} catch (Exception e1) {}
+
+    	}
+    	return ncVer;
+    }
     
     public String getContentType() {
         return "text/xml";

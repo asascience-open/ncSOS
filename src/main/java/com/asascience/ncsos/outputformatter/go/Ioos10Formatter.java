@@ -81,7 +81,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
                 supported = true;
             }
         }
-
+ 
         if (!supported) {
             this.hasError = true;
             this.setupException("Unsupported feature type for the " + RESPONSE_FORMAT + " response format! FeatureType: " + (handler.getDatasetFeatureType().toString()));
@@ -154,10 +154,11 @@ public class Ioos10Formatter extends BaseOutputFormatter {
             <gml:version>FILLME</gml:version>
         </gml:metaDataProperty>
          */
+
         List<Element> mdps = this.getRoot().getChildren("metaDataProperty", this.GML_NS);
         for (Element md : mdps) {
             if (md.getAttribute("title", this.XLINK_NS) != null && md.getAttributeValue("title", this.XLINK_NS).equalsIgnoreCase("softwareVersion")) {
-                md.getChild("version", this.GML_NS).setText(NCSOS_VERSION);
+                md.getChild("version", this.GML_NS).setText(getNcsosVersion());
             }
         }
     }

@@ -4,26 +4,25 @@
  */
 package com.asascience.ncsos.outputformatter.gc;
 
+
 import com.asascience.ncsos.gc.GetCapabilitiesRequestHandler;
 import com.asascience.ncsos.go.GetObservationRequestHandler;
 import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
-import com.asascience.ncsos.service.BaseRequestHandler;
-import com.asascience.ncsos.util.VocabDefinitions;
+
 
 import org.jdom.Element;
 import org.jdom.Namespace;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
+
 
 import ucar.nc2.constants.FeatureType;
 import ucar.nc2.time.CalendarDateRange;
 import ucar.unidata.geoloc.LatLonRect;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+
+
 
 /**
  * @author kwilcox
@@ -154,9 +153,10 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         List<Element> md = this.getRoot().getChild(OPERATIONS_METADATA, owsns)
                 .getChild("ExtendedCapabilities", owsns)
                 .getChildren("metaDataProperty", gmlns);
+        
         for (Element e : md) {
             if (e.getAttributeValue("title", this.getNamespace("xlink")).equalsIgnoreCase("softwareVersion")) {
-                e.getChild("version", gmlns).setText(NCSOS_VERSION);
+                e.getChild("version", gmlns).setText(getNcsosVersion());
             }
         }
     }
@@ -223,6 +223,9 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         }
         // ResponseFormat
         offering.addContent(new Element("responseFormat", sosns).setText(GetObservationRequestHandler.OOSTETHYS_RESPONSE_FORMAT));
+        offering.addContent(new Element("responseFormat", sosns).setText(GetObservationRequestHandler.CSV_RESPONSE_FORMAT));
+        offering.addContent(new Element("responseFormat", sosns).setText(GetObservationRequestHandler.JSON_RESPONSE_FORMAT));
+
         switch (ftype) {
             case STATION:
             case STATION_PROFILE:
@@ -270,6 +273,8 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         offering.addContent(new Element("featureOfInterest", sosns).setAttribute("href", this.handler.getUrnName(stationName), xlinkns));
         // ResponseFormat
         offering.addContent(new Element("responseFormat", sosns).setText(GetObservationRequestHandler.OOSTETHYS_RESPONSE_FORMAT));
+        offering.addContent(new Element("responseFormat", sosns).setText(GetObservationRequestHandler.CSV_RESPONSE_FORMAT));
+        offering.addContent(new Element("responseFormat", sosns).setText(GetObservationRequestHandler.JSON_RESPONSE_FORMAT));
         switch (ftype) {
             case STATION:
             case STATION_PROFILE:

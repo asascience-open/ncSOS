@@ -18,7 +18,7 @@ import java.util.List;
 public abstract class OutputFormatter {
 
     private HashMap<String, Namespace> namespaces;
-    public static final String NCSOS_VERSION = OutputFormatter.class.getPackage().getImplementationVersion();
+    public static final String NCSOS_VERSION = com.asascience.ncsos.outputformatter.OutputFormatter.class.getPackage().getImplementationVersion();
     public static final String OBSERVATION = "Observation";
     public static final String OBSERVATION_COLLECTION = "ObservationCollection";
     public static final String MEMBER = "member";

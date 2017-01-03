@@ -6,6 +6,7 @@ package com.asascience.ncsos.outputformatter.ds;
 
 import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
 import com.asascience.ncsos.util.XMLDomUtils;
+
 import org.jdom.Element;
 import org.jdom.Namespace;
 
@@ -262,6 +263,7 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
         </sml:capabilities>
         */
         Element parent = getRoot();
+
         List<Element> caps = parent.getChildren(CAPABILITIES, this.SML_NS);
         for (Element e : caps) {
             if (e.getAttribute(NAME) != null && (e.getAttributeValue(NAME).equalsIgnoreCase("ioosServiceMetadata"))) {
@@ -269,7 +271,7 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
                 List<Element> fields = sdr.getChildren("field", this.SWE_NS);
                 for (Element field : fields) {
                     if (field.getAttribute(NAME) != null && field.getAttributeValue(NAME).equalsIgnoreCase("softwareVersion")) {
-                        field.getChild("Text", this.SWE_NS).getChild("value", this.SWE_NS).setText(NCSOS_VERSION);
+                        field.getChild("Text", this.SWE_NS).getChild("value", this.SWE_NS).setText(getNcsosVersion());
                     }
                 }
             }
