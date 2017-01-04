@@ -1,7 +1,7 @@
 package com.asascience.ncsos.outputformatter.go;
 
 import com.asascience.ncsos.go.GetObservationRequestHandler;
-import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
+import com.asascience.ncsos.outputformatter.XmlOutputFormatter;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 
-public class OosTethysFormatter extends BaseOutputFormatter {
+public class OosTethysFormatter extends XmlOutputFormatter {
 
     private static final String TEMPLATE = "templates/GO_oostethys.xml";
     private static final String OBSERVATION = "Observation";

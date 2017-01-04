@@ -7,12 +7,10 @@ package com.asascience.ncsos.outputformatter.gc;
 
 import com.asascience.ncsos.gc.GetCapabilitiesRequestHandler;
 import com.asascience.ncsos.go.GetObservationRequestHandler;
-import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
-
+import com.asascience.ncsos.outputformatter.XmlOutputFormatter;
 
 import org.jdom.Element;
 import org.jdom.Namespace;
-
 
 import ucar.nc2.constants.FeatureType;
 import ucar.nc2.time.CalendarDateRange;
@@ -27,7 +25,7 @@ import java.util.Set;
 /**
  * @author kwilcox
  */
-public class GetCapsFormatter extends BaseOutputFormatter {
+public class GetCapsFormatter extends XmlOutputFormatter {
 
     public static final String CONTENTS = "Contents";
     public static final String EPSG4326 = "EPSG::4326";

@@ -3,7 +3,7 @@ package com.asascience.ncsos.outputformatter.go;
 import com.asascience.ncsos.cdmclasses.TimeSeriesProfile;
 import com.asascience.ncsos.cdmclasses.baseCDMClass;
 import com.asascience.ncsos.go.GetObservationRequestHandler;
-import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
+import com.asascience.ncsos.outputformatter.XmlOutputFormatter;
 
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class Ioos10Formatter extends BaseOutputFormatter {
+public class Ioos10Formatter extends XmlOutputFormatter {
 
     public static final String RESPONSE_OBSERVED_PROPERTIES = "Response Observed Properties";
 
@@ -34,9 +34,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
     private static final String TEMPLATE = "templates/GO_ioos10.xml";
     private static final String RESPONSE_FORMAT = "text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0\"";
     private static final FeatureType[] supportedTypes = {FeatureType.STATION_PROFILE, FeatureType.STATION};
-    private static final String BLOCK_SEPERATOR = "\n";
-    private static final String TOKEN_SEPERATOR = ",";
-    private static final String DECIMAL_SEPERATOR = ".";
+
     private static final String STATIC_STATIONS_DEF = "http://mmisw.org/ont/ioos/swe_element_type/stations";
     private static final String STATIC_STATION_DEF = "http://mmisw.org/ont/ioos/swe_element_type/station";
     private static final String OBS_COLLECTION_DEF = "http://mmisw.org/ont/ioos/swe_element_type/sensorObservationCollection";
@@ -1055,4 +1053,10 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         }
         super.writeOutput(writer);
     }
+
+	@Override
+	public void addDataFormattedStringToInfoList(String dataFormattedString) {
+		// TODO Auto-generated method stub
+		
+	}
 }

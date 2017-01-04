@@ -20,7 +20,7 @@ import java.util.BitSet;
  *
  * @author SCowan
  */
-public class CachedFileFormatter extends OutputFormatter {
+public class CachedFileFormatter extends XmlOutputFormatter {
     
     private Document document;
     private String errorString;

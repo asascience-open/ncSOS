@@ -4,7 +4,7 @@
  */
 package com.asascience.ncsos.outputformatter.ds;
 
-import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
+import com.asascience.ncsos.outputformatter.XmlOutputFormatter;
 import com.asascience.ncsos.util.XMLDomUtils;
 
 import org.jdom.Element;
@@ -19,7 +19,7 @@ import java.util.List;
  *
  * @author SCowan
  */
-public class IoosPlatform10Formatter extends BaseOutputFormatter {
+public class IoosPlatform10Formatter extends XmlOutputFormatter {
     public static final String BLANK = "";
     public static final String CAPABILITIES = "capabilities";
     public static final String CLASSIFIER = "classifier";

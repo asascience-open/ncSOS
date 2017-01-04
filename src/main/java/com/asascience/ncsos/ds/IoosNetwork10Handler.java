@@ -2,7 +2,7 @@ package com.asascience.ncsos.ds;
 
 import com.asascience.ncsos.cdmclasses.*;
 import com.asascience.ncsos.outputformatter.ErrorFormatter;
-import com.asascience.ncsos.outputformatter.OutputFormatter;
+import com.asascience.ncsos.outputformatter.XmlOutputFormatter;
 import com.asascience.ncsos.outputformatter.ds.IoosNetwork10Formatter;
 import com.asascience.ncsos.util.ListComprehension;
 import com.asascience.ncsos.util.LogReporter;
@@ -46,7 +46,7 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
         setStationData();
     }
 
-    public void setupOutputDocument(OutputFormatter format) throws IOException {
+    public void setupOutputDocument(XmlOutputFormatter format) throws IOException {
         if (!checkForProcedure(this.procedure)) {
             formatter = new ErrorFormatter();
             ((ErrorFormatter)formatter).setException("Invalid procedure: " + this.procedure, INVALID_PARAMETER, "procedure");

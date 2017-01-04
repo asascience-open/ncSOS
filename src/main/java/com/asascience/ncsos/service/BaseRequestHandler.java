@@ -1,6 +1,7 @@
 package com.asascience.ncsos.service;
 
 import com.asascience.ncsos.outputformatter.OutputFormatter;
+import com.asascience.ncsos.outputformatter.XmlOutputFormatter;
 import com.asascience.ncsos.util.DiscreteSamplingGeometryUtil;
 import com.asascience.ncsos.util.ListComprehension;
 import com.asascience.ncsos.util.VocabDefinitions;

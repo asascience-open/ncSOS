@@ -2,7 +2,9 @@ package com.asascience.ncsos.go;
 
 import com.asascience.ncsos.cdmclasses.*;
 import com.asascience.ncsos.outputformatter.ErrorFormatter;
+import com.asascience.ncsos.outputformatter.go.CsvFormatter;
 import com.asascience.ncsos.outputformatter.go.Ioos10Formatter;
+import com.asascience.ncsos.outputformatter.go.JsonFormatter;
 import com.asascience.ncsos.outputformatter.go.OosTethysFormatter;
 import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.ListComprehension;
@@ -43,6 +45,8 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
     public static final String FILL_VALUE_NAME = "_FillValue";
     public static final String IOOS10_RESPONSE_FORMAT = "text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0\"";
     public static final String OOSTETHYS_RESPONSE_FORMAT = "text/xml;subtype=\"om/1.0.0\"";
+    public static final String CSV_RESPONSE_FORMAT = "text/csv";
+    public static final String JSON_RESPONSE_FORMAT = "text/json";
     private final List<String> eventTimes;
     private boolean requestFirstTime;
     private boolean requestLastTime;
@@ -99,9 +103,17 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
         // set up our formatter
         if (responseFormat.equalsIgnoreCase(OOSTETHYS_RESPONSE_FORMAT)) {
             formatter = new OosTethysFormatter(this);
-        } else if (responseFormat.equalsIgnoreCase(IOOS10_RESPONSE_FORMAT)) {
+        } 
+        else if (responseFormat.equalsIgnoreCase(IOOS10_RESPONSE_FORMAT)) {
             formatter = new Ioos10Formatter(this);
-        } else {
+        } 
+        else if (responseFormat.equalsIgnoreCase(CSV_RESPONSE_FORMAT)){
+        	formatter = new CsvFormatter(this);
+        }
+        else if (responseFormat.equalsIgnoreCase(JSON_RESPONSE_FORMAT)){
+        	formatter = new JsonFormatter(this);
+        }
+        else {
             formatter = new ErrorFormatter();
             ((ErrorFormatter)formatter).setException("Could not recognize response format: " + responseFormat, 
                     INVALID_PARAMETER, "responseFormat");

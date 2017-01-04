@@ -5,6 +5,7 @@
 package com.asascience.ncsos.ds;
 
 import com.asascience.ncsos.outputformatter.ErrorFormatter;
+import com.asascience.ncsos.outputformatter.XmlOutputFormatter;
 import com.asascience.ncsos.outputformatter.ds.IoosNetwork10Formatter;
 import com.asascience.ncsos.outputformatter.ds.IoosPlatform10Formatter;
 import com.asascience.ncsos.service.BaseRequestHandler;
@@ -84,7 +85,7 @@ public class BaseDSHandler extends BaseRequestHandler {
         // find out needed info based on whether this is a station or sensor look up
         if (this.procedure.contains(STATION)) {
             setNeededInfoForStation(dataset, uri, query);
-            describer.setupOutputDocument(formatter);
+            describer.setupOutputDocument((XmlOutputFormatter) formatter);
         } else if (this.procedure.contains(SENSOR)) {
             formatter = new ErrorFormatter();
             ((ErrorFormatter)formatter).setException("NcSOS does not currently support DescribeSensor for sensor procedures.",
@@ -92,7 +93,7 @@ public class BaseDSHandler extends BaseRequestHandler {
         } else if (this.procedure.contains(NETWORK)) {
             formatter = new IoosNetwork10Formatter();
             describer = new IoosNetwork10Handler(dataset, procedure, query);
-            describer.setupOutputDocument(formatter);
+            describer.setupOutputDocument((XmlOutputFormatter) formatter);
         } else {
             formatter = new ErrorFormatter();
             ((ErrorFormatter)formatter).setException("Unknown procedure (not a 'station', 'sensor' or 'network'): " + 
