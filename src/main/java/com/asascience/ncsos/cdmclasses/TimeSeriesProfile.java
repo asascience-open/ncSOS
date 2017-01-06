@@ -179,6 +179,13 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
         return numProfiles;
     }
     
+    public String getHeightAxisUnits(){
+    	String heightUnits = null;
+    	if(this.heightAxis != null){
+    		heightUnits = this.heightAxis.getUnitsString();
+    	}
+    	return heightUnits;
+    }
     
     public List<Double> getProfileHeightsForStation(String station){
         List<Double> profHeights;
