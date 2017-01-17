@@ -391,22 +391,7 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
         return variableNames1;
     }
 
-     /**
-     * Create the observation data for go, passing it to our formatter
-     */
-    public void parseObservations() {
-    	if(CDMDataSet != null){
-    		for (int s = 0; s < CDMDataSet.getNumberOfStations(); s++) {
-    			String dataString = CDMDataSet.getDataResponse(s);
-    			for (String dataPoint : dataString.split(";")) {
-    				if (!dataPoint.equals("")) {
-    					formatter.addDataFormattedStringToInfoList(dataPoint);
-    				}
-    			}
-    		}
-    	}
-    }
-
+   
 
 
     public List<String> getRequestedEventTimes() {
@@ -458,13 +443,20 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
 
     public List<String> getRequestedObservedProperties() {
         CoordinateAxis heightAxis = netCDFDataset.findCoordinateAxis(AxisType.Height);
+        CoordinateAxis latAxis = netCDFDataset.findCoordinateAxis(AxisType.Lat);
+        CoordinateAxis lonAxis = netCDFDataset.findCoordinateAxis(AxisType.Lon);
 
         List<String> retval = Arrays.asList(obsProperties);
 
         if (heightAxis != null) {
             retval = ListComprehension.filterOut(retval, heightAxis.getShortName());
         }
-
+        if (latAxis != null){
+        	retval = ListComprehension.filterOut(retval, latAxis.getShortName());
+        }
+        if (lonAxis != null){
+        	retval = ListComprehension.filterOut(retval, lonAxis.getShortName());
+        }
         return retval;
     }
 

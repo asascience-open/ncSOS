@@ -6,6 +6,7 @@ package com.asascience.ncsos.cdmclasses;
 
 import org.joda.time.Chronology;
 import org.joda.time.chrono.ISOChronology;
+
 import ucar.nc2.units.DateFormatter;
 import ucar.nc2.units.DateUnit;
 import ucar.unidata.geoloc.Station;
@@ -29,6 +30,8 @@ public abstract class baseCDMClass implements iStationData {
     protected static final int Invalid_Value = -9999999;
     public static final String STATION_STR = "station=";
     public static final String TIME_STR = "time=";
+    public final static String BIN_STR = "BIN=";
+
     protected static final String Invalid_Station = "INVALID_ST";
     protected Chronology chrono = ISOChronology.getInstance();
     protected DateFormatter df = new DateFormatter();

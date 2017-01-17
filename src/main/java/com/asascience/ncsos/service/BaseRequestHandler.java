@@ -414,7 +414,8 @@ public abstract class BaseRequestHandler {
             String name = var.getShortName();
             if (name.equalsIgnoreCase(PROFILE) || name.toLowerCase().contains("info") || name.toLowerCase().contains("time") ||
                 name.toLowerCase().contains("row") || name.equalsIgnoreCase("z") || name.equalsIgnoreCase("alt") ||
-                name.equalsIgnoreCase("height"))
+                name.equalsIgnoreCase("height") ||
+                name.equalsIgnoreCase("depth") || name.equalsIgnoreCase("lat") || name.equalsIgnoreCase("lon"))
             	continue;
             else
                 this.sensorNames.put(name, var);
@@ -573,7 +574,11 @@ public abstract class BaseRequestHandler {
     protected HashMap<String, Variable> getPlatformMap(){
     	return this.platformVariableMap;
     }
-    /**
+    public NetcdfDataset getNetCDFDataset() {
+		return netCDFDataset;
+	}
+
+	/**
      * Return the list of sensor names
      * @return string list of sensor names
      */

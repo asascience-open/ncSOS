@@ -227,6 +227,7 @@ public class GetCapsFormatter extends XmlOutputFormatter {
         switch (ftype) {
             case STATION:
             case STATION_PROFILE:
+            case GRID:
                 offering.addContent(new Element("responseFormat", sosns).setText(GetObservationRequestHandler.IOOS10_RESPONSE_FORMAT));
                 break;
             default:
@@ -276,6 +277,7 @@ public class GetCapsFormatter extends XmlOutputFormatter {
         switch (ftype) {
             case STATION:
             case STATION_PROFILE:
+            case GRID:
                 offering.addContent(new Element("responseFormat", sosns).setText(GetObservationRequestHandler.IOOS10_RESPONSE_FORMAT));
                 break;
             default:
@@ -306,9 +308,7 @@ public class GetCapsFormatter extends XmlOutputFormatter {
     /***********************/
     /** Interface Methods **/
     /***********************/
-    public void addDataFormattedStringToInfoList(String dataFormattedString) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+
 
     private void setHTTPMethods(Element parent, String threddsURI) {
         Namespace owsns = this.getNamespace("ows");

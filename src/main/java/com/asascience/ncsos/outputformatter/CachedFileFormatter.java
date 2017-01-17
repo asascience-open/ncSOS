@@ -80,9 +80,7 @@ public class CachedFileFormatter extends XmlOutputFormatter {
      *   Interface Methods    **************************************************
      **************************************************************************/
     
-    public void addDataFormattedStringToInfoList(String dataFormattedString) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+  
 
     public void writeOutput(Writer writer) throws IOException {
         XMLOutputter xmlOutput = new XMLOutputter();

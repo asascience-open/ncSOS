@@ -214,9 +214,7 @@ public class Parser {
                         // Errors are caught internally in the obsHandler
                         retval.put(OUTPUT_FORMATTER, obsHandler.getOutputFormatter());
                         return retval;
-                    } else {
-                        obsHandler.parseObservations();
-                    }
+                    } 
                     // add our handler to the return value
                     retval.put(OUTPUT_FORMATTER, obsHandler.getOutputFormatter());
                 } catch (Exception ex) {

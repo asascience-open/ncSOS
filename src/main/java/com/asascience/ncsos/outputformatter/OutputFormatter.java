@@ -19,8 +19,5 @@ public abstract class OutputFormatter {
      */
     public abstract String getContentType();
 
-	public void addDataFormattedStringToInfoList(String dataPoint) {
-		// TODO Auto-generated method stub
-		
-	}
+
 }

@@ -256,14 +256,7 @@ public abstract class XmlOutputFormatter extends OutputFormatter {
      */
     protected abstract String getTemplateLocation();
 
-    /**
-     * Adds data from a formatted string to some container defined in the individual formatters.
-     *
-     * @param dataFormattedString a csv string that usually follows the format of key=value,key1=value1,key2=value2,etc
-     *                            'value' can be csvs as well, allowing for multiple values per key
-     */
-  //  public abstract void addDataFormattedStringToInfoList(String dataFormattedString);
-
+  
  
     
 }
