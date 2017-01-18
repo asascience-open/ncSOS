@@ -2,7 +2,7 @@ package com.asascience.ncsos.ds;
 
 import com.asascience.ncsos.cdmclasses.*;
 import com.asascience.ncsos.outputformatter.ErrorFormatter;
-import com.asascience.ncsos.outputformatter.OutputFormatter;
+import com.asascience.ncsos.outputformatter.XmlOutputFormatter;
 import com.asascience.ncsos.outputformatter.ds.IoosPlatform10Formatter;
 import com.asascience.ncsos.util.LogReporter;
 import com.asascience.ncsos.util.VocabDefinitions;
@@ -44,7 +44,7 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
         this.setStationData();
     }
     
-    public void setupOutputDocument(OutputFormatter output) throws IOException {
+    public void setupOutputDocument(XmlOutputFormatter output) throws IOException {
         if (errorString != null) {
             formatter = new ErrorFormatter();
             ((ErrorFormatter)formatter).setException(errorString);
@@ -152,7 +152,7 @@ public class IoosPlatform10Handler extends Ioos10Handler implements BaseDSInterf
     }
     
     private void formatSmlNetworkProcedures() {
-        platform.addSmlCapabilitiesNetwork(OutputFormatter.SYSTEM, this.getUrnNetworkAll());
+        platform.addSmlCapabilitiesNetwork(XmlOutputFormatter.SYSTEM, this.getUrnNetworkAll());
     }
     
     private void formatSmlContacts() {

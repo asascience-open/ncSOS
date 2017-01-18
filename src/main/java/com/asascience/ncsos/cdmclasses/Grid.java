@@ -2,12 +2,13 @@ package com.asascience.ncsos.cdmclasses;
 
 import ucar.ma2.Array;
 import ucar.nc2.constants.CF;
-import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.dataset.CoordinateAxis1D;
 import ucar.nc2.dataset.CoordinateAxis1DTime;
 import ucar.nc2.dt.GridCoordSystem;
 import ucar.nc2.dt.GridDataset;
 import ucar.nc2.dt.GridDatatype;
+import ucar.nc2.time.CalendarDate;
+import ucar.nc2.time.CalendarDateFormatter;
 import ucar.nc2.units.DateFormatter;
 import ucar.unidata.geoloc.LatLonRect;
 import ucar.unidata.geoloc.Station;
@@ -15,9 +16,11 @@ import ucar.unidata.geoloc.Station;
 import java.io.IOException;
 import java.util.*;
 
+import org.joda.time.DateTime;
+
 public class Grid extends baseCDMClass implements iStationData {
 
-    private static final String DEPTH = "depth";
+    public static final String DEPTH = "depth";
     public static final String LAT = "latitude";
     public static final String LON = "longitude";
     private List<String> stationNameList;
@@ -56,14 +59,18 @@ public class Grid extends baseCDMClass implements iStationData {
         lowerAlt = upperAlt = 0;
     }
 
-    /**
+    public Map<String, String> getLatLonRequest() {
+		return latLonRequest;
+	}
+
+	/**
      * Adds a Date entry to the builder from the dates array
      * @param builder the StringBuilder being built
      * @param dates Date array from which the first date value (0 index) is pulled from
      */
-    private void addDateEntry(StringBuilder builder, Date[] dates) {
-        builder.append("time=").append(dateFormatter.toDateTimeStringISO(dates[0]));
-        builder.append(",");
+    private String addDateEntry( CalendarDate date) {
+        return ("time=")+(date.toString())+",";
+       // builder.append(",");
     }
 
     /**
@@ -72,30 +79,78 @@ public class Grid extends baseCDMClass implements iStationData {
      * @return integer array with the indices of the depth values
      */
     private int[] checkAndGetDepthIndices(Map<String, Integer[]> latLons) {
-        // setup for finding our depth values
-        int[] retVal = new int[latLons.get(LAT).length];
-        CoordinateAxis1D depthData = (CoordinateAxis1D) GridData.getDataVariable(DEPTH);
-        if (depthData != null) {
-            double[] depthDbl = depthData.getCoordValues();
-            String[] requestedDepths = latLonRequest.get(DEPTH).split("[,]");
-            int currIndex = 0;
-            for (int i=0;i<retVal.length;i++) {
-                currIndex = (i < requestedDepths.length) ? i : requestedDepths.length - 1;
-                try {
-                    retVal[i] = findBestIndex(depthDbl, Double.parseDouble(requestedDepths[currIndex]));
-                } catch (Exception e) {
-                    System.out.println("Could not parse: " + requestedDepths[currIndex] + " - " + e.getMessage());
-                    retVal[i] = 0;
-                }
-            }
-        } else {
-            for (int r=0;r<retVal.length;r++) {
-                retVal[r] = 0;
-            }
-        }
-        return retVal;
+    	// setup for finding our depth values
+    	int[] retVal = new int[latLons.get(LAT).length];
+    	CoordinateAxis1D depthData = (CoordinateAxis1D) GridData.getDataVariable(DEPTH);
+    	if (depthData != null) {
+    		double[] depthDbl = depthData.getCoordValues();
+    		String[] requestedDepths = null;
+    		if(latLonRequest.containsKey(DEPTH)){
+    			requestedDepths = latLonRequest.get(DEPTH).split("[,]");
+
+    			int currIndex = 0;
+    			for (int i=0;i<retVal.length;i++) {
+    				currIndex = (i < requestedDepths.length) ? i : requestedDepths.length - 1;
+    				try {
+    					retVal[i] = findBestIndex(depthDbl, Double.parseDouble(requestedDepths[currIndex]));
+    				} catch (Exception e) {
+    					System.out.println("Could not parse: " + requestedDepths[currIndex] + " - " + e.getMessage());
+    					retVal[i] = 0;
+    				}
+    			}
+    		}
+    	} else {
+    		for (int r=0;r<retVal.length;r++) {
+    			retVal[r] = 0;
+    		}
+    	}
+    	return retVal;
     }
 
+    
+    public Integer getGridZIndex(String grid){
+    	Integer zIndex = -1;
+    	GridDatatype gridType= this.GridData.findGridDatatype(grid);
+    	if(gridType != null){
+    		zIndex = gridType.getZDimensionIndex();
+    	}
+    	return zIndex;
+    }
+    
+    
+    public String getDepthUnits(String grid){
+    	String units = null;
+    	GridDatatype gridType= this.GridData.findGridDatatype(grid);
+    	if(gridType != null){
+    		int zIndex = gridType.getZDimensionIndex();
+    		if(zIndex > -1){
+    				units = gridType.getCoordinateSystem().getVerticalAxis().getUnitsString();
+    		}
+    	}
+    	
+    	return units;
+    }
+    public List<Double> getDepths(String grid){
+    	GridDatatype gridType= this.GridData.findGridDatatype(grid);
+    	List<Double> heightVals = new ArrayList<Double>();
+    	if(gridType != null){
+    		int zIndex = gridType.getZDimensionIndex();
+    		if(zIndex > -1){
+
+    			try {
+    				Array heights = gridType.getCoordinateSystem().getVerticalAxis().read();
+    				for(int i =0; i < heights.getSize(); i++){
+    					heightVals.add(heights.getDouble(i));
+    				}
+    			} catch (IOException e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+    		}
+    	}
+    	return heightVals;
+    }
+    
     /************************/
     /* iStationData Methods */
     /**************************************************************************/
@@ -151,10 +206,51 @@ public class Grid extends baseCDMClass implements iStationData {
 
             GridDatatype grid = GridData.getGrids().get(0);
             GridCoordSystem gcs = grid.getCoordinateSystem();
-            String lat_name   = GridData.getGrids().get(0).getCoordinateSystem().getYHorizAxis().getOriginalVariable().getFullName();
-            String lon_name   = GridData.getGrids().get(0).getCoordinateSystem().getXHorizAxis().getOriginalVariable().getFullName();
+            
+            String lat_name   =  gcs.getYHorizAxis().getOriginalVariable().getFullName();
+            String lon_name   = gcs.getXHorizAxis().getOriginalVariable().getFullName();
             String depth_name = null;
+            Integer timeIstart = null;
+            Integer timeIend = -1;
+            CoordinateAxis1DTime coordTime = gcs.getTimeAxis1D();
 
+            if (this.eventTimes == null){
+            	timeIstart = 0;
+            	timeIend = (int) (coordTime.getSize() -1);
+            }
+            else if (eventTimes.size() > 1) {
+            	// find all times between two specified
+            	CalendarDate dtStart = CalendarDateFormatter.isoStringToCalendarDate(null, eventTimes.get(0));
+                CalendarDate dtEnd = CalendarDateFormatter.isoStringToCalendarDate(null, eventTimes.get(1));
+                for(Integer timeIndex = 0; timeIndex < coordTime.getSize(); timeIndex++){
+                	CalendarDate cD = coordTime.getCalendarDate(timeIndex);
+                	if(timeIstart == null && (cD.getDifferenceInMsecs(dtStart) == 0 || cD.isAfter(dtStart))){
+                		timeIstart = timeIndex;
+                	}
+                	if(cD.getDifferenceInMsecs(dtEnd) == 0 || (cD.isBefore(dtEnd) && timeIstart != null)){
+                		timeIend = timeIndex;
+                	}
+                }
+            } //if single event time        
+            else {
+               // get closest time
+            	CalendarDate dtStart = CalendarDateFormatter.isoStringToCalendarDate(null, eventTimes.get(0));
+            	long cDiff;
+            	long savedDiff = Long.MAX_VALUE;
+            	Integer currIndex = null;
+            	for(Integer timeIndex = 0; timeIndex <= timeIend; timeIndex++){
+                	CalendarDate cD = coordTime.getCalendarDate(timeIndex);
+
+            		cDiff = cD.getDifferenceInMsecs(dtStart);
+            		
+            		if(currIndex == null ||  Math.abs(cDiff) < savedDiff){
+            			savedDiff = Math.abs(cDiff);
+            			currIndex = timeIndex;
+            		}
+            	}
+            	timeIstart = currIndex;
+            	timeIend = currIndex;
+            }
             double[] lonDbl = ((CoordinateAxis1D)GridData.getDataVariable(lon_name)).getCoordValues();
             double[] latDbl = ((CoordinateAxis1D)GridData.getDataVariable(lat_name)).getCoordValues();
             double[] depthDbl = null;
@@ -168,62 +264,99 @@ public class Grid extends baseCDMClass implements iStationData {
             Map<String, Integer[]> latLonDepthHash = findDataIndexs(lonDbl, latDbl, latLonRequest);
 
             int[] depthHeights = new int[latLonDepthHash.get(LON).length];
+            Map<Integer, List<Integer>> allDepths = new HashMap<Integer, List<Integer>>();
             Boolean zeroDepths = true;
 
             for(String vars : variableNames) {
                 if(vars.equalsIgnoreCase(DEPTH)) {
                     // we do want depths
                     zeroDepths = false;
-                    depthHeights = checkAndGetDepthIndices(latLonDepthHash);
+                    if(this.latLonRequest.containsKey(DEPTH)){
+                    	depthHeights = checkAndGetDepthIndices(latLonDepthHash);
+                    	 for(int i=0; i<depthHeights.length; i++) {
+                    		 List<Integer> oneVal = new ArrayList<Integer>();
+                    		 oneVal.add(depthHeights[i]);
+                    		 allDepths.put(i, oneVal);
+                    	 }
+                    }
+                    else {
+                    	
+                    	List<Double> depthVals = this.getDepths(grid.getShortName());
+                    	List<Integer> depthIndexList = new ArrayList<Integer>();
+                    	for(int i=0; i <depthVals.size(); i++){
+                    		depthIndexList.add(i);
+                    	}
+                    	for(int i=0; i<latLonDepthHash.get(LON).length; i++) {
+                    		allDepths.put(i, depthIndexList);
+                    	}
+                    }
+                    break;
                 }
             }
             
             if (zeroDepths) {
                 for(int i=0; i<depthHeights.length; i++) {
-                    depthHeights[i] = 0;
+                    List<Integer> oneVal = new ArrayList<Integer>();
+           		 	oneVal.add(0);
+           		 	allDepths.put(i, oneVal);
                 }
             }
-            
-            for (int k=0; k<latLonDepthHash.get(LAT).length; k++) {
-                java.util.Date[] dates = null;
-                if (gcs.hasTimeAxis1D()) {
-                    CoordinateAxis1DTime tAxis1D = gcs.getTimeAxis1D();
-                    dates = tAxis1D.getTimeDates();
 
-                } else if (gcs.hasTimeAxis()) {
-                    CoordinateAxis tAxis = gcs.getTimeAxis();
-                }
-                //modify for requested dates, add in for loop
-                addDateEntry(builder, dates);
+            for(Integer timeIndex = timeIstart; timeIndex <= timeIend; timeIndex++){
+            	for (int k=0; k<latLonDepthHash.get(LAT).length; k++) {
+            		for(Integer depthIndex : allDepths.get(k)){
 
-                // add depth
-                if(depthDbl != null) {
-                    builder.append(depth_name).append("=").append(depthDbl[depthHeights[k]]).append(",");
-                }
-                
-                builder.append(lat_name).append("=").append(latDbl[latLonDepthHash.get(LAT)[k]]).append(",");
-                builder.append(lon_name).append("=").append(lonDbl[latLonDepthHash.get(LON)[k]]).append(",");
-                // get data slices
-                String dataName;
-                for (int l=0; l<GridData.getGrids().size();l++) {
-                    dataName = GridData.getGrids().get(l).getName();
-                    if (isInVariableNames(GridData.getGrids().get(l).getName())) {
-                        try {
-                            data = grid.readDataSlice(0, depthHeights[k], latLonDepthHash.get(LAT)[k], latLonDepthHash.get(LON)[k]);
-                            builder.append(dataName).append("=").append(data.getFloat(0)).append(",");
-                        } catch (Exception ex) {
-                            System.out.println("Error in reading data slice, index " + l + " - " + ex.getMessage());
-                            builder.delete(0, builder.length());
-                            builder.append("ERROR= reading data slice from GridData: ").append(ex.getLocalizedMessage());
-                            return builder.toString();
-                        }
-                    }
-                }
-                if(builder.length() > 0)
-                    builder.deleteCharAt(builder.length()-1);
-                builder.append(";");
+            			CalendarDate cD = coordTime.getCalendarDate(timeIndex);
+            			String startStr = "";
+
+            			//modify for requested dates, add in for loop
+            			startStr = addDateEntry(cD);
+
+            			// add depth
+            			if(depthDbl != null) {
+            				startStr += (depth_name)+("=")+(depthDbl[depthIndex])+(",");
+            				startStr += (BIN_STR)+(depthIndex)+(",");
+            				//builder.append(depth_name).append("=").append(depthDbl[depthIndex]).append(",");
+            				//builder.append(BIN_STR).append(depthIndex).append(",");
+            			}
+            			startStr += (STATION_STR + stNum) +(",");
+
+            			startStr += lat_name + "="+latDbl[latLonDepthHash.get(LAT)[k]]+(",");
+            			startStr += lon_name + ("=") + (lonDbl[latLonDepthHash.get(LON)[k]]) +(",");
+            			
+            			
+            			//builder.append(STATION_STR + stNum).append(",");
+
+            			//builder.append(lat_name).append("=").append(latDbl[latLonDepthHash.get(LAT)[k]]).append(",");
+            			//builder.append(lon_name).append("=").append(lonDbl[latLonDepthHash.get(LON)[k]]).append(",");
+            			// get data slices
+            			String dataName;
+            			for (int l=0; l<GridData.getGrids().size();l++) {
+            				dataName = GridData.getGrids().get(l).getName();
+            				if (isInVariableNames(GridData.getGrids().get(l).getName())) {
+            					try {
+                    				builder.append(startStr);
+
+            						grid = GridData.getGrids().get(l);
+            						int latI = latLonDepthHash.get(LAT)[k];
+            						int lonI = latLonDepthHash.get(LON)[k];
+            						data = grid.readDataSlice(timeIndex, depthIndex, latI, lonI);
+            						builder.append(dataName).append("=").append(data.getFloat(0)).append(";");
+            					} catch (Exception ex) {
+            						System.out.println("Error in reading data slice, index " + l + " - " + ex.getMessage());
+            						builder.delete(0, builder.length());
+            						builder.append("ERROR= reading data slice from GridData: ").append(ex.getLocalizedMessage());
+            						return builder.toString();
+            					}
+            				}
+            			}
+            			//if(builder.length() > 0)
+            			//	builder.deleteCharAt(builder.length()-1);
+            			//builder.append(";");
+            		}
+            	}
             }
-            builder.append(" ").append("\n");
+            //builder.append(" ").append("\n");
             return builder.toString();
         }
         return DATA_RESPONSE_ERROR + Grid.class;
@@ -273,6 +406,23 @@ public class Grid extends baseCDMClass implements iStationData {
         return retVal;
     }
 
+    public double getClosestLat(int stNum){
+  
+        String lat_name   = GridData.getGrids().get(0).getCoordinateSystem().getYHorizAxis().getOriginalVariable().getFullName();
+        String lon_name   = GridData.getGrids().get(0).getCoordinateSystem().getXHorizAxis().getOriginalVariable().getFullName();
+        double[] lonDbl = ((CoordinateAxis1D)GridData.getDataVariable(lon_name)).getCoordValues();
+        double[] latDbl = ((CoordinateAxis1D)GridData.getDataVariable(lat_name)).getCoordValues();
+        return latDbl[this.findBestIndexLon(latDbl, (Double.valueOf( this.latLonRequest.get(LAT).split(",")[0])))];
+
+    }
+    
+    public double getClosestLon(int stNum){
+    	   String lon_name   = GridData.getGrids().get(0).getCoordinateSystem().getXHorizAxis().getOriginalVariable().getFullName();
+           double[] lonDbl = ((CoordinateAxis1D)GridData.getDataVariable(lon_name)).getCoordValues();
+           return lonDbl[this.findBestIndexLon(lonDbl, (Double.valueOf( this.latLonRequest.get(LON).split(",")[0])))];
+    }
+    
+ 
     @Override
     public double getLowerLon(int stNum) {
 //        return Double.parseDouble(latLonRequest.get(LON));
@@ -459,9 +609,9 @@ public class Grid extends baseCDMClass implements iStationData {
         // get our indices
         for(int i=0;i<requestedArrayLength;i++) {
             if(requestedLons.length > i) {
-                retLons[i] = findBestIndex(lonDbl, requestedLons[i]);
+                retLons[i] = findBestIndexLon(lonDbl, requestedLons[i]);
             } else {
-                retLons[i] = findBestIndex(lonDbl, requestedLons[requestedLons.length - 1]);
+                retLons[i] = findBestIndexLon(lonDbl, requestedLons[requestedLons.length - 1]);
             }
 
             if(requestedLats.length > i) {
@@ -541,6 +691,31 @@ public class Grid extends baseCDMClass implements iStationData {
         return retIndex;
     }
 
+    private int findBestIndexLon(double[] valueArray, double valueToFind){
+        // iterate through the array to find the index with the value closest to 'valueToFind'
+        double bestDiffValue = Double.MAX_VALUE;
+        int retIndex = -1;
+        double uValueToFind = valueToFind % 360; // make 0-360
+        for(int i=0; i<valueArray.length; i++) {
+        	double cVal = valueArray[i] % 360;
+        	double curDiffValue;
+    		curDiffValue = cVal - uValueToFind;
+    		double meth2;
+        	 if(uValueToFind > cVal){
+        		   meth2 = (360 - uValueToFind) + cVal;
+        	 }
+        	 else{
+        		 meth2 = (360 - cVal) + uValueToFind;
+        	 }        	   
+        	 curDiffValue = Math.min(curDiffValue, meth2);
+       
+        	if(Math.abs(curDiffValue) < bestDiffValue) {
+               bestDiffValue = Math.abs(curDiffValue);
+               retIndex = i;
+           }
+        }
+        return retIndex;
+    }
     public List<String> getLocationsString(int stNum) {
         List<String> retval = new ArrayList<String>();
         retval.add(this.getLowerLat(stNum) + " " + this.getLowerLon(stNum));

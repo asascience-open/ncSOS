@@ -2,7 +2,9 @@ package com.asascience.ncsos.go;
 
 import com.asascience.ncsos.cdmclasses.*;
 import com.asascience.ncsos.outputformatter.ErrorFormatter;
+import com.asascience.ncsos.outputformatter.go.CsvFormatter;
 import com.asascience.ncsos.outputformatter.go.Ioos10Formatter;
+import com.asascience.ncsos.outputformatter.go.JsonFormatter;
 import com.asascience.ncsos.outputformatter.go.OosTethysFormatter;
 import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.ListComprehension;
@@ -43,12 +45,17 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
     public static final String FILL_VALUE_NAME = "_FillValue";
     public static final String IOOS10_RESPONSE_FORMAT = "text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0\"";
     public static final String OOSTETHYS_RESPONSE_FORMAT = "text/xml;subtype=\"om/1.0.0\"";
+    public static final String CSV_RESPONSE_FORMAT = "text/csv";
+    public static final String JSON_RESPONSE_FORMAT = "text/json";
     private final List<String> eventTimes;
     private boolean requestFirstTime;
     private boolean requestLastTime;
     private static final String LATEST_TIME = "latest";
     private static final String FIRST_TIME = "first";
     private static final String ALL_OBS = "all";
+    private String latAxisName;
+    private String lonAxisName;
+    private String depthAxisName;
     /**
      * SOS get obs request handler
      * @param netCDFDataset dataset for which the get observation request is being made
@@ -69,6 +76,9 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
         super(netCDFDataset);
         this.requestFirstTime = false;
         this.requestLastTime = false;
+        latAxisName = null;
+        lonAxisName = null;
+        depthAxisName = null;
         eventTimes = setupGetObservation(netCDFDataset,
                                         requestedProcedures,
                                         offering,
@@ -99,9 +109,17 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
         // set up our formatter
         if (responseFormat.equalsIgnoreCase(OOSTETHYS_RESPONSE_FORMAT)) {
             formatter = new OosTethysFormatter(this);
-        } else if (responseFormat.equalsIgnoreCase(IOOS10_RESPONSE_FORMAT)) {
+        } 
+        else if (responseFormat.equalsIgnoreCase(IOOS10_RESPONSE_FORMAT)) {
             formatter = new Ioos10Formatter(this);
-        } else {
+        } 
+        else if (responseFormat.equalsIgnoreCase(CSV_RESPONSE_FORMAT)){
+        	formatter = new CsvFormatter(this);
+        }
+        else if (responseFormat.equalsIgnoreCase(JSON_RESPONSE_FORMAT)){
+        	formatter = new JsonFormatter(this);
+        }
+        else {
             formatter = new ErrorFormatter();
             ((ErrorFormatter)formatter).setException("Could not recognize response format: " + responseFormat, 
                     INVALID_PARAMETER, "responseFormat");
@@ -240,6 +258,19 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
         return localEventTime;
 
     }
+    
+    public boolean is3dGrid(String station){
+    	boolean is3dGrid = false;
+    	if(this.getCDMDataset() instanceof Grid){
+			Grid gDs = (Grid) this.getCDMDataset();
+			Map<String, String> llrequest  = gDs.getLatLonRequest();
+			if(!llrequest.containsKey(Grid.DEPTH) || llrequest.get(Grid.DEPTH).split(",").length > 1){
+				is3dGrid = gDs.getGridZIndex(this.getCDMDataset().getStationName(0)) > -1 ? true : false;
+			}
+		}
+    	return is3dGrid;
+    }
+    
     private void setCDMDatasetForStations(NetcdfDataset netCDFDataset, String[] eventTime, 
             Map<String, String> latLonRequest,  CoordinateAxis heightAxis) throws IOException {
         // strip out text if the station is defined by indices
@@ -300,13 +331,21 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
 
             Variable depthAxis;
             if (!latLonRequest.isEmpty()) {
+            	List<String>  variableNamesNew = new ArrayList<String>();
+                variableNamesNew.addAll(Arrays.asList(this.obsProperties));
                 depthAxis = (netCDFDataset.findVariable(DEPTH));
                 if (depthAxis != null) {
+                	this.depthAxisName = depthAxis.getFullName();
                     this.obsProperties = checkNetcdfFileForAxis((CoordinateAxis1D) depthAxis, this.obsProperties);
                 }
-                this.obsProperties = checkNetcdfFileForAxis(netCDFDataset.findCoordinateAxis(AxisType.Lat), this.obsProperties);
-                this.obsProperties = checkNetcdfFileForAxis(netCDFDataset.findCoordinateAxis(AxisType.Lon), this.obsProperties);
+                CoordinateAxis lonAxis = netCDFDataset.findCoordinateAxis(AxisType.Lon);
+                this.lonAxisName = lonAxis.getFullName();
+                this.obsProperties = checkNetcdfFileForAxis(lonAxis, this.obsProperties);
 
+                CoordinateAxis latAxis = netCDFDataset.findCoordinateAxis(AxisType.Lat);
+                this.latAxisName = latAxis.getFullName();
+                this.obsProperties = checkNetcdfFileForAxis(latAxis, this.obsProperties);
+              
                 CDMDataSet = new Grid(this.procedures, eventTime, this.obsProperties, latLonRequest);
                 CDMDataSet.setData(getGridDataset());
             }
@@ -369,8 +408,9 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
             //if it not found add it!
             if (!foundZ && !Axis.getDimensions().isEmpty()) {
                 variableNamesNew = new ArrayList<String>();
-                variableNamesNew.addAll(Arrays.asList(variableNames1));
                 variableNamesNew.add(Axis.getFullName());
+
+                variableNamesNew.addAll(Arrays.asList(variableNames1));
                 variableNames1 = new String[variableNames1.length + 1];
                 variableNames1 = (String[]) variableNamesNew.toArray(variableNames1);
                 //*******************************
@@ -379,22 +419,7 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
         return variableNames1;
     }
 
-     /**
-     * Create the observation data for go, passing it to our formatter
-     */
-    public void parseObservations() {
-    	if(CDMDataSet != null){
-    		for (int s = 0; s < CDMDataSet.getNumberOfStations(); s++) {
-    			String dataString = CDMDataSet.getDataResponse(s);
-    			for (String dataPoint : dataString.split(";")) {
-    				if (!dataPoint.equals("")) {
-    					formatter.addDataFormattedStringToInfoList(dataPoint);
-    				}
-    			}
-    		}
-    	}
-    }
-
+   
 
 
     public List<String> getRequestedEventTimes() {
@@ -446,13 +471,20 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
 
     public List<String> getRequestedObservedProperties() {
         CoordinateAxis heightAxis = netCDFDataset.findCoordinateAxis(AxisType.Height);
+        CoordinateAxis latAxis = netCDFDataset.findCoordinateAxis(AxisType.Lat);
+        CoordinateAxis lonAxis = netCDFDataset.findCoordinateAxis(AxisType.Lon);
 
         List<String> retval = Arrays.asList(obsProperties);
 
         if (heightAxis != null) {
             retval = ListComprehension.filterOut(retval, heightAxis.getShortName());
         }
-
+        if (latAxis != null){
+        	retval = ListComprehension.filterOut(retval, latAxis.getShortName());
+        }
+        if (lonAxis != null){
+        	retval = ListComprehension.filterOut(retval, lonAxis.getShortName());
+        }
         return retval;
     }
 
@@ -551,4 +583,19 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
         }
 
     }
+
+
+	public String getLatAxisName() {
+		return latAxisName;
+	}
+
+
+	public String getLonAxisName() {
+		return lonAxisName;
+	}
+
+
+	public String getDepthAxisName() {
+		return depthAxisName;
+	}
 }

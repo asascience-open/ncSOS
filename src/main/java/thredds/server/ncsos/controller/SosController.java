@@ -79,6 +79,7 @@ public class SosController implements ISosContoller {
             _log.error("Something went wrong", e);
 
             ErrorFormatter  output = new ErrorFormatter();
+            res.setContentType(output.getContentType().toString());        
             output.setException(e.getMessage());
 
 

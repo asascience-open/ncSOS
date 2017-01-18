@@ -3,7 +3,7 @@ package com.asascience.ncsos.outputformatter;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
-public class ErrorFormatter extends BaseOutputFormatter {
+public class ErrorFormatter extends XmlOutputFormatter {
 
     private final static String TEMPLATE = "templates/exception.xml";
 
@@ -36,4 +36,6 @@ public class ErrorFormatter extends BaseOutputFormatter {
         root.getChild("Exception", ns).setAttribute("exceptionCode", code).setAttribute("locator", locator);
         root.getChild("Exception", ns).getChild("ExceptionText", ns).setText(exceptionMessage);
     }
+
+	
 }

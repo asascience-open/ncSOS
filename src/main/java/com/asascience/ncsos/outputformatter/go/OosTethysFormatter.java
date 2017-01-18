@@ -1,7 +1,7 @@
 package com.asascience.ncsos.outputformatter.go;
 
 import com.asascience.ncsos.go.GetObservationRequestHandler;
-import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
+import com.asascience.ncsos.outputformatter.XmlOutputFormatter;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 
-public class OosTethysFormatter extends BaseOutputFormatter {
+public class OosTethysFormatter extends XmlOutputFormatter {
 
     private static final String TEMPLATE = "templates/GO_oostethys.xml";
     private static final String OBSERVATION = "Observation";
@@ -226,18 +226,36 @@ public class OosTethysFormatter extends BaseOutputFormatter {
         // split on token separator then on '='
         StringBuilder retval = new StringBuilder();
         String[] blockSplit = dataBlock.split(BLOCK_SEPERATOR);
+        String lastTime = null;
+        String latAxisName = this.handler.getLatAxisName();
+        String lonAxisName = this.handler.getLonAxisName();
+        String depthAxisName = this.handler.getDepthAxisName();
+        boolean skipLatLonBlock;
         for (String block : blockSplit) {
-            String[] tokenSplit = block.split(TOKEN_SEPERATOR);
-            for (String obsValue : tokenSplit) {
-                String[] obs = obsValue.split("=");
-                if (obs.length > 1 && (obs[0].equals("time") || isInRequestObservedProperties(obs[0]))) {
-                    retval.append(obs[1]).append(TOKEN_SEPERATOR);
-                }
-            }
-            // remove last token seperator
-            if (retval.length() > 1)
-                retval.deleteCharAt(retval.length()-1);
-            retval.append(BLOCK_SEPERATOR);
+        	String[] tokenSplit = block.split(TOKEN_SEPERATOR);
+        	skipLatLonBlock = false;
+        	for (String obsValue : tokenSplit) {
+        		String[] obs = obsValue.split("=");
+        		if (obs.length > 1 && (obs[0].equals("time") || isInRequestObservedProperties(obs[0]))){
+        			if(lastTime != null && obs[0].equals("time")) {
+        				if(!lastTime.equals(obs[1])){
+        					// remove last token seperator
+        					if (retval.length() > 1)
+        						retval.deleteCharAt(retval.length()-1);
+        					retval.append(BLOCK_SEPERATOR);
+        				}
+        				else
+        					skipLatLonBlock = true;
+        			}
+        			if(! ((obs[0].equals(latAxisName)  || obs[0].equals(lonAxisName) || obs[0].equals("time") ||
+        					(depthAxisName !=  null && obs[0].equals(depthAxisName))) && skipLatLonBlock)){
+        				retval.append(obs[1]).append(TOKEN_SEPERATOR);
+
+        			}
+        			if(obs[0].equals("time") )
+        				lastTime = obs[1];
+        		}
+        	}
         }
         // remove last block separator
         if (retval.length() > 1)

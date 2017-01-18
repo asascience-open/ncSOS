@@ -1,6 +1,6 @@
 package com.asascience.ncsos;
 
-import com.asascience.ncsos.outputformatter.OutputFormatter;
+import com.asascience.ncsos.outputformatter.XmlOutputFormatter;
 import com.asascience.ncsos.service.Parser;
 import com.asascience.ncsos.util.XMLDomUtils;
 import org.jdom.Document;
@@ -58,7 +58,7 @@ public class NcSOSTest {
             Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
 
-            OutputFormatter outputFormat = (OutputFormatter) parser.enhanceGETRequest(dataset, getQueryString(kvp), dataset_path).get(OUTPUT_FORMATTER);
+            XmlOutputFormatter outputFormat = (XmlOutputFormatter) parser.enhanceGETRequest(dataset, getQueryString(kvp), dataset_path).get(OUTPUT_FORMATTER);
             outputFormat.writeOutput(writer);
 
             // Write to disk

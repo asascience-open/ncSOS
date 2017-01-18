@@ -42,7 +42,6 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
     private final String[] variableNames;
     private ArrayList<Double> altMin, altMax;
     private Map<String, List<Double>> numberHeightsForStation;
-    public final static String BIN_STR = "BIN=";
     private boolean requestedFirst;
     private boolean requestedLast;
     private boolean multDimTimVar;
@@ -179,6 +178,13 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
         return numProfiles;
     }
     
+    public String getHeightAxisUnits(){
+    	String heightUnits = null;
+    	if(this.heightAxis != null){
+    		heightUnits = this.heightAxis.getUnitsString();
+    	}
+    	return heightUnits;
+    }
     
     public List<Double> getProfileHeightsForStation(String station){
         List<Double> profHeights;
