@@ -68,9 +68,9 @@ public class Grid extends baseCDMClass implements iStationData {
      * @param builder the StringBuilder being built
      * @param dates Date array from which the first date value (0 index) is pulled from
      */
-    private void addDateEntry(StringBuilder builder, CalendarDate date) {
-        builder.append("time=").append(date.toString());
-        builder.append(",");
+    private String addDateEntry( CalendarDate date) {
+        return ("time=")+(date.toString())+",";
+       // builder.append(",");
     }
 
     /**
@@ -117,6 +117,19 @@ public class Grid extends baseCDMClass implements iStationData {
     	return zIndex;
     }
     
+    
+    public String getDepthUnits(String grid){
+    	String units = null;
+    	GridDatatype gridType= this.GridData.findGridDatatype(grid);
+    	if(gridType != null){
+    		int zIndex = gridType.getZDimensionIndex();
+    		if(zIndex > -1){
+    				units = gridType.getCoordinateSystem().getVerticalAxis().getUnitsString();
+    		}
+    	}
+    	
+    	return units;
+    }
     public List<Double> getDepths(String grid){
     	GridDatatype gridType= this.GridData.findGridDatatype(grid);
     	List<Double> heightVals = new ArrayList<Double>();
@@ -288,32 +301,47 @@ public class Grid extends baseCDMClass implements iStationData {
            		 	allDepths.put(i, oneVal);
                 }
             }
+
             for(Integer timeIndex = timeIstart; timeIndex <= timeIend; timeIndex++){
             	for (int k=0; k<latLonDepthHash.get(LAT).length; k++) {
             		for(Integer depthIndex : allDepths.get(k)){
 
             			CalendarDate cD = coordTime.getCalendarDate(timeIndex);
+            			String startStr = "";
+
             			//modify for requested dates, add in for loop
-            			addDateEntry(builder, cD);
+            			startStr = addDateEntry(cD);
 
             			// add depth
             			if(depthDbl != null) {
-            				builder.append(depth_name).append("=").append(depthDbl[depthIndex]).append(",");
-            				builder.append(BIN_STR).append(depthIndex).append(",");
+            				startStr += (depth_name)+("=")+(depthDbl[depthIndex])+(",");
+            				startStr += (BIN_STR)+(depthIndex)+(",");
+            				//builder.append(depth_name).append("=").append(depthDbl[depthIndex]).append(",");
+            				//builder.append(BIN_STR).append(depthIndex).append(",");
             			}
+            			startStr += (STATION_STR + stNum) +(",");
 
-            			builder.append(lat_name).append("=").append(latDbl[latLonDepthHash.get(LAT)[k]]).append(",");
-            			builder.append(lon_name).append("=").append(lonDbl[latLonDepthHash.get(LON)[k]]).append(",");
+            			startStr += lat_name + "="+latDbl[latLonDepthHash.get(LAT)[k]]+(",");
+            			startStr += lon_name + ("=") + (lonDbl[latLonDepthHash.get(LON)[k]]) +(",");
+            			
+            			
+            			//builder.append(STATION_STR + stNum).append(",");
+
+            			//builder.append(lat_name).append("=").append(latDbl[latLonDepthHash.get(LAT)[k]]).append(",");
+            			//builder.append(lon_name).append("=").append(lonDbl[latLonDepthHash.get(LON)[k]]).append(",");
             			// get data slices
             			String dataName;
             			for (int l=0; l<GridData.getGrids().size();l++) {
             				dataName = GridData.getGrids().get(l).getName();
             				if (isInVariableNames(GridData.getGrids().get(l).getName())) {
             					try {
+                    				builder.append(startStr);
+
+            						grid = GridData.getGrids().get(l);
             						int latI = latLonDepthHash.get(LAT)[k];
             						int lonI = latLonDepthHash.get(LON)[k];
             						data = grid.readDataSlice(timeIndex, depthIndex, latI, lonI);
-            						builder.append(dataName).append("=").append(data.getFloat(0)).append(",");
+            						builder.append(dataName).append("=").append(data.getFloat(0)).append(";");
             					} catch (Exception ex) {
             						System.out.println("Error in reading data slice, index " + l + " - " + ex.getMessage());
             						builder.delete(0, builder.length());
@@ -322,13 +350,13 @@ public class Grid extends baseCDMClass implements iStationData {
             					}
             				}
             			}
-            			if(builder.length() > 0)
-            				builder.deleteCharAt(builder.length()-1);
-            			builder.append(";");
+            			//if(builder.length() > 0)
+            			//	builder.deleteCharAt(builder.length()-1);
+            			//builder.append(";");
             		}
             	}
             }
-            builder.append(" ").append("\n");
+            //builder.append(" ").append("\n");
             return builder.toString();
         }
         return DATA_RESPONSE_ERROR + Grid.class;

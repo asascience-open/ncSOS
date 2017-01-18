@@ -226,18 +226,36 @@ public class OosTethysFormatter extends XmlOutputFormatter {
         // split on token separator then on '='
         StringBuilder retval = new StringBuilder();
         String[] blockSplit = dataBlock.split(BLOCK_SEPERATOR);
+        String lastTime = null;
+        String latAxisName = this.handler.getLatAxisName();
+        String lonAxisName = this.handler.getLonAxisName();
+        String depthAxisName = this.handler.getDepthAxisName();
+        boolean skipLatLonBlock;
         for (String block : blockSplit) {
-            String[] tokenSplit = block.split(TOKEN_SEPERATOR);
-            for (String obsValue : tokenSplit) {
-                String[] obs = obsValue.split("=");
-                if (obs.length > 1 && (obs[0].equals("time") || isInRequestObservedProperties(obs[0]))) {
-                    retval.append(obs[1]).append(TOKEN_SEPERATOR);
-                }
-            }
-            // remove last token seperator
-            if (retval.length() > 1)
-                retval.deleteCharAt(retval.length()-1);
-            retval.append(BLOCK_SEPERATOR);
+        	String[] tokenSplit = block.split(TOKEN_SEPERATOR);
+        	skipLatLonBlock = false;
+        	for (String obsValue : tokenSplit) {
+        		String[] obs = obsValue.split("=");
+        		if (obs.length > 1 && (obs[0].equals("time") || isInRequestObservedProperties(obs[0]))){
+        			if(lastTime != null && obs[0].equals("time")) {
+        				if(!lastTime.equals(obs[1])){
+        					// remove last token seperator
+        					if (retval.length() > 1)
+        						retval.deleteCharAt(retval.length()-1);
+        					retval.append(BLOCK_SEPERATOR);
+        				}
+        				else
+        					skipLatLonBlock = true;
+        			}
+        			if(! ((obs[0].equals(latAxisName)  || obs[0].equals(lonAxisName) || obs[0].equals("time") ||
+        					(depthAxisName !=  null && obs[0].equals(depthAxisName))) && skipLatLonBlock)){
+        				retval.append(obs[1]).append(TOKEN_SEPERATOR);
+
+        			}
+        			if(obs[0].equals("time") )
+        				lastTime = obs[1];
+        		}
+        	}
         }
         // remove last block separator
         if (retval.length() > 1)

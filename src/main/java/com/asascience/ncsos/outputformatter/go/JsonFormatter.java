@@ -6,10 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.asascience.ncsos.cdmclasses.Grid;
 import com.asascience.ncsos.cdmclasses.TimeSeriesProfile;
 import com.asascience.ncsos.cdmclasses.baseCDMClass;
 import com.asascience.ncsos.go.GetObservationRequestHandler;
 import com.asascience.ncsos.outputformatter.OutputFormatter;
+import com.asascience.ncsos.service.BaseRequestHandler;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,7 +34,8 @@ public class JsonFormatter extends OutputFormatter {
 		String binKeyname = TimeSeriesProfile.BIN_STR.replace("=","");
 		Map<String, List<Double>> heightMap = new HashMap<String, List<Double>>();
 		boolean isProfile = handler.getCDMDataset() instanceof TimeSeriesProfile;
-
+		boolean is3dGrid =  this.handler.is3dGrid(this.handler.getCDMDataset().getStationName(0));
+		
 
 		for (int p = 0; p < handler.getProcedures().length; p++) {
 			String keyVals = handler.getValueBlockForAllObs(BLOCK_SEPERATOR, DECIMAL_SEPERATOR, TOKEN_SEPERATOR, p);
@@ -46,7 +49,7 @@ public class JsonFormatter extends OutputFormatter {
 					String[] tokenSplit = token.split("=");
 					if (tokenSplit[0].equals(station_keyname)) {
 						stationNum = Integer.parseInt(tokenSplit[1]);
-						station = handler.getProcedures()[stationNum];
+						station = this.handler.stationToFieldName(this.handler.getProcedures()[stationNum])+"_";
 					}
 					else if (tokenSplit[0].equals(time_keyname)) {
 						time = tokenSplit[1];
@@ -57,10 +60,7 @@ public class JsonFormatter extends OutputFormatter {
 				}
 				if(station == null || time == null) continue;
 
-				if(!stationData.containsKey(station)){						
-					stationToNum.put(station, stationNum);
-					stationData.put(station, new HashMap<String, JsonFormatterData>());
-				}
+		
 
 				for (String token : blockAr) {
 					String[] tokenSplit = token.split("=");
@@ -70,8 +70,15 @@ public class JsonFormatter extends OutputFormatter {
 					}
 					if (obsProps.contains(var) && tokenSplit.length > 1) {
 						String varValue = tokenSplit[1];
-
+						station = station +var;
+						if(!stationData.containsKey(station)){						
+							stationToNum.put(station, stationNum);
+							stationData.put(station, new HashMap<String, JsonFormatterData>());
+						}
 						String varStandard = handler.getVariableStandardName(var);
+						if(varStandard.equals(BaseRequestHandler.UNKNOWN)){
+							varStandard = station;
+						}
 						Map<String, JsonFormatterData> cData = stationData.get(station);
 
 						if (!cData.containsKey(varStandard)){
@@ -81,7 +88,12 @@ public class JsonFormatter extends OutputFormatter {
 										handler.getCDMDataset()).getHeightAxisUnits();
 
 								heightMap.put(station, ((TimeSeriesProfile )
-										handler.getCDMDataset()).getProfileHeightsForStation(station));
+										handler.getCDMDataset()).getProfileHeightsForStation(String.valueOf(stationNum)));
+							}
+							else if(is3dGrid){
+						      	Grid grid = ((Grid) this.handler.getCDMDataset());
+					        	heightMap.put(station, grid.getDepths(var));
+					        	heightUnits = grid.getDepthUnits(var);
 							}
 							// 
 							JsonFormatterData jdata = new JsonFormatterData(varStandard,
@@ -92,7 +104,7 @@ public class JsonFormatter extends OutputFormatter {
 
 						data.getTimeValues().add(time);
 						data.getDataValues().add(varValue);
-						if(isProfile)
+						if(isProfile || is3dGrid)
 							data.getHeightValues().add(heightMap.get(station).get(bin));
 
 					}
@@ -134,9 +146,9 @@ public class JsonFormatter extends OutputFormatter {
 		  jsonGen.writeStartObject();
 
 		  for(String stationKey : stationData.keySet()){
+
 			  int stationNum = stationToNum.get(stationKey);
-			  jsonGen.writeObjectFieldStart(stationstr);
-			  jsonGen.writeStringField("name", stationKey);
+			  jsonGen.writeObjectFieldStart(stationKey);
 			  jsonGen.writeArrayFieldStart(coordinates);
 			  jsonGen.writeNumber((this.handler.getCDMDataset().getLowerLat(stationNum)));
 			  jsonGen.writeNumber((this.handler.getCDMDataset().getLowerLon(stationNum)));
@@ -177,10 +189,12 @@ public class JsonFormatter extends OutputFormatter {
 			  }
 			  jsonGen.writeEndObject();
 			  jsonGen.writeEndObject();
-			  
+			  jsonGen.flush();
+
 			  
 		  }
 		  jsonGen.writeEndObject();
+
 		  jsonGen.flush();
 
 	  }

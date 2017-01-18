@@ -381,7 +381,7 @@ public class Ioos10Formatter extends XmlOutputFormatter {
             return dr;
         }
 
-        boolean is3dGrid = is3dGrid(this.handler.getCDMDataset().getStationName(0));
+        boolean is3dGrid = this.handler.is3dGrid(this.handler.getCDMDataset().getStationName(0));
 
       
 
@@ -410,17 +410,7 @@ public class Ioos10Formatter extends XmlOutputFormatter {
         return dr;
     }
 
-    private boolean is3dGrid(String gridName){
-        boolean is3dGrid = false;
-        if(this.handler.getCDMDataset() instanceof Grid){
-        	Grid gDs = (Grid) this.handler.getCDMDataset();
-        	Map<String, String> llrequest  = gDs.getLatLonRequest();
-        	if(!llrequest.containsKey(Grid.DEPTH) || llrequest.get(Grid.DEPTH).split(",").length > 1){
-            	is3dGrid = gDs.getGridZIndex(gridName) > -1 ? true : false;
-        	}
-        }
-        return is3dGrid;
-    }
+
     
     
     //<editor-fold defaultstate="collapsed" desc="dynamic data">
@@ -466,7 +456,7 @@ public class Ioos10Formatter extends XmlOutputFormatter {
             }
 
             for (String sensor : sensors) {
-            	boolean is3dGrid = this.is3dGrid(stName);
+            	boolean is3dGrid = this.handler.is3dGrid(stName);
                 if(this.handler.getCDMDataset() instanceof TimeSeriesProfile || is3dGrid){
                 	int numberProfiles;
                 	 if(is3dGrid){
@@ -529,7 +519,7 @@ public class Ioos10Formatter extends XmlOutputFormatter {
             return item;
         } 
         else {
-            String name = stationToFieldName(stName) + "_" + sensor.toLowerCase();
+            String name = this.handler.stationToFieldName(stName) + "_" + sensor.toLowerCase();
             item = new Element("item", this.SWE2_NS).setAttribute("name", name);
 
             String sensorDef = this.handler.getVariableStandardName(sensor);
@@ -616,7 +606,7 @@ public class Ioos10Formatter extends XmlOutputFormatter {
             item = new Element("item", this.SWE2_NS).setAttribute("name", sensor);
             return item;
         } else {
-            String name = stationToFieldName(stName) + "_" + sensor.toLowerCase();
+            String name = this.handler.stationToFieldName(stName) + "_" + sensor.toLowerCase();
             item = new Element("item", this.SWE2_NS).setAttribute("name", name);
 
             String sensorDef = this.handler.getVariableStandardName(sensor);
@@ -672,15 +662,17 @@ public class Ioos10Formatter extends XmlOutputFormatter {
         for(String obsProp : obsProps){
             previousTime = null;
             for (String block : strBuilder.toString().split(BLOCK_SEPERATOR)) {
+            	
                 // split on token seperator
                 StringBuilder newBlock = new StringBuilder();
                 String binDef = null;
                 
                 boolean inPrevBlock = false;
-             
+                String currTime = null;
                 for (String token : block.split(TOKEN_SEPERATOR)) {
                     if (token.contains(baseCDMClass.TIME_STR)) {
-                        String currTime = token.replaceAll("time=", "");
+                        currTime = token.replaceAll("time=", "");
+ 
                         if((previousTime != null && !previousTime.equals(currTime)) ||
                             (previousTime == null && !firstProp)){
                             newBlock.append(BLOCK_SEPERATOR);
@@ -691,22 +683,25 @@ public class Ioos10Formatter extends XmlOutputFormatter {
                             inPrevBlock = true;
                         }
                         newBlock.append(currTime).append(TOKEN_SEPERATOR);
-                        previousTime = currTime;
                     } 
                     else if(token.startsWith(TimeSeriesProfile.BIN_STR)){
                         binDef = token.replaceAll(TimeSeriesProfile.BIN_STR, "");
 
                     }
                     else if (token.contains(baseCDMClass.STATION_STR)) {
+                        String[] tokenSplit = token.split("=");
+                        int stNum = Integer.parseInt(tokenSplit[1]);
+
                         if(!inPrevBlock){
-                            String[] tokenSplit = token.split("=");
-                            int stNum = Integer.parseInt(tokenSplit[1]);
-                            newBlock.append(stationToFieldName(this.handler.getProcedures()[stNum])).append("_");
+                            newBlock.append(this.handler.stationToFieldName(this.handler.getProcedures()[stNum])).append("_");
                         }
+
                     } 
                     else {
                         String[] tokenSplit = token.split("=");
                         if (obsProp.equals(tokenSplit[0]) && tokenSplit.length > 1) {
+                            previousTime = currTime;
+
                             // create a new block for each measurement
                             // add name of measurement to match the data choice 
                             if(!inPrevBlock){
@@ -769,7 +764,7 @@ public class Ioos10Formatter extends XmlOutputFormatter {
                 else if (token.contains(baseCDMClass.STATION_STR)) {
                     String[] tokenSplit = token.split("=");
                     int stNum = Integer.parseInt(tokenSplit[1]);
-                    newBlock.append(stationToFieldName(this.handler.getProcedures()[stNum])).append("_");
+                    newBlock.append(this.handler.stationToFieldName(this.handler.getProcedures()[stNum])).append("_");
                 } else {
                     String[] tokenSplit = token.split("=");
                     if (obsProps.contains(tokenSplit[0]) && tokenSplit.length > 1) {
@@ -852,7 +847,7 @@ public class Ioos10Formatter extends XmlOutputFormatter {
          */
         Element stStation = new Element("field", this.SWE2_NS);
         // change 'procedure' into the readable format described in the template
-        String name = stationToFieldName(stName);
+        String name = this.handler.stationToFieldName(stName);
         stStation.setAttribute(NAME, name);
         // DataRecord
         Element record = new Element("DataRecord", this.SWE2_NS);
@@ -930,7 +925,7 @@ public class Ioos10Formatter extends XmlOutputFormatter {
         text.addContent(value);
         field.addContent(text);
         dataRecord.addContent(field);
-        boolean is3dGrid =  this.is3dGrid(op);
+        boolean is3dGrid =  this.handler.is3dGrid(op);
      
         
         if(this.handler.getCDMDataset() instanceof TimeSeriesProfile || is3dGrid){
@@ -1083,23 +1078,6 @@ public class Ioos10Formatter extends XmlOutputFormatter {
         return coord;
     }
 
-    /**
-     * Go from urn to readable name (as in swe2:field name)
-     * @param stName
-     * @return 
-     */
-    private String stationToFieldName(String stName) {
-        // get the gml urn
-        String urn = this.handler.getUrnName(stName);
-        // split on station/sensor
-        String[] urnSplit = urn.split("(sensor|station):");
-        // get the last index of split
-        urn = urnSplit[urnSplit.length - 1];
-        // convert to underscore
-        String underScorePattern = "[\\+\\-\\s:]+";
-        urn = urn.replaceAll(underScorePattern, "_");
-        return urn.toLowerCase();
-    }
 
     @Override
     public void writeOutput(Writer writer) throws IOException {

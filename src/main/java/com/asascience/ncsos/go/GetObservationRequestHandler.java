@@ -53,6 +53,9 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
     private static final String LATEST_TIME = "latest";
     private static final String FIRST_TIME = "first";
     private static final String ALL_OBS = "all";
+    private String latAxisName;
+    private String lonAxisName;
+    private String depthAxisName;
     /**
      * SOS get obs request handler
      * @param netCDFDataset dataset for which the get observation request is being made
@@ -73,6 +76,9 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
         super(netCDFDataset);
         this.requestFirstTime = false;
         this.requestLastTime = false;
+        latAxisName = null;
+        lonAxisName = null;
+        depthAxisName = null;
         eventTimes = setupGetObservation(netCDFDataset,
                                         requestedProcedures,
                                         offering,
@@ -252,6 +258,19 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
         return localEventTime;
 
     }
+    
+    public boolean is3dGrid(String station){
+    	boolean is3dGrid = false;
+    	if(this.getCDMDataset() instanceof Grid){
+			Grid gDs = (Grid) this.getCDMDataset();
+			Map<String, String> llrequest  = gDs.getLatLonRequest();
+			if(!llrequest.containsKey(Grid.DEPTH) || llrequest.get(Grid.DEPTH).split(",").length > 1){
+				is3dGrid = gDs.getGridZIndex(this.getCDMDataset().getStationName(0)) > -1 ? true : false;
+			}
+		}
+    	return is3dGrid;
+    }
+    
     private void setCDMDatasetForStations(NetcdfDataset netCDFDataset, String[] eventTime, 
             Map<String, String> latLonRequest,  CoordinateAxis heightAxis) throws IOException {
         // strip out text if the station is defined by indices
@@ -312,13 +331,21 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
 
             Variable depthAxis;
             if (!latLonRequest.isEmpty()) {
+            	List<String>  variableNamesNew = new ArrayList<String>();
+                variableNamesNew.addAll(Arrays.asList(this.obsProperties));
                 depthAxis = (netCDFDataset.findVariable(DEPTH));
                 if (depthAxis != null) {
+                	this.depthAxisName = depthAxis.getFullName();
                     this.obsProperties = checkNetcdfFileForAxis((CoordinateAxis1D) depthAxis, this.obsProperties);
                 }
-                this.obsProperties = checkNetcdfFileForAxis(netCDFDataset.findCoordinateAxis(AxisType.Lat), this.obsProperties);
-                this.obsProperties = checkNetcdfFileForAxis(netCDFDataset.findCoordinateAxis(AxisType.Lon), this.obsProperties);
+                CoordinateAxis lonAxis = netCDFDataset.findCoordinateAxis(AxisType.Lon);
+                this.lonAxisName = lonAxis.getFullName();
+                this.obsProperties = checkNetcdfFileForAxis(lonAxis, this.obsProperties);
 
+                CoordinateAxis latAxis = netCDFDataset.findCoordinateAxis(AxisType.Lat);
+                this.latAxisName = latAxis.getFullName();
+                this.obsProperties = checkNetcdfFileForAxis(latAxis, this.obsProperties);
+              
                 CDMDataSet = new Grid(this.procedures, eventTime, this.obsProperties, latLonRequest);
                 CDMDataSet.setData(getGridDataset());
             }
@@ -381,8 +408,9 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
             //if it not found add it!
             if (!foundZ && !Axis.getDimensions().isEmpty()) {
                 variableNamesNew = new ArrayList<String>();
-                variableNamesNew.addAll(Arrays.asList(variableNames1));
                 variableNamesNew.add(Axis.getFullName());
+
+                variableNamesNew.addAll(Arrays.asList(variableNames1));
                 variableNames1 = new String[variableNames1.length + 1];
                 variableNames1 = (String[]) variableNamesNew.toArray(variableNames1);
                 //*******************************
@@ -555,4 +583,19 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
         }
 
     }
+
+
+	public String getLatAxisName() {
+		return latAxisName;
+	}
+
+
+	public String getLonAxisName() {
+		return lonAxisName;
+	}
+
+
+	public String getDepthAxisName() {
+		return depthAxisName;
+	}
 }

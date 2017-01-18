@@ -19,5 +19,6 @@ public abstract class OutputFormatter {
      */
     public abstract String getContentType();
 
+    
 
 }

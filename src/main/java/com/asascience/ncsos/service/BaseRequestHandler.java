@@ -15,6 +15,8 @@ import ucar.nc2.constants.FeatureType;
 import ucar.nc2.dataset.CoordinateTransform;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dt.GridDataset;
+import ucar.nc2.dt.GridDataset.Gridset;
+import ucar.nc2.dt.GridDatatype;
 import ucar.nc2.ft.*;
 
 import java.io.IOException;
@@ -69,6 +71,7 @@ public abstract class BaseRequestHandler {
     private HashMap<String, String> urnToStationName;
     private HashMap<String, VariableSimpleIF> sensorNames;
     private HashMap<String, Variable> platformVariableMap;
+    private HashMap<String, String> gridVariableMap;
     protected boolean isInitialized;
     protected String crsName;
     private boolean crsInitialized;
@@ -305,6 +308,8 @@ public abstract class BaseRequestHandler {
     	List<String> platformVars = new ArrayList<String>();
         this.urnToStationName = new HashMap<String, String>();
         this.platformVariableMap = new HashMap<String, Variable>();
+        this.gridVariableMap = new HashMap<String, String>();
+
         this.stationNames = new HashMap<Integer, String>();
         for (Variable var : netCDFDataset.getVariables()) {
             // look for cf_role attr
@@ -328,7 +333,8 @@ public abstract class BaseRequestHandler {
             }
             // check name for grid data (does not have cf_role)
             String varName = var.getFullName().toLowerCase();
-            if (varName.contains(GRID) && varName.contains(NAME)) {
+           
+            if (var.getRank() >= 3 || (varName.contains(GRID) && varName.contains(NAME))) {
                 this.stationVariable = var;
                 parseGridIdsToName();
             }
@@ -499,10 +505,19 @@ public abstract class BaseRequestHandler {
      * Gets a number of stations based on the size of the grid sets.
      */
     private void parseGridIdsToName() {
-        this.stationNames = new HashMap<Integer, String>();
-        for (int i=0; i<getGridDataset().getGridsets().size(); i++) {
-            this.stationNames.put(i, "Grid"+i);
-        }
+    	this.stationNames = new HashMap<Integer, String>();
+    	GridDataset gd = getGridDataset();
+    	if(gd != null){
+    		List<Gridset> gridSets = gd.getGridsets();
+    		int i = 0;
+    		for (Gridset gs : gridSets) {
+    			for(GridDatatype gridV : gs.getGrids()){
+    				this.gridVariableMap.put(gridV.getFullName(), "Grid"+i);
+    			}
+    			this.stationNames.put(i, "Grid"+i);
+    			i++;
+    		}
+    	}
     }
     
     /**
@@ -770,6 +785,9 @@ public abstract class BaseRequestHandler {
     				}
     			}
     		}
+    		else if(this.gridVariableMap.containsKey(stationName)){
+    			stationName = this.gridVariableMap.get(stationName);
+    		}
     		if (feature_name.length > 1 && feature_name[0].equalsIgnoreCase("urn")) {
     			// We already have a URN, so just return it.
     			return stationName;
@@ -778,6 +796,25 @@ public abstract class BaseRequestHandler {
     	return STATION_URN_BASE + this.global_attributes.get(NAMING_AUTHORITY) + ":" + stationName;
     }
     
+    
+
+    /**
+     * Go from urn to readable name (as in swe2:field name)
+     * @param stName
+     * @return 
+     */
+    public String stationToFieldName(String stName) {
+        // get the gml urn
+        String urn = this.getUrnName(stName);
+        // split on station/sensor
+        String[] urnSplit = urn.split("(sensor|station):");
+        // get the last index of split
+        urn = urnSplit[urnSplit.length - 1];
+        // convert to underscore
+        String underScorePattern = "[\\+\\-\\s:]+";
+        urn = urn.replaceAll(underScorePattern, "_");
+        return urn.toLowerCase();
+    }
     protected Variable getPlatformVariableFromURN(String stationURN){
     	Variable platformVar = null;
     	Map<String, Variable> platformMap = this.getPlatformVariableMap();
@@ -812,7 +849,9 @@ public abstract class BaseRequestHandler {
     			stationName = cName;
     		}
     	}
-    	
+    	if(this.gridVariableMap != null && this.gridVariableMap.containsKey(stationName)){
+    		stationName = this.gridVariableMap.get(stationName);
+    	}
         String[] feature_name = stationName.split(":");
         String authority = (String) this.global_attributes.get(NAMING_AUTHORITY);
         if (feature_name.length > 2 && feature_name[0].equalsIgnoreCase("urn")) {
