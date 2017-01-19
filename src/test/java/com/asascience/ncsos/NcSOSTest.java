@@ -1,9 +1,8 @@
 package com.asascience.ncsos;
 
-import com.asascience.ncsos.outputformatter.OutputFormatter;
+import com.asascience.ncsos.outputformatter.XmlOutputFormatter;
 import com.asascience.ncsos.service.Parser;
 import com.asascience.ncsos.util.XMLDomUtils;
-import org.apache.log4j.BasicConfigurator;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -35,9 +34,6 @@ public class NcSOSTest {
 
     public static void setUpClass() throws Exception {
 
-        BasicConfigurator.resetConfiguration();
-        BasicConfigurator.configure();
-
         try {
             File configFile = new File("resources/tests_config.xml");
             InputStream templateInputStream = new FileInputStream(configFile);
@@ -57,11 +53,12 @@ public class NcSOSTest {
 
     protected static Element makeTestRequest(String dataset_path, String output, HashMap<String,String> kvp) {
         try {
+        	System.out.println(dataset_path + " "+kvp);
             NetcdfDataset dataset = NetcdfDataset.openDataset(dataset_path);
             Parser parser = new Parser();
             Writer writer = new CharArrayWriter();
 
-            OutputFormatter outputFormat = (OutputFormatter) parser.enhanceGETRequest(dataset, getQueryString(kvp), dataset_path).get(OUTPUT_FORMATTER);
+            XmlOutputFormatter outputFormat = (XmlOutputFormatter) parser.enhanceGETRequest(dataset, getQueryString(kvp), dataset_path).get(OUTPUT_FORMATTER);
             outputFormat.writeOutput(writer);
 
             // Write to disk
@@ -75,6 +72,7 @@ public class NcSOSTest {
             System.out.println(ex.getMessage());
             return null;
         }
+
     }
 
     protected static String getExceptionText(Element e) {

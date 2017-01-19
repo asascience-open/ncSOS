@@ -5,7 +5,7 @@ import com.asascience.ncsos.error.ExceptionResponseHandler;
 import com.asascience.ncsos.gc.GetCapabilitiesRequestHandler;
 import com.asascience.ncsos.go.GetObservationRequestHandler;
 import com.asascience.ncsos.outputformatter.CachedFileFormatter;
-import com.asascience.ncsos.outputformatter.OutputFormatter;
+import com.asascience.ncsos.outputformatter.XmlOutputFormatter;
 import com.asascience.ncsos.util.LogUtils;
 import com.asascience.ncsos.util.LowerCaseStringMap;
 
@@ -214,9 +214,7 @@ public class Parser {
                         // Errors are caught internally in the obsHandler
                         retval.put(OUTPUT_FORMATTER, obsHandler.getOutputFormatter());
                         return retval;
-                    } else {
-                        obsHandler.parseObservations();
-                    }
+                    } 
                     // add our handler to the return value
                     retval.put(OUTPUT_FORMATTER, obsHandler.getOutputFormatter());
                 } catch (Exception ex) {
@@ -365,7 +363,7 @@ public class Parser {
         return cacheHandle;
     }
 
-    private OutputFormatter fileIsInDate(File f, String sections) throws ParserConfigurationException, SAXException, IOException {
+    private XmlOutputFormatter fileIsInDate(File f, String sections) throws ParserConfigurationException, SAXException, IOException {
         _log.debug("Using cached get capabilities doc");
         CachedFileFormatter retval = new CachedFileFormatter(f);
         retval.setSections(sections);

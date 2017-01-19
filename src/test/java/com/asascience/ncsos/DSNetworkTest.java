@@ -65,12 +65,13 @@ public class DSNetworkTest extends NcSOSTest {
     public void testAll() {
         HashMap<String,String> pairs = (HashMap<String,String>) kvp.clone();
         pairs.put("procedure", "urn:ioos:network:" + this.authority + ":all");
-
-        File   file     = new File("resources" + systemSeparator + "datasets" + systemSeparator + this.currentFile.getAttributeValue("path"));
+        String relPath = "resources" + systemSeparator + "datasets" + systemSeparator + this.currentFile.getAttributeValue("path");
+        File   file     = new File(relPath);
         String feature  = this.currentFile.getAttributeValue("feature");
         String output   = new File(outputDir + systemSeparator + file.getName() + ".xml").getAbsolutePath();
         System.out.println("------ " + file + " (" + feature + ") ------");
-        Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
+
+        Element result = NcSOSTest.makeTestRequest(relPath, output, pairs);
         if (currentFile.getAttributeValue("feature").equalsIgnoreCase("point")) {
             // NcSOS does not support POINT features at this time!
             Assert.assertTrue(NcSOSTest.isException(result));

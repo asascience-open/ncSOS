@@ -7,9 +7,12 @@ package com.asascience.ncsos.cdmclasses;
 import com.asascience.ncsos.go.ObservationOffering;
 import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
+
 import org.joda.time.Chronology;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
+
+import ucar.nc2.Variable;
 import ucar.nc2.ft.PointFeature;
 import ucar.nc2.ft.PointFeatureIterator;
 import ucar.nc2.ft.StationTimeSeriesFeature;
@@ -24,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -82,7 +86,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
             } //if single event time        
             else {
                 if (eventTimes.get(0).contentEquals(dateFormatter.toDateTimeStringISO(
-                		getDateForTime(pointFeature.getObservationTime(), pointFeature.getTimeUnit())))) {
+                		new Date(pointFeature.getObservationTimeAsCalendarDate().getMillis())))){
                     createTimeSeriesData(valueList, dateFormatter, pointFeature, builder, stNum);
                 }
             }
@@ -98,7 +102,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
         //count++;
         valueList.clear();
         
-        Date valDate = getDateForTime(pointFeature.getObservationTime(), pointFeature.getTimeUnit());
+        Date valDate = new Date(pointFeature.getObservationTimeAsCalendarDate().getMillis());
         valueList.add("time=" + dateFormatter.toDateTimeStringISO(valDate));
         valueList.add(STATION_STR + stNum);
         try {
@@ -149,7 +153,7 @@ public class TimeSeries extends baseCDMClass implements iStationData {
 
         DateTime dtStart = new DateTime(df.getISODate(eventTimes.get(0)), chrono);
         DateTime dtEnd = new DateTime(df.getISODate(eventTimes.get(1)), chrono);
-        DateTime tsDt = new DateTime(getDateForTime(pointFeature.getObservationTime(), pointFeature.getTimeUnit()), chrono);
+        DateTime tsDt = new DateTime(new Date(pointFeature.getObservationTimeAsCalendarDate().getMillis()));
      
         //find out if current time(searchtime) is one or after startTime
         //same as start
@@ -178,14 +182,31 @@ public class TimeSeries extends baseCDMClass implements iStationData {
     public void setData(Object featureCollection) throws IOException {
         try {
             this.tsData = (StationTimeSeriesFeatureCollection) featureCollection;
-
+            String genericName = this.tsData.getCollectionFeatureType().name()+"-";
             // Try to get stations by name, both with URN procedure and without
             tsStationList = tsData.getStations(reqStationNames);
+            
+            
+            // based on files with cf_role 
             for (String s : reqStationNames) {
                 String[] urns = s.split(":");
-                Station st = tsData.getStation(urns[urns.length - 1]);
+                String statUrn = urns[urns.length - 1];
+                Station st = tsData.getStation(statUrn);
                 if (st != null) {
                     tsStationList.add(st);
+                }
+                else if (statUrn.startsWith(genericName)){
+                	// check to see if generic name (ie: STATION-0)
+                	try {
+                		Integer sIndex = Integer.valueOf(statUrn.substring(genericName.length()));
+                		st = tsData.getStations().get(sIndex);
+                		if(st != null){
+                			tsStationList.add(st);
+                		}
+                	}
+                	catch(Exception n){
+                		n.printStackTrace();
+                	}
                 }
             }
 
@@ -246,7 +267,12 @@ public class TimeSeries extends baseCDMClass implements iStationData {
     @Override
     public String getStationName(int idNum) {
         if (tsData != null && getNumberOfStations() > idNum) {
-            return (tsStationList.get(idNum).getName());
+        	String statName = tsStationList.get(idNum).getName();
+        	if (statName.isEmpty()){
+        		// return generic
+        		statName = this.tsData.getCollectionFeatureType().name()+"-"+idNum;
+        	}
+            return statName;
         } else {
             return Invalid_Station;
         }

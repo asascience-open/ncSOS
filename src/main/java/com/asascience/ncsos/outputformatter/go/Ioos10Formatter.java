@@ -1,25 +1,28 @@
 package com.asascience.ncsos.outputformatter.go;
 
+import com.asascience.ncsos.cdmclasses.Grid;
 import com.asascience.ncsos.cdmclasses.TimeSeriesProfile;
 import com.asascience.ncsos.cdmclasses.baseCDMClass;
 import com.asascience.ncsos.go.GetObservationRequestHandler;
-import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
-import com.asascience.ncsos.util.VocabDefinitions;
+import com.asascience.ncsos.outputformatter.XmlOutputFormatter;
+import com.asascience.ncsos.service.BaseRequestHandler;
 
 import org.jdom.Element;
 import org.jdom.Namespace;
 import org.springframework.util.StringUtils;
 
 import ucar.nc2.Attribute;
+import ucar.nc2.Variable;
 import ucar.nc2.constants.FeatureType;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
-public class Ioos10Formatter extends BaseOutputFormatter {
+public class Ioos10Formatter extends XmlOutputFormatter {
 
     public static final String RESPONSE_OBSERVED_PROPERTIES = "Response Observed Properties";
 
@@ -31,10 +34,8 @@ public class Ioos10Formatter extends BaseOutputFormatter {
     // private constant fields
     private static final String TEMPLATE = "templates/GO_ioos10.xml";
     private static final String RESPONSE_FORMAT = "text/xml;subtype=\"om/1.0.0/profiles/ioos_sos/1.0\"";
-    private static final FeatureType[] supportedTypes = {FeatureType.STATION_PROFILE, FeatureType.STATION};
-    private static final String BLOCK_SEPERATOR = "\n";
-    private static final String TOKEN_SEPERATOR = ",";
-    private static final String DECIMAL_SEPERATOR = ".";
+    private static final FeatureType[] supportedTypes = {FeatureType.STATION_PROFILE, FeatureType.STATION, FeatureType.GRID};
+
     private static final String STATIC_STATIONS_DEF = "http://mmisw.org/ont/ioos/swe_element_type/stations";
     private static final String STATIC_STATION_DEF = "http://mmisw.org/ont/ioos/swe_element_type/station";
     private static final String OBS_COLLECTION_DEF = "http://mmisw.org/ont/ioos/swe_element_type/sensorObservationCollection";
@@ -79,7 +80,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
                 supported = true;
             }
         }
-
+ 
         if (!supported) {
             this.hasError = true;
             this.setupException("Unsupported feature type for the " + RESPONSE_FORMAT + " response format! FeatureType: " + (handler.getDatasetFeatureType().toString()));
@@ -109,7 +110,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
             // Description
             processingStr = "description";
             obsElement.addContent(new Element("description", this.GML_NS).setText(
-                                (String)this.handler.getGlobalAttribute("description", "No description")));
+                                (String)this.handler.getGlobalAttribute("summary", "No description")));
             processingStr = "samplingTime";
             Element samplingTime = new Element("samplingTime", this.OM_NS);
             samplingTime.addContent(this.createTimePeriodTree());
@@ -140,6 +141,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
 
         } catch (Exception ex) {
             _log.error(ex.toString());
+         ex.printStackTrace();
             this.setupException("Unable to correctly create response for request: " + ex.toString()+
                     "\n Error when creating the following response block: " + processingStr);
         }
@@ -151,10 +153,11 @@ public class Ioos10Formatter extends BaseOutputFormatter {
             <gml:version>FILLME</gml:version>
         </gml:metaDataProperty>
          */
+
         List<Element> mdps = this.getRoot().getChildren("metaDataProperty", this.GML_NS);
         for (Element md : mdps) {
             if (md.getAttribute("title", this.XLINK_NS) != null && md.getAttributeValue("title", this.XLINK_NS).equalsIgnoreCase("softwareVersion")) {
-                md.getChild("version", this.GML_NS).setText(NCSOS_VERSION);
+                md.getChild("version", this.GML_NS).setText(getNcsosVersion());
             }
         }
     }
@@ -226,7 +229,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         for (String op : obsProps) {
             Element swe = new Element("component", this.SWE_NS);
             String stdName = this.handler.getVariableStandardName(op);
-            swe.setAttribute("href", VocabDefinitions.GetDefinitionForParameter(stdName), this.XLINK_NS);
+            swe.setAttribute("href", handler.getHrefForParameter(stdName), this.XLINK_NS);
             comp.addContent(swe);
         }
         return comp;
@@ -287,6 +290,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         mPoint.setAttribute("srsName", this.handler.getCrsName());
         Element ptMembers = new Element("pointMembers", this.GML_NS);
         for (int i = 0; i < this.handler.getProcedures().length; i++) {
+   
             String stName = this.handler.getUrnName(this.handler.getCDMDataset().getStationName(i));
             Element point = new Element("Point", this.GML_NS);
 
@@ -295,7 +299,16 @@ public class Ioos10Formatter extends BaseOutputFormatter {
             point.addContent(pname);
 
             Element ppos = new Element("pos", this.GML_NS);
-            ppos.setText(this.handler.getStationLowerCorner(i));
+            if(this.handler.getCDMDataset() instanceof Grid){
+                if(this.handler.getCDMDataset() instanceof Grid){
+                	Grid grid = (Grid) this.handler.getCDMDataset();
+                	ppos.setText(BaseRequestHandler.formatDegree(grid.getClosestLat(i)) +" "+
+                			BaseRequestHandler.formatDegree(grid.getClosestLon(i)));
+                }
+            }
+            else{
+            	ppos.setText(this.handler.getStationLowerCorner(i));
+            }
             point.addContent(ppos);
 
             ptMembers.addContent(point);
@@ -368,9 +381,11 @@ public class Ioos10Formatter extends BaseOutputFormatter {
             return dr;
         }
 
+        boolean is3dGrid = this.handler.is3dGrid(this.handler.getCDMDataset().getStationName(0));
+
       
 
-        if(this.handler.getCDMDataset() instanceof TimeSeriesProfile){
+        if(this.handler.getCDMDataset() instanceof TimeSeriesProfile || is3dGrid){
             this.createValuesElementTimeSeriesProfile(strBuilder, dynamic_array);
         }
         else {
@@ -395,6 +410,9 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         return dr;
     }
 
+
+    
+    
     //<editor-fold defaultstate="collapsed" desc="dynamic data">
     private Element createObservationsElement() {
         /*
@@ -438,9 +456,18 @@ public class Ioos10Formatter extends BaseOutputFormatter {
             }
 
             for (String sensor : sensors) {
-                if(this.handler.getCDMDataset() instanceof TimeSeriesProfile){
-                    dataChoice.addContent(createDataChoiceForSensorTimeSeriesProfile(stName, sensor,
-                           ((TimeSeriesProfile) this.handler.getCDMDataset()).getNumberProfilesForStation(stName)));
+            	boolean is3dGrid = this.handler.is3dGrid(stName);
+                if(this.handler.getCDMDataset() instanceof TimeSeriesProfile || is3dGrid){
+                	int numberProfiles;
+                	 if(is3dGrid){
+                     	Grid grid = ((Grid) this.handler.getCDMDataset());
+                     	numberProfiles = grid.getDepths(stName).size();
+                     }
+                     else {
+                     	numberProfiles = ((TimeSeriesProfile) this.handler.getCDMDataset()).getNumberProfilesForStation(stName);
+                     }
+                	
+                    dataChoice.addContent(createDataChoiceForSensorTimeSeriesProfile(stName, sensor, numberProfiles));
                 }
                 else {
                     dataChoice.addContent(createDataChoiceForSensorTimeSeries(stName, sensor));
@@ -492,7 +519,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
             return item;
         } 
         else {
-            String name = stationToFieldName(stName) + "_" + sensor.toLowerCase();
+            String name = this.handler.stationToFieldName(stName) + "_" + sensor.toLowerCase();
             item = new Element("item", this.SWE2_NS).setAttribute("name", name);
 
             String sensorDef = this.handler.getVariableStandardName(sensor);
@@ -526,24 +553,25 @@ public class Ioos10Formatter extends BaseOutputFormatter {
             
             //Add the DataArray item with the profile definition
             
-            Element quantity = new Element("Quantity", this.SWE2_NS).setAttribute(DEFINITION, 
-                                            VocabDefinitions.GetDefinitionForParameter(sensorDef));
+            Element quantity = new Element("Quantity", this.SWE2_NS).setAttribute(DEFINITION,
+            								handler.getHrefForParameter(sensorDef));
             quantity.addContent(new Element("uom", this.SWE2_NS).setAttribute("code", sensorUnits));
 
             // if the variable has a 'fill value' then add it as a nil value
             try {
-                for (Attribute attr : this.handler.getVariableByName(sensor).getAttributes()) {
-                    if (attr.getShortName().toLowerCase().contains("fillvalue")) {
-                        Element nilValues = new Element("nilValues", this.SWE2_NS);
-                        Element nnilValues = new Element("NilValues", this.SWE2_NS);
 
-                        Element nvs = new Element("nilValue", this.SWE2_NS).setAttribute("reason", MISSING_REASON);
-                        nvs.setText(attr.getValue(0).toString());
-                        nnilValues.addContent(nvs);
-                        nilValues.addContent(nnilValues);
-                        quantity.addContent(nilValues);
-                    }
-                }
+            	Attribute fillAtt = this.handler.getVariableByName(sensor).findAttributeIgnoreCase(GetObservationRequestHandler.FILL_VALUE_NAME);
+            	if (fillAtt != null) {
+            		Element nilValues = new Element("nilValues", this.SWE2_NS);
+            		Element nnilValues = new Element("NilValues", this.SWE2_NS);
+
+            		Element nvs = new Element("nilValue", this.SWE2_NS).setAttribute("reason", MISSING_REASON);
+            		nvs.setText(fillAtt.getValue(0).toString());
+            		nnilValues.addContent(nvs);
+            		nilValues.addContent(nnilValues);
+            		quantity.addContent(nilValues);
+            	}
+
             } catch (Exception ex) {
             }
 
@@ -578,21 +606,24 @@ public class Ioos10Formatter extends BaseOutputFormatter {
             item = new Element("item", this.SWE2_NS).setAttribute("name", sensor);
             return item;
         } else {
-            String name = stationToFieldName(stName) + "_" + sensor.toLowerCase();
+            String name = this.handler.stationToFieldName(stName) + "_" + sensor.toLowerCase();
             item = new Element("item", this.SWE2_NS).setAttribute("name", name);
 
             String sensorDef = this.handler.getVariableStandardName(sensor);
             String sensorUnits = this.handler.getUnitsString(sensor);
-
+            Variable sensorVar = this.handler.getVariableByName(sensor);
+            String fieldname = this.handler.getSensorUrnName(stName, sensorVar);
             Element dataRecord = new Element("DataRecord", this.SWE2_NS).setAttribute(DEFINITION, STATIC_SENSOR_DEF);
             Element field = new Element("field", this.SWE2_NS).setAttribute("name", sensor);
-            Element quantity = new Element("Quantity", this.SWE2_NS).setAttribute(DEFINITION, VocabDefinitions.GetDefinitionForParameter(sensorDef));
+            Element quantity = new Element("Quantity", this.SWE2_NS).setAttribute(DEFINITION, 
+            		handler.getHrefForParameter(sensorDef));
             quantity.addContent(new Element("uom", this.SWE2_NS).setAttribute("code", sensorUnits));
-
+            
             // if the variable has a 'fill value' then add it as a nil value
             try {
-                for (Attribute attr : this.handler.getVariableByName(sensor).getAttributes()) {
-                    if (attr.getShortName().toLowerCase().contains("fillvalue")) {
+            	
+                for (Attribute attr : sensorVar.getAttributes()) {
+                    if (attr.getShortName().equalsIgnoreCase(GetObservationRequestHandler.FILL_VALUE_NAME)) {
                         Element nilValues = new Element("nilValues", this.SWE2_NS);
                         Element nnilValues = new Element("NilValues", this.SWE2_NS);
 
@@ -631,15 +662,17 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         for(String obsProp : obsProps){
             previousTime = null;
             for (String block : strBuilder.toString().split(BLOCK_SEPERATOR)) {
+            	
                 // split on token seperator
                 StringBuilder newBlock = new StringBuilder();
                 String binDef = null;
                 
                 boolean inPrevBlock = false;
-             
+                String currTime = null;
                 for (String token : block.split(TOKEN_SEPERATOR)) {
                     if (token.contains(baseCDMClass.TIME_STR)) {
-                        String currTime = token.replaceAll("time=", "");
+                        currTime = token.replaceAll("time=", "");
+ 
                         if((previousTime != null && !previousTime.equals(currTime)) ||
                             (previousTime == null && !firstProp)){
                             newBlock.append(BLOCK_SEPERATOR);
@@ -650,22 +683,25 @@ public class Ioos10Formatter extends BaseOutputFormatter {
                             inPrevBlock = true;
                         }
                         newBlock.append(currTime).append(TOKEN_SEPERATOR);
-                        previousTime = currTime;
                     } 
                     else if(token.startsWith(TimeSeriesProfile.BIN_STR)){
                         binDef = token.replaceAll(TimeSeriesProfile.BIN_STR, "");
 
                     }
                     else if (token.contains(baseCDMClass.STATION_STR)) {
+                        String[] tokenSplit = token.split("=");
+                        int stNum = Integer.parseInt(tokenSplit[1]);
+
                         if(!inPrevBlock){
-                            String[] tokenSplit = token.split("=");
-                            int stNum = Integer.parseInt(tokenSplit[1]);
-                            newBlock.append(stationToFieldName(this.handler.getProcedures()[stNum])).append("_");
+                            newBlock.append(this.handler.stationToFieldName(this.handler.getProcedures()[stNum])).append("_");
                         }
+
                     } 
                     else {
                         String[] tokenSplit = token.split("=");
                         if (obsProp.equals(tokenSplit[0]) && tokenSplit.length > 1) {
+                            previousTime = currTime;
+
                             // create a new block for each measurement
                             // add name of measurement to match the data choice 
                             if(!inPrevBlock){
@@ -728,7 +764,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
                 else if (token.contains(baseCDMClass.STATION_STR)) {
                     String[] tokenSplit = token.split("=");
                     int stNum = Integer.parseInt(tokenSplit[1]);
-                    newBlock.append(stationToFieldName(this.handler.getProcedures()[stNum])).append("_");
+                    newBlock.append(this.handler.stationToFieldName(this.handler.getProcedures()[stNum])).append("_");
                 } else {
                     String[] tokenSplit = token.split("=");
                     if (obsProps.contains(tokenSplit[0]) && tokenSplit.length > 1) {
@@ -811,7 +847,7 @@ public class Ioos10Formatter extends BaseOutputFormatter {
          */
         Element stStation = new Element("field", this.SWE2_NS);
         // change 'procedure' into the readable format described in the template
-        String name = stationToFieldName(stName);
+        String name = this.handler.stationToFieldName(stName);
         stStation.setAttribute(NAME, name);
         // DataRecord
         Element record = new Element("DataRecord", this.SWE2_NS);
@@ -873,8 +909,9 @@ public class Ioos10Formatter extends BaseOutputFormatter {
          * </swe2:field>
          */
         String op_name = stFormName + "_" + op.toLowerCase();
+        String sensorUrn = this.handler.getSensorUrnName(stName, this.handler.getVariableByName(op));
         Element retval = new Element("field", this.SWE2_NS);
-        retval.setAttribute("name", op_name);
+        retval.setAttribute("name", sensorUrn);
         Element dataRecord = new Element("DataRecord", this.SWE2_NS);
         dataRecord.setAttribute("id", op_name);
         dataRecord.setAttribute(DEFINITION, STATIC_SENSOR_DEF);
@@ -884,15 +921,16 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         Element text = new Element("Text", this.SWE2_NS);
         text.setAttribute(DEFINITION, SENSOR_ID_DEF);
         Element value = new Element("value", this.SWE2_NS);
-        value.setText(this.handler.getSensorUrnName(stName, op));
+        value.setText(this.handler.getSensorUrnName(stName, handler.getSensorVariable(op)));
         text.addContent(value);
         field.addContent(text);
         dataRecord.addContent(field);
-
+        boolean is3dGrid =  this.handler.is3dGrid(op);
+     
         
-        if(this.handler.getCDMDataset() instanceof TimeSeriesProfile){
+        if(this.handler.getCDMDataset() instanceof TimeSeriesProfile || is3dGrid){
             addLocationVector(stNum, op_name, retval);
-            addProfileHeights(retval, stName);
+            addProfileHeights(retval, stName, is3dGrid);
         }
         else {
             // height field
@@ -920,15 +958,25 @@ public class Ioos10Formatter extends BaseOutputFormatter {
     }
     
     
-    private void addProfileHeights(Element sensorElem, String stationName){
-        if(!(this.handler.getCDMDataset() instanceof TimeSeriesProfile)) return;
-        
-        TimeSeriesProfile timeSeriesProfile = ((TimeSeriesProfile) this.handler.getCDMDataset());
-        List<Double> heights = timeSeriesProfile.getProfileHeightsForStation(stationName);
+    private void addProfileHeights(Element sensorElem, String stationName, boolean is3dGrid){
+        if(!(this.handler.getCDMDataset() instanceof TimeSeriesProfile) &&
+          !(this.handler.getCDMDataset() instanceof Grid) ) return;
+        List<Double> heights;
+        Integer numberProfiles;
+        if(is3dGrid){
+        	Grid grid = ((Grid) this.handler.getCDMDataset());
+        	heights = grid.getDepths(stationName);
+        	numberProfiles = heights.size();
+        }
+        else {
+        	TimeSeriesProfile timeSeriesProfile = ((TimeSeriesProfile) this.handler.getCDMDataset());
+        	heights = timeSeriesProfile.getProfileHeightsForStation(stationName);
+        	numberProfiles = timeSeriesProfile.getNumberProfilesForStation(stationName);
+        }
         Element field = new Element(FIELD, this.SWE2_NS);
         field.setAttribute(NAME, "profileHeights");
         Element profileHeightsDataArray =  new Element(DATA_ARRAY, SWE2_NS).setAttribute(DEFINITION, PROFILE_HEIGHTS_DEF);
-        profileHeightsDataArray.addContent(createElementCount(timeSeriesProfile.getNumberProfilesForStation(stationName)));
+        profileHeightsDataArray.addContent(createElementCount(numberProfiles));
         Element profileDef = new Element(ELEMENT_TYPE, SWE2_NS).setAttribute(NAME, PROFILE_DEFINITION);
         Element profileDataRec = new Element(DATA_RECORD, SWE2_NS).setAttribute(DEFINITION, PROFILE_HEIGHT_DEF);
         Element heightField = new Element(FIELD, SWE2_NS).setAttribute(NAME, "height");
@@ -986,8 +1034,17 @@ public class Ioos10Formatter extends BaseOutputFormatter {
     private Element getLocVectorForStation(int stNum){
         Element vector = new Element("Vector", this.SWE2_NS);
         // coords: lat, lon, z
-        String lat = Double.toString(this.handler.getCDMDataset().getLowerLat(stNum));
-        String lon = Double.toString(this.handler.getCDMDataset().getLowerLon(stNum));
+        String lat;
+        String lon;
+        if(this.handler.getCDMDataset() instanceof Grid){
+        	Grid grid = (Grid) this.handler.getCDMDataset();
+        	lat = BaseRequestHandler.formatDegree(grid.getClosestLat(stNum));
+        	lon = BaseRequestHandler.formatDegree(grid.getClosestLon(stNum));
+        }else{
+            lat = Double.toString(this.handler.getCDMDataset().getLowerLat(stNum));
+            lon = Double.toString(this.handler.getCDMDataset().getLowerLon(stNum));
+        }
+
         String alt = Double.toString(this.handler.getCDMDataset().getLowerAltitude(stNum));
         // create and add the swe2:coordinates
         vector.addContent(createSwe2Coordinate("latitude", "http://mmisw.org/ont/cf/parameter/latitude", "Lat", "deg", lat));
@@ -1021,23 +1078,6 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         return coord;
     }
 
-    /**
-     * Go from urn to readable name (as in swe2:field name)
-     * @param stName
-     * @return 
-     */
-    private String stationToFieldName(String stName) {
-        // get the gml urn
-        String urn = this.handler.getUrnName(stName);
-        // split on station/sensor
-        String[] urnSplit = urn.split("(sensor|station):");
-        // get the last index of split
-        urn = urnSplit[urnSplit.length - 1];
-        // convert to underscore
-        String underScorePattern = "[\\+\\-\\s:]+";
-        urn = urn.replaceAll(underScorePattern, "_");
-        return urn.toLowerCase();
-    }
 
     @Override
     public void writeOutput(Writer writer) throws IOException {
@@ -1046,4 +1086,6 @@ public class Ioos10Formatter extends BaseOutputFormatter {
         }
         super.writeOutput(writer);
     }
+
+
 }

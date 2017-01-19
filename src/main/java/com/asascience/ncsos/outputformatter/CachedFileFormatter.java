@@ -20,7 +20,7 @@ import java.util.BitSet;
  *
  * @author SCowan
  */
-public class CachedFileFormatter extends OutputFormatter {
+public class CachedFileFormatter extends XmlOutputFormatter {
     
     private Document document;
     private String errorString;
@@ -80,9 +80,7 @@ public class CachedFileFormatter extends OutputFormatter {
      *   Interface Methods    **************************************************
      **************************************************************************/
     
-    public void addDataFormattedStringToInfoList(String dataFormattedString) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+  
 
     public void writeOutput(Writer writer) throws IOException {
         XMLOutputter xmlOutput = new XMLOutputter();

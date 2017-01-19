@@ -4,8 +4,10 @@ import com.asascience.ncsos.outputformatter.ErrorFormatter;
 import com.asascience.ncsos.outputformatter.gc.GetCapsFormatter;
 import com.asascience.ncsos.service.BaseRequestHandler;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
+
 import ucar.nc2.constants.FeatureType;
 import ucar.nc2.dataset.NetcdfDataset;
+import ucar.nc2.dt.GridDataset;
 import ucar.nc2.ft.*;
 import ucar.nc2.time.CalendarDate;
 import ucar.nc2.time.CalendarDateRange;
@@ -124,16 +126,18 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
             // remove service provider from doc
             out.removeServiceProvider();
         }
-
+        HashMap<Integer, String> stationNames = getStationNames();
+        int stationNameSize = stationNames.values().size();
         // operations metadata; parse if it is the section identified or 'all'
         if (this.requestedSections.get(Sections.OPERATIONSMETADATA.ordinal())) {
         	
             // Set the THREDDS URI
             out.setURL(threddsURI);
             // Set the GetObservation Operation
-            out.setOperationsMetadataGetObs(threddsURI, getSensorNames(), getStationNames().values().toArray(new String[getStationNames().values().size()]));
+            out.setOperationsMetadataGetObs(threddsURI, getSensorNames().keySet(), stationNames.values().toArray(
+            		new String[stationNameSize]));
             // Set the DescribeSensor Operation
-            out.setOperationsMetadataDescSen(threddsURI, getStationNames().values().toArray(new String[getStationNames().values().size()]));
+            out.setOperationsMetadataDescSen(threddsURI, stationNames.values().toArray(new String[stationNameSize]));
             // Set the ExtendedCapabilities
             out.setVersionMetadata();
         } else {
@@ -161,10 +165,15 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
                 setTime = CalendarDateRange.of(setStartDate, setEndDate);
             }
 
-            out.setObservationOfferingNetwork(setRange, getStationNames().values().toArray(new String[getStationNames().values().size()]), getSensorNames(), setTime, this.getFeatureDataset().getFeatureType());
+            out.setObservationOfferingNetwork(setRange, stationNames.values().toArray(
+            		new String[stationNames.values().size()]), getSensorNames().keySet(), 
+            		setTime, this.getFeatureDataset().getFeatureType());
             // Add an offering for every station
-            for (Integer index : getStationNames().keySet()) {
-                ((GetCapsFormatter) formatter).setObservationOffering(this.getUrnName(getStationNames().get(index)), stationBBox.get(index), getSensorNames(), stationDateRange.get(index), this.getFeatureDataset().getFeatureType());
+            for (Integer index : stationNames.keySet()) {
+                ((GetCapsFormatter) formatter).setObservationOffering(
+                		this.getUrnName(stationNames.get(index)), 
+                		stationBBox.get(index), getSensorNames().keySet(), 
+                		stationDateRange.get(index), this.getFeatureDataset().getFeatureType());
             }
         } else {
             // remove Contents node
@@ -254,9 +263,11 @@ public class GetCapabilitiesRequestHandler extends BaseRequestHandler {
                     }
                     break;
                 case GRID:
-                    start = getGridDataset().getCalendarDateStart();
-                    end = getGridDataset().getCalendarDateEnd();
+                	GridDataset gridData = getGridDataset();
+                    start = gridData.getCalendarDateStart();
+                    end = gridData.getCalendarDateEnd();
                     this.stationDateRange.put(0, CalendarDateRange.of(start, end));
+                    this.stationBBox.put(0, gridData.getBoundingBox());
                     break;
                 case STATION_PROFILE:
                     try {

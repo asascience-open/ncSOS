@@ -394,10 +394,7 @@
         </file>
 
         <file path='cf_templates/trajectory-Incomplete-Multidimensional-SingleTrajectory-H.4.2.nc' feature="trajectory">
-            <!-- 1 trajectory named Trajectory0 -->
-            <!-- NetCDF-JAva should be pulling out the name "Trajectory1" from the file, but it is not,
-                 so NcSOS is populating the platform with the name "TRAJECTORY-0" (first Trajectory feature type found) -->
-            <platform id="urn:ioos:station:ncsos:TRAJECTORY-0">
+            <platform id="urn:ioos:station:ncsos:Trajectory1">
                 <lats>
                     42.00339, 8.972063, 25.84197, 35.69975, 11.13223, 14.31806, 17.69424,
                     2.707556, 25.04592, 32.40454, 34.26738, 43.30651, 40.59655, 22.00984,
@@ -732,11 +729,8 @@
 
         <!-- Glider DAC -->
 
-        <file path="glider_dac/timeagg.ncml" feature="trajectory" authority="edu.rutgers.marine">
-            <!-- 1 trajectory named Trajectory0 -->
-            <!-- NetCDF-JAva should be pulling out the name "Trajectory1" from the file, but it is not,
-                 so NcSOS is populating the platform with the name "TRAJECTORY-0" (first Trajectory feature type found) -->
-            <platform id="urn:ioos:station:edu.rutgers.marine:TRAJECTORY-0">
+        <file path="glider_dac/timeagg.ncml" feature="trajectory" authority="edu.rutgers.marine">     
+            <platform id="urn:ioos:station:edu.rutgers.marine:platform">
                 <lats>
                     2.152863, 33.60481, 22.56251, 13.43282, 43.01199, 18.84832, 18.04041,
                     32.34516, 8.652234, 18.90537, 12.18454, 16.49819, 1.547926, 22.03359,

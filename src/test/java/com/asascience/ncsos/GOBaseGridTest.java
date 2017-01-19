@@ -85,7 +85,10 @@ public class GOBaseGridTest extends NcSOSTest {
 
             for (Element s : (List<Element>) e.getChildren("sensor")) {
 
-                String standard = VocabDefinitions.GetDefinitionForParameter(s.getAttributeValue("standard"));
+                String standard = VocabDefinitions.GetDefinitionForParameter(
+                		s.getAttributeValue("standard"),
+                		"http://mmisw.org/ont/cf/parameter/",
+                		true);
 
                 for (Element v : (List<Element>) s.getChildren("values")) {
 
@@ -152,6 +155,7 @@ public class GOBaseGridTest extends NcSOSTest {
 
         System.out.println("------ " + file + " (" + feature + ") ------");
         System.out.println("------ " + this.testType + " ------");
+        System.out.println("-------" + pairs);
         Element result = NcSOSTest.makeTestRequest(file.getAbsolutePath(), output, pairs);
         Assert.assertFalse(NcSOSTest.isException(result));
     }

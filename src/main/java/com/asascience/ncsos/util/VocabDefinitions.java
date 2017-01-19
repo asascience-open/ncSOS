@@ -2,6 +2,8 @@ package com.asascience.ncsos.util;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashSet;
 
 public final class VocabDefinitions {
@@ -10,23 +12,48 @@ public final class VocabDefinitions {
     private static HashSet<String> cfSet;
     private static HashSet<String> ioosDefs;
     private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(VocabDefinitions.class);
-    
+    private static final String CF_HREF = "http://mmisw.org/ont/cf/parameter/";
     private VocabDefinitions() {}
     
     /**
      * Determines the necessary term for the parameter.
      * @param param the name of the parameter to look for, expected lowercase w/ "_"
-     * @return if in CF table: http://mmissw.org/ont/cf/parameter/param else http://mmisw.org/ont/ioos/parameter/param
+     * @return if in standard vocabulary specified then <standard_voacbulary><standard_name> 
+     *         else if CF table: http://mmissw.org/ont/cf/parameter/param else http://mmisw.org/ont/ioos/parameter/param
      */
-    public static String GetDefinitionForParameter(String param) {
-        if (cfSet == null)
-            CreateCFSet();
+    public static String GetDefinitionForParameter(String standardName, String standardNameVocab, Boolean cfConv) {
+    	String paramHref = "http://mmisw.org/ont/ioos/parameter/" + standardName;
+    	boolean validUrl = false;
+    	
+    	
+    	if (standardNameVocab != null){
+    		try{
+    			URL vocabUrl = new URL(standardNameVocab);
+    			validUrl = true;
+    		}
+    		catch(MalformedURLException e){}
+    	} 
+   
+    	if(validUrl){
+    		paramHref = standardNameVocab + standardName;
+    	}
+    	else {
+    		boolean isCf = false;
+    		if (cfConv != null && cfConv == true){
+    			isCf = true;
+    		}
+    		else {
+    			if (cfSet == null)
+    				CreateCFSet();
         
-        if (cfSet.contains(param))
-            return "http://mmisw.org/ont/cf/parameter/" + param;
-        
-        // default
-        return "http://mmisw.org/ont/ioos/parameter/" + param;
+    			if (cfSet.contains(standardName))
+    				isCf = true;
+    		}
+    		if(isCf)
+    			paramHref  = CF_HREF + standardName;
+    	}
+  
+        return paramHref ;
     }
     
     public static String GetIoosDefinition(String def) {

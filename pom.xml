@@ -4,7 +4,9 @@
 
   <groupId>com.asascience</groupId>
   <artifactId>ncsos</artifactId>
-  <version>1.1.2</version>
+
+  <version>1.4</version>
+
   <packaging>jar</packaging>
 
   <name>ncsos</name>
@@ -12,7 +14,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <thredds.version>4.3.16</thredds.version>
+    <thredds.version>4.5.3</thredds.version>
   </properties>
   
   
@@ -66,26 +68,36 @@
     </dependency>
     <dependency>
       <groupId>org.jdom</groupId>
-      <artifactId>jdom</artifactId>
+      <artifactId>jdom2</artifactId>
     </dependency>
+    <dependency>
+		<groupId>com.fasterxml.jackson.core</groupId>
+		<artifactId>jackson-databind</artifactId>
+		<version>2.6.3</version>
+	</dependency>
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
     </dependency>
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <scope>runtime</scope>
     </dependency>
+	<dependency>
+	  <groupId>org.apache.logging.log4j</groupId>
+	  <artifactId>log4j-core</artifactId>
+	</dependency>
     <dependency>
       <groupId>edu.ucar</groupId>
-      <artifactId>netcdf</artifactId>
+      <artifactId>netcdf4</artifactId>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
+      <artifactId>javax.servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
-    <dependency>
+      <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
@@ -109,7 +121,7 @@
         </exclusion>
       </exclusions> 
     </dependency>
-    <dependency>
+   <dependency>
       <groupId>json-taglib</groupId>
       <artifactId>json-taglib</artifactId>
       <scope>runtime</scope>
@@ -159,11 +171,14 @@
     <plugin>
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-jar-plugin</artifactId>
+      <version>2.5</version>
       <configuration>
         <archive>
           <manifest>
             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+           
           </manifest>
+        
         </archive>
       </configuration>
     </plugin>
@@ -172,8 +187,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.1</version>
         <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
+          <source>1.7</source>
+          <target>1.7</target>
         </configuration>
       </plugin>    
       <plugin>
@@ -192,6 +207,8 @@
                 <zip destfile="target/ncSOS-${project.version}.zip" basedir="target/" includes="*xml *.txt *.jar" />
                 <copy file="target/ncSOS-${project.version}.zip" todir="jar/" />
                 <copy file="target/ncSOS-${project.version}.zip" tofile="jar/ncSOS.zip" />
+                <copy file="target/ncSOS-${project.version}.jar" tofile="/Users/cheryl.morse/apache-tomcat-8.0.26/webapps/thredds/WEB-INF/lib/ncSOS-${project.version}.jar"/>
+                <copy file="target/ncSOS-${project.version}.jar" tofile="/Users/cheryl.morse/apache-tomcat-8.0.24/webapps/thredds/WEB-INF/lib/ncSOS-${project.version}.jar"/>
                 
                 <!-- Put a path to Tomcat directory here to deploy on build -->
                 <!--<property name="tomcat.path" value="/srv/tomcat/apache-tomcat-7.0.47" />-->

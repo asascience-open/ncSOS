@@ -1,6 +1,6 @@
 package com.asascience.ncsos.util;
 
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 import thredds.servlet.DatasetHandler;
 import thredds.servlet.ServletUtil;
 import ucar.nc2.NetcdfFile;
@@ -11,11 +11,12 @@ import ucar.nc2.ft.PointFeatureCollection;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 public class DatasetHandlerAdapter {
+	  static final Logger _log= LogManager.getLogger(DatasetHandlerAdapter.class.getName());
 
-    private static final Logger _log = Logger.getLogger(DatasetHandlerAdapter.class);
-
+  //  private static final Logger _log = Logger.getLogger(DatasetHandlerAdapter.class);
     /** 
      * Open a NetcdfDataset based on the incoming url request.
      * 

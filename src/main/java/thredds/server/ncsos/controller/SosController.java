@@ -5,7 +5,6 @@ import com.asascience.ncsos.outputformatter.OutputFormatter;
 import com.asascience.ncsos.service.Parser;
 import com.asascience.ncsos.util.DatasetHandlerAdapter;
 
-import org.apache.log4j.BasicConfigurator;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -33,7 +32,7 @@ public class SosController implements ISosContoller {
     }
 
     public void init() throws ServletException {
-        BasicConfigurator.configure();
+   
         _logServerStartup.info("SOS Service - initialization start");
     }
 
@@ -55,7 +54,8 @@ public class SosController implements ISosContoller {
     public void handleSOSRequest(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
 
         NetcdfDataset dataset = null;
-        
+     
+       
         respMap = new HashMap<String, Object>();
         Writer writer = res.getWriter();
         try {
@@ -79,6 +79,7 @@ public class SosController implements ISosContoller {
             _log.error("Something went wrong", e);
 
             ErrorFormatter  output = new ErrorFormatter();
+            res.setContentType(output.getContentType().toString());        
             output.setException(e.getMessage());
 
 
@@ -87,21 +88,7 @@ public class SosController implements ISosContoller {
             writer.close();
             //close the dataset remove memory hang
         } finally {  
-            // This is a workaround for a bug in thredds. On the second request 
-            // for a ncml object the request will fail due to an error
-            // with the cached object. In order to get around this, the
-            // cache for the ncml files must be cleared.
-            String location = dataset.getReferencedFile().getLocation().toLowerCase();
-            try{
-            	NetcdfDataset dset =  ((NetcdfDataset)dataset.getReferencedFile());
-
-            	if(location.endsWith("xml") ||
-            			location.endsWith("ncml") ||
-            			dset.getAggregation() != null) {
-            		dataset.getReferencedFile().setFileCache(null);
-            	}
-            }
-            catch(Exception e){}
+        
             DatasetHandlerAdapter.closeDataset(dataset);
             
             

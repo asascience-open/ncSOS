@@ -1,5 +1,6 @@
 resources/datasets/*
 target/*
+jar/*
 src/test/java/com/asascience/ncSOS/getObs/output/*
 src/test/java/com/asascience/ncSOS/getCaps/output/*
 build/*

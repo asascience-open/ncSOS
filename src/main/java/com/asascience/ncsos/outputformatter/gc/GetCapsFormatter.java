@@ -4,30 +4,28 @@
  */
 package com.asascience.ncsos.outputformatter.gc;
 
+
 import com.asascience.ncsos.gc.GetCapabilitiesRequestHandler;
 import com.asascience.ncsos.go.GetObservationRequestHandler;
-import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
-import com.asascience.ncsos.service.BaseRequestHandler;
-import com.asascience.ncsos.util.VocabDefinitions;
+import com.asascience.ncsos.outputformatter.XmlOutputFormatter;
 
 import org.jdom.Element;
 import org.jdom.Namespace;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
 
 import ucar.nc2.constants.FeatureType;
 import ucar.nc2.time.CalendarDateRange;
 import ucar.unidata.geoloc.LatLonRect;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+
+
 
 /**
  * @author kwilcox
  */
-public class GetCapsFormatter extends BaseOutputFormatter {
+public class GetCapsFormatter extends XmlOutputFormatter {
 
     public static final String CONTENTS = "Contents";
     public static final String EPSG4326 = "EPSG::4326";
@@ -58,18 +56,20 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         // Title
         si.getChild("Abstract", owsns).setText((String)attrs.get("summary"));
         // Access
-        si.getChild("AccessConstraints", owsns).setText((String)attrs.get("access_constraints"));
+        si.getChild("AccessConstraints", owsns).setText((String)attrs.get("license"));
         // Keywords
         Element keywords = si.getChild("Keywords", owsns);
         try {
+   
             for (String keyword : ((String)attrs.get("keywords")).split(",")) {
                 keywords.addContent(new Element("Keyword", owsns).setText(keyword));
             }
         } catch(Exception e) {
             // No keywords
+        	 keywords.addContent(new Element("Keyword", owsns));
         }
         // Fees
-        si.getChild("Fees", owsns).setText((String)attrs.get("fees"));
+        si.getChild("Fees", owsns).setText((String)attrs.get("license"));
     }
 
     public void removeServiceIdentification() {
@@ -80,14 +80,19 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         Namespace owsns = this.getNamespace("ows");
         Element si = this.getRoot().getChild(SERVICE_PROVIDER, owsns);
         // ProviderName
-        si.getChild("ProviderName", owsns).setText((String)this.handler.getGlobalAttribute("publisher_name", "No global attribute 'publisher_name' found."));
+        si.getChild("ProviderName", owsns).setText((String)this.handler.getGlobalAttribute("publisher_name", 
+        		"No global attribute 'publisher_name' found."));
         // ProviderSite
-        si.getChild("ProviderSite", owsns).getAttribute("href", this.getNamespace("xlink")).setValue((String)this.handler.getGlobalAttribute("publisher_url", "No global attribute 'publisher_url' found."));
+        si.getChild("ProviderSite", owsns).getAttribute("href", this.getNamespace("xlink")).setValue(
+        		(String)this.handler.getGlobalAttribute("publisher_url", "No global attribute 'publisher_url' found."));
         // ServiceContact
         Element sc = si.getChild("ServiceContact", owsns);
-        sc.getChild("IndividualName", owsns).setText((String)this.handler.getGlobalAttribute("publisher_name", "No global attribute 'publisher_name' found."));
-        sc.getChild("ContactInfo", owsns).getChild("Phone", owsns).getChild("Voice", owsns).setText((String)this.handler.getGlobalAttribute("publisher_phone", "No global attribute 'publisher_phone' found."));
-        sc.getChild("ContactInfo", owsns).getChild("Address", owsns).getChild("ElectronicMailAddress", owsns).setText((String)this.handler.getGlobalAttribute("publisher_email", "No global attribute 'publisher_email' found."));
+        sc.getChild("IndividualName", owsns).setText((String)this.handler.getGlobalAttribute("publisher_name", 
+        		"No global attribute 'publisher_name' found."));
+        sc.getChild("ContactInfo", owsns).getChild("Phone", owsns).getChild("Voice", owsns).setText(
+        		(String)this.handler.getGlobalAttribute("publisher_phone", "No global attribute 'publisher_phone' found."));
+        sc.getChild("ContactInfo", owsns).getChild("Address", owsns).getChild("ElectronicMailAddress", owsns).setText(
+        		(String)this.handler.getGlobalAttribute("publisher_email", "No global attribute 'publisher_email' found."));
     }
 
     public void removeServiceProvider() {
@@ -102,7 +107,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         }
     }
 
-    public void setOperationsMetadataGetObs(String threddsURI, List<String> dataVarShortNames, String[] stationNames) {
+    public void setOperationsMetadataGetObs(String threddsURI, Set<String> dataVarShortNames, String[] stationNames) {
         Namespace owsns = this.getNamespace("ows");
         Element si = this.getRoot().getChild(OPERATIONS_METADATA, owsns);
         for (Object e : si.getChildren("Operation", owsns)) {
@@ -121,7 +126,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
                         p.addContent(allowed);
                     } else if (name.equalsIgnoreCase("observedProperty")) {
                         for (String s : dataVarShortNames) {
-                            allowed.addContent(new Element("Value", owsns).setText(handler.getObservedOfferingUrl(s)));
+                            allowed.addContent(new Element("Value", owsns).setText(this.handler.getVariableStandardName(s)));
                         }
                         p.addContent(allowed);
                     } else if (name.equalsIgnoreCase("procedure")) {
@@ -146,9 +151,10 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         List<Element> md = this.getRoot().getChild(OPERATIONS_METADATA, owsns)
                 .getChild("ExtendedCapabilities", owsns)
                 .getChildren("metaDataProperty", gmlns);
+        
         for (Element e : md) {
             if (e.getAttributeValue("title", this.getNamespace("xlink")).equalsIgnoreCase("softwareVersion")) {
-                e.getChild("version", gmlns).setText(NCSOS_VERSION);
+                e.getChild("version", gmlns).setText(getNcsosVersion());
             }
         }
     }
@@ -183,7 +189,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         return new Element("ObservationOffering", this.getNamespace("sos"));
     }
 
-    public void setObservationOfferingNetwork(LatLonRect datasetRect, String[] stations, List<String> sensors, CalendarDateRange dates, FeatureType ftype) {
+    public void setObservationOfferingNetwork(LatLonRect datasetRect, String[] stations, Set<String> sensors, CalendarDateRange dates, FeatureType ftype) {
         Namespace gmlns = this.getNamespace("gml");
         Namespace sosns = this.getNamespace("sos");
         Namespace xlinkns = this.getNamespace("xlink");
@@ -215,9 +221,13 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         }
         // ResponseFormat
         offering.addContent(new Element("responseFormat", sosns).setText(GetObservationRequestHandler.OOSTETHYS_RESPONSE_FORMAT));
+        offering.addContent(new Element("responseFormat", sosns).setText(GetObservationRequestHandler.CSV_RESPONSE_FORMAT));
+        offering.addContent(new Element("responseFormat", sosns).setText(GetObservationRequestHandler.JSON_RESPONSE_FORMAT));
+
         switch (ftype) {
             case STATION:
             case STATION_PROFILE:
+            case GRID:
                 offering.addContent(new Element("responseFormat", sosns).setText(GetObservationRequestHandler.IOOS10_RESPONSE_FORMAT));
                 break;
             default:
@@ -232,7 +242,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         ol.addContent(offering);
     }
 
-    public void setObservationOffering(String stationName, LatLonRect datasetRect, List<String> sensors, CalendarDateRange dates, FeatureType ftype) {
+    public void setObservationOffering(String stationName, LatLonRect datasetRect, Set<String> sensors, CalendarDateRange dates, FeatureType ftype) {
         Namespace owsns = this.getNamespace("ows");
         Namespace gmlns = this.getNamespace("gml");
         Namespace sosns = this.getNamespace("sos");
@@ -262,9 +272,12 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         offering.addContent(new Element("featureOfInterest", sosns).setAttribute("href", this.handler.getUrnName(stationName), xlinkns));
         // ResponseFormat
         offering.addContent(new Element("responseFormat", sosns).setText(GetObservationRequestHandler.OOSTETHYS_RESPONSE_FORMAT));
+        offering.addContent(new Element("responseFormat", sosns).setText(GetObservationRequestHandler.CSV_RESPONSE_FORMAT));
+        offering.addContent(new Element("responseFormat", sosns).setText(GetObservationRequestHandler.JSON_RESPONSE_FORMAT));
         switch (ftype) {
             case STATION:
             case STATION_PROFILE:
+            case GRID:
                 offering.addContent(new Element("responseFormat", sosns).setText(GetObservationRequestHandler.IOOS10_RESPONSE_FORMAT));
                 break;
             default:
@@ -295,9 +308,7 @@ public class GetCapsFormatter extends BaseOutputFormatter {
     /***********************/
     /** Interface Methods **/
     /***********************/
-    public void addDataFormattedStringToInfoList(String dataFormattedString) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+
 
     private void setHTTPMethods(Element parent, String threddsURI) {
         Namespace owsns = this.getNamespace("ows");
@@ -338,12 +349,11 @@ public class GetCapsFormatter extends BaseOutputFormatter {
         try {
             st = dateRange.getStart().toString();
             et = dateRange.getEnd().toString();
-        } catch (Exception e) {
-            st = "UNKNOWN";
-            et = "UNKNOWN";
-        } finally {
             tp.addContent(new Element("beginPosition", gmlns).setText(st));
             tp.addContent(new Element("endPosition", gmlns).setText(et));
+        } catch (Exception e) {
+            tp.addContent(new Element("beginPosition", gmlns).setAttribute("indeterminatePosition", "unknown"));
+            tp.addContent(new Element("endPosition", gmlns).setAttribute("indeterminatePosition", "unknown"));
         }
         return tm;
     }

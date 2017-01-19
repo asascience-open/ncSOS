@@ -4,8 +4,9 @@
  */
 package com.asascience.ncsos.outputformatter.ds;
 
-import com.asascience.ncsos.outputformatter.BaseOutputFormatter;
+import com.asascience.ncsos.outputformatter.XmlOutputFormatter;
 import com.asascience.ncsos.util.XMLDomUtils;
+
 import org.jdom.Element;
 import org.jdom.Namespace;
 
@@ -18,7 +19,7 @@ import java.util.List;
  *
  * @author SCowan
  */
-public class IoosPlatform10Formatter extends BaseOutputFormatter {
+public class IoosPlatform10Formatter extends XmlOutputFormatter {
     public static final String BLANK = "";
     public static final String CAPABILITIES = "capabilities";
     public static final String CLASSIFIER = "classifier";
@@ -40,7 +41,7 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
     private final static String IOOSURL = "http://code.google.com/p/ioostech/source/browse/#svn%2Ftrunk%2Ftemplates%2FMilestone1.0";
     private final static String OBSERVATION_TIME_RANGE = "observationTimeRange";
     public static final String MEMBER = "member";
-    private final static String OBS_TR_DEF = "http://mmisw.org/ont/ioos/definition/observationTimeRange";
+    private final static String OBS_TR_DEF = "http://mmisw.org/ont/ioos/swe_element_type/observationTimeRange";
     protected Namespace GML_NS,SML_NS,XLINK_NS,SWE_NS = null;
 
     public IoosPlatform10Formatter() {
@@ -262,6 +263,7 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
         </sml:capabilities>
         */
         Element parent = getRoot();
+
         List<Element> caps = parent.getChildren(CAPABILITIES, this.SML_NS);
         for (Element e : caps) {
             if (e.getAttribute(NAME) != null && (e.getAttributeValue(NAME).equalsIgnoreCase("ioosServiceMetadata"))) {
@@ -269,7 +271,7 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
                 List<Element> fields = sdr.getChildren("field", this.SWE_NS);
                 for (Element field : fields) {
                     if (field.getAttribute(NAME) != null && field.getAttributeValue(NAME).equalsIgnoreCase("softwareVersion")) {
-                        field.getChild("Text", this.SWE_NS).getChild("value", this.SWE_NS).setText(NCSOS_VERSION);
+                        field.getChild("Text", this.SWE_NS).getChild("value", this.SWE_NS).setText(getNcsosVersion());
                     }
                 }
             }
@@ -388,11 +390,18 @@ public class IoosPlatform10Formatter extends BaseOutputFormatter {
         }
     }
 
-    public static String parseUnitString(String units){        
-        String unitStr =units.replaceAll("[\\s+]", BLANK);
-        unitStr =unitStr.replaceAll("\\:\\.", BLANK);
-        //keeps
-        unitStr = unitStr.replaceAll("[^A-Za-z0-9-]", BLANK);
+    public static String parseUnitString(String units){   
+    	String unitStr;
+    	try {
+			unitStr = URLEncoder.encode(units, "UTF-8").replaceAll("\\%2D", "-");
+			unitStr = unitStr.replaceAll("\\%2F","/").replaceAll("\\+", "%20");
+			
+		} catch (UnsupportedEncodingException e) {
+	        unitStr =units.replaceAll("[\\s+]", BLANK);
+	        unitStr =unitStr.replaceAll("\\:\\.", BLANK);
+	        //keeps
+	        unitStr = unitStr.replaceAll("[^A-Za-z0-9-]", BLANK);
+		}
         return unitStr;
     }
     

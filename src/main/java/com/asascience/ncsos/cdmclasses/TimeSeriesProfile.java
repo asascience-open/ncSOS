@@ -42,7 +42,6 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
     private final String[] variableNames;
     private ArrayList<Double> altMin, altMax;
     private Map<String, List<Double>> numberHeightsForStation;
-    public final static String BIN_STR = "BIN=";
     private boolean requestedFirst;
     private boolean requestedLast;
     private boolean multDimTimVar;
@@ -171,6 +170,9 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
         return builder.toString();
     }
 
+
+    
+    // returns the number of unique depths ie alt(profile,z) will return profile*z
     public int getNumberProfilesForStation(String station){
         int numProfiles = 0;
         if(this.numberHeightsForStation.containsKey(station)){
@@ -179,10 +181,18 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
         return numProfiles;
     }
     
+    public String getHeightAxisUnits(){
+    	String heightUnits = null;
+    	if(this.heightAxis != null){
+    		heightUnits = this.heightAxis.getUnitsString();
+    	}
+    	return heightUnits;
+    }
     
     public List<Double> getProfileHeightsForStation(String station){
         List<Double> profHeights;
-        if(this.numberHeightsForStation.containsKey(station)){
+        
+        if(station != null && this.numberHeightsForStation.containsKey(station)){
             profHeights = this.numberHeightsForStation.get(station);
         }
         else{
@@ -190,6 +200,17 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
         }
         return profHeights;
     }
+    
+    
+    public List<Double> getProfileHeightsForStation(int stationNum){
+    	Station stat = tsStationList.get(stationNum);
+    	String statStr =  null;
+    	if (stat != null){
+    		statStr = stat.getName();
+    	}
+        return getProfileHeightsForStation(statStr);
+    }
+    
     
     private void createStationProfileData(ProfileFeature pf, List<String> valueList, 
                                            DateFormatter dateFormatter, StringBuilder builder, int stNum) {
@@ -201,7 +222,7 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
                 PointFeature pointFeature = it.next();
                 valueList.clear();
                 valueList.add(TIME_STR + dateFormatter.toDateTimeStringISO(
-                		getDateForTime(pointFeature.getObservationTime(), pointFeature.getTimeUnit())));
+                		new Date(pointFeature.getObservationTimeAsCalendarDate().getMillis())));
                 valueList.add(STATION_STR + stNum);
                 Object heightOb = null;
                 if(this.heightAxis != null)
@@ -252,6 +273,7 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
     @Override
     public void setData(Object featureProfileCollection) throws IOException {
         this.tsProfileData = (StationProfileFeatureCollection) featureProfileCollection;
+        String genericName = this.tsProfileData.getCollectionFeatureType().name()+"-";
 
         tsStationList = tsProfileData.getStations(reqStationNames);
 
@@ -259,9 +281,24 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
         tsStationList = tsProfileData.getStations(reqStationNames);
         for (String s : reqStationNames) {
             String[] urns = s.split(":");
+            String statUrn = urns[urns.length - 1];
+
             Station st = tsProfileData.getStation(urns[urns.length - 1]);
             if (st != null) {
                 tsStationList.add(st);
+            }
+            else if (statUrn.startsWith(genericName)){
+            	// check to see if generic name (ie: STATION-0)
+            	try {
+            		Integer sIndex = Integer.valueOf(statUrn.substring(genericName.length()));
+            		st = tsProfileData.getStations().get(sIndex);
+            		if(st != null){
+            			tsStationList.add(st);
+            		}
+            	}
+            	catch(Exception n){
+            		n.printStackTrace();
+            	}
             }
         }
 
@@ -270,6 +307,7 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
         altMin = new ArrayList<Double>();
         altMax = new ArrayList<Double>();
         numberHeightsForStation = new HashMap<String, List<Double>>();
+
         DateTime curTime;
         DateTime dtStart = null;
         DateTime dtEnd = null;
@@ -334,8 +372,7 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
                        if(!altVals.contains(alt))
                            altVals.add(alt);
                     }
-                    if(!this.multDimTimVar)
-                        break;
+
                }
                 this.numberHeightsForStation.put(tsStationList.get(j).getName(), altVals);
                 altMin.add(altmin);
@@ -370,9 +407,15 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
 
     @Override
     public String getStationName(int idNum) {
-        if (tsProfileData != null) {
-            return (tsStationList.get(idNum).getName());
-        } else {
+        if (tsProfileData != null && getNumberOfStations() > idNum) {
+        	String statName = tsStationList.get(idNum).getName();
+        	if (statName.isEmpty()){
+        		// return generic
+        		statName = this.tsProfileData.getCollectionFeatureType().name()+"-"+idNum;
+        	}
+            return statName;
+        } 
+        else {
             return Invalid_Station;
         }
     }

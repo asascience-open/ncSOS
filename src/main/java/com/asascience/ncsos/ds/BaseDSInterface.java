@@ -4,7 +4,7 @@
  */
 package com.asascience.ncsos.ds;
 
-import com.asascience.ncsos.outputformatter.OutputFormatter;
+import com.asascience.ncsos.outputformatter.XmlOutputFormatter;
 
 import java.io.IOException;
 
@@ -20,5 +20,5 @@ public interface BaseDSInterface {
      * assembly is available.
      * @param output the formatter to be used for the response
      */
-    public void setupOutputDocument(OutputFormatter output) throws IOException;
+    public void setupOutputDocument(XmlOutputFormatter output) throws IOException;
 }

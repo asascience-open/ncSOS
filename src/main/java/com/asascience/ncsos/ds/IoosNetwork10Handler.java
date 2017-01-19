@@ -2,12 +2,14 @@ package com.asascience.ncsos.ds;
 
 import com.asascience.ncsos.cdmclasses.*;
 import com.asascience.ncsos.outputformatter.ErrorFormatter;
-import com.asascience.ncsos.outputformatter.OutputFormatter;
+import com.asascience.ncsos.outputformatter.XmlOutputFormatter;
 import com.asascience.ncsos.outputformatter.ds.IoosNetwork10Formatter;
 import com.asascience.ncsos.util.ListComprehension;
 import com.asascience.ncsos.util.LogReporter;
 import com.asascience.ncsos.util.VocabDefinitions;
+
 import ucar.nc2.Attribute;
+import ucar.nc2.Variable;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.NetcdfDataset;
 
@@ -44,7 +46,7 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
         setStationData();
     }
 
-    public void setupOutputDocument(OutputFormatter format) throws IOException {
+    public void setupOutputDocument(XmlOutputFormatter format) throws IOException {
         if (!checkForProcedure(this.procedure)) {
             formatter = new ErrorFormatter();
             ((ErrorFormatter)formatter).setException("Invalid procedure: " + this.procedure, INVALID_PARAMETER, "procedure");
@@ -64,8 +66,8 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
     
     private void describeNetwork() {
         this.network.setVersionMetadata();
-        this.network.setDescriptionNode((String)this.getGlobalAttribute("description", "No description found"));
-        this.network.setName(this.procedure);
+        this.network.setDescriptionNode((String)this.getGlobalAttribute("title", "No description found"));
+        this.network.setName(NETWORK_ALL);
         this.network.removeSmlLocation();
         this.formatSmlIdentification();
         this.formatSmlClassification();
@@ -77,23 +79,31 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
     
     private void formatSmlIdentification() {
         network.addSmlIdentifier("networkID", VocabDefinitions.GetIoosDefinition("networkID"), this.procedure);
-        network.addSmlIdentifier("shortName", VocabDefinitions.GetIoosDefinition("shortName"), (String)this.getGlobalAttribute("shortName", "SOS station assets collection of the dataset"));
-        network.addSmlIdentifier("longName", VocabDefinitions.GetIoosDefinition("longName"), (String)this.getGlobalAttribute("longName", this.procedure + " Collaction of all station assets available in dataset"));
+        network.addSmlIdentifier("shortName", VocabDefinitions.GetIoosDefinition("shortName"),
+        		(String)this.getGlobalAttribute("id", "SOS station assets collection of the dataset"));
+        network.addSmlIdentifier("longName", VocabDefinitions.GetIoosDefinition("longName"), 
+        		(String)this.getGlobalAttribute("title", this.procedure + " Collaction of all station assets available in dataset"));
     }
     
     private void formatSmlClassification() {
         // add platformType, operatorSector and publisher classifications (assuming they are global variables
         network.addSmlClassifier("platformType", VocabDefinitions.GetIoosDefinition("platformType"), 
-                "platform", this.checkForRequiredValue("platform_type"));
-        network.addSmlClassifier("operatorSector", VocabDefinitions.GetIoosDefinition("operatorSector"), "sector", this.checkForRequiredValue("operator_sector"));
-        network.addSmlClassifier("publisher", VocabDefinitions.GetIoosDefinition("publisher"), "organization", this.checkForRequiredValue("publisher"));
+                "platform", this.getPlatformType(this.procedure));
+        network.addSmlClassifier("operatorSector", VocabDefinitions.GetIoosDefinition("operatorSector"), 
+        		"sector", this.checkForRequiredValue("creator_sector"));
+        network.addSmlClassifier("publisher", VocabDefinitions.GetIoosDefinition("publisher"), "organization", 
+        		this.checkForRequiredValue("publisher_name"));
         network.addSmlClassifier("parentNetwork", "http://mmisw.org/ont/ioos/definition/parentNetwork", 
                 "organization", (String)this.getGlobalAttribute(INSTITUTION, ATTRIBUTE_MISSING ));
         
         // sponsor is optional
-        String value = (String)this.getGlobalAttribute("sponsor", null);
-        if (value != null) {
-            network.addSmlClassifier("sponsor", VocabDefinitions.GetIoosDefinition("sponsor"), "organization", value);
+        String contribRole = (String)this.getGlobalAttribute("contributor_role", null);
+        String contribName = (String)this.getGlobalAttribute("contributor_name", null);
+        if (contribRole != null && contribName !=null) {
+            network.addSmlClassifier("sponsor", 
+            						VocabDefinitions.GetIoosDefinition("sponsor"), 
+            						"organization", 
+            						contribName + " - "+ contribRole);
         }
     }
     
@@ -112,10 +122,12 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
         String org = this.checkForRequiredValue("creator_name");
         String url = (String)this.getGlobalAttribute("creator_url", null);
         HashMap<String, String> address = createAddressForContact("creator");
-        contactInfo.put("address", address);
         HashMap<String, String> phone = new HashMap<String, String>();
         phone.put("voice", (String)this.getGlobalAttribute("creator_phone", null));
         contactInfo.put("phone", phone);
+
+        contactInfo.put("address", address);
+     
         network.addContactNode(role, org, contactInfo, url);
 
         contactInfo.clear();
@@ -125,9 +137,10 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
         org = this.checkForRequiredValue("publisher_name");
         url = (String)this.getGlobalAttribute("publisher_url", null);
         address = createAddressForContact("publisher");
-        contactInfo.put("address", address);
         phone.put("voice", (String)this.getGlobalAttribute("publisher_phone", null));
+
         contactInfo.put("phone", phone);
+        contactInfo.put("address", address);
         network.addContactNode(role, org, contactInfo, url);
     }
     
@@ -147,13 +160,21 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
         for (String str : this.getStationNames().values()) {
             stationNames.add(str);
         }
+        
+        String stationsNamesFromUrn[] = new String[stationNames.size()];
+        Map<String,String> urnMap =  this.getUrnToStationName();
+        for(int statI = 0; statI < stationNames.size(); statI++){
+        	
+        	stationsNamesFromUrn[statI]  = urnMap.get(this.getUrnName(stationNames.get(statI)));
+        }
+        
         switch(this.getDatasetFeatureType()) {
             case STATION:
-                this.stationData = new TimeSeries(stationNames.toArray(new String[stationNames.size()]), null, null);
+                this.stationData = new TimeSeries(stationsNamesFromUrn, null, null);
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 break;
             case STATION_PROFILE:
-                this.stationData = new TimeSeriesProfile(stationNames.toArray(new String[stationNames.size()]), null, null,
+                this.stationData = new TimeSeriesProfile(stationsNamesFromUrn, null, null,
                                     false, false, false, null);
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 break;
@@ -166,7 +187,7 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
                     }
                 });
                 */
-                this.stationData = new Profile(stationNames.toArray(new String[stationNames.size()]), null, null);
+                this.stationData = new Profile(stationsNamesFromUrn, null, null);
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 break;
             case TRAJECTORY:
@@ -178,7 +199,7 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
                     }
                 });
                 */
-                this.stationData = new Trajectory(stationNames.toArray(new String[stationNames.size()]),null,null);
+                this.stationData = new Trajectory(stationsNamesFromUrn,null,null);
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 break;
             case SECTION:
@@ -190,7 +211,7 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
                     }
                 });
                 */
-                this.stationData = new Section(stationNames.toArray(new String[stationNames.size()]), null, null);
+                this.stationData = new Section(stationsNamesFromUrn, null, null);
                 this.stationData.setData(this.getFeatureTypeDataSet());
                 break;
             case GRID:
@@ -201,7 +222,7 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
                 HashMap<String,String> latLon = new HashMap<String, String>();
                 latLon.put(Grid.LAT, this.getGridDataset().getBoundingBox().getLatMin() + "_" + this.getGridDataset().getBoundingBox().getLatMax());
                 latLon.put(Grid.LON, this.getGridDataset().getBoundingBox().getLonMin() + "_" + this.getGridDataset().getBoundingBox().getLonMax());
-                this.stationData = new Grid(stationNames.toArray(new String[stationNames.size()]), null, dataVars.toArray(new String[dataVars.size()]), latLon);
+                this.stationData = new Grid(stationsNamesFromUrn, null, dataVars.toArray(new String[dataVars.size()]), latLon);
                 this.stationData.setData(this.getGridDataset());
                 break;
             case POINT:
@@ -237,28 +258,32 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
         for (Map.Entry<Integer,String> station : this.getStationNames().entrySet()) {
             network.addSmlComponent(station.getValue());
             // identifiers for station
-            String stationNameFixed = station.getValue().replaceAll("[Pp]rofile|[Tt]rajectory", "");
+            String stationURN = this.getUrnName(station.getValue());
             // stationID
             network.addIdentifierToComponent(station.getValue(), "stationID", 
-            		VocabDefinitions.GetIoosDefinition("stationID"),
-                    this.getUrnName(station.getValue()));
+            		VocabDefinitions.GetIoosDefinition("stationID"), stationURN);
+           
+            Variable platformVar = this.getPlatformVariableMap().get(station.getValue());
+
             // shortName
-            VariableSimpleIF pVar = this.checkForRequiredVariable("platform_short_name");
+            String stationLabel = ATTRIBUTE_MISSING;
+            String [] splitUrn = stationURN.split(":");
+            if(splitUrn.length > 1)
+            	stationLabel = splitUrn[splitUrn.length -1];
             network.addIdentifierToComponent(station.getValue(), "shortName", 
-            		VocabDefinitions.GetIoosDefinition("shortName"),
-            		this.checkForRequiredValue(pVar, stationNameFixed));
+            		VocabDefinitions.GetIoosDefinition("shortName"), stationLabel);
 
             // longName
-            pVar = this.checkForRequiredVariable("platform_long_name");
+           
             network.addIdentifierToComponent(station.getValue(), "longName", 
             		VocabDefinitions.GetIoosDefinition("longName"), 
-            		this.checkForRequiredValue(pVar, stationNameFixed));
+            		this.checkForRequiredValue(platformVar, "long_name"));
 
             // wmoid if it exists
-            pVar = this.getVariableByName("platform_wmo_code");
-            if (pVar != null) {
+    
+            if (platformVar != null) {
                 network.addIdentifierToComponent(station.getValue(), "wmoId", 
-                		VocabDefinitions.GetIoosDefinition("wmoId"), this.checkForRequiredValue(pVar, stationNameFixed));
+                		VocabDefinitions.GetIoosDefinition("wmoId"), this.checkForRequiredValue(platformVar, "wmo_code"));
             }
             // valid time
             network.setComponentValidTime(station.getValue(), this.stationData.getTimeBegin(station.getKey()), this.stationData.getTimeEnd(station.getKey()));
@@ -280,9 +305,13 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
             }
             // outputs
             for (VariableSimpleIF var : this.getDataVariables()) {
-                String name = var.getShortName();
+                String name = this.checkForRequiredValue(var, STANDARD_NAME);
+                if(name.equals(ATTRIBUTE_MISSING)){
+                	name = var.getShortName();
+                }
                 String title = this.procedure.substring(0,this.procedure.lastIndexOf(":")+1) + station.getValue() + ":" + name.replaceAll("\\s+", "_");
-                String def = VocabDefinitions.GetDefinitionForParameter(this.checkForRequiredValue(var, "standard_name"));
+                String def = this.checkForRequiredValue(this.checkForRequiredValue(var, STANDARD_NAME));
+              
                 String units = this.checkForRequiredValue(var, "units");
                 network.addComponentOutput(station.getValue(), name, title, def, (String)this.getGlobalAttribute("featureType"), units);
             }
@@ -290,28 +319,32 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
     }
 
     private void formatSingleComponent() {
-        String strPlatform = (String)this.getGlobalAttribute("platform", null);
-        ucar.nc2.Variable identVar;
-        if (strPlatform != null) {
-            identVar = this.getVariableByName(strPlatform);
-        } else { 
-            // use the station variable
-            identVar = this.stationVariable;
-        }
+    
         
         for (Map.Entry<Integer,String> station : this.getStationNames().entrySet()) {
+        	
+        	
             network.addSmlComponent(station.getValue());
+            Variable platformVar = this.getPlatformVariableMap().get(station.getValue());
+   
+            String stationUrn =  this.getUrnName(station.getValue());
+            String stationLabel = ATTRIBUTE_MISSING;
+            String [] splitUrn = stationUrn.split(":");
+            if(splitUrn.length > 1)
+            	stationLabel = splitUrn[splitUrn.length -1];
             // identifiers for station
             network.addIdentifierToComponent(station.getValue(), "stationID", GetIoosDef("stationID"), 
-                    this.getUrnName(station.getValue()));
+                    stationUrn);
             network.addIdentifierToComponent(station.getValue(), "shortName", GetIoosDef("shortName"), 
-                    this.checkForRequiredValue(identVar, "short_name"));
+                    stationLabel);
             network.addIdentifierToComponent(station.getValue(), "longName", GetIoosDef("longName"), 
-                    this.checkForRequiredValue(identVar, "long_name"));
+                    this.checkForRequiredValue(platformVar, "long_name"));
             // wmoid, if it exists
-            Attribute identAtt = identVar.findAttribute("wmo_code");
-            if (identAtt != null) {
-                network.addIdentifierToComponent(station.getValue(), "wmoID", VocabDefinitions.GetIoosDefinition("wmoID"), identAtt.getStringValue());
+            if(platformVar != null){
+            	Attribute identAtt = platformVar.findAttribute("wmo_code");
+            	if (identAtt != null) {
+            		network.addIdentifierToComponent(station.getValue(), "wmoID", VocabDefinitions.GetIoosDefinition("wmoID"), identAtt.getStringValue());
+            	}
             }
             // valid time
             network.setComponentValidTime(station.getValue(), this.stationData.getTimeBegin(station.getKey()), this.stationData.getTimeEnd(station.getKey()));
@@ -333,11 +366,18 @@ public class IoosNetwork10Handler extends Ioos10Handler implements BaseDSInterfa
             }
             // outputs
             for (VariableSimpleIF var : this.getDataVariables()) {
-                String name = var.getShortName();
-                String title = this.procedure.substring(0,this.procedure.lastIndexOf(":")+1) + station.getValue() + ":" + name.replaceAll("\\s+", "_");
-                String def = VocabDefinitions.GetDefinitionForParameter(this.checkForRequiredValue(var, "standard_name"));
+               
+                String name = this.checkForRequiredValue(var, STANDARD_NAME);
+                if(name.equals(ATTRIBUTE_MISSING)){
+                	name = var.getShortName();
+                }
+                String title = this.procedure.substring(0,this.procedure.lastIndexOf(":")+1) + 
+                		station.getValue() + ":" + name.replaceAll("\\s+", "_");
+                String def = getHrefForParameter(this.checkForRequiredValue(var, STANDARD_NAME));  
+                	
                 String units = this.checkForRequiredValue(var, "units");
-                network.addComponentOutput(station.getValue(), name, title, def, (String)this.getGlobalAttribute("featureType"), units);
+                network.addComponentOutput(station.getValue(), name, title, def, 
+                		(String)this.getGlobalAttribute("featureType"), units);
             }
         }
     }
