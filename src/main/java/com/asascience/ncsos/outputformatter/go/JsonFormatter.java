@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ucar.nc2.constants.AxisType;
+import ucar.nc2.dataset.CoordinateAxis;
+
 import com.asascience.ncsos.cdmclasses.Grid;
 import com.asascience.ncsos.cdmclasses.TimeSeriesProfile;
 import com.asascience.ncsos.cdmclasses.baseCDMClass;
@@ -35,21 +38,21 @@ public class JsonFormatter extends OutputFormatter {
 		Map<String, List<Double>> heightMap = new HashMap<String, List<Double>>();
 		boolean isProfile = handler.getCDMDataset() instanceof TimeSeriesProfile;
 		boolean is3dGrid =  this.handler.is3dGrid(this.handler.getCDMDataset().getStationName(0));
-		
-
+		int cStat = 0;
 		for (int p = 0; p < handler.getProcedures().length; p++) {
 			String keyVals = handler.getValueBlockForAllObs(BLOCK_SEPERATOR, DECIMAL_SEPERATOR, TOKEN_SEPERATOR, p);
 			for (String block :keyVals.split(BLOCK_SEPERATOR)) {
 				String blockAr[] = block.split(TOKEN_SEPERATOR);
-				String station = null;
+				String station = "station";
 				String time = null;
 				int stationNum = -1;
+				String currDepth = null;
 				int bin = 0; // default when not a profile
 				for (String token : blockAr) {
 					String[] tokenSplit = token.split("=");
 					if (tokenSplit[0].equals(station_keyname)) {
 						stationNum = Integer.parseInt(tokenSplit[1]);
-						station = this.handler.stationToFieldName(this.handler.getProcedures()[stationNum])+"_";
+						station = this.handler.stationToFieldName(this.handler.getProcedures()[stationNum]);
 					}
 					else if (tokenSplit[0].equals(time_keyname)) {
 						time = tokenSplit[1];
@@ -57,11 +60,15 @@ public class JsonFormatter extends OutputFormatter {
 					else if(tokenSplit[0].equals(binKeyname)){
 						bin = Integer.parseInt(tokenSplit[1]);
 					}
+					else if(tokenSplit[0].equals(this.handler.getDepthAxisName())){
+						currDepth = tokenSplit[1];
+					}
 				}
-				if(station == null || time == null) continue;
+				
+				if(time == null) continue;
 
 		
-
+				
 				for (String token : blockAr) {
 					String[] tokenSplit = token.split("=");
 					String var = tokenSplit[0];
@@ -70,9 +77,14 @@ public class JsonFormatter extends OutputFormatter {
 					}
 					if (obsProps.contains(var) && tokenSplit.length > 1) {
 						String varValue = tokenSplit[1];
-						station = station +var;
-						if(!stationData.containsKey(station)){						
-							stationToNum.put(station, stationNum);
+						station = station + "_" + var;
+						if(!stationData.containsKey(station)){
+							if(stationNum != -1)
+								stationToNum.put(station, stationNum);
+							else {
+								stationToNum.put(station, cStat);
+								cStat++;
+							}
 							stationData.put(station, new HashMap<String, JsonFormatterData>());
 						}
 						String varStandard = handler.getVariableStandardName(var);
@@ -88,12 +100,19 @@ public class JsonFormatter extends OutputFormatter {
 										handler.getCDMDataset()).getHeightAxisUnits();
 
 								heightMap.put(station, ((TimeSeriesProfile )
-										handler.getCDMDataset()).getProfileHeightsForStation(String.valueOf(stationNum)));
+										handler.getCDMDataset()).getProfileHeightsForStation(stationNum));
 							}
 							else if(is3dGrid){
 						      	Grid grid = ((Grid) this.handler.getCDMDataset());
 					        	heightMap.put(station, grid.getDepths(var));
 					        	heightUnits = grid.getDepthUnits(var);
+							}
+							else {
+								heightUnits = null;
+								CoordinateAxis zAxis = this.handler.getNetCDFDataset().findCoordinateAxis(AxisType.Height);
+								if(zAxis != null && zAxis.getSize() > 1){
+										heightUnits = this.handler.getDepthUnits();
+								}
 							}
 							// 
 							JsonFormatterData jdata = new JsonFormatterData(varStandard,
@@ -106,7 +125,8 @@ public class JsonFormatter extends OutputFormatter {
 						data.getDataValues().add(varValue);
 						if(isProfile || is3dGrid)
 							data.getHeightValues().add(heightMap.get(station).get(bin));
-
+						else if(currDepth != null && data.heightValues != null)
+							data.heightValues.add(Double.valueOf(currDepth));
 					}
 				}
 			}

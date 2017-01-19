@@ -231,9 +231,11 @@ public class OosTethysFormatter extends XmlOutputFormatter {
         String lonAxisName = this.handler.getLonAxisName();
         String depthAxisName = this.handler.getDepthAxisName();
         boolean skipLatLonBlock;
+        String lastDepth = null;
         for (String block : blockSplit) {
         	String[] tokenSplit = block.split(TOKEN_SEPERATOR);
         	skipLatLonBlock = false;
+        	String skippedStr = "";
         	for (String obsValue : tokenSplit) {
         		String[] obs = obsValue.split("=");
         		if (obs.length > 1 && (obs[0].equals("time") || isInRequestObservedProperties(obs[0]))){
@@ -247,10 +249,25 @@ public class OosTethysFormatter extends XmlOutputFormatter {
         				else
         					skipLatLonBlock = true;
         			}
+        			if(depthAxisName !=  null && obs[0].equals(depthAxisName)){
+        				if(skipLatLonBlock){
+        					if(lastDepth != obs[1]){
+        						skipLatLonBlock = false;
+        						if (retval.length() > 1)
+            						retval.deleteCharAt(retval.length()-1);
+        						retval.append(BLOCK_SEPERATOR);
+                				retval.append(skippedStr);
+                				skippedStr = "";
+        					}
+        				}
+        				lastDepth = obs[1];
+        			}
         			if(! ((obs[0].equals(latAxisName)  || obs[0].equals(lonAxisName) || obs[0].equals("time") ||
         					(depthAxisName !=  null && obs[0].equals(depthAxisName))) && skipLatLonBlock)){
         				retval.append(obs[1]).append(TOKEN_SEPERATOR);
-
+        			}
+        			else {
+        				skippedStr += obs[1] + TOKEN_SEPERATOR;
         			}
         			if(obs[0].equals("time") )
         				lastTime = obs[1];

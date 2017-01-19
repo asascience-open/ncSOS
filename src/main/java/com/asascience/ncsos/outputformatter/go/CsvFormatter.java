@@ -42,6 +42,7 @@ public class CsvFormatter extends OutputFormatter {
 					  Integer bin = null;
 					  String currTime = null;
 					  String lat = null;
+					  String currDepth = null;
 					  String lon = null;
 					  for (String token : block.split(TOKEN_SEPERATOR)) {
 						  String[] tokenSplit = token.split("=");
@@ -83,26 +84,36 @@ public class CsvFormatter extends OutputFormatter {
 						  else if(token.startsWith("BIN") && (isProfile || is3dGrid)){
 							  bin = Integer.valueOf(tokenSplit[1]);
 						  }
-						  
+						  else if(tokenSplit[0].equals(this.handler.getDepthAxisName())){
+							  currDepth = tokenSplit[1];
+						  }
 						  else {
 							  if (obsProps.contains(tokenSplit[0]) && tokenSplit.length > 1) {
-								  String station = this.handler.stationToFieldName(this.handler.getProcedures()[stNum]);
-								  String stationSensor = station + "_"+ tokenSplit[0];
-								  if(isFirstBlock)
+								  String station = "";
+								  if(stNum != null)
+									  station = this.handler.stationToFieldName(this.handler.getProcedures()[stNum]) + "_";
+								  String stationSensor = station + tokenSplit[0];
+								  if(isFirstBlock){
 									  headerStr += "variable"+TOKEN_SEPERATOR;
+									  if(!(isProfile || is3dGrid) && currDepth != null){
+										  headerStr += this.handler.getDepthAxisName()+ "(" + this.handler.getDepthUnits() +")"+TOKEN_SEPERATOR;
+									  }
+								  }
 								  if((isProfile || is3dGrid) && !heightMap.containsKey(stationSensor)) {
 									  if(isProfile){
 										  if(isFirstBlock)
 											  headerStr = headerStr + "height(" +  ((TimeSeriesProfile )handler.getCDMDataset()).getHeightAxisUnits() +")"+TOKEN_SEPERATOR;
 										  heightMap.put(stationSensor, ((TimeSeriesProfile )
-													handler.getCDMDataset()).getProfileHeightsForStation(String.valueOf(stNum)));
+													handler.getCDMDataset()).getProfileHeightsForStation(stNum));
 										 
 									  }
-									  else{
+									  
+									  else {
 										  Grid grid = ((Grid) this.handler.getCDMDataset());
 										  heightMap.put(stationSensor, grid.getDepths(tokenSplit[0]));
 										  if(isFirstBlock)
-											  headerStr = headerStr + "height(" +  ((Grid) this.handler.getCDMDataset()).getDepthUnits(tokenSplit[0])  +")"+TOKEN_SEPERATOR;
+											  headerStr = headerStr + this.handler.getDepthAxisName()+ "(" +
+													  ((Grid) this.handler.getCDMDataset()).getDepthUnits(tokenSplit[0])  +")"+TOKEN_SEPERATOR;
 									  }
 									  appendedHeader = true;
 
@@ -114,6 +125,7 @@ public class CsvFormatter extends OutputFormatter {
 								  if(lon != null){
 									  newBlock.append(lon).append(TOKEN_SEPERATOR);
 								  }
+								  
 								  newBlock.append(stationSensor);
 								  if(isProfile || is3dGrid){
 									  if (bin != null)
@@ -121,6 +133,9 @@ public class CsvFormatter extends OutputFormatter {
 									  else{
 										  newBlock.append(TOKEN_SEPERATOR).append("");
 									  }
+								  }
+								  else if(currDepth != null){
+									  newBlock.append(TOKEN_SEPERATOR).append(currDepth);
 								  }
 								  newBlock.append(TOKEN_SEPERATOR).append(tokenSplit[1]).append(BLOCK_SEPERATOR);
 								  String sensorUnits = this.handler.getUnitsString(tokenSplit[0]);
@@ -130,7 +145,11 @@ public class CsvFormatter extends OutputFormatter {
 									  headerStr += "value";
 								  }
 								  if(!allObsInHeader.contains(tokenSplit[0])){
-									  headerStr = this.handler.stationToFieldName(this.handler.getProcedures()[stNum]) + "_"+ tokenSplit[0] + " => " +this.handler.getVariableStandardName(tokenSplit[0]) + 
+									  String statName = "";
+									  if(stNum != null){
+										  statName = this.handler.stationToFieldName(this.handler.getProcedures()[stNum]) + "_";
+									  }
+									  headerStr = statName+ tokenSplit[0] + " => " +this.handler.getVariableStandardName(tokenSplit[0]) + 
 											  "(" + sensorUnits +")"+"\n" + headerStr;
 									  allObsInHeader.add(tokenSplit[0]);
 									  appendedHeader = true;

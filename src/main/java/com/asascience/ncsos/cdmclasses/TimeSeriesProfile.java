@@ -170,6 +170,9 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
         return builder.toString();
     }
 
+
+    
+    // returns the number of unique depths ie alt(profile,z) will return profile*z
     public int getNumberProfilesForStation(String station){
         int numProfiles = 0;
         if(this.numberHeightsForStation.containsKey(station)){
@@ -188,7 +191,8 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
     
     public List<Double> getProfileHeightsForStation(String station){
         List<Double> profHeights;
-        if(this.numberHeightsForStation.containsKey(station)){
+        
+        if(station != null && this.numberHeightsForStation.containsKey(station)){
             profHeights = this.numberHeightsForStation.get(station);
         }
         else{
@@ -196,6 +200,17 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
         }
         return profHeights;
     }
+    
+    
+    public List<Double> getProfileHeightsForStation(int stationNum){
+    	Station stat = tsStationList.get(stationNum);
+    	String statStr =  null;
+    	if (stat != null){
+    		statStr = stat.getName();
+    	}
+        return getProfileHeightsForStation(statStr);
+    }
+    
     
     private void createStationProfileData(ProfileFeature pf, List<String> valueList, 
                                            DateFormatter dateFormatter, StringBuilder builder, int stNum) {
@@ -292,6 +307,7 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
         altMin = new ArrayList<Double>();
         altMax = new ArrayList<Double>();
         numberHeightsForStation = new HashMap<String, List<Double>>();
+
         DateTime curTime;
         DateTime dtStart = null;
         DateTime dtEnd = null;
@@ -356,8 +372,7 @@ public class TimeSeriesProfile extends baseCDMClass implements iStationData {
                        if(!altVals.contains(alt))
                            altVals.add(alt);
                     }
-                    if(!this.multDimTimVar)
-                        break;
+
                }
                 this.numberHeightsForStation.put(tsStationList.get(j).getName(), altVals);
                 altMin.add(altmin);

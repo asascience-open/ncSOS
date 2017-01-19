@@ -677,9 +677,9 @@ public abstract class BaseRequestHandler {
 	}
 
 	protected Attribute[] getAttributesOfVariable(String varName) {
-        Variable var;
+		VariableSimpleIF var;
         if (featureDataset != null) {
-            var = (Variable) featureDataset.getDataVariable(varName);
+            var = featureDataset.getDataVariable(varName);
         } else {
             var = netCDFDataset.findVariable(varName);
         }

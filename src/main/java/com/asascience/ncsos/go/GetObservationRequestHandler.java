@@ -333,7 +333,7 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
             if (!latLonRequest.isEmpty()) {
             	List<String>  variableNamesNew = new ArrayList<String>();
                 variableNamesNew.addAll(Arrays.asList(this.obsProperties));
-                depthAxis = (netCDFDataset.findVariable(DEPTH));
+                depthAxis = netCDFDataset.findCoordinateAxis(AxisType.Height);
                 if (depthAxis != null) {
                 	this.depthAxisName = depthAxis.getFullName();
                     this.obsProperties = checkNetcdfFileForAxis((CoordinateAxis1D) depthAxis, this.obsProperties);
@@ -383,8 +383,27 @@ public class GetObservationRequestHandler extends BaseRequestHandler {
             //only set the data is it is valid
             CDMDataSet.setData(getFeatureTypeDataSet());
         }
+        CoordinateAxis depthAxis = netCDFDataset.findCoordinateAxis(AxisType.Height);
+        if (depthAxis != null) 
+        	this.depthAxisName = depthAxis.getFullName();
+        CoordinateAxis lonAxis = netCDFDataset.findCoordinateAxis(AxisType.Lon);
+        if (lonAxis != null)
+        	this.lonAxisName = lonAxis.getFullName();
+        CoordinateAxis latAxis = netCDFDataset.findCoordinateAxis(AxisType.Lat);
+        if(latAxis != null)
+        	this.latAxisName = latAxis.getFullName();
     }
 
+    
+    public String getDepthUnits(){
+    	String depthUnits = null;
+    	
+        CoordinateAxis depthAxis = netCDFDataset.findCoordinateAxis(AxisType.Height);
+        if(depthAxis != null){
+        	depthUnits = depthAxis.getUnitsString();
+        }
+        return depthUnits;
+    }
     /**
      * checks for the presence of height in the netcdf dataset if it finds it but not in the variables selected it adds it
      * @param Axis the axis being checked
