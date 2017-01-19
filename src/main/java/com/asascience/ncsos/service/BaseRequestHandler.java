@@ -334,7 +334,7 @@ public abstract class BaseRequestHandler {
             // check name for grid data (does not have cf_role)
             String varName = var.getFullName().toLowerCase();
            
-            if (var.getRank() >= 3 || (varName.contains(GRID) && varName.contains(NAME))) {
+            if (dataFeatureType == FeatureType.GRID || (varName.contains(GRID) && varName.contains(NAME))) {
                 this.stationVariable = var;
                 parseGridIdsToName();
             }
@@ -355,10 +355,10 @@ public abstract class BaseRequestHandler {
         if(!platformVars.isEmpty()){
         	//
         	int stationIndex = 0;
-        
+
         	Map<Integer, String> stationNamesForURNMap = new HashMap<Integer, String>();
         	parsePlatformNames(stationNamesForURNMap);
-        
+
         	for (String platformVariableName : platformVars){
         		Variable var = getVariableByName(platformVariableName);
         		String station = null;
@@ -370,7 +370,7 @@ public abstract class BaseRequestHandler {
         				}
         			}
         		}
-        		
+
         		if (var != null && station == null) {
         			station = var.getShortName();
 
@@ -383,8 +383,8 @@ public abstract class BaseRequestHandler {
         			this.urnToStationName.put( this.getUrnName(station), stationNamesForURNMap.get(stationIndex));
         			stationIndex++;
         		}
-        		}
         	}
+        }
         	
         	
         
