@@ -16,6 +16,7 @@ import ucar.nc2.constants.FeatureType;
 import ucar.nc2.time.CalendarDateRange;
 import ucar.unidata.geoloc.LatLonRect;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -321,12 +322,13 @@ public class GetCapsFormatter extends XmlOutputFormatter {
         Namespace gmlns = this.getNamespace("gml");
         Element bb = new Element("boundedBy", gmlns);
         Element env = new Element("Envelope", gmlns);
+        DecimalFormat df = new DecimalFormat("#.0##");
         env.setAttribute("srsName", handler.getCrsName());
         String lc = null;
         String uc = null;
         try {
-            lc = rect.getLowerLeftPoint().getLatitude() + " " + rect.getLowerLeftPoint().getLongitude();
-            uc = rect.getUpperRightPoint().getLatitude() + " " + rect.getUpperRightPoint().getLongitude();
+            lc = df.format(rect.getLowerLeftPoint().getLatitude()) + " " + df.format(rect.getLowerLeftPoint().getLongitude());
+            uc = df.format(rect.getUpperRightPoint().getLatitude()) + " " + df.format(rect.getUpperRightPoint().getLongitude());
         } catch(Exception e) {
             lc = "UNKNOWN";
             uc = "UNKNOWN";
