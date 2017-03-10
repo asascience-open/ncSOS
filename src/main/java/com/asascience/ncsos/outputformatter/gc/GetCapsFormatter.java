@@ -322,7 +322,7 @@ public class GetCapsFormatter extends XmlOutputFormatter {
         Namespace gmlns = this.getNamespace("gml");
         Element bb = new Element("boundedBy", gmlns);
         Element env = new Element("Envelope", gmlns);
-        DecimalFormat df = new DecimalFormat("#.0##");
+        DecimalFormat df = new DecimalFormat("0.0##");
         env.setAttribute("srsName", handler.getCrsName());
         String lc = null;
         String uc = null;
