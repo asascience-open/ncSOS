@@ -20,9 +20,9 @@
   
   <distributionManagement>
     <repository>
-      <id>asa-sonatype-nexus-snapshots</id>
-      <name>ASA Nexus SNAPSHOT Repo</name>
-      <url>http://geo.asascience.com/nexus/content/repositories/snapshots/</url>
+      <id>asa-maven-releases</id>
+      <name>ASA Repo</name>
+      <url>>http://maven.asascience.com/ncsos-releases</url>
     </repository>
   </distributionManagement>
   
@@ -30,8 +30,9 @@
     <repository>
       <id>asascience</id>
       <name>asascience</name>
-      <url>http://geo.asascience.com/nexus/content/repositories/thirdparty/</url>
+      <url>http://maven.asascience.com/thirdparty/</url>
     </repository>
+  
     <repository>
       <releases>
           <enabled>true</enabled>
@@ -75,6 +76,7 @@
 		<artifactId>jackson-databind</artifactId>
 		<version>2.6.3</version>
 	</dependency>
+
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
