@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import ucar.nc2.dataset.NetcdfDataset;
+import thredds.servlet.ThreddsConfig;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +25,9 @@ public class SosController implements ISosContoller {
 
     private static org.slf4j.Logger _log = org.slf4j.LoggerFactory.getLogger(SosController.class);
     private static org.slf4j.Logger _logServerStartup = org.slf4j.LoggerFactory.getLogger("serverStartup");
-    
+
+    private boolean allow = false;
+
     private HashMap<String, Object> respMap;
 
     protected String getPath() {
@@ -54,8 +57,13 @@ public class SosController implements ISosContoller {
     public void handleSOSRequest(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
 
         NetcdfDataset dataset = null;
-     
-       
+
+        allow = ThreddsConfig.getBoolean("NCSOS.allow", false);
+        if (!allow) {
+            res.sendError(HttpServletResponse.SC_FORBIDDEN, "ncSOS service not enabled");
+            return;
+        }
+
         respMap = new HashMap<String, Object>();
         Writer writer = res.getWriter();
         try {
