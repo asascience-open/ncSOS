@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/asascience-open/ncSOS.png?branch=master)](https://travis-ci.org/asascience-open/ncSOS)
 
-Stable version: **v1.4.2** for THREDDS version 4.5+
+Stable version: **v1.4.3** for THREDDS version 4.5+
 
 Stable version: **v1.1.1** for all other THREDDS versions
 
@@ -25,9 +25,12 @@ _You will need a working THREDDS installation of at least version **4.5** to run
 | ------------- | ---------------------- | ----------------------------------------------- |
 | [v1.1.1](https://github.com/asascience-open/ncSOS/releases/tag/v1.1.1) (release)           | 4.3.20 (20131125.1409) | http://sos.maracoos.org/stable/catalog.html     |
 | [master](https://github.com/asascience-open/ncSOS/tree/master)  (branch)      | 4.6.3 | http://sos.maracoos.org/pre/catalog.html        |
-| [v1.4.2](https://github.com/asascience-open/ncSOS/releases/tag/v1.4.2)  (release)   | 4.5.4 (20141008.1804) | http://sos.maracoos.org/dev/catalog.html        |
+| [v1.4.3](https://github.com/asascience-open/ncSOS/releases/tag/v1.4.3)  (release)   | 4.5.4 (20141008.1804) | http://sos.maracoos.org/dev/catalog.html        |
 
 ## ChangeLog
+### v1.4.3
+* Added the ability to enable/disable ncSOS globally in the threddsConfig.xml file
+
 ### v1.4.2
 * Added response formats to return data in CSV or JSON
 * Get observations for GRID feature type when latitude/longitude is specified
