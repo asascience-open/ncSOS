@@ -30,6 +30,13 @@ _You will need a working THREDDS installation of at least version **4.5** to run
 ## ChangeLog
 ### v1.4.3
 * Added the ability to enable/disable ncSOS globally in the threddsConfig.xml file
+* To enable ncSOS add the following to the threddsConfig.xml:
+
+```
+<NCSOS>
+  <allow>true</allow>
+</NCSOS>
+```
 
 ### v1.4.2
 * Added response formats to return data in CSV or JSON
