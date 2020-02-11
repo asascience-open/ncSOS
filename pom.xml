@@ -30,7 +30,7 @@
     <repository>
       <id>asascience</id>
       <name>asascience</name>
-      <url>http://maven.asascience.com/maven/thirdparty/</url>
+      <url>https://maven.asascience.com/maven/thirdparty/</url>
     </repository>
   
     <repository>
